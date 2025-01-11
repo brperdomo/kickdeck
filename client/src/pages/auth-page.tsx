@@ -110,12 +110,14 @@ export default function AuthPage() {
 
   // Handle email validation
   const handleEmailValidation = async (email: string) => {
-    if (email === lastCheckedEmail) return;
+    if (email === lastCheckedEmail || !isRegistering) return;
 
     try {
       // Only check if email is valid
       const emailValidation = z.string().email().safeParse(email);
-      if (emailValidation.success && isRegistering) {
+      if (emailValidation.success) {
+        // Add a small delay to prevent too frequent API calls
+        await new Promise(resolve => setTimeout(resolve, 300));
         setLastCheckedEmail(email);
         await emailCheckMutation.mutateAsync(email);
       }
@@ -263,7 +265,10 @@ export default function AuthPage() {
                               )}
                               onChange={(e) => {
                                 field.onChange(e);
-                                handleEmailValidation(e.target.value);
+                                const value = e.target.value;
+                                if (value && value !== lastCheckedEmail) {
+                                  handleEmailValidation(value);
+                                }
                               }}
                             />
                           </FormControl>
@@ -273,9 +278,9 @@ export default function AuthPage() {
                                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-primary" />
                               ) : emailCheckMutation.data?.available ? (
                                 <CheckCircle2 className="h-5 w-5 text-green-500" />
-                              ) : (
+                              ) : emailCheckMutation.data?.available === false ? (
                                 <XCircle className="h-5 w-5 text-red-500" />
-                              )}
+                              ) : null}
                             </div>
                           )}
                         </div>
