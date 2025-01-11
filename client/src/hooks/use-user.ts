@@ -4,8 +4,8 @@ import type { InsertUser, SelectUser } from "@db/schema";
 // Temporary mock admin user for development
 const mockAdminUser: SelectUser = {
   id: 1,
-  email: "bperdomo@zoho.com",
-  username: "bperdomo@zoho.com",
+  email: "admin@example.com",
+  username: "admin",
   password: "",
   firstName: "Admin",
   lastName: "User",
@@ -51,9 +51,8 @@ async function handleRequest(
 }
 
 async function fetchUser(): Promise<SelectUser | null> {
-  // Always bypass auth in development mode
-  const isDev = import.meta.env.DEV;
-  if (isDev) {
+  // Check for development mode bypass
+  if (import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === 'true') {
     console.log('🔓 Development mode - Using mock admin user');
     return mockAdminUser;
   }
@@ -110,9 +109,12 @@ export function useUser() {
     },
   });
 
+  // Check for development mode bypass
+  const bypassAuth = import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === 'true';
+
   return {
-    user: import.meta.env.DEV ? mockAdminUser : user,
-    isLoading: import.meta.env.DEV ? false : isLoading,
+    user: bypassAuth ? mockAdminUser : user,
+    isLoading: bypassAuth ? false : isLoading,
     error,
     login: loginMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
