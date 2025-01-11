@@ -267,16 +267,15 @@ export default function AuthPage() {
                 <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
                   {isRegistering ? "Register" : "Login"}
                 </Button>
-
-                {!isRegistering && (
-                  <div className="text-center mt-4">
-                    <Button variant="link" className="text-sm text-green-600">
-                      Forgot Password?
-                    </Button>
-                  </div>
-                )}
               </form>
             </Form>
+            {!isRegistering && (
+              <div className="text-center mt-4">
+                <Button variant="link" className="text-sm text-green-600" type="button">
+                  Forgot Password?
+                </Button>
+              </div>
+            )}
           </Tabs>
         </CardContent>
       </Card>
