@@ -22,13 +22,24 @@ import { Trophy } from "lucide-react";
 import { z } from "zod";
 import { Link } from "wouter";
 
+// Define the login schema separately from the registration schema
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
 });
 
-const registerSchema = insertUserSchema.extend({
+// Create a registration schema that extends the insertUserSchema
+const registerSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  username: z.string().min(3, "Username must be at least 3 characters").max(50),
+  password: z.string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character"),
   confirmPassword: z.string(),
+  firstName: z.string().min(1, "First name is required").max(50),
+  lastName: z.string().min(1, "Last name is required").max(50),
+  phone: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -49,6 +60,7 @@ export default function AuthPage() {
       email: "",
       password: "",
     },
+    mode: "onChange", // Enable real-time validation
   });
 
   const registerForm = useForm<RegisterFormData>({
@@ -61,23 +73,22 @@ export default function AuthPage() {
       firstName: "",
       lastName: "",
       phone: "",
-      isParent: false,
     },
+    mode: "onChange", // Enable real-time validation
   });
-
-  const form = isRegistering ? registerForm : loginForm;
 
   async function onSubmit(data: LoginFormData | RegisterFormData) {
     try {
       if (isRegistering) {
-        const registerData = data as RegisterFormData;
-        const { confirmPassword, ...userData } = registerData;
+        const { confirmPassword, ...registerData } = data as RegisterFormData;
+        // Prepare the data for registration
         const submitData: InsertUser = {
-          ...userData,
-          phone: userData.phone || null,
+          ...registerData,
+          phone: registerData.phone || null,
           isParent: userType === "parent",
           createdAt: new Date().toISOString(),
         };
+
         const result = await registerUser(submitData);
         if (!result.ok) {
           toast({
@@ -90,9 +101,15 @@ export default function AuthPage() {
       } else {
         const loginData = data as LoginFormData;
         const result = await login({
-          ...loginData,
-          username: loginData.email, // Use email as username for login
+          username: loginData.email,
+          password: loginData.password,
+          firstName: "", // Add required fields for InsertUser type
+          lastName: "",
+          email: loginData.email,
+          isParent: false,
+          createdAt: new Date().toISOString(),
         });
+
         if (!result.ok) {
           toast({
             variant: "destructive",
@@ -116,6 +133,8 @@ export default function AuthPage() {
     }
   }
 
+  const form = isRegistering ? registerForm : loginForm;
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 to-green-800 p-4">
       <Card className="w-full max-w-md bg-white/95 backdrop-blur">
@@ -126,7 +145,10 @@ export default function AuthPage() {
           <CardTitle className="text-2xl font-bold">Soccer Registration System</CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs value={isRegistering ? "register" : "login"} onValueChange={(v) => setIsRegistering(v === "register")}>
+          <Tabs 
+            value={isRegistering ? "register" : "login"} 
+            onValueChange={(v) => setIsRegistering(v === "register")}
+          >
             <TabsList className="grid w-full grid-cols-2 mb-4">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Register</TabsTrigger>
