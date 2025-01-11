@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { InsertUser, SelectUser } from "@db/schema";
 
 // Temporary mock admin user for development
-const mockAdminUser: SelectUser & { role?: { name: string, permissions: string[] } } = {
+const mockAdminUser: SelectUser = {
   id: 1,
   email: "bperdomo@zoho.com",
   username: "bperdomo@zoho.com",
@@ -11,18 +11,7 @@ const mockAdminUser: SelectUser & { role?: { name: string, permissions: string[]
   lastName: "User",
   phone: null,
   isParent: false,
-  roleId: 1,
-  role: {
-    name: 'SUPER_ADMIN',
-    permissions: [
-      'MANAGE_ADMINS',
-      'MANAGE_EVENTS',
-      'MANAGE_TEAMS',
-      'VIEW_EVENTS',
-      'VIEW_TEAMS',
-      'VIEW_REPORTS',
-    ],
-  },
+  isAdmin: true,
   createdAt: new Date().toISOString(),
 };
 
@@ -61,7 +50,7 @@ async function handleRequest(
   }
 }
 
-async function fetchUser(): Promise<(SelectUser & { role?: { name: string, permissions: string[] } }) | null> {
+async function fetchUser(): Promise<SelectUser | null> {
   // Always bypass auth in development mode
   const isDev = import.meta.env.DEV;
   if (isDev) {
@@ -92,7 +81,7 @@ async function fetchUser(): Promise<(SelectUser & { role?: { name: string, permi
 export function useUser() {
   const queryClient = useQueryClient();
 
-  const { data: user, error, isLoading } = useQuery<(SelectUser & { role?: { name: string, permissions: string[] } }) | null, Error>({
+  const { data: user, error, isLoading } = useQuery<SelectUser | null, Error>({
     queryKey: ['user'],
     queryFn: fetchUser,
     staleTime: Infinity, // Data never goes stale
@@ -121,14 +110,6 @@ export function useUser() {
     },
   });
 
-  // Helper function to check if user has a specific permission
-  const hasPermission = (permission: string) => {
-    if (import.meta.env.DEV) {
-      return mockAdminUser.role?.permissions.includes(permission) ?? false;
-    }
-    return user?.role?.permissions.includes(permission) ?? false;
-  };
-
   return {
     user: import.meta.env.DEV ? mockAdminUser : user,
     isLoading: import.meta.env.DEV ? false : isLoading,
@@ -136,6 +117,5 @@ export function useUser() {
     login: loginMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
     register: registerMutation.mutateAsync,
-    hasPermission,
   };
 }
