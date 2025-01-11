@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { log } from "./vite";
 import { db } from "@db";
-import { users } from "@db/schema";
+import { users, organizationSettings } from "@db/schema";
 import { eq } from "drizzle-orm";
 import fs from "fs/promises";
 import path from "path";
@@ -50,6 +50,57 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/login', rateLimit(60 * 1000, 5)); // 5 requests per minute
     app.use('/api/register', rateLimit(60 * 1000, 3)); // 3 requests per minute
     app.use('/api/check-email', rateLimit(60 * 1000, 10)); // 10 requests per minute
+
+    // Organization settings endpoints
+    app.get('/api/admin/organization-settings', isAdmin, async (req, res) => {
+      try {
+        const [settings] = await db
+          .select()
+          .from(organizationSettings)
+          .limit(1);
+
+        res.json(settings || {});
+      } catch (error) {
+        console.error('Error fetching organization settings:', error);
+        res.status(500).send("Internal server error");
+      }
+    });
+
+    app.post('/api/admin/organization-settings', isAdmin, async (req, res) => {
+      try {
+        const [existingSettings] = await db
+          .select()
+          .from(organizationSettings)
+          .limit(1);
+
+        const updatedSettings = {
+          ...req.body,
+          updatedAt: new Date().toISOString(),
+        };
+
+        let settings;
+        if (existingSettings) {
+          [settings] = await db
+            .update(organizationSettings)
+            .set(updatedSettings)
+            .where(eq(organizationSettings.id, existingSettings.id))
+            .returning();
+        } else {
+          [settings] = await db
+            .insert(organizationSettings)
+            .values({
+              ...updatedSettings,
+              createdAt: new Date().toISOString(),
+            })
+            .returning();
+        }
+
+        res.json(settings);
+      } catch (error) {
+        console.error('Error updating organization settings:', error);
+        res.status(500).send("Internal server error");
+      }
+    });
 
     // Email availability check endpoint
     app.get('/api/check-email', async (req, res) => {

@@ -41,6 +41,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 
 // Type guard function to check if user is admin
 function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
@@ -367,38 +369,42 @@ export default function AdminDashboard() {
               <h2 className="text-2xl font-bold">Settings</h2>
             </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Theme Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    Primary Color
-                  </label>
-                  <Select 
-                    value={currentColor}
-                    onValueChange={setColor}
-                    disabled={isThemeLoading}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select a color" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="slate">Slate</SelectItem>
-                      <SelectItem value="red">Red</SelectItem>
-                      <SelectItem value="orange">Orange</SelectItem>
-                      <SelectItem value="green">Green</SelectItem>
-                      <SelectItem value="blue">Blue</SelectItem>
-                      <SelectItem value="violet">Violet</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-sm text-muted-foreground">
-                    Choose the primary color for the dashboard interface.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Theme Settings</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">
+                      Primary Color
+                    </Label>
+                    <Select 
+                      value={currentColor}
+                      onValueChange={setColor}
+                      disabled={isThemeLoading}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select a color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="slate">Slate</SelectItem>
+                        <SelectItem value="red">Red</SelectItem>
+                        <SelectItem value="orange">Orange</SelectItem>
+                        <SelectItem value="green">Green</SelectItem>
+                        <SelectItem value="blue">Blue</SelectItem>
+                        <SelectItem value="violet">Violet</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-sm text-muted-foreground">
+                      Choose the primary color for the dashboard interface.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <OrganizationSettingsForm />
+            </div>
           </>
         );
 
@@ -491,5 +497,151 @@ export default function AdminDashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+function OrganizationSettingsForm() {
+  const { settings, isLoading, updateSettings, isUpdating } = useOrganizationSettings();
+  const [name, setName] = useState(settings?.name || '');
+  const [primaryColor, setPrimaryColor] = useState(settings?.primaryColor || '#000000');
+  const [secondaryColor, setSecondaryColor] = useState(settings?.secondaryColor || '#ffffff');
+  const [logo, setLogo] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState(settings?.logoUrl);
+
+  useEffect(() => {
+    if (settings) {
+      setName(settings.name || '');
+      setPrimaryColor(settings.primaryColor || '#000000');
+      setSecondaryColor(settings.secondaryColor || '#ffffff');
+      setPreviewUrl(settings.logoUrl);
+    }
+  }, [settings]);
+
+  const handleLogoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setLogo(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      // In a real application, you would upload the logo to a storage service
+      // and get back a URL. For now, we'll just use the preview URL
+      await updateSettings({
+        name,
+        primaryColor,
+        secondaryColor,
+        logoUrl: previewUrl,
+      });
+    } catch (error) {
+      console.error('Error updating organization settings:', error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Organization Branding</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="org-name">Organization Name</Label>
+            <Input
+              id="org-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter organization name"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="primary-color">Primary Brand Color</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="primary-color"
+                  type="color"
+                  value={primaryColor}
+                  onChange={(e) => setPrimaryColor(e.target.value)}
+                  className="w-12 h-12 p-1"
+                />
+                <Input
+                  value={primaryColor}
+                  onChange={(e) => setPrimaryColor(e.target.value)}
+                  placeholder="#000000"
+                  className="font-mono"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="secondary-color">Secondary Brand Color</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="secondary-color"
+                  type="color"
+                  value={secondaryColor}
+                  onChange={(e) => setSecondaryColor(e.target.value)}
+                  className="w-12 h-12 p-1"
+                />
+                <Input
+                  value={secondaryColor}
+                  onChange={(e) => setSecondaryColor(e.target.value)}
+                  placeholder="#ffffff"
+                  className="font-mono"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="logo">Organization Logo</Label>
+            <div className="flex items-start gap-4">
+              <div className="flex-1">
+                <Input
+                  id="logo"
+                  type="file"
+                  onChange={handleLogoChange}
+                  accept="image/*"
+                />
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Recommended size: 200x200px. Max file size: 2MB
+                </p>
+              </div>
+              {previewUrl && (
+                <div className="relative w-20 h-20 border rounded-lg overflow-hidden">
+                  <img
+                    src={previewUrl}
+                    alt="Logo preview"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <Button type="submit" disabled={isUpdating}>
+            {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Save Changes
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
