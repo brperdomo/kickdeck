@@ -46,6 +46,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
+import { useExportProcess } from "@/hooks/use-export-process"; // Added import
+
 
 // Type guard function to check if user is admin
 function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
@@ -57,14 +59,32 @@ type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-playe
 
 function ReportsView() {
   const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
+  const { isExporting, startExport } = useExportProcess();
 
   const renderReportContent = () => {
     switch (selectedReport) {
       case 'financial':
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Event Financial Reports</h3>
-            {/* Placeholder for financial report content */}
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Event Financial Reports</h3>
+              <Button 
+                onClick={() => startExport('financial')}
+                disabled={isExporting !== null}
+              >
+                {isExporting === 'financial' ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Export Report
+                  </>
+                )}
+              </Button>
+            </div>
             <Card>
               <CardContent className="p-6">
                 <p className="text-muted-foreground">Financial report content will be implemented here</p>
@@ -75,8 +95,25 @@ function ReportsView() {
       case 'manager':
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Manager Export</h3>
-            {/* Placeholder for manager export content */}
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Manager Export</h3>
+              <Button 
+                onClick={() => startExport('manager')}
+                disabled={isExporting !== null}
+              >
+                {isExporting === 'manager' ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <FileSpreadsheet className="mr-2 h-4 w-4" />
+                    Export Data
+                  </>
+                )}
+              </Button>
+            </div>
             <Card>
               <CardContent className="p-6">
                 <p className="text-muted-foreground">Manager export content will be implemented here</p>
@@ -87,8 +124,25 @@ function ReportsView() {
       case 'player':
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Player Export</h3>
-            {/* Placeholder for player export content */}
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Player Export</h3>
+              <Button 
+                onClick={() => startExport('player')}
+                disabled={isExporting !== null}
+              >
+                {isExporting === 'player' ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <FileSpreadsheet className="mr-2 h-4 w-4" />
+                    Export Data
+                  </>
+                )}
+              </Button>
+            </div>
             <Card>
               <CardContent className="p-6">
                 <p className="text-muted-foreground">Player export content will be implemented here</p>
@@ -99,8 +153,25 @@ function ReportsView() {
       case 'schedule':
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Schedule Export</h3>
-            {/* Placeholder for schedule export content */}
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Schedule Export</h3>
+              <Button 
+                onClick={() => startExport('schedule')}
+                disabled={isExporting !== null}
+              >
+                {isExporting === 'schedule' ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <FileSpreadsheet className="mr-2 h-4 w-4" />
+                    Export Data
+                  </>
+                )}
+              </Button>
+            </div>
             <Card>
               <CardContent className="p-6">
                 <p className="text-muted-foreground">Schedule export content will be implemented here</p>
@@ -111,8 +182,25 @@ function ReportsView() {
       case 'guest-player':
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Guest Player Export</h3>
-            {/* Placeholder for guest player export content */}
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Guest Player Export</h3>
+              <Button 
+                onClick={() => startExport('guest-player')}
+                disabled={isExporting !== null}
+              >
+                {isExporting === 'guest-player' ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <FileSpreadsheet className="mr-2 h-4 w-4" />
+                    Export Data
+                  </>
+                )}
+              </Button>
+            </div>
             <Card>
               <CardContent className="p-6">
                 <p className="text-muted-foreground">Guest player export content will be implemented here</p>
@@ -143,41 +231,61 @@ function ReportsView() {
                 variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
                 onClick={() => setSelectedReport('financial')}
+                disabled={isExporting !== null}
               >
                 <FileText className="mr-2 h-4 w-4" />
                 Event Financial Reports
+                {isExporting === 'financial' && (
+                  <Loader2 className="ml-auto h-4 w-4 animate-spin" />
+                )}
               </Button>
               <Button
                 variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
                 onClick={() => setSelectedReport('manager')}
+                disabled={isExporting !== null}
               >
                 <FileSpreadsheet className="mr-2 h-4 w-4" />
                 Manager Export
+                {isExporting === 'manager' && (
+                  <Loader2 className="ml-auto h-4 w-4 animate-spin" />
+                )}
               </Button>
               <Button
                 variant={selectedReport === 'player' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
                 onClick={() => setSelectedReport('player')}
+                disabled={isExporting !== null}
               >
                 <FileSpreadsheet className="mr-2 h-4 w-4" />
                 Player Export
+                {isExporting === 'player' && (
+                  <Loader2 className="ml-auto h-4 w-4 animate-spin" />
+                )}
               </Button>
               <Button
                 variant={selectedReport === 'schedule' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
                 onClick={() => setSelectedReport('schedule')}
+                disabled={isExporting !== null}
               >
                 <FileSpreadsheet className="mr-2 h-4 w-4" />
                 Schedule Export
+                {isExporting === 'schedule' && (
+                  <Loader2 className="ml-auto h-4 w-4 animate-spin" />
+                )}
               </Button>
               <Button
                 variant={selectedReport === 'guest-player' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
                 onClick={() => setSelectedReport('guest-player')}
+                disabled={isExporting !== null}
               >
                 <FileSpreadsheet className="mr-2 h-4 w-4" />
                 Guest Player Export
+                {isExporting === 'guest-player' && (
+                  <Loader2 className="ml-auto h-4 w-4 animate-spin" />
+                )}
               </Button>
             </div>
           </CardContent>
@@ -861,7 +969,7 @@ function AdminDashboard() {
           </Button>
           <Button
             variant={currentView === 'administrators' ? 'secondary' : 'ghost'}
-            className="w-full justify-start"
+            className            className="w-full justify-start"
             onClick={() => setCurrentView('administrators')}
           >
             <Shield className="mr-2 h-4 w-4" />
