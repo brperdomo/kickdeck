@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/hooks/use-user";
 import { useLocation } from "wouter";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -33,6 +33,14 @@ import {
   LogOut
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useTheme } from "@/hooks/use-theme";
 
 // Type guard function to check if user is admin
 function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
@@ -45,6 +53,7 @@ export default function AdminDashboard() {
   const { user, logout } = useUser();
   const [, navigate] = useLocation();
   const [currentView, setCurrentView] = useState<View>('events');
+  
 
   useEffect(() => {
     if (!isAdminUser(user)) {
@@ -77,6 +86,12 @@ export default function AdminDashboard() {
   if (!isAdminUser(user)) {
     return null;
   }
+
+  const handleThemeColorChange = useCallback((value: string) => {
+    //Here you would make an API call to update theme.json
+    console.log("Theme color updated:", value);
+  }, []);
+
 
   const renderContent = () => {
     switch (currentView) {
@@ -355,6 +370,50 @@ export default function AdminDashboard() {
           </>
         );
 
+      case 'settings':
+        const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
+
+        return (
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Settings</h2>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Theme Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Primary Color
+                  </label>
+                  <Select 
+                    value={currentColor}
+                    onValueChange={setColor}
+                    disabled={isThemeLoading}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select a color" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="slate">Slate</SelectItem>
+                      <SelectItem value="red">Red</SelectItem>
+                      <SelectItem value="orange">Orange</SelectItem>
+                      <SelectItem value="green">Green</SelectItem>
+                      <SelectItem value="blue">Blue</SelectItem>
+                      <SelectItem value="violet">Violet</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground">
+                    Choose the primary color for the dashboard interface.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        );
+
       default:
         return (
           <div className="flex items-center justify-center h-full">
@@ -423,8 +482,8 @@ export default function AdminDashboard() {
       <div className="flex-1 flex flex-col">
         {/* Top Bar */}
         <div className="h-16 border-b border-border px-8 flex items-center justify-end bg-card">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
             onClick={async () => {
               await logout();

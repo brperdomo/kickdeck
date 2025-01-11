@@ -5,6 +5,8 @@ import { log } from "./vite";
 import { db } from "@db";
 import { users } from "@db/schema";
 import { eq } from "drizzle-orm";
+import fs from "fs/promises";
+import path from "path";
 
 // Simple rate limiting middleware
 const rateLimit = (windowMs: number, maxRequests: number) => {
@@ -88,6 +90,21 @@ export function registerRoutes(app: Express): Server {
       } catch (error) {
         console.error('Error fetching users:', error);
         res.status(500).send("Internal server error");
+      }
+    });
+
+    // Theme update endpoint
+    app.post('/api/theme', async (req, res) => {
+      try {
+        const themeData = req.body;
+        const themePath = path.resolve(process.cwd(), 'theme.json');
+
+        await fs.writeFile(themePath, JSON.stringify(themeData, null, 2));
+
+        res.json({ message: 'Theme updated successfully' });
+      } catch (error) {
+        console.error('Error updating theme:', error);
+        res.status(500).json({ message: 'Failed to update theme' });
       }
     });
 
