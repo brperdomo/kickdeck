@@ -16,8 +16,8 @@ import { SelectUser } from "@db/schema";
 import { Loader2 } from "lucide-react";
 
 // Type guard function to check if user is admin
-function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: boolean } {
-  return user !== null && 'isAdmin' in user && user.isAdmin === true;
+function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
+  return user !== null && user.isAdmin === true;
 }
 
 export default function AdminDashboard() {
@@ -33,23 +33,13 @@ export default function AdminDashboard() {
   const { data: users, isLoading, error } = useQuery<SelectUser[]>({
     queryKey: ["/api/admin/users"],
     enabled: isAdminUser(user),
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    gcTime: 3600000, // Keep unused data for 1 hour
   });
 
   // Return null during initial load or if user is not admin
   if (!isAdminUser(user)) {
     return null;
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background p-8">
-        <Card className="max-w-6xl mx-auto">
-          <CardContent className="p-6">
-            <p className="text-destructive">Error loading users: {error instanceof Error ? error.message : 'Unknown error'}</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
   }
 
   return (
@@ -77,6 +67,12 @@ export default function AdminDashboard() {
                     <TableRow>
                       <TableCell colSpan={5} className="h-24 text-center">
                         <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                      </TableCell>
+                    </TableRow>
+                  ) : error ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-24 text-center text-destructive">
+                        Error loading users: {error instanceof Error ? error.message : 'Unknown error'}
                       </TableCell>
                     </TableRow>
                   ) : !users || users.length === 0 ? (

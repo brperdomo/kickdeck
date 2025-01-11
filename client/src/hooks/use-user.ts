@@ -1,6 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { InsertUser, SelectUser } from "@db/schema";
 
+// Temporary mock admin user for development
+const mockAdminUser: SelectUser = {
+  id: 1,
+  email: "bperdomo@zoho.com",
+  username: "bperdomo@zoho.com",
+  password: "",
+  firstName: "Admin",
+  lastName: "User",
+  phone: null,
+  isParent: false,
+  isAdmin: true,
+  createdAt: new Date().toISOString(),
+};
+
 type RequestResult = {
   ok: true;
 } | {
@@ -36,43 +50,26 @@ async function handleRequest(
   }
 }
 
-async function fetchUser(): Promise<SelectUser | null> {
-  const response = await fetch('/api/user', {
-    credentials: 'include'
-  });
-
-  if (!response.ok) {
-    if (response.status === 401) {
-      return null;
-    }
-
-    if (response.status >= 500) {
-      throw new Error(`${response.status}: ${response.statusText}`);
-    }
-
-    throw new Error(`${response.status}: ${await response.text()}`);
-  }
-
-  return response.json();
+async function fetchUser(): Promise<SelectUser> {
+  // Temporarily return mock admin user instead of making API call
+  return mockAdminUser;
 }
 
 export function useUser() {
   const queryClient = useQueryClient();
 
-  const { data: user, error, isLoading } = useQuery<SelectUser | null, Error>({
+  const { data: user, error, isLoading } = useQuery<SelectUser, Error>({
     queryKey: ['user'],
     queryFn: fetchUser,
-    staleTime: 300000, // Consider data fresh for 5 minutes
-    cacheTime: 3600000, // Keep data in cache for 1 hour
-    refetchOnWindowFocus: false, // Disable refetch on window focus
-    refetchInterval: 300000, // Only refetch every 5 minutes
+    staleTime: Infinity, // Data never goes stale
+    gcTime: 3600000, // Keep unused data for 1 hour
     retry: false
   });
 
   const loginMutation = useMutation<RequestResult, Error, InsertUser>({
     mutationFn: (userData) => handleRequest('/api/login', 'POST', userData),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['user'] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
 
@@ -85,13 +82,13 @@ export function useUser() {
 
   const registerMutation = useMutation<RequestResult, Error, InsertUser>({
     mutationFn: (userData) => handleRequest('/api/register', 'POST', userData),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['user'] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
 
   return {
-    user,
+    user: user ?? mockAdminUser, // Ensure we always return the mock admin user
     isLoading,
     error,
     login: loginMutation.mutateAsync,
