@@ -29,7 +29,8 @@ import {
   Eye,
   Shield,
   UserPlus,
-  Home
+  Home,
+  LogOut
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -41,7 +42,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
 type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households';
 
 export default function AdminDashboard() {
-  const { user } = useUser();
+  const { user, logout } = useUser();
   const [, navigate] = useLocation();
   const [currentView, setCurrentView] = useState<View>('events');
 
@@ -367,9 +368,11 @@ export default function AdminDashboard() {
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
       <div className="w-64 bg-card border-r border-border p-4">
-        <div className="flex items-center gap-2 mb-8">
-          <Calendar className="h-6 w-6" />
-          <h1 className="font-semibold text-lg">Soccer Events</h1>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-6 w-6" />
+            <h1 className="font-semibold text-lg">Admin Dashboard</h1>
+          </div>
         </div>
 
         <nav className="space-y-2">
@@ -417,9 +420,27 @@ export default function AdminDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 overflow-auto">
-        <div className="max-w-6xl mx-auto">
-          {renderContent()}
+      <div className="flex-1 flex flex-col">
+        {/* Top Bar */}
+        <div className="h-16 border-b border-border px-8 flex items-center justify-end bg-card">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={async () => {
+              await logout();
+              navigate("/");
+            }}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
+        </div>
+
+        <div className="flex-1 p-8 overflow-auto">
+          <div className="max-w-6xl mx-auto">
+            {renderContent()}
+          </div>
         </div>
       </div>
     </div>
