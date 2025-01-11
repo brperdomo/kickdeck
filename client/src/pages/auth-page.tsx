@@ -18,9 +18,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy } from "lucide-react";
+import { Trophy, CheckCircle2, XCircle } from "lucide-react";
 import { z } from "zod";
 import { Link } from "wouter";
+import { useMutation } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 
 // Shared password schema
 const passwordSchema = z.string()
@@ -56,11 +58,31 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 type LoginFormData = z.infer<typeof loginSchema>;
 
+// Function to check email availability
+async function checkEmailAvailability(email: string): Promise<{ available: boolean }> {
+  const response = await fetch(`/api/check-email?email=${encodeURIComponent(email)}`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to check email availability");
+  }
+  return response.json();
+}
+
 export default function AuthPage() {
   const { toast } = useToast();
   const { login, register: registerUser } = useUser();
   const [isRegistering, setIsRegistering] = useState(false);
   const [userType, setUserType] = useState<"player" | "parent">("player");
+  const [lastCheckedEmail, setLastCheckedEmail] = useState<string>("");
+
+  // Email availability check mutation
+  const emailCheckMutation = useMutation({
+    mutationFn: checkEmailAvailability,
+    onError: (error) => {
+      console.error("Email check failed:", error);
+    },
+  });
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -84,6 +106,22 @@ export default function AuthPage() {
     },
     mode: "all",
   });
+
+  // Handle email validation
+  const handleEmailValidation = async (email: string) => {
+    if (email === lastCheckedEmail) return;
+
+    try {
+      // Only check if email is valid
+      const emailValidation = z.string().email().safeParse(email);
+      if (emailValidation.success && isRegistering) {
+        setLastCheckedEmail(email);
+        await emailCheckMutation.mutateAsync(email);
+      }
+    } catch (error) {
+      console.error("Email validation error:", error);
+    }
+  };
 
   async function onSubmit(data: LoginFormData | RegisterFormData) {
     try {
@@ -187,10 +225,40 @@ export default function AuthPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" {...field} />
-                      </FormControl>
+                      <div className="relative">
+                        <FormControl>
+                          <Input
+                            type="email"
+                            {...field}
+                            className={cn(
+                              "pr-10",
+                              isRegistering && emailCheckMutation.data?.available && "border-green-500 focus-visible:ring-green-500",
+                              isRegistering && emailCheckMutation.data?.available === false && "border-red-500 focus-visible:ring-red-500"
+                            )}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              handleEmailValidation(e.target.value);
+                            }}
+                          />
+                        </FormControl>
+                        {isRegistering && field.value && (
+                          <div className="absolute right-3 top-2.5">
+                            {emailCheckMutation.isPending ? (
+                              <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-primary" />
+                            ) : emailCheckMutation.data?.available ? (
+                              <CheckCircle2 className="h-5 w-5 text-green-500" />
+                            ) : (
+                              <XCircle className="h-5 w-5 text-red-500" />
+                            )}
+                          </div>
+                        )}
+                      </div>
                       <FormMessage />
+                      {isRegistering && emailCheckMutation.data?.available === false && (
+                        <p className="text-sm text-red-500 mt-1">
+                          This email is already registered
+                        </p>
+                      )}
                     </FormItem>
                   )}
                 />
