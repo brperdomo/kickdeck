@@ -7,7 +7,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { users, insertUserSchema, type SelectUser } from "@db/schema";
 import { db } from "@db";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 
 const scryptAsync = promisify(scrypt);
 const crypto = {
@@ -58,16 +58,17 @@ export function setupAuth(app: Express) {
   app.use(passport.session());
 
   passport.use(
-    new LocalStrategy(async (username, password, done) => {
+    new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
       try {
+        // Check for user by email or username
         const [user] = await db
           .select()
           .from(users)
-          .where(eq(users.username, username))
+          .where(or(eq(users.email, email), eq(users.username, email)))
           .limit(1);
 
         if (!user) {
-          return done(null, false, { message: "Incorrect username." });
+          return done(null, false, { message: "Incorrect email or username." });
         }
         const isMatch = await crypto.compare(password, user.password);
         if (!isMatch) {
@@ -108,14 +109,15 @@ export function setupAuth(app: Express) {
 
       const { username, password, firstName, lastName, email, phone, isParent } = result.data;
 
+      // Check if user exists by email or username
       const [existingUser] = await db
         .select()
         .from(users)
-        .where(eq(users.username, username))
+        .where(or(eq(users.email, email), eq(users.username, username)))
         .limit(1);
 
       if (existingUser) {
-        return res.status(400).send("Username already exists");
+        return res.status(400).send("User with this email or username already exists");
       }
 
       const hashedPassword = await crypto.hash(password);
@@ -179,6 +181,7 @@ export function setupAuth(app: Express) {
       res.json({ message: "Logout successful" });
     });
   });
+
   app.post("/api/reset-password", async (req, res) => {
     try {
       const { email } = req.body;
@@ -213,6 +216,7 @@ export function setupAuth(app: Express) {
       res.status(500).send("An error occurred while processing your request");
     }
   });
+
   app.get("/api/user", (req, res) => {
     if (req.isAuthenticated()) {
       return res.json(req.user);
