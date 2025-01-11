@@ -15,32 +15,47 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { z } from "zod";
+
+const registerSchema = insertUserSchema.extend({
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function AuthPage() {
   const { toast } = useToast();
-  const { login, register } = useUser();
+  const { login, register: registerUser } = useUser();
   const [isRegistering, setIsRegistering] = useState(false);
+  const [userType, setUserType] = useState<"player" | "parent">("player");
 
-  const form = useForm<InsertUser>({
-    resolver: zodResolver(insertUserSchema),
+  const form = useForm<RegisterFormData>({
+    resolver: zodResolver(isRegistering ? registerSchema : insertUserSchema),
     defaultValues: {
       username: "",
       password: "",
+      confirmPassword: "",
       firstName: "",
       lastName: "",
       email: "",
-      phone: undefined, 
+      phone: undefined,
       isParent: false,
     },
   });
 
-  async function onSubmit(data: InsertUser) {
+  async function onSubmit(data: RegisterFormData) {
     try {
+      const { confirmPassword, ...userData } = data;
+      userData.isParent = userType === "parent";
+
       const result = isRegistering 
-        ? await register(data)
-        : await login(data);
+        ? await registerUser(userData)
+        : await login(userData);
 
       if (!result.ok) {
         toast({
@@ -79,6 +94,24 @@ export default function AuthPage() {
 
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                {isRegistering && (
+                  <RadioGroup
+                    defaultValue="player"
+                    value={userType}
+                    onValueChange={(v) => setUserType(v as "player" | "parent")}
+                    className="flex justify-center space-x-4 mb-6"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="player" id="player" />
+                      <label htmlFor="player">Register as Player</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="parent" id="parent" />
+                      <label htmlFor="parent">Register as Parent</label>
+                    </div>
+                  </RadioGroup>
+                )}
+
                 <FormField
                   control={form.control}
                   name="username"
@@ -108,13 +141,29 @@ export default function AuthPage() {
                 />
 
                 {isRegistering && (
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirm Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {isRegistering && (
                   <>
                     <FormField
                       control={form.control}
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>First Name</FormLabel>
+                          <FormLabel>{userType === "parent" ? "Parent First Name" : "Player First Name"}</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -128,7 +177,7 @@ export default function AuthPage() {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Last Name</FormLabel>
+                          <FormLabel>{userType === "parent" ? "Parent Last Name" : "Player Last Name"}</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -142,7 +191,7 @@ export default function AuthPage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>{userType === "parent" ? "Parent Email" : "Player Email"}</FormLabel>
                           <FormControl>
                             <Input type="email" {...field} />
                           </FormControl>
@@ -156,7 +205,7 @@ export default function AuthPage() {
                       name="phone"
                       render={({ field: { value, ...fieldProps } }) => (
                         <FormItem>
-                          <FormLabel>Phone (Optional)</FormLabel>
+                          <FormLabel>{userType === "parent" ? "Parent Phone (Optional)" : "Player Phone (Optional)"}</FormLabel>
                           <FormControl>
                             <Input 
                               type="tel" 
@@ -164,23 +213,6 @@ export default function AuthPage() {
                               value={value ?? ''} 
                             />
                           </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="isParent"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center gap-2">
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <FormLabel>Register as Parent</FormLabel>
                           <FormMessage />
                         </FormItem>
                       )}
