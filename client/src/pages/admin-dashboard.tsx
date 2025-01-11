@@ -14,9 +14,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { SelectUser } from "@db/schema";
-import { 
-  Loader2, 
-  Search, 
+import {
+  Loader2,
+  Search,
   Plus,
   Settings,
   Users,
@@ -28,15 +28,17 @@ import {
   Copy,
   Eye,
   Shield,
-  UserPlus
+  UserPlus,
+  Home
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 // Type guard function to check if user is admin
 function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households';
 
 export default function AdminDashboard() {
   const { user } = useUser();
@@ -63,12 +65,110 @@ export default function AdminDashboard() {
     gcTime: 3600000,
   });
 
+  const { data: households, isLoading: householdsLoading, error: householdsError } = useQuery<any[]>({
+    queryKey: ["/api/admin/households"],
+    enabled: isAdminUser(user) && currentView === 'households',
+    staleTime: 30000,
+    gcTime: 3600000,
+  });
+
+
   if (!isAdminUser(user)) {
     return null;
   }
 
   const renderContent = () => {
     switch (currentView) {
+      case 'households':
+        return (
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search households..."
+                  className="pl-9 w-[300px]"
+                />
+              </div>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Household
+              </Button>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Households</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Last Name</TableHead>
+                        <TableHead>Address</TableHead>
+                        <TableHead>Primary Email</TableHead>
+                        <TableHead>Members</TableHead>
+                        <TableHead>Created At</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {householdsLoading ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="h-24 text-center">
+                            <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                          </TableCell>
+                        </TableRow>
+                      ) : householdsError ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="h-24 text-center text-destructive">
+                            Error loading households: {householdsError instanceof Error ? householdsError.message : 'Unknown error'}
+                          </TableCell>
+                        </TableRow>
+                      ) : !households || households.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="h-24 text-center">
+                            No households found
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        households.map((household:any) => (
+                          <TableRow key={household.id}>
+                            <TableCell>{household.lastName}</TableCell>
+                            <TableCell>
+                              {household.address}, {household.city}, {household.state} {household.zipCode}
+                            </TableCell>
+                            <TableCell>{household.primaryEmail}</TableCell>
+                            <TableCell>
+                              {/* This will be populated once we implement the relationship query */}
+                              <Badge variant="secondary">2 members</Badge>
+                            </TableCell>
+                            <TableCell>{new Date(household.createdAt).toLocaleDateString()}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
+                                  <Trash className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        );
+
       case 'administrators':
         return (
           <>
@@ -153,8 +253,8 @@ export default function AdminDashboard() {
             <div className="flex justify-between items-center mb-6">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder="Search events..." 
+                <Input
+                  placeholder="Search events..."
                   className="pl-9 w-[300px]"
                 />
               </div>
@@ -210,7 +310,7 @@ export default function AdminDashboard() {
                           </TableCell>
                         </TableRow>
                       ) : (
-                        events.map((event) => (
+                        events.map((event:any) => (
                           <TableRow key={event.id}>
                             <TableCell>{event.name}</TableCell>
                             <TableCell>{new Date(event.date).toLocaleDateString()}</TableCell>
@@ -219,7 +319,7 @@ export default function AdminDashboard() {
                             <TableCell>
                               <span className={
                                 `px-2 py-1 rounded-full text-xs font-medium ${
-                                  event.status === 'Active' 
+                                  event.status === 'Active'
                                     ? 'bg-green-100 text-green-800'
                                     : 'bg-gray-100 text-gray-800'
                                 }`
@@ -273,32 +373,40 @@ export default function AdminDashboard() {
         </div>
 
         <nav className="space-y-2">
-          <Button 
-            variant={currentView === 'events' ? 'secondary' : 'ghost'} 
+          <Button
+            variant={currentView === 'events' ? 'secondary' : 'ghost'}
             className="w-full justify-start"
             onClick={() => setCurrentView('events')}
           >
             <Calendar className="mr-2 h-4 w-4" />
             Events
           </Button>
-          <Button 
-            variant={currentView === 'teams' ? 'secondary' : 'ghost'} 
+          <Button
+            variant={currentView === 'teams' ? 'secondary' : 'ghost'}
             className="w-full justify-start"
             onClick={() => setCurrentView('teams')}
           >
             <Users className="mr-2 h-4 w-4" />
             Teams
           </Button>
-          <Button 
-            variant={currentView === 'administrators' ? 'secondary' : 'ghost'} 
+          <Button
+            variant={currentView === 'households' ? 'secondary' : 'ghost'}
+            className="w-full justify-start"
+            onClick={() => setCurrentView('households')}
+          >
+            <Home className="mr-2 h-4 w-4" />
+            Households
+          </Button>
+          <Button
+            variant={currentView === 'administrators' ? 'secondary' : 'ghost'}
             className="w-full justify-start"
             onClick={() => setCurrentView('administrators')}
           >
             <Shield className="mr-2 h-4 w-4" />
             Administrators
           </Button>
-          <Button 
-            variant={currentView === 'settings' ? 'secondary' : 'ghost'} 
+          <Button
+            variant={currentView === 'settings' ? 'secondary' : 'ghost'}
             className="w-full justify-start"
             onClick={() => setCurrentView('settings')}
           >

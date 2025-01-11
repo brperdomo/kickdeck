@@ -13,6 +13,18 @@ export const users = pgTable("users", {
   isParent: boolean("isParent").default(false).notNull(),
   isAdmin: boolean("isAdmin").default(false).notNull(),
   createdAt: text("createdAt").notNull().default(new Date().toISOString()),
+  householdId: serial("householdId").references(() => households.id),
+});
+
+export const households = pgTable("households", {
+  id: serial("id").primaryKey(),
+  lastName: text("lastName").notNull(),
+  address: text("address").notNull(),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  zipCode: text("zipCode").notNull(),
+  primaryEmail: text("primaryEmail").notNull(),
+  createdAt: text("createdAt").notNull().default(new Date().toISOString()),
 });
 
 const passwordSchema = z.string()
@@ -29,8 +41,22 @@ export const insertUserSchema = createInsertSchema(users, {
   phone: z.string().optional(),
   isAdmin: z.boolean().optional(),
   isParent: z.boolean().optional(),
+  householdId: z.number().optional(),
+});
+
+export const insertHouseholdSchema = createInsertSchema(households, {
+  lastName: z.string().min(1, "Last name is required"),
+  address: z.string().min(1, "Address is required"),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(2, "State is required").max(2),
+  zipCode: z.string().min(5, "ZIP code is required").max(10),
+  primaryEmail: z.string().email("Please enter a valid email address"),
 });
 
 export const selectUserSchema = createSelectSchema(users);
+export const selectHouseholdSchema = createSelectSchema(households);
+
 export type InsertUser = typeof users.$inferInsert;
 export type SelectUser = typeof users.$inferSelect;
+export type InsertHousehold = typeof households.$inferInsert;
+export type SelectHousehold = typeof households.$inferSelect;
