@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/hooks/use-user";
 import { useLocation } from "wouter";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
 import {
   Table,
@@ -321,7 +322,7 @@ function AdminDashboard() {
     }
   }, [user, navigate]);
 
-  const { data: events, isLoading: eventsLoading, error: eventsError } = useQuery<any[]>({
+  const { data: events, isLoading: eventsLoading, error: eventsError } = useQuery({
     queryKey: ["/api/admin/events"],
     enabled: isAdminUser(user) && currentView === 'events',
     staleTime: 30000,
