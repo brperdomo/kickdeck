@@ -1,21 +1,10 @@
-import { scrypt, randomBytes } from "crypto";
-import { promisify } from "util";
 import { db } from "@db";
 import { users } from "@db/schema";
 import { eq } from "drizzle-orm";
-
-const scryptAsync = promisify(scrypt);
-
-async function hashPassword(password: string) {
-  const salt = randomBytes(16).toString("hex");
-  const buf = (await scryptAsync(password, salt, 64)) as Buffer;
-  return `${buf.toString("hex")}.${salt}`;
-}
+import { crypto } from "./crypto";
 
 export async function createAdmin() {
   try {
-    const hashedPassword = await hashPassword("!Nova2025");
-
     // Check if admin already exists
     const [existingAdmin] = await db
       .select()
@@ -24,6 +13,8 @@ export async function createAdmin() {
       .limit(1);
 
     if (!existingAdmin) {
+      const hashedPassword = await crypto.hash("!Nova2025");
+
       await db.insert(users).values({
         email: "bperdomo@zoho.com",
         username: "bperdomo@zoho.com",
