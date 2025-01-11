@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/hooks/use-user";
 import { useLocation } from "wouter";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
+import { useTheme } from "@/hooks/use-theme";
 import {
   Table,
   TableBody,
@@ -40,7 +41,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useTheme } from "@/hooks/use-theme";
 
 // Type guard function to check if user is admin
 function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
@@ -53,7 +53,7 @@ export default function AdminDashboard() {
   const { user, logout } = useUser();
   const [, navigate] = useLocation();
   const [currentView, setCurrentView] = useState<View>('events');
-  
+  const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
 
   useEffect(() => {
     if (!isAdminUser(user)) {
@@ -81,16 +81,6 @@ export default function AdminDashboard() {
     staleTime: 30000,
     gcTime: 3600000,
   });
-
-
-  if (!isAdminUser(user)) {
-    return null;
-  }
-
-  const handleThemeColorChange = useCallback((value: string) => {
-    //Here you would make an API call to update theme.json
-    console.log("Theme color updated:", value);
-  }, []);
 
 
   const renderContent = () => {
@@ -371,8 +361,6 @@ export default function AdminDashboard() {
         );
 
       case 'settings':
-        const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
-
         return (
           <>
             <div className="flex justify-between items-center mb-6">
@@ -415,13 +403,13 @@ export default function AdminDashboard() {
         );
 
       default:
-        return (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-muted-foreground">Select a menu item from the sidebar</p>
-          </div>
-        );
+        return null;
     }
   };
+
+  if (!isAdminUser(user)) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen bg-background">
