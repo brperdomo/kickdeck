@@ -22,12 +22,8 @@ import { Trophy } from "lucide-react";
 import { z } from "zod";
 import { Link } from "wouter";
 
-const emailSchema = z.string()
-  .email("Invalid email address")
-  .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid email format");
-
 const loginSchema = z.object({
-  email: emailSchema,
+  email: z.string().email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
 });
 

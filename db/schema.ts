@@ -19,13 +19,8 @@ const passwordSchema = z.string()
   .regex(/[0-9]/, "Password must contain at least one number")
   .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character");
 
-// Email regex that accepts valid email formats
-const emailSchema = z.string()
-  .email("Invalid email address")
-  .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid email format");
-
 export const insertUserSchema = createInsertSchema(users, {
-  email: emailSchema,
+  email: z.string().email("Please enter a valid email address"),
   username: z.string().min(3, "Username must be at least 3 characters").max(50),
   password: passwordSchema,
   firstName: z.string().min(1, "First name is required").max(50),
