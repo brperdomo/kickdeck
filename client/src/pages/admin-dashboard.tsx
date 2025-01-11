@@ -31,7 +31,9 @@ import {
   Shield,
   UserPlus,
   Home,
-  LogOut
+  LogOut,
+  FileText,
+  FileSpreadsheet
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -50,7 +52,149 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports';
+type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
+
+function ReportsView() {
+  const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
+
+  const renderReportContent = () => {
+    switch (selectedReport) {
+      case 'financial':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Event Financial Reports</h3>
+            {/* Placeholder for financial report content */}
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Financial report content will be implemented here</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      case 'manager':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Manager Export</h3>
+            {/* Placeholder for manager export content */}
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Manager export content will be implemented here</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      case 'player':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Player Export</h3>
+            {/* Placeholder for player export content */}
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Player export content will be implemented here</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      case 'schedule':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Schedule Export</h3>
+            {/* Placeholder for schedule export content */}
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Schedule export content will be implemented here</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      case 'guest-player':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Guest Player Export</h3>
+            {/* Placeholder for guest player export content */}
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Guest player export content will be implemented here</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Reports</h2>
+      </div>
+
+      <div className="grid grid-cols-4 gap-6">
+        {/* Report Navigation */}
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Report Types</CardTitle>
+          </CardHeader>
+          <CardContent className="p-3">
+            <div className="space-y-2">
+              <Button
+                variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('financial')}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Event Financial Reports
+              </Button>
+              <Button
+                variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('manager')}
+              >
+                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                Manager Export
+              </Button>
+              <Button
+                variant={selectedReport === 'player' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('player')}
+              >
+                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                Player Export
+              </Button>
+              <Button
+                variant={selectedReport === 'schedule' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('schedule')}
+              >
+                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                Schedule Export
+              </Button>
+              <Button
+                variant={selectedReport === 'guest-player' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('guest-player')}
+              >
+                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                Guest Player Export
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Report Content */}
+        <div className="col-span-3">
+          <Card>
+            <CardContent className="p-6">
+              {renderReportContent()}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </>
+  );
+}
 
 function BrandingPreview() {
   const { preview } = useBrandingPreview();
@@ -668,7 +812,8 @@ function AdminDashboard() {
             </>
           </BrandingPreviewProvider>
         );
-
+      case 'reports':
+        return <ReportsView />;
       default:
         return null;
     }
@@ -729,6 +874,14 @@ function AdminDashboard() {
           >
             <Settings className="mr-2 h-4 w-4" />
             Settings
+          </Button>
+          <Button
+            variant={currentView === 'reports' ? 'secondary' : 'ghost'}
+            className="w-full justify-start"
+            onClick={() => setCurrentView('reports')}
+          >
+            <FileText className="mr-2 h-4 w-4" />
+            Reports
           </Button>
         </nav>
       </div>
