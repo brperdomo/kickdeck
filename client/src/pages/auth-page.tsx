@@ -173,10 +173,12 @@ export default function AuthPage() {
         const result = await login({
           username: loginData.email,
           password: loginData.password,
+          email: loginData.email,
           firstName: "",
           lastName: "",
-          email: loginData.email,
+          phone: null,
           isParent: false,
+          isAdmin: false,
           createdAt: new Date().toISOString(),
         });
 
