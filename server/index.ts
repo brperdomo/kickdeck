@@ -1,10 +1,13 @@
 import express, { type Request, Response, NextFunction } from "express";
+import { createServer } from "http";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { db } from "@db";
 import { users } from "@db/schema";
 
 const app = express();
+
+// Basic middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -39,7 +42,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Test database connection before starting server
+// Test database connection
 async function testDbConnection() {
   try {
     await db.select().from(users).limit(1);
@@ -53,26 +56,35 @@ async function testDbConnection() {
 
 (async () => {
   try {
-    // Test database connection
+    // Test database connection first
     const dbConnected = await testDbConnection();
     if (!dbConnected) {
       throw new Error("Could not connect to database");
     }
 
-    const server = registerRoutes(app);
+    // Create HTTP server
+    const server = createServer(app);
+
+    // Setup development middleware first
+    if (app.get("env") === "development") {
+      await setupVite(app, server);
+      log("Vite middleware setup complete");
+    }
+
+    // Register API routes after Vite setup
+    registerRoutes(app);
+    log("API routes registered");
 
     // Error handling middleware
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       log("Error encountered: " + err.message);
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
-
       res.status(status).json({ message });
     });
 
-    if (app.get("env") === "development") {
-      await setupVite(app, server);
-    } else {
+    // Static file serving in production
+    if (app.get("env") !== "development") {
       serveStatic(app);
     }
 
