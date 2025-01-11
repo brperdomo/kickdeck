@@ -19,14 +19,16 @@ function Router() {
     );
   }
 
-  if (!user) {
-    return <AuthPage />;
-  }
-
   return (
     <Switch>
-      <Route path="/" component={Profile} />
-      <Route component={NotFound} />
+      {user ? (
+        <>
+          <Route path="/" component={Profile} />
+          <Route component={NotFound} />
+        </>
+      ) : (
+        <Route path="*" component={AuthPage} />
+      )}
     </Switch>
   );
 }
