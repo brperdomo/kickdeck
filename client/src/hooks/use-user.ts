@@ -51,13 +51,10 @@ async function handleRequest(
 }
 
 async function fetchUser(): Promise<SelectUser | null> {
-  // Check if we're in development mode and bypass is enabled
+  // Always bypass auth in development mode
   const isDev = import.meta.env.DEV;
-  const bypassAuth = isDev && import.meta.env.VITE_BYPASS_AUTH === 'true';
-
-  if (bypassAuth) {
-    // Log that we're using bypass mode
-    console.log('🔓 Auth bypass enabled - Using mock admin user');
+  if (isDev) {
+    console.log('🔓 Development mode - Using mock admin user');
     return mockAdminUser;
   }
 
@@ -114,8 +111,8 @@ export function useUser() {
   });
 
   return {
-    user,
-    isLoading,
+    user: import.meta.env.DEV ? mockAdminUser : user,
+    isLoading: import.meta.env.DEV ? false : isLoading,
     error,
     login: loginMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
