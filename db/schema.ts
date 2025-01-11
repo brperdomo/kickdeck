@@ -27,8 +27,8 @@ export const insertUserSchema = createInsertSchema(users, {
   firstName: z.string().min(1, "First name is required").max(50),
   lastName: z.string().min(1, "Last name is required").max(50),
   phone: z.string().optional(),
-  isParent: z.boolean(),
   isAdmin: z.boolean().optional(),
+  isParent: z.boolean().optional(),
 });
 
 export const selectUserSchema = createSelectSchema(users);
