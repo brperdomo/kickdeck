@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Edit, Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -18,6 +18,23 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+
 
 type EventTab = 'information' | 'age-groups' | 'scoring' | 'complexes' | 'settings' | 'administrators';
 
@@ -44,6 +61,21 @@ const eventInformationSchema = z.object({
 });
 
 type EventInformationValues = z.infer<typeof eventInformationSchema>;
+
+type Gender = 'Male' | 'Female' | 'Coed';
+type FieldSize = '3v3' | '4v4' | '5v5' | '6v6' | '7v7' | '8v8' | '9v9' | '10v10' | '11v11' | 'N/A';
+
+interface AgeGroup {
+  id: string;
+  gender: Gender;
+  projectedTeams: number;
+  birthDateStart: string;
+  birthDateEnd: string;
+  scoringRule: string;
+  ageGroup: string;
+  fieldSize: FieldSize;
+  amountDue: number | null;
+}
 
 export default function CreateEvent() {
   const [, navigate] = useLocation();
@@ -284,9 +316,185 @@ export default function CreateEvent() {
             </TabsContent>
 
             <TabsContent value="age-groups">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Age Groups</h3>
-                {/* Age groups configuration will be implemented here */}
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Age Groups</h3>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add New Age Group
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Add New Age Group</DialogTitle>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="gender">Gender *</Label>
+                            <Select required>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select gender" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Male">Male</SelectItem>
+                                <SelectItem value="Female">Female</SelectItem>
+                                <SelectItem value="Coed">Coed</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="projected-teams">Projected # of Teams</Label>
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                type="button"
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                              <Input
+                                type="number"
+                                id="projected-teams"
+                                min="0"
+                                max="200"
+                                className="w-20 text-center"
+                              />
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                type="button"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label>Birth Date Range</Label>
+                            <div className="flex items-center space-x-2">
+                              <Input type="date" className="w-full" />
+                              <span>to</span>
+                              <Input type="date" className="w-full" />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="scoring-rule">Scoring Rule</Label>
+                            <Select>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select scoring rule" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="default">Default Scoring</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="age-group">Age Group *</Label>
+                            <Select required>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select age group" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Array.from({ length: 22 }, (_, i) => i + 4).map((age) => (
+                                  <SelectItem key={age} value={`U${age}`}>
+                                    U{age}
+                                  </SelectItem>
+                                ))}
+                                <SelectItem value="Open">Open</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="field-size">Field Size</Label>
+                            <Select>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select field size" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
+                                  <SelectItem key={size} value={size}>
+                                    {size}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="amount-due">Amount Due (optional)</Label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-2.5">$</span>
+                            <Input
+                              type="number"
+                              id="amount-due"
+                              className="pl-7"
+                              placeholder="0.00"
+                              step="0.01"
+                              min="0"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="outline">Cancel</Button>
+                          <Button>Add Age Group</Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                <Card>
+                  <CardContent className="p-0">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Age Group</TableHead>
+                          <TableHead>Gender</TableHead>
+                          <TableHead>Field Size</TableHead>
+                          <TableHead>Birth Date Range</TableHead>
+                          <TableHead>Teams</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {/* Add sample row to show structure */}
+                        <TableRow>
+                          <TableCell>U10</TableCell>
+                          <TableCell>
+                            <Badge variant="outline">Male</Badge>
+                          </TableCell>
+                          <TableCell>7v7</TableCell>
+                          <TableCell>Jan 1, 2014 - Dec 31, 2015</TableCell>
+                          <TableCell>
+                            <Badge>12 Teams</Badge>
+                          </TableCell>
+                          <TableCell>$150.00</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <Button variant="ghost" size="icon">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="text-destructive">
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
 
