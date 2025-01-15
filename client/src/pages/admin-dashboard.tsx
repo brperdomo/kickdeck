@@ -34,7 +34,9 @@ import {
   User,
   Palette,
   ChevronRight,
-  Loader2
+  Loader2,
+  CreditCard,
+  Download
 } from "lucide-react";
 import {
   Table,
@@ -58,7 +60,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
 }
 
 type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account';
-type SettingsView = 'branding' | 'general';
+type SettingsView = 'branding' | 'general' | 'payments';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 
 function ReportsView() {
@@ -112,7 +114,7 @@ function ReportsView() {
                   </>
                 ) : (
                   <>
-                    <FileSpreadsheet className="mr-2 h-4 w-4" />
+                    <Download className="mr-2 h-4 w-4" />
                     Export Data
                   </>
                 )}
@@ -141,7 +143,7 @@ function ReportsView() {
                   </>
                 ) : (
                   <>
-                    <FileSpreadsheet className="mr-2 h-4 w-4" />
+                    <Download className="mr-2 h-4 w-4" />
                     Export Data
                   </>
                 )}
@@ -170,7 +172,7 @@ function ReportsView() {
                   </>
                 ) : (
                   <>
-                    <FileSpreadsheet className="mr-2 h-4 w-4" />
+                    <Download className="mr-2 h-4 w-4" />
                     Export Data
                   </>
                 )}
@@ -199,7 +201,7 @@ function ReportsView() {
                   </>
                 ) : (
                   <>
-                    <FileSpreadsheet className="mr-2 h-4 w-4" />
+                    <Download className="mr-2 h-4 w-4" />
                     Export Data
                   </>
                 )}
@@ -249,7 +251,7 @@ function ReportsView() {
                 onClick={() => setSelectedReport('manager')}
                 disabled={isExporting !== null}
               >
-                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                <Download className="mr-2 h-4 w-4" />
                 Manager Export
                 {isExporting === 'manager' && (
                   <Loader2 className="ml-auto h-4 w-4 animate-spin" />
@@ -261,7 +263,7 @@ function ReportsView() {
                 onClick={() => setSelectedReport('player')}
                 disabled={isExporting !== null}
               >
-                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                <Download className="mr-2 h-4 w-4" />
                 Player Export
                 {isExporting === 'player' && (
                   <Loader2 className="ml-auto h-4 w-4 animate-spin" />
@@ -273,7 +275,7 @@ function ReportsView() {
                 onClick={() => setSelectedReport('schedule')}
                 disabled={isExporting !== null}
               >
-                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                <Download className="mr-2 h-4 w-4" />
                 Schedule Export
                 {isExporting === 'schedule' && (
                   <Loader2 className="ml-auto h-4 w-4 animate-spin" />
@@ -285,7 +287,7 @@ function ReportsView() {
                 onClick={() => setSelectedReport('guest-player')}
                 disabled={isExporting !== null}
               >
-                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                <Download className="mr-2 h-4 w-4" />
                 Guest Player Export
                 {isExporting === 'guest-player' && (
                   <Loader2 className="ml-auto h-4 w-4 animate-spin" />
@@ -563,6 +565,68 @@ function OrganizationSettingsForm() {
 
       <BrandingPreview />
     </div>
+  );
+}
+
+function PaymentsSettingsView() {
+  const [stripeAccount, setStripeAccount] = useState({
+    businessName: '',
+    displayName: '',
+    accountStatus: 'Not Connected',
+    bankAccountLast4: '',
+  });
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Payment Settings</h2>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Stripe Integration</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Business Name</Label>
+              <p className="text-lg font-medium">{stripeAccount.businessName || 'Not set'}</p>
+            </div>
+            <div>
+              <Label>Display Name</Label>
+              <p className="text-lg font-medium">{stripeAccount.displayName || 'Not set'}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Account Status</Label>
+              <Badge variant={stripeAccount.accountStatus === 'Active' ? 'default' : 'secondary'}>
+                {stripeAccount.accountStatus}
+              </Badge>
+            </div>
+            <div>
+              <Label>Bank Account</Label>
+              <p className="text-lg font-medium">
+                {stripeAccount.bankAccountLast4
+                  ? `****${stripeAccount.bankAccountLast4}`
+                  : 'Not connected'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-4">
+            <Button variant="outline">
+              Disconnect
+            </Button>
+            <Button>
+              <CreditCard className="mr-2 h-4 w-4" />
+              Connect with Stripe
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }
 
@@ -880,22 +944,21 @@ export default function AdminDashboard() {
         );
 
       case 'settings':
-        if (currentSettingsView === 'branding') {
-          return (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold">Branding Settings</h2>
-              <BrandingPreviewProvider>
-                <OrganizationSettingsForm />
-              </BrandingPreviewProvider>
-            </div>
-          );
+        switch (currentSettingsView) {
+          case 'branding':
+            return (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold">Branding Settings</h2>
+                <BrandingPreviewProvider>
+                  <OrganizationSettingsForm />
+                </BrandingPreviewProvider>
+              </div>
+            );
+          case 'payments':
+            return <PaymentsSettingsView />;
+          default:
+            return null;
         }
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Settings</h2>
-            <p className="text-muted-foreground">Select a settings category from the sidebar to begin.</p>
-          </div>
-        );
 
       case 'reports':
         return <ReportsView />;
@@ -932,7 +995,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Navigation */}
-          <div className="flex-1 space-y-2 overflow-y-auto">
+          <div className="space-y-2">
             <Button
               variant={currentView === 'events' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
@@ -941,14 +1004,7 @@ export default function AdminDashboard() {
               <Calendar className="mr-2 h-4 w-4" />
               Events
             </Button>
-            <Button
-              variant={currentView === 'teams' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setCurrentView('teams')}
-            >
-              <Users className="mr-2 h-4 w-4" />
-              Teams
-            </Button>
+
             <Button
               variant={currentView === 'households' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
@@ -957,6 +1013,7 @@ export default function AdminDashboard() {
               <Home className="mr-2 h-4 w-4" />
               Households
             </Button>
+
             <Button
               variant={currentView === 'administrators' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
@@ -965,36 +1022,38 @@ export default function AdminDashboard() {
               <Shield className="mr-2 h-4 w-4" />
               Administrators
             </Button>
+
             <Button
-              variant={currentView === 'account' ? 'secondary' : 'ghost'}
+              variant={currentView === 'reports' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setCurrentView('account')}
+              onClick={() => setCurrentView('reports')}
             >
-              <User className="mr-2 h-4 w-4" />
-              My Account
+              <FileText className="mr-2 h-4 w-4" />
+              Reports
             </Button>
+
             <Collapsible
               open={isSettingsOpen}
               onOpenChange={setIsSettingsOpen}
+              className="space-y-2"
             >
               <CollapsibleTrigger asChild>
                 <Button
                   variant={currentView === 'settings' ? 'secondary' : 'ghost'}
                   className="w-full justify-between"
-                  onClick={() => setCurrentView('settings')}
                 >
                   <span className="flex items-center">
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
                   </span>
                   <ChevronRight
-                    className={`h-4 w-4 transition-transform ${
-                      isSettingsOpen ? 'transform rotate-90' : ''
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isSettingsOpen ? 'rotate-90' : ''
                     }`}
                   />
                 </Button>
               </CollapsibleTrigger>
-              <CollapsibleContent className="pl-4 space-y-1">
+              <CollapsibleContent className="space-y-2 pl-4">
                 <Button
                   variant={currentSettingsView === 'branding' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
@@ -1006,21 +1065,41 @@ export default function AdminDashboard() {
                   <Palette className="mr-2 h-4 w-4" />
                   Branding
                 </Button>
+                <Button
+                  variant={currentSettingsView === 'payments' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setCurrentView('settings');
+                    setCurrentSettingsView('payments');
+                  }}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Payments
+                </Button>
               </CollapsibleContent>
             </Collapsible>
+
             <Button
-              variant={currentView === 'reports' ? 'secondary' : 'ghost'}
+              variant={currentView === 'account' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setCurrentView('reports')}
+              onClick={() => setCurrentView('account')}
             >
-              <FileText className="mr-2 h-4 w-4" />
-              Reports
+              <User className="mr-2 h-4 w-4" />
+              My Account
             </Button>
           </div>
 
-          {/* Powered by MatchPro */}
-          <div className="mt-4 pt-4 border-t border-border">
-            <p className="text-sm text-muted-foreground text-center">
+          {/* Footer */}
+          <div className="mt-auto space-y-2">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-muted-foreground"
+              onClick={() => logout()}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+            <p className="text-xs text-center text-muted-foreground pt-4 border-t">
               Powered by MatchPro
             </p>
           </div>
@@ -1028,32 +1107,8 @@ export default function AdminDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <div className="h-16 border-b border-border px-8 flex items-center justify-between bg-card">
-          <div className="flex items-center gap-2">
-            <h1 className="font-semibold text-lg">Admin Dashboard</h1>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={async () => {
-              await logout();
-              navigate("/");
-            }}
-            className="flex items-center gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </Button>
-        </div>
-
-        {/* Content Area */}
-        <div className="flex-1 p-8 overflow-y-auto">
-          <div className="max-w-6xl mx-auto">
-            {renderContent()}
-          </div>
-        </div>
+      <div className="flex-1 overflow-auto p-8">
+        {renderContent()}
       </div>
     </div>
   );
