@@ -24,9 +24,6 @@ import { Link } from "wouter";
 import { useMutation } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 
-// Note: The background image will be served from the public folder
-const bgImageUrl = "/assets/soccer-field-bg.png";
-
 // Shared password schema
 const passwordSchema = z.string()
   .min(8, "Password must be at least 8 characters")
@@ -209,21 +206,9 @@ export default function AuthPage() {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center relative bg-gray-100"
-      style={{
-        backgroundImage: `url(${bgImageUrl})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundAttachment: "fixed",
-      }}
-    >
-      {/* Add a dark overlay to improve readability */}
-      <div className="absolute inset-0 bg-black/40" />
-
-      <div className="container mx-auto px-4 relative">
-        <Card className="w-full max-w-md mx-auto bg-white/80 backdrop-blur-md p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-700 to-green-900 p-4">
+      <div className="container max-w-lg mx-auto">
+        <Card className="w-full bg-white/95 shadow-xl">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-2">
               <Trophy className="h-12 w-12 text-green-600" />
