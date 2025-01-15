@@ -191,7 +191,7 @@ export default function CreateEvent() {
                         <FormLabel>Details About This Event *</FormLabel>
                         <FormControl>
                           <Editor
-                            apiKey="no-api-key"
+                            apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
                             init={{
                               height: 300,
                               menubar: true,
@@ -222,7 +222,7 @@ export default function CreateEvent() {
                         <FormLabel>Agreement *</FormLabel>
                         <FormControl>
                           <Editor
-                            apiKey="no-api-key"
+                            apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
                             init={{
                               height: 300,
                               menubar: true,
@@ -253,7 +253,7 @@ export default function CreateEvent() {
                         <FormLabel>Refund Policy *</FormLabel>
                         <FormControl>
                           <Editor
-                            apiKey="no-api-key"
+                            apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
                             init={{
                               height: 300,
                               menubar: true,
