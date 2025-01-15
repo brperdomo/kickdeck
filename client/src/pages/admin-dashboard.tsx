@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useUser } from "@/hooks/use-user";
 import { useLocation } from "wouter";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
 import { SelectUser } from "@db/schema";
 import {
@@ -656,6 +656,66 @@ function PaymentsSettingsView() {
 
 function ComplexesView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    openTime: '',
+    closeTime: '',
+    address: '',
+    city: '',
+    state: '',
+    country: 'US',
+    rules: '',
+    directions: ''
+  });
+
+  const complexesQuery = useQuery({
+    queryKey: ['/api/admin/complexes'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/complexes');
+      if (!response.ok) throw new Error('Failed to fetch complexes');
+      return response.json();
+    }
+  });
+
+  const createComplexMutation = useMutation({
+    mutationFn: async (data: typeof formData) => {
+      const response = await fetch('/api/admin/complexes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to create complex');
+      return response.json();
+    },
+    onSuccess: () => {
+      complexesQuery.refetch();
+      setIsModalOpen(false);
+      setFormData({
+        name: '',
+        openTime: '',
+        closeTime: '',
+        address: '',
+        city: '',
+        state: '',
+        country: 'US',
+        rules: '',
+        directions: ''
+      });
+    }
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    createComplexMutation.mutate(formData);
+  };
 
   return (
     <>
@@ -669,13 +729,58 @@ function ComplexesView() {
 
       <Card>
         <CardContent className="p-6">
-          <div className="text-center py-8">
-            <Building2 className="mx-auto h-12 w-12 text-muted-foreground/50" />
-            <h3 className="mt-4 text-lg font-semibold">No complexes found</h3>
-            <p className="text-muted-foreground">
-              Click 'Add New Complex' to see it here
-            </p>
-          </div>
+          {complexesQuery.isLoading ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : complexesQuery.data?.length === 0 ? (
+            <div className="text-center py-8">
+              <Building2 className="mx-auto h-12 w-12 text-muted-foreground/50" />
+              <h3 className="mt-4 text-lg font-semibold">No complexes found</h3>
+              <p className="text-muted-foreground">
+                Click 'Add New Complex' to see it here
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Address</TableHead>
+                    <TableHead>Hours</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {complexesQuery.data?.map((complex: any) => (
+                    <TableRow key={complex.id}>
+                      <TableCell>{complex.name}</TableCell>
+                      <TableCell>
+                        {complex.address}, {complex.city}, {complex.state}
+                      </TableCell>
+                      <TableCell>
+                        {complex.openTime} - {complex.closeTime}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
+                            <Trash className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -684,21 +789,39 @@ function ComplexesView() {
           <DialogHeader>
             <DialogTitle>Add New Complex</DialogTitle>
           </DialogHeader>
-          <form className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
                 <Label htmlFor="name">Complex Name</Label>
-                <Input id="name" placeholder="Enter complex name" required />
+                <Input 
+                  id="name" 
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter complex name" 
+                  required 
+                />
               </div>
 
               <div>
                 <Label htmlFor="openTime">Open Time (Local Time)</Label>
-                <Input id="openTime" type="time" required />
+                <Input 
+                  id="openTime" 
+                  type="time" 
+                  value={formData.openTime}
+                  onChange={handleInputChange}
+                  required 
+                />
               </div>
 
               <div>
                 <Label htmlFor="closeTime">Close Time (Local Time)</Label>
-                <Input id="closeTime" type="time" required />
+                <Input 
+                  id="closeTime" 
+                  type="time" 
+                  value={formData.closeTime}
+                  onChange={handleInputChange}
+                  required 
+                />
               </div>
 
               <div className="col-span-2">
@@ -711,17 +834,27 @@ function ComplexesView() {
 
               <div className="col-span-2">
                 <Label htmlFor="address">Address</Label>
-                <Input id="address" placeholder="Street address" />
+                <Input 
+                  id="address" 
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  placeholder="Street address" 
+                />
               </div>
 
               <div>
                 <Label htmlFor="city">City</Label>
-                <Input id="city" placeholder="City" />
+                <Input 
+                  id="city" 
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  placeholder="City" 
+                />
               </div>
 
               <div>
                 <Label htmlFor="state">State</Label>
-                <Select>
+                <Select value={formData.state} onValueChange={(value) => setFormData(prev => ({ ...prev, state: value }))}>
                   <SelectTrigger id="state">
                     <SelectValue placeholder="Select state" />
                   </SelectTrigger>
@@ -731,20 +864,18 @@ function ComplexesView() {
                     <SelectItem value="AZ">Arizona</SelectItem>
                     <SelectItem value="AR">Arkansas</SelectItem>
                     <SelectItem value="CA">California</SelectItem>
-                    {/* Add more states as needed */}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="col-span-2">
                 <Label htmlFor="country">Country</Label>
-                <Select>
+                <Select value={formData.country} onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}>
                   <SelectTrigger id="country">
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="US">United States</SelectItem>
-                    {/* Add more countries as needed */}
                   </SelectContent>
                 </Select>
               </div>
@@ -753,6 +884,8 @@ function ComplexesView() {
                 <Label htmlFor="rules">General Complex Rules</Label>
                 <Textarea
                   id="rules"
+                  value={formData.rules}
+                  onChange={handleInputChange}
                   placeholder="Enter complex rules and guidelines..."
                   className="h-24"
                 />
@@ -762,6 +895,8 @@ function ComplexesView() {
                 <Label htmlFor="directions">Directions</Label>
                 <Textarea
                   id="directions"
+                  value={formData.directions}
+                  onChange={handleInputChange}
                   placeholder="Enter directions to the complex..."
                   className="h-24"
                 />
@@ -769,10 +904,15 @@ function ComplexesView() {
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit">Create Complex</Button>
+              <Button type="submit" disabled={createComplexMutation.isPending}>
+                {createComplexMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Create Complex
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -780,6 +920,7 @@ function ComplexesView() {
     </>
   );
 }
+
 
 function AdminDashboard() {
   const { user, logout } = useUser();
@@ -847,11 +988,11 @@ function AdminDashboard() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Last Name</TableHead>
+                        <TableHead>Name</TableHead>
                         <TableHead>Address</TableHead>
-                        <TableHead>Primary Email</TableHead>
-                        <TableHead>Members</TableHead>
-                        <TableHead>Created At</TableHead>
+                        <TableHead>Phone</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Status</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -864,41 +1005,32 @@ function AdminDashboard() {
                         </TableRow>
                       ) : householdsError ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="h-24 text-center text-destructive">
-                            Error loading households: {householdsError instanceof Error ? householdsError.message : 'Unknown error'}
+                          <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                            Failed to load households
                           </TableCell>
                         </TableRow>
-                      ) : !households || households.length === 0 ? (
+                      ) : households?.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="h-24 text-center">
+                          <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                             No households found
                           </TableCell>
                         </TableRow>
                       ) : (
-                        households.map((household:any) => (
+                        households?.map((household) => (
                           <TableRow key={household.id}>
-                            <TableCell>{household.lastName}</TableCell>
+                            <TableCell>{household.name}</TableCell>
+                            <TableCell>{household.address}</TableCell>
+                            <TableCell>{household.phone}</TableCell>
+                            <TableCell>{household.email}</TableCell>
                             <TableCell>
-                              {household.address}, {household.city}, {household.state} {household.zipCode}
+                              <Badge variant={household.status === 'active' ? 'default' : 'secondary'}>
+                                {household.status}
+                              </Badge>
                             </TableCell>
-                            <TableCell>{household.primaryEmail}</TableCell>
                             <TableCell>
-                              {/* This will be populated once we implement the relationship query */}
-                              <Badge variant="secondary">2 members</Badge>
-                            </TableCell>
-                            <TableCell>{new Date(household.createdAt).toLocaleDateString()}</TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
-                                  <Trash className="h-4 w-4" />
-                                </Button>
-                              </div>
+                              <Button variant="ghost" size="sm">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
                             </TableCell>
                           </TableRow>
                         ))
@@ -1116,36 +1248,35 @@ function AdminDashboard() {
         );
 
       case 'settings':
-        switch (currentSettingsView) {
-          case 'branding':
-            return (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-bold">Branding Settings</h2>
-                <BrandingPreviewProvider>
-                  <OrganizationSettingsForm />
-                </BrandingPreviewProvider>
-              </div>
-            );
-          case 'payments':
-            return <PaymentsSettingsView />;
-          default:
-            return null;
+        if (currentSettingsView === 'branding') {
+          return (
+            <BrandingPreviewProvider>
+              <OrganizationSettingsForm />
+            </BrandingPreviewProvider>
+          );
         }
 
+        if (currentSettingsView === 'payments') {
+          return <PaymentsSettingsView />;
+        }
+
+        return null;
       case 'reports':
         return <ReportsView />;
       case 'account':
         return (
-          <Suspense fallback={
-            <div className="flex items-center justify-center h-full">
-              <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-          }>
-            <div className="max-w-4xl mx-auto">
-              <MyAccount />
-            </div>
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center min-h-[60vh]">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            }
+          >
+            <MyAccount />
           </Suspense>
         );
+      case 'complexes':
+        return <ComplexesView />;
       default:
         return null;
     }
