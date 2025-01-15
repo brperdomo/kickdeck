@@ -7,6 +7,7 @@ import { users, organizationSettings } from "@db/schema";
 import { eq } from "drizzle-orm";
 import fs from "fs/promises";
 import path from "path";
+import { crypto } from "./crypto";
 
 // Simple rate limiting middleware
 const rateLimit = (windowMs: number, maxRequests: number) => {
@@ -162,6 +163,88 @@ export function registerRoutes(app: Express): Server {
     // Set up authentication routes and middleware
     setupAuth(app);
     log("Authentication routes registered successfully");
+
+
+    // Add these new routes for profile management
+    app.put('/api/user/profile', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const { firstName, lastName, email, phone } = req.body;
+
+        // Check if email is already taken by another user
+        if (email !== req.user.email) {
+          const [existingUser] = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, email))
+            .limit(1);
+
+          if (existingUser) {
+            return res.status(400).send("Email already in use");
+          }
+        }
+
+        // Update user profile
+        const [updatedUser] = await db
+          .update(users)
+          .set({
+            firstName,
+            lastName,
+            email,
+            phone,
+            updatedAt: new Date().toISOString(),
+          })
+          .where(eq(users.id, req.user.id))
+          .returning();
+
+        // Update session
+        req.login(updatedUser, (err) => {
+          if (err) {
+            return res.status(500).send("Failed to update session");
+          }
+          res.json(updatedUser);
+        });
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        res.status(500).send("Failed to update profile");
+      }
+    });
+
+    app.put('/api/user/password', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const { currentPassword, newPassword } = req.body;
+
+        // Verify current password
+        const isMatch = await crypto.compare(currentPassword, req.user.password);
+        if (!isMatch) {
+          return res.status(400).send("Current password is incorrect");
+        }
+
+        // Hash new password
+        const hashedPassword = await crypto.hash(newPassword);
+
+        // Update password
+        await db
+          .update(users)
+          .set({
+            password: hashedPassword,
+            updatedAt: new Date().toISOString(),
+          })
+          .where(eq(users.id, req.user.id));
+
+        res.json({ message: "Password updated successfully" });
+      } catch (error) {
+        console.error('Error updating password:', error);
+        res.status(500).send("Failed to update password");
+      }
+    });
 
     return httpServer;
   } catch (error) {

@@ -33,7 +33,8 @@ import {
   Home,
   LogOut,
   FileText,
-  FileSpreadsheet
+  FileSpreadsheet,
+  User
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -47,6 +48,7 @@ import { Label } from "@/components/ui/label";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
 import { useExportProcess } from "@/hooks/use-export-process"; // Added import
+import React from 'react';
 
 
 // Type guard function to check if user is admin
@@ -54,7 +56,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 
 function ReportsView() {
@@ -68,7 +70,7 @@ function ReportsView() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Event Financial Reports</h3>
-              <Button 
+              <Button
                 onClick={() => startExport('financial')}
                 disabled={isExporting !== null}
               >
@@ -97,7 +99,7 @@ function ReportsView() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Manager Export</h3>
-              <Button 
+              <Button
                 onClick={() => startExport('manager')}
                 disabled={isExporting !== null}
               >
@@ -126,7 +128,7 @@ function ReportsView() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Player Export</h3>
-              <Button 
+              <Button
                 onClick={() => startExport('player')}
                 disabled={isExporting !== null}
               >
@@ -155,7 +157,7 @@ function ReportsView() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Schedule Export</h3>
-              <Button 
+              <Button
                 onClick={() => startExport('schedule')}
                 disabled={isExporting !== null}
               >
@@ -184,7 +186,7 @@ function ReportsView() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Guest Player Export</h3>
-              <Button 
+              <Button
                 onClick={() => startExport('guest-player')}
                 disabled={isExporting !== null}
               >
@@ -329,7 +331,7 @@ function BrandingPreview() {
           <div className="space-y-2">
             <h3 className="text-sm font-medium text-muted-foreground">Organization Name</h3>
             <div className="p-4 rounded-lg bg-card">
-              <span 
+              <span
                 className="text-xl font-bold"
                 style={{ color: preview.primaryColor }}
               >
@@ -343,7 +345,7 @@ function BrandingPreview() {
             <h3 className="text-sm font-medium text-muted-foreground">Brand Colors</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 rounded-lg flex flex-col items-center justify-center">
-                <span 
+                <span
                   className="text-white text-sm font-medium"
                   style={{ backgroundColor: preview.primaryColor }}
                 >
@@ -351,7 +353,7 @@ function BrandingPreview() {
                 </span>
               </div>
               <div className="p-4 rounded-lg flex flex-col items-center justify-center border">
-                <span 
+                <span
                   className="text-sm font-medium"
                   style={{ backgroundColor: preview.secondaryColor }}
                 >
@@ -375,9 +377,9 @@ function BrandingPreview() {
                 Sample Button
               </Button>
               <div className="p-4 rounded-lg">
-                <p 
+                <p
                   className="text-sm"
-                  style={{ 
+                  style={{
                     backgroundColor: preview.secondaryColor,
                     color: preview.primaryColor
                   }}
@@ -922,6 +924,17 @@ function AdminDashboard() {
         );
       case 'reports':
         return <ReportsView />;
+      case 'account':
+        const MyAccount = React.lazy(() => import('./my-account'));
+        return (
+          <React.Suspense fallback={
+            <div className="flex items-center justify-center h-full">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          }>
+            <MyAccount />
+          </React.Suspense>
+        );
       default:
         return null;
     }
@@ -969,11 +982,19 @@ function AdminDashboard() {
           </Button>
           <Button
             variant={currentView === 'administrators' ? 'secondary' : 'ghost'}
-            className            className="w-full justify-start"
+            className="w-full justify-start"
             onClick={() => setCurrentView('administrators')}
           >
             <Shield className="mr-2 h-4 w-4" />
             Administrators
+          </Button>
+          <Button
+            variant={currentView === 'account' ? 'secondary' : 'ghost'}
+            className="w-full justify-start"
+            onClick={() => setCurrentView('account')}
+          >
+            <User className="mr-2 h-4 w-4" />
+            My Account
           </Button>
           <Button
             variant={currentView === 'settings' ? 'secondary' : 'ghost'}
