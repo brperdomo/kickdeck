@@ -206,8 +206,19 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 to-green-800 p-4">
-      <Card className="w-full max-w-md bg-white/95 backdrop-blur">
+    <div
+      className="min-h-screen flex items-center justify-center relative"
+      style={{
+        backgroundImage: 'url(/attached_assets/Soccer Field BG.PNG)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      {/* Add a dark overlay to improve readability */}
+      <div className="absolute inset-0 bg-black/40" />
+
+      <Card className="w-full max-w-md relative bg-white/80 backdrop-blur-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-2">
             <Trophy className="h-12 w-12 text-green-600" />
