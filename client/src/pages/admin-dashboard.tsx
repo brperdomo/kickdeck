@@ -59,7 +59,6 @@ import { useExportProcess } from "@/hooks/use-export-process"; // Added import
 import React from 'react';
 
 
-
 // Type guard function to check if user is admin
 function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
   return user !== null && user.isAdmin === true;
@@ -928,7 +927,7 @@ function AdminDashboard() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen">
       {/* Sidebar */}
       <div className="w-64 bg-card border-r p-4 space-y-2 overflow-y-auto">
         <div className="space-y-2">
@@ -1020,8 +1019,33 @@ function AdminDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto p-6">
-        {renderContent()}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Bar */}
+        <div className="h-16 border-b border-border px-8 flex items-center justify-between bg-card">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-6 w-6" />
+            <h1 className="font-semibold text-lg">Admin Dashboard</h1>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={async () => {
+              await logout();
+              navigate("/");
+            }}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1 p-8 overflow-y-auto">
+          <div className="max-w-6xl mx-auto">
+            {renderContent()}
+          </div>
+        </div>
       </div>
     </div>
   );
