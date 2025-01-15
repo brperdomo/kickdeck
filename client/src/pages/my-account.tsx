@@ -16,7 +16,7 @@ const profileFormSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string()
-    .regex(/^(\+1|1)?[-.\s]?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})$/, "Invalid US phone number format")
+    .regex(/^(\+1|1)?[-.\s]?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})$/, "Invalid phone number")
     .optional()
     .or(z.literal('')),
 });
@@ -33,13 +33,29 @@ const passwordFormSchema = z.object({
 type ProfileFormData = z.infer<typeof profileFormSchema>;
 type PasswordFormData = z.infer<typeof passwordFormSchema>;
 
+// Phone number formatter
+const formatPhoneNumber = (value: string) => {
+  if (!value) return '';
+
+  // Strip all non-numeric characters
+  const cleaned = value.replace(/\D/g, '');
+
+  // Format only if we have exactly 10 digits
+  if (cleaned.length === 10) {
+    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+  }
+
+  // Return the cleaned number if not 10 digits
+  return cleaned;
+};
+
 export default function MyAccount() {
   const { user } = useUser();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  const { register: profileRegister, handleSubmit: handleProfileSubmit, formState: { errors: profileErrors } } = useForm<ProfileFormData>({
+  const { register, handleSubmit: handleProfileSubmit, formState: { errors: profileErrors }, setValue } = useForm<ProfileFormData>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       firstName: user?.firstName || '',
@@ -48,6 +64,12 @@ export default function MyAccount() {
       phone: user?.phone || '',
     }
   });
+
+  // Custom phone input handler
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatPhoneNumber(e.target.value);
+    setValue('phone', formattedValue);
+  };
 
   const { register: passwordRegister, handleSubmit: handlePasswordSubmit, formState: { errors: passwordErrors }, reset: resetPasswordForm } = useForm<PasswordFormData>({
     resolver: zodResolver(passwordFormSchema)
@@ -138,7 +160,7 @@ export default function MyAccount() {
                 <Label htmlFor="firstName">First Name *</Label>
                 <Input
                   id="firstName"
-                  {...profileRegister("firstName")}
+                  {...register("firstName")}
                   aria-invalid={!!profileErrors.firstName}
                 />
                 {profileErrors.firstName && (
@@ -149,7 +171,7 @@ export default function MyAccount() {
                 <Label htmlFor="lastName">Last Name *</Label>
                 <Input
                   id="lastName"
-                  {...profileRegister("lastName")}
+                  {...register("lastName")}
                   aria-invalid={!!profileErrors.lastName}
                 />
                 {profileErrors.lastName && (
@@ -162,7 +184,7 @@ export default function MyAccount() {
               <Input
                 id="email"
                 type="email"
-                {...profileRegister("email")}
+                {...register("email")}
                 aria-invalid={!!profileErrors.email}
               />
               {profileErrors.email && (
@@ -174,14 +196,16 @@ export default function MyAccount() {
               <Input
                 id="phone"
                 type="tel"
-                placeholder="(123) 456-7890"
-                {...profileRegister("phone")}
+                {...register("phone")}
+                onChange={(e) => {
+                  register("phone").onChange(e); // Keep react-hook-form updated
+                  handlePhoneChange(e); // Apply formatting
+                }}
                 aria-invalid={!!profileErrors.phone}
               />
               {profileErrors.phone && (
                 <p className="text-sm text-destructive">{profileErrors.phone.message}</p>
               )}
-              <p className="text-sm text-muted-foreground">Format: (123) 456-7890 or 123-456-7890</p>
             </div>
             <Button type="submit" disabled={isUpdating}>
               {isUpdating ? (

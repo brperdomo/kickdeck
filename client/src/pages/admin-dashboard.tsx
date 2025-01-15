@@ -973,7 +973,7 @@ function AdminDashboard() {
             Teams
           </Button>
           <Button
-            variant={currentView === 'households' ? 'secondary' : 'ghost'}
+            variant={currentView ==='households' ? 'secondary' : 'ghost'}
             className="w-full justify-start"
             onClick={() => setCurrentView('households')}
           >
