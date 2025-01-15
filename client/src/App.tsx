@@ -22,21 +22,33 @@ function Router() {
     );
   }
 
+  // Handle unauthenticated routes
+  if (!user) {
+    if (window.location.pathname !== "/" && window.location.pathname !== "/forgot-password") {
+      window.location.href = "/";
+      return null;
+    }
+    return (
+      <Switch>
+        <Route path="/forgot-password" component={ForgotPassword} />
+        <Route component={AuthPage} />
+      </Switch>
+    );
+  }
+
+  // Handle authenticated routes
   return (
     <Switch>
-      {user ? (
-        <>
-          <Route path="/" component={user.isAdmin ? AdminDashboard : Profile} />
-          <Route path="/admin" component={AdminDashboard} />
-          {user.isAdmin && <Route path="/create-event" component={CreateEvent} />}
-          <Route component={NotFound} />
-        </>
-      ) : (
-        <>
-          <Route path="/forgot-password" component={ForgotPassword} />
-          <Route path="*" component={AuthPage} />
-        </>
-      )}
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/create-event">
+        {user.isAdmin ? <CreateEvent /> : <NotFound />}
+      </Route>
+      <Route path="/">
+        {user.isAdmin ? <AdminDashboard /> : <Profile />}
+      </Route>
+      <Route>
+        {() => <NotFound />}
+      </Route>
     </Switch>
   );
 }
