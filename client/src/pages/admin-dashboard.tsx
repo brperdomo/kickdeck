@@ -1,7 +1,13 @@
+import { useState } from "react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/hooks/use-user";
 import { useLocation } from "wouter";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
 import {
@@ -34,7 +40,9 @@ import {
   LogOut,
   FileText,
   FileSpreadsheet,
-  User
+  User,
+  Palette,
+  ChevronRight
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -51,12 +59,14 @@ import { useExportProcess } from "@/hooks/use-export-process"; // Added import
 import React from 'react';
 
 
+
 // Type guard function to check if user is admin
 function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
   return user !== null && user.isAdmin === true;
 }
 
 type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account';
+type SettingsView = 'branding' | 'general';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 
 function ReportsView() {
@@ -568,6 +578,8 @@ function AdminDashboard() {
   const { user, logout } = useUser();
   const [, navigate] = useLocation();
   const [currentView, setCurrentView] = useState<View>('events');
+  const [currentSettingsView, setCurrentSettingsView] = useState<SettingsView>('general');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
 
   useEffect(() => {
@@ -876,52 +888,23 @@ function AdminDashboard() {
         );
 
       case 'settings':
-        return (
-          <BrandingPreviewProvider>
-            <>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Settings</h2>
-              </div>
-
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Theme Settings</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">
-                        Primary Color
-                      </Label>
-                      <Select
-                        value={currentColor}
-                        onValueChange={setColor}
-                        disabled={isThemeLoading}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select a color" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="slate">Slate</SelectItem>
-                          <SelectItem value="red">Red</SelectItem>
-                          <SelectItem value="orange">Orange</SelectItem>
-                          <SelectItem value="green">Green</SelectItem>
-                          <SelectItem value="blue">Blue</SelectItem>
-                          <SelectItem value="violet">Violet</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <p className="text-sm text-muted-foreground">
-                        Choose the primary color for the dashboard interface.
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-
+        if (currentSettingsView === 'branding') {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold">Branding Settings</h2>
+              <BrandingPreviewProvider>
                 <OrganizationSettingsForm />
-              </div>
-            </>
-          </BrandingPreviewProvider>
+              </BrandingPreviewProvider>
+            </div>
+          );
+        }
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Settings</h2>
+            <p className="text-muted-foreground">Select a settings category from the sidebar to begin.</p>
+          </div>
         );
+
       case 'reports':
         return <ReportsView />;
       case 'account':
@@ -945,17 +928,10 @@ function AdminDashboard() {
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
-      <div className="w-64 bg-card border-r border-border p-4">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-6 w-6" />
-            <h1 className="font-semibold text-lg">Admin Dashboard</h1>
-          </div>
-        </div>
-
-        <nav className="space-y-2">
+      <div className="w-64 bg-card border-r p-4 space-y-2 overflow-y-auto">
+        <div className="space-y-2">
           <Button
             variant={currentView === 'events' ? 'secondary' : 'ghost'}
             className="w-full justify-start"
@@ -996,14 +972,42 @@ function AdminDashboard() {
             <User className="mr-2 h-4 w-4" />
             My Account
           </Button>
-          <Button
-            variant={currentView === 'settings' ? 'secondary' : 'ghost'}
-            className="w-full justify-start"
-            onClick={() => setCurrentView('settings')}
+          <Collapsible
+            open={isSettingsOpen}
+            onOpenChange={setIsSettingsOpen}
           >
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
-          </Button>
+            <CollapsibleTrigger asChild>
+              <Button
+                variant={currentView === 'settings' ? 'secondary' : 'ghost'}
+                className="w-full justify-between"
+                onClick={() => setCurrentView('settings')}
+              >
+                <span className="flex items-center">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Settings
+                </span>
+                <ChevronRight
+                  className={`h-4 w-4 transition-transform ${
+                    isSettingsOpen ? 'transform rotate-90' : ''
+                  }`}
+                />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="pl-4 space-y-1">
+              <Button
+                variant={currentSettingsView === 'branding' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => {
+                  setCurrentView('settings');
+                  setCurrentSettingsView('branding');
+                }}
+              >
+                <Palette className="mr-2 h-4 w-4" />
+                Branding
+              </Button>
+              {/* Add more settings options here */}
+            </CollapsibleContent>
+          </Collapsible>
           <Button
             variant={currentView === 'reports' ? 'secondary' : 'ghost'}
             className="w-full justify-start"
@@ -1012,32 +1016,12 @@ function AdminDashboard() {
             <FileText className="mr-2 h-4 w-4" />
             Reports
           </Button>
-        </nav>
+        </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Bar */}
-        <div className="h-16 border-b border-border px-8 flex items-center justify-end bg-card">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={async () => {
-              await logout();
-              navigate("/");
-            }}
-            className="flex items-center gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </Button>
-        </div>
-
-        <div className="flex-1 p-8 overflow-auto">
-          <div className="max-w-6xl mx-auto">
-            {renderContent()}
-          </div>
-        </div>
+      <div className="flex-1 overflow-y-auto p-6">
+        {renderContent()}
       </div>
     </div>
   );
