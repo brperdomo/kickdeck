@@ -36,7 +36,13 @@ import {
   ChevronRight,
   Loader2,
   CreditCard,
-  Download
+  Download,
+  ClipboardList,
+  UserCircle,
+  Percent,
+  Printer,
+  Flag,
+  MoreHorizontal,
 } from "lucide-react";
 import {
   Table,
@@ -51,6 +57,14 @@ import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
 import { useExportProcess } from "@/hooks/use-export-process";
 import { lazy, Suspense } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const MyAccount = lazy(() => import("./my-account"));
 
@@ -858,7 +872,6 @@ export default function AdminDashboard() {
                 <CardTitle>Events</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* Existing events table content */}
                 <div className="rounded-md border">
                   <Table>
                     <TableHeader>
@@ -876,7 +889,7 @@ export default function AdminDashboard() {
                         <TableHead># of Applications</TableHead>
                         <TableHead># of Accepted Teams</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Actions</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -899,45 +912,64 @@ export default function AdminDashboard() {
                           </TableCell>
                         </TableRow>
                       ) : (
-                        events.map((event:any) => (
+                        events.map((event: any) => (
                           <TableRow key={event.id}>
                             <TableCell>{event.name}</TableCell>
                             <TableCell>{new Date(event.date).toLocaleDateString()}</TableCell>
-                            <TableCell>{event.applications}</TableCell>
-                            <TableCell>{event.acceptedTeams}</TableCell>
+                            <TableCell>{event.applicationCount || 0}</TableCell>
+                            <TableCell>{event.acceptedTeamsCount || 0}</TableCell>
                             <TableCell>
-                              <span className={
-                                `px-2 py-1 rounded-full text-xs font-medium ${
-                                  event.status === 'Active'
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-gray-100 text-gray-800'
-                                }`
-                              }>
+                              <Badge variant={event.status === 'Active' ? 'default' : 'secondary'}>
                                 {event.status}
-                              </span>
+                              </Badge>
                             </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                  <Copy className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
-                                  <Trash className="h-4 w-4" />
-                                </Button>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end items-center gap-2">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                      <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" className="w-48">
+                                    <DropdownMenuItem>
+                                      <Eye className="mr-2 h-4 w-4" />
+                                      Manage
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <ClipboardList className="mr-2 h-4 w-4" />
+                                      Application Questions
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <UserCircle className="mr-2 h-4 w-4" />
+                                      Player Questions
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <Percent className="mr-2 h-4 w-4" />
+                                      Discounts
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <Printer className="mr-2 h-4 w-4" />
+                                      Print Game Cards
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <Flag className="mr-2 h-4 w-4" />
+                                      Red Card Report
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem className="text-destructive">
+                                      <Trash className="mr-2 h-4 w-4" />
+                                      Delete Event
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               </div>
                             </TableCell>
                           </TableRow>
                         ))
                       )}
                     </TableBody>
-                  </Table>
-                </div>
+                  </Table>                </div>
               </CardContent>
             </Card>
           </>
