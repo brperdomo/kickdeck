@@ -83,7 +83,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling';
 type SettingsView = 'branding' | 'general' | 'payments';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 
@@ -922,6 +922,28 @@ function ComplexesView() {
 }
 
 
+function SchedulingView() {
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Scheduling</h2>
+      </div>
+
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center py-8">
+            <Calendar className="mx-auto h-12 w-12 text-muted-foreground/50" />
+            <h3 className="mt-4 text-lg font-semibold">Schedule Management</h3>
+            <p className="text-muted-foreground">
+              Manage game schedules, field assignments, and time slots
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
 function AdminDashboard() {
   const { user, logout } = useUser();
   const [, navigate] = useLocation();
@@ -1277,6 +1299,8 @@ function AdminDashboard() {
         );
       case 'complexes':
         return <ComplexesView />;
+      case 'scheduling':
+        return <SchedulingView />;
       default:
         return null;
     }
@@ -1342,6 +1366,14 @@ function AdminDashboard() {
               <Building2 className="mr-2 h-4 w-4" />
               Field Complexes
             </Button>
+            <Button
+                variant={currentView === 'scheduling' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setCurrentView('scheduling')}
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                Scheduling
+              </Button>
             <Collapsible
               open={isSettingsOpen}
               onOpenChange={setIsSettingsOpen}
