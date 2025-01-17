@@ -117,6 +117,38 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Add complex update endpoint after the create endpoint
+    app.patch('/api/admin/complexes/:id', isAdmin, async (req, res) => {
+      try {
+        const complexId = parseInt(req.params.id);
+        const [updatedComplex] = await db
+          .update(complexes)
+          .set({
+            name: req.body.name,
+            address: req.body.address,
+            city: req.body.city,
+            state: req.body.state,
+            country: req.body.country,
+            openTime: req.body.openTime,
+            closeTime: req.body.closeTime,
+            rules: req.body.rules || null,
+            directions: req.body.directions || null,
+            updatedAt: new Date().toISOString(),
+          })
+          .where(eq(complexes.id, complexId))
+          .returning();
+
+        if (!updatedComplex) {
+          return res.status(404).send("Complex not found");
+        }
+
+        res.json(updatedComplex);
+      } catch (error) {
+        console.error('Error updating complex:', error);
+        res.status(500).send("Failed to update complex");
+      }
+    });
+
     // Add complex deletion endpoint
     app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {
@@ -171,11 +203,11 @@ export function registerRoutes(app: Express): Server {
 
         // Calculate totals
         const totalComplexes = complexesWithFields.length;
-        const totalFields = complexesWithFields.reduce((sum, complex) => 
+        const totalFields = complexesWithFields.reduce((sum, complex) =>
           sum + Number(complex.fieldCount), 0);
 
         // Find the complex with most fields
-        const mostActive = complexesWithFields.reduce((prev, current) => 
+        const mostActive = complexesWithFields.reduce((prev, current) =>
           Number(current.fieldCount) > Number(prev.fieldCount) ? current : prev
         );
 
@@ -184,8 +216,8 @@ export function registerRoutes(app: Express): Server {
           totalFields,
           eventsToday: 0, // This will be implemented when events are added
           averageUsage: 0, // This will be implemented when usage tracking is added
-          message: totalFields === 0 ? 
-            "Add fields to your complexes and start scheduling events to see usage analytics!" : 
+          message: totalFields === 0 ?
+            "Add fields to your complexes and start scheduling events to see usage analytics!" :
             undefined,
           mostActiveComplex: {
             name: mostActive.complex.name,

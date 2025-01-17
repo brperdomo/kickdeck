@@ -659,6 +659,7 @@ function PaymentsSettingsView() {
 
 function ComplexesView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isFieldModalOpen, setIsFieldModalOpen] = useState(false);
   const [isViewFieldsModalOpen, setIsViewFieldsModalOpen] = useState(false);
   const [selectedComplexId, setSelectedComplexId] = useState<number | null>(null);
@@ -673,12 +674,6 @@ function ComplexesView() {
     country: 'US',
     rules: '',
     directions: ''
-  });
-  const [fieldFormData, setFieldFormData] = useState({
-    name: '',
-    hasLights: false,
-    hasParking: false,
-    specialInstructions: ''
   });
 
   // Query for complexes data
@@ -728,6 +723,186 @@ function ComplexesView() {
     }
   });
 
+  // Add update complex mutation
+  const updateComplexMutation = useMutation({
+    mutationFn: async (data: typeof formData & { id: number }) => {
+      const { id, ...updateData } = data;
+      const response = await fetch(`/api/admin/complexes/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
+      });
+      if (!response.ok) throw new Error('Failed to update complex');
+      return response.json();
+    },
+    onSuccess: () => {
+      complexesQuery.refetch();
+      setIsEditModalOpen(false);
+      setSelectedComplex(null);
+    }
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedComplex) {
+      updateComplexMutation.mutate({ ...formData, id: selectedComplex.id });
+    } else {
+      createComplexMutation.mutate(formData);
+    }
+  };
+
+  const handleEdit = (complex: any) => {
+    setSelectedComplex(complex);
+    setFormData({
+      name: complex.name,
+      openTime: complex.openTime,
+      closeTime: complex.closeTime,
+      address: complex.address,
+      city: complex.city,
+      state: complex.state,
+      country: complex.country,
+      rules: complex.rules || '',
+      directions: complex.directions || ''
+    });
+    setIsEditModalOpen(true);
+  };
+
+  // Render the create/edit modal
+  const renderComplexModal = (isEdit: boolean = false) => (
+    <Dialog open={isEdit ? isEditModalOpen : isModalOpen} onOpenChange={isEdit ? setIsEditModalOpen : setIsModalOpen}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>{isEdit ? 'Edit Complex' : 'Add New Complex'}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Complex Name</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="Enter complex name"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="openTime">Opening Time</Label>
+                <Input
+                  id="openTime"
+                  type="time"
+                  value={formData.openTime}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="closeTime">Closing Time</Label>
+                <Input
+                  id="closeTime"
+                  type="time"
+                  value={formData.closeTime}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="address">Address</Label>
+              <Input
+                id="address"
+                value={formData.address}
+                onChange={handleInputChange}
+                placeholder="Street address"
+              />
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  placeholder="City"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="state">State</Label>
+                <Input
+                  id="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  placeholder="State"
+                  maxLength={2}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="country">Country</Label>
+                <Select
+                  value={formData.country}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}
+                >
+                  <SelectTrigger id="country">
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="US">United States</SelectItem>
+                    <SelectItem value="CA">Canada</SelectItem>
+                    <SelectItem value="MX">Mexico</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="rules">Complex Rules</Label>
+              <Textarea
+                id="rules"
+                value={formData.rules}
+                onChange={handleInputChange}
+                placeholder="Enter any rules or guidelines for this complex"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="directions">Directions</Label>
+              <Textarea
+                id="directions"
+                value={formData.directions}
+                onChange={handleInputChange}
+                placeholder="Enter directions or special instructions"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => isEdit ? setIsEditModalOpen(false) : setIsModalOpen(false)}
+              type="button"
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={createComplexMutation.isPending || updateComplexMutation.isPending}>
+              {(createComplexMutation.isPending || updateComplexMutation.isPending) && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {isEdit ? 'Save Changes' : 'Create Complex'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+
   // Add field creation mutation
   const createFieldMutation = useMutation({
     mutationFn: async (data: typeof fieldFormData & { complexId: number }) => {
@@ -752,19 +927,6 @@ function ComplexesView() {
       });
     }
   });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { id, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [id]: value
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    createComplexMutation.mutate(formData);
-  };
 
   const handleFieldSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -882,7 +1044,12 @@ function ComplexesView() {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8"
+            onClick={() => handleEdit(complex)}
+          >
             <Edit className="h-4 w-4" />
           </Button>
         </TooltipTrigger>
@@ -1107,12 +1274,10 @@ function ComplexesView() {
             <div className="flex justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
-          ) : complexesQuery.data?.length === 0 ? (
+          ) : !complexesQuery.data?.length ? (
             <div className="text-center py-8">
-              <Building2 className="mx-auto h-12 w-12 text-muted-foreground/50" />
-              <h3 className="mt-4 text-lg font-semibold">No complexes found</h3>
               <p className="text-muted-foreground">
-                Click 'Add New Complex' to see it here
+                No complexes found. Add your first complex to get started!
               </p>
             </div>
           ) : (
@@ -1182,7 +1347,12 @@ function ComplexesView() {
                         </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8"
+                              onClick={() => handleEdit(complex)}
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
@@ -1213,152 +1383,17 @@ function ComplexesView() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {!complexesQuery.data?.length && (
-                  <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
-                      No complexes found. Add your first complex to get started!
-                    </TableCell>
-                  </TableRow>
-                )}
               </TableBody>
             </Table>
           )}
         </CardContent>
       </Card>
 
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Add New Complex</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <Label htmlFor="name">Complex Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder="Enter complex name"
-                  required
-                />
-              </div>
+      {/* Render both create and edit modals */}
+      {renderComplexModal(false)} {/* Create modal */}
+      {renderComplexModal(true)}  {/* Edit modal */}
 
-              <div>
-                <Label htmlFor="openTime">Open Time (Local Time)</Label>
-                <Input
-                  id="openTime"
-                  type="time"
-                  value={formData.openTime}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="closeTime">Close Time (Local Time)</Label>
-                <Input
-                  id="closeTime"
-                  type="time"
-                  value={formData.closeTime}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className="col-span-2">
-                <Label htmlFor="address">Address</Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  placeholder="Street address"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="city">City</Label>
-                <Input
-                  id="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  placeholder="City"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="state">State</Label>
-                <Input
-                  id="state"
-                  value={formData.state}
-                  onChange={handleInputChange}
-                  placeholder="State"
-                  required
-                />
-              </div>
-
-              <div className="col-span-2">
-                <Label htmlFor="country">Country</Label>
-                <Select
-                  value={formData.country}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}
-                >
-                  <SelectTrigger id="country">
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="US">United States</SelectItem>
-                    <SelectItem value="CA">Canada</SelectItem>                    <SelectItem value="MX">Mexico</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="col-span-2">
-                <Label htmlFor="rules">Complex Rules</Label>
-                <Textarea
-                  id="rules"
-                  value={formData.rules}
-                  onChange={handleInputChange}
-                  placeholder="Enter complex rules and regulations..."
-                />
-              </div>
-
-              <div className="col-span-2">
-                <Label htmlFor="directions">Directions</Label>
-                <Textarea
-                  id="directions"
-                  value={formData.directions}
-                  onChange={handleInputChange}
-                  placeholder="Enter directions to the complex..."
-                />
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={createComplexMutation.isPending}
-              >
-                {createComplexMutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  'Create Complex'
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Field Modal */}
+      {/* Field modals remain unchanged */}
       <Dialog open={isFieldModalOpen} onOpenChange={setIsFieldModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -1950,7 +1985,6 @@ function AdminDashboard() {
               My Account
             </Button>
           </div>
-
           {/* Footer */}
           <div className="mt-auto space-y-2">
             <Button
@@ -1967,7 +2001,6 @@ function AdminDashboard() {
           </div>
         </div>
       </div>
-
       {/* Main Content */}
       <div className="flex-1 overflow-auto p-8">
         {renderContent()}
