@@ -123,12 +123,18 @@ interface Complex {
   state: string;
   openFields: number;
   closedFields: number;
-  isOpen: boolean; 
+  isOpen: boolean;
 }
 
 interface SelectedComplex extends Complex {
   selected: boolean;
 }
+
+const complexSelectionSchema = z.object({
+  selectedComplexIds: z.array(z.string()).min(1, "Select at least one complex")
+});
+
+type ComplexSelectionValues = z.infer<typeof complexSelectionSchema>;
 
 export default function CreateEvent() {
   const [, navigate] = useLocation();
@@ -143,7 +149,7 @@ export default function CreateEvent() {
 
   const complexesQuery = useQuery({
     queryKey: ['/api/admin/complexes'],
-    enabled: activeTab === 'complexes', 
+    enabled: activeTab === 'complexes',
     queryFn: () => fetch('/api/admin/complexes').then(res => res.json()) as Promise<Complex[]>,
   });
 
@@ -258,6 +264,24 @@ export default function CreateEvent() {
 
   const handleDeleteScoringRule = (id: string) => {
     setScoringRules(scoringRules.filter(rule => rule.id !== id));
+  };
+
+  const complexSelectionForm = useForm<ComplexSelectionValues>({
+    resolver: zodResolver(complexSelectionSchema),
+    defaultValues: {
+      selectedComplexIds: []
+    }
+  });
+
+  const onComplexSelectionSubmit = (data: ComplexSelectionValues) => {
+    const selectedIds = data.selectedComplexIds.map(id => parseInt(id));
+    const updatedComplexes = complexesQuery.data?.filter(complex =>
+      selectedIds.includes(complex.id)
+    ).map(complex => ({
+      ...complex,
+      selected: true
+    })) || [];
+    setSelectedComplexes(updatedComplexes);
   };
 
 
@@ -793,7 +817,7 @@ export default function CreateEvent() {
                       <Button onClick={() => {
                         scoringForm.reset();
                         setIsScoringModalOpen(true);
-                        setEditingScoringRule(null); 
+                        setEditingScoringRule(null);
                       }}>
                         <Plus className="mr-2 h-4 w-4" />
                         Create New Rule
@@ -922,7 +946,7 @@ export default function CreateEvent() {
                                   <FormLabel>Red Card Points</FormLabel>
                                   <FormControl>
                                     <Input
-                                      type="number"
+                                           type="number"
                                       {...field}
                                       onChange={e => field.onChange(Number(e.target.value))}
                                     />
@@ -1097,45 +1121,49 @@ export default function CreateEvent() {
             </TabsContent>
 
             <TabsContent value="complexes">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" onClick={() => navigateTab('prev')}>
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      Back
-                    </Button>
-                    <h3 className="text-lg font-semibold">Complexes & Fields</h3>
-                  </div>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" onClick={() => navigateTab('prev')}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back
+                  </Button>
+                  <h3 className="text-lg font-semibold">Select Complexes</h3>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex flex-col space-y-2">
-                    <Label htmlFor="complex-select">Select Complexes</Label>
-                    <Select
-                      onValueChange={(values) => {
-                        const selectedIds = values.map(v => parseInt(v));
-                        const updatedComplexes = complexesQuery.data?.map(complex => ({
-                          ...complex,
-                          selected: selectedIds.includes(complex.id)
-                        })) || [];
-                        setSelectedComplexes(updatedComplexes.filter(c => c.selected));
-                      }}
-                      multiple={true}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select complexes for this event" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {complexesQuery.data?.map((complex) => (
-                          <SelectItem key={complex.id} value={complex.id.toString()}>
-                            {complex.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <Form {...complexSelectionForm}>
+                    <form onSubmit={complexSelectionForm.handleSubmit(onComplexSelectionSubmit)} className="space-y-4">
+                      <FormField
+                        control={complexSelectionForm.control}
+                        name="selectedComplexIds"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Select Complexes for this Event</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Choose complexes to use" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {complexesQuery.data?.map((complex) => (
+                                  <SelectItem key={complex.id} value={complex.id.toString()}>
+                                    {complex.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <Button type="submit">Add Selected Complexes</Button>
+                    </form>
+                  </Form>
 
                   {selectedComplexes.length > 0 && (
                     <Card>
