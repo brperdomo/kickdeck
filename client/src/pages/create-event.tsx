@@ -34,7 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-
+import crypto from 'crypto';
 
 type EventTab = 'information' | 'age-groups' | 'scoring' | 'complexes' | 'settings' | 'administrators';
 
@@ -83,12 +83,41 @@ interface AgeGroup extends AgeGroupValues {
   id: string;
 }
 
+interface ScoringRule {
+  id: string;
+  title: string;
+  win: number;
+  loss: number;
+  tie: number;
+  goalCapped: number;
+  shutout: number;
+  redCard: number;
+  tieBreaker: string;
+  ageGroups: string[];
+}
+
+const scoringRuleSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  win: z.number().min(0, "Win points must be positive"),
+  loss: z.number().min(0, "Loss points must be positive"),
+  tie: z.number().min(0, "Tie points must be positive"),
+  goalCapped: z.number().min(0, "Goal cap must be positive"),
+  shutout: z.number().min(0, "Shutout points must be positive"),
+  redCard: z.number().min(-10, "Red card points must be greater than -10"),
+  tieBreaker: z.string().min(1, "Tie breaker is required"),
+  ageGroups: z.array(z.string()).min(1, "Select at least one age group"),
+});
+
+type ScoringRuleValues = z.infer<typeof scoringRuleSchema>;
+
 export default function CreateEvent() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<EventTab>('information');
   const [ageGroups, setAgeGroups] = useState<AgeGroup[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingAgeGroup, setEditingAgeGroup] = useState<AgeGroup | null>(null);
+  const [scoringRules, setScoringRules] = useState<ScoringRule[]>([]);
+  const [isScoringModalOpen, setIsScoringModalOpen] = useState(false);
 
   const navigateTab = (direction: 'next' | 'prev') => {
     const currentIndex = TAB_ORDER.indexOf(activeTab);
@@ -154,6 +183,28 @@ export default function CreateEvent() {
     console.log(data);
     navigateTab('next');
   };
+
+  const scoringForm = useForm<ScoringRuleValues>({
+    resolver: zodResolver(scoringRuleSchema),
+    defaultValues: {
+      title: "",
+      win: 3,
+      loss: 0,
+      tie: 1,
+      goalCapped: 5,
+      shutout: 1,
+      redCard: -1,
+      tieBreaker: "head_to_head",
+      ageGroups: [],
+    },
+  });
+
+  const handleAddScoringRule = (data: ScoringRuleValues) => {
+    setScoringRules([...scoringRules, { ...data, id: crypto.randomUUID() }]);
+    setIsScoringModalOpen(false);
+    scoringForm.reset();
+  };
+
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl">
@@ -674,14 +725,303 @@ export default function CreateEvent() {
 
             <TabsContent value="scoring">
               <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" onClick={() => navigateTab('prev')}>
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back
-                  </Button>
-                  <h3 className="text-lg font-semibold">Scoring Settings</h3>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" onClick={() => navigateTab('prev')}>
+                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      Back
+                    </Button>
+                    <h3 className="text-lg font-semibold">Scoring Settings</h3>
+                  </div>
+                  <Dialog open={isScoringModalOpen} onOpenChange={setIsScoringModalOpen}>
+                    <DialogTrigger asChild>
+                      <Button onClick={() => {
+                        scoringForm.reset();
+                        setIsScoringModalOpen(true);
+                      }}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New Rule
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Create New Scoring Rule</DialogTitle>
+                      </DialogHeader>
+                      <Form {...scoringForm}>
+                        <form onSubmit={scoringForm.handleSubmit(handleAddScoringRule)} className="space-y-4">
+                          <FormField
+                            control={scoringForm.control}
+                            name="title"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Rule Title</FormLabel>
+                                <FormControl>
+                                  <Input {...field} placeholder="Enter rule title" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <div className="grid grid-cols-3 gap-4">
+                            <FormField
+                              control={scoringForm.control}
+                              name="win"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Win Points</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={e => field.onChange(Number(e.target.value))}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={scoringForm.control}
+                              name="loss"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Loss Points</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={e => field.onChange(Number(e.target.value))}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={scoringForm.control}
+                              name="tie"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Tie Points</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={e => field.onChange(Number(e.target.value))}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-4">
+                            <FormField
+                              control={scoringForm.control}
+                              name="goalCapped"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Goal Cap</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={e => field.onChange(Number(e.target.value))}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={scoringForm.control}
+                              name="shutout"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Shutout Bonus</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={e => field.onChange(Number(e.target.value))}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={scoringForm.control}
+                              name="redCard"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Red Card Points</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      {...field}
+                                      onChange={e => field.onChange(Number(e.target.value))}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          <FormField
+                            control={scoringForm.control}
+                            name="tieBreaker"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Tie Breaker Rule</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select tie breaker rule" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="head_to_head">Head to Head</SelectItem>
+                                    <SelectItem value="goal_difference">Goal Difference</SelectItem>
+                                    <SelectItem value="goals_scored">Goals Scored</SelectItem>
+                                    <SelectItem value="fair_play">Fair Play Points</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={scoringForm.control}
+                            name="ageGroups"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Age Groups</FormLabel>
+                                <FormControl>
+                                  <Select
+                                    onValueChange={(value) => {
+                                      const currentValues = field.value || [];
+                                      const newValues = currentValues.includes(value)
+                                        ? currentValues.filter(v => v !== value)
+                                        : [...currentValues, value];
+                                      field.onChange(newValues);
+                                    }}
+                                    value={field.value?.[0] || ""}
+                                    multiple
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select age groups" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      {ageGroups.map((group) => (
+                                        <SelectItem key={group.id} value={group.id}>
+                                          {group.ageGroup} - {group.gender}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <div className="flex justify-end space-x-2 pt-4">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => {
+                                setIsScoringModalOpen(false);
+                                scoringForm.reset();
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                            <Button type="submit">
+                              Create Rule
+                            </Button>
+                          </div>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
                 </div>
-                {/* Scoring settings form will be implemented here */}
+
+                <Card>
+                  <CardContent className="p-0">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Title</TableHead>
+                          <TableHead className="text-center">Win</TableHead>
+                          <TableHead className="text-center">Loss</TableHead>
+                          <TableHead className="text-center">Tie</TableHead>
+                          <TableHead className="text-center">Goal Cap</TableHead>
+                          <TableHead className="text-center">Shutout</TableHead>
+                          <TableHead className="text-center">Red Card</TableHead>
+                          <TableHead>Tie Breaker</TableHead>
+                          <TableHead>Age Groups</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {scoringRules.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={10} className="text-center py-4">
+                              No scoring rules added yet
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          scoringRules.map((rule) => (
+                            <TableRow key={rule.id}>
+                              <TableCell>{rule.title}</TableCell>
+                              <TableCell className="text-center">{rule.win}</TableCell>
+                              <TableCell className="text-center">{rule.loss}</TableCell>
+                              <TableCell className="text-center">{rule.tie}</TableCell>
+                              <TableCell className="text-center">{rule.goalCapped}</TableCell>
+                              <TableCell className="text-center">{rule.shutout}</TableCell>
+                              <TableCell className="text-center">{rule.redCard}</TableCell>
+                              <TableCell>
+                                {rule.tieBreaker.split('_').map(word =>
+                                  word.charAt(0).toUpperCase() + word.slice(1)
+                                ).join(' ')}
+                              </TableCell>
+                              <TableCell>
+                                {ageGroups
+                                  .filter(group => rule.ageGroups.includes(group.id))
+                                  .map(group => group.ageGroup)
+                                  .join(', ')}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 text-destructive"
+                                  onClick={() => setScoringRules(rules =>
+                                    rules.filter(r => r.id !== rule.id)
+                                  )}
+                                >
+                                  <Trash className="h-4 w-4" />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+
                 <div className="flex justify-end mt-4">
                   <Button onClick={() => navigateTab('next')}>Save & Continue</Button>
                 </div>
