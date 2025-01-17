@@ -12,7 +12,7 @@ import { useUser } from "@/hooks/use-user";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
-import { SelectUser } from "@db/schema";
+import { SelectUser, SelectComplex, SelectField, InsertField } from "@db/schema";
 import {
   Calendar,
   Search,
@@ -84,7 +84,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import type { SelectComplex, SelectField, InsertField } from "@db/schema";
 
 const MyAccount = lazy(() => import("./my-account"));
 
@@ -949,7 +948,20 @@ function ComplexesView() {
   });
 
   // Query for complex analytics
-  const analyticsQuery = useQuery({
+  type ComplexAnalytics = {
+    totalComplexes: number;
+    totalFields: number;
+    eventsToday: number;
+    averageUsage: number;
+    mostActiveComplex: {
+      id: number;
+      name: string;
+      address: string;
+      fieldsCount: number;
+    } | null;
+  };
+
+  const analyticsQuery = useQuery<ComplexAnalytics>({
     queryKey: ['/api/admin/complexes/analytics'],
     queryFn: async () => {
       const response = await fetch('/api/admin/complexes/analytics');
@@ -1038,29 +1050,60 @@ function ComplexesView() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.openTime || !formData.closeTime ||
-      !formData.address || !formData.city || !formData.state) {
-      return;
+    try {
+      if (selectedComplex) {
+        // Handle edit
+        await updateComplexMutation.mutateAsync({
+          id: selectedComplex.id,
+          ...formData
+        });
+        setIsEditModalOpen(false);
+      } else {
+        // Handle create
+        await createComplexMutation.mutateAsync(formData);
+        setIsModalOpen(false);
+      }
+
+      // Reset form
+      setFormData({
+        name: '',
+        openTime: '',
+        closeTime: '',
+        address: '',
+        city: '',
+        state: '',
+        country: 'US',
+        rules: '',
+        directions: ''
+      });
+
+      // Refetch complexes and analytics
+      await Promise.all([
+        complexesQuery.refetch(),
+        analyticsQuery.refetch()
+      ]);
+    } catch (error) {
+      console.error('Error submitting complex:', error);
     }
-    createComplexMutation.mutate(formData);
   };
 
-  const handleEdit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedComplex && (!formData.name || !formData.openTime || !formData.closeTime ||
-      !formData.address || !formData.city || !formData.state)) {
-      return;
-    }
-    if (selectedComplex) {
-      updateComplexMutation.mutate({ ...formData, id: selectedComplex.id });
-    }
-  };
+  const handleDelete = async () => {
+    if (!selectedComplex) return;
 
-  const handleDelete = () => {
-    if (selectedComplex) {
-      deleteComplexMutation.mutate(selectedComplex.id);
+    try {
+      await deleteComplexMutation.mutateAsync(selectedComplex.id);
+      setIsDeleteDialogOpen(false);
+      setSelectedComplex(null);
+
+      // Refetch complexes and analytics after deletion
+      await Promise.all([
+        complexesQuery.refetch(),
+        analyticsQuery.refetch()
+      ]);
+    } catch (error) {
+      console.error('Error deleting complex:', error);
     }
   };
 
@@ -1087,29 +1130,19 @@ function ComplexesView() {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Field Complexes</h2>
-        <Button onClick={() => setIsModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add New Complex
-        </Button>
-      </div>
-
-      {/* Analytics Dashboard */}
-      <div className="mb-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Complexes
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total Complexes</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {analyticsQuery.data?.totalComplexes || 0}
+              {analyticsQuery.data?.totalComplexes ?? 0}
             </div>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Fields</CardTitle>
@@ -1117,37 +1150,22 @@ function ComplexesView() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {analyticsQuery.data?.totalFields || 0}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Events Today
-            </CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {analyticsQuery.data?.eventsToday || 0}
+              {analyticsQuery.data?.totalFields ?? 0}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Most Active Complex
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Most Active Complex</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {analyticsQuery.data?.mostActiveComplex?.name || 'No data'}
+              {analyticsQuery.data?.mostActiveComplex?.name ?? 'N/A'}
             </div>
             {analyticsQuery.data?.mostActiveComplex && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mt-1">
                 {analyticsQuery.data.mostActiveComplex.fieldsCount} fields
               </p>
             )}
