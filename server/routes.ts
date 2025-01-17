@@ -155,18 +155,6 @@ export function registerRoutes(app: Express): Server {
         const complexId = parseInt(req.params.id);
         const { isOpen } = req.body;
 
-        // First check if complex has any fields
-        const [fieldCount] = await db
-          .select({
-            count: sql<number>`count(*)`.mapWith(Number)
-          })
-          .from(fields)
-          .where(eq(fields.complexId, complexId));
-
-        if (fieldCount.count === 0) {
-          return res.status(400).send("Cannot change status of a complex without fields");
-        }
-
         // Start a transaction to update both complex and fields
         await db.transaction(async (tx) => {
           // Update complex status
