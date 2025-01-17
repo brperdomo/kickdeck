@@ -980,7 +980,7 @@ function ComplexesView() {
 
               <div className="col-span-2">
                 <Label htmlFor="country">Country</Label>
-                <Select value={formData.country} onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}>
+                <Select value={formData.country} onValueChange={(value) => setFormData(prev => ({ ...prev, country: value}))}>
                   <SelectTrigger id="country">
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
@@ -1014,14 +1014,18 @@ function ComplexesView() {
             </div>
 
             <DialogFooter>
-              <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>
+              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
                 Cancel
               </Button>
               <Button type="submit" disabled={createComplexMutation.isPending}>
-                {createComplexMutation.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {createComplexMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create Complex'
                 )}
-                Create Complex
               </Button>
             </DialogFooter>
           </form>
