@@ -123,7 +123,11 @@ interface Complex {
   state: string;
   openFields: number;
   closedFields: number;
-  isOpen: boolean; // Added isOpen property
+  isOpen: boolean; 
+}
+
+interface SelectedComplex extends Complex {
+  selected: boolean;
 }
 
 export default function CreateEvent() {
@@ -135,11 +139,11 @@ export default function CreateEvent() {
   const [scoringRules, setScoringRules] = useState<ScoringRule[]>([]);
   const [isScoringModalOpen, setIsScoringModalOpen] = useState(false);
   const [editingScoringRule, setEditingScoringRule] = useState<ScoringRule | null>(null);
+  const [selectedComplexes, setSelectedComplexes] = useState<SelectedComplex[]>([]);
 
-  // Add the complexes query
   const complexesQuery = useQuery({
     queryKey: ['/api/admin/complexes'],
-    enabled: activeTab === 'complexes', // Only fetch when on complexes tab
+    enabled: activeTab === 'complexes', 
     queryFn: () => fetch('/api/admin/complexes').then(res => res.json()) as Promise<Complex[]>,
   });
 
@@ -789,7 +793,7 @@ export default function CreateEvent() {
                       <Button onClick={() => {
                         scoringForm.reset();
                         setIsScoringModalOpen(true);
-                        setEditingScoringRule(null); // added to clear editing state on new rule creation.
+                        setEditingScoringRule(null); 
                       }}>
                         <Plus className="mr-2 h-4 w-4" />
                         Create New Rule
@@ -1104,82 +1108,101 @@ export default function CreateEvent() {
                   </div>
                 </div>
 
-                <Card>
-                  <CardContent className="p-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Complex Name</TableHead>
-                          <TableHead className="text-center"># of Fields</TableHead>
-                          <TableHead>Address</TableHead>
-                          <TableHead className="text-center">Status</TableHead>
-                          <TableHead className="text-center">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {complexesQuery.isLoading ? (
-                          <TableRow>
-                            <TableCell colSpan={5} className="text-center py-4">
-                              Loading complexes...
-                            </TableCell>
-                          </TableRow>
-                        ) : complexesQuery.data?.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={5} className="text-center py-4">
-                              No complexes available
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          complexesQuery.data?.map((complex) => (
-                            <TableRow key={complex.id}>
-                              <TableCell className="font-medium">
-                                {complex.name}
-                              </TableCell>
-                              <TableCell className="text-center">
-                                <Badge variant={complex.openFields > 0 ? "success" : "secondary"}>
-                                  {complex.openFields + complex.closedFields} Fields
-                                </Badge>
-                              </TableCell>
-                              <TableCell>
-                                {complex.address}, {complex.city}, {complex.state}
-                              </TableCell>
-                              <TableCell className="text-center">
-                                <Badge variant={complex.isOpen ? "success" : "destructive"}>
-                                  {complex.isOpen ? "Open" : "Closed"}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-center">
-                                <div className="flex items-center justify-center gap-2">
-                                  <Button
-                                    variant={complex.isOpen ? "destructive" : "default"}
-                                    size="sm"
-                                    onClick={() => {
-                                      fetch(`/api/admin/complexes/${complex.id}/status`, {
-                                        method: 'PATCH',
-                                        headers: {
-                                          'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({ isOpen: !complex.isOpen }),
-                                      }).then(() => {
-                                        complexesQuery.refetch();
-                                      });
-                                    }}
-                                  >
-                                    {complex.isOpen ? 'Close Complex' : 'Open Complex'}
-                                  </Button>
-                                  <Button variant="outline" size="sm">
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    View Fields
-                                  </Button>
-                                </div>
-                              </TableCell>
+                <div className="space-y-4">
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="complex-select">Select Complexes</Label>
+                    <Select
+                      onValueChange={(values) => {
+                        const selectedIds = values.map(v => parseInt(v));
+                        const updatedComplexes = complexesQuery.data?.map(complex => ({
+                          ...complex,
+                          selected: selectedIds.includes(complex.id)
+                        })) || [];
+                        setSelectedComplexes(updatedComplexes.filter(c => c.selected));
+                      }}
+                      multiple={true}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select complexes for this event" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {complexesQuery.data?.map((complex) => (
+                          <SelectItem key={complex.id} value={complex.id.toString()}>
+                            {complex.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {selectedComplexes.length > 0 && (
+                    <Card>
+                      <CardContent className="p-0">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Complex Name</TableHead>
+                              <TableHead className="text-center"># of Fields</TableHead>
+                              <TableHead>Address</TableHead>
+                              <TableHead className="text-center">Status</TableHead>
+                              <TableHead className="text-center">Actions</TableHead>
                             </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
+                          </TableHeader>
+                          <TableBody>
+                            {selectedComplexes.map((complex) => (
+                              <TableRow key={complex.id}>
+                                <TableCell className="font-medium">
+                                  {complex.name}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <Badge variant="secondary">
+                                    {complex.openFields + complex.closedFields} Fields
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>
+                                  {complex.address}, {complex.city}, {complex.state}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <Badge variant={complex.isOpen ? "success" : "destructive"}>
+                                    {complex.isOpen ? "Open" : "Closed"}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <div className="flex items-center justify-center gap-2">
+                                    <Button
+                                      variant={complex.isOpen ? "destructive" : "default"}
+                                      size="sm"
+                                      onClick={() => {
+                                        fetch(`/api/admin/complexes/${complex.id}/status`, {
+                                          method: 'PATCH',
+                                          headers: {
+                                            'Content-Type': 'application/json',
+                                          },
+                                          body: JSON.stringify({ isOpen: !complex.isOpen }),
+                                        }).then(() => {
+                                          complexesQuery.refetch();
+                                        });
+                                      }}
+                                    >
+                                      {complex.isOpen ? 'Close Complex' : 'Open Complex'}
+                                    </Button>
+                                    <Button variant="outline" size="sm">
+                                      <Eye className="mr-2 h-4 w-4" />
+                                      View Fields
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+
                 <div className="flex justify-end mt-4">
                   <Button onClick={() => navigateTab('next')}>Save & Continue</Button>
                 </div>
