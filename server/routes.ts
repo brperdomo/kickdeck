@@ -3,8 +3,8 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { log } from "./vite";
 import { db } from "@db";
-import { users, organizationSettings, complexes } from "@db/schema";
-import { eq, sql } from "drizzle-orm";
+import { users, organizationSettings, complexes, fields } from "@db/schema";
+import { eq, sql, desc } from "drizzle-orm";
 import fs from "fs/promises";
 import path from "path";
 import { crypto } from "./crypto";
@@ -152,30 +152,74 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    // Analytics endpoint for complexes
+    // Fields management endpoints
+    app.get('/api/admin/complexes/:complexId/fields', isAdmin, async (req, res) => {
+      try {
+        const complexFields = await db
+          .select()
+          .from(fields)
+          .where(eq(fields.complexId, parseInt(req.params.complexId)))
+          .orderBy(fields.name);
+
+        res.json(complexFields);
+      } catch (error) {
+        console.error('Error fetching fields:', error);
+        res.status(500).send("Internal server error");
+      }
+    });
+
+    app.post('/api/admin/complexes/:complexId/fields', isAdmin, async (req, res) => {
+      try {
+        const [newField] = await db
+          .insert(fields)
+          .values({
+            ...req.body,
+            complexId: parseInt(req.params.complexId),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          })
+          .returning();
+
+        res.json(newField);
+      } catch (error) {
+        console.error('Error creating field:', error);
+        res.status(500).send("Failed to create field");
+      }
+    });
+
+
+    // Update analytics endpoint to include field counts and most active complex
     app.get('/api/admin/complexes/analytics', isAdmin, async (req, res) => {
       try {
+        // Get total complexes count
         const [complexCount] = await db
           .select({ count: sql<number>`count(*)::int` })
           .from(complexes);
 
-        // Get the complex with the most recent activity
+        // Get total fields count
+        const [fieldCount] = await db
+          .select({ count: sql<number>`count(*)::int` })
+          .from(fields);
+
+        // Get the complex with the most fields
         const [mostActiveComplex] = await db
           .select({
             id: complexes.id,
             name: complexes.name,
             address: complexes.address,
-            eventsCount: sql<number>`0::int`, // This will be updated when we add events
+            fieldsCount: sql<number>`count(${fields.id})::int`
           })
           .from(complexes)
-          .orderBy(complexes.updatedAt, 'desc')
+          .leftJoin(fields, eq(fields.complexId, complexes.id))
+          .groupBy(complexes.id)
+          .orderBy(desc(sql<number>`count(${fields.id})`))
           .limit(1);
 
         res.json({
           totalComplexes: complexCount?.count || 0,
-          totalFields: 0, // This will be updated when we add fields
-          eventsToday: 0, // This will be updated when we add events
-          averageUsage: 0, // This will be calculated when we add usage tracking
+          totalFields: fieldCount?.count || 0,
+          eventsToday: 0, // Will be implemented when events system is added
+          averageUsage: 0, // Will be calculated when usage tracking is added
           mostActiveComplex: mostActiveComplex || null,
         });
       } catch (error) {
