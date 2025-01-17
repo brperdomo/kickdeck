@@ -66,12 +66,25 @@ export function registerRoutes(app: Express): Server {
     // Complex management routes
     app.get('/api/admin/complexes', isAdmin, async (req, res) => {
       try {
-        const allComplexes = await db
-          .select()
+        const complexesWithFields = await db
+          .select({
+            complex: complexes,
+            openFields: db.fn.count(fields.id).as('openFields').where(eq(fields.isOpen, true)),
+            closedFields: db.fn.count(fields.id).as('closedFields').where(eq(fields.isOpen, false))
+          })
           .from(complexes)
+          .leftJoin(fields, eq(complexes.id, fields.complexId))
+          .groupBy(complexes.id)
           .orderBy(complexes.name);
 
-        res.json(allComplexes);
+        // Format the response
+        const formattedComplexes = complexesWithFields.map(({ complex, openFields, closedFields }) => ({
+          ...complex,
+          openFields: Number(openFields),
+          closedFields: Number(closedFields)
+        }));
+
+        res.json(formattedComplexes);
       } catch (error) {
         console.error('Error fetching complexes:', error);
         res.status(500).send("Internal server error");
@@ -104,6 +117,33 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Add complex deletion endpoint
+    app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
+      try {
+        const complexId = parseInt(req.params.id);
+
+        // First delete all fields associated with this complex
+        await db
+          .delete(fields)
+          .where(eq(fields.complexId, complexId));
+
+        // Then delete the complex
+        const [deletedComplex] = await db
+          .delete(complexes)
+          .where(eq(complexes.id, complexId))
+          .returning();
+
+        if (!deletedComplex) {
+          return res.status(404).send("Complex not found");
+        }
+
+        res.json(deletedComplex);
+      } catch (error) {
+        console.error('Error deleting complex:', error);
+        res.status(500).send("Failed to delete complex");
+      }
+    });
+
     // Analytics endpoint for complexes
     app.get('/api/admin/complexes/analytics', isAdmin, async (req, res) => {
       try {
@@ -130,11 +170,11 @@ export function registerRoutes(app: Express): Server {
 
         // Calculate totals
         const totalComplexes = complexesWithFields.length;
-        const totalFields = complexesWithFields.reduce((sum, complex) => 
+        const totalFields = complexesWithFields.reduce((sum, complex) =>
           sum + Number(complex.fieldCount), 0);
 
         // Find the complex with most fields
-        const mostActive = complexesWithFields.reduce((prev, current) => 
+        const mostActive = complexesWithFields.reduce((prev, current) =>
           Number(current.fieldCount) > Number(prev.fieldCount) ? current : prev
         );
 
@@ -143,8 +183,8 @@ export function registerRoutes(app: Express): Server {
           totalFields,
           eventsToday: 0, // This will be implemented when events are added
           averageUsage: 0, // This will be implemented when usage tracking is added
-          message: totalFields === 0 ? 
-            "Add fields to your complexes and start scheduling events to see usage analytics!" : 
+          message: totalFields === 0 ?
+            "Add fields to your complexes and start scheduling events to see usage analytics!" :
             undefined,
           mostActiveComplex: {
             name: mostActive.complex.name,
@@ -157,6 +197,7 @@ export function registerRoutes(app: Express): Server {
         res.status(500).send("Failed to fetch analytics");
       }
     });
+
 
     // Organization settings endpoints
     app.get('/api/admin/organization-settings', isAdmin, async (req, res) => {

@@ -831,6 +831,22 @@ function ComplexesView() {
     }
   });
 
+  // Add delete complex mutation
+  const deleteComplexMutation = useMutation({
+    mutationFn: async (complexId: number) => {
+      const response = await fetch(`/api/admin/complexes/${complexId}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Failed to delete complex');
+      return response.json();
+    },
+    onSuccess: () => {
+      // Refetch both queries after deletion
+      complexesQuery.refetch();
+      analyticsQuery.refetch();
+    }
+  });
+
   // In the table actions cell, update to include Add Field button
   const renderActionButtons = (complex: any) => (
     <div className="flex items-center gap-2">
@@ -876,7 +892,16 @@ function ComplexesView() {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8 text-destructive"
+            onClick={() => {
+              if (window.confirm('Are you sure you want to delete this complex? This will also delete all fields associated with it.')) {
+                deleteComplexMutation.mutate(complex.id);
+              }
+            }}
+          >
             <Trash className="h-4 w-4" />
           </Button>
         </TooltipTrigger>
@@ -964,7 +989,7 @@ function ComplexesView() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-destructive"
+                          className="h-8 w-8 textdestructive"
                           onClick={() => {
                             if (window.confirm('Are you sure you want to delete this field?')) {
                               deleteFieldMutation.mutate(field.id);
@@ -1077,7 +1102,7 @@ function ComplexesView() {
 
       {/* Complex List */}
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="p-0">
           {complexesQuery.isLoading ? (
             <div className="flex justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -1091,34 +1116,112 @@ function ComplexesView() {
               </p>
             </div>
           ) : (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Address</TableHead>
-                    <TableHead>Hours</TableHead>
-                    <TableHead>Actions</TableHead>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Address</TableHead>
+                  <TableHead>Hours</TableHead>
+                  <TableHead className="text-center">Fields Status</TableHead>
+                  <TableHead className="w-[200px]">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {complexesQuery.data?.map((complex) => (
+                  <TableRow key={complex.id}>
+                    <TableCell className="font-medium">
+                      {complex.name}
+                    </TableCell>
+                    <TableCell>
+                      {complex.address}, {complex.city}, {complex.state}
+                    </TableCell>
+                    <TableCell>
+                      {complex.openTime} - {complex.closeTime}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-center gap-4">
+                        <Badge variant="secondary">
+                          {complex.openFields} Open
+                        </Badge>
+                        <Badge variant="outline" className="text-red-500">
+                          {complex.closedFields} Closed
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => handleFieldModalOpen(complex.id)}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Add new field</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8"
+                              onClick={() => handleViewFields(complex)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>View fields in this complex</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit complex information</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 text-destructive"
+                              onClick={() => {
+                                if (window.confirm('Are you sure you want to delete this complex? This will also delete all fields associated with it.')) {
+                                  deleteComplexMutation.mutate(complex.id);
+                                }
+                              }}
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Delete this complex</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {complexesQuery.data?.map((complex: any) => (
-                    <TableRow key={complex.id}>
-                      <TableCell>{complex.name}</TableCell>
-                      <TableCell>
-                        {complex.address}, {complex.city}, {complex.state}
-                      </TableCell>
-                      <TableCell>
-                        {complex.openTime} - {complex.closeTime}
-                      </TableCell>
-                      <TableCell>
-                        {renderActionButtons(complex)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                ))}
+                {!complexesQuery.data?.length && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center">
+                      No complexes found. Add your first complex to get started!
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           )}
         </CardContent>
       </Card>
