@@ -8,6 +8,8 @@ import { eq } from "drizzle-orm";
 import fs from "fs/promises";
 import path from "path";
 import { crypto } from "./crypto";
+import session from "express-session";
+import passport from "passport";
 
 // Simple rate limiting middleware
 const rateLimit = (windowMs: number, maxRequests: number) => {
@@ -37,9 +39,14 @@ const rateLimit = (windowMs: number, maxRequests: number) => {
 
 // Admin middleware
 const isAdmin = (req: Request, res: Response, next: Function) => {
-  if (!req.isAuthenticated() || !req.user?.isAdmin) {
-    return res.status(403).send("Unauthorized");
+  if (!req.isAuthenticated()) {
+    return res.status(401).send("Not authenticated");
   }
+
+  if (!req.user?.isAdmin) {
+    return res.status(403).send("Not authorized");
+  }
+
   next();
 };
 
@@ -47,6 +54,10 @@ export function registerRoutes(app: Express): Server {
   const httpServer = createServer(app);
 
   try {
+    // Set up authentication first
+    setupAuth(app);
+    log("Authentication routes registered successfully");
+
     // Apply rate limiting to auth routes
     app.use('/api/login', rateLimit(60 * 1000, 5)); // 5 requests per minute
     app.use('/api/register', rateLimit(60 * 1000, 3)); // 3 requests per minute
@@ -227,10 +238,6 @@ export function registerRoutes(app: Express): Server {
         res.status(500).json({ message: 'Failed to update theme' });
       }
     });
-
-    // Set up authentication routes and middleware
-    setupAuth(app);
-    log("Authentication routes registered successfully");
 
 
     // Add these new routes for profile management
