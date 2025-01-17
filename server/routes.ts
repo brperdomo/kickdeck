@@ -4,7 +4,7 @@ import { setupAuth } from "./auth";
 import { log } from "./vite";
 import { db } from "@db";
 import { users, organizationSettings, complexes } from "@db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import fs from "fs/promises";
 import path from "path";
 import { crypto } from "./crypto";
@@ -59,9 +59,9 @@ export function registerRoutes(app: Express): Server {
     log("Authentication routes registered successfully");
 
     // Apply rate limiting to auth routes
-    app.use('/api/login', rateLimit(60 * 1000, 5)); // 5 requests per minute
-    app.use('/api/register', rateLimit(60 * 1000, 3)); // 3 requests per minute
-    app.use('/api/check-email', rateLimit(60 * 1000, 10)); // 10 requests per minute
+    app.use('/api/login', rateLimit(60 * 1000, 5));
+    app.use('/api/register', rateLimit(60 * 1000, 3));
+    app.use('/api/check-email', rateLimit(60 * 1000, 10));
 
     // Complex management routes
     app.get('/api/admin/complexes', isAdmin, async (req, res) => {
@@ -104,26 +104,79 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    app.put('/api/admin/complexes/:id', isAdmin, async (req, res) => {
+      try {
+        const [updatedComplex] = await db
+          .update(complexes)
+          .set({
+            name: req.body.name,
+            address: req.body.address,
+            city: req.body.city,
+            state: req.body.state,
+            country: req.body.country,
+            openTime: req.body.openTime,
+            closeTime: req.body.closeTime,
+            rules: req.body.rules || null,
+            directions: req.body.directions || null,
+            updatedAt: new Date().toISOString(),
+          })
+          .where(eq(complexes.id, parseInt(req.params.id)))
+          .returning();
+
+        if (!updatedComplex) {
+          return res.status(404).send("Complex not found");
+        }
+
+        res.json(updatedComplex);
+      } catch (error) {
+        console.error('Error updating complex:', error);
+        res.status(500).send("Failed to update complex");
+      }
+    });
+
+    app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
+      try {
+        const [deletedComplex] = await db
+          .delete(complexes)
+          .where(eq(complexes.id, parseInt(req.params.id)))
+          .returning();
+
+        if (!deletedComplex) {
+          return res.status(404).send("Complex not found");
+        }
+
+        res.json({ message: "Complex deleted successfully" });
+      } catch (error) {
+        console.error('Error deleting complex:', error);
+        res.status(500).send("Failed to delete complex");
+      }
+    });
+
     // Analytics endpoint for complexes
     app.get('/api/admin/complexes/analytics', isAdmin, async (req, res) => {
       try {
-        const complexCount = await db
-          .select({ count: complexes.id })
+        const [complexCount] = await db
+          .select({ count: sql<number>`count(*)::int` })
+          .from(complexes);
+
+        // Get the complex with the most recent activity
+        const [mostActiveComplex] = await db
+          .select({
+            id: complexes.id,
+            name: complexes.name,
+            address: complexes.address,
+            eventsCount: sql<number>`0::int`, // This will be updated when we add events
+          })
           .from(complexes)
+          .orderBy(complexes.updatedAt, 'desc')
           .limit(1);
 
-        // For now, return mock analytics data
-        // In a real application, you would calculate these from actual usage data
         res.json({
-          totalComplexes: complexCount.length > 0 ? complexCount[0].count : 0,
-          totalFields: 24, // This would come from a fields table
-          eventsToday: 8, // This would be calculated from events table
-          averageUsage: 75, // This would be calculated from bookings/usage data
-          mostActiveComplex: {
-            name: "Main Soccer Complex",
-            address: "123 Sports Ave",
-            eventsCount: 45
-          }
+          totalComplexes: complexCount?.count || 0,
+          totalFields: 0, // This will be updated when we add fields
+          eventsToday: 0, // This will be updated when we add events
+          averageUsage: 0, // This will be calculated when we add usage tracking
+          mostActiveComplex: mostActiveComplex || null,
         });
       } catch (error) {
         console.error('Error fetching complex analytics:', error);

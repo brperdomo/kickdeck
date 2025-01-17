@@ -75,6 +75,16 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const MyAccount = lazy(() => import("./my-account"));
 
@@ -656,6 +666,11 @@ function PaymentsSettingsView() {
 
 function ComplexesView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isFieldsModalOpen, setIsFieldsModalOpen] = useState(false);
+  const [selectedComplex, setSelectedComplex] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
     openTime: '',
@@ -678,7 +693,7 @@ function ComplexesView() {
     }
   });
 
-  // Query for complex analytics
+  // Query for complex analytics with real data
   const analyticsQuery = useQuery({
     queryKey: ['/api/admin/complexes/analytics'],
     queryFn: async () => {
@@ -715,6 +730,38 @@ function ComplexesView() {
     }
   });
 
+  const updateComplexMutation = useMutation({
+    mutationFn: async (data: typeof formData & { id: number }) => {
+      const response = await fetch(`/api/admin/complexes/${data.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to update complex');
+      return response.json();
+    },
+    onSuccess: () => {
+      complexesQuery.refetch();
+      setIsEditModalOpen(false);
+      setSelectedComplex(null);
+    }
+  });
+
+  const deleteComplexMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/admin/complexes/${id}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Failed to delete complex');
+      return response.json();
+    },
+    onSuccess: () => {
+      complexesQuery.refetch();
+      setIsDeleteDialogOpen(false);
+      setSelectedComplex(null);
+    }
+  });
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({
@@ -725,7 +772,45 @@ function ComplexesView() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.name || !formData.openTime || !formData.closeTime ||
+      !formData.address || !formData.city || !formData.state) {
+      return; // Form validation will handle the error display
+    }
     createComplexMutation.mutate(formData);
+  };
+
+  const handleEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedComplex) {
+      updateComplexMutation.mutate({ ...formData, id: selectedComplex.id });
+    }
+  };
+
+  const handleDelete = () => {
+    if (selectedComplex) {
+      deleteComplexMutation.mutate(selectedComplex.id);
+    }
+  };
+
+  const handleViewComplex = (complex: any) => {
+    setSelectedComplex(complex);
+    setIsViewModalOpen(true);
+  };
+
+  const handleEditComplex = (complex: any) => {
+    setSelectedComplex(complex);
+    setFormData(complex);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteComplex = (complex: any) => {
+    setSelectedComplex(complex);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleManageFields = (complex: any) => {
+    setSelectedComplex(complex);
+    setIsFieldsModalOpen(true);
   };
 
   return (
@@ -874,13 +959,16 @@ function ComplexesView() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleViewComplex(complex)}>
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEditComplex(complex)}>
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleManageFields(complex)}>
+                            <Flag className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDeleteComplex(complex)}>
                             <Trash className="h-4 w-4" />
                           </Button>
                         </div>
@@ -903,74 +991,74 @@ function ComplexesView() {
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
                 <Label htmlFor="name">Complex Name</Label>
-                <Input 
-                  id="name" 
+                <Input
+                  id="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Enter complex name" 
-                  required 
+                  placeholder="Enter complex name"
+                  required
                 />
               </div>
 
               <div>
                 <Label htmlFor="openTime">Open Time (Local Time)</Label>
-                <Input 
-                  id="openTime" 
-                  type="time" 
+                <Input
+                  id="openTime"
+                  type="time"
                   value={formData.openTime}
                   onChange={handleInputChange}
-                  required 
+                  required
                 />
               </div>
 
               <div>
                 <Label htmlFor="closeTime">Close Time (Local Time)</Label>
-                <Input 
-                  id="closeTime" 
-                  type="time" 
+                <Input
+                  id="closeTime"
+                  type="time"
                   value={formData.closeTime}
                   onChange={handleInputChange}
-                  required 
+                  required
                 />
               </div>
 
               <div className="col-span-2">
                 <Label htmlFor="address">Address</Label>
-                <Input 
-                  id="address" 
+                <Input
+                  id="address"
                   value={formData.address}
                   onChange={handleInputChange}
-                  placeholder="Street address" 
+                  placeholder="Street address"
                   required
                 />
               </div>
 
               <div>
                 <Label htmlFor="city">City</Label>
-                <Input 
-                  id="city" 
+                <Input
+                  id="city"
                   value={formData.city}
                   onChange={handleInputChange}
-                  placeholder="City" 
+                  placeholder="City"
                   required
                 />
               </div>
 
               <div>
                 <Label htmlFor="state">State</Label>
-                <Input 
-                  id="state" 
+                <Input
+                  id="state"
                   value={formData.state}
                   onChange={handleInputChange}
-                  placeholder="State" 
+                  placeholder="State"
                   required
                 />
               </div>
 
               <div className="col-span-2">
                 <Label htmlFor="country">Country</Label>
-                <Select 
-                  value={formData.country} 
+                <Select
+                  value={formData.country}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}
                 >
                   <SelectTrigger id="country">
@@ -1009,8 +1097,8 @@ function ComplexesView() {
               <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={createComplexMutation.isPending}
               >
                 {createComplexMutation.isPending ? (
@@ -1024,6 +1112,239 @@ function ComplexesView() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Complex</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleEdit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <Label htmlFor="name">Complex Name</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter complex name"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="openTime">Open Time (Local Time)</Label>
+                <Input
+                  id="openTime"
+                  type="time"
+                  value={formData.openTime}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="closeTime">Close Time (Local Time)</Label>
+                <Input
+                  id="closeTime"
+                  type="time"
+                  value={formData.closeTime}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="address">Address</Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  placeholder="Street address"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  placeholder="City"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="state">State</Label>
+                <Input
+                  id="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  placeholder="State"
+                  required
+                />
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="country">Country</Label>
+                <Select
+                  value={formData.country}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}
+                >
+                  <SelectTrigger id="country">
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="US">United States</SelectItem>
+                    <SelectItem value="CA">Canada</SelectItem>
+                    <SelectItem value="MX">Mexico</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="rules">Complex Rules</Label>
+                <Textarea
+                  id="rules"
+                  value={formData.rules}
+                  onChange={handleInputChange}
+                  placeholder="Enter complex rules and regulations..."
+                />
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="directions">Directions</Label>
+                <Textarea
+                  id="directions"
+                  value={formData.directions}
+                  onChange={handleInputChange}
+                  placeholder="Enter directions to the complex..."
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={updateComplexMutation.isPending}
+              >
+                {updateComplexMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the complex
+              and all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteComplexMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete Complex"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Fields Management Modal */}
+      <Dialog open={isFieldsModalOpen} onOpenChange={setIsFieldsModalOpen}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Manage Fields - {selectedComplex?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Fields</h3>
+              <Button onClick={() => {}}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Field
+              </Button>
+            </div>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">
+                  Field management functionality will be implemented here
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Modal */}
+      <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>View Complex Details</DialogTitle>
+          </DialogHeader>
+          {selectedComplex && (
+            <div className="space-y-4">
+              <div>
+                <Label>Name</Label>
+                <p className="text-lg font-medium">{selectedComplex.name}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Open Time</Label>
+                  <p className="text-lg">{selectedComplex.openTime}</p>
+                </div>
+                <div>
+                  <Label>Close Time</Label>
+                  <p className="text-lg">{selectedComplex.closeTime}</p>
+                </div>
+              </div>
+              <div>
+                <Label>Address</Label>
+                <p className="text-lg">
+                  {selectedComplex.address}, {selectedComplex.city}, {selectedComplex.state}
+                </p>
+              </div>
+              {selectedComplex.rules && (
+                <div>
+                  <Label>Rules</Label>
+                  <p className="text-lg">{selectedComplex.rules}</p>
+                </div>
+              )}
+              {selectedComplex.directions && (
+                <div>
+                  <Label>Directions</Label>
+                  <p className="text-lg">{selectedComplex.directions}</p>
+                </div>
+              )}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </>
