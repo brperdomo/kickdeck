@@ -4,7 +4,7 @@ import { setupAuth } from "./auth";
 import { log } from "./vite";
 import { db } from "@db";
 import { users, organizationSettings, complexes, fields } from "@db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql, count } from "drizzle-orm";
 import fs from "fs/promises";
 import path from "path";
 import { crypto } from "./crypto";
@@ -69,19 +69,19 @@ export function registerRoutes(app: Express): Server {
         const complexesWithFields = await db
           .select({
             complex: complexes,
-            openFields: db.fn.count(fields.id).as('openFields').where(eq(fields.isOpen, true)),
-            closedFields: db.fn.count(fields.id).as('closedFields').where(eq(fields.isOpen, false))
+            openFields: sql<number>`count(case when ${fields.isOpen} = true then 1 end)`.mapWith(Number),
+            closedFields: sql<number>`count(case when ${fields.isOpen} = false then 1 end)`.mapWith(Number),
           })
           .from(complexes)
           .leftJoin(fields, eq(complexes.id, fields.complexId))
-          .groupBy(complexes.id)
+          .groupBy(complexes.id, complexes.name)
           .orderBy(complexes.name);
 
         // Format the response
         const formattedComplexes = complexesWithFields.map(({ complex, openFields, closedFields }) => ({
           ...complex,
-          openFields: Number(openFields),
-          closedFields: Number(closedFields)
+          openFields,
+          closedFields
         }));
 
         res.json(formattedComplexes);
@@ -151,11 +151,12 @@ export function registerRoutes(app: Express): Server {
         const complexesWithFields = await db
           .select({
             complex: complexes,
-            fieldCount: db.fn.count(fields.id).as('fieldCount')
+            fieldCount: sql<number>`count(${fields.id})`.mapWith(Number)
           })
           .from(complexes)
           .leftJoin(fields, eq(complexes.id, fields.complexId))
-          .groupBy(complexes.id);
+          .groupBy(complexes.id)
+          .orderBy(complexes.name);
 
         if (complexesWithFields.length === 0) {
           return res.json({
@@ -170,11 +171,11 @@ export function registerRoutes(app: Express): Server {
 
         // Calculate totals
         const totalComplexes = complexesWithFields.length;
-        const totalFields = complexesWithFields.reduce((sum, complex) =>
+        const totalFields = complexesWithFields.reduce((sum, complex) => 
           sum + Number(complex.fieldCount), 0);
 
         // Find the complex with most fields
-        const mostActive = complexesWithFields.reduce((prev, current) =>
+        const mostActive = complexesWithFields.reduce((prev, current) => 
           Number(current.fieldCount) > Number(prev.fieldCount) ? current : prev
         );
 
@@ -183,8 +184,8 @@ export function registerRoutes(app: Express): Server {
           totalFields,
           eventsToday: 0, // This will be implemented when events are added
           averageUsage: 0, // This will be implemented when usage tracking is added
-          message: totalFields === 0 ?
-            "Add fields to your complexes and start scheduling events to see usage analytics!" :
+          message: totalFields === 0 ? 
+            "Add fields to your complexes and start scheduling events to see usage analytics!" : 
             undefined,
           mostActiveComplex: {
             name: mostActive.complex.name,
