@@ -659,22 +659,10 @@ function PaymentsSettingsView() {
 
 function ComplexesView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isFieldModalOpen, setIsFieldModalOpen] = useState(false);
   const [isViewFieldsModalOpen, setIsViewFieldsModalOpen] = useState(false);
   const [selectedComplexId, setSelectedComplexId] = useState<number | null>(null);
   const [selectedComplex, setSelectedComplex] = useState<any>(null);
-  const [editFormData, setEditFormData] = useState({
-    name: '',
-    openTime: '',
-    closeTime: '',
-    address: '',
-    city: '',
-    state: '',
-    country: 'US',
-    rules: '',
-    directions: ''
-  });
   const [formData, setFormData] = useState({
     name: '',
     openTime: '',
@@ -713,7 +701,6 @@ function ComplexesView() {
     }
   });
 
-  // Add create complex mutation
   const createComplexMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
       const response = await fetch('/api/admin/complexes', {
@@ -726,38 +713,8 @@ function ComplexesView() {
     },
     onSuccess: () => {
       complexesQuery.refetch();
-      analyticsQuery.refetch();
       setIsModalOpen(false);
       setFormData({
-        name: '',
-        openTime: '',
-        closeTime: '',
-        address: '',
-        city: '',
-        state: '',
-        country: 'US',
-        rules: '',
-        directions: ''
-      });
-    }
-  });
-
-  // Add update complex mutation
-  const updateComplexMutation = useMutation({
-    mutationFn: async (data: typeof editFormData & { id: number }) => {
-      const response = await fetch(`/api/admin/complexes/${data.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      if (!response.ok) throw new Error('Failed to update complex');
-      return response.json();
-    },
-    onSuccess: () => {
-      complexesQuery.refetch();
-      analyticsQuery.refetch();
-      setIsEditModalOpen(false);
-      setEditFormData({
         name: '',
         openTime: '',
         closeTime: '',
@@ -783,6 +740,7 @@ function ComplexesView() {
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate both the complexes list and the fields for this complex
       complexesQuery.refetch();
       fieldsQuery.refetch();
       setIsFieldModalOpen(false);
@@ -794,100 +752,6 @@ function ComplexesView() {
       });
     }
   });
-
-  // Add delete complex mutation
-  const deleteComplexMutation = useMutation({
-    mutationFn: async (complexId: number) => {
-      const response = await fetch(`/api/admin/complexes/${complexId}`, {
-        method: 'DELETE'
-      });
-      if (!response.ok) throw new Error('Failed to delete complex');
-      return response.json();
-    },
-    onSuccess: () => {
-      complexesQuery.refetch();
-      analyticsQuery.refetch();
-    }
-  });
-
-  // Add field deletion mutation
-  const deleteFieldMutation = useMutation({
-    mutationFn: async (fieldId: number) => {
-      const response = await fetch(`/api/admin/fields/${fieldId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('Failed to delete field');
-      return response.json();
-    },
-    onSuccess: () => {
-      fieldsQuery.refetch();
-    }
-  });
-
-  // Add field status toggle mutation
-  const toggleFieldStatusMutation = useMutation({
-    mutationFn: async ({ fieldId, isOpen }: { fieldId: number, isOpen: boolean }) => {
-      const response = await fetch(`/api/admin/fields/${fieldId}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isOpen })
-      });
-      if (!response.ok) throw new Error('Failed to update field status');
-      return response.json();
-    },
-    onSuccess: () => {
-      fieldsQuery.refetch();
-    }
-  });
-
-  // Add query for fetching fields
-  const fieldsQuery = useQuery({
-    queryKey: ['/api/admin/complexes', selectedComplexId, 'fields'],
-    queryFn: async () => {
-      if (!selectedComplexId) return null;
-      const response = await fetch(`/api/admin/complexes/${selectedComplexId}/fields`);
-      if (!response.ok) throw new Error('Failed to fetch fields');
-      return response.json();
-    },
-    enabled: !!selectedComplexId && isViewFieldsModalOpen
-  });
-
-  const handleEditComplex = (complex: any) => {
-    setSelectedComplexId(complex.id);
-    setEditFormData({
-      name: complex.name,
-      openTime: complex.openTime,
-      closeTime: complex.closeTime,
-      address: complex.address,
-      city: complex.city,
-      state: complex.state,
-      country: complex.country || 'US',
-      rules: complex.rules || '',
-      directions: complex.directions || ''
-    });
-    setIsEditModalOpen(true);
-  };
-
-  const handleEditSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedComplexId) return;
-
-    updateComplexMutation.mutate({
-      ...editFormData,
-      id: selectedComplexId
-    });
-  };
-
-  const handleFieldModalOpen = (complexId: number) => {
-    setSelectedComplexId(complexId);
-    setIsFieldModalOpen(true);
-  };
-
-  const handleViewFields = (complex: any) => {
-    setSelectedComplexId(complex.id);
-    setSelectedComplex(complex);
-    setIsViewFieldsModalOpen(true);
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
@@ -912,150 +776,80 @@ function ComplexesView() {
     });
   };
 
-  const renderEditModal = () => (
-    <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Edit Complex</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleEditSubmit}>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-name">Complex Name</Label>
-                <Input
-                  id="edit-name"
-                  value={editFormData.name}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="Enter complex name"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-country">Country</Label>
-                <Select
-                  value={editFormData.country}
-                  onValueChange={(value) => setEditFormData(prev => ({ ...prev, country: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="US">United States</SelectItem>
-                    <SelectItem value="CA">Canada</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+  const handleFieldModalOpen = (complexId: number) => {
+    setSelectedComplexId(complexId);
+    setIsFieldModalOpen(true);
+  };
 
-            <div className="space-y-2">
-              <Label htmlFor="edit-address">Address</Label>
-              <Input
-                id="edit-address"
-                value={editFormData.address}
-                onChange={(e) => setEditFormData(prev => ({ ...prev, address: e.target.value }))}
-                placeholder="Enter street address"
-                required
-              />
-            </div>
+  // Add query for fetching fields
+  const fieldsQuery = useQuery({
+    queryKey: ['/api/admin/complexes', selectedComplexId, 'fields'],
+    queryFn: async () => {
+      if (!selectedComplexId) return null;
+      const response = await fetch(`/api/admin/complexes/${selectedComplexId}/fields`);
+      if (!response.ok) throw new Error('Failed to fetch fields');
+      return response.json();
+    },
+    enabled: !!selectedComplexId && isViewFieldsModalOpen
+  });
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-city">City</Label>
-                <Input
-                  id="edit-city"
-                  value={editFormData.city}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, city: e.target.value }))}
-                  placeholder="Enter city"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-state">State</Label>
-                <Input
-                  id="edit-state"
-                  value={editFormData.state}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, state: e.target.value }))}
-                  placeholder="Enter state"
-                  required
-                />
-              </div>
-            </div>
+  const handleViewFields = (complex: any) => {
+    setSelectedComplexId(complex.id);
+    setSelectedComplex(complex);
+    setIsViewFieldsModalOpen(true);
+  };
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-open-time">Opening Time</Label>
-                <Input
-                  id="edit-open-time"
-                  type="time"
-                  value={editFormData.openTime}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, openTime: e.target.value }))}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-close-time">Closing Time</Label>
-                <Input
-                  id="edit-close-time"
-                  type="time"
-                  value={editFormData.closeTime}
-                  onChange={(e) => setEditFormData(prev =>({ ...prev, closeTime: e.target.value }))}
-                  required
-                />
-              </div>
-            </div>
+  // Add field deletion mutation
+  const deleteFieldMutation = useMutation({
+    mutationFn: async (fieldId: number) => {
+      const response = await fetch(`/api/admin/fields/${fieldId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete field');
+      return response.json();
+    },
+    onSuccess: () => {
+      // Refetch fields after deletion
+      fieldsQuery.refetch();
+    }
+  });
 
-            <div className="space-y-2">
-              <Label htmlFor="edit-rules">Rules (Optional)</Label>
-              <Textarea
-                id="edit-rules"
-                value={editFormData.rules}
-                onChange={(e) => setEditFormData(prev => ({ ...prev, rules: e.target.value }))}
-                placeholder="Enter complex rules"
-              />
-            </div>
+  // Add field status toggle mutation
+  const toggleFieldStatusMutation = useMutation({
+    mutationFn: async ({ fieldId, isOpen }: { fieldId: number, isOpen: boolean }) => {
+      const response = await fetch(`/api/admin/fields/${fieldId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isOpen })
+      });
+      if (!response.ok) throw new Error('Failed to update field status');
+      return response.json();
+    },
+    onSuccess: () => {
+      // Refetch fields after status update
+      fieldsQuery.refetch();
+    }
+  });
 
-            <div className="space-y-2">
-              <Label htmlFor="edit-directions">Directions (Optional)</Label>
-              <Textarea
-                id="edit-directions"
-                value={editFormData.directions}
-                onChange={(e) => setEditFormData(prev => ({ ...prev, directions: e.target.value }))}
-                placeholder="Enter directions to complex"
-              />
-            </div>
-          </div>
+  // Add delete complex mutation
+  const deleteComplexMutation = useMutation({
+    mutationFn: async (complexId: number) => {
+      const response = await fetch(`/api/admin/complexes/${complexId}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Failed to delete complex');
+      return response.json();
+    },
+    onSuccess: () => {
+      // Refetch both queries after deletion
+      complexesQuery.refetch();
+      analyticsQuery.refetch();
+    }
+  });
 
-          <DialogFooter>
-            <Button type="submit" disabled={updateComplexMutation.isPending}>
-              {updateComplexMutation.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Save Changes
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-
+  // In the table actions cell, update to include Add Field button
   const renderActionButtons = (complex: any) => (
     <div className="flex items-center gap-2">
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => handleEditComplex(complex)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Edit complex information</p>
-        </TooltipContent>
-      </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
@@ -1088,7 +882,20 @@ function ComplexesView() {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive"
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Edit className="h-4 w-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Edit complex information</p>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8 text-destructive"
             onClick={() => {
               if (window.confirm('Are you sure you want to delete this complex? This will also delete all fields associated with it.')) {
                 deleteComplexMutation.mutate(complex.id);
@@ -1105,6 +912,117 @@ function ComplexesView() {
     </div>
   );
 
+  // Add the fields view modal with updated controls
+  const renderFieldsModal = () => (
+    <Dialog open={isViewFieldsModalOpen} onOpenChange={setIsViewFieldsModalOpen}>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>
+            Fields in {selectedComplex?.name}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="py-4">
+          {fieldsQuery.isLoading ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : fieldsQuery.data?.length === 0 ? (
+            <div className="text-center py-8">
+              <Flag className="mx-auto h-12 w-12 text-muted-foreground/50" />
+              <h3 className="mt-4 text-lg font-semibold">No fields found</h3>
+              <p className="text-muted-foreground mb-4">
+                This complex doesn't have any fields yet
+              </p>
+              <Button onClick={() => {
+                setIsViewFieldsModalOpen(false);
+                handleFieldModalOpen(selectedComplexId!);
+              }}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Field
+              </Button>
+            </div>
+          ) : (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Features</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Special Instructions</TableHead>
+                    <TableHead className="w-[100px]">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {fieldsQuery.data?.map((field: any) => (
+                    <TableRow key={field.id}>
+                      <TableCell className="font-medium">{field.name}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          {field.hasLights && (
+                            <Badge variant="outline">Lights</Badge>
+                          )}
+                          {field.hasParking && (
+                            <Badge variant="outline">Parking</Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={field.isOpen}
+                            onCheckedChange={(checked) => 
+                              toggleFieldStatusMutation.mutate({ 
+                                fieldId: field.id, 
+                                isOpen: checked 
+                              })
+                            }
+                          />
+                          <span className={field.isOpen ? "text-green-600" : "text-red-600"}>
+                            {field.isOpen ? "Open" : "Closed"}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{field.specialInstructions || "—"}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 textdestructive"
+                          onClick={() => {
+                            if (window.confirm('Are you sure you want to delete this field?')) {
+                              deleteFieldMutation.mutate(field.id);
+                            }
+                          }}
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setIsViewFieldsModalOpen(false)}>
+            Close
+          </Button>
+          <Button onClick={() => {
+            setIsViewFieldsModalOpen(false);
+            handleFieldModalOpen(selectedComplexId!);
+          }}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Field
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+
   return (
     <>
       <div className="flex justify-between items-center mb-6">
@@ -1115,7 +1033,6 @@ function ComplexesView() {
         </Button>
       </div>
 
-      {/* Analytics Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -1124,12 +1041,64 @@ function ComplexesView() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analyticsQuery.data?.totalComplexes || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              {analyticsQuery.data?.message || "Add your first complex to get started"}
-            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Fields</CardTitle>
+            <Flag className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analyticsQuery.data?.totalFields || 0}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Events Today</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analyticsQuery.data?.eventsToday || 0}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Average Usage</CardTitle>
+            <Percent className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analyticsQuery.data?.averageUsage || 0}%</div>
           </CardContent>
         </Card>
       </div>
+
+      {analyticsQuery.data?.message && (
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <Flag className="h-8 w-8 text-muted-foreground" />
+              <p className="text-muted-foreground">{analyticsQuery.data.message}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {analyticsQuery.data?.mostActiveComplex && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Most Active Complex</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <h3 className="font-semibold">{analyticsQuery.data.mostActiveComplex.name}</h3>
+              <p className="text-sm text-muted-foreground">{analyticsQuery.data.mostActiveComplex.address}</p>
+              <p className="text-sm">
+                Total Fields: <span className="font-medium">{analyticsQuery.data.mostActiveComplex.fieldCount}</span>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Complex List */}
       <Card>
@@ -1142,8 +1111,8 @@ function ComplexesView() {
             <div className="text-center py-8">
               <Building2 className="mx-auto h-12 w-12 text-muted-foreground/50" />
               <h3 className="mt-4 text-lg font-semibold">No complexes found</h3>
-              <p className="text-muted-foreground mb-4">
-                Get started by adding your first complex
+              <p className="text-muted-foreground">
+                Click 'Add New Complex' to see it here
               </p>
             </div>
           ) : (
@@ -1158,7 +1127,7 @@ function ComplexesView() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {complexesQuery.data?.map((complex: any) => (
+                {complexesQuery.data?.map((complex) => (
                   <TableRow key={complex.id}>
                     <TableCell className="font-medium">
                       {complex.name}
@@ -1180,7 +1149,67 @@ function ComplexesView() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {renderActionButtons(complex)}
+                      <div className="flex items-center gap-2">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => handleFieldModalOpen(complex.id)}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Add new field</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8"
+                              onClick={() => handleViewFields(complex)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>View fields in this complex</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit complex information</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 text-destructive"
+                              onClick={() => {
+                                if (window.confirm('Are you sure you want to delete this complex? This will also delete all fields associated with it.')) {
+                                  deleteComplexMutation.mutate(complex.id);
+                                }
+                              }}
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Delete this complex</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -1197,12 +1226,221 @@ function ComplexesView() {
         </CardContent>
       </Card>
 
-      {renderEditModal()}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Add New Complex</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <Label htmlFor="name">Complex Name</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter complex name"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="openTime">Open Time (Local Time)</Label>
+                <Input
+                  id="openTime"
+                  type="time"
+                  value={formData.openTime}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="closeTime">Close Time (Local Time)</Label>
+                <Input
+                  id="closeTime"
+                  type="time"
+                  value={formData.closeTime}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="address">Address</Label>
+                <Input
+                  id="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  placeholder="Street address"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  placeholder="City"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="state">State</Label>
+                <Input
+                  id="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  placeholder="State"
+                  required
+                />
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="country">Country</Label>
+                <Select
+                  value={formData.country}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}
+                >
+                  <SelectTrigger id="country">
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="US">United States</SelectItem>
+                    <SelectItem value="CA">Canada</SelectItem>                    <SelectItem value="MX">Mexico</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="rules">Complex Rules</Label>
+                <Textarea
+                  id="rules"
+                  value={formData.rules}
+                  onChange={handleInputChange}
+                  placeholder="Enter complex rules and regulations..."
+                />
+              </div>
+
+              <div className="col-span-2">
+                <Label htmlFor="directions">Directions</Label>
+                <Textarea
+                  id="directions"
+                  value={formData.directions}
+                  onChange={handleInputChange}
+                  placeholder="Enter directions to the complex..."
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={createComplexMutation.isPending}
+              >
+                {createComplexMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create Complex'
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Field Modal */}
+      <Dialog open={isFieldModalOpen} onOpenChange={setIsFieldModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Field</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleFieldSubmit} className="space-y-4">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="field-name">Field Name</Label>
+                <Input
+                  id="field-name"
+                  value={fieldFormData.name}
+                  onChange={(e) => setFieldFormData(prev => ({
+                    ...prev,
+                    name: e.target.value
+                  }))}
+                  placeholder="Enter field name"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="has-lights"
+                  checked={fieldFormData.hasLights}
+                  onCheckedChange={(checked) =>
+                    setFieldFormData(prev => ({
+                      ...prev,
+                      hasLights: checked as boolean
+                    }))
+                  }
+                />
+                <Label htmlFor="has-lights">Has Lights?</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="has-parking"
+                  checked={fieldFormData.hasParking}
+                  onCheckedChange={(checked) =>
+                    setFieldFormData(prev => ({
+                      ...prev,
+                      hasParking: checked as boolean
+                    }))
+                  }
+                />
+                <Label htmlFor="has-parking">Has Parking?</Label>
+              </div>
+
+              <div>
+                <Label htmlFor="special-instructions">Special Instructions</Label>
+                <Textarea
+                  id="special-instructions"
+                  value={fieldFormData.specialInstructions}
+                  onChange={(e) => setFieldFormData(prev => ({
+                    ...prev,
+                    specialInstructions: e.target.value
+                  }))}
+                  placeholder="Enter any special instructions"
+                  className="h-20"
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                type="submit"
+                disabled={createFieldMutation.isPending}
+              >
+                {createFieldMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Add Field
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      {renderFieldsModal()}
     </>
   );
 }
-
-export default ComplexesView;
 
 function SchedulingView() {
   return (
