@@ -1,19 +1,35 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import {
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
+import { 
+  Building2, 
+  Calendar, 
+  Settings, 
+  Shield, 
+  Home, 
+  LogOut, 
+  FileText,
+  User,
+  ChevronRight,
   Plus,
-  Building2,
   Loader2,
   Flag,
   Trash,
   Edit,
   Eye,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useUser } from "@/hooks/use-user";
+import { SelectUser } from "@db/schema";
+import { 
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -62,7 +78,15 @@ interface Field {
   complexId: number;
 }
 
-export function ComplexesView() {
+// Type guard function to check if user is admin
+function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
+  return user !== null && user.isAdmin === true;
+}
+
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling';
+type SettingsView = 'branding' | 'general' | 'payments';
+
+function ComplexesView() {
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -470,4 +494,159 @@ export function ComplexesView() {
   );
 }
 
-export default ComplexesView;
+function AdminDashboard() {
+  const { user, logout } = useUser();
+  const [, navigate] = useLocation();
+  const [currentView, setCurrentView] = useState<View>('complexes');
+  const [currentSettingsView, setCurrentSettingsView] = useState<SettingsView>('general');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isAdminUser(user)) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  const renderContent = () => {
+    switch (currentView) {
+      case 'complexes':
+        return <ComplexesView />;
+      // Other views will be added back as needed
+      default:
+        return <div>Select a view from the sidebar</div>;
+    }
+  };
+
+  if (!isAdminUser(user)) {
+    return null;
+  }
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Sidebar */}
+      <div className="w-64 bg-card border-r flex flex-col h-full">
+        <div className="p-4 flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-6">
+            <Calendar className="h-6 w-6 text-primary" />
+            <h1 className="font-semibold text-xl">Admin Dashboard</h1>
+          </div>
+
+          {/* Navigation */}
+          <div className="space-y-2">
+            <Button
+              variant={currentView === 'events' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setCurrentView('events')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Events
+            </Button>
+
+            <Button
+              variant={currentView === 'households' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setCurrentView('households')}
+            >
+              <Home className="mr-2 h-4 w-4" />
+              Households
+            </Button>
+
+            <Button
+              variant={currentView === 'administrators' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setCurrentView('administrators')}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Administrators
+            </Button>
+
+            <Button
+              variant={currentView === 'reports' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setCurrentView('reports')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Reports
+            </Button>
+
+            <Button
+              variant={currentView === 'complexes' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setCurrentView('complexes')}
+            >
+              <Building2 className="mr-2 h-4 w-4" />
+              Field Complexes
+            </Button>
+
+            <Collapsible
+              open={isSettingsOpen}
+              onOpenChange={setIsSettingsOpen}
+              className="space-y-2"
+            >
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant={currentView === 'settings' ? 'secondary' : 'ghost'}
+                  className="w-full justify-between"
+                >
+                  <span className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </span>
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isSettingsOpen ? 'rotate-90' : ''
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 pl-4">
+                <Button
+                  variant={currentSettingsView === 'branding' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setCurrentView('settings');
+                    setCurrentSettingsView('branding');
+                  }}
+                >
+                  Settings options will be added here
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
+
+            <Button
+              variant={currentView === 'account' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setCurrentView('account')}
+            >
+              <User className="mr-2 h-4 w-4" />
+              My Account
+            </Button>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-auto space-y-2">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-muted-foreground"
+              onClick={() => logout()}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+            <p className="text-xs text-center text-muted-foreground pt-4 border-t">
+              Powered by MatchPro
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto p-8">
+        {renderContent()}
+      </div>
+    </div>
+  );
+}
+
+export default AdminDashboard;
