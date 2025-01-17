@@ -75,6 +75,12 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  type DropResult,
+} from "@hello-pangea/dnd";
 
 const MyAccount = lazy(() => import("./my-account"));
 
@@ -980,7 +986,7 @@ function ComplexesView() {
 
               <div className="col-span-2">
                 <Label htmlFor="country">Country</Label>
-                <Select value={formData.country} onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}>
+                <Select value={formData.country} onValueChange={(value) =>setFormData(prev => ({ ...prev, country: value }))}>
                   <SelectTrigger id="country">
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
@@ -1032,24 +1038,143 @@ function ComplexesView() {
 }
 
 function SchedulingView() {
+  const [events, setEvents] = useState([
+    { id: '1', title: 'Soccer Match', field: 'field-1', time: '09:00' },
+    { id: '2', title: 'Training Session', field: 'field-2', time: '10:00' },
+    { id: '3', title: 'Tournament', field: 'field-3', time: '13:00' },
+  ]);
+
+  const [fields] = useState([
+    { id: 'field-1', name: 'Field 1' },
+    { id: 'field-2', name: 'Field 2' },
+    { id: 'field-3', name: 'Field 3' },
+  ]);
+
+  const timeSlots = Array.from({ length: 12 }, (_, i) => {
+    const hour = i + 8; // Start from 8 AM
+    return `${hour.toString().padStart(2, '0')}:00`;
+  });
+
+  const onDragEnd = (result: DropResult) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) return;
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    const [fieldId, time] = destination.droppableId.split('-at-');
+    const updatedEvents = events.map(event => {
+      if (event.id === draggableId) {
+        return {
+          ...event,
+          field: fieldId,
+          time,
+        };
+      }
+      return event;
+    });
+
+    setEvents(updatedEvents);
+  };
+
   return (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Scheduling</h2>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Event Scheduling</h2>
+        <Button>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Event
+        </Button>
       </div>
 
       <Card>
         <CardContent className="p-6">
-          <div className="text-center py-8">
-            <Calendar className="mx-auto h-12 w-12 text-muted-foreground/50" />
-            <h3 className="mt-4 text-lg font-semibold">Schedule Management</h3>
-            <p className="text-muted-foreground">
-              Manage game schedules, field assignments, and time slots
-            </p>
+          <div className="overflow-x-auto">
+            <DragDropContext onDragEnd={onDragEnd}>
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr>
+                    <th className="border p-2 bg-muted">Time</th>
+                    {fields.map(field => (
+                      <th key={field.id} className="border p-2 bg-muted">
+                        {field.name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {timeSlots.map(time => (
+                    <tr key={time}>
+                      <td className="border p-2 font-medium">{time}</td>
+                      {fields.map(field => {
+                        const dropId = `${field.id}-at-${time}`;
+                        return (
+                          <td key={dropId} className="border p-2 h-24">
+                            <Droppable droppableId={dropId}>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.droppableProps}
+                                  className={`h-full min-h-[5rem] rounded-md transition-colors ${
+                                    snapshot.isDraggingOver
+                                      ? 'bg-primary/10'
+                                      : 'bg-secondary/5'
+                                  }`}
+                                >
+                                  {events
+                                    .filter(
+                                      event =>
+                                        event.field === field.id &&
+                                        event.time === time
+                                    )
+                                    .map((event, index) => (
+                                      <Draggable
+                                        key={event.id}
+                                        draggableId={event.id}
+                                        index={index}
+                                      >
+                                        {(provided, snapshot) => (
+                                          <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            className={`p-2 mb-2 rounded-md ${
+                                              snapshot.isDragging
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'bg-card'
+                                            } shadow-sm border`}
+                                          >
+                                            <div className="font-medium">
+                                              {event.title}
+                                            </div>
+                                            <div className="text-sm text-muted-foreground">
+                                              {time}
+                                            </div>
+                                          </div>
+                                        )}
+                                      </Draggable>
+                                    ))}
+                                  {provided.placeholder}
+                                </div>
+                              )}
+                            </Droppable>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </DragDropContext>
           </div>
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }
 
