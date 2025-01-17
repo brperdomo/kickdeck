@@ -76,6 +76,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const MyAccount = lazy(() => import("./my-account"));
 
@@ -657,6 +658,8 @@ function PaymentsSettingsView() {
 
 function ComplexesView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFieldModalOpen, setIsFieldModalOpen] = useState(false);
+  const [selectedComplexId, setSelectedComplexId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     openTime: '',
@@ -667,6 +670,12 @@ function ComplexesView() {
     country: 'US',
     rules: '',
     directions: ''
+  });
+  const [fieldFormData, setFieldFormData] = useState({
+    name: '',
+    hasLights: false,
+    hasParking: false,
+    specialInstructions: ''
   });
 
   // Query for complexes data
@@ -716,6 +725,30 @@ function ComplexesView() {
     }
   });
 
+  // Add field creation mutation
+  const createFieldMutation = useMutation({
+    mutationFn: async (data: typeof fieldFormData & { complexId: number }) => {
+      const response = await fetch('/api/admin/fields', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to create field');
+      return response.json();
+    },
+    onSuccess: () => {
+      complexesQuery.refetch();
+      setIsFieldModalOpen(false);
+      setFieldFormData({
+        name: '',
+        hasLights: false,
+        hasParking: false,
+        specialInstructions: ''
+      });
+      setSelectedComplexId(null);
+    }
+  });
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({
@@ -728,6 +761,72 @@ function ComplexesView() {
     e.preventDefault();
     createComplexMutation.mutate(formData);
   };
+
+  const handleFieldSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedComplexId) return;
+
+    createFieldMutation.mutate({
+      ...fieldFormData,
+      complexId: selectedComplexId
+    });
+  };
+
+  const handleFieldModalOpen = (complexId: number) => {
+    setSelectedComplexId(complexId);
+    setIsFieldModalOpen(true);
+  };
+
+  // In the table actions cell, update to include Add Field button
+  const renderActionButtons = (complex: any) => (
+    <div className="flex items-center gap-2">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => handleFieldModalOpen(complex.id)}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Add new field</p>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Eye className="h-4 w-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>View complex details</p>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Edit className="h-4 w-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Edit complex information</p>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
+            <Trash className="h-4 w-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Delete this complex</p>
+        </TooltipContent>
+      </Tooltip>
+    </div>
+  );
 
   return (
     <>
@@ -874,38 +973,7 @@ function ComplexesView() {
                         {complex.openTime} - {complex.closeTime}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>View complex details</p>
-                            </TooltipContent>
-                          </Tooltip>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Edit complex information</p>
-                            </TooltipContent>
-                          </Tooltip>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
-                                <Trash className="h-4 w-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Delete this complex</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </div>
+                        {renderActionButtons(complex)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -1042,6 +1110,86 @@ function ComplexesView() {
                 ) : (
                   'Create Complex'
                 )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Field Modal */}
+      <Dialog open={isFieldModalOpen} onOpenChange={setIsFieldModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Field</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleFieldSubmit} className="space-y-4">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="field-name">Field Name</Label>
+                <Input
+                  id="field-name"
+                  value={fieldFormData.name}
+                  onChange={(e) => setFieldFormData(prev => ({
+                    ...prev,
+                    name: e.target.value
+                  }))}
+                  placeholder="Enter field name"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="has-lights"
+                  checked={fieldFormData.hasLights}
+                  onCheckedChange={(checked) =>
+                    setFieldFormData(prev => ({
+                      ...prev,
+                      hasLights: checked as boolean
+                    }))
+                  }
+                />
+                <Label htmlFor="has-lights">Has Lights?</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="has-parking"
+                  checked={fieldFormData.hasParking}
+                  onCheckedChange={(checked) =>
+                    setFieldFormData(prev => ({
+                      ...prev,
+                      hasParking: checked as boolean
+                    }))
+                  }
+                />
+                <Label htmlFor="has-parking">Has Parking?</Label>
+              </div>
+
+              <div>
+                <Label htmlFor="special-instructions">Special Instructions</Label>
+                <Textarea
+                  id="special-instructions"
+                  value={fieldFormData.specialInstructions}
+                  onChange={(e) => setFieldFormData(prev => ({
+                    ...prev,
+                    specialInstructions: e.target.value
+                  }))}
+                  placeholder="Enter any special instructions"
+                  className="h-20"
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                type="submit"
+                disabled={createFieldMutation.isPending}
+              >
+                {createFieldMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Add Field
               </Button>
             </DialogFooter>
           </form>

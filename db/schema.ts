@@ -52,6 +52,17 @@ export const complexes = pgTable("complexes", {
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
 });
 
+export const fields = pgTable("fields", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  hasLights: boolean("has_lights").default(false).notNull(),
+  hasParking: boolean("has_parking").default(false).notNull(),
+  specialInstructions: text("special_instructions"),
+  complexId: serial("complex_id").references(() => complexes.id),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
 const passwordSchema = z.string()
   .min(8, "Password must be at least 8 characters")
   .regex(/[0-9]/, "Password must contain at least one number")
@@ -104,6 +115,16 @@ export const selectComplexSchema = createSelectSchema(complexes);
 export const selectUserSchema = createSelectSchema(users);
 export const selectHouseholdSchema = createSelectSchema(households);
 
+export const insertFieldSchema = createInsertSchema(fields, {
+  name: z.string().min(1, "Field name is required"),
+  hasLights: z.boolean(),
+  hasParking: z.boolean(),
+  specialInstructions: z.string().optional(),
+  complexId: z.number(),
+});
+
+export const selectFieldSchema = createSelectSchema(fields);
+
 export type InsertUser = typeof users.$inferInsert;
 export type SelectUser = typeof users.$inferSelect;
 export type InsertHousehold = typeof households.$inferInsert;
@@ -112,3 +133,5 @@ export type InsertOrganizationSettings = typeof organizationSettings.$inferInser
 export type SelectOrganizationSettings = typeof organizationSettings.$inferSelect;
 export type InsertComplex = typeof complexes.$inferInsert;
 export type SelectComplex = typeof complexes.$inferSelect;
+export type InsertField = typeof fields.$inferInsert;
+export type SelectField = typeof fields.$inferSelect;

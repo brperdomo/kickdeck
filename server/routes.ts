@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { log } from "./vite";
 import { db } from "@db";
-import { users, organizationSettings, complexes } from "@db/schema";
+import { users, organizationSettings, complexes, fields } from "@db/schema";
 import { eq } from "drizzle-orm";
 import fs from "fs/promises";
 import path from "path";
@@ -239,6 +239,29 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+
+    // Add field creation endpoint
+    app.post('/api/admin/fields', isAdmin, async (req, res) => {
+      try {
+        const [newField] = await db
+          .insert(fields)
+          .values({
+            name: req.body.name,
+            hasLights: req.body.hasLights,
+            hasParking: req.body.hasParking,
+            specialInstructions: req.body.specialInstructions || null,
+            complexId: req.body.complexId,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          })
+          .returning();
+
+        res.json(newField);
+      } catch (error) {
+        console.error('Error creating field:', error);
+        res.status(500).send("Failed to create field");
+      }
+    });
 
     // Add these new routes for profile management
     app.put('/api/user/profile', async (req, res) => {
