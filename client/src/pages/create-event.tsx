@@ -155,6 +155,7 @@ export default function CreateEvent() {
   const [editingScoringRule, setEditingScoringRule] = useState<ScoringRule | null>(null);
   const [selectedComplexes, setSelectedComplexes] = useState<SelectedComplex[]>([]);
   const [viewingComplexId, setViewingComplexId] = useState<number | null>(null);
+  const [eventFieldSizes, setEventFieldSizes] = useState<Record<number, FieldSize>>({});
 
   const complexesQuery = useQuery({
     queryKey: ['/api/admin/complexes'],
@@ -913,7 +914,7 @@ export default function CreateEvent() {
                                 No age groups created yet. Create age groups first to assign scoring rules.
                               </TableCell>
                             </TableRow>
-                          ) : (
+                          ): (
                             ageGroups.map((group) => (
                               <TableRow key={group.id}>
                                 <TableCell>{group.ageGroup}</TableCell>
@@ -927,7 +928,7 @@ export default function CreateEvent() {
                                 <TableCell>
                                   <div className="flex items-center justify-center">
                                     <Select
-                                      value={group.scoringRule}
+                                      value={group.scoringRule || ""}
                                       onValueChange={(value) => {
                                         setAgeGroups(groups =>
                                           groups.map(g =>
@@ -962,8 +963,7 @@ export default function CreateEvent() {
                 </div>
 
                 <div className="flex justify-end mt-4">
-                  <Button onClick={() => navigateTab('next')}>
-                    Continue
+                  <Button onClick={() => navigateTab('next')}>Continue
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
@@ -1098,6 +1098,7 @@ export default function CreateEvent() {
                                     <TableHead className="text-center">Features</TableHead>
                                     <TableHead>Special Instructions</TableHead>
                                     <TableHead className="text-center">Status</TableHead>
+                                    <TableHead className="text-center">Event Field Size</TableHead>
                                   </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -1120,9 +1121,36 @@ export default function CreateEvent() {
                                         {field.specialInstructions || 'N/A'}
                                       </TableCell>
                                       <TableCell className="text-center">
-                                        <Badge variant={field.isOpen ? "success" : "destructive"}>
+                                        <Badge variant={field.isOpen ? "outline" : "destructive"}>
                                           {field.isOpen ? "Open" : "Closed"}
                                         </Badge>
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                        <Select
+                                          value={eventFieldSizes[field.id] || ''}
+                                          onValueChange={(value) => {
+                                            setEventFieldSizes(prev => ({
+                                              ...prev,
+                                              [field.id]: value as FieldSize
+                                            }));
+                                          }}
+                                        >
+                                          <SelectTrigger className="w-[120px]">
+                                            <SelectValue placeholder="Select size" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
+                                              <SelectItem key={size} value={size}>
+                                                {size}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                        {eventFieldSizes[field.id] && (
+                                          <Badge variant="secondary" className="ml-2">
+                                            Set for event
+                                          </Badge>
+                                        )}
                                       </TableCell>
                                     </TableRow>
                                   ))}
