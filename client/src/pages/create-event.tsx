@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from '@tanstack/react-query';
+import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox
 
 // Helper function to generate unique IDs
 const generateId = () => {
@@ -942,19 +943,19 @@ export default function CreateEvent() {
                               control={scoringForm.control}
                               name="redCard"
                               render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Red Card Points</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                           type="number"
-                                      {...field}
-                                      onChange={e => field.onChange(Number(e.target.value))}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
+                              <FormItem>
+                                <FormLabel>Red Card Points</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    {...field}
+                                    onChange={e => field.onChange(Number(e.target.value))}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                           </div>
 
                           <FormField
@@ -1137,31 +1138,43 @@ export default function CreateEvent() {
                         control={complexSelectionForm.control}
                         name="selectedComplexIds"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="space-y-4">
                             <FormLabel>Select Complexes for this Event</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Choose complexes to use" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
+                            <FormControl>
+                              <div className="space-y-2">
                                 {complexesQuery.data?.map((complex) => (
-                                  <SelectItem key={complex.id} value={complex.id.toString()}>
-                                    {complex.name}
-                                  </SelectItem>
+                                  <div key={complex.id} className="flex items-center space-x-2">
+                                    <Checkbox
+                                      checked={field.value.includes(complex.id.toString())}
+                                      onCheckedChange={(checked) => {
+                                        const value = complex.id.toString();
+                                        const newValue = checked
+                                          ? [...field.value, value]
+                                          : field.value.filter((v) => v !== value);
+                                        field.onChange(newValue);
+
+                                        // Update selected complexes
+                                        const selectedIds = newValue.map(v => parseInt(v));
+                                        const updatedComplexes = complexesQuery.data
+                                          ?.filter(complex => selectedIds.includes(complex.id))
+                                          .map(complex => ({
+                                            ...complex,
+                                            selected: true
+                                          })) || [];
+                                        setSelectedComplexes(updatedComplexes);
+                                      }}
+                                    />
+                                    <Label>
+                                      {complex.name} ({complex.openFields + complex.closedFields} fields)
+                                    </Label>
+                                  </div>
                                 ))}
-                              </SelectContent>
-                            </Select>
+                              </div>
+                            </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-
-                      <Button type="submit">Add Selected Complexes</Button>
                     </form>
                   </Form>
 
