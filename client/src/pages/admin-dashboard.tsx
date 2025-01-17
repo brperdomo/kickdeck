@@ -675,6 +675,13 @@ function ComplexesView() {
     rules: '',
     directions: ''
   });
+  const [fieldFormData, setFieldFormData] = useState({
+    name: '',
+    hasLights: false,
+    hasParking: false,
+    isOpen: true,
+    specialInstructions: ''
+  });
 
   // Query for complexes data
   const complexesQuery = useQuery({
@@ -905,7 +912,7 @@ function ComplexesView() {
 
   // Add field creation mutation
   const createFieldMutation = useMutation({
-    mutationFn: async (data: typeof fieldFormData & { complexId: number }) => {
+    mutationFn: async (data: { name: string; hasLights: boolean; hasParking: boolean; isOpen: boolean; specialInstructions: string; complexId: number; }) => {
       const response = await fetch('/api/admin/fields', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -923,6 +930,7 @@ function ComplexesView() {
         name: '',
         hasLights: false,
         hasParking: false,
+        isOpen: true,
         specialInstructions: ''
       });
     }
@@ -1966,8 +1974,7 @@ function AdminDashboard() {
                   variant={currentSettingsView === 'payments' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
                   onClick={() => {
-                    setCurrentView('settings');
-                    setCurrentSettingsView('payments');
+                    setCurrentView('settings');                    setCurrentSettingsView('payments');
                   }}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
