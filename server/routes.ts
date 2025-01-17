@@ -107,22 +107,49 @@ export function registerRoutes(app: Express): Server {
     // Analytics endpoint for complexes
     app.get('/api/admin/complexes/analytics', isAdmin, async (req, res) => {
       try {
-        const complexCount = await db
-          .select({ count: complexes.id })
+        // Get all complexes with their fields
+        const complexesWithFields = await db
+          .select({
+            complex: complexes,
+            fieldCount: db.fn.count(fields.id).as('fieldCount')
+          })
           .from(complexes)
-          .limit(1);
+          .leftJoin(fields, eq(complexes.id, fields.complexId))
+          .groupBy(complexes.id);
 
-        // For now, return mock analytics data
-        // In a real application, you would calculate these from actual usage data
+        if (complexesWithFields.length === 0) {
+          return res.json({
+            totalComplexes: 0,
+            totalFields: 0,
+            eventsToday: 0,
+            averageUsage: 0,
+            message: "Start by adding your first complex and scheduling events to see analytics!",
+            mostActiveComplex: null
+          });
+        }
+
+        // Calculate totals
+        const totalComplexes = complexesWithFields.length;
+        const totalFields = complexesWithFields.reduce((sum, complex) => 
+          sum + Number(complex.fieldCount), 0);
+
+        // Find the complex with most fields
+        const mostActive = complexesWithFields.reduce((prev, current) => 
+          Number(current.fieldCount) > Number(prev.fieldCount) ? current : prev
+        );
+
         res.json({
-          totalComplexes: complexCount.length > 0 ? complexCount[0].count : 0,
-          totalFields: 24, // This would come from a fields table
-          eventsToday: 8, // This would be calculated from events table
-          averageUsage: 75, // This would be calculated from bookings/usage data
+          totalComplexes,
+          totalFields,
+          eventsToday: 0, // This will be implemented when events are added
+          averageUsage: 0, // This will be implemented when usage tracking is added
+          message: totalFields === 0 ? 
+            "Add fields to your complexes and start scheduling events to see usage analytics!" : 
+            undefined,
           mostActiveComplex: {
-            name: "Main Soccer Complex",
-            address: "123 Sports Ave",
-            eventsCount: 45
+            name: mostActive.complex.name,
+            address: mostActive.complex.address,
+            fieldCount: Number(mostActive.fieldCount)
           }
         });
       } catch (error) {

@@ -1004,103 +1004,72 @@ function ComplexesView() {
         <h2 className="text-2xl font-bold">Field Complexes</h2>
         <Button onClick={() => setIsModalOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Add New Complex
+          Add Complex
         </Button>
       </div>
 
-      {/* Analytics Dashboard */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Complexes</p>
-                <h3 className="text-2xl font-bold mt-2">
-                  {analyticsQuery.isLoading ? (
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  ) : (
-                    analyticsQuery.data?.totalComplexes || 0
-                  )}
-                </h3>
-              </div>
-              <Building2 className="h-8 w-8 text-muted-foreground/50" />
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Complexes</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analyticsQuery.data?.totalComplexes || 0}</div>
           </CardContent>
         </Card>
-
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Fields</p>
-                <h3 className="text-2xl font-bold mt-2">
-                  {analyticsQuery.isLoading ? (
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  ) : (
-                    analyticsQuery.data?.totalFields || 0
-                  )}
-                </h3>
-              </div>
-              <Flag className="h-8 w-8 text-muted-foreground/50" />
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Fields</CardTitle>
+            <Flag className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analyticsQuery.data?.totalFields || 0}</div>
           </CardContent>
         </Card>
-
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="textsm font-medium text-muted-foreground">Events Today</p>
-                <h3 className="text-2xl font-bold mt-2">
-                  {analyticsQuery.isLoading ? (
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  ) : (
-                    analyticsQuery.data?.eventsToday || 0
-                  )}
-                </h3>
-              </div>
-              <Calendar className="h-8 w-8 text-muted-foreground/50" />
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Events Today</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analyticsQuery.data?.eventsToday || 0}</div>
           </CardContent>
         </Card>
-
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Average Usage</p>
-                <h3 className="text-2xl font-bold mt-2">
-                  {analyticsQuery.isLoading ? (
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  ) : (
-                    `${analyticsQuery.data?.averageUsage || 0}%`
-                  )}
-                </h3>
-              </div>
-              <Percent className="h-8 w-8 text-muted-foreground/50" />
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Average Usage</CardTitle>
+            <Percent className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{analyticsQuery.data?.averageUsage || 0}%</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Most Active Complex */}
+      {analyticsQuery.data?.message && (
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <Flag className="h-8 w-8 text-muted-foreground" />
+              <p className="text-muted-foreground">{analyticsQuery.data.message}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {analyticsQuery.data?.mostActiveComplex && (
         <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Most Active Complex</h3>
-              <Badge variant="secondary">
-                {analyticsQuery.data.mostActiveComplex.eventsCount} events this month
-              </Badge>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Building2 className="h-12 w-12 text-primary" />
-              <div>
-                <p className="font-medium">{analyticsQuery.data.mostActiveComplex.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {analyticsQuery.data.mostActiveComplex.address}
-                </p>
-              </div>
+          <CardHeader>
+            <CardTitle>Most Active Complex</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <h3 className="font-semibold">{analyticsQuery.data.mostActiveComplex.name}</h3>
+              <p className="text-sm text-muted-foreground">{analyticsQuery.data.mostActiveComplex.address}</p>
+              <p className="text-sm">
+                Total Fields: <span className="font-medium">{analyticsQuery.data.mostActiveComplex.fieldCount}</span>
+              </p>
             </div>
           </CardContent>
         </Card>
