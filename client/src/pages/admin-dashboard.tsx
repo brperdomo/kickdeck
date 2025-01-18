@@ -1008,8 +1008,8 @@ function ComplexesView() {
   const deleteFieldMutation = useMutation({
     mutationFn: async (fieldId: number) => {
       const response = await fetch(`/api/admin/fields/${fieldId}`, {
-        method: 'DELETE',
-      });
+        method: 'DELETE'
+            });
       if (!response.ok) throw new Error('Failed to delete field');
       return response.json();
     },
@@ -2667,6 +2667,4 @@ function AdministratorsView() {
       </Card>
     </>
   );
-}
-
 }
