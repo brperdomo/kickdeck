@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean, jsonb, time, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, jsonb, time, integer, date } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -141,8 +141,6 @@ export type InsertField = typeof fields.$inferInsert;
 export type SelectField = typeof fields.$inferSelect;
 
 
-// Add these new table definitions after the existing tables
-
 export const events = pgTable("events", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -186,7 +184,6 @@ export const eventFieldSizes = pgTable("event_field_sizes", {
   createdAt: text("created_at").notNull(),
 });
 
-// Add Zod schemas for the new tables
 export const insertEventSchema = createInsertSchema(events, {
   name: z.string().min(1, "Event name is required"),
   startDate: z.string().min(1, "Start date is required"),
@@ -200,3 +197,83 @@ export const insertEventSchema = createInsertSchema(events, {
 
 export type InsertEvent = typeof events.$inferInsert;
 export type SelectEvent = typeof events.$inferSelect;
+
+
+export const gameTimeSlots = pgTable("game_time_slots", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id),
+  fieldId: integer("field_id").notNull().references(() => fields.id),
+  startTime: text("start_time").notNull(),
+  endTime: text("end_time").notNull(),
+  dayIndex: integer("day_index").notNull(),
+  isAvailable: boolean("is_available").default(true).notNull(),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+export const tournamentGroups = pgTable("tournament_groups", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id),
+  ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
+  name: text("name").notNull(),
+  type: text("type").notNull(),
+  stage: text("stage").notNull(),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+});
+
+export const teams = pgTable("teams", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id),
+  ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
+  groupId: integer("group_id").references(() => tournamentGroups.id),
+  name: text("name").notNull(),
+  coach: text("coach"),
+  managerName: text("manager_name"),
+  managerPhone: text("manager_phone"),
+  managerEmail: text("manager_email"),
+  seedRanking: integer("seed_ranking"),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+});
+
+export const games = pgTable("games", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id),
+  ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
+  groupId: integer("group_id").references(() => tournamentGroups.id),
+  fieldId: integer("field_id").references(() => fields.id),
+  timeSlotId: integer("time_slot_id").references(() => gameTimeSlots.id),
+  homeTeamId: integer("home_team_id").references(() => teams.id),
+  awayTeamId: integer("away_team_id").references(() => teams.id),
+  homeScore: integer("home_score"),
+  awayScore: integer("away_score"),
+  status: text("status").notNull().default('scheduled'),
+  round: integer("round").notNull(),
+  matchNumber: integer("match_number").notNull(),
+  duration: integer("duration").notNull(),
+  breakTime: integer("break_time").notNull().default(5),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+export const insertGameTimeSlotSchema = createInsertSchema(gameTimeSlots);
+export const insertTournamentGroupSchema = createInsertSchema(tournamentGroups);
+export const insertTeamSchema = createInsertSchema(teams);
+export const insertGameSchema = createInsertSchema(games, {
+  status: z.enum(['scheduled', 'in_progress', 'completed', 'cancelled']),
+  duration: z.number().min(20).max(120),
+  breakTime: z.number().min(0).max(30),
+});
+
+export const selectGameTimeSlotSchema = createSelectSchema(gameTimeSlots);
+export const selectTournamentGroupSchema = createSelectSchema(tournamentGroups);
+export const selectTeamSchema = createSelectSchema(teams);
+export const selectGameSchema = createSelectSchema(games);
+
+export type InsertGameTimeSlot = typeof gameTimeSlots.$inferInsert;
+export type SelectGameTimeSlot = typeof gameTimeSlots.$inferSelect;
+export type InsertTournamentGroup = typeof tournamentGroups.$inferInsert;
+export type SelectTournamentGroup = typeof tournamentGroups.$inferSelect;
+export type InsertTeam = typeof teams.$inferInsert;
+export type SelectTeam = typeof teams.$inferSelect;
+export type InsertGame = typeof games.$inferInsert;
+export type SelectGame = typeof games.$inferSelect;

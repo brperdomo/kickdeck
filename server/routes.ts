@@ -3,14 +3,17 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { log } from "./vite";
 import { db } from "@db";
-import { users, organizationSettings, complexes, fields, events, eventAgeGroups, eventComplexes, eventFieldSizes } from "@db/schema";
-import { eq, sql, count } from "drizzle-orm";
+import { 
+  users, organizationSettings, complexes, fields, events, 
+  eventAgeGroups, eventComplexes, eventFieldSizes,
+  gameTimeSlots, tournamentGroups, teams, games
+} from "@db/schema";
+import { eq, sql, count, and, gte, lte } from "drizzle-orm";
 import fs from "fs/promises";
 import path from "path";
 import { crypto } from "./crypto";
 import session from "express-session";
 import passport from "passport";
-import { insertEventSchema } from "@db/schema";
 
 // Simple rate limiting middleware
 const rateLimit = (windowMs: number, maxRequests: number) => {
@@ -667,6 +670,139 @@ export function registerRoutes(app: Express): Server {
       } catch (error) {
         console.error('Error fetching events:', error);
         res.status(500).send("Failed to fetch events");
+      }
+    });
+
+    // Add these new endpoints for scheduling functionality
+    app.get('/api/admin/events/:id/schedule', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.params.id);
+
+        // Fetch all games for this event with related data
+        const schedule = await db
+          .select({
+            game: games,
+            homeTeam: teams,
+            awayTeam: teams,
+            field: fields,
+            timeSlot: gameTimeSlots,
+            ageGroup: eventAgeGroups,
+          })
+          .from(games)
+          .leftJoin(teams, eq(games.homeTeamId, teams.id))
+          .leftJoin(teams, eq(games.awayTeamId, teams.id))
+          .leftJoin(fields, eq(games.fieldId, fields.id))
+          .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
+          .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
+          .where(eq(games.eventId, eventId))
+          .orderBy(gameTimeSlots.startTime);
+
+        // Format the schedule for frontend display
+        const formattedSchedule = schedule.map(item => ({
+          id: item.game.id,
+          startTime: item.timeSlot.startTime,
+          endTime: item.timeSlot.endTime,
+          fieldName: item.field.name,
+          ageGroup: item.ageGroup.ageGroup,
+          homeTeam: item.homeTeam.name,
+          awayTeam: item.awayTeam.name,
+          status: item.game.status,
+        }));
+
+        res.json({ games: formattedSchedule });
+      } catch (error) {
+        console.error('Error fetching schedule:', error);
+        res.status(500).send("Failed to fetch schedule");
+      }
+    });
+
+    app.post('/api/admin/events/:id/generate-schedule', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.params.id);
+        const { gamesPerDay, minutesPerGame, breakBetweenGames } = req.body;
+
+        // Start a transaction for the entire schedule generation process
+        await db.transaction(async (tx) => {
+          // 1. Fetch event details
+          const [event] = await tx
+            .select()
+            .from(events)
+            .where(eq(events.id, eventId));
+
+          if (!event) {
+            throw new Error("Event not found");
+          }
+
+          // 2. Fetch all age groups for this event
+          const ageGroups = await tx
+            .select()
+            .from(eventAgeGroups)
+            .where(eq(eventAgeGroups.eventId, eventId));
+
+          // 3. Fetch all available fields
+          const eventFields = await tx
+            .select({
+              field: fields,
+              complex: complexes,
+            })
+            .from(eventComplexes)
+            .innerJoin(fields, eq(eventComplexes.complexId, fields.complexId))
+            .innerJoin(complexes, eq(eventComplexes.complexId, complexes.id))
+            .where(eq(eventComplexes.eventId, eventId));
+
+          // 4. Generate time slots for each day
+          const startDate = new Date(event.startDate);
+          const endDate = new Date(event.endDate);
+          const dayCount = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+          for (let dayIndex = 0; dayIndex < dayCount; dayIndex++) {
+            const currentDate = new Date(startDate);
+            currentDate.setDate(currentDate.getDate() + dayIndex);
+
+            for (const { field, complex } of eventFields) {
+              const complexOpenTime = new Date(`${currentDate.toISOString().split('T')[0]}T${complex.openTime}`);
+              const complexCloseTime = new Date(`${currentDate.toISOString().split('T')[0]}T${complex.closeTime}`);
+
+              let currentTime = complexOpenTime;
+              while (currentTime.getTime() + (minutesPerGame * 60 * 1000) <= complexCloseTime.getTime()) {
+                const endTime = new Date(currentTime.getTime() + (minutesPerGame * 60 * 1000));
+
+                await tx.insert(gameTimeSlots).values({
+                  eventId,
+                  fieldId: field.id,
+                  startTime: currentTime.toISOString(),
+                  endTime: endTime.toISOString(),
+                  dayIndex,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                });
+
+                // Add break time before next game
+                currentTime = new Date(endTime.getTime() + (breakBetweenGames * 60 * 1000));
+              }
+            }
+          }
+
+          // 5. Create tournament groups for each age group
+          for (const ageGroup of ageGroups) {
+            await tx.insert(tournamentGroups).values({
+              eventId,
+              ageGroupId: ageGroup.id,
+              name: `Group A - ${ageGroup.ageGroup}`,
+              type: 'round_robin',
+              stage: 'group',
+              createdAt: new Date().toISOString(),
+            });
+          }
+
+          // 6. Schedule will be generated based on registered teams
+          // This will be implemented in a separate endpoint once teams are registered
+        });
+
+        res.json({ message: "Schedule framework generated successfully" });
+      } catch (error) {
+        console.error('Error generating schedule:', error);
+        res.status(500).send("Failed to generate schedule");
       }
     });
 

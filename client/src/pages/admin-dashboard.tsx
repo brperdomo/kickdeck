@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
 import { SelectUser } from "@db/schema";
-import { useToast } from "@/hooks/use-toast"; // Fixed import for toast
+import { useToast } from "@/hooks/use-toast";
 import {
   Calendar,
   Search,
@@ -78,8 +78,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Switch } from "@/components/ui/switch"; // Added import
-
+import { Switch } from "@/components/ui/switch";
 
 interface Complex {
   id: number;
@@ -678,7 +677,7 @@ function PaymentsSettingsView() {
 }
 
 function ComplexesView() {
-  const { toast } = useToast(); // Get toast function from hook
+  const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isFieldModalOpen, setIsFieldModalOpen] = useState(false);
@@ -1489,23 +1488,172 @@ function ComplexesView() {
 }
 
 function SchedulingView() {
+  const { toast } = useToast();
+  const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  // Query for events that need scheduling
+  const eventsQuery = useQuery({
+    queryKey: ['/api/admin/events'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) throw new Error('Failed to fetch events');
+      return response.json();
+    }
+  });
+
+  // Query for schedule if an event is selected
+  const scheduleQuery = useQuery({
+    queryKey: ['/api/admin/events', selectedEvent, 'schedule'],
+    queryFn: async () => {
+      if (!selectedEvent) return null;
+      const response = await fetch(`/api/admin/events/${selectedEvent}/schedule`);
+      if (!response.ok) throw new Error('Failed to fetch schedule');
+      return response.json();
+    },
+    enabled: !!selectedEvent
+  });
+
+  // Mutation for generating schedule
+  const generateScheduleMutation = useMutation({
+    mutationFn: async (data: { 
+      eventId: number, 
+      gamesPerDay: number,
+      minutesPerGame: number,
+      breakBetweenGames: number 
+    }) => {
+      const response = await fetch(`/api/admin/events/${data.eventId}/generate-schedule`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to generate schedule');
+      return response.json();
+    },
+    onSuccess: () => {
+      scheduleQuery.refetch();
+      toast({
+        title: "Success",
+        description: "Tournament schedule generated successfully!",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to generate schedule",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleGenerateSchedule = async (eventId: number) => {
+    try {
+      setIsGenerating(true);
+      await generateScheduleMutation.mutateAsync({
+        eventId,
+        gamesPerDay: 8, // Default values, can be made configurable
+        minutesPerGame: 60,
+        breakBetweenGames: 15
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Scheduling</h2>
+        <h2 className="text-2xl font-bold">Tournament Scheduling</h2>
       </div>
 
-      <Card>
-        <CardContent className="p-6">
-          <div className="text-center py-8">
-            <Calendar className="mx-auto h-12 w-12 text-muted-foreground/50" />
-            <h3 className="mt-4 text-lg font-semibold">Schedule Management</h3>
-            <p className="text-muted-foreground">
-              Manage game schedules, field assignments, and time slots
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid gap-6">
+        {/* Event Selection */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Select Event</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <Select
+                value={selectedEvent?.toString()}
+                onValueChange={(value) => setSelectedEvent(parseInt(value))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select an event to schedule" />
+                </SelectTrigger>
+                <SelectContent>
+                  {eventsQuery.data?.map((event: any) => (
+                    <SelectItem key={event.id} value={event.id.toString()}>
+                      {event.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {selectedEvent && (
+                <Button 
+                  onClick={() => handleGenerateSchedule(selectedEvent)}
+                  disabled={isGenerating}
+                  className="w-full"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Generating Schedule...
+                    </>
+                  ) : (
+                    <>
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Generate Schedule
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Schedule Display */}
+        {selectedEvent && scheduleQuery.data && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Tournament Schedule</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Field</TableHead>
+                    <TableHead>Age Group</TableHead>
+                    <TableHead>Teams</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {scheduleQuery.data.games?.map((game: any) => (
+                    <TableRow key={game.id}>
+                      <TableCell>
+                        {new Date(game.startTime).toLocaleTimeString()} - {new Date(game.endTime).toLocaleTimeString()}
+                      </TableCell>
+                      <TableCell>{game.fieldName}</TableCell>
+                      <TableCell>{game.ageGroup}</TableCell>
+                      <TableCell>
+                        {game.homeTeam} vs {game.awayTeam}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={game.status === 'scheduled' ? 'default' : 'secondary'}>
+                          {game.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </>
   );
 }
@@ -1607,8 +1755,7 @@ function AdminDashboard() {
   const [currentSettingsView, setCurrentSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
-  const { toast } = useToast(); // Added toast import
-
+  const { toast } = useToast();
   useEffect(() => {
     if (!isAdminUser(user)) {
       navigate("/");
