@@ -3,10 +3,19 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { log } from "./vite";
 import { db } from "@db";
-import { 
-  users, organizationSettings, complexes, fields, events, 
-  eventAgeGroups, eventComplexes, eventFieldSizes,
-  gameTimeSlots, tournamentGroups, teams, games
+import {
+  users,
+  organizationSettings,
+  complexes,
+  fields,
+  events,
+  eventAgeGroups,
+  eventComplexes,
+  eventFieldSizes,
+  gameTimeSlots,
+  tournamentGroups,
+  teams,
+  games
 } from "@db/schema";
 import { eq, sql, count, and, gte, lte } from "drizzle-orm";
 import fs from "fs/promises";
@@ -961,21 +970,19 @@ export function registerRoutes(app: Express): Server {
     // Teams management endpoints
     app.get('/api/admin/teams', isAdmin, async (req, res) => {
       try {
-        const eventId = parseInt(req.query.eventId as string);
-        const ageGroup = req.query.ageGroup as string;
+        const { eventId, ageGroup } = req.query;
 
         if (!eventId || !ageGroup) {
           return res.status(400).send("Event ID and age group are required");
         }
 
-        // Get the age group ID first
         const [ageGroupRecord] = await db
           .select()
           .from(eventAgeGroups)
           .where(
             and(
-              eq(eventAgeGroups.eventId, eventId),
-              eq(eventAgeGroups.ageGroup, ageGroup)
+              eq(eventAgeGroups.eventId, Number(eventId)),
+              eq(eventAgeGroups.ageGroup, ageGroup as string)
             )
           );
 
@@ -983,19 +990,18 @@ export function registerRoutes(app: Express): Server {
           return res.status(404).send("Age group not found");
         }
 
-        // Fetch teams for this age group
-        const teams = await db
+        const teamsList = await db
           .select()
           .from(teams)
           .where(
             and(
-              eq(teams.eventId, eventId),
+              eq(teams.eventId, Number(eventId)),
               eq(teams.ageGroupId, ageGroupRecord.id)
             )
           )
           .orderBy(teams.name);
 
-        res.json(teams);
+        res.json(teamsList);
       } catch (error) {
         console.error('Error fetching teams:', error);
         res.status(500).send("Failed to fetch teams");

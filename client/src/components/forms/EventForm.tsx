@@ -20,7 +20,7 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 
-// Reuse types and schemas from create-event.tsx
+// Types and interfaces from create-event.tsx
 export interface EventData {
   name: string;
   startDate: string;
@@ -35,11 +35,25 @@ export interface EventData {
   selectedComplexIds: number[];
 }
 
+type Gender = 'Male' | 'Female' | 'Coed';
+type FieldSize = '3v3' | '4v4' | '5v5' | '6v6' | '7v7' | '8v8' | '9v9' | '10v10' | '11v11' | 'N/A';
+
+interface AgeGroup {
+  id: string;
+  gender: Gender;
+  projectedTeams: number;
+  birthDateStart: string;
+  birthDateEnd: string;
+  scoringRule?: string;
+  ageGroup: string;
+  fieldSize: FieldSize;
+  amountDue?: number | null;
+}
+
 export type EventTab = 'information' | 'age-groups' | 'scoring' | 'complexes' | 'settings' | 'administrators';
 
 export const TAB_ORDER: EventTab[] = ['information', 'age-groups', 'scoring', 'complexes', 'settings', 'administrators'];
 
-// USA Timezones from create-event.tsx
 const USA_TIMEZONES = [
   { value: 'America/New_York', label: 'Eastern Time (ET)' },
   { value: 'America/Chicago', label: 'Central Time (CT)' },
@@ -72,6 +86,13 @@ interface EventFormProps {
 export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormProps) {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<EventTab>('information');
+  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(initialData?.ageGroups || []);
+  const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(
+    initialData?.complexFieldSizes || {}
+  );
+  const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(
+    initialData?.selectedComplexIds || []
+  );
   const { toast } = useToast();
 
   const form = useForm<EventInformationValues>({
@@ -89,8 +110,22 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
   });
 
   const handleSubmit = (data: EventInformationValues) => {
-    // TODO: Add validation and combine with age groups and complex data
-    onSubmit(data as EventData);
+    const combinedData: EventData = {
+      ...data,
+      ageGroups,
+      complexFieldSizes,
+      selectedComplexIds,
+    };
+    onSubmit(combinedData);
+  };
+
+  const navigateTab = (direction: 'next' | 'prev') => {
+    const currentIndex = TAB_ORDER.indexOf(activeTab);
+    if (direction === 'next' && currentIndex < TAB_ORDER.length - 1) {
+      setActiveTab(TAB_ORDER[currentIndex + 1]);
+    } else if (direction === 'prev' && currentIndex > 0) {
+      setActiveTab(TAB_ORDER[currentIndex - 1]);
+    }
   };
 
   return (
@@ -125,14 +160,200 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
             <TabsContent value="information">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8 max-w-4xl mx-auto">
-                  {/* Form fields from create-event.tsx */}
-                  {/* ... */}
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Event Name *</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Enter event name" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="startDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Event Start Date *</FormLabel>
+                          <FormControl>
+                            <Input type="datetime-local" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="endDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Event End Date *</FormLabel>
+                          <FormControl>
+                            <Input type="datetime-local" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="timezone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Time Zone *</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select time zone" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {USA_TIMEZONES.map((timezone) => (
+                              <SelectItem key={timezone.value} value={timezone.value}>
+                                {timezone.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="applicationDeadline"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Application Submission Deadline *</FormLabel>
+                        <FormControl>
+                          <Input type="datetime-local" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="details"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Details About This Event</FormLabel>
+                        <FormControl>
+                          <Editor
+                            apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                            init={{
+                              height: 300,
+                              menubar: true,
+                              plugins: [
+                                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                              ],
+                              toolbar: 'undo redo | formatselect | ' +
+                                'bold italic backcolor | alignleft aligncenter ' +
+                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                'removeformat | help',
+                            }}
+                            value={field.value}
+                            onEditorChange={(content) => field.onChange(content)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="agreement"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Agreement</FormLabel>
+                        <FormControl>
+                          <Editor
+                            apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                            init={{
+                              height: 300,
+                              menubar: true,
+                              plugins: [
+                                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                              ],
+                              toolbar: 'undo redo | formatselect | ' +
+                                'bold italic backcolor | alignleft aligncenter ' +
+                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                'removeformat | help',
+                            }}
+                            value={field.value}
+                            onEditorChange={(content) => field.onChange(content)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="refundPolicy"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Refund Policy</FormLabel>
+                        <FormControl>
+                          <Editor
+                            apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                            init={{
+                              height: 300,
+                              menubar: true,
+                              plugins: [
+                                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                              ],
+                              toolbar: 'undo redo | formatselect | ' +
+                                'bold italic backcolor | alignleft aligncenter ' +
+                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                'removeformat | help',
+                            }}
+                            value={field.value}
+                            onEditorChange={(content) => field.onChange(content)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="flex justify-between gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => navigate("/admin")}
+                    >
+                      Cancel
+                    </Button>
+                    <div className="flex gap-4">
+                      <Button type="submit">
+                        {isEdit ? 'Update Event' : 'Create Event'}
+                      </Button>
+                    </div>
+                  </div>
                 </form>
               </Form>
             </TabsContent>
 
-            {/* Other tab contents */}
-            {/* ... */}
           </Tabs>
         </CardContent>
       </Card>
