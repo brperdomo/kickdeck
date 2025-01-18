@@ -404,11 +404,14 @@ export default function CreateEvent() {
 
       toast({
         title: "Success",
-        description: "Event created successfully!",
+        description: "Event created successfully! Redirecting to dashboard...",
+        variant: "default",
       });
 
-      // Navigate back to events list
-      navigate("/admin/events");
+      // Add a small delay to show the success message before navigation
+      setTimeout(() => {
+        navigate("/admin");
+      }, 1500);
     } catch (error) {
       console.error('Error creating event:', error);
       toast({
