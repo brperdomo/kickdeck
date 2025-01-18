@@ -10,9 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUser } from "@/hooks/use-user";
-//import { useLocation } from "wouter";
 import { useEffect } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
 import { SelectUser } from "@db/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -46,6 +45,7 @@ import {
   Flag,
   MoreHorizontal,
   Building2,
+  Mail,
 } from "lucide-react";
 import {
   Table,
@@ -82,6 +82,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
 import { format } from 'date-fns';
+import * as z from 'zod';
+import { useForm, Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from '@mantine/forms';
+import { zodResolver } from '@mantine/zod';
 
 interface Complex {
   id: number;
@@ -1992,89 +1995,13 @@ function AdminDashboard() {
                           </TableRow>
                         ))
                       )}
-                    </TableBody>
-                  </Table>
+                    </TableBody                  </Table>
                 </div>
               </CardContent>            </Card>
           </>
         );
       case 'administrators':
-        return (
-          <>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Administrators</h2>
-              <Button>
-                <UserPlus className="mr-2 h-4 w-4" />
-                Create Administrator User
-              </Button>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Full Admin Access</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Created At</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {adminsLoading ? (
-                        <TableRow>
-                          <TableCell colSpan={5} className="h-24 text-center">
-                            <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                          </TableCell>
-                        </TableRow>
-                      ) : adminsError ? (
-                        <TableRow>
-                          <TableCell colSpan={5} className="h-24 text-center text-destructive">
-                            Error loading administrators: {adminsError instanceof Error ? adminsError.message : 'Unknown error'}
-                          </TableCell>
-                        </TableRow>
-                      ) : !administrators || administrators.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={5} className="h-24 text-center">
-                            No administrators found
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        administrators.map((admin) => (
-                          <TableRow key={admin.id}>
-                            <TableCell>{admin.firstName} {admin.lastName}</TableCell>
-                            <TableCell>{admin.email}</TableCell>
-                            <TableCell>
-                              <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                Active
-                              </span>
-                            </TableCell>
-                            <TableCell>{new Date(admin.createdAt).toLocaleDateString()}</TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive">
-                                  <Trash className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
-          </>
-        );
+        return <AdministratorsView/>;
       case 'events':
         return <EventsView />;
       case 'settings':
@@ -2502,3 +2429,199 @@ function TeamsView() {
     </>
   );
 }
+
+const createAdminSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Please enter a valid email address"),
+});
+
+type CreateAdminFormValues = z.infer<typeof createAdminSchema>;
+
+function AdministratorsView() {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const form = useForm<CreateAdminFormValues>({
+    resolver: zodResolver(createAdminSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+    },
+  });
+
+  const createAdminMutation = useMutation({
+    mutationFn: async (data: CreateAdminFormValues) => {
+      const response = await fetch('/api/admin/administrators', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error);
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/administrators'] });
+      setIsCreateModalOpen(false);
+      form.reset();
+      toast({
+        title: "Administrator Invited",
+        description: "An invitation email has been sent to the new administrator.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (data: CreateAdminFormValues) => {
+    createAdminMutation.mutate(data);
+  };
+
+  // Query for fetching administrators list
+  const { data: administrators, isLoading } = useQuery({
+    queryKey: ['/api/admin/administrators'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/administrators');
+      if (!response.ok) throw new Error('Failed to fetch administrators');
+      return response.json();
+    },
+  });
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Administrators</h2>
+        <Button onClick={() => setIsCreateModalOpen(true)}>
+          <UserPlus className="h-4 w-4 mr-2" />
+          Create Administrator
+        </Button>
+      </div>
+
+      <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Create New Administrator</DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter first name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter last name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="email" placeholder="Enter email address" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setIsCreateModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit"
+                  disabled={createAdminMutation.isPending}
+                >
+                  {createAdminMutation.isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Create Administrator
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <Card>
+        <CardContent className="p-6">
+          {isLoading ? (
+            <div className="flex justify-center p-4">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {administrators?.map((admin: any) => (
+                  <TableRow key={admin.id}>
+                    <TableCell>{`${admin.firstName} ${admin.lastName}`}</TableCell>
+                    <TableCell>{admin.email}</TableCell>
+                    <TableCell>
+                      <Badge variant={admin.isEmailVerified ? "default" : "secondary"}>
+                        {admin.isEmailVerified ? "Active" : "Pending"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="sm">
+                          <Mail className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+<

@@ -23,6 +23,27 @@ import path from "path";
 import { crypto } from "./crypto";
 import session from "express-session";
 import passport from "passport";
+import nodemailer from "nodemailer";
+import { randomBytes } from "crypto";
+
+// Add this type definition
+interface AdminInviteData {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+// Add these constants at the top of the file
+const SMTP_HOST = process.env.SMTP_HOST || "smtp.gmail.com";
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || "587");
+const SMTP_USER = process.env.SMTP_USER;
+const SMTP_PASS = process.env.SMTP_PASS;
+const APP_URL = process.env.APP_URL || "http://localhost:5000";
+
+// Add this function to generate verification tokens
+function generateVerificationToken(): string {
+  return randomBytes(32).toString('hex');
+}
 
 // Simple rate limiting middleware
 const rateLimit = (windowMs: number, maxRequests: number) => {
@@ -1068,6 +1089,87 @@ export function registerRoutes(app: Express): Server {
       } catch (error) {
         console.error('Error fetching age groups:', error);
         res.status(500).send("Failed to fetch age groups");
+      }
+    });
+
+    // Add administrator creation endpoint
+    app.post('/api/admin/administrators', isAdmin, async (req, res) => {
+      try {
+        const { firstName, lastName, email }: AdminInviteData = req.body;
+
+        // Check if email already exists
+        const [existingUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
+
+        if (existingUser) {
+          return res.status(400).send("Email already exists");
+        }
+
+        // Generate verification token
+        const verificationToken = generateVerificationToken();
+        const tokenExpiry = new Date();
+        tokenExpiry.setHours(tokenExpiry.getHours() + 24); // Token valid for 24 hours
+
+        // Create new admin user
+        const [newAdmin] = await db
+          .insert(users)
+          .values({
+            email,
+            username: email,
+            firstName,
+            lastName,
+            isAdmin: true,
+            password: verificationToken, // Temporary password until user sets their own
+            createdAt: new Date().toISOString(),
+          })
+          .returning();
+
+        // Set up email transport
+        const transporter = nodemailer.createTransport({
+          host: SMTP_HOST,
+          port: SMTP_PORT,
+          secure: SMTP_PORT === 465,
+          auth: {
+            user: SMTP_USER,
+            pass: SMTP_PASS,
+          },
+        });
+
+        // Create verification URL
+        const verificationUrl = `${APP_URL}/verify-admin?token=${verificationToken}&email=${encodeURIComponent(email)}`;
+
+        // Send invitation email
+        await transporter.sendMail({
+          from: SMTP_USER,
+          to: email,
+          subject: "Administrator Account Invitation",
+          html: `
+            <h1>Welcome to the Team!</h1>
+            <p>You have been invited to be an administrator.</p>
+            <p>Click the link below to set up your account:</p>
+            <a href="${verificationUrl}">${verificationUrl}</a>
+            <p>This link will expire in 24 hours.</p>
+          `,
+        });
+
+        res.json({ 
+          message: "Administrator invited successfully",
+          admin: {
+            id: newAdmin.id,
+            email: newAdmin.email,
+            firstName: newAdmin.firstName,
+            lastName: newAdmin.lastName,
+            isAdmin: newAdmin.isAdmin,
+            createdAt: newAdmin.createdAt,
+          }
+        });
+
+      } catch (error) {
+        console.error('Error creating administrator:', error);
+        res.status(500).send("Failed to create administrator");
       }
     });
 
