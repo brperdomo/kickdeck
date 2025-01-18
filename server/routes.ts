@@ -641,6 +641,34 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Add this new endpoint after the existing event creation endpoint
+    app.get('/api/admin/events', isAdmin, async (req, res) => {
+      try {
+        const eventsList = await db
+          .select({
+            event: events,
+            ageGroupCount: sql<number>`count(distinct ${eventAgeGroups.id})`.mapWith(Number),
+            complexCount: sql<number>`count(distinct ${eventComplexes.id})`.mapWith(Number),
+          })
+          .from(events)
+          .leftJoin(eventAgeGroups, eq(events.id, eventAgeGroups.eventId))
+          .leftJoin(eventComplexes, eq(events.id, eventComplexes.eventId))
+          .groupBy(events.id)
+          .orderBy(events.createdAt);
+
+        // Format the response
+        const formattedEvents = eventsList.map(({ event, ageGroupCount, complexCount }) => ({
+          ...event,
+          ageGroupCount,
+          complexCount
+        }));
+
+        res.json(formattedEvents);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).send("Failed to fetch events");
+      }
+    });
 
     return httpServer;
   } catch (error) {

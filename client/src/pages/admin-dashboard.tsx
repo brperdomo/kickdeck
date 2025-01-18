@@ -1008,7 +1008,7 @@ function ComplexesView() {
   // Add field status toggle mutation
   const toggleFieldStatusMutation = useMutation({
     mutationFn: async ({ fieldId, isOpen }: { fieldId: number, isOpen: boolean }) => {
-      constresponse = await fetch(`/api/admin/fields/${fieldId}/status`, {
+      const response = await fetch(`/api/admin/admin/fields/${fieldId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isOpen })
@@ -1510,6 +1510,96 @@ function SchedulingView() {
   );
 }
 
+function EventsView() {
+  const { toast } = useToast();
+  const [, navigate] = useLocation();
+
+  const eventsQuery = useQuery({
+    queryKey: ['/api/admin/events'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) throw new Error('Failed to fetch events');
+      return response.json();
+    }
+  });
+
+  if (eventsQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (eventsQuery.error) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-red-500">Error loading events</p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Events</h2>
+        <Button onClick={() => navigate("/create-event")}>
+          <Plus className="h-4 w-4 mr-2" />
+          Create Event
+        </Button>
+      </div>
+
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Date Range</TableHead>
+                <TableHead>Age Groups</TableHead>
+                <TableHead>Complexes</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {eventsQuery.data?.map((event) => (
+                <TableRow key={event.id}>
+                  <TableCell>{event.name}</TableCell>
+                  <TableCell>
+                    {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>{event.ageGroupCount} groups</TableCell>
+                  <TableCell>{event.complexCount} complexes</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost" size="sm">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {eventsQuery.data?.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                    No events found. Create your first event to get started!
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
 function AdminDashboard() {
   const { user, logout } = useUser();
   const [, navigate] = useLocation();
@@ -1711,131 +1801,7 @@ function AdminDashboard() {
         );
 
       case 'events':
-        return (
-          <>
-            <div className="flex justify-between items-center mb-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search events..."
-                  className="pl-9 w-[300px]"
-                />
-              </div>
-              <Button onClick={() => navigate("/create-event")}>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Event
-              </Button>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Events</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>
-                          <div className="flex items-center gap-2">
-                            Date
-                            <div className="flex flex-col">
-                              <ChevronUp className="h-3 w-3" />
-                              <ChevronDown className="h-3 w-3" />
-                            </div>
-                          </div>
-                        </TableHead>
-                        <TableHead># of Applications</TableHead>
-                        <TableHead># of Accepted Teams</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {eventsLoading ? (
-                        <TableRow>
-                          <TableCell colSpan={6} className="h-24 text-center">
-                            <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                          </TableCell>
-                        </TableRow>
-                      ) : eventsError ? (
-                        <TableRow>
-                          <TableCell colSpan={6} className="h-24 text-center text-destructive">
-                            Error loading events: {eventsError instanceof Error ? eventsError.message : 'Unknown error'}
-                          </TableCell>
-                        </TableRow>
-                      ) : !events || events.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={6} className="h-24 text-center">
-                            No events found
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        events.map((event: any) => (
-                          <TableRow key={event.id}>
-                            <TableCell>{event.name}</TableCell>
-                            <TableCell>{new Date(event.date).toLocaleDateString()}</TableCell>
-                            <TableCell>{event.applicationCount || 0}</TableCell>
-                            <TableCell>{event.acceptedTeamsCount || 0}</TableCell>
-                            <TableCell>
-                              <Badge variant={event.status === 'Active' ? 'default' : 'secondary'}>
-                                {event.status}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex justify-end items-center gap-2">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                                      <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end" className="w-48">
-                                    <DropdownMenuItem>
-                                      <Eye className="mr-2 h-4 w-4" />
-                                      Manage
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <ClipboardList className="mr-2 h-4 w-4" />
-                                      Application Questions
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <UserCircle className="mr-2 h-4 w-4" />
-                                      Player Questions
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <Percent className="mr-2 h-4 w-4" />
-                                      Discounts
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <Printer className="mr-2 h-4 w-4" />
-                                      Print Game Cards
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <Flag className="mr-2 h-4 w-4" />
-                                      Red Card Report
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem className="text-destructive">
-                                      <Trash className="mr-2 h-4 w-4" />
-                                      Delete Event
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
-          </>
-        );
-
+        return <EventsView />;
       case 'settings':
         if (currentSettingsView === 'branding') {
           return (
