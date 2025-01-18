@@ -1007,7 +1007,7 @@ function ComplexesView() {
   // Add field status toggle mutation
   const toggleFieldStatusMutation = useMutation({
     mutationFn: async ({ fieldId, isOpen }: { fieldId: number, isOpen: boolean }) => {
-      const response = await fetch(`/api/admin/admin/fields/${fieldId}/status`, {
+      const response= await fetch(`/api/admin/admin/fields/${fieldId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isOpen })
@@ -1087,9 +1087,9 @@ function ComplexesView() {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="h-8 w-8"
             onClick={() => handleViewFields(complex)}
           >
@@ -1102,9 +1102,9 @@ function ComplexesView() {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="h-8 w-8"
             onClick={() => handleEdit(complex)}
           >
@@ -1117,9 +1117,9 @@ function ComplexesView() {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="h-8 w-8 text-destructive"
             onClick={() => {
               if (window.confirm('Are you sure you want to delete this complex? This will also delete all fields associated with it.')) {
@@ -1197,10 +1197,10 @@ function ComplexesView() {
                         <div className="flex items-center gap-2">
                           <Switch
                             checked={field.isOpen}
-                            onCheckedChange={(checked) => 
-                              toggleFieldStatusMutation.mutate({ 
-                                fieldId: field.id, 
-                                isOpen: checked 
+                            onCheckedChange={(checked) =>
+                              toggleFieldStatusMutation.mutate({
+                                fieldId: field.id,
+                                isOpen: checked
                               })
                             }
                           />
@@ -1351,7 +1351,7 @@ function ComplexesView() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {complexesQuery.data?.map((complex:Complex) => (
+                {complexesQuery.data?.map((complex: Complex) => (
                   <TableRow key={complex.id}>
                     <TableCell className="font-medium">
                       {complex.name}
@@ -1366,10 +1366,10 @@ function ComplexesView() {
                       <div className="flex items-center justify-center gap-2">
                         <Switch
                           checked={complex.isOpen}
-                          onCheckedChange={(checked) => 
-                            toggleComplexStatusMutation.mutate({ 
-                              complexId: complex.id, 
-                              isOpen: checked 
+                          onCheckedChange={(checked) =>
+                            toggleComplexStatusMutation.mutate({
+                              complexId: complex.id,
+                              isOpen: checked
                             })
                           }
                         />
@@ -1516,11 +1516,11 @@ function SchedulingView() {
 
   // Mutation for generating schedule
   const generateScheduleMutation = useMutation({
-    mutationFn: async (data: { 
-      eventId: number, 
+    mutationFn: async (data: {
+      eventId: number,
       gamesPerDay: number,
       minutesPerGame: number,
-      breakBetweenGames: number 
+      breakBetweenGames: number
     }) => {
       const response = await fetch(`/api/admin/events/${data.eventId}/generate-schedule`, {
         method: 'POST',
@@ -1591,7 +1591,7 @@ function SchedulingView() {
               </Select>
 
               {selectedEvent && (
-                <Button 
+                <Button
                   onClick={() => handleGenerateSchedule(selectedEvent)}
                   disabled={isGenerating}
                   className="w-full"
@@ -1981,6 +1981,8 @@ function AdminDashboard() {
         return <ComplexesView />;
       case 'scheduling':
         return <SchedulingView />;
+      case 'teams':
+        return <TeamsView />;
       default:
         return null;
     }
@@ -2054,6 +2056,14 @@ function AdminDashboard() {
                 <Calendar className="mr-2 h-4 w-4" />
                 Scheduling
               </Button>
+            <Button
+              variant={currentView === 'teams' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setCurrentView('teams')}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Teams
+            </Button>
             <Collapsible
               open={isSettingsOpen}
               onOpenChange={setIsSettingsOpen}
@@ -2086,11 +2096,13 @@ function AdminDashboard() {
                 >
                   <Palette className="mr-2 h-4 w-4" />
                   Branding
-                </Button>                <Button
+                </Button>
+                <Button
                   variant={currentSettingsView === 'payments' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
                   onClick={() => {
-                    setCurrentView('settings');                    setCurrentSettingsView('payments');
+                    setCurrentView('settings');
+                    setCurrentSettingsView('payments');
                   }}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
@@ -2133,3 +2145,232 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
+
+function TeamsView() {
+  const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
+  const [selectedAgeGroup, setSelectedAgeGroup] = useState<string>("");
+  const { toast } = useToast();
+
+  // Query for events
+  const eventsQuery = useQuery({
+    queryKey: ['/api/admin/events'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) throw new Error('Failed to fetch events');
+      return response.json();
+    }
+  });
+
+  // Query for age groups of selected event
+  const ageGroupsQuery = useQuery({
+    queryKey: ['/api/admin/events', selectedEvent, 'age-groups'],
+    queryFn: async () => {
+      if (!selectedEvent) return [];
+      const response = await fetch(`/api/admin/events/${selectedEvent}/age-groups`);
+      if (!response.ok) throw new Error('Failed to fetch age groups');
+      return response.json();
+    },
+    enabled: !!selectedEvent
+  });
+
+  // Query for teams in selected event and age group
+  const teamsQuery = useQuery({
+    queryKey: ['/api/admin/teams', selectedEvent, selectedAgeGroup],
+    queryFn: async () => {
+      if (!selectedEvent || !selectedAgeGroup) return [];
+      const response = await fetch(`/api/admin/teams?eventId=${selectedEvent}&ageGroup=${selectedAgeGroup}`);
+      if (!response.ok) throw new Error('Failed to fetch teams');
+      return response.json();
+    },
+    enabled: !!selectedEvent && !!selectedAgeGroup
+  });
+
+  const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
+  const [newTeamName, setNewTeamName] = useState("");
+
+  const addTeamMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newTeamName,
+          eventId: selectedEvent,
+          ageGroup: selectedAgeGroup
+        })
+      });
+      if (!response.ok) throw new Error('Failed to add team');
+      return response.json();
+    },
+    onSuccess: () => {
+      teamsQuery.refetch();
+      setNewTeamName("");
+      setIsAddTeamModalOpen(false);
+      toast({ title: "Success", description: "Team added successfully!" });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to add team",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleAddTeam = () => {
+    if (!newTeamName || !selectedEvent || !selectedAgeGroup) {
+      toast({
+        title: "Error",
+        description: "Please fill all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+    addTeamMutation.mutate();
+  };
+
+  return (
+    <>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold mb-4">Teams Management</h2>
+        <div className="space-y-4">
+          <div className="grid gap-4">
+            <div>
+              <Label>Event</Label>
+              <Select
+                value={selectedEvent?.toString()}
+                onValueChange={(value) => {
+                  setSelectedEvent(parseInt(value));
+                  setSelectedAgeGroup(""); // Reset age group when event changes
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Event" />
+                </SelectTrigger>
+                <SelectContent>
+                  {eventsQuery.data?.map((event: any) => (
+                    <SelectItem key={event.id} value={event.id.toString()}>
+                      {event.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {selectedEvent && (
+              <div>
+                <Label>Age Group</Label>
+                <Select
+                  value={selectedAgeGroup}
+                  onValueChange={setSelectedAgeGroup}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Age Group" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ageGroupsQuery.data?.map((group: any) => (
+                      <SelectItem key={group.ageGroup} value={group.ageGroup}>
+                        {group.ageGroup} ({group.gender}) - {group.teamCount} teams
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+
+          {selectedEvent && selectedAgeGroup && (
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">
+                Teams ({teamsQuery.data?.length || 0})
+              </h3>
+              <Button onClick={() => setIsAddTeamModalOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Team
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {selectedEvent && selectedAgeGroup && (
+        <Card>
+          <CardContent className="p-6">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Team Name</TableHead>
+                  <TableHead className="w-[100px]">Created</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {teamsQuery.isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={2} className="text-center">
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                    </TableCell>
+                  </TableRow>
+                ) : teamsQuery.data?.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={2} className="text-center text-muted-foreground">
+                      No teams found for this age group.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  teamsQuery.data?.map((team: any) => (
+                    <TableRow key={team.id}>
+                      <TableCell>{team.name}</TableCell>
+                      <TableCell>
+                        {new Date(team.createdAt).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
+
+      <Dialog open={isAddTeamModalOpen} onOpenChange={setIsAddTeamModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Team</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="team-name">Team Name</Label>
+              <Input
+                id="team-name"
+                value={newTeamName}
+                onChange={(e) => setNewTeamName(e.target.value)}
+                placeholder="Enter team name"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsAddTeamModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddTeam}
+              disabled={addTeamMutation.isPending}
+            >
+              {addTeamMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Adding...
+                </>
+              ) : (
+                "Add Team"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}

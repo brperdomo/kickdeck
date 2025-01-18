@@ -682,15 +682,21 @@ export function registerRoutes(app: Express): Server {
         const schedule = await db
           .select({
             game: games,
-            homeTeam: teams,
-            awayTeam: teams,
+            homeTeam: {
+              id: teams.id,
+              name: teams.name,
+            },
+            awayTeam: {
+              id: sql<number>`${teams}.id as away_team_id`,
+              name: sql<string>`${teams}.name as away_team_name`,
+            },
             field: fields,
             timeSlot: gameTimeSlots,
             ageGroup: eventAgeGroups,
           })
           .from(games)
           .leftJoin(teams, eq(games.homeTeamId, teams.id))
-          .leftJoin(teams, eq(games.awayTeamId, teams.id))
+          .leftJoin(teams.as('away_teams'), eq(games.awayTeamId, sql<number>`away_teams.id`))
           .leftJoin(fields, eq(games.fieldId, fields.id))
           .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
           .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
@@ -806,7 +812,111 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Teams management endpoints
+    app.get('/api/admin/teams', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.query.eventId as string);
+        const ageGroup = req.query.ageGroup as string;
+
+        if (!eventId || !ageGroup) {
+          return res.status(400).send("Event ID and age group are required");
+        }
+
+        // Get the age group ID first
+        const [ageGroupRecord] = await db
+          .select()
+          .from(eventAgeGroups)
+          .where(and(
+            eq(eventAgeGroups.eventId, eventId),
+            eq(eventAgeGroups.ageGroup, ageGroup)
+          ));
+
+        if (!ageGroupRecord) {
+          return res.status(404).send("Age group not found");
+        }
+
+        // Now get the teams for this age group
+        const teamsList = await db
+          .select()
+          .from(teams)
+          .where(and(
+            eq(teams.eventId, eventId),
+            eq(teams.ageGroupId, ageGroupRecord.id)
+          ))
+          .orderBy(teams.name);
+
+        res.json(teamsList);
+      } catch (error) {
+        console.error('Error fetching teams:', error);
+        res.status(500).send("Failed to fetch teams");
+      }
+    });
+
+    app.post('/api/admin/teams', isAdmin, async (req, res) => {
+      try {
+        const { name, eventId, ageGroup } = req.body;
+
+        if (!name || !eventId || !ageGroup) {
+          return res.status(400).send("Name, event ID, and age group are required");
+        }
+
+        // Get the age group ID first
+        const [ageGroupRecord] = await db
+          .select()
+          .from(eventAgeGroups)
+          .where(and(
+            eq(eventAgeGroups.eventId, eventId),
+            eq(eventAgeGroups.ageGroup, ageGroup)
+          ));
+
+        if (!ageGroupRecord) {
+          return res.status(404).send("Age group not found");
+        }
+
+        // Create the team
+        const [newTeam] = await db
+          .insert(teams)
+          .values({
+            name,
+            eventId,
+            ageGroupId: ageGroupRecord.id,
+            createdAt: new Date().toISOString(),
+          })
+          .returning();
+
+        res.json(newTeam);
+      } catch (error) {
+        console.error('Error creating team:', error);
+        res.status(500).send("Failed to create team");
+      }
+    });
+
+    // Add endpoint to get age groups for an event
+    app.get('/api/admin/events/:id/age-groups', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.params.id);
+
+        const ageGroups = await db
+          .select({
+            ageGroup: eventAgeGroups.ageGroup,
+            gender: eventAgeGroups.gender,
+            teamCount: sql<number>`count(${teams.id})`.mapWith(Number)
+          })
+          .from(eventAgeGroups)
+          .leftJoin(teams, eq(teams.ageGroupId, eventAgeGroups.id))
+          .where(eq(eventAgeGroups.eventId, eventId))
+          .groupBy(eventAgeGroups.id, eventAgeGroups.ageGroup, eventAgeGroups.gender)
+          .orderBy(eventAgeGroups.ageGroup);
+
+        res.json(ageGroups);
+      } catch (error) {
+        console.error('Error fetching age groups:', error);
+        res.status(500).send("Failed to fetch age groups");
+      }
+    });
+
     return httpServer;
+
   } catch (error) {
     log("Error registering routes: " + (error as Error).message);
     throw error;
