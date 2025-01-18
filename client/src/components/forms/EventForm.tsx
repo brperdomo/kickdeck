@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useNavigate } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Plus, Minus, Edit, Trash, Eye, ArrowRight } from "lucide-react";
+import { ArrowLeft, Edit, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -84,7 +84,7 @@ interface EventFormProps {
 }
 
 export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormProps) {
-  const [, navigate] = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<EventTab>('information');
   const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(initialData?.ageGroups || []);
   const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(

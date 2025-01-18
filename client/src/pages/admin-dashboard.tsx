@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useNavigate } from "wouter";
 import {
   Collapsible,
   CollapsibleContent,
@@ -1010,19 +1010,20 @@ function ComplexesView() {
       const response = await fetch(`/api/admin/fields/${fieldId}`, {
         method: 'DELETE',
       });
-      if (!responseok) throw new Error('Failed to delete field');
+      if (!response.ok) throw new Error('Failed to delete field');
       return response.json();
     },
     onSuccess: () => {
-      // Refetch      // Refetch fields after deletion
+      // Refetch fields after deletion
       fieldsQuery.refetch();
+      toast({ description: "Field deleted successfully" });
     }
   });
 
   // Add field status toggle mutation
   const toggleFieldStatusMutation = useMutation({
     mutationFn: async ({ fieldId, isOpen }: { fieldId: number, isOpen: boolean }) => {
-      const response= await fetch(`/api/admin/fields/${fieldId}/status`, {
+      const response = await fetch(`/api/admin/fields/${fieldId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isOpen })
@@ -1031,7 +1032,8 @@ function ComplexesView() {
       return response.json();
     },
     onSuccess: () => {
-      // Refetch fields after status update      fieldsQuery.refetch();
+      // Refetch fields after status update
+      fieldsQuery.refetch();
     }
   });
 
@@ -1229,7 +1231,7 @@ function ComplexesView() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 textdestructive"
+                          className="h-8 w-8 text-destructive"
                           onClick={() => {
                             if (window.confirm('Are you sure you want to delete this field?')) {
                               deleteFieldMutation.mutate(field.id);
@@ -1680,13 +1682,12 @@ function SchedulingView() {
 }
 
 function EventsView() {
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
 
-  // Query for events list
-  const eventsQuery = useQuery({
+  const { data: events, isLoading } = useQuery({
     queryKey: ['/api/admin/events'],
     queryFn: async () => {
       const response = await fetch('/api/admin/events');
@@ -1695,7 +1696,6 @@ function EventsView() {
     }
   });
 
-  // Query for selected event details
   const eventDetailsQuery = useQuery({
     queryKey: ['/api/admin/events', selectedEvent, 'edit'],
     queryFn: async () => {
@@ -1719,7 +1719,7 @@ function EventsView() {
       return response.json();
     },
     onSuccess: () => {
-      eventsQuery.refetch();
+      events.refetch();
       setIsEditModalOpen(false);
       setSelectedEvent(null);
       toast({
@@ -1749,7 +1749,7 @@ function EventsView() {
     <>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Events</h2>
-        <Button onClick={() => setLocation("/create-event")}>
+        <Button onClick={() => navigate("/create-event")}>
           <Plus className="h-4 w-4 mr-2" />
           Create Event
         </Button>
@@ -1762,11 +1762,11 @@ function EventsView() {
           </CardHeader>
           <CardContent>
             <div className="relative">
-              {eventsQuery.isLoading ? (
+              {isLoading ? (
                 <div className="flex justify-center p-4">
                   <Loader2 className="h-6 w-6 animate-spin" />
                 </div>
-              ) : eventsQuery.data?.length === 0 ? (
+              ) : events?.length === 0 ? (
                 <p className="text-center text-muted-foreground py-4">
                   No events found. Create your first event to get started.
                 </p>
@@ -1781,11 +1781,11 @@ function EventsView() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {eventsQuery.data?.map((event: any) => (
+                    {events?.map((event: any) => (
                       <TableRow key={event.id}>
                         <TableCell>{event.name}</TableCell>
                         <TableCell>
-                          {format(new Date(event.startDate), 'MMM d, yyyy')} - 
+                          {format(new Date(event.startDate), 'MMM d, yyyy')} -
                           {format(new Date(event.endDate), 'MMM d, yyyy')}
                         </TableCell>
                         <TableCell>
@@ -1892,18 +1892,19 @@ function EventsView() {
 }
 
 function AdminDashboard() {
-  const { user, logout } = useUser();
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<View>('events');
-  const [currentSettingsView, setCurrentSettingsView] = useState<SettingsView>('general');
+  const [settingsView, setSettingsView] = useState<SettingsView>('branding');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
+  const { user, logout } = useUser();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     if (!isAdminUser(user)) {
-      setLocation("/");
+      navigate("/");
     }
-  }, [user, setLocation]);
+  }, [user, navigate]);
 
   const { data: events, isLoading: eventsLoading, error: eventsError } = useQuery({
     queryKey: ["/api/admin/events"],
@@ -2000,34 +2001,32 @@ function AdminDashboard() {
                               <Button variant="ghost" size="sm">
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
-                            </</TableCell>
+                            </TableCell>
                           </TableRow>
                         ))
                       )}
                     </TableBody>
-                  </Table>
-                </div>
-              </CardContent>            </Card>
+                  </Table>                </div>
+              </CardContent>
+            </Card>
           </>
         );
       case 'administrators':
-        return <AdministratorsView/>;
+        return <AdministratorsView />;
       case 'events':
         return <EventsView />;
       case 'settings':
-        if (currentSettingsView === 'branding') {
-          return (
-            <BrandingPreviewProvider>
-              <OrganizationSettingsForm />
-            </BrandingPreviewProvider>
-          );
-        }
-
-        if (currentSettingsView === 'payments') {
-          return <PaymentsSettingsView />;
-        }
-
-        return null;
+        return (
+          <div>
+            {settingsView === 'branding' ? (
+              <BrandingPreviewProvider>
+                <OrganizationSettingsForm />
+              </BrandingPreviewProvider>
+            ) : settingsView === 'payments' ? (
+              <PaymentsSettingsView />
+            ) : null}
+          </div>
+        );
       case 'reports':
         return <ReportsView />;
       case 'account':
@@ -2053,67 +2052,101 @@ function AdminDashboard() {
     }
   };
 
-  if (!isAdminUser(user)) {
-    return null;
-  }
+  const { data: complexes, isLoading: complexesLoading, error: complexesError } = useQuery({
+    queryKey: ["/api/admin/complexes"],
+    enabled: isAdminUser(user) && currentView === 'complexes',
+    staleTime: 30000,
+    gcTime: 3600000,
+  });
+
+  const { data: schedule, isLoading: scheduleLoading, error: scheduleError } = useQuery({
+    queryKey: ["/api/admin/schedule"],
+    enabled: isAdminUser(user) && currentView === 'scheduling',
+    staleTime: 30000,
+    gcTime: 3600000,
+  });
+
+
+  const { data: teams, isLoading: teamsLoading, error: teamsError } = useQuery({
+    queryKey: ["/api/admin/teams"],
+    enabled: isAdminUser(user) && currentView === 'teams',
+    staleTime: 30000,
+    gcTime: 3600000,
+  });
+
+  const deleteFieldMutation = useMutation({
+    mutationFn: async (fieldId: number) => {
+      const response = await fetch(`/api/admin/fields/${fieldId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete field');
+      return response.json();
+    },
+    onSuccess: () => {
+      complexes.refetch();
+      fieldsQuery.refetch();
+      toast({ description: "Field deleted successfully" });
+    }
+  });
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar */}
-      <div className="w-64 bg-card border-r flex flex-col h-full">
-        <div className="p-4 flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center gap-2 mb-6">
-            <Calendar className="h-6 w-6 text-primary" />
-            <h1 className="font-semibold text-xl">Admin Dashboard</h1>
-          </div>
+    <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <div className="flex h-screen overflow-hidden bg-background">
+        {/* Sidebar */}
+        <div className="w-64 bg-card border-r flex flex-col h-full">
+          <div className="p-4 flex flex-col h-full">
+            {/* Header */}
+            <div className="flex items-center gap-2 mb-6">
+              <Calendar className="h-6 w-6 text-primary" />
+              <h1 className="font-semibold text-xl">Admin Dashboard</h1>
+            </div>
 
-          {/* Navigation */}
-          <div className="space-y-2">
-            <Button
-              variant={currentView === 'events' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setCurrentView('events')}
-            >
-              <Calendar className="mr-2 h-4 w-4" />
-              Events
-            </Button>
+            {/* Navigation */}
+            <div className="space-y-2">
+              <Button
+                variant={currentView === 'events' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setCurrentView('events')}
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                Events
+              </Button>
 
-            <Button
-              variant={currentView === 'households' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setCurrentView('households')}
-            >
-              <Home className="mr-2 h-4 w-4" />
-              Households
-            </Button>
+              <Button
+                variant={currentView === 'households' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setCurrentView('households')}
+              >
+                <Home className="mr-2 h-4 w-4" />
+                Households
+              </Button>
 
-            <Button
-              variant={currentView === 'administrators' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setCurrentView('administrators')}
-            >
-              <Shield className="mr-2 h-4 w-4" />
-              Administrators
-            </Button>
+              <Button
+                variant={currentView === 'administrators' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setCurrentView('administrators')}
+              >
+                <Shield className="mr-2 h-4 w-4" />
+                Administrators
+              </Button>
 
-            <Button
-              variant={currentView === 'reports' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setCurrentView('reports')}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Reports
-            </Button>
-            <Button
-              variant={currentView === 'complexes' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setCurrentView('complexes')}
-            >
-              <Building2 className="mr-2 h-4 w-4" />
-              Field Complexes
-            </Button>
-            <Button
+              <Button
+                variant={currentView === 'reports' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setCurrentView('reports')}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Reports
+              </Button>
+              <Button
+                variant={currentView === 'complexes' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setCurrentView('complexes')}
+              >
+                <Building2 className="mr-2 h-4 w-4" />
+                Field Complexes
+              </Button>
+              <Button
                 variant={currentView === 'scheduling' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
                 onClick={() => setCurrentView('scheduling')}
@@ -2121,89 +2154,90 @@ function AdminDashboard() {
                 <Calendar className="mr-2 h-4 w-4" />
                 Scheduling
               </Button>
-            <Button
-              variant={currentView === 'teams' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setCurrentView('teams')}
-            >
-              <Users className="mr-2 h-4 w-4" />
-              Teams
-            </Button>
-            <Collapsible
-              open={isSettingsOpen}
-              onOpenChange={setIsSettingsOpen}
-              className="space-y-2"
-            >
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant={currentView === 'settings' ? 'secondary' : 'ghost'}
-                  className="w-full justify-between"
-                >
-                  <span className="flex items-center">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </span>
-                  <ChevronRight
-                    className={`h-4 w-4 transition-transform duration-200 ${
-                      isSettingsOpen ? 'rotate-90' : ''
-                    }`}
-                  />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-2 pl-4">
-                <Button
-                  variant={currentSettingsView === 'branding' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setCurrentView('settings');
-                    setCurrentSettingsView('branding');
-                  }}
-                >
-                  <Palette className="mr-2 h-4 w-4" />
-                  Branding
-                </Button>
-                <Button
-                  variant={currentSettingsView === 'payments' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setCurrentView('settings');
-                    setCurrentSettingsView('payments');
-                  }}
-                >
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Payments
-                </Button>
-              </CollapsibleContent>
-            </Collapsible>
+              <Button
+                variant={currentView === 'teams' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setCurrentView('teams')}
+              >
+                <Users className="mr-2 h-4 w-4" />
+                Teams
+              </Button>
+              <Collapsible
+                open={isSettingsOpen}
+                onOpenChange={setIsSettingsOpen}
+                className="space-y-2"
+              >
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant={currentView === 'settings' ? 'secondary' : 'ghost'}
+                    className="w-full justify-between"
+                  >
+                    <span className="flex items-center">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </span>
+                    <ChevronRight
+                      className={`h-4 w-4 transition-transform duration-200 ${
+                        isSettingsOpen ? 'rotate-90' : ''
+                      }`}
+                    />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-2 pl-4">
+                  <Button
+                    variant={settingsView === 'branding' ? 'secondary' : 'ghost'}
+                    className="w-full justify-start"
+                    onClick={() => {
+                      setCurrentView('settings');
+                      setSettingsView('branding');
+                    }}
+                  >
+                    <Palette className="mr-2 h-4 w-4" />
+                    Branding
+                  </Button>
+                  <Button
+                    variant={settingsView === 'payments' ? 'secondary' : 'ghost'}
+                    className="w-full justify-start"
+                    onClick={() => {
+                      setCurrentView('settings');
+                      setSettingsView('payments');
+                    }}
+                  >
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Payments
+                  </Button>
+                </CollapsibleContent>
+              </Collapsible>
 
-            <Button
-              variant={currentView === 'account' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setCurrentView('account')}
-            >
-              <User className="mr-2 h-4 w-4" />
-              My Account
-            </Button>
-          </div>
-          {/* Footer */}
-          <div className="mt-auto space-y-2">
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-muted-foreground"
-              onClick={() => logout()}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
-            <p className="text-xs text-center text-muted-foreground pt-4 border-t">
-              Powered by MatchPro
-            </p>
+              <Button
+                variant={currentView === 'account' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setCurrentView('account')}
+              >
+                <User className="mr-2 h-4 w-4" />
+                My Account
+              </Button>
+            </div>
+            {/* Footer */}
+            <div className="mt-auto space-y-2">
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-muted-foreground"
+                onClick={() => logout()}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
+              <p className="text-xs text-center text-muted-foreground pt-4 border-t">
+                Powered by MatchPro
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto p-8">
-        {renderContent()}
+        {/* Main Content */}
+        <div className="flex-1 overflow-auto p-8">
+          {renderContent()}
+        </div>
       </div>
     </div>
   );
@@ -2566,14 +2600,14 @@ function AdministratorsView() {
                 )}
               />
               <DialogFooter>
-                <Button 
-                  type="button" 
-                  variant="outline" 
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={() => setIsCreateModalOpen(false)}
                 >
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   type="submit"
                   disabled={createAdminMutation.isPending}
                 >
@@ -2633,4 +2667,6 @@ function AdministratorsView() {
       </Card>
     </>
   );
+}
+
 }
