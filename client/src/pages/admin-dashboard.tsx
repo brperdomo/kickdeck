@@ -15,6 +15,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
 import { SelectUser } from "@db/schema";
 import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import * as z from "zod";
 import {
   Calendar,
   Search,
@@ -82,9 +93,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
 import { format } from 'date-fns';
-import * as z from 'zod';
-import { useForm, Form, FormField, FormItem, FormControl, FormLabel, FormMessage } from '@mantine/forms';
-import { zodResolver } from '@mantine/zod';
+
 
 interface Complex {
   id: number;
@@ -1001,7 +1010,7 @@ function ComplexesView() {
       const response = await fetch(`/api/admin/fields/${fieldId}`, {
         method: 'DELETE',
       });
-      if (!response.ok) throw new Error('Failed to delete field');
+      if (!responseok) throw new Error('Failed to delete field');
       return response.json();
     },
     onSuccess: () => {
@@ -1991,7 +2000,7 @@ function AdminDashboard() {
                               <Button variant="ghost" size="sm">
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
-                            </TableCell>
+                            </</TableCell>
                           </TableRow>
                         ))
                       )}

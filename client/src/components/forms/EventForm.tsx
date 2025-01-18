@@ -14,13 +14,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Editor } from '@tinymce/tinymce-react';
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 
-// Types and interfaces from create-event.tsx
+// Types and interfaces
 export interface EventData {
   name: string;
   startDate: string;
@@ -84,7 +84,7 @@ interface EventFormProps {
 }
 
 export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormProps) {
-  const [, setLocation] = useLocation();
+  const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<EventTab>('information');
   const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(initialData?.ageGroups || []);
   const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(
@@ -134,7 +134,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setLocation("/admin")}
+          onClick={() => navigate("/admin")}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
@@ -340,7 +340,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => setLocation("/admin")}
+                      onClick={() => navigate("/admin")}
                     >
                       Cancel
                     </Button>
