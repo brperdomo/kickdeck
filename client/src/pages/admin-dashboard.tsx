@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import {
   Collapsible,
   CollapsibleContent,
@@ -9,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUser } from "@/hooks/use-user";
-import { useLocation } from "wouter";
+//import { useLocation } from "wouter";
 import { useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
@@ -1001,7 +1002,7 @@ function ComplexesView() {
       return response.json();
     },
     onSuccess: () => {
-      // Refetch fields after deletion
+      // Refetch      // Refetch fields after deletion
       fieldsQuery.refetch();
     }
   });
@@ -1667,6 +1668,7 @@ function SchedulingView() {
 }
 
 function EventsView() {
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
@@ -1735,7 +1737,7 @@ function EventsView() {
     <>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Events</h2>
-        <Button onClick={() => navigate("/create-event")}>
+        <Button onClick={() => setLocation("/create-event")}>
           <Plus className="h-4 w-4 mr-2" />
           Create Event
         </Button>
@@ -1879,7 +1881,7 @@ function EventsView() {
 
 function AdminDashboard() {
   const { user, logout } = useUser();
-  const [, navigate] = useLocation();
+  const [, setLocation] = useLocation();
   const [currentView, setCurrentView] = useState<View>('events');
   const [currentSettingsView, setCurrentSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -1887,9 +1889,9 @@ function AdminDashboard() {
   const { toast } = useToast();
   useEffect(() => {
     if (!isAdminUser(user)) {
-      navigate("/");
+      setLocation("/");
     }
-  }, [user, navigate]);
+  }, [user, setLocation]);
 
   const { data: events, isLoading: eventsLoading, error: eventsError } = useQuery({
     queryKey: ["/api/admin/events"],
@@ -1993,11 +1995,9 @@ function AdminDashboard() {
                     </TableBody>
                   </Table>
                 </div>
-              </CardContent>
-            </Card>
+              </CardContent>            </Card>
           </>
         );
-
       case 'administrators':
         return (
           <>
@@ -2075,7 +2075,6 @@ function AdminDashboard() {
             </Card>
           </>
         );
-
       case 'events':
         return <EventsView />;
       case 'settings':
