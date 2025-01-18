@@ -79,6 +79,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
+import { ScheduleVisualization } from "@/components/ScheduleVisualization";
 
 interface Complex {
   id: number;
@@ -1007,7 +1008,7 @@ function ComplexesView() {
   // Add field status toggle mutation
   const toggleFieldStatusMutation = useMutation({
     mutationFn: async ({ fieldId, isOpen }: { fieldId: number, isOpen: boolean }) => {
-      const response= await fetch(`/api/admin/admin/fields/${fieldId}/status`, {
+      const response= await fetch(`/api/admin/fields/${fieldId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isOpen })
@@ -1488,11 +1489,15 @@ function ComplexesView() {
 }
 
 function SchedulingView() {
-  const { toast } = useToast();
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [scheduleParams, setScheduleParams] = useState({
+    gamesPerDay: 6,
+    minutesPerGame: 60,
+    breakBetweenGames: 15
+  });
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  // Query for events that need scheduling
+  // Query for events
   const eventsQuery = useQuery({
     queryKey: ['/api/admin/events'],
     queryFn: async () => {
@@ -1502,11 +1507,11 @@ function SchedulingView() {
     }
   });
 
-  // Query for schedule if an event is selected
+  // Query for schedule
   const scheduleQuery = useQuery({
     queryKey: ['/api/admin/events', selectedEvent, 'schedule'],
     queryFn: async () => {
-      if (!selectedEvent) return null;
+      if (!selectedEvent) return { games: [] };
       const response = await fetch(`/api/admin/events/${selectedEvent}/schedule`);
       if (!response.ok) throw new Error('Failed to fetch schedule');
       return response.json();
@@ -1534,52 +1539,46 @@ function SchedulingView() {
       scheduleQuery.refetch();
       toast({
         title: "Success",
-        description: "Tournament schedule generated successfully!",
+        description: "Schedule generated successfully",
       });
     },
     onError: (error) => {
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to generate schedule",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   });
 
-  const handleGenerateSchedule = async (eventId: number) => {
-    try {
-      setIsGenerating(true);
-      await generateScheduleMutation.mutateAsync({
-        eventId,
-        gamesPerDay: 8, // Default values, can be made configurable
-        minutesPerGame: 60,
-        breakBetweenGames: 15
-      });
-    } finally {
-      setIsGenerating(false);
-    }
+  const handleGenerateSchedule = (eventId: number) => {
+    generateScheduleMutation.mutate({
+      eventId,
+      ...scheduleParams
+    });
   };
 
   return (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Tournament Scheduling</h2>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Game Scheduling</h2>
       </div>
 
-      <div className="grid gap-6">
-        {/* Event Selection */}
-        <Card>
+      <div className="grid grid-cols-4 gap-6">
+        {/* Settings Panel */}
+        <Card className="col-span-1">
           <CardHeader>
-            <CardTitle>Select Event</CardTitle>
+            <CardTitle>Settings</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="space-y-4">
+            <div>
+              <Label>Event</Label>
               <Select
                 value={selectedEvent?.toString()}
                 onValueChange={(value) => setSelectedEvent(parseInt(value))}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select an event to schedule" />
+                  <SelectValue placeholder="Select Event" />
                 </SelectTrigger>
                 <SelectContent>
                   {eventsQuery.data?.map((event: any) => (
@@ -1589,72 +1588,80 @@ function SchedulingView() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
 
-              {selectedEvent && (
+            {selectedEvent && (
+              <>
+                <div className="space-y-2">
+                  <Label>Games Per Day</Label>
+                  <Input
+                    type="number"
+                    value={scheduleParams.gamesPerDay}
+                    onChange={(e) => setScheduleParams(prev => ({
+                      ...prev,
+                      gamesPerDay: parseInt(e.target.value)
+                    }))}
+                    min={1}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Minutes Per Game</Label>
+                  <Input
+                    type="number"
+                    value={scheduleParams.minutesPerGame}
+                    onChange={(e) => setScheduleParams(prev => ({
+                      ...prev,
+                      minutesPerGame: parseInt(e.target.value)
+                    }))}
+                    min={30}
+                    step={15}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Break Between Games (minutes)</Label>
+                  <Input
+                    type="number"
+                    value={scheduleParams.breakBetweenGames}
+                    onChange={(e) => setScheduleParams(prev => ({
+                      ...prev,
+                      breakBetweenGames: parseInt(e.target.value)
+                    }))}
+                    min={5}
+                    step={5}
+                  />
+                </div>
+
                 <Button
                   onClick={() => handleGenerateSchedule(selectedEvent)}
-                  disabled={isGenerating}
+                  disabled={generateScheduleMutation.isPending}
                   className="w-full"
                 >
-                  {isGenerating ? (
+                  {generateScheduleMutation.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating Schedule...
+                      Generating...
                     </>
                   ) : (
-                    <>
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Generate Schedule
-                    </>
+                    "Generate Schedule"
                   )}
                 </Button>
-              )}
-            </div>
+              </>
+            )}
           </CardContent>
         </Card>
 
-        {/* Schedule Display */}
-        {selectedEvent && scheduleQuery.data && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Tournament Schedule</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Time</TableHead>
-                    <TableHead>Field</TableHead>
-                    <TableHead>Age Group</TableHead>
-                    <TableHead>Teams</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {scheduleQuery.data.games?.map((game: any) => (
-                    <TableRow key={game.id}>
-                      <TableCell>
-                        {new Date(game.startTime).toLocaleTimeString()} - {new Date(game.endTime).toLocaleTimeString()}
-                      </TableCell>
-                      <TableCell>{game.fieldName}</TableCell>
-                      <TableCell>{game.ageGroup}</TableCell>
-                      <TableCell>
-                        {game.homeTeam} vs {game.awayTeam}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={game.status === 'scheduled' ? 'default' : 'secondary'}>
-                          {game.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        )}
+        {/* Schedule Visualization */}
+        <div className="col-span-3">
+          <ScheduleVisualization
+            games={scheduleQuery.data?.games || []}
+            isLoading={scheduleQuery.isLoading}
+            date={selectedDate}
+          />
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

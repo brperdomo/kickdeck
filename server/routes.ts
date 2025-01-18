@@ -682,38 +682,34 @@ export function registerRoutes(app: Express): Server {
         const schedule = await db
           .select({
             game: games,
-            homeTeam: {
-              id: teams.id,
-              name: teams.name,
-            },
-            awayTeam: {
-              id: sql<number>`${teams}.id as away_team_id`,
-              name: sql<string>`${teams}.name as away_team_name`,
-            },
+            homeTeam: teams,
+            awayTeam: sql<{ id: number; name: string }>`json_build_object('id', ${sql.raw('away_teams')}.id, 'name', ${sql.raw('away_teams')}.name)`,
             field: fields,
             timeSlot: gameTimeSlots,
             ageGroup: eventAgeGroups,
           })
           .from(games)
           .leftJoin(teams, eq(games.homeTeamId, teams.id))
-          .leftJoin(teams.as('away_teams'), eq(games.awayTeamId, sql<number>`away_teams.id`))
+          .leftJoin(sql.raw('teams as away_teams'), eq(games.awayTeamId, sql.raw('away_teams.id')))
           .leftJoin(fields, eq(games.fieldId, fields.id))
           .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
           .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
           .where(eq(games.eventId, eventId))
           .orderBy(gameTimeSlots.startTime);
 
-        // Format the schedule for frontend display
-        const formattedSchedule = schedule.map(item => ({
-          id: item.game.id,
-          startTime: item.timeSlot.startTime,
-          endTime: item.timeSlot.endTime,
-          fieldName: item.field.name,
-          ageGroup: item.ageGroup.ageGroup,
-          homeTeam: item.homeTeam.name,
-          awayTeam: item.awayTeam.name,
-          status: item.game.status,
-        }));
+        // Format the schedule for frontend display with null checks
+        const formattedSchedule = schedule
+          .filter(item => item.timeSlot && item.field && item.homeTeam && item.ageGroup)
+          .map(item => ({
+            id: item.game.id,
+            startTime: item.timeSlot!.startTime,
+            endTime: item.timeSlot!.endTime,
+            fieldName: item.field!.name,
+            ageGroup: item.ageGroup!.ageGroup,
+            homeTeam: item.homeTeam!.name,
+            awayTeam: (item.awayTeam as { name: string }).name,
+            status: item.game.status,
+          }));
 
         res.json({ games: formattedSchedule });
       } catch (error) {
