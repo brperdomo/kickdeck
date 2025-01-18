@@ -1,25 +1,21 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
-import { EventForm } from "@/components/forms/EventForm";
+import { EventForm, type EventData } from "@/components/forms/EventForm";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-import type { EventData } from "@/lib/types/event";
 
 export default function EditEvent() {
   const { id } = useParams();
   const [, navigate] = useLocation();
   const { toast } = useToast();
 
-  // Query for event details including all sections
+  // Query for event details
   const eventQuery = useQuery({
-    queryKey: [`/api/admin/events/${id}/edit`],
+    queryKey: ['/api/admin/events', id, 'edit'],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${id}/edit`);
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to fetch event details');
-      }
-      return response.json() as Promise<EventData>;
+      if (!response.ok) throw new Error('Failed to fetch event details');
+      return response.json();
     },
   });
 
@@ -31,12 +27,7 @@ export default function EditEvent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to update event');
-      }
-
+      if (!response.ok) throw new Error('Failed to update event');
       return response.json();
     },
     onSuccess: () => {
@@ -66,9 +57,7 @@ export default function EditEvent() {
   if (eventQuery.error) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-red-500">
-          {eventQuery.error instanceof Error ? eventQuery.error.message : "Error loading event details"}
-        </p>
+        <p className="text-red-500">Error loading event details</p>
       </div>
     );
   }
