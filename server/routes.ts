@@ -673,7 +673,12 @@ export function registerRoutes(app: Express): Server {
             return res.status(404).send("Event not found");
           }
 
-          // Update age groups - first delete existing ones
+          // First, delete tournament groups associated with the event's age groups
+          await tx
+            .delete(tournamentGroups)
+            .where(eq(tournamentGroups.eventId, eventId));
+
+          // Then delete age groups
           await tx
             .delete(eventAgeGroups)
             .where(eq(eventAgeGroups.eventId, eventId));
@@ -948,7 +953,7 @@ export function registerRoutes(app: Express): Server {
 
         res.json({ message: "Schedule framework generated successfully" });
       } catch (error) {
-        console.error('Errorgenerating schedule:', error);
+        console.error('Error generating schedule:', error);
         res.status(500).send("Failed to generate schedule");
       }
     });
@@ -967,26 +972,30 @@ export function registerRoutes(app: Express): Server {
         const [ageGroupRecord] = await db
           .select()
           .from(eventAgeGroups)
-          .where(and(
-            eq(eventAgeGroups.eventId, eventId),
-            eq(eventAgeGroups.ageGroup, ageGroup)
-          ));
+          .where(
+            and(
+              eq(eventAgeGroups.eventId, eventId),
+              eq(eventAgeGroups.ageGroup, ageGroup)
+            )
+          );
 
         if (!ageGroupRecord) {
           return res.status(404).send("Age group not found");
         }
 
-        // Now get the teams for this age group
-        const teamsList = await db
+        // Fetch teams for this age group
+        const teams = await db
           .select()
           .from(teams)
-          .where(and(
-            eq(teams.eventId, eventId),
-            eq(teams.ageGroupId, ageGroupRecord.id)
-          ))
+          .where(
+            and(
+              eq(teams.eventId, eventId),
+              eq(teams.ageGroupId, ageGroupRecord.id)
+            )
+          )
           .orderBy(teams.name);
 
-        res.json(teamsList);
+        res.json(teams);
       } catch (error) {
         console.error('Error fetching teams:', error);
         res.status(500).send("Failed to fetch teams");
