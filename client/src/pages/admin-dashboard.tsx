@@ -80,6 +80,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
+import { format } from 'date-fns';
 
 interface Complex {
   id: number;
@@ -1667,8 +1668,10 @@ function SchedulingView() {
 
 function EventsView() {
   const { toast } = useToast();
-  const [, navigate] = useLocation();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
 
+  // Query for events list
   const eventsQuery = useQuery({
     queryKey: ['/api/admin/events'],
     queryFn: async () => {
@@ -1678,21 +1681,55 @@ function EventsView() {
     }
   });
 
-  if (eventsQuery.isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
+  // Query for selected event details
+  const eventDetailsQuery = useQuery({
+    queryKey: ['/api/admin/events', selectedEvent, 'edit'],
+    queryFn: async () => {
+      if (!selectedEvent) return null;
+      const response = await fetch(`/api/admin/events/${selectedEvent}/edit`);
+      if (!response.ok) throw new Error('Failed to fetch event details');
+      return response.json();
+    },
+    enabled: !!selectedEvent
+  });
 
-  if (eventsQuery.error) {
-    return (
-      <div className="p-8 text-center">
-        <p className="text-red-500">Error loading events</p>
-      </div>
-    );
-  }
+  // Mutation for updating event
+  const updateEventMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch(`/api/admin/events/${selectedEvent}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to update event');
+      return response.json();
+    },
+    onSuccess: () => {
+      eventsQuery.refetch();
+      setIsEditModalOpen(false);
+      setSelectedEvent(null);
+      toast({
+        title: "Success",
+        description: "Event updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update event",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleEditClick = (eventId: number) => {
+    setSelectedEvent(eventId);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdate = (formData: any) => {
+    updateEventMutation.mutate(formData);
+  };
 
   return (
     <>
@@ -1704,53 +1741,138 @@ function EventsView() {
         </Button>
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Date Range</TableHead>
-                <TableHead>Age Groups</TableHead>
-                <TableHead>Complexes</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {eventsQuery.data?.map((event) => (
-                <TableRow key={event.id}>
-                  <TableCell>{event.name}</TableCell>
-                  <TableCell>
-                    {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>{event.ageGroupCount} groups</TableCell>
-                  <TableCell>{event.complexCount} complexes</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {eventsQuery.data?.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                    No events found. Create your first event to get started!
-                  </TableCell>
-                </TableRow>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>All Events</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="relative">
+              {eventsQuery.isLoading ? (
+                <div className="flex justify-center p-4">
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                </div>
+              ) : eventsQuery.data?.length === 0 ? (
+                <p className="text-center text-muted-foreground py-4">
+                  No events found. Create your first event to get started.
+                </p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Event Name</TableHead>
+                      <TableHead>Date Range</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {eventsQuery.data?.map((event: any) => (
+                      <TableRow key={event.id}>
+                        <TableCell>{event.name}</TableCell>
+                        <TableCell>
+                          {format(new Date(event.startDate), 'MMM d, yyyy')} - 
+                          {format(new Date(event.endDate), 'MMM d, yyyy')}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
+                            {event.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEditClick(event.id)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Edit Event Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Edit Event</DialogTitle>
+          </DialogHeader>
+          {eventDetailsQuery.isLoading ? (
+            <div className="flex justify-center p-4">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : eventDetailsQuery.data ? (
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              // TODO: Add form handling
+              handleUpdate(eventDetailsQuery.data);
+            }}>
+              <div className="grid gap-4 py-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="name">Event Name</Label>
+                  <Input
+                    id="name"
+                    defaultValue={eventDetailsQuery.data.name}
+                    placeholder="Enter event name"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="startDate">Start Date</Label>
+                    <Input
+                      id="startDate"
+                      type="date"
+                      defaultValue={eventDetailsQuery.data.startDate.split('T')[0]}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="endDate">End Date</Label>
+                    <Input
+                      id="endDate"
+                      type="date"
+                      defaultValue={eventDetailsQuery.data.endDate.split('T')[0]}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="details">Event Details</Label>
+                  <Textarea
+                    id="details"
+                    defaultValue={eventDetailsQuery.data.details || ''}
+                    placeholder="Enter event details"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditModalOpen(false)}
+                  type="button"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={updateEventMutation.isPending}>
+                  {updateEventMutation.isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Save Changes
+                </Button>
+              </DialogFooter>
+            </form>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

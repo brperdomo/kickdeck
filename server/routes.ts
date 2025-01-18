@@ -644,6 +644,101 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Add this new update endpoint after the existing event creation endpoint
+    app.patch('/api/admin/events/:id', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.params.id);
+        const eventData = req.body;
+
+        // Start a transaction to update event and related records
+        await db.transaction(async (tx) => {
+          // Update the event
+          const [updatedEvent] = await tx
+            .update(events)
+            .set({
+              name: eventData.name,
+              startDate: eventData.startDate,
+              endDate: eventData.endDate,
+              timezone: eventData.timezone,
+              applicationDeadline: eventData.applicationDeadline,
+              details: eventData.details || null,
+              agreement: eventData.agreement || null,
+              refundPolicy: eventData.refundPolicy || null,
+              updatedAt: new Date().toISOString(),
+            })
+            .where(eq(events.id, eventId))
+            .returning();
+
+          if (!updatedEvent) {
+            return res.status(404).send("Event not found");
+          }
+
+          // Update age groups - first delete existing ones
+          await tx
+            .delete(eventAgeGroups)
+            .where(eq(eventAgeGroups.eventId, eventId));
+
+          // Create new age groups
+          for (const group of eventData.ageGroups) {
+            await tx
+              .insert(eventAgeGroups)
+              .values({
+                eventId: eventId,
+                gender: group.gender,
+                projectedTeams: group.projectedTeams,
+                birthDateStart: group.birthDateStart,
+                birthDateEnd: group.birthDateEnd,
+                scoringRule: group.scoringRule,
+                ageGroup: group.ageGroup,
+                fieldSize: group.fieldSize,
+                amountDue: group.amountDue || null,
+                createdAt: new Date().toISOString(),
+              });
+          }
+
+          // Update complex assignments
+          await tx
+            .delete(eventComplexes)
+            .where(eq(eventComplexes.eventId, eventId));
+
+          for (const complexId of eventData.selectedComplexIds) {
+            await tx
+              .insert(eventComplexes)
+              .values({
+                eventId: eventId,
+                complexId: complexId,
+                createdAt: new Date().toISOString(),
+              });
+          }
+
+          // Update field size assignments
+          await tx
+            .delete(eventFieldSizes)
+            .where(eq(eventFieldSizes.eventId, eventId));
+
+          for (const [fieldId, fieldSize] of Object.entries(eventData.complexFieldSizes)) {
+            await tx
+              .insert(eventFieldSizes)
+              .values({
+                eventId: eventId,
+                fieldId: parseInt(fieldId),
+                fieldSize: fieldSize,
+                createdAt: new Date().toISOString(),
+              });
+          }
+        });
+
+        res.json({ message: "Event updated successfully" });
+      } catch (error) {
+        console.error('Error updating event:', error);
+        let errorMessage = "Failed to update event";
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        res.status(500).send(errorMessage);
+      }
+    });
+
     // Add this new endpoint after the existing event creation endpoint
     app.get('/api/admin/events', isAdmin, async (req, res) => {
       try {
@@ -670,6 +765,56 @@ export function registerRoutes(app: Express): Server {
       } catch (error) {
         console.error('Error fetching events:', error);
         res.status(500).send("Failed to fetch events");
+      }
+    });
+
+    // Add this new endpoint to get event details for editing
+    app.get('/api/admin/events/:id/edit', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.params.id);
+
+        // Get event details
+        const [event] = await db
+          .select()
+          .from(events)
+          .where(eq(events.id, eventId));
+
+        if (!event) {
+          return res.status(404).send("Event not found");
+        }
+
+        // Get age groups
+        const ageGroups = await db
+          .select()
+          .from(eventAgeGroups)
+          .where(eq(eventAgeGroups.eventId, eventId));
+
+        // Get complex assignments
+        const complexAssignments = await db
+          .select()
+          .from(eventComplexes)
+          .where(eq(eventComplexes.eventId, eventId));
+
+        // Get field size assignments
+        const fieldSizes = await db
+          .select()
+          .from(eventFieldSizes)
+          .where(eq(eventFieldSizes.eventId, eventId));
+
+        // Format response
+        const response = {
+          ...event,
+          ageGroups,
+          selectedComplexIds: complexAssignments.map(a => a.complexId),
+          complexFieldSizes: Object.fromEntries(
+            fieldSizes.map(f => [f.fieldId, f.fieldSize])
+          )
+        };
+
+        res.json(response);
+      } catch (error) {
+        console.error('Error fetching event details:', error);
+        res.status(500).send("Failed to fetch event details");
       }
     });
 
@@ -803,7 +948,7 @@ export function registerRoutes(app: Express): Server {
 
         res.json({ message: "Schedule framework generated successfully" });
       } catch (error) {
-        console.error('Error generating schedule:', error);
+        console.error('Errorgenerating schedule:', error);
         res.status(500).send("Failed to generate schedule");
       }
     });
