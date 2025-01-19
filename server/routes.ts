@@ -883,7 +883,7 @@ export function registerRoutes(app: Express): Server {
         const complexData = await db
           .select({
             complex: complexes,
-            fields: sql<any>`COALESCE(json_agg(
+            fields: sql<any>`json_agg(
               CASE WHEN ${fields.id} IS NOT NULL THEN
                 json_build_object(
                   'id', ${fields.id},
@@ -895,27 +895,13 @@ export function registerRoutes(app: Express): Server {
                 )
               ELSE NULL
               END
-            ) FILTER (WHERE ${fields.id} IS NOT NULL), '[]')::json`,
+            ) FILTER (WHERE ${fields.id} IS NOT NULL)`.mapWith((f) => f || []),
             openFields: sql<number>`count(case when ${fields.isOpen} = true then 1 end)`.mapWith(Number),
             closedFields: sql<number>`count(case when ${fields.isOpen} = false then 1 end)`.mapWith(Number),
           })
           .from(complexes)
           .leftJoin(fields, eq(complexes.id, fields.complexId))
-          .groupBy(
-            complexes.id,
-            complexes.name,
-            complexes.address,
-            complexes.city,
-            complexes.state,
-            complexes.country,
-            complexes.openTime,
-            complexes.closeTime,
-            complexes.isOpen,
-            complexes.rules,
-            complexes.directions,
-            complexes.createdAt,
-            complexes.updatedAt
-          )
+          .groupBy(complexes.id)
           .orderBy(complexes.name);
 
         // Get scoring rules
@@ -959,7 +945,7 @@ export function registerRoutes(app: Express): Server {
           })),
           complexes: complexData.map(({ complex, fields, openFields, closedFields }) => ({
             ...complex,
-            fields: Array.isArray(fields) ? fields : [],
+            fields: fields || [],
             openFields: openFields || 0,
             closedFields: closedFields || 0
           })),
@@ -973,7 +959,7 @@ export function registerRoutes(app: Express): Server {
           availableAgeGroups: ageGroups.map(({ ageGroup }) => ageGroup.ageGroup),
           availableFieldSizes: [...new Set(fieldSizes.map(f => f.fieldSize))].filter(Boolean),
           timeZones: event.timezone ? [event.timezone] : [], // Include current timezone
-          validationErrors: {} // Empty object for frontendvalidation
+          validationErrors: {} // Empty object for frontend validation
         };
 
         res.json(response);
@@ -985,7 +971,8 @@ export function registerRoutes(app: Express): Server {
 
     // Add this new endpoint after the existing event endpoints
     app.get('/api/admin/events/:id', isAdmin, async (req, res) => {
-      try {        const eventId = parseInt(req.params.id);
+      try {
+        const eventId = parseInt(req.params.id);
 
         // Get event details
         const [event] = await db
