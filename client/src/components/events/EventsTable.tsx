@@ -12,8 +12,25 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { formatDate } from "@/lib/utils";
-import { Calendar, Edit, Trash2, Copy } from "lucide-react";
+import {
+  Calendar,
+  Edit,
+  Trash2,
+  FileQuestion,
+  User,
+  TagsIcon,
+  Printer,
+  AlertTriangle,
+} from "lucide-react";
 import { Loader2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Event {
   id: number;
@@ -21,6 +38,8 @@ interface Event {
   startDate: string;
   endDate: string;
   status: "draft" | "published" | "in_progress" | "completed" | "cancelled";
+  applicationsReceived: number;
+  teamsAccepted: number;
 }
 
 export function EventsTable() {
@@ -81,6 +100,8 @@ export function EventsTable() {
             <TableRow>
               <TableHead>Event Name</TableHead>
               <TableHead>Date Range</TableHead>
+              <TableHead>Applications</TableHead>
+              <TableHead>Teams</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -95,36 +116,48 @@ export function EventsTable() {
                     <span>{formatDate(event.startDate)} - {formatDate(event.endDate)}</span>
                   </div>
                 </TableCell>
+                <TableCell>{event.applicationsReceived}</TableCell>
+                <TableCell>{event.teamsAccepted}</TableCell>
                 <TableCell>
-                  {event.status}
+                  <span className="capitalize">{event.status.replace('_', ' ')}</span>
                 </TableCell>
-                <TableCell className="text-right space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate(`/admin/events/${event.id}/edit`)}
-                    className="inline-flex items-center justify-center"
-                  >
-                    <Edit className="h-4 w-4" />
-                    <span className="ml-2">Edit Details</span>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="inline-flex items-center justify-center"
-                  >
-                    <Copy className="h-4 w-4" />
-                    <span className="ml-2">Duplicate</span>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDelete(event.id)}
-                    className="inline-flex items-center justify-center text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span className="ml-2">Delete</span>
-                  </Button>
+                <TableCell className="text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        Actions
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuLabel>Event Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/edit`)}>
+                        <Edit className="h-4 w-4 mr-2" /> Edit Details
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/application-questions`)}>
+                        <FileQuestion className="h-4 w-4 mr-2" /> Application Questions
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/player-questions`)}>
+                        <User className="h-4 w-4 mr-2" /> Player Questions
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/discounts`)}>
+                        <TagsIcon className="h-4 w-4 mr-2" /> Discounts
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/game-cards`)}>
+                        <Printer className="h-4 w-4 mr-2" /> Print Game Cards
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/red-cards`)}>
+                        <AlertTriangle className="h-4 w-4 mr-2" /> Red Card Report
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => handleDelete(event.id)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
