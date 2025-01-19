@@ -820,20 +820,19 @@ export function registerRoutes(app: Express): Server {
         const eventsList = await db
           .select({
             event: events,
-            ageGroupCount: sql<number>`count(distinct ${eventAgeGroups.id})`.mapWith(Number),
-            complexCount: sql<number>`count(distinct ${eventComplexes.id})`.mapWith(Number),
+            applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
+            teamCount: sql<number>`count(case when ${teams.status} = 'accepted' then 1 end)`.mapWith(Number),
           })
           .from(events)
-          .leftJoin(eventAgeGroups, eq(events.id, eventAgeGroups.eventId))
-          .leftJoin(eventComplexes, eq(events.id, eventComplexes.eventId))
+          .leftJoin(teams, eq(events.id, teams.eventId))
           .groupBy(events.id)
-          .orderBy(events.createdAt);
+          .orderBy(events.startDate);
 
         // Format the response
-        const formattedEvents = eventsList.map(({ event, ageGroupCount, complexCount }) => ({
+        const formattedEvents = eventsList.map(({ event, applicationCount, teamCount }) => ({
           ...event,
-          ageGroupCount,
-          complexCount
+          applicationCount,
+          teamCount
         }));
 
         res.json(formattedEvents);
@@ -1326,6 +1325,68 @@ export function registerRoutes(app: Express): Server {
       } catch (error) {
         console.error('Error deleting team:', error);
         res.status(500).send("Failed to delete team");
+      }
+    });
+
+    // Add these new endpoints for event management
+    app.get('/api/admin/events', isAdmin, async (req, res) => {
+      try {
+        const eventsList = await db
+          .select({
+            event: events,
+            applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
+            teamCount: sql<number>`count(case when ${teams.status} = 'accepted' then 1 end)`.mapWith(Number),
+          })
+          .from(events)
+          .leftJoin(teams, eq(events.id, teams.eventId))
+          .groupBy(events.id)
+          .orderBy(events.startDate);
+
+        // Format the response
+        const formattedEvents = eventsList.map(({ event, applicationCount, teamCount }) => ({
+          ...event,
+          applicationCount,
+          teamCount
+        }));
+
+        res.json(formattedEvents);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).send("Failed to fetch events");
+      }
+    });
+
+    app.delete('/api/admin/events/:id', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.params.id);
+
+        // Start a transaction to handle cascade deletion
+        await db.transaction(async (tx) => {
+          // Delete related records first
+          await tx.delete(eventAgeGroups).where(eq(eventAgeGroups.eventId, eventId));
+          await tx.delete(eventComplexes).where(eq(eventComplexes.eventId, eventId));
+          await tx.delete(eventFieldSizes).where(eq(eventFieldSizes.eventId, eventId));
+          await tx.delete(teams).where(eq(teams.eventId, eventId));
+
+          // Finally delete the event
+          const [deletedEvent] = await tx
+            .delete(events)
+            .where(eq(events.id, eventId))
+            .returning();
+
+          if (!deletedEvent) {
+            throw new Error("Event not found");
+          }
+        });
+
+        res.json({ message: "Event deleted successfully" });
+      } catch (error) {
+        console.error('Error deleting event:', error);
+        let errorMessage = "Failed to delete event";
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        res.status(500).send(errorMessage);
       }
     });
 
