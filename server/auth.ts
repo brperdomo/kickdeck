@@ -3,7 +3,7 @@ import { IVerifyOptions, Strategy as LocalStrategy } from "passport-local";
 import { type Express } from "express";
 import session from "express-session";
 import createMemoryStore from "memorystore";
-import { users, insertUserSchema, type SelectUser } from "@db/schema";
+import { users, insertUserSchema, households, insertHouseholdSchema, type SelectUser } from "@db/schema";
 import { db } from "@db";
 import { eq, or } from "drizzle-orm";
 import { crypto } from "./crypto";
@@ -104,6 +104,21 @@ export function setupAuth(app: Express) {
 
       const hashedPassword = await crypto.hash(password);
 
+      // First, create the household
+      const [household] = await db
+        .insert(households)
+        .values({
+          lastName,
+          address: "", // These will be updated in the user profile
+          city: "",
+          state: "",
+          zipCode: "",
+          primaryEmail: email,
+          createdAt: new Date().toISOString(),
+        })
+        .returning();
+
+      // Then create the user with the household reference
       const [newUser] = await db
         .insert(users)
         .values({
@@ -114,6 +129,9 @@ export function setupAuth(app: Express) {
           email,
           phone,
           isParent,
+          householdId: household.id,
+          isAdmin: false,
+          createdAt: new Date().toISOString(),
         })
         .returning();
 
