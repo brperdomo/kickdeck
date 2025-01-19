@@ -16,7 +16,10 @@ import {
   tournamentGroups,
   teams,
   games,
-  eventScoringRules
+  eventScoringRules,
+  chatRooms,
+  chatParticipants,
+  messages
 } from "@db/schema";
 import { eq, sql, count, and, gte, lte, or } from "drizzle-orm";
 import fs from "fs/promises";
@@ -24,6 +27,7 @@ import path from "path";
 import { crypto } from "./crypto";
 import session from "express-session";
 import passport from "passport";
+import { setupWebSocketServer } from "./websocket";
 
 // Simple rate limiting middleware
 const rateLimit = (windowMs: number, maxRequests: number) => {
@@ -66,6 +70,9 @@ const isAdmin = (req: Request, res: Response, next: Function) => {
 
 export function registerRoutes(app: Express): Server {
   const httpServer = createServer(app);
+
+  // Set up WebSocket server
+  setupWebSocketServer(httpServer);
 
   try {
     // Set up authentication first
@@ -1390,10 +1397,180 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    return httpServer;
+    // Chat-related routes
+    app.post('/api/chat/rooms', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
 
+      try {
+        const { name, type, eventId, teamId } = req.body;
+
+        // Create chat room
+        const [chatRoom] = await db.transaction(async (tx) => {
+          const [room] = await tx
+            .insert(chatRooms)
+            .values({
+              name,
+              type,
+              eventId: eventId || null,
+              teamId: teamId || null,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            })
+            .returning();
+
+          // Add creator as admin participant
+          await tx
+            .insert(chatParticipants)
+            .values({
+              chatRoomId: room.id,
+              userId: req.user.id,
+              isAdmin: true,
+              lastReadAt: new Date().toISOString(),
+              createdAt: new Date().toISOString(),
+            });
+
+          return [room];
+        });
+
+        res.json(chatRoom);
+      } catch (error) {
+        console.error('Error creating chat room:', error);
+        res.status(500).send("Failed to create chat room");
+      }
+    });
+
+    app.get('/api/chat/rooms', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const userRooms = await db
+          .select({
+            room: chatRooms,
+            unreadCount: sql<number>`
+              count(case when ${messages.createdAt} > ${chatParticipants.lastReadAt} then 1 end)
+            `.mapWith(Number),
+          })
+          .from(chatParticipants)
+          .innerJoin(chatRooms, eq(chatParticipants.chatRoomId, chatRooms.id))
+          .leftJoin(messages, eq(messages.chatRoomId, chatRooms.id))
+          .where(eq(chatParticipants.userId, req.user.id))
+          .groupBy(chatRooms.id)
+          .orderBy(chatRooms.updatedAt);
+
+        res.json(userRooms);
+      } catch (error) {
+        console.error('Error fetching chat rooms:', error);
+        res.status(500).send("Failed to fetch chat rooms");
+      }
+    });
+
+    app.get('/api/chat/rooms/:roomId/messages', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const roomId = parseInt(req.params.roomId);
+
+        // Verify user is a participant
+        const [participant] = await db
+          .select()
+          .from(chatParticipants)
+          .where(and(
+            eq(chatParticipants.chatRoomId, roomId),
+            eq(chatParticipants.userId, req.user.id)
+          ));
+
+        if (!participant) {
+          return res.status(403).send("Not a participant of this chat room");
+        }
+
+        const roomMessages = await db
+          .select({
+            message: messages,
+            user: {
+              id: users.id,
+              username: users.username,
+              firstName: users.firstName,
+              lastName: users.lastName,
+            },
+          })
+          .from(messages)
+          .innerJoin(users, eq(messages.userId, users.id))
+          .where(eq(messages.chatRoomId, roomId))
+          .orderBy(messages.createdAt);
+
+        // Update last read timestamp
+        await db
+          .update(chatParticipants)
+          .set({
+            lastReadAt: new Date().toISOString(),
+          })
+          .where(and(
+            eq(chatParticipants.chatRoomId, roomId),
+            eq(chatParticipants.userId, req.user.id)
+          ));
+
+        res.json(roomMessages);
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+        res.status(500).send("Failed to fetch messages");
+      }
+    });
+
+    app.post('/api/chat/rooms/:roomId/participants', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const roomId = parseInt(req.params.roomId);
+        const { userIds } = req.body;
+
+        // Verify requester is an admin of the room
+        const [requesterParticipant] = await db
+          .select()
+          .from(chatParticipants)
+          .where(and(
+            eq(chatParticipants.chatRoomId, roomId),
+            eq(chatParticipants.userId, req.user.id),
+            eq(chatParticipants.isAdmin, true)
+          ));
+
+        if (!requesterParticipant) {
+          return res.status(403).send("Not authorized to add participants");
+        }
+
+        // Add new participants
+        const newParticipants = await db
+          .insert(chatParticipants)
+          .values(
+            userIds.map((userId: number) => ({
+              chatRoomId: roomId,
+              userId,
+              isAdmin: false,
+              lastReadAt: new Date().toISOString(),
+              createdAt: new Date().toISOString(),
+            }))
+          )
+          .returning();
+
+        res.json(newParticipants);
+      } catch (error) {
+        console.error('Error adding participants:', error);
+        res.status(500).send("Failed to add participants");
+      }
+    });
+
+    return httpServer;
   } catch (error) {
-    log("Error registering routes: " + (error as Error).message);
+    console.error('Error setting up routes:', error);
     throw error;
   }
+
+  return httpServer;
 }

@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean, jsonb, time, integer, date } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, jsonb, time, integer, date, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -341,3 +341,64 @@ export type InsertEventAdministrator = typeof eventAdministrators.$inferInsert;
 export type SelectEventAdministrator = typeof eventAdministrators.$inferSelect;
 export type InsertEventSetting = typeof eventSettings.$inferInsert;
 export type SelectEventSetting = typeof eventSettings.$inferSelect;
+
+// New chat-related tables
+export const chatRooms = pgTable("chat_rooms", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // 'team', 'event', 'private'
+  eventId: integer("event_id").references(() => events.id),
+  teamId: integer("team_id").references(() => teams.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const chatParticipants = pgTable("chat_participants", {
+  id: serial("id").primaryKey(),
+  chatRoomId: integer("chat_room_id").notNull().references(() => chatRooms.id),
+  userId: integer("user_id").notNull().references(() => users.id),
+  isAdmin: boolean("is_admin").default(false).notNull(),
+  lastReadAt: timestamp("last_read_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  chatRoomId: integer("chat_room_id").notNull().references(() => chatRooms.id),
+  userId: integer("user_id").notNull().references(() => users.id),
+  content: text("content").notNull(),
+  type: text("type").notNull().default('text'), // 'text', 'image', 'system'
+  metadata: jsonb("metadata"), // For additional message data
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Add schema validation for new tables
+export const insertChatRoomSchema = createInsertSchema(chatRooms, {
+  name: z.string().min(1, "Chat room name is required"),
+  type: z.enum(['team', 'event', 'private']),
+  eventId: z.number().optional(),
+  teamId: z.number().optional(),
+});
+
+export const insertMessageSchema = createInsertSchema(messages, {
+  content: z.string().min(1, "Message content is required"),
+  type: z.enum(['text', 'image', 'system']).default('text'),
+  metadata: z.record(z.unknown()).optional(),
+});
+
+export const insertChatParticipantSchema = createInsertSchema(chatParticipants, {
+  isAdmin: z.boolean().default(false),
+});
+
+export const selectChatRoomSchema = createSelectSchema(chatRooms);
+export const selectMessageSchema = createSelectSchema(messages);
+export const selectChatParticipantSchema = createSelectSchema(chatParticipants);
+
+// Add type exports for new tables
+export type InsertChatRoom = typeof chatRooms.$inferInsert;
+export type SelectChatRoom = typeof chatRooms.$inferSelect;
+export type InsertMessage = typeof messages.$inferInsert;
+export type SelectMessage = typeof messages.$inferSelect;
+export type InsertChatParticipant = typeof chatParticipants.$inferInsert;
+export type SelectChatParticipant = typeof chatParticipants.$inferSelect;
