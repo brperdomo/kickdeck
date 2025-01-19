@@ -16,7 +16,7 @@ import {
   tournamentGroups,
   teams,
   games,
-  eventScoringRules // Added import for eventScoringRules
+  eventScoringRules
 } from "@db/schema";
 import { eq, sql, count, and, gte, lte } from "drizzle-orm";
 import fs from "fs/promises";
@@ -83,6 +83,15 @@ export function registerRoutes(app: Express): Server {
         const complexesWithFields = await db
           .select({
             complex: complexes,
+            fields: sql<Field[]>`json_agg(
+              json_build_object(
+                'id', ${fields.id},
+                'name', ${fields.name},
+                'hasLights', ${fields.hasLights},
+                'hasParking', ${fields.hasParking},
+                'isOpen', ${fields.isOpen}
+              )
+            )`.mapWith((f) => f === null ? [] : f),
             openFields: sql<number>`count(case when ${fields.isOpen} = true then 1 end)`.mapWith(Number),
             closedFields: sql<number>`count(case when ${fields.isOpen} = false then 1 end)`.mapWith(Number),
           })
@@ -92,8 +101,9 @@ export function registerRoutes(app: Express): Server {
           .orderBy(complexes.name);
 
         // Format the response
-        const formattedComplexes = complexesWithFields.map(({ complex, openFields, closedFields }) => ({
+        const formattedComplexes = complexesWithFields.map(({ complex, fields, openFields, closedFields }) => ({
           ...complex,
+          fields: fields || [],
           openFields,
           closedFields
         }));
@@ -965,7 +975,7 @@ export function registerRoutes(app: Express): Server {
               complex: complexes,
             })
             .from(eventComplexes)
-            .innerJoin(fields, eq(eventComplexes.complexId, fields.complexId))
+            .innerJoin(fields, eq(eventCompleComplexes.complexId))
             .innerJoin(complexes, eq(eventComplexes.complexId, complexes.id))
             .where(eq(eventComplexes.eventId, eventId));
 
@@ -1129,7 +1139,6 @@ export function registerRoutes(app: Express): Server {
     });
 
     // Add administrators endpoint
-    //This endpoint is already present in the original code, removing it as per the intention of replacement.
     app.post('/api/admin/administrators', isAdmin, async (req, res) => {
       try {
         const { firstName, lastName, email, temporaryPassword } = req.body;
