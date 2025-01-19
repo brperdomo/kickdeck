@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type InsertUser } from "@db/schema";
@@ -74,7 +74,6 @@ export default function AuthPage() {
   const { toast } = useToast();
   const { login, register: registerUser } = useUser();
   const [isRegistering, setIsRegistering] = useState(false);
-  const [lastCheckedEmail, setLastCheckedEmail] = useState<string>("");
   const [passwordMatch, setPasswordMatch] = useState<boolean | null>(null);
 
   // Email availability check mutation
@@ -91,7 +90,7 @@ export default function AuthPage() {
       email: "",
       password: "",
     },
-    mode: "all",
+    mode: "onChange",
   });
 
   const registerForm = useForm<RegisterFormData>({
@@ -105,43 +104,8 @@ export default function AuthPage() {
       lastName: "",
       phone: "",
     },
-    mode: "all",
+    mode: "onChange",
   });
-
-  // Improved email validation with proper debouncing
-  const handleEmailValidation = async (email: string) => {
-    if (!email || email === lastCheckedEmail || !isRegistering) return;
-
-    try {
-      const emailValidation = z.string().email().safeParse(email);
-      if (emailValidation.success) {
-        setLastCheckedEmail(email);
-        emailCheckMutation.mutate(email);
-      }
-    } catch (error) {
-      console.error("Email validation error:", error);
-    }
-  };
-
-  // Add password match check effect
-  useEffect(() => {
-    if (isRegistering) {
-      const subscription = registerForm.watch((value, { name, type }) => {
-        if (name === "password" || name === "confirmPassword" || type === "change") {
-          const password = registerForm.getValues("password");
-          const confirmPassword = registerForm.getValues("confirmPassword");
-
-          if (password && confirmPassword) {
-            setPasswordMatch(password === confirmPassword);
-          } else {
-            setPasswordMatch(null);
-          }
-        }
-      });
-
-      return () => subscription.unsubscribe();
-    }
-  }, [isRegistering, registerForm]);
 
   async function onSubmit(data: LoginFormData | RegisterFormData) {
     try {
@@ -241,12 +205,9 @@ export default function AuthPage() {
               value={isRegistering ? "register" : "login"}
               onValueChange={(v) => {
                 setIsRegistering(v === "register");
-                // Reset forms when switching between login and register
                 loginForm.reset();
                 registerForm.reset();
                 setPasswordMatch(null);
-                setLastCheckedEmail("");
-                emailCheckMutation.reset();
               }}
             >
               <TabsList className="grid w-full grid-cols-2 mb-4">
@@ -263,37 +224,20 @@ export default function AuthPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Email</FormLabel>
-                          <div className="relative">
-                            <FormControl>
-                              <Input
-                                type="email"
-                                {...field}
-                                className={cn(
-                                  "pr-10",
-                                  emailCheckMutation.data?.available && field.value && "border-green-500 focus-visible:ring-green-500",
-                                  emailCheckMutation.data?.available === false && "border-red-500 focus-visible:ring-red-500"
-                                )}
-                                onChange={(e) => {
-                                  field.onChange(e);
-                                  const value = e.target.value;
-                                  if (value) {
-                                    setTimeout(() => handleEmailValidation(value), 500);
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            {field.value && (
-                              <div className="absolute right-3 top-2.5">
-                                {emailCheckMutation.isPending ? (
-                                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-primary" />
-                                ) : emailCheckMutation.data?.available ? (
-                                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                                ) : emailCheckMutation.data?.available === false ? (
-                                  <XCircle className="h-5 w-5 text-red-500" />
-                                ) : null}
-                              </div>
-                            )}
-                          </div>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="Enter your email"
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                const email = e.target.value;
+                                if (email && email.includes('@')) {
+                                  emailCheckMutation.mutate(email);
+                                }
+                              }}
+                            />
+                          </FormControl>
                           <FormMessage />
                           {emailCheckMutation.data?.available === false && (
                             <p className="text-sm text-red-500 mt-1">
@@ -311,7 +255,10 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Username</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input
+                              placeholder="Choose a username"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -324,24 +271,20 @@ export default function AuthPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Password</FormLabel>
-                          <div className="relative">
-                            <FormControl>
-                              <Input
-                                type="password"
-                                {...field}
-                                className={cn(
-                                  "pr-10",
-                                  passwordMatch && "border-green-500 focus-visible:ring-green-500",
-                                  passwordMatch === false && "border-red-500 focus-visible:ring-red-500"
-                                )}
-                              />
-                            </FormControl>
-                            {field.value && (
-                              <div className="absolute right-3 top-2.5 transition-opacity duration-200">
-                                <Lock className="h-5 w-5 text-muted-foreground" />
-                              </div>
-                            )}
-                          </div>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="Enter your password"
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                const confirmPassword = registerForm.getValues("confirmPassword");
+                                if (confirmPassword) {
+                                  setPasswordMatch(e.target.value === confirmPassword);
+                                }
+                              }}
+                            />
+                          </FormControl>
                           <FormDescription>
                             Must be at least 8 characters with a number and special character
                           </FormDescription>
@@ -356,32 +299,21 @@ export default function AuthPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Confirm Password</FormLabel>
-                          <div className="relative">
-                            <FormControl>
-                              <Input
-                                type="password"
-                                {...field}
-                                className={cn(
-                                  "pr-10",
-                                  passwordMatch && "border-green-500 focus-visible:ring-green-500",
-                                  passwordMatch === false && "border-red-500 focus-visible:ring-red-500"
-                                )}
-                                onPaste={(e) => e.preventDefault()} // Prevent pasting for security
-                              />
-                            </FormControl>
-                            {field.value && (
-                              <div className="absolute right-3 top-2.5 transition-transform duration-200 ease-in-out">
-                                {passwordMatch ? (
-                                  <CheckCircle2 className="h-5 w-5 text-green-500 animate-in fade-in-0 zoom-in-95" />
-                                ) : (
-                                  <XCircle className="h-5 w-5 text-red-500 animate-in fade-in-0 zoom-in-95" />
-                                )}
-                              </div>
-                            )}
-                          </div>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="Confirm your password"
+                              {...field}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                const password = registerForm.getValues("password");
+                                setPasswordMatch(e.target.value === password);
+                              }}
+                            />
+                          </FormControl>
                           <FormMessage />
                           {passwordMatch === false && (
-                            <p className="text-sm text-red-500 mt-1 animate-in fade-in-0 slide-in-from-right-1">
+                            <p className="text-sm text-red-500 mt-1">
                               Passwords do not match
                             </p>
                           )}
@@ -396,7 +328,10 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>First Name</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input
+                              placeholder="Enter your first name"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -410,7 +345,10 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Last Name</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input
+                              placeholder="Enter your last name"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -426,6 +364,7 @@ export default function AuthPage() {
                           <FormControl>
                             <Input
                               type="tel"
+                              placeholder="Enter your phone number"
                               {...fieldProps}
                               value={value ?? ""}
                             />
@@ -450,7 +389,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input type="email" {...field} />
+                            <Input
+                              type="email"
+                              placeholder="Enter your email"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -464,7 +407,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Input type="password" {...field} />
+                            <Input
+                              type="password"
+                              placeholder="Enter your password"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
