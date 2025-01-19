@@ -17,7 +17,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, CheckCircle2, XCircle, Lock } from "lucide-react";
 import { z } from "zod";
@@ -75,7 +74,6 @@ export default function AuthPage() {
   const { toast } = useToast();
   const { login, register: registerUser } = useUser();
   const [isRegistering, setIsRegistering] = useState(false);
-  const [userType, setUserType] = useState<"player" | "parent">("player");
   const [lastCheckedEmail, setLastCheckedEmail] = useState<string>("");
   const [passwordMatch, setPasswordMatch] = useState<boolean | null>(null);
 
@@ -157,7 +155,6 @@ export default function AuthPage() {
         const submitData: InsertUser = {
           ...registerData,
           phone: registerData.phone || null,
-          isParent: userType === "parent",
           createdAt: new Date().toISOString(),
         };
 
@@ -225,7 +222,6 @@ export default function AuthPage() {
                     <div className="space-y-2">
                       <p>To register for the soccer system:</p>
                       <ul className="list-disc pl-4 space-y-1">
-                        <li>Choose between Player or Parent registration</li>
                         <li>Fill in all required fields marked with *</li>
                         <li>Password must be at least 8 characters with numbers and special characters</li>
                         <li>Your email will be used for account verification</li>
@@ -266,22 +262,6 @@ export default function AuthPage() {
               {isRegistering ? (
                 <Form {...registerForm}>
                   <form onSubmit={registerForm.handleSubmit(onSubmit)} className="space-y-4">
-                    <RadioGroup
-                      defaultValue="player"
-                      value={userType}
-                      onValueChange={(v) => setUserType(v as "player" | "parent")}
-                      className="flex justify-center space-x-4 mb-6"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="player" id="player" />
-                        <label htmlFor="player">Register as Player</label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="parent" id="parent" />
-                        <label htmlFor="parent">Register as Parent</label>
-                      </div>
-                    </RadioGroup>
-
                     <FormField
                       control={registerForm.control}
                       name="email"
@@ -419,9 +399,7 @@ export default function AuthPage() {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            {userType === "player" ? "Player First Name" : "Parent First Name"}
-                          </FormLabel>
+                          <FormLabel>First Name</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
@@ -435,9 +413,7 @@ export default function AuthPage() {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            {userType === "player" ? "Player Last Name" : "Parent Last Name"}
-                          </FormLabel>
+                          <FormLabel>Last Name</FormLabel>
                           <FormControl>
                             <Input {...field} />
                           </FormControl>
