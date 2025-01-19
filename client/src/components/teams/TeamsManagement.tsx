@@ -40,7 +40,7 @@ export function TeamsManagement({ eventId }: TeamsManagementProps) {
   });
 
   const teamsQuery = useQuery<Team[]>({
-    queryKey: [`/api/admin/teams`, { eventId, ageGroupId: selectedAgeGroupId !== "all" ? selectedAgeGroupId : null }],
+    queryKey: [`/api/admin/teams?eventId=${eventId}${selectedAgeGroupId !== "all" ? `&ageGroupId=${selectedAgeGroupId}` : ''}`],
     enabled: !!eventId,
   });
 
