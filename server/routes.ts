@@ -956,8 +956,7 @@ export function registerRoutes(app: Express): Server {
             });
           }
 
-          // 6. Schedule will be generated based on registered teams
-          // This will be implemented in a separate endpoint once teams are registered
+          // 6. Schedule will be generated based on registered teams          // This will be implemented in a separate endpoint once teams are registered
         });
 
         res.json({ message: "Schedule framework generated successfully" });
@@ -1071,6 +1070,30 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Add administrators endpoint
+    app.get('/api/admin/administrators', isAdmin, async (req, res) => {
+      try {
+        const administrators = await db
+          .select({
+            id: users.id,
+            email: users.email,
+            firstName: users.firstName,
+            lastName: users.lastName,
+            phone: users.phone,
+            createdAt: users.createdAt,
+          })
+          .from(users)
+          .where(eq(users.isAdmin, true))
+          .orderBy(users.lastName, users.firstName);
+
+        res.json(administrators);
+      } catch (error) {
+        console.error('Error fetching administrators:', error);
+        res.status(500).send("Failed to fetch administrators");
+      }
+    });
+
+    // Teams management endpoints
     return httpServer;
 
   } catch (error) {

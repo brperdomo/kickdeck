@@ -2016,6 +2016,7 @@ function AdminDashboard() {
                     <TableRow>
                       <TableHead>Name</TableHead>
                       <TableHead>Email</TableHead>
+                      <TableHead>Phone</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -2023,8 +2024,11 @@ function AdminDashboard() {
                   <TableBody>
                     {adminsQuery?.data?.map((admin) => (
                       <TableRow key={admin.id}>
-                        <TableCell>{admin.firstName} {admin.lastName}</TableCell>
+                        <TableCell>
+                          {admin.firstName} {admin.lastName}
+                        </TableCell>
                         <TableCell>{admin.email}</TableCell>
+                        <TableCell>{admin.phone || '-'}</TableCell>
                         <TableCell>
                           <Badge variant="outline">Active</Badge>
                         </TableCell>
