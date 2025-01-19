@@ -90,14 +90,18 @@ export function registerRoutes(app: Express): Server {
         const complexesWithFields = await db
           .select({
             complex: complexes,
-            fields: sql<Field[]>`json_agg(
-              json_build_object(
-                'id', ${fields.id},
-                'name', ${fields.name},
-                'hasLights', ${fields.hasLights},
-                'hasParking', ${fields.hasParking},
-                'isOpen', ${fields.isOpen}
-              )
+            fields: sql<any>`json_agg(
+              CASE WHEN ${fields.id} IS NOT NULL THEN
+                json_build_object(
+                  'id', ${fields.id},
+                  'name', ${fields.name},
+                  'hasLights', ${fields.hasLights},
+                  'hasParking', ${fields.hasParking},
+                  'isOpen', ${fields.isOpen},
+                  'specialInstructions', ${fields.specialInstructions}
+                )
+              ELSE NULL
+              END
             )`.mapWith((f) => f === null ? [] : f),
             openFields: sql<number>`count(case when ${fields.isOpen} = true then 1 end)`.mapWith(Number),
             closedFields: sql<number>`count(case when ${fields.isOpen} = false then 1 end)`.mapWith(Number),
@@ -879,19 +883,26 @@ export function registerRoutes(app: Express): Server {
         const complexData = await db
           .select({
             complex: complexes,
-            fields: sql<Field[]>`json_agg(
-              json_build_object(
-                'id', ${fields.id},
-                'name', ${fields.name},
-                'hasLights', ${fields.hasLights},
-                'hasParking', ${fields.hasParking},
-                'isOpen', ${fields.isOpen}
-              )
+            fields: sql<any>`json_agg(
+              CASE WHEN ${fields.id} IS NOT NULL THEN
+                json_build_object(
+                  'id', ${fields.id},
+                  'name', ${fields.name},
+                  'hasLights', ${fields.hasLights},
+                  'hasParking', ${fields.hasParking},
+                  'isOpen', ${fields.isOpen},
+                  'specialInstructions', ${fields.specialInstructions}
+                )
+              ELSE NULL
+              END
             )`.mapWith((f) => f === null ? [] : f),
           })
           .from(complexes)
           .leftJoin(fields, eq(complexes.id, fields.complexId))
-          .groupBy(complexes.id);
+          .groupBy(complexes.id, complexes.name, complexes.address, complexes.city,
+            complexes.state, complexes.country, complexes.openTime, complexes.closeTime,
+            complexes.isOpen, complexes.rules, complexes.directions,
+            complexes.createdAt, complexes.updatedAt);
 
         // Get complex assignments
         const complexAssignments = await db
@@ -977,7 +988,7 @@ export function registerRoutes(app: Express): Server {
 
         // Get field size assignments
         const fieldSizes = await db
-          .select()
+          .select          .select()
           .from(eventFieldSizes)
           .where(eq(eventFieldSizes.eventId, eventId));
 
