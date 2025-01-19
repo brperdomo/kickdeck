@@ -59,7 +59,7 @@ import { Badge } from "@/components/ui/badge";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
 import { useExportProcess } from "@/hooks/use-export-process";
-import { lazy, Suspense } from "react";
+import { lazy } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -83,6 +83,8 @@ import { Switch } from "@/components/ui/switch";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
 import { format } from 'date-fns';
 import { AdminModal } from "@/components/admin/AdminModal";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Suspense } from "react";
 
 interface Complex {
   id: number;
@@ -1007,7 +1009,6 @@ function ComplexesView() {
     }
   });
 
-  // Add field status toggle mutation
   const toggleFieldStatusMutation = useMutation({
     mutationFn: async ({fieldId, isOpen }: { fieldId: number; isOpen: boolean }) => {
       const response = await fetch(`/api/admin/fields/${fieldId}/status`, {
@@ -1507,14 +1508,15 @@ function ComplexesView() {
 }
 
 function SchedulingView() {
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState("");
   const [scheduleParams, setScheduleParams] = useState({
     gamesPerDay: 6,
     minutesPerGame: 60,
-    breakBetweenGames: 15
+    breakBetweenGames: 15,
   });
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const { toast } = useToast();
 
   // Query for events
   const eventsQuery = useQuery({
@@ -1565,26 +1567,32 @@ function SchedulingView() {
     }) => {
       const response = await fetch(`/api/admin/events/${data.eventId}/generate-schedule`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       });
-      if (!response.ok) throw new Error('Failed to generate schedule');
+
+      if (!response.ok) {
+        throw new Error('Failed to generate schedule');
+      }
+
       return response.json();
     },
     onSuccess: () => {
       scheduleQuery.refetch();
       toast({
         title: "Success",
-        description: "Schedule generated successfully",
+        description: "Schedule generated successfully!",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to generate schedule",
-        variant: "destructive"
+        description: error.message,
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const handleGenerateSchedule = (eventId: number) => {
@@ -1604,19 +1612,21 @@ function SchedulingView() {
     });
   };
 
+  if (eventsQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Game Scheduling</h2>
-      </div>
+      <h2 className="text-2xl font-bold">Game Scheduling</h2>
 
       <div className="grid grid-cols-4 gap-6">
-        {/* Settings Panel */}
         <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Settings</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="p-6 space-y-4">
             <div>
               <Label>Event</Label>
               <Select
@@ -1665,11 +1675,12 @@ function SchedulingView() {
                   <Input
                     type="number"
                     value={scheduleParams.gamesPerDay}
-                    onChange={(e) => setScheduleParams(prev => ({
-                      ...prev,
-                      gamesPerDay: parseInt(e.target.value)
-                    }))}
-                    min={1}
+                    onChange={(e) =>
+                      setScheduleParams({
+                        ...scheduleParams,
+                        gamesPerDay: parseInt(e.target.value),
+                      })
+                    }
                   />
                 </div>
 
@@ -1678,12 +1689,12 @@ function SchedulingView() {
                   <Input
                     type="number"
                     value={scheduleParams.minutesPerGame}
-                    onChange={(e) => setScheduleParams(prev => ({
-                      ...prev,
-                      minutesPerGame: parseInt(e.target.value)
-                    }))}
-                    min={30}
-                    step={15}
+                    onChange={(e) =>
+                      setScheduleParams({
+                        ...scheduleParams,
+                        minutesPerGame: parseInt(e.target.value),
+                      })
+                    }
                   />
                 </div>
 
@@ -1692,19 +1703,19 @@ function SchedulingView() {
                   <Input
                     type="number"
                     value={scheduleParams.breakBetweenGames}
-                    onChange={(e) => setScheduleParams(prev => ({
-                      ...prev,
-                      breakBetweenGames: parseInt(e.target.value)
-                    }))}
-                    min={5}
-                    step={5}
+                    onChange={(e) =>
+                      setScheduleParams({
+                        ...scheduleParams,
+                        breakBetweenGames: parseInt(e.target.value),
+                      })
+                    }
                   />
                 </div>
 
                 <Button
+                  className="w-full"
                   onClick={() => handleGenerateSchedule(selectedEvent)}
                   disabled={generateScheduleMutation.isPending}
-                  className="w-full"
                 >
                   {generateScheduleMutation.isPending ? (
                     <>
@@ -1715,12 +1726,19 @@ function SchedulingView() {
                     "Generate Schedule"
                   )}
                 </Button>
+
+                <div>
+                  <Label>Select Date</Label>
+                  <DatePicker
+                    date={selectedDate}
+                    onDateChange={setSelectedDate}
+                  />
+                </div>
               </>
             )}
           </CardContent>
         </Card>
 
-        {/* Schedule Visualization */}
         <div className="col-span-3">
           <ScheduleVisualization
             games={scheduleQuery.data?.games || []}
@@ -1995,8 +2013,7 @@ function AdminDashboard() {
 
   const adminsQuery = useQuery<SelectUser[]>({
     queryKey: ["/api/admin/administrators"],
-    enabled: isAdminUser(user) && activeView === 'administrators',
-    staleTime: 30000,
+    enabled: isAdminUser(user) && activeView=== 'administrators',    staleTime: 30000,
     gcTime: 3600000,
   });
 
@@ -2088,7 +2105,8 @@ function AdminDashboard() {
                     </TableBody>
                   </Table>
                 </div>
-              </CardContent>            </Card>
+              </CardContent>
+            </Card>
           </>
         );
       case 'administrators':
@@ -2201,13 +2219,13 @@ function AdminDashboard() {
               Field Complexes
             </Button>
             <Button
-                variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setActiveView('scheduling')}
-              >
-                <Calendar className="mr-2 h-4 w-4" />
-                Scheduling
-              </Button>
+              variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('scheduling')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Scheduling
+            </Button>
             <Button
               variant={activeView === 'teams' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
