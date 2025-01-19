@@ -189,9 +189,10 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
   const { toast } = useToast();
 
   // Fetch available complexes
-  const complexesQuery = useQuery({
+  const complexesQuery = useQuery<Complex[]>({
     queryKey: ['/api/admin/complexes'],
     enabled: activeTab === 'complexes',
+    initialData: [], // Provide empty array as initial data
   });
 
   // Fetch available administrators
@@ -959,7 +960,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
                   <div>Error loading complexes</div>
                 ) : (
                   <div className="space-y-4">
-                    {complexesQuery.data?.map((complex: Complex) => (
+                    {(complexesQuery.data || []).map((complex: Complex) => (
                       <Card key={complex.id}>
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between mb-4">
@@ -994,7 +995,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
                             )}
                           </div>
 
-                          {selectedComplexIds.includes(complex.id) && (
+                          {selectedComplexIds.includes(complex.id) && complex.fields && (
                             <div className="pl-8">
                               <h5 className="text-sm font-medium mb-2">Available Fields:</h5>
                               <ul className="space-y-2">
