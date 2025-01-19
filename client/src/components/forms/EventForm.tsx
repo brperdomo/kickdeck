@@ -12,6 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Editor } from '@tinymce/tinymce-react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +28,8 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useQuery } from "@tanstack/react-query";
+import { AdminModal } from "@/components/admin/AdminModal";
 
 // Types and interfaces
 export interface EventData {
@@ -34,6 +45,40 @@ export interface EventData {
   complexFieldSizes: Record<number, FieldSize>;
   selectedComplexIds: number[];
   scoringRules: ScoringRule[];
+  settings: EventSetting[];
+  administrators: EventAdministrator[];
+}
+
+interface Complex {
+  id: number;
+  name: string;
+  fields: Field[];
+}
+
+interface Field {
+  id: number;
+  name: string;
+  complexId: number;
+  hasLights: boolean;
+  hasParking: boolean;
+  isOpen: boolean;
+}
+
+interface EventSetting {
+  id: string;
+  key: string;
+  value: string;
+}
+
+interface EventAdministrator {
+  id: string;
+  userId: number;
+  role: 'owner' | 'admin' | 'moderator';
+  user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
 }
 
 type Gender = 'Male' | 'Female' | 'Coed';
@@ -76,6 +121,7 @@ const USA_TIMEZONES = [
   { value: 'Pacific/Honolulu', label: 'Hawaii Time (HT)' },
 ];
 
+// Form Schemas
 const eventInformationSchema = z.object({
   name: z.string().min(1, "Event name is required"),
   startDate: z.string().min(1, "Start date is required"),
@@ -109,9 +155,15 @@ const scoringRuleSchema = z.object({
   tieBreaker: z.string().min(1, "Tie breaker is required"),
 });
 
+const eventSettingSchema = z.object({
+  key: z.string().min(1, "Key is required"),
+  value: z.string().min(1, "Value is required"),
+});
+
 type EventInformationValues = z.infer<typeof eventInformationSchema>;
 type AgeGroupValues = z.infer<typeof ageGroupSchema>;
 type ScoringRuleValues = z.infer<typeof scoringRuleSchema>;
+type EventSettingValues = z.infer<typeof eventSettingSchema>;
 
 interface EventFormProps {
   initialData?: EventData;
@@ -124,11 +176,29 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
   const [activeTab, setActiveTab] = useState<EventTab>('information');
   const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(initialData?.ageGroups || []);
   const [scoringRules, setScoringRules] = useState<ScoringRule[]>(initialData?.scoringRules || []);
+  const [settings, setSettings] = useState<EventSetting[]>(initialData?.settings || []);
+  const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(initialData?.selectedComplexIds || []);
+  const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(initialData?.complexFieldSizes || {});
   const [isAgeGroupDialogOpen, setIsAgeGroupDialogOpen] = useState(false);
   const [isScoringDialogOpen, setIsScoringDialogOpen] = useState(false);
+  const [isSettingDialogOpen, setIsSettingDialogOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [editingAgeGroup, setEditingAgeGroup] = useState<AgeGroup | null>(null);
   const [editingScoringRule, setEditingScoringRule] = useState<ScoringRule | null>(null);
+  const [editingSetting, setEditingSetting] = useState<EventSetting | null>(null);
   const { toast } = useToast();
+
+  // Fetch available complexes
+  const complexesQuery = useQuery({
+    queryKey: ['/api/admin/complexes'],
+    enabled: activeTab === 'complexes',
+  });
+
+  // Fetch available administrators
+  const administratorsQuery = useQuery({
+    queryKey: ['/api/admin/users'],
+    enabled: activeTab === 'administrators',
+  });
 
   const form = useForm<EventInformationValues>({
     resolver: zodResolver(eventInformationSchema),
@@ -141,7 +211,6 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
       details: "",
       agreement: "",
       refundPolicy: "",
-      scoringRules: []
     },
   });
 
@@ -173,12 +242,23 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
     },
   });
 
+  const settingForm = useForm<EventSettingValues>({
+    resolver: zodResolver(eventSettingSchema),
+    defaultValues: {
+      key: "",
+      value: "",
+    },
+  });
+
   // Initialize forms with existing data when editing
   useEffect(() => {
     if (initialData && isEdit) {
       form.reset(initialData);
       setAgeGroups(initialData.ageGroups);
       setScoringRules(initialData.scoringRules || []);
+      setSettings(initialData.settings || []);
+      setSelectedComplexIds(initialData.selectedComplexIds || []);
+      setComplexFieldSizes(initialData.complexFieldSizes || {});
     }
   }, [initialData, isEdit, form]);
 
@@ -187,8 +267,10 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
       ...data,
       ageGroups,
       scoringRules,
-      complexFieldSizes: initialData?.complexFieldSizes || {},
-      selectedComplexIds: initialData?.selectedComplexIds || [],
+      settings,
+      complexFieldSizes,
+      selectedComplexIds,
+      administrators: initialData?.administrators || [],
     };
     onSubmit(combinedData);
   };
@@ -219,6 +301,34 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
     scoringForm.reset();
   };
 
+  const handleAddSetting = (data: EventSettingValues) => {
+    if (editingSetting) {
+      setSettings(settings => settings.map(setting =>
+        setting.id === editingSetting.id ? { ...data, id: setting.id } : setting
+      ));
+      setEditingSetting(null);
+    } else {
+      setSettings([...settings, { ...data, id: Date.now().toString() }]);
+    }
+    setIsSettingDialogOpen(false);
+    settingForm.reset();
+  };
+
+  const handleComplexSelection = (complexId: number) => {
+    setSelectedComplexIds(prev =>
+      prev.includes(complexId)
+        ? prev.filter(id => id !== complexId)
+        : [...prev, complexId]
+    );
+  };
+
+  const handleFieldSizeChange = (complexId: number, size: FieldSize) => {
+    setComplexFieldSizes(prev => ({
+      ...prev,
+      [complexId]: size
+    }));
+  };
+
   const handleEditAgeGroup = (ageGroup: AgeGroup) => {
     setEditingAgeGroup(ageGroup);
     ageGroupForm.reset(ageGroup);
@@ -238,6 +348,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
   const handleDeleteScoringRule = (id: string) => {
     setScoringRules(scoringRules.filter(rule => rule.id !== id));
   };
+
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl">
@@ -840,27 +951,165 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Complexes and Fields</h3>
-                  <Button onClick={() => {
-                    // TODO: Implement complex selection
-                  }}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Complex
-                  </Button>
                 </div>
-                <div className="grid gap-4">
-                  {/* Complex selection and field configuration will go here */}
-                </div>
+
+                {complexesQuery.isLoading ? (
+                  <div>Loading complexes...</div>
+                ) : complexesQuery.error ? (
+                  <div>Error loading complexes</div>
+                ) : (
+                  <div className="space-y-4">
+                    {complexesQuery.data?.map((complex: Complex) => (
+                      <Card key={complex.id}>
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-4">
+                              <Checkbox
+                                checked={selectedComplexIds.includes(complex.id)}
+                                onCheckedChange={() => handleComplexSelection(complex.id)}
+                              />
+                              <h4 className="font-semibold">{complex.name}</h4>
+                            </div>
+                            {selectedComplexIds.includes(complex.id) && (
+                              <Select
+                                value={complexFieldSizes[complex.id] || '11v11'}
+                                onValueChange={(value: FieldSize) => handleFieldSizeChange(complex.id, value)}
+                              >
+                                <SelectTrigger className="w-[180px]">
+                                  <SelectValue placeholder="Select field size" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="3v3">3v3</SelectItem>
+                                  <SelectItem value="4v4">4v4</SelectItem>
+                                  <SelectItem value="5v5">5v5</SelectItem>
+                                  <SelectItem value="6v6">6v6</SelectItem>
+                                  <SelectItem value="7v7">7v7</SelectItem>
+                                  <SelectItem value="8v8">8v8</SelectItem>
+                                  <SelectItem value="9v9">9v9</SelectItem>
+                                  <SelectItem value="10v10">10v10</SelectItem>
+                                  <SelectItem value="11v11">11v11</SelectItem>
+                                  <SelectItem value="N/A">N/A</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            )}
+                          </div>
+
+                          {selectedComplexIds.includes(complex.id) && (
+                            <div className="pl-8">
+                              <h5 className="text-sm font-medium mb-2">Available Fields:</h5>
+                              <ul className="space-y-2">
+                                {complex.fields.map(field => (
+                                  <li key={field.id} className="text-sm text-muted-foreground">
+                                    {field.name}
+                                    {field.hasLights && " (Lights)"}
+                                    {field.hasParking && " (Parking)"}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
             </TabsContent>
 
             {/* Settings Tab */}
             <TabsContent value="settings">
               <div className="space-y-6">
-                <h3 className="text-lg font-semibold">Event Settings</h3>
-                <div className="grid gap-4">
-                  {/* Event settings configuration will go here */}
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Event Settings</h3>
+                  <Button onClick={() => {
+                    setEditingSetting(null);
+                    settingForm.reset();
+                    setIsSettingDialogOpen(true);
+                  }}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Setting
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {settings.map(setting => (
+                    <Card key={setting.id}>
+                      <CardContent className="p-4 flex justify-between items-center">
+                        <div>
+                          <h4 className="font-semibold">{setting.key}</h4>
+                          <p className="text-sm text-muted-foreground">{setting.value}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setEditingSetting(setting);
+                              settingForm.reset(setting);
+                              setIsSettingDialogOpen(true);
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive"
+                            onClick={() => {
+                              setSettings(settings.filter(s => s.id !== setting.id));
+                            }}
+                          >
+                            <Trash className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </div>
+
+              <Dialog open={isSettingDialogOpen} onOpenChange={setIsSettingDialogOpen}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>
+                      {editingSetting ? 'Edit Setting' : 'Add Setting'}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <Form {...settingForm}>
+                    <form onSubmit={settingForm.handleSubmit(handleAddSetting)} className="space-y-4">
+                      <FormField
+                        control={settingForm.control}
+                        name="key"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Key</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={settingForm.control}
+                        name="value"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Value</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button type="submit">
+                        {editingSetting ? 'Update Setting' : 'Add Setting'}
+                      </Button>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
 
             {/* Administrators Tab */}
@@ -868,17 +1117,46 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Event Administrators</h3>
-                  <Button onClick={() => {
-                    // TODO: Implement administrator assignment
-                  }}>
+                  <Button onClick={() => setIsAdminModalOpen(true)}>
                     <Plus className="h-4 w-4 mr-2" />
                     Add Administrator
                   </Button>
                 </div>
-                <div className="grid gap-4">
-                  {/* Administrator list and management will go here */}
+
+                {/* Administrator List */}
+                <div className="space-y-4">
+                  {initialData?.administrators?.map((admin) => (
+                    <Card key={admin.id}>
+                      <CardContent className="p-4 flex justify-between items-center">
+                        <div>
+                          <h4 className="font-semibold">
+                            {admin.user.firstName} {admin.user.lastName}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {admin.user.email} - {admin.role}
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive"
+                          onClick={() => {
+                            // Handle removing administrator
+                          }}
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </div>
+
+              {/* Administrator Modal */}
+              <AdminModal
+                isOpen={isAdminModalOpen}
+                onClose={() => setIsAdminModalOpen(false)}
+              />
             </TabsContent>
           </Tabs>
         </CardContent>
