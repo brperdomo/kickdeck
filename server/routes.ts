@@ -821,7 +821,7 @@ export function registerRoutes(app: Express): Server {
           .select({
             event: events,
             applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
-            teamCount: sql<number>`count(case when ${teams.status} = 'accepted' then 1 end)`.mapWith(Number),
+            teamCount: sql<number>`count(${teams.id})`.mapWith(Number),
           })
           .from(events)
           .leftJoin(teams, eq(events.id, teams.eventId))
@@ -1335,7 +1335,7 @@ export function registerRoutes(app: Express): Server {
           .select({
             event: events,
             applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
-            teamCount: sql<number>`count(case when ${teams.status} = 'accepted' then 1 end)`.mapWith(Number),
+            teamCount: sql<number>`count(${teams.id})`.mapWith(Number),
           })
           .from(events)
           .leftJoin(teams, eq(events.id, teams.eventId))
