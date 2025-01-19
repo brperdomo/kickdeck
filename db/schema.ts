@@ -151,9 +151,6 @@ export const events = pgTable("events", {
   details: text("details"),
   agreement: text("agreement"),
   refundPolicy: text("refund_policy"),
-  applicationsReceived: integer("applications_received").default(0).notNull(),
-  teamsAccepted: integer("teams_accepted").default(0).notNull(),
-  status: text("status").default('draft').notNull(),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
 });
@@ -196,9 +193,6 @@ export const insertEventSchema = createInsertSchema(events, {
   details: z.string().optional(),
   agreement: z.string().optional(),
   refundPolicy: z.string().optional(),
-  applicationsReceived: z.number().default(0),
-  teamsAccepted: z.number().default(0),
-  status: z.enum(['draft', 'published', 'in_progress', 'completed', 'cancelled']).default('draft'),
 });
 
 export type InsertEvent = typeof events.$inferInsert;

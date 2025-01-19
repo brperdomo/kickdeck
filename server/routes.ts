@@ -819,18 +819,23 @@ export function registerRoutes(app: Express): Server {
       try {
         const eventsList = await db
           .select({
-            id: events.id,
-            name: events.name,
-            startDate: events.startDate,
-            endDate: events.endDate,
-            status: events.status,
-            applicationsReceived: events.applicationsReceived,
-            teamsAccepted: events.teamsAccepted,
+            event: events,
+            applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
+            teamCount: sql<number>`count(${teams.id})`.mapWith(Number),
           })
           .from(events)
+          .leftJoin(teams, eq(events.id, teams.eventId))
+          .groupBy(events.id)
           .orderBy(events.startDate);
 
-        res.json(eventsList);
+        // Format the response
+        const formattedEvents = eventsList.map(({ event, applicationCount, teamCount }) => ({
+          ...event,
+          applicationCount,
+          teamCount
+        }));
+
+        res.json(formattedEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
         res.status(500).send("Failed to fetch events");
@@ -1328,18 +1333,23 @@ export function registerRoutes(app: Express): Server {
       try {
         const eventsList = await db
           .select({
-            id: events.id,
-            name: events.name,
-            startDate: events.startDate,
-            endDate: events.endDate,
-            status: events.status,
-            applicationsReceived: events.applicationsReceived,
-            teamsAccepted: events.teamsAccepted,
+            event: events,
+            applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
+            teamCount: sql<number>`count(${teams.id})`.mapWith(Number),
           })
           .from(events)
+          .leftJoin(teams, eq(events.id, teams.eventId))
+          .groupBy(events.id)
           .orderBy(events.startDate);
 
-        res.json(eventsList);
+        // Format the response
+        const formattedEvents = eventsList.map(({ event, applicationCount, teamCount }) => ({
+          ...event,
+          applicationCount,
+          teamCount
+        }));
+
+        res.json(formattedEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
         res.status(500).send("Failed to fetch events");

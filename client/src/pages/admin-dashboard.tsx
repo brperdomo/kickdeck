@@ -56,10 +56,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
-import {
-  BrandingPreviewProvider,
-  useBrandingPreview,
-} from "@/hooks/use-branding-preview";
+import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
 import { useExportProcess } from "@/hooks/use-export-process";
 import { lazy, Suspense } from "react";
 import {
@@ -77,23 +74,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
-import { format } from "date-fns";
+import { format } from 'date-fns';
 import { AdminModal } from "@/components/admin/AdminModal";
 
 interface Complex {
@@ -117,46 +104,30 @@ interface Complex {
 const MyAccount = lazy(() => import("./my-account"));
 
 // Type guard function to check if user is admin
-function isAdminUser(
-  user: SelectUser | null,
-): user is SelectUser & { isAdmin: true } {
+function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
   return user !== null && user.isAdmin === true;
 }
 
-type View =
-  | "events"
-  | "teams"
-  | "administrators"
-  | "settings"
-  | "households"
-  | "reports"
-  | "account"
-  | "complexes"
-  | "scheduling";
-type SettingsView = "branding" | "general" | "payments";
-type ReportType =
-  | "financial"
-  | "manager"
-  | "player"
-  | "schedule"
-  | "guest-player";
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling';
+type SettingsView = 'branding' | 'general' | 'payments';
+type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 
 function ReportsView() {
-  const [selectedReport, setSelectedReport] = useState<ReportType>("financial");
+  const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
   const { isExporting, startExport } = useExportProcess();
 
   const renderReportContent = () => {
     switch (selectedReport) {
-      case "financial":
+      case 'financial':
         return (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Event Financial Reports</h3>
               <Button
-                onClick={() => startExport("financial")}
+                onClick={() => startExport('financial')}
                 disabled={isExporting !== null}
               >
-                {isExporting === "financial" ? (
+                {isExporting === 'financial' ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Exporting...
@@ -171,23 +142,21 @@ function ReportsView() {
             </div>
             <Card>
               <CardContent className="p-6">
-                <p className="text-muted-foreground">
-                  Financial report content will be implemented here
-                </p>
+                <p className="text-muted-foreground">Financial report content will be implemented here</p>
               </CardContent>
             </Card>
           </div>
         );
-      case "manager":
+      case 'manager':
         return (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Manager Export</h3>
               <Button
-                onClick={() => startExport("manager")}
+                onClick={() => startExport('manager')}
                 disabled={isExporting !== null}
               >
-                {isExporting === "manager" ? (
+                {isExporting === 'manager' ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Exporting...
@@ -202,23 +171,21 @@ function ReportsView() {
             </div>
             <Card>
               <CardContent className="p-6">
-                <p className="text-muted-foreground">
-                  Manager export content will be implemented here
-                </p>
+                <p className="text-muted-foreground">Manager export content will be implemented here</p>
               </CardContent>
             </Card>
           </div>
         );
-      case "player":
+      case 'player':
         return (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Player Export</h3>
               <Button
-                onClick={() => startExport("player")}
+                onClick={() => startExport('player')}
                 disabled={isExporting !== null}
               >
-                {isExporting === "player" ? (
+                {isExporting === 'player' ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Exporting...
@@ -233,23 +200,21 @@ function ReportsView() {
             </div>
             <Card>
               <CardContent className="p-6">
-                <p className="text-muted-foreground">
-                  Player export content will be implemented here
-                </p>
+                <p className="text-muted-foreground">Player export content will be implemented here</p>
               </CardContent>
             </Card>
           </div>
         );
-      case "schedule":
+      case 'schedule':
         return (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Schedule Export</h3>
               <Button
-                onClick={() => startExport("schedule")}
+                onClick={() => startExport('schedule')}
                 disabled={isExporting !== null}
               >
-                {isExporting === "schedule" ? (
+                {isExporting === 'schedule' ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Exporting...
@@ -264,23 +229,21 @@ function ReportsView() {
             </div>
             <Card>
               <CardContent className="p-6">
-                <p className="text-muted-foreground">
-                  Schedule export content will be implemented here
-                </p>
+                <p className="text-muted-foreground">Schedule export content will be implemented here</p>
               </CardContent>
             </Card>
           </div>
         );
-      case "guest-player":
+      case 'guest-player':
         return (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Guest Player Export</h3>
               <Button
-                onClick={() => startExport("guest-player")}
+                onClick={() => startExport('guest-player')}
                 disabled={isExporting !== null}
               >
-                {isExporting === "guest-player" ? (
+                {isExporting === 'guest-player' ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Exporting...
@@ -295,9 +258,7 @@ function ReportsView() {
             </div>
             <Card>
               <CardContent className="p-6">
-                <p className="text-muted-foreground">
-                  Guest player export content will be implemented here
-                </p>
+                <p className="text-muted-foreground">Guest player export content will be implemented here</p>
               </CardContent>
             </Card>
           </div>
@@ -322,64 +283,62 @@ function ReportsView() {
           <CardContent className="p-3">
             <div className="space-y-2">
               <Button
-                variant={selectedReport === "financial" ? "secondary" : "ghost"}
+                variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
-                onClick={() => setSelectedReport("financial")}
+                onClick={() => setSelectedReport('financial')}
                 disabled={isExporting !== null}
               >
                 <FileText className="mr-2 h-4 w-4" />
                 Event Financial Reports
-                {isExporting === "financial" && (
+                {isExporting === 'financial' && (
                   <Loader2 className="ml-auto h-4 w-4 animate-spin" />
                 )}
               </Button>
               <Button
-                variant={selectedReport === "manager" ? "secondary" : "ghost"}
+                variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
-                onClick={() => setSelectedReport("manager")}
+                onClick={() => setSelectedReport('manager')}
                 disabled={isExporting !== null}
               >
                 <Download className="mr-2 h-4 w-4" />
                 Manager Export
-                {isExporting === "manager" && (
+                {isExporting === 'manager' && (
                   <Loader2 className="ml-auto h-4 w-4 animate-spin" />
                 )}
               </Button>
               <Button
-                variant={selectedReport === "player" ? "secondary" : "ghost"}
+                variant={selectedReport === 'player' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
-                onClick={() => setSelectedReport("player")}
+                onClick={() => setSelectedReport('player')}
                 disabled={isExporting !== null}
               >
                 <Download className="mr-2 h-4 w-4" />
                 Player Export
-                {isExporting === "player" && (
+                {isExporting === 'player' && (
                   <Loader2 className="ml-auto h-4 w-4 animate-spin" />
                 )}
               </Button>
               <Button
-                variant={selectedReport === "schedule" ? "secondary" : "ghost"}
+                variant={selectedReport === 'schedule' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
-                onClick={() => setSelectedReport("schedule")}
+                onClick={() => setSelectedReport('schedule')}
                 disabled={isExporting !== null}
               >
                 <Download className="mr-2 h-4 w-4" />
                 Schedule Export
-                {isExporting === "schedule" && (
+                {isExporting === 'schedule' && (
                   <Loader2 className="ml-auto h-4 w-4 animate-spin" />
                 )}
               </Button>
               <Button
-                variant={
-                  selectedReport === "guest-player" ? "secondary" : "ghost"
-                }
+                variant={selectedReport === 'guest-player' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
-                onClick={() => setSelectedReport("guest-player")}
+                onClick={() => setSelectedReport('guest-player')}
                 disabled={isExporting !== null}
               >
                 <Download className="mr-2 h-4 w-4" />
                 Guest Player Export
-                {isExporting === "guest-player" && (
+                {isExporting === 'guest-player' && (
                   <Loader2 className="ml-auto h-4 w-4 animate-spin" />
                 )}
               </Button>
@@ -390,7 +349,9 @@ function ReportsView() {
         {/* Report Content */}
         <div className="col-span-3">
           <Card>
-            <CardContent className="p-6">{renderReportContent()}</CardContent>
+            <CardContent className="p-6">
+              {renderReportContent()}
+            </CardContent>
           </Card>
         </div>
       </div>
@@ -421,9 +382,7 @@ function BrandingPreview() {
 
           {/* Organization Name Preview */}
           <div className="space-y-2">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Organization Name
-            </h3>
+            <h3 className="text-sm font-medium text-muted-foreground">Organization Name</h3>
             <div className="p-4 rounded-lg bg-card">
               <span
                 className="text-xl font-bold"
@@ -436,9 +395,7 @@ function BrandingPreview() {
 
           {/* Color Preview */}
           <div className="space-y-2">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Brand Colors
-            </h3>
+            <h3 className="text-sm font-medium text-muted-foreground">Brand Colors</h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 rounded-lg flex flex-col items-center justify-center">
                 <span
@@ -461,15 +418,13 @@ function BrandingPreview() {
 
           {/* Sample UI Elements */}
           <div className="space-y-2">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Sample Elements
-            </h3>
+            <h3 className="text-sm font-medium text-muted-foreground">Sample Elements</h3>
             <div className="space-y-2">
               <Button
                 className="w-full"
                 style={{
                   backgroundColor: preview.primaryColor,
-                  color: "white",
+                  color: 'white',
                 }}
               >
                 Sample Button
@@ -479,7 +434,7 @@ function BrandingPreview() {
                   className="text-sm"
                   style={{
                     backgroundColor: preview.secondaryColor,
-                    color: preview.primaryColor,
+                    color: preview.primaryColor
                   }}
                 >
                   Sample text with your brand colors
@@ -500,24 +455,19 @@ function BrandingPreview() {
 }
 
 function OrganizationSettingsForm() {
-  const { settings, isLoading, updateSettings, isUpdating } =
-    useOrganizationSettings();
+  const { settings, isLoading, updateSettings, isUpdating } = useOrganizationSettings();
   const { updatePreview } = useBrandingPreview();
-  const [name, setName] = useState(settings?.name || "");
-  const [primaryColor, setPrimaryColor] = useState(
-    settings?.primaryColor || "#000000",
-  );
-  const [secondaryColor, setSecondaryColor] = useState(
-    settings?.secondaryColor || "#ffffff",
-  );
+  const [name, setName] = useState(settings?.name || '');
+  const [primaryColor, setPrimaryColor] = useState(settings?.primaryColor || '#000000');
+  const [secondaryColor, setSecondaryColor] = useState(settings?.secondaryColor || '#ffffff');
   const [logo, setLogo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState(settings?.logoUrl);
 
   useEffect(() => {
     if (settings) {
-      setName(settings.name || "");
-      setPrimaryColor(settings.primaryColor || "#000000");
-      setSecondaryColor(settings.secondaryColor || "#ffffff");
+      setName(settings.name || '');
+      setPrimaryColor(settings.primaryColor || '#000000');
+      setSecondaryColor(settings.secondaryColor || '#ffffff');
       setPreviewUrl(settings.logoUrl);
     }
   }, [settings]);
@@ -554,7 +504,7 @@ function OrganizationSettingsForm() {
       });
       updatePreview({ isDraft: false });
     } catch (error) {
-      console.error("Error updating organization settings:", error);
+      console.error('Error updating organization settings:', error);
     }
   };
 
@@ -669,10 +619,10 @@ function OrganizationSettingsForm() {
 
 function PaymentsSettingsView() {
   const [stripeAccount, setStripeAccount] = useState({
-    businessName: "",
-    displayName: "",
-    accountStatus: "Not Connected",
-    bankAccountLast4: "",
+    businessName: '',
+    displayName: '',
+    accountStatus: 'Not Connected',
+    bankAccountLast4: '',
   });
 
   return (
@@ -689,28 +639,18 @@ function PaymentsSettingsView() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Business Name</Label>
-              <p className="text-lg font-medium">
-                {stripeAccount.businessName || "Not set"}
-              </p>
+              <p className="text-lg font-medium">{stripeAccount.businessName || 'Not set'}</p>
             </div>
             <div>
               <Label>Display Name</Label>
-              <p className="text-lg font-medium">
-                {stripeAccount.displayName || "Not set"}
-              </p>
+              <p className="text-lg font-medium">{stripeAccount.displayName || 'Not set'}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Account Status</Label>
-              <Badge
-                variant={
-                  stripeAccount.accountStatus === "Active"
-                    ? "default"
-                    : "secondary"
-                }
-              >
+              <Badge variant={stripeAccount.accountStatus === 'Active' ? 'default' : 'secondary'}>
                 {stripeAccount.accountStatus}
               </Badge>
             </div>
@@ -719,13 +659,15 @@ function PaymentsSettingsView() {
               <p className="text-lg font-medium">
                 {stripeAccount.bankAccountLast4
                   ? `****${stripeAccount.bankAccountLast4}`
-                  : "Not connected"}
+                  : 'Not connected'}
               </p>
             </div>
           </div>
 
           <div className="flex justify-end space-x-4">
-            <Button variant="outline">Disconnect</Button>
+            <Button variant="outline">
+              Disconnect
+            </Button>
             <Button>
               <CreditCard className="mr-2 h-4 w-4" />
               Connect with Stripe
@@ -743,74 +685,72 @@ function ComplexesView() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isFieldModalOpen, setIsFieldModalOpen] = useState(false);
   const [isViewFieldsModalOpen, setIsViewFieldsModalOpen] = useState(false);
-  const [selectedComplexId, setSelectedComplexId] = useState<number | null>(
-    null,
-  );
+  const [selectedComplexId, setSelectedComplexId] = useState<number | null>(null);
   const [selectedComplex, setSelectedComplex] = useState<Complex | null>(null);
   const [formData, setFormData] = useState({
-    name: "",
-    openTime: "",
-    closeTime: "",
-    address: "",
-    city: "",
-    state: "",
-    country: "US",
-    rules: "",
-    directions: "",
+    name: '',
+    openTime: '',
+    closeTime: '',
+    address: '',
+    city: '',
+    state: '',
+    country: 'US',
+    rules: '',
+    directions: ''
   });
   const [fieldFormData, setFieldFormData] = useState({
-    name: "",
+    name: '',
     hasLights: false,
     hasParking: false,
     isOpen: true,
-    specialInstructions: "",
+    specialInstructions: ''
   });
 
   // Query for complexes data
   const complexesQuery = useQuery({
-    queryKey: ["/api/admin/complexes"],
+    queryKey: ['/api/admin/complexes'],
     queryFn: async () => {
-      const response = await fetch("/api/admin/complexes");
-      if (!response.ok) throw new Error("Failed to fetch complexes");
+      const response = await fetch('/api/admin/complexes');
+      if (!response.ok) throw new Error('Failed to fetch complexes');
       return response.json();
-    },
+    }
   });
 
   // Query for complex analytics
   const analyticsQuery = useQuery({
-    queryKey: ["/api/admin/complexes/analytics"],
+    queryKey: ['/api/admin/complexes/analytics'],
     queryFn: async () => {
-      const response = await fetch("/api/admin/complexes/analytics");
-      if (!response.ok) throw new Error("Failed to fetch analytics");
+      const response = await fetch('/api/admin/complexes/analytics');
+      if (!response.ok) throw new Error('Failed to fetch analytics');
       return response.json();
-    },
+    }
   });
 
   const createComplexMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const response = await fetch("/api/admin/complexes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const response = await fetch('/api/admin/complexes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
       });
-      if (!response.ok) throw new Error("Failed to create complex");
+      if (!response.ok) throw new Error('Failed to create complex');
       return response.json();
     },
     onSuccess: () => {
       complexesQuery.refetch();
       setIsModalOpen(false);
       setFormData({
-        name: "",
-        openTime: "",
-        closeTime: "",
-        address: "",
-        city: "",
-        state: "",
-        country: "US",
-        rules: "",
-        directions: "",
+        name: '',
+        openTime: '',
+        closeTime: '',
+        address: '',
+        city: '',
+        state: '',
+        country: 'US',
+        rules: '',
+        directions: ''
       });
-    },
+    }
   });
 
   // Add update complex mutation
@@ -818,29 +758,25 @@ function ComplexesView() {
     mutationFn: async (data: typeof formData & { id: number }) => {
       const { id, ...updateData } = data;
       const response = await fetch(`/api/admin/complexes/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updateData),
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
       });
-      if (!response.ok) throw new Error("Failed to update complex");
+      if (!response.ok) throw new Error('Failed to update complex');
       return response.json();
     },
     onSuccess: () => {
       complexesQuery.refetch();
       setIsEditModalOpen(false);
       setSelectedComplex(null);
-    },
+    }
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      [id]: value,
+      [id]: value
     }));
   };
 
@@ -863,23 +799,18 @@ function ComplexesView() {
       city: complex.city,
       state: complex.state,
       country: complex.country,
-      rules: complex.rules || "",
-      directions: complex.directions || "",
+      rules: complex.rules || '',
+      directions: complex.directions || ''
     });
     setIsEditModalOpen(true);
   };
 
   // Render the create/edit modal
   const renderComplexModal = (isEdit: boolean = false) => (
-    <Dialog
-      open={isEdit ? isEditModalOpen : isModalOpen}
-      onOpenChange={isEdit ? setIsEditModalOpen : setIsModalOpen}
-    >
+    <Dialog open={isEdit ? isEditModalOpen : isModalOpen} onOpenChange={isEdit ? setIsEditModalOpen : setIsModalOpen}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>
-            {isEdit ? "Edit Complex" : "Add New Complex"}
-          </DialogTitle>
+          <DialogTitle>{isEdit ? 'Edit Complex' : 'Add New Complex'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
@@ -948,9 +879,7 @@ function ComplexesView() {
                 <Label htmlFor="country">Country</Label>
                 <Select
                   value={formData.country}
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, country: value }))
-                  }
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}
                 >
                   <SelectTrigger id="country">
                     <SelectValue placeholder="Select country" />
@@ -987,25 +916,16 @@ function ComplexesView() {
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() =>
-                isEdit ? setIsEditModalOpen(false) : setIsModalOpen(false)
-              }
+              onClick={() => isEdit ? setIsEditModalOpen(false) : setIsModalOpen(false)}
               type="button"
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={
-                createComplexMutation.isPending ||
-                updateComplexMutation.isPending
-              }
-            >
-              {(createComplexMutation.isPending ||
-                updateComplexMutation.isPending) && (
+            <Button type="submit" disabled={createComplexMutation.isPending || updateComplexMutation.isPending}>
+              {(createComplexMutation.isPending || updateComplexMutation.isPending) && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {isEdit ? "Save Changes" : "Create Complex"}
+              {isEdit ? 'Save Changes' : 'Create Complex'}
             </Button>
           </DialogFooter>
         </form>
@@ -1015,20 +935,13 @@ function ComplexesView() {
 
   // Add field creation mutation
   const createFieldMutation = useMutation({
-    mutationFn: async (data: {
-      name: string;
-      hasLights: boolean;
-      hasParking: boolean;
-      isOpen: boolean;
-      specialInstructions: string;
-      complexId: number;
-    }) => {
-      const response = await fetch("/api/admin/fields", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+    mutationFn: async (data: { name: string; hasLights: boolean; hasParking: boolean; isOpen: boolean; specialInstructions: string; complexId: number; }) => {
+      const response = await fetch('/api/admin/fields', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
       });
-      if (!response.ok) throw new Error("Failed to create field");
+      if (!response.ok) throw new Error('Failed to create field');
       return response.json();
     },
     onSuccess: () => {
@@ -1037,13 +950,13 @@ function ComplexesView() {
       fieldsQuery.refetch();
       setIsFieldModalOpen(false);
       setFieldFormData({
-        name: "",
+        name: '',
         hasLights: false,
         hasParking: false,
         isOpen: true,
-        specialInstructions: "",
+        specialInstructions: ''
       });
-    },
+    }
   });
 
   const handleFieldSubmit = (e: React.FormEvent) => {
@@ -1052,7 +965,7 @@ function ComplexesView() {
 
     createFieldMutation.mutate({
       ...fieldFormData,
-      complexId: selectedComplexId,
+      complexId: selectedComplexId
     });
   };
 
@@ -1063,16 +976,14 @@ function ComplexesView() {
 
   // Add query for fetching fields
   const fieldsQuery = useQuery({
-    queryKey: ["/api/admin/complexes", selectedComplexId, "fields"],
+    queryKey: ['/api/admin/complexes', selectedComplexId, 'fields'],
     queryFn: async () => {
       if (!selectedComplexId) return null;
-      const response = await fetch(
-        `/api/admin/complexes/${selectedComplexId}/fields`,
-      );
-      if (!response.ok) throw new Error("Failed to fetch fields");
+      const response = await fetch(`/api/admin/complexes/${selectedComplexId}/fields`);
+      if (!response.ok) throw new Error('Failed to fetch fields');
       return response.json();
     },
-    enabled: !!selectedComplexId && isViewFieldsModalOpen,
+    enabled: !!selectedComplexId && isViewFieldsModalOpen
   });
 
   const handleViewFields = (complex: Complex) => {
@@ -1085,33 +996,27 @@ function ComplexesView() {
   const deleteFieldMutation = useMutation({
     mutationFn: async (fieldId: number) => {
       const response = await fetch(`/api/admin/fields/${fieldId}`, {
-        method: "DELETE",
+        method: 'DELETE',
       });
-      if (!response.ok) throw new Error("Failed to delete field");
+      if (!response.ok) throw new Error('Failed to delete field');
       return response.json();
     },
     onSuccess: () => {
       // Refetch      fieldsQuery.refetch;
-    },
+    }
   });
 
   // Add field status toggle mutation
   const toggleFieldStatusMutation = useMutation({
-    mutationFn: async ({
-      fieldId,
-      isOpen,
-    }: {
-      fieldId: number;
-      isOpen: boolean;
-    }) => {
+    mutationFn: async ({ fieldId, isOpen }: { fieldId: number; isOpen: boolean }) => {
       const response = await fetch(`/api/admin/fields/${fieldId}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isOpen }),
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isOpen })
       });
 
       if (!response.ok) {
-        throw new Error("Failed to toggle field status");
+        throw new Error('Failed to toggle field status');
       }
 
       return response.json();
@@ -1127,10 +1032,7 @@ function ComplexesView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to update field status",
+        description: error instanceof Error ? error.message : "Failed to update field status",
         variant: "destructive",
       });
     },
@@ -1140,30 +1042,24 @@ function ComplexesView() {
   const deleteComplexMutation = useMutation({
     mutationFn: async (complexId: number) => {
       const response = await fetch(`/api/admin/complexes/${complexId}`, {
-        method: "DELETE",
+        method: 'DELETE'
       });
-      if (!response.ok) throw new Error("Failed to delete complex");
+      if (!response.ok) throw new Error('Failed to delete complex');
       return response.json();
     },
     onSuccess: () => {
       // Refetch both queries after deletion
       complexesQuery.refetch();
       analyticsQuery.refetch();
-    },
+    }
   });
 
   const toggleComplexStatusMutation = useMutation({
-    mutationFn: async ({
-      complexId,
-      isOpen,
-    }: {
-      complexId: number;
-      isOpen: boolean;
-    }) => {
+    mutationFn: async ({ complexId, isOpen }: { complexId: number; isOpen: boolean }) => {
       const response = await fetch(`/api/admin/complexes/${complexId}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isOpen }),
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isOpen })
       });
       if (!response.ok) {
         const error = await response.text();
@@ -1186,7 +1082,7 @@ function ComplexesView() {
         description: error.message,
         variant: "destructive",
       });
-    },
+    }
   });
 
   // In the table actions cell, update to include Add Field button
@@ -1244,11 +1140,7 @@ function ComplexesView() {
             size="icon"
             className="h-8 w-8 text-destructive"
             onClick={() => {
-              if (
-                window.confirm(
-                  "Are you sure you want to delete this complex? This will also delete all fields associated with it.",
-                )
-              ) {
+              if (window.confirm('Are you sure you want to delete this complex? This will also delete all fields associated with it.')) {
                 deleteComplexMutation.mutate(complex.id);
               }
             }}
@@ -1265,13 +1157,12 @@ function ComplexesView() {
 
   // Add the fields view modal with updated controls
   const renderFieldsModal = () => (
-    <Dialog
-      open={isViewFieldsModalOpen}
-      onOpenChange={setIsViewFieldsModalOpen}
-    >
+    <Dialog open={isViewFieldsModalOpen} onOpenChange={setIsViewFieldsModalOpen}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Fields in {selectedComplex?.name}</DialogTitle>
+          <DialogTitle>
+            Fields in {selectedComplex?.name}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="py-4">
@@ -1286,12 +1177,10 @@ function ComplexesView() {
               <p className="text-muted-foreground mb-4">
                 This complex doesn't have any fields yet
               </p>
-              <Button
-                onClick={() => {
-                  setIsViewFieldsModalOpen(false);
-                  handleFieldModalOpen(selectedComplexId!);
-                }}
-              >
+              <Button onClick={() => {
+                setIsViewFieldsModalOpen(false);
+                handleFieldModalOpen(selectedComplexId!);
+              }}>
                 <Plus className="mr-2 h-4 w-4" />
                 Add New Field
               </Button>
@@ -1311,9 +1200,7 @@ function ComplexesView() {
                 <TableBody>
                   {fieldsQuery.data?.map((field: any) => (
                     <TableRow key={field.id}>
-                      <TableCell className="font-medium">
-                        {field.name}
-                      </TableCell>
+                      <TableCell className="font-medium">{field.name}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           {field.hasLights && (
@@ -1331,15 +1218,11 @@ function ComplexesView() {
                             onCheckedChange={(checked) =>
                               toggleFieldStatusMutation.mutate({
                                 fieldId: field.id,
-                                isOpen: checked,
+                                isOpen: checked
                               })
                             }
                           />
-                          <span
-                            className={
-                              field.isOpen ? "text-green-600" : "text-red-600"
-                            }
-                          >
+                          <span className={field.isOpen ? "text-green-600" : "text-red-600"}>
                             {field.isOpen ? "Open" : "Closed"}
                           </span>
                         </div>
@@ -1351,11 +1234,7 @@ function ComplexesView() {
                           size="icon"
                           className="h-8 w-8 text-destructive"
                           onClick={() => {
-                            if (
-                              window.confirm(
-                                "Are you sure you want to delete this field?",
-                              )
-                            ) {
+                            if (window.confirm('Are you sure you want to delete this field?')) {
                               deleteFieldMutation.mutate(field.id);
                             }
                           }}
@@ -1372,18 +1251,13 @@ function ComplexesView() {
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => setIsViewFieldsModalOpen(false)}
-          >
+          <Button variant="outline" onClick={() => setIsViewFieldsModalOpen(false)}>
             Close
           </Button>
-          <Button
-            onClick={() => {
-              setIsViewFieldsModalOpen(false);
-              handleFieldModalOpen(selectedComplexId!);
-            }}
-          >
+          <Button onClick={() => {
+            setIsViewFieldsModalOpen(false);
+            handleFieldModalOpen(selectedComplexId!);
+          }}>
             <Plus className="mr-2 h-4 w-4" />
             Add Field
           </Button>
@@ -1401,18 +1275,15 @@ function ComplexesView() {
           Add Complex
         </Button>
       </div>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Complexes
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total Complexes</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {analyticsQuery.data?.totalComplexes || 0}
-            </div>
+            <div className="text-2xl font-bold">{analyticsQuery.data?.totalComplexes || 0}</div>
           </CardContent>
         </Card>
         <Card>
@@ -1421,9 +1292,7 @@ function ComplexesView() {
             <Flag className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {analyticsQuery.data?.totalFields || 0}
-            </div>
+            <div className="text-2xl font-bold">{analyticsQuery.data?.totalFields || 0}</div>
           </CardContent>
         </Card>
         <Card>
@@ -1432,9 +1301,7 @@ function ComplexesView() {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {analyticsQuery.data?.eventsToday || 0}
-            </div>
+            <div className="text-2xl font-bold">{analyticsQuery.data?.eventsToday || 0}</div>
           </CardContent>
         </Card>
         <Card>
@@ -1443,24 +1310,22 @@ function ComplexesView() {
             <Percent className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {analyticsQuery.data?.averageUsage || 0}%
-            </div>
+            <div className="text-2xl font-bold">{analyticsQuery.data?.averageUsage || 0}%</div>
           </CardContent>
         </Card>
       </div>
+
       {analyticsQuery.data?.message && (
         <Card className="mb-6">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
               <Flag className="h-8 w-8 text-muted-foreground" />
-              <p className="text-muted-foreground">
-                {analyticsQuery.data.message}
-              </p>
+              <p className="text-muted-foreground">{analyticsQuery.data.message}</p>
             </div>
           </CardContent>
         </Card>
       )}
+
       {analyticsQuery.data?.mostActiveComplex && (
         <Card className="mb-6">
           <CardHeader>
@@ -1468,22 +1333,16 @@ function ComplexesView() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <h3 className="font-semibold">
-                {analyticsQuery.data.mostActiveComplex.name}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {analyticsQuery.data.mostActiveComplex.address}
-              </p>
+              <h3 className="font-semibold">{analyticsQuery.data.mostActiveComplex.name}</h3>
+              <p className="text-sm text-muted-foreground">{analyticsQuery.data.mostActiveComplex.address}</p>
               <p className="text-sm">
-                Total Fields:{" "}
-                <span className="font-medium">
-                  {analyticsQuery.data.mostActiveComplex.fieldCount}
-                </span>
+                Total Fields: <span className="font-medium">{analyticsQuery.data.mostActiveComplex.fieldCount}</span>
               </p>
             </div>
           </CardContent>
         </Card>
       )}
+
       {/* Complex List */}
       <Card>
         <CardContent className="p-0">
@@ -1528,15 +1387,11 @@ function ComplexesView() {
                           onCheckedChange={(checked) =>
                             toggleComplexStatusMutation.mutate({
                               complexId: complex.id,
-                              isOpen: checked,
+                              isOpen: checked
                             })
                           }
                         />
-                        <span
-                          className={
-                            complex.isOpen ? "text-green-600" : "text-red-600"
-                          }
-                        >
+                        <span className={complex.isOpen ? "text-green-600" : "text-red-600"}>
                           {complex.isOpen ? "Open" : "Closed"}
                         </span>
                       </div>
@@ -1551,7 +1406,9 @@ function ComplexesView() {
                         </Badge>
                       </div>
                     </TableCell>
-                    <TableCell>{renderActionButtons(complex)}</TableCell>
+                    <TableCell>
+                      {renderActionButtons(complex)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -1559,9 +1416,11 @@ function ComplexesView() {
           )}
         </CardContent>
       </Card>
+
       {/* Render both create and edit modals */}
       {renderComplexModal(false)} {/* Create modal */}
-      {renderComplexModal(true)} {/* Edit modal */}
+      {renderComplexModal(true)}  {/* Edit modal */}
+
       {/* Field modals remain unchanged */}
       <Dialog open={isFieldModalOpen} onOpenChange={setIsFieldModalOpen}>
         <DialogContent className="sm:max-w-md">
@@ -1575,12 +1434,10 @@ function ComplexesView() {
                 <Input
                   id="field-name"
                   value={fieldFormData.name}
-                  onChange={(e) =>
-                    setFieldFormData((prev) => ({
-                      ...prev,
-                      name: e.target.value,
-                    }))
-                  }
+                  onChange={(e) => setFieldFormData(prev => ({
+                    ...prev,
+                    name: e.target.value
+                  }))}
                   placeholder="Enter field name"
                   required
                 />
@@ -1591,9 +1448,9 @@ function ComplexesView() {
                   id="has-lights"
                   checked={fieldFormData.hasLights}
                   onCheckedChange={(checked) =>
-                    setFieldFormData((prev) => ({
+                    setFieldFormData(prev => ({
                       ...prev,
-                      hasLights: checked as boolean,
+                      hasLights: checked as boolean
                     }))
                   }
                 />
@@ -1605,9 +1462,9 @@ function ComplexesView() {
                   id="has-parking"
                   checked={fieldFormData.hasParking}
                   onCheckedChange={(checked) =>
-                    setFieldFormData((prev) => ({
+                    setFieldFormData(prev => ({
                       ...prev,
-                      hasParking: checked as boolean,
+                      hasParking: checked as boolean
                     }))
                   }
                 />
@@ -1615,18 +1472,14 @@ function ComplexesView() {
               </div>
 
               <div>
-                <Label htmlFor="special-instructions">
-                  Special Instructions
-                </Label>
+                <Label htmlFor="special-instructions">Special Instructions</Label>
                 <Textarea
                   id="special-instructions"
                   value={fieldFormData.specialInstructions}
-                  onChange={(e) =>
-                    setFieldFormData((prev) => ({
-                      ...prev,
-                      specialInstructions: e.target.value,
-                    }))
-                  }
+                  onChange={(e) => setFieldFormData(prev => ({
+                    ...prev,
+                    specialInstructions: e.target.value
+                  }))}
                   placeholder="Enter any special instructions"
                   className="h-20"
                 />
@@ -1634,7 +1487,10 @@ function ComplexesView() {
             </div>
 
             <DialogFooter>
-              <Button type="submit" disabled={createFieldMutation.isPending}>
+              <Button
+                type="submit"
+                disabled={createFieldMutation.isPending}
+              >
                 {createFieldMutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
@@ -1654,51 +1510,46 @@ function SchedulingView() {
   const [scheduleParams, setScheduleParams] = useState({
     gamesPerDay: 6,
     minutesPerGame: 60,
-    breakBetweenGames: 15,
+    breakBetweenGames: 15
   });
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   // Query for events
   const eventsQuery = useQuery({
-    queryKey: ["/api/admin/events"],
+    queryKey: ['/api/admin/events'],
     queryFn: async () => {
-      const response = await fetch("/api/admin/events");
-      if (!response.ok) throw new Error("Failed to fetch events");
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) throw new Error('Failed to fetch events');
       return response.json();
-    },
+    }
   });
 
   // Query for schedule
   const scheduleQuery = useQuery({
-    queryKey: ["/api/admin/events", selectedEvent, "schedule"],
+    queryKey: ['/api/admin/events', selectedEvent, 'schedule'],
     queryFn: async () => {
       if (!selectedEvent) return { games: [] };
-      const response = await fetch(
-        `/api/admin/events/${selectedEvent}/schedule`,
-      );
-      if (!response.ok) throw new Error("Failed to fetch schedule");
+      const response = await fetch(`/api/admin/events/${selectedEvent}/schedule`);
+      if (!response.ok) throw new Error('Failed to fetch schedule');
       return response.json();
     },
-    enabled: !!selectedEvent,
+    enabled: !!selectedEvent
   });
 
   // Mutation for generating schedule
   const generateScheduleMutation = useMutation({
     mutationFn: async (data: {
-      eventId: number;
-      gamesPerDay: number;
-      minutesPerGame: number;
-      breakBetweenGames: number;
+      eventId: number,
+      gamesPerDay: number,
+      minutesPerGame: number,
+      breakBetweenGames: number
     }) => {
-      const response = await fetch(
-        `/api/admin/events/${data.eventId}/generate-schedule`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        },
-      );
-      if (!response.ok) throw new Error("Failed to generate schedule");
+      const response = await fetch(`/api/admin/events/${data.eventId}/generate-schedule`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to generate schedule');
       return response.json();
     },
     onSuccess: () => {
@@ -1711,19 +1562,16 @@ function SchedulingView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate schedule",
-        variant: "destructive",
+        description: error instanceof Error ? error.message : "Failed to generate schedule",
+        variant: "destructive"
       });
-    },
+    }
   });
 
   const handleGenerateSchedule = (eventId: number) => {
     generateScheduleMutation.mutate({
       eventId,
-      ...scheduleParams,
+      ...scheduleParams
     });
   };
 
@@ -1766,12 +1614,10 @@ function SchedulingView() {
                   <Input
                     type="number"
                     value={scheduleParams.gamesPerDay}
-                    onChange={(e) =>
-                      setScheduleParams((prev) => ({
-                        ...prev,
-                        gamesPerDay: parseInt(e.target.value),
-                      }))
-                    }
+                    onChange={(e) => setScheduleParams(prev => ({
+                      ...prev,
+                      gamesPerDay: parseInt(e.target.value)
+                    }))}
                     min={1}
                   />
                 </div>
@@ -1781,12 +1627,10 @@ function SchedulingView() {
                   <Input
                     type="number"
                     value={scheduleParams.minutesPerGame}
-                    onChange={(e) =>
-                      setScheduleParams((prev) => ({
-                        ...prev,
-                        minutesPerGame: parseInt(e.target.value),
-                      }))
-                    }
+                    onChange={(e) => setScheduleParams(prev => ({
+                      ...prev,
+                      minutesPerGame: parseInt(e.target.value)
+                    }))}
                     min={30}
                     step={15}
                   />
@@ -1797,12 +1641,10 @@ function SchedulingView() {
                   <Input
                     type="number"
                     value={scheduleParams.breakBetweenGames}
-                    onChange={(e) =>
-                      setScheduleParams((prev) => ({
-                        ...prev,
-                        breakBetweenGames: parseInt(e.target.value),
-                      }))
-                    }
+                    onChange={(e) => setScheduleParams(prev => ({
+                      ...prev,
+                      breakBetweenGames: parseInt(e.target.value)
+                    }))}
                     min={5}
                     step={5}
                   />
@@ -1845,42 +1687,40 @@ function EventsView() {
   const { toast } = useToast();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
-  const [handleDuplicateEvent, setHandleDuplicateEvent] = useState(
-    () => () => {},
-  );
-  const [handleDeleteEvent, setHandleDeleteEvent] = useState(() => () => {});
+  const [handleDuplicateEvent, setHandleDuplicateEvent] = useState(() => () => { });
+  const [handleDeleteEvent, setHandleDeleteEvent] = useState(() => () => { });
 
   // Query for events list
   const eventsQuery = useQuery({
-    queryKey: ["/api/admin/events"],
+    queryKey: ['/api/admin/events'],
     queryFn: async () => {
-      const response = await fetch("/api/admin/events");
-      if (!response.ok) throw new Error("Failed to fetch events");
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) throw new Error('Failed to fetch events');
       return response.json();
-    },
+    }
   });
 
   // Query for selected event details
   const eventDetailsQuery = useQuery({
-    queryKey: ["/api/admin/events", selectedEvent, "edit"],
+    queryKey: ['/api/admin/events', selectedEvent, 'edit'],
     queryFn: async () => {
       if (!selectedEvent) return null;
       const response = await fetch(`/api/admin/events/${selectedEvent}/edit`);
-      if (!response.ok) throw new Error("Failed to fetch event details");
+      if (!response.ok) throw new Error('Failed to fetch event details');
       return response.json();
     },
-    enabled: !!selectedEvent,
+    enabled: !!selectedEvent
   });
 
   // Mutation for updating event
   const updateEventMutation = useMutation({
     mutationFn: async (data: any) => {
       const response = await fetch(`/api/admin/events/${selectedEvent}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
       });
-      if (!response.ok) throw new Error("Failed to update event");
+      if (!response.ok) throw new Error('Failed to update event');
       return response.json();
     },
     onSuccess: () => {
@@ -1895,11 +1735,10 @@ function EventsView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to update event",
-        variant: "destructive",
+        description: error instanceof Error ? error.message : "Failed to update event",
+        variant: "destructive"
       });
-    },
+    }
   });
 
   const handleEditClick = (eventId: number) => {
@@ -1951,17 +1790,11 @@ function EventsView() {
                       <TableRow key={event.id}>
                         <TableCell>{event.name}</TableCell>
                         <TableCell>
-                          {format(new Date(event.startDate), "MMM d, yyyy")} -
-                          {format(new Date(event.endDate), "MMM d, yyyy")}
+                          {format(new Date(event.startDate), 'MMM d, yyyy')} -
+                          {format(new Date(event.endDate), 'MMM d, yyyy')}
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            variant={
-                              event.status === "active"
-                                ? "default"
-                                : "secondary"
-                            }
-                          >
+                          <Badge variant={event.status === 'active' ? 'default' : 'secondary'}>
                             {event.status}
                           </Badge>
                         </TableCell>
@@ -2019,13 +1852,11 @@ function EventsView() {
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
           ) : eventDetailsQuery.data ? (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                // TODO: Add form handling
-                handleUpdate(eventDetailsQuery.data);
-              }}
-            >
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              // TODO: Add form handling
+              handleUpdate(eventDetailsQuery.data);
+            }}>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
                   <Label htmlFor="name">Event Name</Label>
@@ -2042,9 +1873,7 @@ function EventsView() {
                     <Input
                       id="startDate"
                       type="date"
-                      defaultValue={
-                        eventDetailsQuery.data.startDate.split("T")[0]
-                      }
+                      defaultValue={eventDetailsQuery.data.startDate.split('T')[0]}
                     />
                   </div>
                   <div className="grid gap-2">
@@ -2052,9 +1881,7 @@ function EventsView() {
                     <Input
                       id="endDate"
                       type="date"
-                      defaultValue={
-                        eventDetailsQuery.data.endDate.split("T")[0]
-                      }
+                      defaultValue={eventDetailsQuery.data.endDate.split('T')[0]}
                     />
                   </div>
                 </div>
@@ -2063,7 +1890,7 @@ function EventsView() {
                   <Label htmlFor="details">Event Details</Label>
                   <Textarea
                     id="details"
-                    defaultValue={eventDetailsQuery.data.details || ""}
+                    defaultValue={eventDetailsQuery.data.details || ''}
                     placeholder="Enter event details"
                   />
                 </div>
@@ -2094,9 +1921,8 @@ function EventsView() {
 function AdminDashboard() {
   const { user, logout } = useUser();
   const [, setLocation] = useLocation();
-  const [currentView, setCurrentView] = useState<View>("events");
-  const [currentSettingsView, setCurrentSettingsView] =
-    useState<SettingsView>("general");
+  const [currentView, setCurrentView] = useState<View>('events');
+  const [currentSettingsView, setCurrentSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
   const { toast } = useToast();
@@ -2106,40 +1932,33 @@ function AdminDashboard() {
     }
   }, [user, setLocation]);
 
-  const {
-    data: events,
-    isLoading: eventsLoading,
-    error: eventsError,
-  } = useQuery({
+  const { data: events, isLoading: eventsLoading, error: eventsError } = useQuery({
     queryKey: ["/api/admin/events"],
-    enabled: isAdminUser(user) && currentView === "events",
+    enabled: isAdminUser(user) && currentView === 'events',
     staleTime: 30000,
     gcTime: 3600000,
   });
 
   const adminsQuery = useQuery<SelectUser[]>({
     queryKey: ["/api/admin/administrators"],
-    enabled: isAdminUser(user) && currentView === "administrators",
+    enabled: isAdminUser(user) && currentView === 'administrators',
     staleTime: 30000,
     gcTime: 3600000,
   });
 
-  const {
-    data: households,
-    isLoading: householdsLoading,
-    error: householdsError,
-  } = useQuery<any[]>({
+  const { data: households, isLoading: householdsLoading, error: householdsError } = useQuery<any[]>({
     queryKey: ["/api/admin/households"],
-    enabled: isAdminUser(user) && currentView === "households",
+    enabled: isAdminUser(user) && currentView === 'households',
     staleTime: 30000,
     gcTime: 3600000,
   });
+
 
   const renderContent = () => {
     switch (currentView) {
-      case "complexes":
+      case 'complexes':
         return <ComplexesView />;
-      case "households":
+      case 'households':
         return (
           <>
             <div className="flex justify-between items-center mb-6">
@@ -2182,19 +2001,13 @@ function AdminDashboard() {
                         </TableRow>
                       ) : householdsError ? (
                         <TableRow>
-                          <TableCell
-                            colSpan={6}
-                            className="h-24 textcenter text-muted-foreground"
-                          >
+                          <TableCell colSpan={6} className="h-24 textcenter text-muted-foreground">
                             Failed to load households
                           </TableCell>
                         </TableRow>
                       ) : households?.length === 0 ? (
                         <TableRow>
-                          <TableCell
-                            colSpan={6}
-                            className="h-24 text-center text-muted-foreground"
-                          >
+                          <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                             No households found
                           </TableCell>
                         </TableRow>
@@ -2206,13 +2019,7 @@ function AdminDashboard() {
                             <TableCell>{household.phone}</TableCell>
                             <TableCell>{household.email}</TableCell>
                             <TableCell>
-                              <Badge
-                                variant={
-                                  household.status === "active"
-                                    ? "default"
-                                    : "secondary"
-                                }
-                              >
+                              <Badge variant={household.status === 'active' ? 'default' : 'secondary'}>
                                 {household.status}
                               </Badge>
                             </TableCell>
@@ -2227,29 +2034,28 @@ function AdminDashboard() {
                     </TableBody>
                   </Table>
                 </div>
-              </CardContent>{" "}
-            </Card>
+              </CardContent>            </Card>
           </>
         );
-      case "administrators":
+      case 'administrators':
         return <AdministratorsView />;
-      case "events":
+      case 'events':
         return <EventsView />;
-      case "settings":
-        if (currentSettingsView === "branding") {
+      case 'settings':
+        if (currentSettingsView === 'branding') {
           return (
             <BrandingPreviewProvider>
               <OrganizationSettingsForm />
             </BrandingPreviewProvider>
           );
         }
-        if (currentSettingsView === "payments") {
+        if (currentSettingsView === 'payments') {
           return <PaymentsSettingsView />;
         }
         return null;
-      case "reports":
+      case 'reports':
         return <ReportsView />;
-      case "account":
+      case 'account':
         return (
           <Suspense
             fallback={
@@ -2261,11 +2067,11 @@ function AdminDashboard() {
             <MyAccount />
           </Suspense>
         );
-      case "complexes":
+      case 'complexes':
         return <ComplexesView />;
-      case "scheduling":
+      case 'scheduling':
         return <SchedulingView />;
-      case "teams":
+      case 'teams':
         return <TeamsView />;
       default:
         return null;
@@ -2290,60 +2096,60 @@ function AdminDashboard() {
           {/* Navigation */}
           <div className="space-y-2">
             <Button
-              variant={currentView === "events" ? "secondary" : "ghost"}
+              variant={currentView === 'events' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setCurrentView("events")}
+              onClick={() => setCurrentView('events')}
             >
               <Calendar className="mr-2 h-4 w-4" />
               Events
             </Button>
 
             <Button
-              variant={currentView === "households" ? "secondary" : "ghost"}
+              variant={currentView === 'households' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setCurrentView("households")}
+              onClick={() => setCurrentView('households')}
             >
               <Home className="mr-2 h-4 w-4" />
               Households
             </Button>
 
             <Button
-              variant={currentView === "administrators" ? "secondary" : "ghost"}
+              variant={currentView === 'administrators' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setCurrentView("administrators")}
+              onClick={() => setCurrentView('administrators')}
             >
               <Shield className="mr-2 h-4 w-4" />
               Administrators
             </Button>
 
             <Button
-              variant={currentView === "reports" ? "secondary" : "ghost"}
+              variant={currentView === 'reports' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setCurrentView("reports")}
+              onClick={() => setCurrentView('reports')}
             >
               <FileText className="mr-2 h-4 w-4" />
               Reports
             </Button>
             <Button
-              variant={currentView === "complexes" ? "secondary" : "ghost"}
+              variant={currentView === 'complexes' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setCurrentView("complexes")}
+              onClick={() => setCurrentView('complexes')}
             >
               <Building2 className="mr-2 h-4 w-4" />
               Field Complexes
             </Button>
             <Button
-              variant={currentView === "scheduling" ? "secondary" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => setCurrentView("scheduling")}
-            >
-              <Calendar className="mr-2 h-4 w-4" />
-              Scheduling
-            </Button>
+                variant={currentView === 'scheduling' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setCurrentView('scheduling')}
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                Scheduling
+              </Button>
             <Button
-              variant={currentView === "teams" ? "secondary" : "ghost"}
+              variant={currentView === 'teams' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setCurrentView("teams")}
+              onClick={() => setCurrentView('teams')}
             >
               <Users className="mr-2 h-4 w-4" />
               Teams
@@ -2355,7 +2161,7 @@ function AdminDashboard() {
             >
               <CollapsibleTrigger asChild>
                 <Button
-                  variant={currentView === "settings" ? "secondary" : "ghost"}
+                  variant={currentView === 'settings' ? 'secondary' : 'ghost'}
                   className="w-full justify-between"
                 >
                   <span className="flex items-center">
@@ -2364,33 +2170,29 @@ function AdminDashboard() {
                   </span>
                   <ChevronRight
                     className={`h-4 w-4 transition-transform duration-200 ${
-                      isSettingsOpen ? "rotate-90" : ""
+                      isSettingsOpen ? 'rotate-90' : ''
                     }`}
                   />
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-2 pl-4">
                 <Button
-                  variant={
-                    currentSettingsView === "branding" ? "secondary" : "ghost"
-                  }
+                  variant={currentSettingsView === 'branding' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
                   onClick={() => {
-                    setCurrentView("settings");
-                    setCurrentSettingsView("branding");
+                    setCurrentView('settings');
+                    setCurrentSettingsView('branding');
                   }}
                 >
                   <Palette className="mr-2 h-4 w-4" />
                   Branding
                 </Button>
                 <Button
-                  variant={
-                    currentSettingsView === "payments" ? "secondary" : "ghost"
-                  }
+                  variant={currentSettingsView === 'payments' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
                   onClick={() => {
-                    setCurrentView("settings");
-                    setCurrentSettingsView("payments");
+                    setCurrentView('settings');
+                    setCurrentSettingsView('payments');
                   }}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
@@ -2400,9 +2202,9 @@ function AdminDashboard() {
             </Collapsible>
 
             <Button
-              variant={currentView === "account" ? "secondary" : "ghost"}
+              variant={currentView === 'account' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setCurrentView("account")}
+              onClick={() => setCurrentView('account')}
             >
               <User className="mr-2 h-4 w-4" />
               My Account
@@ -2425,7 +2227,9 @@ function AdminDashboard() {
         </div>
       </div>
       {/* Main Content */}
-      <div className="flex-1 overflow-auto p-8">{renderContent()}</div>
+      <div className="flex-1 overflow-auto p-8">
+        {renderContent()}
+      </div>
     </div>
   );
 }
@@ -2439,40 +2243,36 @@ function TeamsView() {
 
   // Query for events
   const eventsQuery = useQuery({
-    queryKey: ["/api/admin/events"],
+    queryKey: ['/api/admin/events'],
     queryFn: async () => {
-      const response = await fetch("/api/admin/events");
-      if (!response.ok) throw new Error("Failed to fetch events");
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) throw new Error('Failed to fetch events');
       return response.json();
-    },
+    }
   });
 
   // Query for age groups of selected event
   const ageGroupsQuery = useQuery({
-    queryKey: ["/api/admin/events", selectedEvent, "age-groups"],
+    queryKey: ['/api/admin/events', selectedEvent, 'age-groups'],
     queryFn: async () => {
       if (!selectedEvent) return [];
-      const response = await fetch(
-        `/api/admin/events/${selectedEvent}/age-groups`,
-      );
-      if (!response.ok) throw new Error("Failed to fetch age groups");
+      const response = await fetch(`/api/admin/events/${selectedEvent}/age-groups`);
+      if (!response.ok) throw new Error('Failed to fetch age groups');
       return response.json();
     },
-    enabled: !!selectedEvent,
+    enabled: !!selectedEvent
   });
 
   // Query for teams in selected event and age group
   const teamsQuery = useQuery({
-    queryKey: ["/api/admin/teams", selectedEvent, selectedAgeGroup],
+    queryKey: ['/api/admin/teams', selectedEvent, selectedAgeGroup],
     queryFn: async () => {
       if (!selectedEvent || !selectedAgeGroup) return [];
-      const response = await fetch(
-        `/api/admin/teams?eventId=${selectedEvent}&ageGroup=${selectedAgeGroup}`,
-      );
-      if (!response.ok) throw new Error("Failed to fetch teams");
+      const response = await fetch(`/api/admin/teams?eventId=${selectedEvent}&ageGroup=${selectedAgeGroup}`);
+      if (!response.ok) throw new Error('Failed to fetch teams');
       return response.json();
     },
-    enabled: !!selectedEvent && !!selectedAgeGroup,
+    enabled: !!selectedEvent && !!selectedAgeGroup
   });
 
   const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
@@ -2480,16 +2280,16 @@ function TeamsView() {
 
   const addTeamMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch("/api/admin/teams", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/admin/teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: newTeamName,
           eventId: selectedEvent,
-          ageGroup: selectedAgeGroup,
-        }),
+          ageGroup: selectedAgeGroup
+        })
       });
-      if (!response.ok) throw new Error("Failed to add team");
+      if (!response.ok) throw new Error('Failed to add team');
       return response.json();
     },
     onSuccess: () => {
@@ -2501,11 +2301,10 @@ function TeamsView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to add team",
-        variant: "destructive",
+        description: error instanceof Error ? error.message : "Failed to add team",
+        variant: "destructive"
       });
-    },
+    }
   });
 
   const handleAddTeam = () => {
@@ -2513,7 +2312,7 @@ function TeamsView() {
       toast({
         title: "Error",
         description: "Please fill all required fields",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -2561,8 +2360,7 @@ function TeamsView() {
                   <SelectContent>
                     {ageGroupsQuery.data?.map((group: any) => (
                       <SelectItem key={group.ageGroup} value={group.ageGroup}>
-                        {group.ageGroup} ({group.gender}) - {group.teamCount}{" "}
-                        teams
+                        {group.ageGroup} ({group.gender}) - {group.teamCount} teams
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -2604,10 +2402,7 @@ function TeamsView() {
                   </TableRow>
                 ) : teamsQuery.data?.length === 0 ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={2}
-                      className="text-center text-muted-foreground"
-                    >
+                    <TableCell colSpan={2} className="text-center text-muted-foreground">
                       No teams found for this age group.
                     </TableCell>
                   </TableRow>
@@ -2673,7 +2468,7 @@ function TeamsView() {
 function AdministratorsView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: administrators, isLoading } = useQuery({
-    queryKey: ["/api/admin/administrators"],
+    queryKey: ['/api/admin/administrators'],
   });
 
   if (isLoading) {
@@ -2733,9 +2528,7 @@ function AdministratorsView() {
                 <TableRow>
                   <TableHead className="min-w-[150px] pl-6">Name</TableHead>
                   <TableHead className="min-w-[200px]">Email</TableHead>
-                  <TableHead className="min-w-[120px] hidden sm:table-cell">
-                    Added
-                  </TableHead>
+                  <TableHead className="min-w-[120px] hidden sm:table-cell">Added</TableHead>
                   <TableHead className="w-[60px] pr-6">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -2745,18 +2538,16 @@ function AdministratorsView() {
                     <TableCell className="font-medium pl-6">
                       {admin.firstName} {admin.lastName}
                     </TableCell>
-                    <TableCell className="break-all">{admin.email}</TableCell>
+                    <TableCell className="break-all">
+                      {admin.email}
+                    </TableCell>
                     <TableCell className="hidden sm:table-cell">
-                      {format(new Date(admin.createdAt), "MMM d, yyyy")}
+                      {format(new Date(admin.createdAt), 'MMM d, yyyy')}
                     </TableCell>
                     <TableCell className="pr-6">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                          >
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
                             <span className="sr-only">Open menu</span>
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
@@ -2781,7 +2572,10 @@ function AdministratorsView() {
         </div>
       </Card>
 
-      <AdminModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AdminModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 }
