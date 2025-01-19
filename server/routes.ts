@@ -988,7 +988,7 @@ export function registerRoutes(app: Express): Server {
 
         // Get field size assignments
         const fieldSizes = await db
-          .select          .select()
+          .select()
           .from(eventFieldSizes)
           .where(eq(eventFieldSizes.eventId, eventId));
 
