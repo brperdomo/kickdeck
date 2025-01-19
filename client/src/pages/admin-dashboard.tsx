@@ -1003,8 +1003,7 @@ function ComplexesView() {
       return response.json();
     },
     onSuccess: () => {
-      // Refetch      // Refetch fields after deletion
-      fieldsQuery.refetch;
+      // Refetch      fieldsQuery.refetch;
     }
   });
 
@@ -1218,7 +1217,7 @@ function ComplexesView() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 textdestructive"
+                          className="h-8 w-8 text-destructive"
                           onClick={() => {
                             if (window.confirm('Are you sure you want to delete this field?')) {
                               deleteFieldMutation.mutate(field.id);
@@ -1996,8 +1995,7 @@ function AdminDashboard() {
                     </TableBody>
                   </Table>
                 </div>
-              </CardContent>
-            </Card>
+              </CardContent>            </Card>
           </>
         );
       case 'administrators':
@@ -2012,11 +2010,9 @@ function AdminDashboard() {
             </BrandingPreviewProvider>
           );
         }
-
         if (currentSettingsView === 'payments') {
           return <PaymentsSettingsView />;
         }
-
         return null;
       case 'reports':
         return <ReportsView />;
@@ -2438,15 +2434,46 @@ function AdministratorsView() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
+    );
+  }
+
+  if (!administrators?.length) {
+    return (
+      <>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <h2 className="text-2xl font-bold">Administrators</h2>
+          <Button onClick={() => setIsModalOpen(true)}>
+            <UserPlus className="h-4 w-4 mr-2" />
+            Add Administrator
+          </Button>
+        </div>
+
+        <Card className="flex flex-col items-center justify-center p-8 text-center">
+          <UserPlus className="h-12 w-12 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No Administrators</h3>
+          <p className="text-muted-foreground mb-4">
+            Get started by adding your first administrator
+          </p>
+          <Button onClick={() => setIsModalOpen(true)}>
+            <UserPlus className="h-4 w-4 mr-2" />
+            Add Administrator
+          </Button>
+        </Card>
+
+        <AdminModal 
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      </>
     );
   }
 
   return (
     <>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h2 className="text-2xl font-bold">Administrators</h2>
         <Button onClick={() => setIsModalOpen(true)}>
           <UserPlus className="h-4 w-4 mr-2" />
@@ -2454,45 +2481,56 @@ function AdministratorsView() {
         </Button>
       </div>
 
-      <Card>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Added</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {administrators?.map((admin) => (
-              <TableRow key={admin.id}>
-                <TableCell>{admin.firstName} {admin.lastName}</TableCell>
-                <TableCell>{admin.email}</TableCell>
-                <TableCell>{format(new Date(admin.createdAt), 'MMM d, yyyy')}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Eye className="h-4 w-4 mr-2" />
-                        View Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="text-destructive">
-                        <Trash className="h-4 w-4 mr-2" />
-                        Remove Access
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <Card className="overflow-hidden">
+        <div className="overflow-x-auto -mx-6">
+          <div className="inline-block min-w-full align-middle">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[150px] pl-6">Name</TableHead>
+                  <TableHead className="min-w-[200px]">Email</TableHead>
+                  <TableHead className="min-w-[120px] hidden sm:table-cell">Added</TableHead>
+                  <TableHead className="w-[60px] pr-6">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {administrators?.map((admin) => (
+                  <TableRow key={admin.id}>
+                    <TableCell className="font-medium pl-6">
+                      {admin.firstName} {admin.lastName}
+                    </TableCell>
+                    <TableCell className="break-all">
+                      {admin.email}
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {format(new Date(admin.createdAt), 'MMM d, yyyy')}
+                    </TableCell>
+                    <TableCell className="pr-6">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive">
+                            <Trash className="h-4 w-4 mr-2" />
+                            Remove Access
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </Card>
 
       <AdminModal 

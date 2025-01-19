@@ -77,13 +77,13 @@ export function AdminModal({ isOpen, onClose }: AdminModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[425px] p-0">
+        <DialogHeader className="p-6 pb-0">
           <DialogTitle>Add New Administrator</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="firstName"
@@ -137,7 +137,7 @@ export function AdminModal({ isOpen, onClose }: AdminModalProps) {
                 </FormItem>
               )}
             />
-            <div className="flex justify-end gap-2">
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
