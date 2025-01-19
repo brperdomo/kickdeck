@@ -868,7 +868,7 @@ export function registerRoutes(app: Express): Server {
           return res.status(404).send("Event not found");
         }
 
-        // Get age groups with their teams
+        // Get age groups with their teams count
         const ageGroups = await db
           .select({
             ageGroup: eventAgeGroups,
@@ -879,7 +879,7 @@ export function registerRoutes(app: Express): Server {
           .where(eq(eventAgeGroups.eventId, eventId))
           .groupBy(eventAgeGroups.id);
 
-        // Get all complexes with their fields
+        // Get all complexes with their fields and full metadata
         const complexData = await db
           .select({
             complex: complexes,
@@ -899,10 +899,27 @@ export function registerRoutes(app: Express): Server {
           })
           .from(complexes)
           .leftJoin(fields, eq(complexes.id, fields.complexId))
-          .groupBy(complexes.id, complexes.name, complexes.address, complexes.city,
-            complexes.state, complexes.country, complexes.openTime, complexes.closeTime,
-            complexes.isOpen, complexes.rules, complexes.directions,
-            complexes.createdAt, complexes.updatedAt);
+          .groupBy(
+            complexes.id,
+            complexes.name,
+            complexes.address,
+            complexes.city,
+            complexes.state,
+            complexes.country,
+            complexes.openTime,
+            complexes.closeTime,
+            complexes.isOpen,
+            complexes.rules,
+            complexes.directions,
+            complexes.createdAt,
+            complexes.updatedAt
+          );
+
+        // Get scoring rules
+        const scoringRules = await db
+          .select()
+          .from(eventScoringRules)
+          .where(eq(eventScoringRules.eventId, eventId));
 
         // Get complex assignments
         const complexAssignments = await db
@@ -916,7 +933,7 @@ export function registerRoutes(app: Express): Server {
           .from(eventFieldSizes)
           .where(eq(eventFieldSizes.eventId, eventId));
 
-        // Get administrators (users with isAdmin=true)
+        // Get all administrators
         const administrators = await db
           .select({
             id: users.id,
@@ -928,12 +945,14 @@ export function registerRoutes(app: Express): Server {
           .from(users)
           .where(eq(users.isAdmin, true));
 
-        // Format response
+        // Format response to match create event view structure
         const response = {
           ...event,
           ageGroups: ageGroups.map(({ ageGroup, teamCount }) => ({
             ...ageGroup,
-            teamCount
+            teamCount,
+            assignedFields: [], // This will be populated by the frontend if needed
+            assignedTeams: []   // This will be populated by the frontend if needed
           })),
           complexes: complexData.map(({ complex, fields }) => ({
             ...complex,
@@ -943,7 +962,13 @@ export function registerRoutes(app: Express): Server {
           complexFieldSizes: Object.fromEntries(
             fieldSizes.map(f => [f.fieldId, f.fieldSize])
           ),
-          administrators
+          scoringRules,
+          administrators,
+          // Additional metadata needed by create view
+          availableAgeGroups: ageGroups.map(({ ageGroup }) => ageGroup.ageGroup),
+          availableFieldSizes: [...new Set(fieldSizes.map(f => f.fieldSize))],
+          timeZones: event.timezone ? [event.timezone] : [], // Include current timezone
+          validationErrors: {} // Empty object for frontend validation
         };
 
         res.json(response);
@@ -955,8 +980,7 @@ export function registerRoutes(app: Express): Server {
 
     // Add this new endpoint after the existing event endpoints
     app.get('/api/admin/events/:id', isAdmin, async (req, res) => {
-      try {
-        const eventId = parseInt(req.params.id);
+      try {        const eventId = parseInt(req.params.id);
 
         // Get event details
         const [event] = await db
