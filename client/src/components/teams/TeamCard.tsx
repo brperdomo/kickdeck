@@ -23,6 +23,7 @@ interface Team {
   managerName?: string;
   managerPhone?: string;
   managerEmail?: string;
+  ageGroup: string;
 }
 
 interface TeamCardProps {
@@ -54,6 +55,7 @@ export function TeamCard({ team }: TeamCardProps) {
         title: "Success",
         description: "Team deleted successfully",
       });
+      setShowDeleteDialog(false);
     },
     onError: (error) => {
       toast({
@@ -70,6 +72,7 @@ export function TeamCard({ team }: TeamCardProps) {
         <CardContent className="pt-6">
           <div className="space-y-2">
             <h3 className="font-semibold">{team.name}</h3>
+            <p className="text-sm text-muted-foreground">Age Group: {team.ageGroup}</p>
             {team.coach && <p className="text-sm text-muted-foreground">Coach: {team.coach}</p>}
             {team.managerName && (
               <p className="text-sm text-muted-foreground">Manager: {team.managerName}</p>
@@ -89,8 +92,8 @@ export function TeamCard({ team }: TeamCardProps) {
             className="h-8 px-2"
             onClick={() => setShowEditModal(true)}
           >
-            <Edit className="h-4 w-4" />
-            <span className="sr-only">Edit team</span>
+            <Edit className="h-4 w-4 mr-2" />
+            <span>Edit</span>
           </Button>
           <Button
             variant="outline"
@@ -98,8 +101,8 @@ export function TeamCard({ team }: TeamCardProps) {
             className="h-8 px-2 text-destructive hover:text-destructive"
             onClick={() => setShowDeleteDialog(true)}
           >
-            <Trash2 className="h-4 w-4" />
-            <span className="sr-only">Delete team</span>
+            <Trash2 className="h-4 w-4 mr-2" />
+            <span>Delete</span>
           </Button>
         </CardFooter>
       </Card>
@@ -118,8 +121,13 @@ export function TeamCard({ team }: TeamCardProps) {
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => deleteTeamMutation.mutate()}
+              disabled={deleteTeamMutation.isPending}
             >
-              Delete
+              {deleteTeamMutation.isPending ? (
+                "Deleting..."
+              ) : (
+                "Delete"
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
