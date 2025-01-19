@@ -895,16 +895,27 @@ export function registerRoutes(app: Express): Server {
                 )
               ELSE NULL
               END
-            ) FILTER (WHERE ${fields.id} IS NOT NULL), '[]')`.mapWith((f) => Array.isArray(f) ? f : []),
+            ) FILTER (WHERE ${fields.id} IS NOT NULL), '[]')::json`,
             openFields: sql<number>`count(case when ${fields.isOpen} = true then 1 end)`.mapWith(Number),
             closedFields: sql<number>`count(case when ${fields.isOpen} = false then 1 end)`.mapWith(Number),
           })
           .from(complexes)
           .leftJoin(fields, eq(complexes.id, fields.complexId))
-          .groupBy(complexes.id, complexes.name, complexes.address, complexes.city,
-            complexes.state, complexes.country, complexes.openTime, complexes.closeTime,
-            complexes.isOpen, complexes.rules, complexes.directions,
-            complexes.createdAt, complexes.updatedAt)
+          .groupBy(
+            complexes.id,
+            complexes.name,
+            complexes.address,
+            complexes.city,
+            complexes.state,
+            complexes.country,
+            complexes.openTime,
+            complexes.closeTime,
+            complexes.isOpen,
+            complexes.rules,
+            complexes.directions,
+            complexes.createdAt,
+            complexes.updatedAt
+          )
           .orderBy(complexes.name);
 
         // Get scoring rules
@@ -948,7 +959,7 @@ export function registerRoutes(app: Express): Server {
           })),
           complexes: complexData.map(({ complex, fields, openFields, closedFields }) => ({
             ...complex,
-            fields: fields || [],
+            fields: Array.isArray(fields) ? fields : [],
             openFields: openFields || 0,
             closedFields: closedFields || 0
           })),
