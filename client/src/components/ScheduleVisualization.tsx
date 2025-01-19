@@ -10,6 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Game {
   id: number;
@@ -22,13 +29,29 @@ interface Game {
   status: string;
 }
 
+interface AgeGroup {
+  id: string;
+  ageGroup: string;
+  gender: string;
+}
+
 interface ScheduleVisualizationProps {
   games: Game[];
+  ageGroups: AgeGroup[];
+  selectedAgeGroup: string;
+  onAgeGroupChange: (ageGroupId: string) => void;
   isLoading: boolean;
   date: Date;
 }
 
-export function ScheduleVisualization({ games, isLoading, date }: ScheduleVisualizationProps) {
+export function ScheduleVisualization({ 
+  games, 
+  ageGroups,
+  selectedAgeGroup,
+  onAgeGroupChange,
+  isLoading, 
+  date 
+}: ScheduleVisualizationProps) {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
 
   // Get unique fields
@@ -44,7 +67,7 @@ export function ScheduleVisualization({ games, isLoading, date }: ScheduleVisual
   }, {} as Record<string, Game[]>);
 
   // Generate a color for each age group
-  const ageGroups = Array.from(new Set(games.map(game => game.ageGroup)));
+  const existingAgeGroups = Array.from(new Set(games.map(game => game.ageGroup)));
   const colors = [
     "bg-blue-200",
     "bg-green-200",
@@ -54,7 +77,7 @@ export function ScheduleVisualization({ games, isLoading, date }: ScheduleVisual
     "bg-orange-200",
   ];
   const ageGroupColors = Object.fromEntries(
-    ageGroups.map((group, i) => [group, colors[i % colors.length]])
+    existingAgeGroups.map((group, i) => [group, colors[i % colors.length]])
   );
 
   if (isLoading) {
@@ -68,12 +91,27 @@ export function ScheduleVisualization({ games, isLoading, date }: ScheduleVisual
   return (
     <Card>
       <CardContent className="p-6">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">
-            Schedule for {format(date, "MMMM d, yyyy")}
-          </h3>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {ageGroups.map(group => (
+        <div className="mb-4 space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold">
+              Schedule for {format(date, "MMMM d, yyyy")}
+            </h3>
+            <Select value={selectedAgeGroup} onValueChange={onAgeGroupChange}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Select age group" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Age Groups</SelectItem>
+                {ageGroups.map((group) => (
+                  <SelectItem key={group.id} value={group.id}>
+                    {group.ageGroup} ({group.gender})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {existingAgeGroups.map(group => (
               <Badge key={group} variant="secondary" className={ageGroupColors[group]}>
                 {group}
               </Badge>
