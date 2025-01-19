@@ -45,7 +45,7 @@ function Router() {
       <Route path="/create-event">
         {user.isAdmin ? <CreateEvent /> : <NotFound />}
       </Route>
-      <Route path="/admin/events/:id/edit">
+      <Route path="/admin/events/:id">
         {user.isAdmin ? <EditEvent /> : <NotFound />}
       </Route>
       <Route path="/">

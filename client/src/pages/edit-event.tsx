@@ -11,10 +11,13 @@ export default function EditEvent() {
 
   // Query for event details
   const eventQuery = useQuery({
-    queryKey: ['/api/admin/events', id, 'edit'],
+    queryKey: [`/api/admin/events/${id}`],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${id}/edit`);
-      if (!response.ok) throw new Error('Failed to fetch event details');
+      const response = await fetch(`/api/admin/events/${id}`);
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error);
+      }
       return response.json();
     },
   });
@@ -27,7 +30,12 @@ export default function EditEvent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      if (!response.ok) throw new Error('Failed to update event');
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error);
+      }
+
       return response.json();
     },
     onSuccess: () => {
@@ -49,15 +57,21 @@ export default function EditEvent() {
   if (eventQuery.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   if (eventQuery.error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-red-500">Error loading event details</p>
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <p className="text-destructive font-medium">Failed to load event details</p>
+        <button
+          onClick={() => navigate("/admin")}
+          className="text-primary hover:underline"
+        >
+          Return to Dashboard
+        </button>
       </div>
     );
   }
