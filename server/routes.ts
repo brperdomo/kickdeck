@@ -206,16 +206,14 @@ export function registerRoutes(app: Express): Server {
             return res.status(404).send("Complex not found");
           }
 
-          // If complex is closed, force all fields to be closed
-          if (!isOpen) {
-            await tx
-              .update(fields)
-              .set({
-                isOpen: false,
-                updatedAt: new Date().toISOString(),
-              })
-              .where(eq(fields.complexId, complexId));
-          }
+          // Update all fields based on complex status
+          await tx
+            .update(fields)
+            .set({
+              isOpen,
+              updatedAt: new Date().toISOString(),
+            })
+            .where(eq(fields.complexId, complexId));
 
           res.json(updatedComplex);
         });
