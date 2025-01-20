@@ -242,7 +242,6 @@ export default function AuthPage() {
                               type="email"
                               placeholder="Enter your email"
                               {...field}
-                              value={field.value || ""}
                               onChange={(e) => {
                                 field.onChange(e);
                                 const email = e.target.value;
