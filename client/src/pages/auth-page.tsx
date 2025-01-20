@@ -239,19 +239,16 @@ export default function AuthPage() {
                           <FormLabel>Email *</FormLabel>
                           <FormControl>
                             <Input
-                              {...field}
                               type="email"
                               placeholder="Enter your email"
-                              onChange={(e) => {
-                                field.onChange(e);
+                              {...field}
+                              onBlur={(e) => {
+                                field.onBlur();
+                                setInputFocus(prev => ({ ...prev, email: false }));
                                 const email = e.target.value;
                                 if (email && email.includes('@')) {
                                   emailCheckMutation.mutate(email);
                                 }
-                              }}
-                              onBlur={() => {
-                                field.onBlur();
-                                setInputFocus(prev => ({ ...prev, email: false }));
                               }}
                               onFocus={() => setInputFocus(prev => ({ ...prev, email: true }))}
                               className={`${
@@ -280,18 +277,18 @@ export default function AuthPage() {
                           <FormLabel>Username *</FormLabel>
                           <FormControl>
                             <Input
-                              {...field}
                               placeholder="Choose a username"
-                              className={`${
-                                inputFocus.username ? 'border-primary ring-2 ring-primary/20' : ''
-                              } ${
-                                registerForm.formState.errors.username ? 'border-red-500' : ''
-                              }`}
+                              {...field}
                               onFocus={() => setInputFocus(prev => ({ ...prev, username: true }))}
                               onBlur={() => {
                                 field.onBlur();
                                 setInputFocus(prev => ({ ...prev, username: false }));
                               }}
+                              className={`${
+                                inputFocus.username ? 'border-primary ring-2 ring-primary/20' : ''
+                              } ${
+                                registerForm.formState.errors.username ? 'border-red-500' : ''
+                              }`}
                             />
                           </FormControl>
                           <FormMessage />
