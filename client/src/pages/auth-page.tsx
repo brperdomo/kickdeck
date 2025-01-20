@@ -239,23 +239,22 @@ export default function AuthPage() {
                           <FormLabel>Email *</FormLabel>
                           <FormControl>
                             <Input
+                              {...field}
                               type="email"
                               placeholder="Enter your email"
-                              {...field}
-                              onBlur={(e) => {
-                                field.onBlur();
-                                setInputFocus(prev => ({ ...prev, email: false }));
-                                const email = e.target.value;
-                                if (email && email.includes('@')) {
-                                  emailCheckMutation.mutate(email);
-                                }
-                              }}
-                              onFocus={() => setInputFocus(prev => ({ ...prev, email: true }))}
                               className={`${
                                 inputFocus.email ? 'border-primary ring-2 ring-primary/20' : ''
                               } ${
                                 registerForm.formState.errors.email ? 'border-red-500' : ''
                               }`}
+                              onFocus={() => setInputFocus(prev => ({ ...prev, email: true }))}
+                              onBlur={(e) => {
+                                field.onBlur();
+                                setInputFocus(prev => ({ ...prev, email: false }));
+                                if (e.target.value && e.target.value.includes('@')) {
+                                  emailCheckMutation.mutate(e.target.value);
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
