@@ -72,12 +72,6 @@ export default function AuthPage() {
   const { toast } = useToast();
   const { login, register: registerUser } = useUser();
   const [isRegistering, setIsRegistering] = useState(false);
-  const [passwordMatch, setPasswordMatch] = useState<boolean | null>(null);
-  const [inputFocus, setInputFocus] = useState<{
-    email: boolean;
-  }>({
-    email: false,
-  });
 
   // Email availability check mutation
   const emailCheckMutation = useMutation({
@@ -93,7 +87,6 @@ export default function AuthPage() {
       email: "",
       password: "",
     },
-    mode: "onChange",
   });
 
   const registerForm = useForm<RegisterFormData>({
@@ -106,7 +99,6 @@ export default function AuthPage() {
       lastName: "",
       phone: "",
     },
-    mode: "onChange",
   });
 
   async function onSubmit(data: LoginFormData | RegisterFormData) {
@@ -181,32 +173,6 @@ export default function AuthPage() {
               <Trophy className="h-16 w-16 text-green-600 mb-4" />
               <CardTitle className="text-3xl font-bold">Sign In to MatchPro</CardTitle>
             </div>
-            <div className="absolute top-4 right-4">
-              <HelpButton
-                title={isRegistering ? "Registration Help" : "Login Help"}
-                content={
-                  isRegistering ? (
-                    <div className="space-y-2">
-                      <p>To register for the soccer system:</p>
-                      <ul className="list-disc pl-4 space-y-1">
-                        <li>Fill in all required fields marked with *</li>
-                        <li>Password must be at least 8 characters with numbers and special characters</li>
-                        <li>Your email will be used for account verification</li>
-                      </ul>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <p>To log in to your account:</p>
-                      <ul className="list-disc pl-4 space-y-1">
-                        <li>Enter your registered email address</li>
-                        <li>Enter your password</li>
-                        <li>Click "Forgot Password?" if you need to reset</li>
-                      </ul>
-                    </div>
-                  )
-                }
-              />
-            </div>
           </CardHeader>
           <CardContent>
             <Tabs
@@ -215,7 +181,6 @@ export default function AuthPage() {
                 setIsRegistering(v === "register");
                 loginForm.reset();
                 registerForm.reset();
-                setPasswordMatch(null);
               }}
             >
               <TabsList className="grid w-full grid-cols-2 mb-4">
@@ -226,7 +191,6 @@ export default function AuthPage() {
               {isRegistering ? (
                 <Form {...registerForm}>
                   <form onSubmit={registerForm.handleSubmit(onSubmit)} className="space-y-4">
-                    {/* Email Field */}
                     <FormField
                       control={registerForm.control}
                       name="email"
@@ -238,24 +202,6 @@ export default function AuthPage() {
                               type="email"
                               placeholder="Enter your email"
                               {...field}
-                              value={field.value || ""}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                const email = e.target.value;
-                                if (email && email.includes('@')) {
-                                  emailCheckMutation.mutate(email);
-                                }
-                              }}
-                              onBlur={() => {
-                                field.onBlur();
-                                setInputFocus(prev => ({ ...prev, email: false }));
-                              }}
-                              onFocus={() => setInputFocus(prev => ({ ...prev, email: true }))}
-                              className={`${
-                                inputFocus.email ? 'border-primary ring-2 ring-primary/20' : ''
-                              } ${
-                                registerForm.formState.errors.email ? 'border-red-500' : ''
-                              }`}
                             />
                           </FormControl>
                           <FormMessage />
@@ -268,7 +214,6 @@ export default function AuthPage() {
                       )}
                     />
 
-                    {/* Password Field */}
                     <FormField
                       control={registerForm.control}
                       name="password"
@@ -280,13 +225,6 @@ export default function AuthPage() {
                               type="password"
                               placeholder="Enter your password"
                               {...field}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                const confirmPassword = registerForm.getValues("confirmPassword");
-                                if (confirmPassword) {
-                                  setPasswordMatch(e.target.value === confirmPassword);
-                                }
-                              }}
                             />
                           </FormControl>
                           <FormDescription>
@@ -297,7 +235,6 @@ export default function AuthPage() {
                       )}
                     />
 
-                    {/* Confirm Password Field */}
                     <FormField
                       control={registerForm.control}
                       name="confirmPassword"
@@ -309,24 +246,13 @@ export default function AuthPage() {
                               type="password"
                               placeholder="Confirm your password"
                               {...field}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                const password = registerForm.getValues("password");
-                                setPasswordMatch(e.target.value === password);
-                              }}
                             />
                           </FormControl>
                           <FormMessage />
-                          {passwordMatch === false && (
-                            <p className="text-sm text-red-500 mt-1">
-                              Passwords do not match
-                            </p>
-                          )}
                         </FormItem>
                       )}
                     />
 
-                    {/* First Name Field */}
                     <FormField
                       control={registerForm.control}
                       name="firstName"
@@ -344,7 +270,6 @@ export default function AuthPage() {
                       )}
                     />
 
-                    {/* Last Name Field */}
                     <FormField
                       control={registerForm.control}
                       name="lastName"
@@ -362,19 +287,18 @@ export default function AuthPage() {
                       )}
                     />
 
-                    {/* Phone Field */}
                     <FormField
                       control={registerForm.control}
                       name="phone"
-                      render={({ field: { value, ...fieldProps } }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Phone Number (Optional)</FormLabel>
                           <FormControl>
                             <Input
                               type="tel"
                               placeholder="Enter your phone number"
-                              {...fieldProps}
-                              value={value ?? ""}
+                              {...field}
+                              value={field.value ?? ""}
                             />
                           </FormControl>
                           <FormMessage />
