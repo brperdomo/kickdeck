@@ -17,9 +17,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, ArrowLeft } from "lucide-react";
+import { Trophy, ArrowLeft, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Link } from "wouter";
+import { useEffect, useState } from "react";
 
 const registerSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -45,6 +46,11 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export default function Register() {
   const { toast } = useToast();
   const { register } = useUser();
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [emailAvailability, setEmailAvailability] = useState<{
+    available: boolean;
+    message?: string;
+  } | null>(null);
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -57,7 +63,64 @@ export default function Register() {
     },
   });
 
+  // Debounced email validation
+  useEffect(() => {
+    const email = form.watch("email");
+    let timeoutId: NodeJS.Timeout;
+
+    const checkEmailAvailability = async () => {
+      if (!email || !z.string().email().safeParse(email).success) {
+        setEmailAvailability(null);
+        return;
+      }
+
+      try {
+        setIsCheckingEmail(true);
+        const response = await fetch(`/api/check-email?email=${encodeURIComponent(email)}`, {
+          credentials: 'include'
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to check email availability");
+        }
+
+        const data = await response.json();
+        setEmailAvailability(data);
+
+        if (!data.available) {
+          form.setError("email", {
+            type: "manual",
+            message: data.message || "This email is already registered"
+          });
+        }
+      } catch (error) {
+        console.error('Error checking email:', error);
+        setEmailAvailability(null);
+      } finally {
+        setIsCheckingEmail(false);
+      }
+    };
+
+    if (email) {
+      timeoutId = setTimeout(checkEmailAvailability, 500);
+    } else {
+      setEmailAvailability(null);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [form.watch("email")]);
+
   async function onSubmit(data: RegisterFormData) {
+    // Double check email availability before submitting
+    if (!emailAvailability?.available) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please use a different email address",
+      });
+      return;
+    }
+
     try {
       const { confirmPassword, ...registerData } = data;
       const submitData: InsertUser = {
@@ -160,14 +223,32 @@ export default function Register() {
                     <FormItem>
                       <FormLabel className="text-base">Email</FormLabel>
                       <FormControl>
-                        <Input
-                          type="email"
-                          autoComplete="email"
-                          className="h-11 text-base px-4"
-                          {...field}
-                        />
+                        <div className="relative">
+                          <Input
+                            type="email"
+                            autoComplete="email"
+                            className={`h-11 text-base px-4 ${
+                              emailAvailability?.available === false
+                                ? "border-red-500 focus:ring-red-500"
+                                : emailAvailability?.available
+                                ? "border-green-500 focus:ring-green-500"
+                                : ""
+                            }`}
+                            {...field}
+                          />
+                          {isCheckingEmail && (
+                            <div className="absolute right-3 top-3">
+                              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                            </div>
+                          )}
+                        </div>
                       </FormControl>
                       <FormMessage />
+                      {emailAvailability?.available === false && (
+                        <p className="text-sm text-red-500 mt-1">
+                          {emailAvailability.message}
+                        </p>
+                      )}
                     </FormItem>
                   )}
                 />
@@ -214,6 +295,7 @@ export default function Register() {
                 <Button
                   type="submit"
                   className="w-full h-11 text-base bg-green-600 hover:bg-green-700 transition-colors"
+                  disabled={isCheckingEmail || emailAvailability?.available === false}
                 >
                   Create Account
                 </Button>
