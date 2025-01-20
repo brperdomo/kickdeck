@@ -61,11 +61,11 @@ export default function Register() {
     try {
       const { confirmPassword, ...registerData } = data;
       const submitData: InsertUser = {
-        username: registerData.email, // Using email as username
-        email: registerData.email,
+        username: registerData.email,
         password: registerData.password,
         firstName: registerData.firstName,
         lastName: registerData.lastName,
+        email: registerData.email,
         phone: null,
         isParent: false,
         isAdmin: false,
@@ -112,8 +112,8 @@ export default function Register() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form 
-                onSubmit={form.handleSubmit(onSubmit)} 
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-5"
                 id="register-form"
                 name="register"
@@ -211,8 +211,8 @@ export default function Register() {
                     </FormItem>
                   )}
                 />
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full h-11 text-base bg-green-600 hover:bg-green-700 transition-colors"
                 >
                   Create Account

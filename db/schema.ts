@@ -80,15 +80,16 @@ export const insertOrganizationSettingsSchema = createInsertSchema(organizationS
 export const selectOrganizationSettingsSchema = createSelectSchema(organizationSettings);
 
 export const insertUserSchema = createInsertSchema(users, {
-  email: z.string().email("Please enter a valid email address"),
+  email: z.string().email("Please enter a valid email address").min(1, "Email is required"),
   username: z.string().min(3, "Username must be at least 3 characters").max(50),
   password: passwordSchema,
   firstName: z.string().min(1, "First name is required").max(50),
   lastName: z.string().min(1, "Last name is required").max(50),
-  phone: z.string().optional(),
-  isAdmin: z.boolean().optional(),
-  isParent: z.boolean().optional(),
+  phone: z.string().nullable(),
+  isAdmin: z.boolean().default(false),
+  isParent: z.boolean().default(false),
   householdId: z.number().optional(),
+  createdAt: z.string().optional(),
 });
 
 export const insertHouseholdSchema = createInsertSchema(households, {
