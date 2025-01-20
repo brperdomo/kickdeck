@@ -18,11 +18,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, CheckCircle2, XCircle, Lock } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { z } from "zod";
 import { Link } from "wouter";
 import { useMutation } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
 import { HelpButton } from "@/components/ui/help-button";
 
 // Shared password schema
@@ -90,7 +89,6 @@ export default function AuthPage() {
       email: "",
       password: "",
     },
-    mode: "onChange",
   });
 
   const registerForm = useForm<RegisterFormData>({
@@ -104,7 +102,6 @@ export default function AuthPage() {
       lastName: "",
       phone: "",
     },
-    mode: "onChange",
   });
 
   async function onSubmit(data: LoginFormData | RegisterFormData) {
@@ -218,19 +215,20 @@ export default function AuthPage() {
               {isRegistering ? (
                 <Form {...registerForm}>
                   <form onSubmit={registerForm.handleSubmit(onSubmit)} className="space-y-4">
+                    {/* Email Field */}
                     <FormField
                       control={registerForm.control}
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>Email *</FormLabel>
                           <FormControl>
                             <Input
                               type="email"
                               placeholder="Enter your email"
                               {...field}
-                              onChange={(e) => {
-                                field.onChange(e);
+                              onBlur={(e) => {
+                                field.onBlur();
                                 const email = e.target.value;
                                 if (email && email.includes('@')) {
                                   emailCheckMutation.mutate(email);
@@ -248,12 +246,13 @@ export default function AuthPage() {
                       )}
                     />
 
+                    {/* Username Field */}
                     <FormField
                       control={registerForm.control}
                       name="username"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username</FormLabel>
+                          <FormLabel>Username *</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Choose a username"
@@ -265,12 +264,13 @@ export default function AuthPage() {
                       )}
                     />
 
+                    {/* Password Field */}
                     <FormField
                       control={registerForm.control}
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel>Password *</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
@@ -293,12 +293,13 @@ export default function AuthPage() {
                       )}
                     />
 
+                    {/* Confirm Password Field */}
                     <FormField
                       control={registerForm.control}
                       name="confirmPassword"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Confirm Password</FormLabel>
+                          <FormLabel>Confirm Password *</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
@@ -321,12 +322,13 @@ export default function AuthPage() {
                       )}
                     />
 
+                    {/* First Name Field */}
                     <FormField
                       control={registerForm.control}
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>First Name</FormLabel>
+                          <FormLabel>First Name *</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter your first name"
@@ -338,12 +340,13 @@ export default function AuthPage() {
                       )}
                     />
 
+                    {/* Last Name Field */}
                     <FormField
                       control={registerForm.control}
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Last Name</FormLabel>
+                          <FormLabel>Last Name *</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter your last name"
@@ -355,6 +358,7 @@ export default function AuthPage() {
                       )}
                     />
 
+                    {/* Phone Field */}
                     <FormField
                       control={registerForm.control}
                       name="phone"
