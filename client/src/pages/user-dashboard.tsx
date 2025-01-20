@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/hooks/use-user";
 import {
   LucideHome,
@@ -28,7 +28,7 @@ export default function UserDashboard() {
           <div className="p-4 border-b">
             <h2 className="text-xl font-bold text-green-600">MatchPro</h2>
           </div>
-          
+
           {/* Navigation Links */}
           <nav className="flex-1 p-4">
             <div className="space-y-2">
@@ -73,37 +73,13 @@ export default function UserDashboard() {
       {/* Main Content */}
       <div className="flex-1 p-8 overflow-auto">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Welcome, {user?.firstName}!</h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>My Household</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Manage your household information and members.
-                </p>
-                <Link href="/household">
-                  <Button className="mt-4">View Household</Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>My Account</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Update your personal information and preferences.
-                </p>
-                <Link href="/account">
-                  <Button className="mt-4">Manage Account</Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-gray-900">
+                Welcome, {user?.firstName}!
+              </CardTitle>
+            </CardHeader>
+          </Card>
         </div>
       </div>
     </div>
