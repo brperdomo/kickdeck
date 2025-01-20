@@ -20,9 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy } from "lucide-react";
 import { z } from "zod";
-import { Link } from "wouter";
 import { useMutation } from "@tanstack/react-query";
-import { HelpButton } from "@/components/ui/help-button";
 
 // Registration schema
 const registerSchema = z.object({
@@ -73,10 +71,6 @@ export default function AuthPage() {
   const { toast } = useToast();
   const { login, register: registerUser } = useUser();
   const [isRegistering, setIsRegistering] = useState(false);
-  const [inputFocus, setInputFocus] = useState({
-    email: false,
-    username: false,
-  });
 
   // Email availability check mutation
   const emailCheckMutation = useMutation({
@@ -92,7 +86,6 @@ export default function AuthPage() {
       loginEmail: "",
       password: "",
     },
-    mode: "onChange",
   });
 
   const registerForm = useForm<RegisterFormData>({
@@ -106,7 +99,6 @@ export default function AuthPage() {
       lastName: "",
       phone: "",
     },
-    mode: "onChange",
   });
 
   async function onSubmit(data: LoginFormData | RegisterFormData) {
@@ -185,14 +177,7 @@ export default function AuthPage() {
           <CardContent>
             <Tabs
               value={isRegistering ? "register" : "login"}
-              onValueChange={(v) => {
-                setIsRegistering(v === "register");
-                if (v === "register") {
-                  registerForm.reset();
-                } else {
-                  loginForm.reset();
-                }
-              }}
+              onValueChange={(v) => setIsRegistering(v === "register")}
             >
               <TabsList className="grid w-full grid-cols-2 mb-4">
                 <TabsTrigger value="login">Login</TabsTrigger>
@@ -211,21 +196,8 @@ export default function AuthPage() {
                           <FormControl>
                             <Input
                               type="email"
-                              placeholder="Enter your email"
+                              autoComplete="email"
                               {...field}
-                              className={`${
-                                inputFocus.email ? 'border-primary ring-2 ring-primary/20' : ''
-                              } ${
-                                registerForm.formState.errors.email ? 'border-red-500' : ''
-                              }`}
-                              onFocus={() => setInputFocus(prev => ({ ...prev, email: true }))}
-                              onBlur={(e) => {
-                                field.onBlur();
-                                setInputFocus(prev => ({ ...prev, email: false }));
-                                if (e.target.value && e.target.value.includes('@')) {
-                                  emailCheckMutation.mutate(e.target.value);
-                                }
-                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -245,26 +217,11 @@ export default function AuthPage() {
                           <FormLabel>Username *</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Choose a username"
+                              autoComplete="username"
                               {...field}
-                              onFocus={() => setInputFocus(prev => ({ ...prev, username: true }))}
-                              onBlur={() => {
-                                field.onBlur();
-                                setInputFocus(prev => ({ ...prev, username: false }));
-                              }}
-                              className={`${
-                                inputFocus.username ? 'border-primary ring-2 ring-primary/20' : ''
-                              } ${
-                                registerForm.formState.errors.username ? 'border-red-500' : ''
-                              }`}
                             />
                           </FormControl>
                           <FormMessage />
-                          {field.value && field.value.length < 3 && (
-                            <p className="text-sm text-amber-500 mt-1">
-                              Username must be at least 3 characters
-                            </p>
-                          )}
                         </FormItem>
                       )}
                     />
@@ -277,7 +234,7 @@ export default function AuthPage() {
                           <FormControl>
                             <Input
                               type="password"
-                              placeholder="Enter your password"
+                              autoComplete="new-password"
                               {...field}
                             />
                           </FormControl>
@@ -297,7 +254,7 @@ export default function AuthPage() {
                           <FormControl>
                             <Input
                               type="password"
-                              placeholder="Confirm your password"
+                              autoComplete="new-password"
                               {...field}
                             />
                           </FormControl>
@@ -313,7 +270,7 @@ export default function AuthPage() {
                           <FormLabel>First Name *</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Enter your first name"
+                              autoComplete="given-name"
                               {...field}
                             />
                           </FormControl>
@@ -329,7 +286,7 @@ export default function AuthPage() {
                           <FormLabel>Last Name *</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Enter your last name"
+                              autoComplete="family-name"
                               {...field}
                             />
                           </FormControl>
@@ -346,7 +303,7 @@ export default function AuthPage() {
                           <FormControl>
                             <Input
                               type="tel"
-                              placeholder="Enter your phone number"
+                              autoComplete="tel"
                               {...field}
                             />
                           </FormControl>
@@ -371,7 +328,7 @@ export default function AuthPage() {
                           <FormControl>
                             <Input
                               type="email"
-                              placeholder="Enter your email"
+                              autoComplete="email"
                               {...field}
                             />
                           </FormControl>
@@ -388,7 +345,7 @@ export default function AuthPage() {
                           <FormControl>
                             <Input
                               type="password"
-                              placeholder="Enter your password"
+                              autoComplete="current-password"
                               {...field}
                             />
                           </FormControl>
