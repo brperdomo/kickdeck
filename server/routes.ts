@@ -106,7 +106,7 @@ export function registerRoutes(app: Express): Server {
         // Add a small delay to prevent brute force attempts
         await new Promise(resolve => setTimeout(resolve, 200));
 
-        return res.json({ 
+        return res.json({
           available: !existingUser,
           message: existingUser ? "Email is already in use" : undefined
         });
@@ -314,6 +314,69 @@ export function registerRoutes(app: Express): Server {
         res.status(500).send("Failed to decline invitation");
       }
     });
+
+    // Add these new endpoints after the existing household routes
+    app.get('/api/admin/households', isAdmin, async (req, res) => {
+      try {
+        const allHouseholds = await db
+          .select()
+          .from(households)
+          .orderBy(households.lastName);
+
+        res.json(allHouseholds);
+      } catch (error) {
+        console.error('Error fetching households:', error);
+        res.status(500).send("Failed to fetch households");
+      }
+    });
+
+    app.get('/api/admin/households/:id/members', isAdmin, async (req, res) => {
+      try {
+        const householdId = parseInt(req.params.id);
+
+        const members = await db
+          .select({
+            id: users.id,
+            firstName: users.firstName,
+            lastName: users.lastName,
+            email: users.email,
+            phone: users.phone,
+            isParent: users.isParent,
+            createdAt: users.createdAt,
+          })
+          .from(users)
+          .where(eq(users.householdId, householdId))
+          .orderBy(users.lastName, users.firstName);
+
+        res.json(members);
+      } catch (error) {
+        console.error('Error fetching household members:', error);
+        res.status(500).send("Failed to fetch household members");
+      }
+    });
+
+    // Add this endpoint to get a single household's details
+    app.get('/api/admin/households/:id', isAdmin, async (req, res) => {
+      try {
+        const householdId = parseInt(req.params.id);
+
+        const [household] = await db
+          .select()
+          .from(households)
+          .where(eq(households.id, householdId))
+          .limit(1);
+
+        if (!household) {
+          return res.status(404).send("Household not found");
+        }
+
+        res.json(household);
+      } catch (error) {
+        console.error('Error fetching household:', error);
+        res.status(500).send("Failed to fetch household");
+      }
+    });
+
 
     // Complex management routes
     app.get('/api/admin/complexes', isAdmin, async (req, res) => {
@@ -994,7 +1057,7 @@ export function registerRoutes(app: Express): Server {
           for (const complexId of eventData.selectedComplexIds) {
             await tx
               .insert(eventComplexes)
-              .values              .values({
+              .values({
                 eventId,
                 complexId,
                 createdAt: new Date().toISOString(),

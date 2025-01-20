@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, Link } from "wouter";
+import { useLocation as useWouterLocation, Link, useNavigate } from "wouter";
 import {
   Collapsible,
   CollapsibleContent,
@@ -47,14 +47,7 @@ import {
   Building2,
   MessageSquare,
 } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
@@ -1002,7 +995,7 @@ function ComplexesView() {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete field');
-      returnjson();
+      return response.json();
     },
     onSuccess: () => {
       // Refetch      fieldsQuery.refetch;
@@ -1847,17 +1840,18 @@ function EventsView() {
 
 function AdminDashboard() {
   const { user, logout } = useUser();
-  const [, setLocation] = useLocation();
+  const [, navigate] = useWouterLocation();
   const [activeView, setActiveView] = useState<View>('events');
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
   const { toast } = useToast();
+
   useEffect(() => {
     if (!isAdminUser(user)) {
-      setLocation("/");
+      navigate("/");
     }
-  }, [user, setLocation]);
+  }, [user, navigate]);
 
   const { data: events, isLoading: eventsLoading, error: eventsError } = useQuery({
     queryKey: ["/api/admin/events"],
@@ -1868,7 +1862,8 @@ function AdminDashboard() {
 
   const adminsQuery = useQuery<SelectUser[]>({
     queryKey: ["/api/admin/administrators"],
-    enabled: isAdminUser(user) && activeView=== 'administrators',    staleTime: 30000,
+    enabled: isAdminUser(user) && activeView === 'administrators',
+    staleTime: 30000,
     gcTime: 3600000,
   });
 
@@ -1879,13 +1874,19 @@ function AdminDashboard() {
     gcTime: 3600000,
   });
 
-
   function renderContent() {
+    const location = window.location.pathname;
+    const householdMatch = location.match(/\/admin\/households\/(\d+)/);
+
     switch (activeView) {
       case 'events':
         return <EventsView />;
       case 'households':
-        return <HouseholdsView />;
+        return householdMatch ? (
+          <HouseholdDetailsView id={householdMatch[1]} />
+        ) : (
+          <HouseholdsView />
+        );
       case 'administrators':
         return <AdministratorsView />;
       case 'reports':
@@ -1976,14 +1977,16 @@ function AdminDashboard() {
               <Building2 className="mr-2 h-4 w-4" />
               Field Complexes
             </Button>
+
             <Button
-              variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
+              variant={activeView === 'scheduling'? 'secondary' : 'ghost'}
               className="w-full justify-start"
               onClick={() => setActiveView('scheduling')}
             >
-              <Calendar className="mr2 h-4 w-4" />
+              <Calendar className="mr-2 h-4 w-4" />
               Scheduling
             </Button>
+
             <Button
               variant={activeView === 'teams' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
@@ -2443,258 +2446,1175 @@ function AdministratorsView() {
 }
 
 function HouseholdsView() {
-  const [, setLocation] = useLocation();
-  const { toast } = useToast();
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedHousehold, setSelectedHousehold] = useState<number | null>(null);
-  const [handleDuplicateHousehold, setHandleDuplicateHousehold] = useState(() => () => { });
-  const [handleDeleteHousehold, setHandleDeleteHousehold] = useState(() => () => { });
-
-  // Query for households list
-  const householdsQuery = useQuery({
+  const [, navigate] = useWouterLocation();
+  const { data: households, isLoading } = useQuery({
     queryKey: ['/api/admin/households'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/households');
-      if (!response.ok) throw new Error('Failed to fetch households');
-      return response.json();
-    }
   });
 
-  // Query for selected household details
-  const householdDetailsQuery = useQuery({
-    queryKey: ['/api/admin/households', selectedHousehold, 'edit'],
-    queryFn: async () => {
-      if (!selectedHousehold) return null;
-      const response = await fetch(`/api/admin/households/${selectedHousehold}/edit`);
-      if (!response.ok) throw new Error('Failed to fetch household details');
-      return response.json();
-    },
-    enabled: !!selectedHousehold
-  });
-
-  // Mutation for updating household
-  const updateHouseholdMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await fetch(`/api/admin/households/${selectedHousehold}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      if (!response.ok) throw new Error('Failed to update household');
-      return response.json();
-    },
-    onSuccess: () => {
-      householdsQuery.refetch();
-      setIsEditModalOpen(false);
-      setSelectedHousehold(null);
-      toast({
-        title: "Success",
-        description: "Household updated successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update household",
-        variant: "destructive"
-      });
-    }
-  });
-
-  const handleEditClick = (householdId: number) => {
-    setSelectedHousehold(householdId);
-    setIsEditModalOpen(true);
-  };
-
-  const handleUpdate = (formData: any) => {
-    updateHouseholdMutation.mutate(formData);
-  };
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin text-border" />
+      </div>
+    );
+  }
 
   return (
     <>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Households</h2>
-        <Button onClick={() => setLocation("/create-household")}>
-          <Plus className="h-4 w-4 mr-2" />
-          Create Household
+      </div>
+
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Last Name</TableHead>
+                <TableHead>Address</TableHead>
+                <TableHead>City</TableHead>
+                <TableHead>State</TableHead>
+                <TableHead>ZIP Code</TableHead>
+                <TableHead>Primary Email</TableHead>
+                <TableHead>Created At</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {households?.map((household: any) => (
+                <TableRow key={household.id}>
+                  <TableCell>
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto font-medium"
+                      onClick={() => navigate(`/admin/households/${household.id}`)}
+                    >
+                      {household.lastName}
+                    </Button>
+                  </TableCell>
+                  <TableCell>{household.address}</TableCell>
+                  <TableCell>{household.city}</TableCell>
+                  <TableCell>{household.state}</TableCell>
+                  <TableCell>{household.zipCode}</TableCell>
+                  <TableCell>{household.primaryEmail}</TableCell>
+                  <TableCell>
+                    {new Date(household.createdAt).toLocaleDateString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+// Add HouseholdDetailsView component
+function HouseholdDetailsView({ id }: { id: string }) {
+  const { data: household, isLoading: isLoadingHousehold } = useQuery({
+    queryKey: [`/api/admin/households/${id}`],
+  });
+
+  const { data: members, isLoading: isLoadingMembers } = useQuery({
+    queryKey: [`/api/admin/households/${id}/members`],
+  });
+
+  const [, navigate] = useWouterLocation();
+
+  if (isLoadingHousehold || isLoadingMembers) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin text-border" />
+      </div>
+    );
+  }
+
+  if (!household) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 space-y-4">
+        <p className="text-lg text-muted-foreground">Household not found</p>
+        <Button onClick={() => navigate("/admin/households")}>
+          Back to Households
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold">Household Details</h2>
+          <p className="text-muted-foreground">
+            {household.lastName} Family • {household.address}, {household.city}, {household.state} {household.zipCode}
+          </p>
+        </div>
+        <Button onClick={() => navigate("/admin/households")}>
+          Back to Households
         </Button>
       </div>
 
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>All Households</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="relative">
-              {householdsQuery.isLoading ? (
-                <div className="flex justify-center p-4">
-                  <Loader2 className="h-6 w-6 animate-spin" />
-                </div>
-              ) : householdsQuery.data?.length === 0 ? (
-                <p className="text-center text-muted-foreground py-4">
-                  No households found. Create your first household to get started.
-                </p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Household Name</TableHead>
-                      <TableHead>Address</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {householdsQuery.data?.map((household: any) => (
-                      <TableRow key={household.id}>
-                        <TableCell>{household.name}</TableCell>
-                        <TableCell>{household.address}</TableCell>
-                        <TableCell>{household.phone}</TableCell>
-                        <TableCell>{household.email}</TableCell>
-                        <TableCell>
-                          <Badge variant={household.status === 'active' ? 'default' : 'secondary'}>
-                            {household.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {/* Household Actions */}
-                          <div className="flex items-center justify-end space-x-2">
-                            <Link href={`/admin/households/${household.id}`}>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="flex items-center gap-2 hover:bg-secondary"
-                              >
-                                <Edit className="h-4 w-4" />
-                                <span>Edit Details</span>
-                              </Button>
-                            </Link>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="flex items-center gap-2 hover:bg-secondary"
-                              onClick={() => handleDuplicateHousehold(household)}
-                            >
-                              <Copy className="h-4 w-4" />
-                              <span>Duplicate</span>
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="flex items-center gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                              onClick={() => handleDeleteHousehold(household)}
-                            >
-                              <Trash className="h-4 w-4" />
-                              <span>Delete</span>
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+      <Card>
+        <CardHeader>
+          <CardTitle>Household Members</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Phone</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Created At</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {members?.map((member: any) => (
+                <TableRow key={member.id}>
+                  <TableCell>{member.firstName} {member.lastName}</TableCell>
+                  <TableCell>{member.email}</TableCell>
+                  <TableCell>{member.phone || 'N/A'}</TableCell>
+                  <TableCell>
+                    <Badge variant={member.isParent ? "default" : "secondary"}>
+                      {member.isParent ? 'Parent' : 'Member'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {new Date(member.createdAt).toLocaleDateString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+              {!members?.length && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
+                    No members found
+                  </TableCell>
+                </TableRow>
               )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+// Update the main AdminDashboard component
+export default function AdminDashboard() {
+  const { user, logout } = useUser();
+  const [location, params] = useWouterLocation();
+  const [activeView, setActiveView] = useState<View>('events');
+  const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
+  const { toast } = useToast();
+  useEffect(() => {
+    if (!isAdminUser(user)) {
+      location("/");
+    }
+  }, [user, location]);
+
+  const { data: events, isLoading: eventsLoading, error: eventsError } = useQuery({
+    queryKey: ["/api/admin/events"],
+    enabled: isAdminUser(user) && activeView === 'events',
+    staleTime: 30000,
+    gcTime: 3600000,
+  });
+
+  const adminsQuery = useQuery<SelectUser[]>({
+    queryKey: ["/api/admin/administrators"],
+    enabled: isAdminUser(user) && activeView === 'administrators',
+    staleTime: 30000,
+    gcTime: 3600000,
+  });
+
+  const { data: households, isLoading: householdsLoading, error: householdsError } = useQuery<any[]>({
+    queryKey: ["/api/admin/households"],
+    enabled: isAdminUser(user) && activeView === 'households',
+    staleTime: 30000,
+    gcTime: 3600000,
+  });
+
+  function renderContent() {
+    switch (activeView) {
+      case 'events':
+        return <EventsView />;
+      case 'households':
+        return params.includes('/admin/households/') ? (
+          <HouseholdDetailsView id={params.split('/').pop()!} />
+        ) : (
+          <HouseholdsView />
+        );
+      case 'administrators':
+        return <AdministratorsView />;
+      case 'reports':
+        return <ReportsView />;
+      case 'settings':
+        return <SettingsView activeSettingsView={activeSettingsView} />;
+      case 'complexes':
+        return <ComplexesView />;
+      case 'scheduling':
+        return <SchedulingView />;
+      case 'teams':
+        return <TeamsView />;
+      case 'account':
+        return (
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center min-h-[200px]">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            }
+          >
+            <MyAccount />
+          </Suspense>
+        );
+      default:
+        return null;
+    }
+  }
+
+  if (!isAdminUser(user)) {
+    return null;
+  }
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Sidebar */}
+      <div className="w-64 bg-card border-r flex flex-col h-full">
+        <div className="p-4 flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-6">
+            <Calendar className="h-6 w-6 text-primary" />
+            <h1 className="font-semibold text-xl">Admin Dashboard</h1>
+          </div>
+
+          {/* Navigation */}
+          <div className="space-y-2">
+            <Button
+              variant={activeView === 'events' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('events')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Events
+            </Button>
+
+            <Button
+              variant={activeView === 'households' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('households')}
+            >
+              <Home className="mr-2 h-4 w-4" />
+              Households
+            </Button>
+
+            <Button
+              variant={activeView === 'administrators' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('administrators')}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Administrators
+            </Button>
+
+            <Button
+              variant={activeView === 'reports' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('reports')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Reports
+            </Button>
+
+            <Button
+              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('complexes')}
+            >
+              <Building2 className="mr-2 h-4 w-4" />
+              Field Complexes
+            </Button>
+
+            <Button
+              variant={activeView === 'scheduling'? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('scheduling')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Scheduling
+            </Button>
+
+            <Button
+              variant={activeView === 'teams' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('teams')}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Teams
+            </Button>
+
+            {/* Add Chat Button */}
+            <Link href="/chat">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+              >
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Chat
+              </Button>
+            </Link>
+
+            {/* Settings Collapsible */}
+            <Collapsible
+              open={isSettingsOpen}
+              onOpenChange={setIsSettingsOpen}
+              className="space-y-2"
+            >
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+                  className="w-full justify-between"
+                >
+                  <span className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </span>
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isSettingsOpen ? 'rotate-90' : ''
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 pl-4">
+                <Button
+                  variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('branding');
+                  }}
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Branding
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('payments');
+                  }}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Payments
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('general');
+                  }}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  General
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
+
+            <Button
+              variant={activeView === 'account' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('account')}
+            >
+              <User className="mr-2 h-4 w-4" />
+              My Account
+            </Button>
+          </div>
+          {/* Footer */}
+          <div className="mt-auto space-y-2">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-muted-foreground"
+              onClick={() => logout()}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+            <p className="text-xs text-center text-muted-foreground pt-4 border-t">
+              Powered by MatchPro
+            </p>
+          </div>
+        </div>
+      </div>
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto p-8">
+        {renderContent()}
+      </div>
+    </div>
+  );
+}
+
+export default AdminDashboard;
+
+function TeamsView() {
+  const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
+  const [selectedAgeGroup, setSelectedAgeGroup] = useState<string>("");
+  const { toast } = useToast();
+
+  // Query for events
+  const eventsQuery = useQuery({
+    queryKey: ['/api/admin/events'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) throw new Error('Failed to fetch events');
+      return response.json();
+    }
+  });
+
+  // Query for age groups of selected event
+  const ageGroupsQuery = useQuery({
+    queryKey: ['/api/admin/events', selectedEvent, 'age-groups'],
+    queryFn: async () => {
+      if (!selectedEvent) return [];
+      const response = await fetch(`/api/admin/events/${selectedEvent}/age-groups`);
+      if (!response.ok) throw new Error('Failed to fetch age groups');
+      return response.json();
+    },
+    enabled: !!selectedEvent
+  });
+
+  // Query for teams in selected event and age group
+  const teamsQuery = useQuery({
+    queryKey: ['/api/admin/teams', selectedEvent, selectedAgeGroup],
+    queryFn: async () => {
+      if (!selectedEvent || !selectedAgeGroup) return [];
+      const response = await fetch(`/api/admin/teams?eventId=${selectedEvent}&ageGroup=${selectedAgeGroup}`);
+      if (!response.ok) throw new Error('Failed to fetch teams');
+      return response.json();
+    },
+    enabled: !!selectedEvent && !!selectedAgeGroup
+  });
+
+  const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
+  const [newTeamName, setNewTeamName] = useState("");
+
+  const addTeamMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/teams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newTeamName,
+          eventId: selectedEvent,
+          ageGroup: selectedAgeGroup
+        })
+      });
+      if (!response.ok) throw new Error('Failed to add team');
+      return response.json();
+    },
+    onSuccess: () => {
+      teamsQuery.refetch();
+      setNewTeamName("");
+      setIsAddTeamModalOpen(false);
+      toast({ title: "Success", description: "Team added successfully!" });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to add team",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleAddTeam = () => {
+    if (!newTeamName || !selectedEvent || !selectedAgeGroup) {
+      toast({
+        title: "Error",
+        description: "Please fill all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+    addTeamMutation.mutate();
+  };
+
+  return (
+    <>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold mb-4">Teams Management</h2>
+        <div className="space-y-4">
+          <div className="grid gap-4">
+            <div>
+              <Label>Event</Label>
+              <Select
+                value={selectedEvent?.toString()}
+                onValueChange={(value) => {
+                  setSelectedEvent(parseInt(value));
+                  setSelectedAgeGroup(""); // Reset age group when event changes
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Event" />
+                </SelectTrigger>
+                <SelectContent>
+                  {eventsQuery.data?.map((event: any) => (
+                    <SelectItem key={event.id} value={event.id.toString()}>
+                      {event.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </CardContent>
-        </Card>
+
+            {selectedEvent && (
+              <div>
+                <Label>Age Group</Label>
+                <Select
+                  value={selectedAgeGroup}
+                  onValueChange={setSelectedAgeGroup}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Age Group" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ageGroupsQuery.data?.map((group: any) => (
+                      <SelectItem key={group.ageGroup} value={group.ageGroup}>
+                        {group.ageGroup} ({group.gender}) - {group.teamCount} teams
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+
+          {selectedEvent && selectedAgeGroup && (
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">
+                Teams ({teamsQuery.data?.length || 0})
+              </h3>
+              <Button onClick={() => setIsAddTeamModalOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Team
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Edit Household Modal */}
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="max-w-3xl">
+      {selectedEvent && selectedAgeGroup && (
+        <Card>
+          <CardContent className="p-6">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Team Name</TableHead>
+                  <TableHead className="w-[100px]">Created</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {teamsQuery.isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={2} className="text-center">
+                      <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                    </TableCell>
+                  </TableRow>
+                ) : teamsQuery.data?.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={2} className="text-center text-muted-foreground">
+                      No teams found for this age group.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  teamsQuery.data?.map((team: any) => (
+                    <TableRow key={team.id}>
+                      <TableCell>{team.name}</TableCell>
+                      <TableCell>
+                        {new Date(team.createdAt).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
+
+      <Dialog open={isAddTeamModalOpen} onOpenChange={setIsAddTeamModalOpen}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Household</DialogTitle>
+            <DialogTitle>Add New Team</DialogTitle>
           </DialogHeader>
-          {householdDetailsQuery.isLoading ? (
-            <div className="flex justify-center p-4">
-              <Loader2 className="h-6 w-6 animate-spin" />
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="team-name">Team Name</Label>
+              <Input
+                id="team-name"
+                value={newTeamName}
+                onChange={(e) => setNewTeamName(e.target.value)}
+                placeholder="Enter team name"
+              />
             </div>
-          ) : householdDetailsQuery.data ? (
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              // TODO: Add form handling
-              handleUpdate(householdDetailsQuery.data);
-            }}>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Household Name</Label>
-                  <Input
-                    id="name"
-                    defaultValue={householdDetailsQuery.data.name}
-                    placeholder="Enter household name"
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="address">Address</Label>
-                  <Input
-                    id="address"
-                    defaultValue={householdDetailsQuery.data.address}
-                    placeholder="Enter address"
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    defaultValue={householdDetailsQuery.data.phone}
-                    placeholder="Enter phone number"
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    defaultValue={householdDetailsQuery.data.email}
-                    placeholder="Enter email address"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setIsEditModalOpen(false)}
-                  type="button"
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={updateHouseholdMutation.isPending}>
-                  {updateHouseholdMutation.isPending && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Save Changes
-                </Button>
-              </DialogFooter>
-            </form>
-          ) : null}
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsAddTeamModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddTeam}
+              disabled={addTeamMutation.isPending}
+            >
+              {addTeamMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Adding...
+                </>
+              ) : (
+                "Add Team"
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
   );
 }
 
-function SettingsView(props: { activeSettingsView: SettingsView }) {
-  const { activeSettingsView } = props;
+function AdministratorsView() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { data: administrators, isLoading } = useQuery({
+    queryKey: ['/api/admin/administrators'],
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!administrators?.length) {
+    return (
+      <>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <h2 className="text-2xl font-bold">Administrators</h2>
+          <Button onClick={() => setIsModalOpen(true)}>
+            <UserPlus className="h-4 w-4 mr-2" />
+            Add Administrator
+          </Button>
+        </div>
+
+        <Card className="flex flex-col items-center justify-center p-8 text-center">
+          <UserPlus className="h-12 w-12 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No Administrators</h3>
+          <p className="text-muted-foreground mb-4">
+            Get started by adding your first administrator
+          </p>
+          <Button onClick={() => setIsModalOpen(true)}>
+            <UserPlus className="h-4 w-4 mr-2" />
+            Add Administrator
+          </Button>
+        </Card>
+
+        <AdminModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      </>
+    );
+  }
+
   return (
     <>
-      {activeSettingsView === 'branding' && (
-        <BrandingPreviewProvider>
-          <OrganizationSettingsForm />
-        </BrandingPreviewProvider>
-      )}
-      {activeSettingsView === 'payments' && <PaymentsSettingsView />}
-      {activeSettingsView === 'general' && (
-        <div>
-          General Settings Content Here
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h2 className="text-2xl font-bold">Administrators</h2>
+        <Button onClick={() => setIsModalOpen(true)}>
+          <UserPlus className="h-4 w-4 mr-2" />
+          Add Administrator
+        </Button>
+      </div>
+
+      <Card className="overflow-hidden">
+        <div className="overflow-x-auto -mx-6">
+          <div className="inline-block min-w-full align-middle">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[150px] pl-6">Name</TableHead>
+                  <TableHead className="min-w-[200px]">Email</TableHead>
+                  <TableHead className="min-w-[120px] hidden sm:table-cell">Added</TableHead>
+                  <TableHead className="w-[60px] pr-6">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {administrators?.map((admin) => (
+                  <TableRow key={admin.id}>
+                    <TableCell className="font-medium pl-6">
+                      {admin.firstName} {admin.lastName}
+                    </TableCell>
+                    <TableCell className="break-all">
+                      {admin.email}
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {format(new Date(admin.createdAt), 'MMM d, yyyy')}
+                    </TableCell>
+                    <TableCell className="pr-6">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive">
+                            <Trash className="h-4 w-4 mr-2" />
+                            Remove Access
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
-      )}
+      </Card>
+
+      <AdminModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 }
+
+function HouseholdsView() {
+  const [, navigate] = useWouterLocation();
+  const { data: households, isLoading } = useQuery({
+    queryKey: ['/api/admin/households'],
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin text-border" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Households</h2>
+      </div>
+
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Last Name</TableHead>
+                <TableHead>Address</TableHead>
+                <TableHead>City</TableHead>
+                <TableHead>State</TableHead>
+                <TableHead>ZIP Code</TableHead>
+                <TableHead>Primary Email</TableHead>
+                <TableHead>Created At</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {households?.map((household: any) => (
+                <TableRow key={household.id}>
+                  <TableCell>
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto font-medium"
+                      onClick={() => navigate(`/admin/households/${household.id}`)}
+                    >
+                      {household.lastName}
+                    </Button>
+                  </TableCell>
+                  <TableCell>{household.address}</TableCell>
+                  <TableCell>{household.city}</TableCell>
+                  <TableCell>{household.state}</TableCell>
+                  <TableCell>{household.zipCode}</TableCell>
+                  <TableCell>{household.primaryEmail}</TableCell>
+                  <TableCell>
+                    {new Date(household.createdAt).toLocaleDateString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+// Add HouseholdDetailsView component
+function HouseholdDetailsView({ id }: { id: string }) {
+  const { data: household, isLoading: isLoadingHousehold } = useQuery({
+    queryKey: [`/api/admin/households/${id}`],
+  });
+
+  const { data: members, isLoading: isLoadingMembers } = useQuery({
+    queryKey: [`/api/admin/households/${id}/members`],
+  });
+
+  const [, navigate] = useWouterLocation();
+
+  if (isLoadingHousehold || isLoadingMembers) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin text-border" />
+      </div>
+    );
+  }
+
+  if (!household) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 space-y-4">
+        <p className="text-lg text-muted-foreground">Household not found</p>
+        <Button onClick={() => navigate("/admin/households")}>
+          Back to Households
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold">Household Details</h2>
+          <p className="text-muted-foreground">
+            {household.lastName} Family • {household.address}, {household.city}, {household.state} {household.zipCode}
+          </p>
+        </div>
+        <Button onClick={() => navigate("/admin/households")}>
+          Back to Households
+        </Button>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Household Members</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Phone</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Created At</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {members?.map((member: any) => (
+                <TableRow key={member.id}>
+                  <TableCell>{member.firstName} {member.lastName}</TableCell>
+                  <TableCell>{member.email}</TableCell>
+                  <TableCell>{member.phone || 'N/A'}</TableCell>
+                  <TableCell>
+                    <Badge variant={member.isParent ? "default" : "secondary"}>
+                      {member.isParent ? 'Parent' : 'Member'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {new Date(member.createdAt).toLocaleDateString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+              {!members?.length && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
+                    No members found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+// Update the main AdminDashboard component
+export default function AdminDashboard() {
+  const { user, logout } = useUser();
+  const [location, params] = useWouterLocation();
+  const [activeView, setActiveView] = useState<View>('events');
+  const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
+  const { toast } = useToast();
+  useEffect(() => {
+    if (!isAdminUser(user)) {
+      location("/");
+    }
+  }, [user, location]);
+
+  const { data: events, isLoading: eventsLoading, error: eventsError } = useQuery({
+    queryKey: ["/api/admin/events"],
+    enabled: isAdminUser(user) && activeView === 'events',
+    staleTime: 30000,
+    gcTime: 3600000,
+  });
+
+  const adminsQuery = useQuery<SelectUser[]>({
+    queryKey: ["/api/admin/administrators"],
+    enabled: isAdminUser(user) && activeView === 'administrators',
+    staleTime: 30000,
+    gcTime: 3600000,
+  });
+
+  const { data: households, isLoading: householdsLoading, error: householdsError } = useQuery<any[]>({
+    queryKey: ["/api/admin/households"],
+    enabled: isAdminUser(user) && activeView === 'households',
+    staleTime: 30000,
+    gcTime: 3600000,
+  });
+
+  function renderContent() {
+    switch (activeView) {
+      case 'events':
+        return <EventsView />;
+      case 'households':
+        return params.includes('/admin/households/') ? (
+          <HouseholdDetailsView id={params.split('/').pop()!} />
+        ) : (
+          <HouseholdsView />
+        );
+      case 'administrators':
+        return <AdministratorsView />;
+      case 'reports':
+        return <ReportsView />;
+      case 'settings':
+        return <SettingsView activeSettingsView={activeSettingsView} />;
+      case 'complexes':
+        return <ComplexesView />;
+      case 'scheduling':
+        return <SchedulingView />;
+      case 'teams':
+        return <TeamsView />;
+      case 'account':
+        return (
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center min-h-[200px]">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            }
+          >
+            <MyAccount />
+          </Suspense>
+        );
+      default:
+        return null;
+    }
+  }
+
+  if (!isAdminUser(user)) {
+    return null;
+  }
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Sidebar */}
+      <div className="w-64 bg-card border-r flex flex-col h-full">
+        <div className="p-4 flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-6">
+            <Calendar className="h-6 w-6 text-primary" />
+            <h1 className="font-semibold text-xl">Admin Dashboard</h1>
+          </div>
+
+          {/* Navigation */}
+          <div className="space-y-2">
+            <Button
+              variant={activeView === 'events' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('events')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Events
+            </Button>
+
+            <Button
+              variant={activeView === 'households' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('households')}
+            >
+              <Home className="mr-2 h-4 w-4" />
+              Households
+            </Button>
+
+            <Button
+              variant={activeView === 'administrators' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('administrators')}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Administrators
+            </Button>
+
+            <Button
+              variant={activeView === 'reports' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('reports')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Reports
+            </Button>
+
+            <Button
+              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('complexes')}
+            >
+              <Building2 className="mr-2 h-4 w-4" />
+              Field Complexes
+            </Button>
+
+            <Button
+              variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('scheduling')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Scheduling
+            </Button>
+
+            <Button
+              variant={activeView === 'teams' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('teams')}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Teams
+            </Button>
+
+            {/* Add Chat Button */}
+            <Link href="/chat">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+              >
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Chat
+              </Button>
+            </Link>
+
+            {/* Settings Collapsible */}
+            <Collapsible
+              open={isSettingsOpen}
+              onOpenChange={setIsSettingsOpen}
+              className="space-y-2"
+            >
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+                  className="w-full justify-between"
+                >
+                  <span className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </span>
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isSettingsOpen ? 'rotate-90' : ''
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 pl-4">
+                <Button
+                  variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('branding');
+                  }}
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Branding
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('payments');
+                  }}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Payments
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('general');
+                  }}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  General
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
+
+            <Button
+              variant={activeView === 'account' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('account')}
+            >
+              <User className="mr-2 h-4 w-4" />
+              My Account
+            </Button>
+          </div>
+          {/* Footer */}
+          <div className="mt-auto space-y-2">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-muted-foreground"
+              onClick={() => logout()}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+            <p className="text-xs text-center text-muted-foreground pt-4 border-t">
+              Powered by MatchPro
+            </p>
+          </div>
+        </div>
+      </div>
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto p-8">
+        {renderContent()}
+      </div>
+    </div>
+  );
+}
+
+export default AdminDashboard;
