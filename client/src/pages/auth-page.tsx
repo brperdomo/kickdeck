@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type InsertUser } from "@db/schema";
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
+import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import {
   Form,
   FormControl,
@@ -11,6 +12,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,10 +21,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy } from "lucide-react";
 import { z } from "zod";
 import { Link } from "wouter";
+import { useMutation } from "@tanstack/react-query";
 
-// Password validation schema
-const passwordSchema = z
-  .string()
+// Shared password schema
+const passwordSchema = z.string()
   .min(8, "Password must be at least 8 characters")
   .regex(/[0-9]/, "Password must contain at least one number")
   .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character");
@@ -35,9 +37,14 @@ const registerSchema = z.object({
   firstName: z.string().min(1, "First name is required").max(50),
   lastName: z.string().min(1, "Last name is required").max(50),
   phone: z.string().optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords must match",
-  path: ["confirmPassword"],
+}).superRefine((data, ctx) => {
+  if (data.password !== data.confirmPassword) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Passwords must match",
+      path: ["confirmPassword"],
+    });
+  }
 });
 
 // Login schema
@@ -49,10 +56,26 @@ const loginSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 type LoginFormData = z.infer<typeof loginSchema>;
 
+// Function to check email availability
+async function checkEmailAvailability(email: string): Promise<{ available: boolean }> {
+  const response = await fetch(`/api/check-email?email=${encodeURIComponent(email)}`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to check email availability");
+  }
+  return response.json();
+}
+
 export default function AuthPage() {
   const { toast } = useToast();
   const { login, register: registerUser } = useUser();
   const [isRegistering, setIsRegistering] = useState(false);
+
+  // Email availability check mutation
+  const emailCheckMutation = useMutation({
+    mutationFn: checkEmailAvailability,
+  });
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -78,10 +101,8 @@ export default function AuthPage() {
     try {
       if (isRegistering) {
         const { confirmPassword, ...registerData } = data as RegisterFormData;
-
-        // Create user data for registration
-        const userData: InsertUser = {
-          username: registerData.email,
+        const submitData: InsertUser = {
+          username: registerData.email, // Use email as username
           email: registerData.email,
           password: registerData.password,
           firstName: registerData.firstName,
@@ -92,7 +113,7 @@ export default function AuthPage() {
           createdAt: new Date().toISOString(),
         };
 
-        const result = await registerUser(userData);
+        const result = await registerUser(submitData);
         if (!result.ok) {
           toast({
             variant: "destructive",
@@ -102,7 +123,6 @@ export default function AuthPage() {
           return;
         }
       } else {
-        // Handle login
         const loginData = data as LoginFormData;
         const result = await login({
           username: loginData.email,
@@ -126,7 +146,6 @@ export default function AuthPage() {
         }
       }
 
-      // Show success message
       toast({
         title: "Success",
         description: isRegistering ? "Registration successful" : "Login successful",
@@ -141,15 +160,14 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-4">
-      <div className="container max-w-lg mx-auto">
-        <Card className="w-full">
-          <CardHeader className="text-center">
-            <div className="flex flex-col items-center">
+    <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
+      <SoccerFieldBackground className="opacity-50" />
+      <div className="container max-w-lg mx-auto relative z-10">
+        <Card className="w-full bg-white/95 backdrop-blur-sm shadow-xl">
+          <CardHeader>
+            <div className="flex flex-col items-center text-center">
               <Trophy className="h-16 w-16 text-green-600 mb-4" />
-              <CardTitle className="text-3xl font-bold">
-                Sign In to MatchPro
-              </CardTitle>
+              <CardTitle className="text-3xl font-bold">Sign In to MatchPro</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -161,7 +179,7 @@ export default function AuthPage() {
                 registerForm.reset();
               }}
             >
-              <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="register">Register</TabsTrigger>
               </TabsList>
@@ -174,12 +192,13 @@ export default function AuthPage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>Email *</FormLabel>
                           <FormControl>
-                            <Input
+                            <Input 
                               type="email"
                               placeholder="Enter your email"
                               {...field}
+                              value={field.value || ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -192,14 +211,18 @@ export default function AuthPage() {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel>Password *</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
-                              placeholder="Create a password"
+                              placeholder="Enter your password"
                               {...field}
+                              value={field.value || ""}
                             />
                           </FormControl>
+                          <FormDescription>
+                            Must be at least 8 characters with a number and special character
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -210,12 +233,13 @@ export default function AuthPage() {
                       name="confirmPassword"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Confirm Password</FormLabel>
+                          <FormLabel>Confirm Password *</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
                               placeholder="Confirm your password"
                               {...field}
+                              value={field.value || ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -228,7 +252,7 @@ export default function AuthPage() {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>First Name</FormLabel>
+                          <FormLabel>First Name *</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter your first name"
@@ -245,7 +269,7 @@ export default function AuthPage() {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Last Name</FormLabel>
+                          <FormLabel>Last Name *</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter your last name"
@@ -268,6 +292,7 @@ export default function AuthPage() {
                               type="tel"
                               placeholder="Enter your phone number"
                               {...field}
+                              value={field.value ?? ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -294,6 +319,7 @@ export default function AuthPage() {
                               type="email"
                               placeholder="Enter your email"
                               {...field}
+                              value={field.value || ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -312,6 +338,7 @@ export default function AuthPage() {
                               type="password"
                               placeholder="Enter your password"
                               {...field}
+                              value={field.value || ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -322,20 +349,18 @@ export default function AuthPage() {
                     <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
                       Login
                     </Button>
-
-                    <div className="text-center mt-4">
-                      <Link href="/forgot-password">
-                        <Button
-                          variant="link"
-                          className="text-sm text-green-600"
-                          type="button"
-                        >
-                          Forgot Password?
-                        </Button>
-                      </Link>
-                    </div>
                   </form>
                 </Form>
+              )}
+
+              {!isRegistering && (
+                <div className="text-center mt-4">
+                  <Link href="/forgot-password">
+                    <Button variant="link" className="text-sm text-green-600" type="button">
+                      Forgot Password?
+                    </Button>
+                  </Link>
+                </div>
               )}
             </Tabs>
           </CardContent>
