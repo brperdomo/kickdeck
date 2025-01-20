@@ -12,7 +12,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,34 +22,20 @@ import { z } from "zod";
 import { Link } from "wouter";
 import { useMutation } from "@tanstack/react-query";
 
-// Shared password schema
-const passwordSchema = z.string()
-  .min(8, "Password must be at least 8 characters")
-  .regex(/[0-9]/, "Password must contain at least one number")
-  .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character");
-
-// Registration schema
+// Registration schema without validation
 const registerSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: passwordSchema,
+  email: z.string(),
+  password: z.string(),
   confirmPassword: z.string(),
-  firstName: z.string().min(1, "First name is required").max(50),
-  lastName: z.string().min(1, "Last name is required").max(50),
+  firstName: z.string(),
+  lastName: z.string(),
   phone: z.string().optional(),
-}).superRefine((data, ctx) => {
-  if (data.password !== data.confirmPassword) {
-    ctx.addIssue({
-      code: "custom",
-      message: "Passwords must match",
-      path: ["confirmPassword"],
-    });
-  }
 });
 
 // Login schema
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: passwordSchema,
+  email: z.string(),
+  password: z.string(),
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -72,7 +57,6 @@ export default function AuthPage() {
   const { login, register: registerUser } = useUser();
   const [isRegistering, setIsRegistering] = useState(false);
 
-  // Email availability check mutation
   const emailCheckMutation = useMutation({
     mutationFn: checkEmailAvailability,
   });
@@ -102,7 +86,7 @@ export default function AuthPage() {
       if (isRegistering) {
         const { confirmPassword, ...registerData } = data as RegisterFormData;
         const submitData: InsertUser = {
-          username: registerData.email, // Use email as username
+          username: registerData.email,
           email: registerData.email,
           password: registerData.password,
           firstName: registerData.firstName,
@@ -198,7 +182,6 @@ export default function AuthPage() {
                               type="email"
                               placeholder="Enter your email"
                               {...field}
-                              value={field.value || ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -217,12 +200,8 @@ export default function AuthPage() {
                               type="password"
                               placeholder="Enter your password"
                               {...field}
-                              value={field.value || ""}
                             />
                           </FormControl>
-                          <FormDescription>
-                            Must be at least 8 characters with a number and special character
-                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -239,7 +218,6 @@ export default function AuthPage() {
                               type="password"
                               placeholder="Confirm your password"
                               {...field}
-                              value={field.value || ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -319,7 +297,6 @@ export default function AuthPage() {
                               type="email"
                               placeholder="Enter your email"
                               {...field}
-                              value={field.value || ""}
                             />
                           </FormControl>
                           <FormMessage />
@@ -338,7 +315,6 @@ export default function AuthPage() {
                               type="password"
                               placeholder="Enter your password"
                               {...field}
-                              value={field.value || ""}
                             />
                           </FormControl>
                           <FormMessage />
