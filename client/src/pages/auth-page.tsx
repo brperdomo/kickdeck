@@ -95,8 +95,8 @@ export default function AuthPage() {
           </CardHeader>
           <CardContent>
             <Form {...loginForm}>
-              <form 
-                onSubmit={loginForm.handleSubmit(onSubmit)} 
+              <form
+                onSubmit={loginForm.handleSubmit(onSubmit)}
                 className="space-y-5"
                 id="login-form"
                 name="login"
@@ -135,23 +135,23 @@ export default function AuthPage() {
                         />
                       </FormControl>
                       <FormMessage />
-                      <div className="text-right">
-                        <Link href="/forgot-password">
-                          <Button variant="link" className="text-sm text-green-600 p-0 h-auto font-semibold hover:text-green-700">
-                            Forgot Password?
-                          </Button>
-                        </Link>
-                      </div>
                     </FormItem>
                   )}
                 />
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full h-11 text-base bg-green-600 hover:bg-green-700 transition-colors"
                 >
                   Login
                 </Button>
-                <div className="pt-2 text-center">
+                <div className="text-center">
+                  <Link href="/forgot-password">
+                    <Button variant="link" className="text-sm text-green-600 p-0 h-auto font-semibold hover:text-green-700">
+                      Forgot Password?
+                    </Button>
+                  </Link>
+                </div>
+                <div className="text-center">
                   <p className="text-sm sm:text-base text-gray-600">
                     New to MatchPro?{" "}
                     <Link href="/register">
