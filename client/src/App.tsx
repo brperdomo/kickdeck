@@ -12,6 +12,7 @@ import AdminDashboard from "@/pages/admin-dashboard";
 import UserDashboard from "@/pages/user-dashboard";
 import HouseholdPage from "@/pages/household";
 import ChatPage from "@/pages/chat";
+import EditEvent from "@/pages/edit-event";
 import { useUser } from "@/hooks/use-user";
 
 function Router() {
@@ -45,6 +46,9 @@ function Router() {
   // Handle authenticated routes
   return (
     <Switch>
+      <Route path="/admin/events/:id">
+        {user.isAdmin ? <EditEvent /> : <NotFound />}
+      </Route>
       <Route path="/admin">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}
       </Route>
