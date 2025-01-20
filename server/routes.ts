@@ -33,7 +33,6 @@ import { setupWebSocketServer } from "./websocket";
 import { randomBytes } from "crypto";
 import { insertHouseholdInvitationSchema } from "@db/schema";
 
-
 // Simple rate limiting middleware
 const rateLimit = (windowMs: number, maxRequests: number) => {
   const requests = new Map<string, { count: number; resetTime: number }>();
@@ -89,6 +88,34 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/register', rateLimit(60 * 1000, 3)); // 3 requests per minute
     app.use('/api/check-email', rateLimit(60 * 1000, 10)); // 10 requests per minute
 
+    // Email availability check endpoint
+    app.get('/api/check-email', async (req, res) => {
+      try {
+        const email = req.query.email as string;
+
+        if (!email) {
+          return res.status(400).json({ available: false, message: "Email is required" });
+        }
+
+        const [existingUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
+
+        // Add a small delay to prevent brute force attempts
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        return res.json({ 
+          available: !existingUser,
+          message: existingUser ? "Email is already in use" : undefined
+        });
+      } catch (error) {
+        console.error('Error checking email availability:', error);
+        return res.status(500).json({ available: false, message: "Internal server error" });
+      }
+    });
+
     // Add household invitation endpoints
     app.post('/api/household/invite', async (req, res) => {
       if (!req.isAuthenticated()) {
@@ -104,15 +131,15 @@ export function registerRoutes(app: Express): Server {
           return res.status(400).send("You must be part of a household to send invitations");
         }
 
-        // Check if user is already in a household
+        // Check if email exists in the system
         const [existingUser] = await db
           .select()
           .from(users)
           .where(eq(users.email, email))
           .limit(1);
 
-        if (existingUser?.householdId) {
-          return res.status(400).send("User is already part of a household");
+        if (existingUser) {
+          return res.status(400).send("This email is already registered in the system");
         }
 
         // Check for existing pending invitation
@@ -561,31 +588,6 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    // Email availability check endpoint
-    app.get('/api/check-email', async (req, res) => {
-      try {
-        const email = req.query.email as string;
-
-        if (!email) {
-          return res.status(400).json({ available: false, message: "Email is required" });
-        }
-
-        const [existingUser] = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email))
-          .limit(1);
-
-        // Add a small delay to prevent brute force attempts
-        await new Promise(resolve => setTimeout(resolve, 200));
-
-        return res.json({ available: !existingUser });
-      } catch (error) {
-        console.error('Error checking email availability:', error);
-        return res.status(500).json({ available: false, message: "Internal server error" });
-      }
-    });
-
     // Admin routes
     app.get('/api/admin/users', isAdmin, async (req, res) => {
       try {
@@ -992,7 +994,7 @@ export function registerRoutes(app: Express): Server {
           for (const complexId of eventData.selectedComplexIds) {
             await tx
               .insert(eventComplexes)
-              .values({
+              .values              .values({
                 eventId,
                 complexId,
                 createdAt: new Date().toISOString(),

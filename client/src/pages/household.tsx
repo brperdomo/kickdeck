@@ -24,18 +24,65 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Users, Send, Clock } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 export default function HouseholdPage() {
   const { user } = useUser();
   const { invitations, isLoading, sendInvitation } = useHouseholdInvitations();
   const [email, setEmail] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+  const [emailError, setEmailError] = useState("");
+
+  const checkEmailAvailability = async (email: string) => {
+    try {
+      setIsChecking(true);
+      const response = await fetch(`/api/check-email?email=${encodeURIComponent(email)}`, {
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+
+      const data = await response.json();
+      if (!data.available) {
+        setEmailError(data.message || "Email is not available");
+        return false;
+      }
+
+      setEmailError("");
+      return true;
+    } catch (error) {
+      console.error('Error checking email:', error);
+      setEmailError("Failed to verify email availability");
+      return false;
+    } finally {
+      setIsChecking(false);
+    }
+  };
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
-    await sendInvitation({ email });
-    setEmail("");
-    setIsDialogOpen(false);
+
+    // Clear previous errors
+    setEmailError("");
+
+    // Check email availability first
+    const isAvailable = await checkEmailAvailability(email);
+    if (!isAvailable) {
+      return;
+    }
+
+    try {
+      await sendInvitation({ email });
+      setEmail("");
+      setIsDialogOpen(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        setEmailError(error.message);
+      }
+    }
   };
 
   return (
@@ -64,14 +111,23 @@ export default function HouseholdPage() {
                     id="email"
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailError("");
+                    }}
                     placeholder="Enter their email address"
                     required
+                    className={emailError ? "border-red-500" : ""}
                   />
+                  {emailError && (
+                    <p className="text-sm text-red-500">
+                      {emailError}
+                    </p>
+                  )}
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">
+                <Button type="submit" disabled={isChecking}>
                   <Send className="mr-2 h-4 w-4" />
                   Send Invitation
                 </Button>
