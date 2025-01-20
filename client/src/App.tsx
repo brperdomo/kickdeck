@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Loader2, Lock } from "lucide-react";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
+import Register from "@/pages/register";
 import Profile from "@/pages/profile";
 import AdminDashboard from "@/pages/admin-dashboard";
 import CreateEvent from "@/pages/create-event";
@@ -27,12 +28,15 @@ function Router() {
 
   // Handle unauthenticated routes
   if (!user) {
-    if (window.location.pathname !== "/" && window.location.pathname !== "/forgot-password") {
+    if (window.location.pathname !== "/" && 
+        window.location.pathname !== "/forgot-password" && 
+        window.location.pathname !== "/register") {
       window.location.href = "/";
       return null;
     }
     return (
       <Switch>
+        <Route path="/register" component={Register} />
         <Route path="/forgot-password" component={ForgotPassword} />
         <Route component={AuthPage} />
       </Switch>
