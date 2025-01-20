@@ -135,6 +135,13 @@ export default function AuthPage() {
                         />
                       </FormControl>
                       <FormMessage />
+                      <div className="text-right">
+                        <Link href="/forgot-password">
+                          <Button variant="link" className="text-sm text-green-600 p-0 h-auto font-semibold hover:text-green-700">
+                            Forgot Password?
+                          </Button>
+                        </Link>
+                      </div>
                     </FormItem>
                   )}
                 />
