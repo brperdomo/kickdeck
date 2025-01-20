@@ -31,33 +31,6 @@ import session from "express-session";
 import passport from "passport";
 import { setupWebSocketServer } from "./websocket";
 import { randomBytes } from "crypto";
-import { insertHouseholdInvitationSchema } from "@db/schema";
-
-// Simple rate limiting middleware
-const rateLimit = (windowMs: number, maxRequests: number) => {
-  const requests = new Map<string, { count: number; resetTime: number }>();
-
-  return (req: Request, res: Response, next: Function) => {
-    const ip = req.ip || req.socket.remoteAddress || 'unknown';
-    const now = Date.now();
-
-    const userRequests = requests.get(ip) || { count: 0, resetTime: now + windowMs };
-
-    if (now > userRequests.resetTime) {
-      userRequests.count = 0;
-      userRequests.resetTime = now + windowMs;
-    }
-
-    userRequests.count++;
-    requests.set(ip, userRequests);
-
-    if (userRequests.count > maxRequests) {
-      return res.status(429).send('Too many requests, please try again later.');
-    }
-
-    next();
-  };
-};
 
 // Admin middleware
 const isAdmin = (req: Request, res: Response, next: Function) => {
@@ -74,8 +47,6 @@ const isAdmin = (req: Request, res: Response, next: Function) => {
 
 export function registerRoutes(app: Express): Server {
   const httpServer = createServer(app);
-
-  // Set up WebSocket server
   setupWebSocketServer(httpServer);
 
   try {
@@ -83,10 +54,6 @@ export function registerRoutes(app: Express): Server {
     setupAuth(app);
     log("Authentication routes registered successfully");
 
-    // Apply rate limiting to auth routes
-    app.use('/api/login', rateLimit(60 * 1000, 5)); // 5 requests per minute
-    app.use('/api/register', rateLimit(60 * 1000, 3)); // 3 requests per minute
-    app.use('/api/check-email', rateLimit(60 * 1000, 10)); // 10 requests per minute
 
     // Email availability check endpoint
     app.get('/api/check-email', async (req, res) => {
@@ -106,7 +73,7 @@ export function registerRoutes(app: Express): Server {
         // Add a small delay to prevent brute force attempts
         await new Promise(resolve => setTimeout(resolve, 200));
 
-        return res.json({ 
+        return res.json({
           available: !existingUser,
           message: existingUser ? "Email is already in use" : undefined
         });
@@ -339,7 +306,7 @@ export function registerRoutes(app: Express): Server {
           })
           .from(complexes)
           .leftJoin(fields, eq(complexes.id, fields.complexId))
-          .groupBy(complexes.id, complexes.name)
+          .groupBy(complexes.id)
           .orderBy(complexes.name);
 
         // Format the response
@@ -994,7 +961,7 @@ export function registerRoutes(app: Express): Server {
           for (const complexId of eventData.selectedComplexIds) {
             await tx
               .insert(eventComplexes)
-              .values              .values({
+              .values({
                 eventId,
                 complexId,
                 createdAt: new Date().toISOString(),

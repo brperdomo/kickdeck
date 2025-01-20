@@ -144,20 +144,18 @@ export default function AuthPage() {
                 >
                   Login
                 </Button>
-                <div className="text-center">
-                  <Link href="/forgot-password">
-                    <Button variant="link" className="text-sm text-green-600 p-0 h-auto font-semibold hover:text-green-700">
-                      Forgot Password?
-                    </Button>
-                  </Link>
-                </div>
+                <Link href="/forgot-password">
+                  <Button variant="link" className="w-full text-sm text-green-600 p-0 h-auto font-semibold hover:text-green-700">
+                    Forgot Password?
+                  </Button>
+                </Link>
                 <div className="text-center">
                   <p className="text-sm sm:text-base text-gray-600">
                     New to MatchPro?{" "}
                     <Link href="/register">
-                      <a className="text-green-600 hover:text-green-700 font-semibold transition-colors">
+                      <Button variant="link" className="p-0 h-auto font-semibold text-green-600 hover:text-green-700">
                         Register Here
-                      </a>
+                      </Button>
                     </Link>
                   </p>
                 </div>
