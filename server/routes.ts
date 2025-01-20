@@ -106,7 +106,7 @@ export function registerRoutes(app: Express): Server {
         // Add a small delay to prevent brute force attempts
         await new Promise(resolve => setTimeout(resolve, 200));
 
-        return res.json({
+        return res.json({ 
           available: !existingUser,
           message: existingUser ? "Email is already in use" : undefined
         });
@@ -994,7 +994,7 @@ export function registerRoutes(app: Express): Server {
           for (const complexId of eventData.selectedComplexIds) {
             await tx
               .insert(eventComplexes)
-              .values({
+              .values              .values({
                 eventId,
                 complexId,
                 createdAt: new Date().toISOString(),
@@ -1837,79 +1837,6 @@ export function registerRoutes(app: Express): Server {
       } catch (error) {
         console.error('Error adding participants:', error);
         res.status(500).send("Failed to add participants");
-      }
-    });
-
-    // put application routes here
-    // prefix all routes with /api
-
-    // Add event details endpoint
-    app.get('/api/admin/events/:id', isAdmin, async (req, res) => {
-      try {
-        const eventId = parseInt(req.params.id);
-
-        // Start a transaction to fetch event and related data
-        const event = await db.transaction(async (tx) => {
-          // Get the event
-          const [eventData] = await tx
-            .select()
-            .from(events)
-            .where(eq(events.id, eventId))
-            .limit(1);
-
-          if (!eventData) {
-            return null;
-          }
-
-          // Get age groups for this event
-          const ageGroups = await tx
-            .select()
-            .from(eventAgeGroups)
-            .where(eq(eventAgeGroups.eventId, eventId));
-
-          // Get complex assignments
-          const complexAssignments = await tx
-            .select()
-            .from(eventComplexes)
-            .where(eq(eventComplexes.eventId, eventId));
-
-          const selectedComplexIds = complexAssignments.map(a => a.complexId);
-
-          // Get field size assignments
-          const fieldSizes = await tx
-            .select()
-            .from(eventFieldSizes)
-            .where(eq(eventFieldSizes.eventId, eventId));
-
-          // Convert field sizes array to object
-          const complexFieldSizes = fieldSizes.reduce((acc, curr) => {
-            acc[curr.fieldId] = curr.fieldSize;
-            return acc;
-          }, {} as Record<number, string>);
-
-          // Get scoring rules
-          const scoringRules = await tx
-            .select()
-            .from(eventScoringRules)
-            .where(eq(eventScoringRules.eventId, eventId));
-
-          return {
-            ...eventData,
-            ageGroups,
-            selectedComplexIds,
-            complexFieldSizes,
-            scoringRules
-          };
-        });
-
-        if (!event) {
-          return res.status(404).send("Event not found");
-        }
-
-        res.json(event);
-      } catch (error) {
-        console.error('Error fetching event:', error);
-        res.status(500).send("Failed to fetch event");
       }
     });
 

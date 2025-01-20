@@ -11,7 +11,6 @@ import ForgotPassword from "@/pages/forgot-password";
 import AdminDashboard from "@/pages/admin-dashboard";
 import UserDashboard from "@/pages/user-dashboard";
 import HouseholdPage from "@/pages/household";
-import EditEvent from "@/pages/edit-event";
 import { useUser } from "@/hooks/use-user";
 
 function Router() {
@@ -47,9 +46,6 @@ function Router() {
     <Switch>
       <Route path="/admin">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}
-      </Route>
-      <Route path="/admin/events/:id/edit">
-        {user.isAdmin ? <EditEvent /> : <NotFound />}
       </Route>
       <Route path="/household" component={HouseholdPage} />
       <Route path="/">
