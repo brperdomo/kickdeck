@@ -10,6 +10,7 @@ import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import AdminDashboard from "@/pages/admin-dashboard";
 import UserDashboard from "@/pages/user-dashboard";
+import HouseholdPage from "@/pages/household";
 import { useUser } from "@/hooks/use-user";
 
 function Router() {
@@ -46,6 +47,7 @@ function Router() {
       <Route path="/admin">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}
       </Route>
+      <Route path="/household" component={HouseholdPage} />
       <Route path="/">
         {user.isAdmin ? <AdminDashboard /> : <UserDashboard />}
       </Route>

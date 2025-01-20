@@ -19,7 +19,9 @@ import {
   eventScoringRules,
   chatRooms,
   chatParticipants,
-  messages
+  messages,
+  households,
+  householdInvitations,
 } from "@db/schema";
 import { eq, sql, count, and, gte, lte, or } from "drizzle-orm";
 import fs from "fs/promises";
@@ -28,6 +30,9 @@ import { crypto } from "./crypto";
 import session from "express-session";
 import passport from "passport";
 import { setupWebSocketServer } from "./websocket";
+import { randomBytes } from "crypto";
+import { insertHouseholdInvitationSchema } from "@db/schema";
+
 
 // Simple rate limiting middleware
 const rateLimit = (windowMs: number, maxRequests: number) => {
@@ -83,6 +88,205 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/login', rateLimit(60 * 1000, 5)); // 5 requests per minute
     app.use('/api/register', rateLimit(60 * 1000, 3)); // 3 requests per minute
     app.use('/api/check-email', rateLimit(60 * 1000, 10)); // 10 requests per minute
+
+    // Add household invitation endpoints
+    app.post('/api/household/invite', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const { email } = req.body;
+        const userId = req.user.id;
+        const householdId = req.user.householdId;
+
+        if (!householdId) {
+          return res.status(400).send("You must be part of a household to send invitations");
+        }
+
+        // Check if user is already in a household
+        const [existingUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
+
+        if (existingUser?.householdId) {
+          return res.status(400).send("User is already part of a household");
+        }
+
+        // Check for existing pending invitation
+        const [existingInvitation] = await db
+          .select()
+          .from(householdInvitations)
+          .where(
+            and(
+              eq(householdInvitations.email, email),
+              eq(householdInvitations.status, 'pending')
+            )
+          )
+          .limit(1);
+
+        if (existingInvitation) {
+          return res.status(400).send("An invitation is already pending for this email");
+        }
+
+        // Generate invitation token and set expiration
+        const token = randomBytes(32).toString('hex');
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + 24); // Expires in 24 hours
+
+        // Create invitation
+        const [invitation] = await db
+          .insert(householdInvitations)
+          .values({
+            householdId,
+            email,
+            token,
+            expiresAt: expiresAt.toISOString(),
+            createdBy: userId,
+          })
+          .returning();
+
+        // TODO: Send email with invitation link
+
+        res.json({ message: "Invitation sent successfully", invitation });
+      } catch (error) {
+        console.error('Error sending invitation:', error);
+        res.status(500).send("Failed to send invitation");
+      }
+    });
+
+    app.get('/api/household/invitations', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const householdId = req.user.householdId;
+
+        if (!householdId) {
+          return res.status(400).send("You must be part of a household to view invitations");
+        }
+
+        const invitations = await db
+          .select({
+            invitation: householdInvitations,
+            createdByUser: {
+              id: users.id,
+              firstName: users.firstName,
+              lastName: users.lastName,
+              email: users.email,
+            },
+          })
+          .from(householdInvitations)
+          .leftJoin(users, eq(householdInvitations.createdBy, users.id))
+          .where(eq(householdInvitations.householdId, householdId));
+
+        res.json(invitations);
+      } catch (error) {
+        console.error('Error fetching invitations:', error);
+        res.status(500).send("Failed to fetch invitations");
+      }
+    });
+
+    app.post('/api/household/invitations/:token/accept', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const { token } = req.params;
+        const userId = req.user.id;
+
+        // Find and validate invitation
+        const [invitation] = await db
+          .select()
+          .from(householdInvitations)
+          .where(
+            and(
+              eq(householdInvitations.token, token),
+              eq(householdInvitations.status, 'pending')
+            )
+          )
+          .limit(1);
+
+        if (!invitation) {
+          return res.status(404).send("Invalid or expired invitation");
+        }
+
+        if (new Date(invitation.expiresAt) < new Date()) {
+          await db
+            .update(householdInvitations)
+            .set({ status: 'expired' })
+            .where(eq(householdInvitations.id, invitation.id));
+
+          return res.status(400).send("Invitation has expired");
+        }
+
+        if (req.user.email !== invitation.email) {
+          return res.status(403).send("This invitation was sent to a different email address");
+        }
+
+        // Update user's household
+        await db
+          .update(users)
+          .set({ householdId: invitation.householdId })
+          .where(eq(users.id, userId));
+
+        // Mark invitation as accepted
+        await db
+          .update(householdInvitations)
+          .set({ status: 'accepted' })
+          .where(eq(householdInvitations.id, invitation.id));
+
+        res.json({ message: "Invitation accepted successfully" });
+      } catch (error) {
+        console.error('Error accepting invitation:', error);
+        res.status(500).send("Failed to accept invitation");
+      }
+    });
+
+    app.post('/api/household/invitations/:token/decline', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const { token } = req.params;
+
+        // Find and validate invitation
+        const [invitation] = await db
+          .select()
+          .from(householdInvitations)
+          .where(
+            and(
+              eq(householdInvitations.token, token),
+              eq(householdInvitations.status, 'pending')
+            )
+          )
+          .limit(1);
+
+        if (!invitation) {
+          return res.status(404).send("Invalid or expired invitation");
+        }
+
+        if (req.user.email !== invitation.email) {
+          return res.status(403).send("This invitation was sent to a different email address");
+        }
+
+        // Mark invitation as declined
+        await db
+          .update(householdInvitations)
+          .set({ status: 'declined' })
+          .where(eq(householdInvitations.id, invitation.id));
+
+        res.json({ message: "Invitation declined successfully" });
+      } catch (error) {
+        console.error('Error declining invitation:', error);
+        res.status(500).send("Failed to decline invitation");
+      }
+    });
 
     // Complex management routes
     app.get('/api/admin/complexes', isAdmin, async (req, res) => {
@@ -1639,6 +1843,4 @@ export function registerRoutes(app: Express): Server {
     console.error('Error setting up routes:', error);
     throw error;
   }
-
-  return httpServer;
 }

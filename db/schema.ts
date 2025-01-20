@@ -130,18 +130,6 @@ export const insertFieldSchema = createInsertSchema(fields, {
 
 export const selectFieldSchema = createSelectSchema(fields);
 
-export type InsertUser = typeof users.$inferInsert;
-export type SelectUser = typeof users.$inferSelect;
-export type InsertHousehold = typeof households.$inferInsert;
-export type SelectHousehold = typeof households.$inferSelect;
-export type InsertOrganizationSettings = typeof organizationSettings.$inferInsert;
-export type SelectOrganizationSettings = typeof organizationSettings.$inferSelect;
-export type InsertComplex = typeof complexes.$inferInsert;
-export type SelectComplex = typeof complexes.$inferSelect;
-export type InsertField = typeof fields.$inferInsert;
-export type SelectField = typeof fields.$inferSelect;
-
-
 export const events = pgTable("events", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -198,7 +186,6 @@ export const insertEventSchema = createInsertSchema(events, {
 
 export type InsertEvent = typeof events.$inferInsert;
 export type SelectEvent = typeof events.$inferSelect;
-
 
 export const gameTimeSlots = pgTable("game_time_slots", {
   id: serial("id").primaryKey(),
@@ -325,7 +312,6 @@ export const eventSettings = pgTable("event_settings", {
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
 });
 
-// Add new schema validation
 export const insertEventAdministratorSchema = createInsertSchema(eventAdministrators, {
   role: z.enum(['owner', 'admin', 'moderator']),
 });
@@ -343,7 +329,6 @@ export type SelectEventAdministrator = typeof eventAdministrators.$inferSelect;
 export type InsertEventSetting = typeof eventSettings.$inferInsert;
 export type SelectEventSetting = typeof eventSettings.$inferSelect;
 
-// New chat-related tables
 export const chatRooms = pgTable("chat_rooms", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -374,7 +359,6 @@ export const messages = pgTable("messages", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Add schema validation for new tables
 export const insertChatRoomSchema = createInsertSchema(chatRooms, {
   name: z.string().min(1, "Chat room name is required"),
   type: z.enum(['team', 'event', 'private']),
@@ -396,10 +380,46 @@ export const selectChatRoomSchema = createSelectSchema(chatRooms);
 export const selectMessageSchema = createSelectSchema(messages);
 export const selectChatParticipantSchema = createSelectSchema(chatParticipants);
 
-// Add type exports for new tables
 export type InsertChatRoom = typeof chatRooms.$inferInsert;
 export type SelectChatRoom = typeof chatRooms.$inferSelect;
 export type InsertMessage = typeof messages.$inferInsert;
 export type SelectMessage = typeof messages.$inferSelect;
 export type InsertChatParticipant = typeof chatParticipants.$inferInsert;
 export type SelectChatParticipant = typeof chatParticipants.$inferSelect;
+
+
+export const householdInvitations = pgTable("household_invitations", {
+  id: serial("id").primaryKey(),
+  householdId: integer("household_id").notNull().references(() => households.id),
+  email: text("email").notNull(),
+  status: text("status").notNull().default('pending'), // 'pending', 'accepted', 'declined', 'expired'
+  token: text("token").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdBy: integer("created_by").notNull().references(() => users.id),
+});
+
+export const insertHouseholdInvitationSchema = createInsertSchema(householdInvitations, {
+  email: z.string().email("Please enter a valid email address"),
+  status: z.enum(['pending', 'accepted', 'declined', 'expired']).default('pending'),
+  token: z.string(),
+  expiresAt: z.string(),
+  createdBy: z.number(),
+  householdId: z.number(),
+});
+
+export const selectHouseholdInvitationSchema = createSelectSchema(householdInvitations);
+
+export type InsertHouseholdInvitation = typeof householdInvitations.$inferInsert;
+export type SelectHouseholdInvitation = typeof householdInvitations.$inferSelect;
+
+export type InsertUser = typeof users.$inferInsert;
+export type SelectUser = typeof users.$inferSelect;
+export type InsertHousehold = typeof households.$inferInsert;
+export type SelectHousehold = typeof households.$inferSelect;
+export type InsertOrganizationSettings = typeof organizationSettings.$inferInsert;
+export type SelectOrganizationSettings = typeof organizationSettings.$inferSelect;
+export type InsertComplex = typeof complexes.$inferInsert;
+export type SelectComplex = typeof complexes.$inferSelect;
+export type InsertField = typeof fields.$inferInsert;
+export type SelectField = typeof fields.$inferSelect;
