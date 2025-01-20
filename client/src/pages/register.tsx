@@ -4,6 +4,7 @@ import { type InsertUser } from "@db/schema";
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
+import { PasswordStrength } from "@/components/ui/password-strength";
 import {
   Form,
   FormControl,
@@ -184,6 +185,7 @@ export default function Register() {
                           {...field}
                         />
                       </FormControl>
+                      <PasswordStrength password={field.value} />
                       <FormDescription className="text-sm">
                         Must be at least 8 characters with a number and special character
                       </FormDescription>
