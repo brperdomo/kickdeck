@@ -186,7 +186,11 @@ export default function AuthPage() {
 
               {isRegistering ? (
                 <Form {...registerForm}>
-                  <form onSubmit={registerForm.handleSubmit(onSubmit)} className="space-y-4">
+                  <form 
+                    onSubmit={registerForm.handleSubmit(onSubmit)} 
+                    className="space-y-4"
+                    autoComplete="off" // Prevent form from using login autofill
+                  >
                     <FormField
                       control={registerForm.control}
                       name="email"
@@ -196,7 +200,7 @@ export default function AuthPage() {
                           <FormControl>
                             <Input
                               type="email"
-                              autoComplete="email"
+                              autoComplete="off"
                               {...field}
                             />
                           </FormControl>
@@ -217,7 +221,7 @@ export default function AuthPage() {
                           <FormLabel>Username *</FormLabel>
                           <FormControl>
                             <Input
-                              autoComplete="username"
+                              autoComplete="off"
                               {...field}
                             />
                           </FormControl>
@@ -270,7 +274,7 @@ export default function AuthPage() {
                           <FormLabel>First Name *</FormLabel>
                           <FormControl>
                             <Input
-                              autoComplete="given-name"
+                              autoComplete="off"
                               {...field}
                             />
                           </FormControl>
@@ -286,7 +290,7 @@ export default function AuthPage() {
                           <FormLabel>Last Name *</FormLabel>
                           <FormControl>
                             <Input
-                              autoComplete="family-name"
+                              autoComplete="off"
                               {...field}
                             />
                           </FormControl>
@@ -303,7 +307,7 @@ export default function AuthPage() {
                           <FormControl>
                             <Input
                               type="tel"
-                              autoComplete="tel"
+                              autoComplete="off"
                               {...field}
                             />
                           </FormControl>
@@ -318,7 +322,12 @@ export default function AuthPage() {
                 </Form>
               ) : (
                 <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onSubmit)} className="space-y-4">
+                  <form 
+                    onSubmit={loginForm.handleSubmit(onSubmit)} 
+                    className="space-y-4"
+                    id="login-form"
+                    name="login"
+                  >
                     <FormField
                       control={loginForm.control}
                       name="loginEmail"
@@ -328,7 +337,7 @@ export default function AuthPage() {
                           <FormControl>
                             <Input
                               type="email"
-                              autoComplete="email"
+                              autoComplete="username"
                               {...field}
                             />
                           </FormControl>
