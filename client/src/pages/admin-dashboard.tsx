@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useLocation as useWouterLocation } from "wouter";
-import { Link } from "wouter";
+import { useLocation, Link } from "wouter";
 import {
   Collapsible,
   CollapsibleContent,
@@ -86,8 +85,6 @@ import { format } from 'date-fns';
 import { AdminModal } from "@/components/admin/AdminModal";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Suspense } from "react";
-import { MobileNavigation } from "@/components/admin/MobileNavigation";
-
 
 interface Complex {
   id: number;
@@ -1005,7 +1002,7 @@ function ComplexesView() {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete field');
-      return response.json();
+      returnjson();
     },
     onSuccess: () => {
       // Refetch      fieldsQuery.refetch;
@@ -1849,14 +1846,13 @@ function EventsView() {
 }
 
 function AdminDashboard() {
-  const [location] = useWouterLocation();
   const { user, logout } = useUser();
-  const [currentView, setCurrentView] = useState<View>('events');
-  const [currentSettingsView, setCurrentSettingsView] = useState<SettingsView>('branding');
+  const [, setLocation] = useLocation();
+  const [activeView, setActiveView] = useState<View>('events');
+  const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
   const { toast } = useToast();
-
   useEffect(() => {
     if (!isAdminUser(user)) {
       setLocation("/");
@@ -1865,27 +1861,27 @@ function AdminDashboard() {
 
   const { data: events, isLoading: eventsLoading, error: eventsError } = useQuery({
     queryKey: ["/api/admin/events"],
-    enabled: isAdminUser(user) && currentView === 'events',
+    enabled: isAdminUser(user) && activeView === 'events',
     staleTime: 30000,
     gcTime: 3600000,
   });
 
   const adminsQuery = useQuery<SelectUser[]>({
     queryKey: ["/api/admin/administrators"],
-    enabled: isAdminUser(user) && currentView=== 'administrators',    staleTime: 30000,
+    enabled: isAdminUser(user) && activeView=== 'administrators',    staleTime: 30000,
     gcTime: 3600000,
   });
 
   const { data: households, isLoading: householdsLoading, error: householdsError } = useQuery<any[]>({
     queryKey: ["/api/admin/households"],
-    enabled: isAdminUser(user) && currentView === 'households',
+    enabled: isAdminUser(user) && activeView === 'households',
     staleTime: 30000,
     gcTime: 3600000,
   });
 
 
   function renderContent() {
-    switch (currentView) {
+    switch (activeView) {
       case 'events':
         return <EventsView />;
       case 'households':
@@ -1895,7 +1891,7 @@ function AdminDashboard() {
       case 'reports':
         return <ReportsView />;
       case 'settings':
-        return <SettingsView activeSettingsView={currentSettingsView} />;
+        return <SettingsView activeSettingsView={activeSettingsView} />;
       case 'complexes':
         return <ComplexesView />;
       case 'scheduling':
@@ -1919,200 +1915,188 @@ function AdminDashboard() {
     }
   }
 
-  const handleLogout = () => {
-    logout();
-  };
-
   if (!isAdminUser(user)) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Desktop Sidebar - hidden on mobile */}
-      <div className="hidden md:block w-64 fixed inset-y-0">
-        <div className="flex flex-col h-full bg-white border-r">
-          <div className="p-4 flex flex-col h-full">
-            {/* Header */}
-            <div className="flex items-center gap-2 mb-6">
-              <Calendar className="h-6 w-6 text-primary" />
-              <h1 className="font-semibold text-xl">Admin Dashboard</h1>
-            </div>
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Sidebar */}
+      <div className="w-64 bg-card border-r flex flex-col h-full">
+        <div className="p-4 flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-6">
+            <Calendar className="h-6 w-6 text-primary" />
+            <h1 className="font-semibold text-xl">Admin Dashboard</h1>
+          </div>
 
-            {/* Navigation */}
-            <div className="space-y-2">
-              <Button
-                variant={currentView === 'events' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setCurrentView('events')}
-              >
-                <Calendar className="mr-2 h-4 w-4" />
-                Events
-              </Button>
+          {/* Navigation */}
+          <div className="space-y-2">
+            <Button
+              variant={activeView === 'events' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('events')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Events
+            </Button>
 
-              <Button
-                variant={currentView === 'households' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setCurrentView('households')}
-              >
-                <Home className="mr-2 h-4 w-4" />
-                Households
-              </Button>
+            <Button
+              variant={activeView === 'households' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('households')}
+            >
+              <Home className="mr-2 h-4 w-4" />
+              Households
+            </Button>
 
-              <Button
-                variant={currentView === 'administrators' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setCurrentView('administrators')}
-              >
-                <Shield className="mr-2 h-4 w-4" />
-                Administrators
-              </Button>
+            <Button
+              variant={activeView === 'administrators' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('administrators')}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Administrators
+            </Button>
 
-              <Button
-                variant={currentView === 'reports' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setCurrentView('reports')}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Reports
-              </Button>
+            <Button
+              variant={activeView === 'reports' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('reports')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Reports
+            </Button>
 
-              <Button
-                variant={currentView === 'complexes' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setCurrentView('complexes')}
-              >
-                <Building2 className="mr-2 h-4 w-4" />
-                Field Complexes
-              </Button>
-              <Button
-                variant={currentView === 'scheduling' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setCurrentView('scheduling')}
-              >
-                <Calendar className="mr2 h-4 w-4" />
-                Scheduling
-              </Button>
-              <Button
-                variant={currentView === 'teams' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setCurrentView('teams')}
-              >
-                <Users className="mr-2 h-4 w-4" />
-                Teams
-              </Button>
+            <Button
+              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('complexes')}
+            >
+              <Building2 className="mr-2 h-4 w-4" />
+              Field Complexes
+            </Button>
+            <Button
+              variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('scheduling')}
+            >
+              <Calendar className="mr2 h-4 w-4" />
+              Scheduling
+            </Button>
+            <Button
+              variant={activeView === 'teams' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('teams')}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Teams
+            </Button>
 
-              {/* Add Chat Button */}
-              <Link href="/chat">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                >
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  Chat
-                </Button>
-              </Link>
-
-              {/* Settings Collapsible */}
-              <Collapsible
-                open={isSettingsOpen}
-                onOpenChange={setIsSettingsOpen}
-                className="space-y-2"
-              >
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant={currentView === 'settings' ? 'secondary' : 'ghost'}
-                    className="w-full justify-between"
-                  >
-                    <span className="flex items-center">
-                      <Settings className="mr-2 h-4 w-4" />
-                      Settings
-                    </span>
-                    <ChevronRight
-                      className={`h-4 w-4 transition-transform duration-200 ${
-                        isSettingsOpen ? 'rotate-90' : ''
-                      }`}
-                    />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-2 pl-4">
-                  <Button
-                    variant={currentSettingsView === 'branding' ? 'secondary' : 'ghost'}
-                    className="w-full justify-start"
-                    onClick={() => {
-                      setCurrentView('settings');
-                      setCurrentSettingsView('branding');
-                    }}
-                  >
-                    <Palette className="mr-2 h-4 w-4" />
-                    Branding
-                  </Button>
-                  <Button
-                    variant={currentSettingsView === 'payments' ? 'secondary' : 'ghost'}
-                    className="w-full justify-start"
-                    onClick={() => {
-                      setCurrentView('settings');
-                      setCurrentSettingsView('payments');
-                    }}
-                  >
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    Payments
-                  </Button>
-                  <Button
-                    variant={currentSettingsView === 'general' ? 'secondary' : 'ghost'}
-                    className="w-full justify-start"
-                    onClick={() => {
-                      setCurrentView('settings');
-                      setCurrentSettingsView('general');
-                    }}
-                  >
-                    <Settings className="mr-2 h-4 w-4" />
-                    General
-                  </Button>
-                </CollapsibleContent>
-              </Collapsible>
-
-              <Button
-                variant={currentView === 'account' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setCurrentView('account')}
-              >
-                <User className="mr-2 h-4 w-4" />
-                My Account
-              </Button>
-            </div>
-            {/* Footer */}
-            <div className="mt-auto space-y-2">
+            {/* Add Chat Button */}
+            <Link href="/chat">
               <Button
                 variant="ghost"
-                className="w-full justify-start text-muted-foreground"
-                onClick={() => handleLogout()}
+                className="w-full justify-start"
               >
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Chat
               </Button>
-              <p className="text-xs text-center text-muted-foreground pt-4 border-t">
-                Powered by MatchPro
-              </p>
-            </div>
+            </Link>
+
+            {/* Settings Collapsible */}
+            <Collapsible
+              open={isSettingsOpen}
+              onOpenChange={setIsSettingsOpen}
+              className="space-y-2"
+            >
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+                  className="w-full justify-between"
+                >
+                  <span className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </span>
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isSettingsOpen ? 'rotate-90' : ''
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 pl-4">
+                <Button
+                  variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('branding');
+                  }}
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Branding
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('payments');
+                  }}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Payments
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('general');
+                  }}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  General
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
+
+            <Button
+              variant={activeView === 'account' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('account')}
+            >
+              <User className="mr-2 h-4 w-4" />
+              My Account
+            </Button>
+          </div>
+          {/* Footer */}
+          <div className="mt-auto space-y-2">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-muted-foreground"
+              onClick={() => logout()}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+            <p className="text-xs text-center text-muted-foreground pt-4 border-t">
+              Powered by MatchPro
+            </p>
           </div>
         </div>
       </div>
-
-      {/* Mobile Navigation */}
-      <MobileNavigation onLogout={handleLogout} currentPath={location} />
-
       {/* Main Content */}
-      <div className="flex flex-col flex-1 md:pl-64 min-h-screen">
-        <main className="flex-1">
-          <div className="py-6 px-4 sm:px-6 lg:px-8">
-            {renderContent()}
-          </div>
-        </main>
+      <div className="flex-1 overflow-auto p-8">
+        {renderContent()}
       </div>
     </div>
   );
 }
+
+export default AdminDashboard;
 
 function TeamsView() {
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
@@ -2714,5 +2698,3 @@ function SettingsView(props: { activeSettingsView: SettingsView }) {
     </>
   );
 }
-
-export default AdminDashboard;
