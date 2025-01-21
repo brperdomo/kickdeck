@@ -1856,6 +1856,7 @@ function AdminDashboard() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
   const { toast } = useToast();
+
   useEffect(() => {
     if (!isAdminUser(user)) {
       setLocation("/");
@@ -1929,8 +1930,8 @@ function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Desktop Sidebar - hidden on mobile */}
-      <div className="hidden md:flex w-64 flex-col fixed inset-y-0">
-        <div className="flex-1 flex flex-col min-h-0 bg-white border-r">
+      <div className="hidden md:block w-64 fixed inset-y-0">
+        <div className="flex flex-col h-full bg-white border-r">
           <div className="p-4 flex flex-col h-full">
             {/* Header */}
             <div className="flex items-center gap-2 mb-6">
@@ -2096,23 +2097,22 @@ function AdminDashboard() {
             </div>
           </div>
         </div>
-        {/* Mobile Navigation */}
-        <MobileNavigation onLogout={handleLogout} currentPath={location} />
+      </div>
 
-        {/* Main Content - adjusted padding for mobile */}
-        <div className="md:pl-64 flex flex-col flex-1">
-          <main className="flex-1">
-            <div className="py-6 px-4 sm:px-6 md:px-8">
-              {renderContent()}
-            </div>
-          </main>
-        </div>
+      {/* Mobile Navigation */}
+      <MobileNavigation onLogout={handleLogout} currentPath={location} />
+
+      {/* Main Content */}
+      <div className="flex flex-col flex-1 md:pl-64 min-h-screen">
+        <main className="flex-1">
+          <div className="py-6 px-4 sm:px-6 lg:px-8">
+            {renderContent()}
+          </div>
+        </main>
       </div>
     </div>
   );
 }
-
-export default AdminDashboard;
 
 function TeamsView() {
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
@@ -2714,3 +2714,5 @@ function SettingsView(props: { activeSettingsView: SettingsView }) {
     </>
   );
 }
+
+export default AdminDashboard;
