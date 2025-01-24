@@ -22,6 +22,8 @@ import {
   messages,
   households,
   householdInvitations,
+  roles,
+  adminRoles,
 } from "@db/schema";
 import { sql, eq, and, or, count } from "drizzle-orm";
 import fs from "fs/promises";
@@ -85,6 +87,8 @@ export function registerRoutes(app: Express): Server {
         });
       } catch (error) {
         console.error('Error checking admin email:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         return res.status(500).json({ exists: false, message: "Internal server error" });
       }
     });
@@ -160,6 +164,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: "Administrator created successfully" });
       } catch (error) {
         console.error('Error creating administrator:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send(error instanceof Error ? error.message : "Failed to create administrator");
       }
     });
@@ -188,6 +194,8 @@ export function registerRoutes(app: Express): Server {
         });
       } catch (error) {
         console.error('Error checking email availability:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         return res.status(500).json({ available: false, message: "Internal server error" });
       }
     });
@@ -258,6 +266,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: "Invitation sent successfully", invitation });
       } catch (error) {
         console.error('Error sending invitation:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to send invitation");
       }
     });
@@ -291,6 +301,8 @@ export function registerRoutes(app: Express): Server {
         res.json(invitations);
       } catch (error) {
         console.error('Error fetching invitations:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch invitations");
       }
     });
@@ -348,6 +360,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: "Invitation accepted successfully" });
       } catch (error) {
         console.error('Error accepting invitation:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to accept invitation");
       }
     });
@@ -389,6 +403,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: "Invitation declined successfully" });
       } catch (error) {
         console.error('Error declining invitation:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to decline invitation");
       }
     });
@@ -448,6 +464,8 @@ export function registerRoutes(app: Express): Server {
         res.json(formattedComplexes);
       } catch (error) {
         console.error('Error fetching complexes:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Internal server error");
       }
     });
@@ -474,6 +492,8 @@ export function registerRoutes(app: Express): Server {
         res.json(newComplex);
       } catch (error) {
         console.error('Error creating complex:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to create complex");
       }
     });
@@ -506,6 +526,8 @@ export function registerRoutes(app: Express): Server {
         res.json(updatedComplex);
       } catch (error) {
         console.error('Error updating complex:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to update complex");
       }
     });
@@ -545,6 +567,8 @@ export function registerRoutes(app: Express): Server {
         });
       } catch (error) {
         console.error('Error updating complex status:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to update complex status");
       }
     });
@@ -572,6 +596,8 @@ export function registerRoutes(app: Express): Server {
         res.json(deletedComplex);
       } catch (error) {
         console.error('Error deleting complex:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to delete complex");
       }
     });
@@ -627,6 +653,8 @@ export function registerRoutes(app: Express): Server {
         });
       } catch (error) {
         console.error('Error fetching complex analytics:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch analytics");
       }
     });
@@ -644,6 +672,8 @@ export function registerRoutes(app: Express): Server {
         res.json(settings || {});
       } catch (error) {
         console.error('Error fetching organization settings:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Internal server error");
       }
     });
@@ -680,6 +710,8 @@ export function registerRoutes(app: Express): Server {
         res.json(settings);
       } catch (error) {
         console.error('Error updating organization settings:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Internal server error");
       }
     });
@@ -697,6 +729,8 @@ export function registerRoutes(app: Express): Server {
         res.json(sanitizedUsers);
       } catch (error) {
         console.error('Error fetching users:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Internal server error");
       }
     });
@@ -712,6 +746,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: 'Theme updated successfully' });
       } catch (error) {
         console.error('Error updating theme:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).json({ message: 'Failed to update theme' });
       }
     });
@@ -735,6 +771,8 @@ export function registerRoutes(app: Express): Server {
         res.json(newField);
       } catch (error) {
         console.error('Error creating field:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to create field");
       }
     });
@@ -752,6 +790,8 @@ export function registerRoutes(app: Express): Server {
         res.json(complexFields);
       } catch (error) {
         console.error('Error fetching fields:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch fields");
       }
     });
@@ -772,6 +812,8 @@ export function registerRoutes(app: Express): Server {
         res.json(deletedField);
       } catch (error) {
         console.error('Error deleting field:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to delete field");
       }
     });
@@ -813,6 +855,8 @@ export function registerRoutes(app: Express): Server {
         res.json(updatedField);
       } catch (error) {
         console.error('Error updating field status:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to update field status");
       }
     });
@@ -861,6 +905,8 @@ export function registerRoutes(app: Express): Server {
         });
       } catch (error) {
         console.error('Error updating profile:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to update profile");
       }
     });
@@ -894,6 +940,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: "Password updated successfully" });
       } catch (error) {
         console.error('Error updating password:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to update password");
       }
     });
@@ -941,7 +989,7 @@ export function registerRoutes(app: Express): Server {
           }
 
           // Create complex assignments
-          for (const complexId of eventData.selectedComplexIds) {
+          for(const complexId of eventData.selectedComplexIds) {
             await tx
               .insert(eventComplexes)
               .values({
@@ -967,6 +1015,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: "Event created successfully" });
       } catch (error) {
         console.error('Error creating event:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         let errorMessage = "Failed to create event";
         if (error instanceof Error) {
           errorMessage = error.message;
@@ -1118,6 +1168,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: "Event updated successfully" });
       } catch (error) {
         console.error('Error updating event:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         let errorMessage = "Failed to update event";
         if (error instanceof Error) {
           errorMessage = error.message;
@@ -1150,6 +1202,8 @@ export function registerRoutes(app: Express): Server {
         res.json(formattedEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch events");
       }
     });
@@ -1266,6 +1320,8 @@ export function registerRoutes(app: Express): Server {
         res.json(response);
       } catch (error) {
         console.error('Error fetching event details:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch event details");
       }
     });
@@ -1323,6 +1379,8 @@ export function registerRoutes(app: Express): Server {
         res.json(response);
       } catch (error) {
         console.error('Error fetching event details:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch event details");
       }
     });
@@ -1368,6 +1426,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ games: formattedSchedule });
       } catch (error) {
         console.error('Error fetching schedule:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch schedule");
       }
     });
@@ -1457,6 +1517,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: "Schedule framework generated successfully" });
       } catch (error) {
         console.error('Error generating schedule:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to generate schedule");
       }
     });
@@ -1474,6 +1536,8 @@ export function registerRoutes(app: Express): Server {
         res.json(ageGroups);
       } catch (error) {
         console.error('Error fetching age groups:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch age groups");
       }
     });
@@ -1508,6 +1572,8 @@ export function registerRoutes(app: Express): Server {
         res.json(formattedTeams);
       } catch (error) {
         console.error('Error fetching teams:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch teams");
       }
     });
@@ -1547,6 +1613,8 @@ export function registerRoutes(app: Express): Server {
         res.json(newTeam);
       } catch (error) {
         console.error('Error creating team:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to create team");
       }
     });
@@ -1571,6 +1639,8 @@ export function registerRoutes(app: Express): Server {
         res.json(ageGroups);
       } catch (error) {
         console.error('Error fetching age groups:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch age groups");
       }
     });
@@ -1614,6 +1684,8 @@ export function registerRoutes(app: Express): Server {
         res.status(201).json(adminWithoutPassword);
       } catch (error) {
         console.error('Error creating administrator:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to create administrator");
       }
     });
@@ -1635,6 +1707,8 @@ export function registerRoutes(app: Express): Server {
         res.json(administrators);
       } catch (error) {
         console.error('Error fetching administrators:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch administrators");
       }
     });
@@ -1665,6 +1739,8 @@ export function registerRoutes(app: Express): Server {
         res.json(updatedTeam);
       } catch (error) {
         console.error('Error updating team:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to update team");
       }
     });
@@ -1702,6 +1778,8 @@ export function registerRoutes(app: Express): Server {
         res.json(deletedTeam);
       } catch (error) {
         console.error('Error deleting team:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to delete team");
       }
     });
@@ -1730,6 +1808,8 @@ export function registerRoutes(app: Express): Server {
         res.json(formattedEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch events");
       }
     });
@@ -1760,6 +1840,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: "Event deleted successfully" });
       } catch (error) {
         console.error('Error deleting event:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         let errorMessage = "Failed to delete event";
         if (error instanceof Error) {
           errorMessage = error.message;
@@ -1808,6 +1890,8 @@ export function registerRoutes(app: Express): Server {
         res.json(chatRoom);
       } catch (error) {
         console.error('Error creating chat room:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to create chat room");
       }
     });
@@ -1835,6 +1919,8 @@ export function registerRoutes(app: Express): Server {
         res.json(userRooms);
       } catch (error) {
         console.error('Error fetching chat rooms:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch chat rooms");
       }
     });
@@ -1889,6 +1975,8 @@ export function registerRoutes(app: Express): Server {
         res.json(roomMessages);
       } catch (error) {
         console.error('Error fetching messages:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to fetch messages");
       }
     });
@@ -1933,6 +2021,8 @@ export function registerRoutes(app: Express): Server {
         res.json(newParticipants);
       } catch (error) {
         console.error('Error adding participants:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
         res.status(500).send("Failed to add participants");
       }
     });
@@ -1940,6 +2030,8 @@ export function registerRoutes(app: Express): Server {
     return httpServer;
   } catch (error) {
     console.error('Error setting up routes:', error);
+    // Added basic error logging for white screen debugging.
+    console.error("Error details:", error);
     throw error;
   }
 }
