@@ -120,8 +120,13 @@ export function AdminModal({ open, onOpenChange }: AdminModalProps) {
 
     // If Super Admin is being selected
     if (roleId === "super_admin") {
-      // Clear other roles and set only Super Admin
-      form.setValue("roles", ["super_admin"], { shouldValidate: true });
+      // If Super Admin is already selected, remove it
+      if (currentRoles.includes("super_admin")) {
+        form.setValue("roles", [], { shouldValidate: true });
+      } else {
+        // Clear other roles and set only Super Admin
+        form.setValue("roles", ["super_admin"], { shouldValidate: true });
+      }
       return;
     }
 
