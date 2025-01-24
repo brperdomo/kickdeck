@@ -300,6 +300,8 @@ export const eventAdministrators = pgTable("event_administrators", {
   eventId: integer("event_id").notNull().references(() => events.id),
   userId: integer("user_id").notNull().references(() => users.id),
   role: text("role").notNull(),
+  adminType: text("admin_type").notNull().default('super_admin'),
+  permissions: jsonb("permissions"),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
 });
 
@@ -314,6 +316,8 @@ export const eventSettings = pgTable("event_settings", {
 
 export const insertEventAdministratorSchema = createInsertSchema(eventAdministrators, {
   role: z.enum(['owner', 'admin', 'moderator']),
+  adminType: z.enum(['super_admin', 'tournament_admin', 'score_admin', 'finance_admin']).default('super_admin'),
+  permissions: z.record(z.boolean()).optional(),
 });
 
 export const insertEventSettingSchema = createInsertSchema(eventSettings, {
@@ -332,7 +336,7 @@ export type SelectEventSetting = typeof eventSettings.$inferSelect;
 export const chatRooms = pgTable("chat_rooms", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  type: text("type").notNull(), // 'team', 'event', 'private'
+  type: text("type").notNull(),
   eventId: integer("event_id").references(() => events.id),
   teamId: integer("team_id").references(() => teams.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -353,8 +357,8 @@ export const messages = pgTable("messages", {
   chatRoomId: integer("chat_room_id").notNull().references(() => chatRooms.id),
   userId: integer("user_id").notNull().references(() => users.id),
   content: text("content").notNull(),
-  type: text("type").notNull().default('text'), // 'text', 'image', 'system'
-  metadata: jsonb("metadata"), // For additional message data
+  type: text("type").notNull().default('text'),
+  metadata: jsonb("metadata"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -392,7 +396,7 @@ export const householdInvitations = pgTable("household_invitations", {
   id: serial("id").primaryKey(),
   householdId: integer("household_id").notNull().references(() => households.id),
   email: text("email").notNull(),
-  status: text("status").notNull().default('pending'), // 'pending', 'accepted', 'declined', 'expired'
+  status: text("status").notNull().default('pending'),
   token: text("token").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
