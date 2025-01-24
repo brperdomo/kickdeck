@@ -2,12 +2,7 @@ import { useState } from "react";
 import { useUser } from "@/hooks/use-user";
 import { useHouseholdInvitations } from "@/hooks/use-household-invitations";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -31,7 +26,7 @@ import {
 import { Users, Send, Clock } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-export default function MatchProClientPage() {
+export default function HouseholdPage() {
   const { user } = useUser();
   const { invitations, isLoading, sendInvitation } = useHouseholdInvitations();
   const [email, setEmail] = useState("");
@@ -93,7 +88,7 @@ export default function MatchProClientPage() {
   return (
     <div className="flex-1 space-y-6 p-8 pt-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">My MatchPro Client</h2>
+        <h2 className="text-3xl font-bold tracking-tight">My Household</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -103,9 +98,9 @@ export default function MatchProClientPage() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Invite MatchPro Client Member</DialogTitle>
+              <DialogTitle>Invite Household Member</DialogTitle>
               <DialogDescription>
-                Send an invitation to add someone to your MatchPro Client group.
+                Send an invitation to add someone to your household.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleInvite}>
@@ -151,7 +146,7 @@ export default function MatchProClientPage() {
           <CardContent>
             <div className="text-2xl font-bold">1</div>
             <p className="text-xs text-muted-foreground">
-              Active MatchPro Client members
+              Active household members
             </p>
           </CardContent>
         </Card>
@@ -174,7 +169,7 @@ export default function MatchProClientPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>MatchPro Client Members</CardTitle>
+          <CardTitle>Household Members</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">

@@ -111,7 +111,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'matchpro-clients' | 'reports' | 'account' | 'complexes' | 'scheduling';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling';
 type SettingsView = 'branding' | 'general' | 'payments';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 
@@ -1002,7 +1002,7 @@ function ComplexesView() {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete field');
-      return response.json();
+      returnjson();
     },
     onSuccess: () => {
       // Refetch      fieldsQuery.refetch;
@@ -1874,7 +1874,7 @@ function AdminDashboard() {
 
   const { data: households, isLoading: householdsLoading, error: householdsError } = useQuery<any[]>({
     queryKey: ["/api/admin/households"],
-    enabled: isAdminUser(user) && activeView === 'matchpro-clients',
+    enabled: isAdminUser(user) && activeView === 'households',
     staleTime: 30000,
     gcTime: 3600000,
   });
@@ -1884,8 +1884,8 @@ function AdminDashboard() {
     switch (activeView) {
       case 'events':
         return <EventsView />;
-      case 'matchpro-clients':
-        return <MatchProClientView />;
+      case 'households':
+        return <HouseholdsView />;
       case 'administrators':
         return <AdministratorsView />;
       case 'reports':
@@ -1942,12 +1942,12 @@ function AdminDashboard() {
             </Button>
 
             <Button
-              variant={activeView === 'matchpro-clients' ? 'secondary' : 'ghost'}
+              variant={activeView === 'households' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('matchpro-clients')}
+              onClick={() => setActiveView('households')}
             >
               <Home className="mr-2 h-4 w-4" />
-              MatchPro Client
+              Households
             </Button>
 
             <Button
@@ -2442,101 +2442,104 @@ function AdministratorsView() {
   );
 }
 
-function MatchProClientView() {
+function HouseholdsView() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<number | null>(null);
+  const [selectedHousehold, setSelectedHousehold] = useState<number | null>(null);
+  const [handleDuplicateHousehold, setHandleDuplicateHousehold] = useState(() => () => { });
+  const [handleDeleteHousehold, setHandleDeleteHousehold] = useState(() => () => { });
 
-  // Query for clients list
-  const clientsQuery = useQuery({
+  // Query for households list
+  const householdsQuery = useQuery({
     queryKey: ['/api/admin/households'],
     queryFn: async () => {
       const response = await fetch('/api/admin/households');
-      if (!response.ok) throw new Error('Failed to fetch MatchPro Clients');
+      if (!response.ok) throw new Error('Failed to fetch households');
       return response.json();
     }
   });
 
-  // Query for selected client details
-  const clientDetailsQuery = useQuery({
-    queryKey: ['/api/admin/households', selectedClient, 'edit'],
+  // Query for selected household details
+  const householdDetailsQuery = useQuery({
+    queryKey: ['/api/admin/households', selectedHousehold, 'edit'],
     queryFn: async () => {
-      if (!selectedClient) return null;
-      const response = await fetch(`/api/admin/households/${selectedClient}/edit`);
-      if (!response.ok) throw new Error('Failed to fetch MatchPro Client details');
+      if (!selectedHousehold) return null;
+      const response = await fetch(`/api/admin/households/${selectedHousehold}/edit`);
+      if (!response.ok) throw new Error('Failed to fetch household details');
       return response.json();
     },
-    enabled: !!selectedClient
+    enabled: !!selectedHousehold
   });
 
-  const updateClientMutation = useMutation({
+  // Mutation for updating household
+  const updateHouseholdMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await fetch(`/api/admin/households/${selectedClient}`, {
+      const response = await fetch(`/api/admin/households/${selectedHousehold}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      if (!response.ok) throw new Error('Failed to update MatchPro Client');
+      if (!response.ok) throw new Error('Failed to update household');
       return response.json();
     },
     onSuccess: () => {
-      clientsQuery.refetch();
+      householdsQuery.refetch();
       setIsEditModalOpen(false);
-      setSelectedClient(null);
+      setSelectedHousehold(null);
       toast({
         title: "Success",
-        description: "MatchPro Client updated successfully",
+        description: "Household updated successfully",
       });
     },
     onError: (error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update MatchPro Client",
+        description: error instanceof Error ? error.message : "Failed to update household",
         variant: "destructive"
       });
     }
   });
 
-  const handleEditClick = (clientId: number) => {
-    setSelectedClient(clientId);
+  const handleEditClick = (householdId: number) => {
+    setSelectedHousehold(householdId);
     setIsEditModalOpen(true);
   };
 
   const handleUpdate = (formData: any) => {
-    updateClientMutation.mutate(formData);
+    updateHouseholdMutation.mutate(formData);
   };
 
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">MatchPro Clients</h2>
-        <Button onClick={() => setLocation("/create-matchpro-client")}>
+        <h2 className="text-2xl font-bold">Households</h2>
+        <Button onClick={() => setLocation("/create-household")}>
           <Plus className="h-4 w-4 mr-2" />
-          Create MatchPro Client
+          Create Household
         </Button>
       </div>
 
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>All MatchPro Clients</CardTitle>
+            <CardTitle>All Households</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="relative">
-              {clientsQuery.isLoading ? (
+              {householdsQuery.isLoading ? (
                 <div className="flex justify-center p-4">
                   <Loader2 className="h-6 w-6 animate-spin" />
                 </div>
-              ) : clientsQuery.data?.length === 0 ? (
+              ) : householdsQuery.data?.length === 0 ? (
                 <p className="text-center text-muted-foreground py-4">
-                  No MatchPro Clients found. Create your first MatchPro Client to get started.
+                  No households found. Create your first household to get started.
                 </p>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Client Name</TableHead>
+                      <TableHead>Household Name</TableHead>
                       <TableHead>Address</TableHead>
                       <TableHead>Phone</TableHead>
                       <TableHead>Email</TableHead>
@@ -2545,20 +2548,21 @@ function MatchProClientView() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {clientsQuery.data?.map((client: any) => (
-                      <TableRow key={client.id}>
-                        <TableCell>{client.name}</TableCell>
-                        <TableCell>{client.address}</TableCell>
-                        <TableCell>{client.phone}</TableCell>
-                        <TableCell>{client.email}</TableCell>
+                    {householdsQuery.data?.map((household: any) => (
+                      <TableRow key={household.id}>
+                        <TableCell>{household.name}</TableCell>
+                        <TableCell>{household.address}</TableCell>
+                        <TableCell>{household.phone}</TableCell>
+                        <TableCell>{household.email}</TableCell>
                         <TableCell>
-                          <Badge variant={client.status === 'active' ? 'default' : 'secondary'}>
-                            {client.status}
+                          <Badge variant={household.status === 'active' ? 'default' : 'secondary'}>
+                            {household.status}
                           </Badge>
                         </TableCell>
                         <TableCell>
+                          {/* Household Actions */}
                           <div className="flex items-center justify-end space-x-2">
-                            <Link href={`/admin/matchpro-clients/${client.id}`}>
+                            <Link href={`/admin/households/${household.id}`}>
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -2568,6 +2572,24 @@ function MatchProClientView() {
                                 <span>Edit Details</span>
                               </Button>
                             </Link>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="flex items-center gap-2 hover:bg-secondary"
+                              onClick={() => handleDuplicateHousehold(household)}
+                            >
+                              <Copy className="h-4 w-4" />
+                              <span>Duplicate</span>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="flex items-center gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => handleDeleteHousehold(household)}
+                            >
+                              <Trash className="h-4 w-4" />
+                              <span>Delete</span>
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -2580,60 +2602,71 @@ function MatchProClientView() {
         </Card>
       </div>
 
-      {/* Edit MatchPro Client Modal */}
+      {/* Edit Household Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Edit MatchPro Client</DialogTitle>
+            <DialogTitle>Edit Household</DialogTitle>
           </DialogHeader>
-          {clientDetailsQuery.isLoading ? (
+          {householdDetailsQuery.isLoading ? (
             <div className="flex justify-center p-4">
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
-          ) : clientDetailsQuery.data ? (
+          ) : householdDetailsQuery.data ? (
             <form onSubmit={(e) => {
               e.preventDefault();
-              handleUpdate(clientDetailsQuery.data);
+              // TODO: Add form handling
+              handleUpdate(householdDetailsQuery.data);
             }}>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Client Name</Label>
+                  <Label htmlFor="name">Household Name</Label>
                   <Input
                     id="name"
-                    defaultValue={clientDetailsQuery.data.name}
-                    placeholder="Enter client name"
+                    defaultValue={householdDetailsQuery.data.name}
+                    placeholder="Enter household name"
                   />
                 </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="address">Address</Label>
                   <Input
                     id="address"
-                    defaultValue={clientDetailsQuery.data.address}
+                    defaultValue={householdDetailsQuery.data.address}
                     placeholder="Enter address"
                   />
                 </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="phone">Phone</Label>
                   <Input
                     id="phone"
                     type="tel"
-                    defaultValue={clientDetailsQuery.data.phone}
+                    defaultValue={householdDetailsQuery.data.phone}
                     placeholder="Enter phone number"
                   />
                 </div>
+
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
-                    defaultValue={clientDetailsQuery.data.email}
+                    defaultValue={householdDetailsQuery.data.email}
                     placeholder="Enter email address"
                   />
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit" disabled={updateClientMutation.isPending}>
-                  {updateClientMutation.isPending && (
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditModalOpen(false)}
+                  type="button"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={updateHouseholdMutation.isPending}>
+                  {updateHouseholdMutation.isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Save Changes
@@ -2665,66 +2698,3 @@ function SettingsView(props: { activeSettingsView: SettingsView }) {
     </>
   );
 }
-
-function renderContent() {
-  switch (activeView) {
-    case 'events':
-      return <EventsView />;
-    case 'matchpro-clients':
-      return <MatchProClientView />;
-    case 'administrators':
-      return <AdministratorsView />;
-    case 'reports':
-      return <ReportsView />;
-    case 'settings':
-      return <SettingsView activeSettingsView={activeSettingsView} />;
-    case 'complexes':
-      return <ComplexesView />;
-    case 'scheduling':
-      return <SchedulingView />;
-    case 'teams':
-      return <TeamsView />;
-    case 'account':
-      return (
-        <Suspense
-          fallback={
-            <div className="flex items-center justify-center min-h-[200px]">
-              <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-          }
-        >
-          <MyAccount />
-        </Suspense>
-      );
-    default:
-      return null;
-  }
-}
-
-const updateClientMutation = useMutation({
-  mutationFn: async (data: any) => {
-    const response = await fetch(`/api/admin/households/${selectedClient}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if (!response.ok) throw new Error('Failed to update MatchPro Client');
-    return response.json();
-  },
-  onSuccess: () => {
-    clientsQuery.refetch();
-    setIsEditModalOpen(false);
-    setSelectedClient(null);
-    toast({
-      title: "Success",
-      description: "MatchPro Client updated successfully",
-    });
-  },
-  onError: (error) => {
-    toast({
-      title: "Error",
-      description: error instanceof Error ? error.message : "Failed to update MatchPro Client",
-      variant: "destructive"
-    });
-  }
-});
