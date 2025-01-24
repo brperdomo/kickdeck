@@ -10,7 +10,7 @@ import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import AdminDashboard from "@/pages/admin-dashboard";
 import UserDashboard from "@/pages/user-dashboard";
-import HouseholdPage from "@/pages/household";
+import MatchProClientPage from "@/pages/match-pro-client";
 import ChatPage from "@/pages/chat";
 import EditEvent from "@/pages/edit-event";
 import { useUser } from "@/hooks/use-user";
@@ -52,7 +52,7 @@ function Router() {
       <Route path="/admin">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}
       </Route>
-      <Route path="/household" component={HouseholdPage} />
+      <Route path="/matchpro-client" component={MatchProClientPage} />
       <Route path="/chat" component={ChatPage} />
       <Route path="/">
         {user.isAdmin ? <AdminDashboard /> : <UserDashboard />}
