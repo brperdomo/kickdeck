@@ -58,7 +58,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
 
   // Email validation query
   const emailCheckQuery = useQuery({
-    queryKey: ['checkEmail', emailToCheck],
+    queryKey: ['checkAdminEmail', emailToCheck],
     queryFn: async () => {
       if (!emailToCheck || (adminToEdit && adminToEdit.email === emailToCheck)) return null;
       const response = await fetch(`/api/admin/check-email?email=${encodeURIComponent(emailToCheck)}`);
