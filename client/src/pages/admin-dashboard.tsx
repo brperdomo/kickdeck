@@ -531,6 +531,22 @@ function ComplexesView() {
 
 function EventsView() {
   const [, navigate] = useLocation();
+  const eventsQuery = useQuery({
+    queryKey: ['/api/admin/events'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) throw new Error('Failed to fetch events');
+      return response.json();
+    }
+  });
+
+  if (eventsQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -576,41 +592,47 @@ function EventsView() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">Summer Soccer Cup 2024</TableCell>
-                  <TableCell>June 15-20, 2024</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="bg-green-50 text-green-700">
-                      Registration Open
-                    </Badge>
-                  </TableCell>
-                  <TableCell>32/48</TableCell>
-                  <TableCell>Smith Lake Park</TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Eye className="mr-2 h-4 w-4" />
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-600">
-                          <Trash className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
+                {eventsQuery.data?.map((event: any) => (
+                  <TableRow key={event.id}>
+                    <TableCell className="font-medium">{event.name}</TableCell>
+                    <TableCell>{event.startDate} - {event.endDate}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={
+                        event.status === 'open' ? "bg-green-50 text-green-700" :
+                        event.status === 'closed' ? "bg-red-50 text-red-700" :
+                        "bg-yellow-50 text-yellow-700"
+                      }>
+                        {event.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{event.teamCount}/{event.maxTeams}</TableCell>
+                    <TableCell>{event.location}</TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}`)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>
@@ -655,6 +677,61 @@ function SchedulingView() {
 }
 
 
+function TeamsView() {
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Teams</h2>
+        <Button>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Team
+        </Button>
+      </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <Input
+                  placeholder="Search teams..."
+                  className="w-[300px]"
+                />
+                <Select defaultValue="all">
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Division" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Divisions</SelectItem>
+                    <SelectItem value="u10">Under 10</SelectItem>
+                    <SelectItem value="u12">Under 12</SelectItem>
+                    <SelectItem value="u14">Under 14</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Team Name</TableHead>
+                  <TableHead>Division</TableHead>
+                  <TableHead>Coach</TableHead>
+                  <TableHead>Players</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {/* Team rows will be populated from the database */}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
 function AdminDashboard() {
   const { user, logout } = useUser();
   const [, setLocation] = useLocation();
@@ -674,6 +751,8 @@ function AdminDashboard() {
         return <AdministratorsView />;
       case 'events':
         return <EventsView />;
+      case 'teams':
+        return <TeamsView />;
       case 'complexes':
         return <ComplexesView />;
       case 'households':
@@ -726,6 +805,15 @@ function AdminDashboard() {
             >
               <Calendar className="mr-2 h-4 w-4" />
               Events
+            </Button>
+
+            <Button
+              variant={activeView === 'teams' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('teams')}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Teams
             </Button>
 
             <Button
