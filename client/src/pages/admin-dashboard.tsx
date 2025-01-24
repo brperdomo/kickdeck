@@ -530,18 +530,90 @@ function ComplexesView() {
 }
 
 function EventsView() {
+  const [, navigate] = useLocation();
+
   return (
     <>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Events</h2>
-        <Button>
+        <Button onClick={() => navigate("/admin/events/create")}>
           <Plus className="mr-2 h-4 w-4" />
           Create Event
         </Button>
       </div>
       <Card>
         <CardContent className="p-6">
-          <p className="text-muted-foreground">Events management coming soon</p>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <Input
+                  placeholder="Search events..."
+                  className="w-[300px]"
+                />
+                <Select defaultValue="all">
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Events</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="upcoming">Upcoming</SelectItem>
+                    <SelectItem value="past">Past</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Event Name</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Teams</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium">Summer Soccer Cup 2024</TableCell>
+                  <TableCell>June 15-20, 2024</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="bg-green-50 text-green-700">
+                      Registration Open
+                    </Badge>
+                  </TableCell>
+                  <TableCell>32/48</TableCell>
+                  <TableCell>Smith Lake Park</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-red-600">
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </>

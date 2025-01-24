@@ -9,6 +9,7 @@ import AuthPage from "@/pages/auth-page";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import AdminDashboard from "@/pages/admin-dashboard";
+import CreateEvent from "@/pages/create-event";
 import UserDashboard from "@/pages/user-dashboard";
 import HouseholdPage from "@/pages/household";
 import ChatPage from "@/pages/chat";
@@ -46,6 +47,9 @@ function Router() {
   // Handle authenticated routes
   return (
     <Switch>
+      <Route path="/admin/events/create">
+        {user.isAdmin ? <CreateEvent /> : <NotFound />}
+      </Route>
       <Route path="/admin/events/:id">
         {user.isAdmin ? <EditEvent /> : <NotFound />}
       </Route>
