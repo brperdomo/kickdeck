@@ -115,6 +115,13 @@ function AdministratorsView() {
   const { toast } = useToast();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("super_admin");
+  const [selectedAdmin, setSelectedAdmin] = useState<{
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    roles: string[];
+  } | null>(null);
 
   // Query to fetch all administrators
   const administratorsQuery = useQuery({
@@ -129,12 +136,28 @@ function AdministratorsView() {
   const administrators = useMemo(() => {
     if (!administratorsQuery.data) return {};
     return administratorsQuery.data.reduce((acc: Record<string, any[]>, admin: any) => {
-      const type = admin.adminType || 'super_admin';
+      const type = admin.roles?.[0] || 'super_admin';
       if (!acc[type]) acc[type] = [];
       acc[type].push(admin);
       return acc;
     }, {});
   }, [administratorsQuery.data]);
+
+  const handleEditAdmin = (admin: any) => {
+    setSelectedAdmin({
+      id: admin.id,
+      email: admin.email,
+      firstName: admin.firstName,
+      lastName: admin.lastName,
+      roles: admin.roles || [],
+    });
+    setIsAddModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsAddModalOpen(false);
+    setSelectedAdmin(null);
+  };
 
   const getBadgeColor = (type: string) => {
     switch (type) {
@@ -251,7 +274,7 @@ function AdministratorsView() {
                         <TableCell>{admin.email}</TableCell>
                         <TableCell>
                           <Badge variant="outline">
-                            {admin.role}
+                            {admin.roles?.[0] || "N/A"} {/* Handle cases where roles might be missing */}
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -267,13 +290,9 @@ function AdministratorsView() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleEditAdmin(admin)}>
                                 <Edit className="mr-2 h-4 w-4" />
                                 Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <Shield className="mr-2 h-4 w-4" />
-                                Change Role
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem className="text-red-600">
@@ -295,7 +314,8 @@ function AdministratorsView() {
 
       <AdminModal
         open={isAddModalOpen}
-        onOpenChange={setIsAddModalOpen}
+        onOpenChange={handleModalClose}
+        adminToEdit={selectedAdmin}
       />
     </>
   );
@@ -944,7 +964,7 @@ function AdminDashboard() {
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </Button>
-            <p className="text-xs text-center text-muted-foreground pt-4 border-t">
+            <p className="text-xs text-center text-muted-foreground pt4">
               Powered by MatchPro
             </p>
           </div>
