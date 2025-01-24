@@ -38,7 +38,14 @@ import {
   ChevronDown,
   Edit,
   Trash,
+  Search,
   Plus,
+  Eye,
+  Download,
+  UserCircle,
+  Percent,
+  Printer,
+  Flag,
 } from "lucide-react";
 import {
   Table,
@@ -49,7 +56,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { useOrganizationSettings } from "@/hooks/use-organization-settings";
+import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
+import { useExportProcess } from "@/hooks/use-export-process";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,6 +75,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { lazy, Suspense } from "react";
 
@@ -70,6 +90,25 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
 
 type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling';
 type SettingsView = 'branding' | 'general' | 'payments';
+type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
+
+interface Complex {
+  id: number;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  openTime: string;
+  closeTime: string;
+  rules?: string;
+  directions?: string;
+  isOpen: boolean;
+  createdAt: string;
+  updatedAt: string;
+  openFields: number;
+  closedFields: number;
+}
 
 function AdministratorsView() {
   const { toast } = useToast();
@@ -261,12 +300,151 @@ function AdministratorsView() {
   );
 }
 
+function ReportsView() {
+  const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
+  const { isExporting, startExport } = useExportProcess();
+
+  const renderReportContent = () => {
+    switch (selectedReport) {
+      case 'financial':
+        return (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Event Financial Reports</h3>
+              <Button
+                onClick={() => startExport('financial')}
+                disabled={isExporting !== 'financial'}
+              >
+                {isExporting === 'financial' ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Export Report
+                  </>
+                )}
+              </Button>
+            </div>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Financial report content will be implemented here</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      // ... other report types ...
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Reports</h2>
+      </div>
+
+      <div className="grid grid-cols-4 gap-6">
+        {/* Report Navigation */}
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Report Types</CardTitle>
+          </CardHeader>
+          <CardContent className="p-3">
+            <div className="space-y-2">
+              <Button
+                variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('financial')}
+                disabled={isExporting !== null}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Event Financial Reports
+              </Button>
+              {/* ... other report type buttons ... */}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Report Content */}
+        <div className="col-span-3">
+          <Card>
+            <CardContent className="p-6">
+              {renderReportContent()}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function BrandingPreview() {
+  const { preview } = useBrandingPreview();
+
+  return (
+    <Card className="col-span-1">
+      <CardHeader>
+        <CardTitle>Live Preview</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          {/* Logo Preview */}
+          {preview.logoUrl && (
+            <div className="flex justify-center p-4 bg-background rounded-lg">
+              <img
+                src={preview.logoUrl}
+                alt="Organization logo"
+                className="h-20 w-20 object-contain"
+              />
+            </div>
+          )}
+          {/* ... other preview elements ... */}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function OrganizationSettingsForm() {
+  const { settings, isLoading, updateSettings, isUpdating } = useOrganizationSettings();
+  const { updatePreview } = useBrandingPreview();
+  const [name, setName] = useState(settings?.name || '');
+  const [primaryColor, setPrimaryColor] = useState(settings?.primaryColor || '#000000');
+  const [secondaryColor, setSecondaryColor] = useState(settings?.secondaryColor || '#ffffff');
+  const [logo, setLogo] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState(settings?.logoUrl);
+
+  // ... form handling logic ...
+
+  return (
+    <div className="grid grid-cols-2 gap-6">
+      <Card className="col-span-1">
+        <CardHeader>
+          <CardTitle>Organization Branding</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form className="space-y-6">
+            {/* ... form fields ... */}
+          </form>
+        </CardContent>
+      </Card>
+
+      <BrandingPreview />
+    </div>
+  );
+}
+
 function AdminDashboard() {
   const { user, logout } = useUser();
   const [, setLocation] = useLocation();
   const [activeView, setActiveView] = useState<View>('administrators');
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
 
   useEffect(() => {
     if (!isAdminUser(user)) {
@@ -280,6 +458,8 @@ function AdminDashboard() {
         return <AdministratorsView />;
       case 'settings':
         return <SettingsView activeSettingsView={activeSettingsView} />;
+      case 'reports':
+        return <ReportsView />;
       case 'account':
         return (
           <Suspense
@@ -321,6 +501,15 @@ function AdminDashboard() {
             >
               <Shield className="mr-2 h-4 w-4" />
               Administrators
+            </Button>
+
+            <Button
+              variant={activeView === 'reports' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('reports')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Reports
             </Button>
 
             {/* Settings */}
@@ -419,16 +608,25 @@ function AdminDashboard() {
 }
 
 function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView }) {
-  return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Settings</h2>
-      <Card>
-        <CardContent className="p-6">
-          <p>Settings content will be implemented here</p>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  switch (activeSettingsView) {
+    case 'branding':
+      return (
+        <BrandingPreviewProvider>
+          <OrganizationSettingsForm />
+        </BrandingPreviewProvider>
+      );
+    default:
+      return (
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold">Settings</h2>
+          <Card>
+            <CardContent className="p-6">
+              <p>Settings content will be implemented here</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+  }
 }
 
 export default AdminDashboard;
