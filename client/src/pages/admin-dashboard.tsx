@@ -1,5 +1,10 @@
 import { useState, useMemo } from "react";
 import { useLocation, Link } from "wouter";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +38,7 @@ import {
   ChevronDown,
   Edit,
   Trash,
-  Copy,
+  Plus,
 } from "lucide-react";
 import {
   Table,
@@ -262,7 +267,6 @@ function AdminDashboard() {
   const [activeView, setActiveView] = useState<View>('administrators');
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const { currentColor, setColor, isLoading: isThemeLoading } = useTheme();
 
   useEffect(() => {
     if (!isAdminUser(user)) {
@@ -289,7 +293,7 @@ function AdminDashboard() {
           </Suspense>
         );
       default:
-        return null;
+        return <div>Feature coming soon</div>;
     }
   };
 
@@ -320,14 +324,63 @@ function AdminDashboard() {
             </Button>
 
             {/* Settings */}
-            <Button
-              variant={activeView === 'settings' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('settings')}
+            <Collapsible
+              open={isSettingsOpen}
+              onOpenChange={setIsSettingsOpen}
+              className="space-y-2"
             >
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
-            </Button>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+                  className="w-full justify-between"
+                >
+                  <span className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </span>
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isSettingsOpen ? 'rotate-90' : ''
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 pl-4">
+                <Button
+                  variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('branding');
+                  }}
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Branding
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('payments');
+                  }}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Payments
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('general');
+                  }}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  General
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
 
             {/* Account */}
             <Button
