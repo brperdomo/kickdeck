@@ -11,6 +11,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -21,7 +22,7 @@ import { adminFormSchema } from "@db/schema";
 import type { AdminFormValues } from "@db/schema";
 
 const availableRoles = [
-  { id: "super_admin", name: "Super Admin", description: "Full system access" },
+  { id: "super_admin", name: "Super Admin", description: "Full system access and overrides all other roles" },
   { id: "tournament_admin", name: "Tournament Admin", description: "Manage tournaments and events" },
   { id: "score_admin", name: "Score Admin", description: "Manage scores and results" },
   { id: "finance_admin", name: "Finance Admin", description: "Manage financial aspects" },
@@ -116,11 +117,31 @@ export function AdminModal({ open, onOpenChange }: AdminModalProps) {
   // Handle role selection
   const toggleRole = (roleId: string) => {
     const currentRoles = form.getValues("roles");
+
+    // If Super Admin is being selected
+    if (roleId === "super_admin") {
+      // Clear other roles and set only Super Admin
+      form.setValue("roles", ["super_admin"], { shouldValidate: true });
+      return;
+    }
+
+    // If another role is being selected and Super Admin is already selected
+    if (currentRoles.includes("super_admin")) {
+      // Remove Super Admin and add the new role
+      form.setValue("roles", [roleId], { shouldValidate: true });
+      return;
+    }
+
+    // Normal role toggling
     const newRoles = currentRoles.includes(roleId)
       ? currentRoles.filter(id => id !== roleId)
       : [...currentRoles, roleId];
+
     form.setValue("roles", newRoles, { shouldValidate: true });
   };
+
+  const currentRoles = form.watch("roles");
+  const isSuperAdmin = currentRoles.includes("super_admin");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -199,31 +220,43 @@ export function AdminModal({ open, onOpenChange }: AdminModalProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Administrator Roles</FormLabel>
+                  <FormDescription>
+                    {isSuperAdmin 
+                      ? "Super Admin role provides full access and overrides all other roles."
+                      : "Select one or more roles. Super Admin overrides all other roles if selected."}
+                  </FormDescription>
                   <FormControl>
                     <div className="space-y-2">
-                      {availableRoles.map((role) => (
-                        <div
-                          key={role.id}
-                          className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                            field.value.includes(role.id)
-                              ? "border-primary bg-primary/5"
-                              : "border-input hover:bg-accent"
-                          }`}
-                          onClick={() => toggleRole(role.id)}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-medium">{role.name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {role.description}
-                              </p>
+                      {availableRoles.map((role) => {
+                        const isSelected = field.value.includes(role.id);
+                        const isDisabled = isSuperAdmin && role.id !== "super_admin";
+
+                        return (
+                          <div
+                            key={role.id}
+                            className={`p-3 rounded-lg border transition-colors ${
+                              isDisabled
+                                ? "opacity-50 cursor-not-allowed border-input"
+                                : isSelected
+                                ? "border-primary bg-primary/5 cursor-pointer"
+                                : "border-input hover:bg-accent cursor-pointer"
+                            }`}
+                            onClick={() => !isDisabled && toggleRole(role.id)}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="font-medium">{role.name}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {role.description}
+                                </p>
+                              </div>
+                              {isSelected && (
+                                <Badge variant="secondary">Selected</Badge>
+                              )}
                             </div>
-                            {field.value.includes(role.id) && (
-                              <Badge variant="secondary">Selected</Badge>
-                            )}
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </FormControl>
                   <FormMessage />
