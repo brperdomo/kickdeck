@@ -236,12 +236,12 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] p-0">
-        <DialogHeader className="p-6 pb-0">
+      <DialogContent className="max-w-[500px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="px-6 pt-6 pb-4 sticky top-0 bg-background z-10 border-b">
           <DialogTitle>{adminToEdit ? 'Edit Administrator' : 'Add New Administrator'}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 p-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-6 py-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -371,7 +371,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
               />
             )}
 
-            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-4 border-t mt-6">
               {adminToEdit && (
                 <Button 
                   type="button" 
