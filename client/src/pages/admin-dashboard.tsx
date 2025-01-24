@@ -89,7 +89,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat';
 type SettingsView = 'branding' | 'general' | 'payments';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 
@@ -763,6 +763,8 @@ function AdminDashboard() {
         return <SettingsView activeSettingsView={activeSettingsView} />;
       case 'reports':
         return <ReportsView />;
+      case 'chat':
+        return <ChatView />;
       case 'account':
         return (
           <Suspense fallback={<div className="flex items-center justify-center min-h-[200px]">
@@ -851,6 +853,16 @@ function AdminDashboard() {
               <FileText className="mr-2 h-4 w-4" />
               Reports
             </Button>
+
+            <Button
+              variant={activeView === 'chat' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('chat')}
+            >
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Chat
+            </Button>
+
 
             {/* Settings */}
             <Collapsible
@@ -944,6 +956,66 @@ function AdminDashboard() {
         {renderView()}
       </div>
     </div>
+  );
+}
+
+function ChatView() {
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const messagesQuery = useQuery({
+    queryKey: ['/api/admin/messages'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/messages');
+      if (!response.ok) throw new Error('Failed to fetch messages');
+      return response.json();
+    }
+  });
+
+  if (messagesQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center minh-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Support Chat</h2>
+      </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex flex-col space-y-4">
+              {messagesQuery.data?.map((message: any) => (
+                <div key={message.id} className={`flex ${message.isAdmin ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`rounded-lg px-4 py-2 max-w-[70%] ${
+                    message.isAdmin 
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'bg-muted'
+                  }`}>
+                    <p className="text-sm font-medium">{message.sender}</p>
+                    <p>{message.content}</p>
+                    <p className="text-xs opacity-70">{new Date(message.timestamp).toLocaleString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Input 
+                placeholder="Type your message..."
+                className="flex-1"
+              />
+              <Button>
+                Send
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }
 
