@@ -20,13 +20,13 @@ interface SendInvitationData {
   email: string;
 }
 
-export function useHouseholdInvitations() {
+export function useMatchproClientInvitations() {
   const queryClient = useQueryClient();
 
   const { data: invitations, isLoading } = useQuery<Invitation[]>({
-    queryKey: ['/api/household/invitations'],
+    queryKey: ['/api/matchpro-client/invitations'],
     queryFn: async () => {
-      const response = await fetch('/api/household/invitations', {
+      const response = await fetch('/api/matchpro-client/invitations', {
         credentials: 'include'
       });
 
@@ -40,7 +40,7 @@ export function useHouseholdInvitations() {
 
   const sendInvitation = useMutation({
     mutationFn: async (data: SendInvitationData) => {
-      const response = await fetch('/api/household/invite', {
+      const response = await fetch('/api/matchpro-client/invite', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -56,7 +56,7 @@ export function useHouseholdInvitations() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/household/invitations'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/matchpro-client/invitations'] });
       toast({
         title: 'Success',
         description: 'Invitation sent successfully',
@@ -73,7 +73,7 @@ export function useHouseholdInvitations() {
 
   const acceptInvitation = useMutation({
     mutationFn: async (token: string) => {
-      const response = await fetch(`/api/household/invitations/${token}/accept`, {
+      const response = await fetch(`/api/matchpro-client/invitations/${token}/accept`, {
         method: 'POST',
         credentials: 'include'
       });
@@ -85,7 +85,7 @@ export function useHouseholdInvitations() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/household/invitations'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/matchpro-client/invitations'] });
       toast({
         title: 'Success',
         description: 'Invitation accepted successfully',
@@ -102,7 +102,7 @@ export function useHouseholdInvitations() {
 
   const declineInvitation = useMutation({
     mutationFn: async (token: string) => {
-      const response = await fetch(`/api/household/invitations/${token}/decline`, {
+      const response = await fetch(`/api/matchpro-client/invitations/${token}/decline`, {
         method: 'POST',
         credentials: 'include'
       });
@@ -114,7 +114,7 @@ export function useHouseholdInvitations() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/household/invitations'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/matchpro-client/invitations'] });
       toast({
         title: 'Success',
         description: 'Invitation declined successfully',

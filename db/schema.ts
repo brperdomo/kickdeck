@@ -23,10 +23,10 @@ export const users = pgTable("users", {
   isParent: boolean("isParent").default(false).notNull(),
   isAdmin: boolean("isAdmin").default(false).notNull(),
   createdAt: text("createdAt").notNull().default(new Date().toISOString()),
-  householdId: serial("householdId").references(() => households.id),
+  matchproClientId: serial("matchproClientId").references(() => matchproClients.id),
 });
 
-export const households = pgTable("households", {
+export const matchproClients = pgTable("matchpro_clients", {
   id: serial("id").primaryKey(),
   lastName: text("lastName").notNull(),
   address: text("address").notNull(),
@@ -88,11 +88,11 @@ export const insertUserSchema = createInsertSchema(users, {
   phone: z.string().nullable(),
   isAdmin: z.boolean().default(false),
   isParent: z.boolean().default(false),
-  householdId: z.number().optional(),
+  matchproClientId: z.number().optional(),
   createdAt: z.string().optional(),
 });
 
-export const insertHouseholdSchema = createInsertSchema(households, {
+export const insertMatchproClientSchema = createInsertSchema(matchproClients, {
   lastName: z.string().min(1, "Last name is required"),
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
@@ -100,6 +100,8 @@ export const insertHouseholdSchema = createInsertSchema(households, {
   zipCode: z.string().min(5, "ZIP code is required").max(10),
   primaryEmail: z.string().email("Please enter a valid email address"),
 });
+
+export const selectMatchproClientSchema = createSelectSchema(matchproClients);
 
 export const insertComplexSchema = createInsertSchema(complexes, {
   name: z.string().min(1, "Complex name is required"),
@@ -117,7 +119,6 @@ export const insertComplexSchema = createInsertSchema(complexes, {
 export const selectComplexSchema = createSelectSchema(complexes);
 
 export const selectUserSchema = createSelectSchema(users);
-export const selectHouseholdSchema = createSelectSchema(households);
 
 export const insertFieldSchema = createInsertSchema(fields, {
   name: z.string().min(1, "Field name is required"),
@@ -387,36 +388,35 @@ export type SelectMessage = typeof messages.$inferSelect;
 export type InsertChatParticipant = typeof chatParticipants.$inferInsert;
 export type SelectChatParticipant = typeof chatParticipants.$inferSelect;
 
-
-export const householdInvitations = pgTable("household_invitations", {
+export const matchproClientInvitations = pgTable("matchpro_client_invitations", {
   id: serial("id").primaryKey(),
-  householdId: integer("household_id").notNull().references(() => households.id),
+  matchproClientId: integer("matchpro_client_id").notNull().references(() => matchproClients.id),
   email: text("email").notNull(),
-  status: text("status").notNull().default('pending'), // 'pending', 'accepted', 'declined', 'expired'
+  status: text("status").notNull().default('pending'),
   token: text("token").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   createdBy: integer("created_by").notNull().references(() => users.id),
 });
 
-export const insertHouseholdInvitationSchema = createInsertSchema(householdInvitations, {
+export const insertMatchproClientInvitationSchema = createInsertSchema(matchproClientInvitations, {
   email: z.string().email("Please enter a valid email address"),
   status: z.enum(['pending', 'accepted', 'declined', 'expired']).default('pending'),
   token: z.string(),
   expiresAt: z.string(),
   createdBy: z.number(),
-  householdId: z.number(),
+  matchproClientId: z.number(),
 });
 
-export const selectHouseholdInvitationSchema = createSelectSchema(householdInvitations);
+export const selectMatchproClientInvitationSchema = createSelectSchema(matchproClientInvitations);
 
-export type InsertHouseholdInvitation = typeof householdInvitations.$inferInsert;
-export type SelectHouseholdInvitation = typeof householdInvitations.$inferSelect;
+export type InsertMatchproClientInvitation = typeof matchproClientInvitations.$inferInsert;
+export type SelectMatchproClientInvitation = typeof matchproClientInvitations.$inferSelect;
 
 export type InsertUser = typeof users.$inferInsert;
 export type SelectUser = typeof users.$inferSelect;
-export type InsertHousehold = typeof households.$inferInsert;
-export type SelectHousehold = typeof households.$inferSelect;
+export type InsertMatchproClient = typeof matchproClients.$inferInsert;
+export type SelectMatchproClient = typeof matchproClients.$inferSelect;
 export type InsertOrganizationSettings = typeof organizationSettings.$inferInsert;
 export type SelectOrganizationSettings = typeof organizationSettings.$inferSelect;
 export type InsertComplex = typeof complexes.$inferInsert;

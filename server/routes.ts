@@ -20,8 +20,8 @@ import {
   chatRooms,
   chatParticipants,
   messages,
-  households,
-  householdInvitations,
+  matchproClients,
+  matchproClientInvitations,
 } from "@db/schema";
 import { sql, eq, and, or, count } from "drizzle-orm";
 import fs from "fs/promises";
@@ -83,8 +83,8 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    // Add household invitation endpoints
-    app.post('/api/household/invite', async (req, res) => {
+    // Add matchproClient invitation endpoints
+    app.post('/api/matchpro-client/invite', async (req, res) => {
       if (!req.isAuthenticated()) {
         return res.status(401).send("Not authenticated");
       }
@@ -92,10 +92,10 @@ export function registerRoutes(app: Express): Server {
       try {
         const { email } = req.body;
         const userId = req.user.id;
-        const householdId = req.user.householdId;
+        const matchproClientId = req.user.matchproClientId;
 
-        if (!householdId) {
-          return res.status(400).send("You must be part of a household to send invitations");
+        if (!matchproClientId) {
+          return res.status(400).send("You must be part of a MatchPro Client to send invitations");
         }
 
         // Check if email exists in the system
@@ -112,11 +112,11 @@ export function registerRoutes(app: Express): Server {
         // Check for existing pending invitation
         const [existingInvitation] = await db
           .select()
-          .from(householdInvitations)
+          .from(matchproClientInvitations)
           .where(
             and(
-              eq(householdInvitations.email, email),
-              eq(householdInvitations.status, 'pending')
+              eq(matchproClientInvitations.email, email),
+              eq(matchproClientInvitations.status, 'pending')
             )
           )
           .limit(1);
@@ -132,16 +132,16 @@ export function registerRoutes(app: Express): Server {
 
         // Create invitation
         const [invitation] = await db
-          .insert(householdInvitations)
+          .insert(matchproClientInvitations)
           .values({
-            householdId: householdId,
+            matchproClientId: matchproClientId,
             email: email,
             token: token,
             status: 'pending',
             expiresAt: expiresAt,
             createdBy: userId,
             createdAt: new Date().toISOString(),
-          } as typeof householdInvitations.$inferInsert)
+          })
           .returning();
 
         // TODO: Send email with invitation link
@@ -153,21 +153,21 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    app.get('/api/household/invitations', async (req, res) => {
+    app.get('/api/matchpro-client/invitations', async (req, res) => {
       if (!req.isAuthenticated()) {
         return res.status(401).send("Not authenticated");
       }
 
       try {
-        const householdId = req.user.householdId;
+        const matchproClientId = req.user.matchproClientId;
 
-        if (!householdId) {
-          return res.status(400).send("You must be part of a household to view invitations");
+        if (!matchproClientId) {
+          return res.status(400).send("You must be part of a MatchPro Client to view invitations");
         }
 
         const invitations = await db
           .select({
-            invitation: householdInvitations,
+            invitation: matchproClientInvitations,
             createdByUser: {
               id: users.id,
               firstName: users.firstName,
@@ -175,9 +175,9 @@ export function registerRoutes(app: Express): Server {
               email: users.email,
             },
           })
-          .from(householdInvitations)
-          .leftJoin(users, eq(householdInvitations.createdBy, users.id))
-          .where(eq(householdInvitations.householdId, householdId));
+          .from(matchproClientInvitations)
+          .leftJoin(users, eq(matchproClientInvitations.createdBy, users.id))
+          .where(eq(matchproClientInvitations.matchproClientId, matchproClientId));
 
         res.json(invitations);
       } catch (error) {
@@ -186,7 +186,7 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    app.post('/api/household/invitations/:token/accept', async (req, res) => {
+    app.post('/api/matchpro-client/invitations/:token/accept', async (req, res) => {
       if (!req.isAuthenticated()) {
         return res.status(401).send("Not authenticated");
       }
@@ -198,11 +198,11 @@ export function registerRoutes(app: Express): Server {
         // Find and validate invitation
         const [invitation] = await db
           .select()
-          .from(householdInvitations)
+          .from(matchproClientInvitations)
           .where(
             and(
-              eq(householdInvitations.token, token),
-              eq(householdInvitations.status, 'pending')
+              eq(matchproClientInvitations.token, token),
+              eq(matchproClientInvitations.status, 'pending')
             )
           )
           .limit(1);
@@ -213,9 +213,9 @@ export function registerRoutes(app: Express): Server {
 
         if (new Date(invitation.expiresAt) < new Date()) {
           await db
-            .update(householdInvitations)
+            .update(matchproClientInvitations)
             .set({ status: 'expired' })
-            .where(eq(householdInvitations.id, invitation.id));
+            .where(eq(matchproClientInvitations.id, invitation.id));
 
           return res.status(400).send("Invitation has expired");
         }
@@ -224,17 +224,17 @@ export function registerRoutes(app: Express): Server {
           return res.status(403).send("This invitation was sent to a different email address");
         }
 
-        // Update user's household
+        // Update user's matchproClient
         await db
           .update(users)
-          .set({ householdId: invitation.householdId })
+          .set({ matchproClientId: invitation.matchproClientId })
           .where(eq(users.id, userId));
 
         // Mark invitation as accepted
         await db
-          .update(householdInvitations)
+          .update(matchproClientInvitations)
           .set({ status: 'accepted' })
-          .where(eq(householdInvitations.id, invitation.id));
+          .where(eq(matchproClientInvitations.id, invitation.id));
 
         res.json({ message: "Invitation accepted successfully" });
       } catch (error) {
@@ -243,7 +243,7 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    app.post('/api/household/invitations/:token/decline', async (req, res) => {
+    app.post('/api/matchpro-client/invitations/:token/decline', async (req, res) => {
       if (!req.isAuthenticated()) {
         return res.status(401).send("Not authenticated");
       }
@@ -254,11 +254,11 @@ export function registerRoutes(app: Express): Server {
         // Find and validate invitation
         const [invitation] = await db
           .select()
-          .from(householdInvitations)
+          .from(matchproClientInvitations)
           .where(
             and(
-              eq(householdInvitations.token, token),
-              eq(householdInvitations.status, 'pending')
+              eq(matchproClientInvitations.token, token),
+              eq(matchproClientInvitations.status, 'pending')
             )
           )
           .limit(1);
@@ -273,9 +273,9 @@ export function registerRoutes(app: Express): Server {
 
         // Mark invitation as declined
         await db
-          .update(householdInvitations)
+          .update(matchproClientInvitations)
           .set({ status: 'declined' })
-          .where(eq(householdInvitations.id, invitation.id));
+          .where(eq(matchproClientInvitations.id, invitation.id));
 
         res.json({ message: "Invitation declined successfully" });
       } catch (error) {
@@ -738,7 +738,7 @@ export function registerRoutes(app: Express): Server {
             email,
             phone,
             updatedAt: new Date().toISOString(),
-          } as typeof users.$inferInsert)
+          })
           .where(eq(users.id, req.user.id))
           .returning();
 
@@ -778,7 +778,7 @@ export function registerRoutes(app: Express): Server {
           .set({
             password: hashedPassword,
             updatedAt: new Date().toISOString(),
-          } as typeof users.$inferInsert)
+          })
           .where(eq(users.id, req.user.id));
 
         res.json({ message: "Password updated successfully" });
@@ -850,7 +850,7 @@ export function registerRoutes(app: Express): Server {
                 fieldId: parseInt(fieldId),
                 fieldSize: fieldSize,
                 createdAt: new Date().toISOString(),
-              } as typeof eventFieldSizes.$inferInsert);
+              });
           }
         });
 
