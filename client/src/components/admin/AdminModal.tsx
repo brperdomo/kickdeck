@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -236,142 +236,144 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="px-6 pt-6 pb-4 sticky top-0 bg-background z-10 border-b">
           <DialogTitle>{adminToEdit ? 'Edit Administrator' : 'Add New Administrator'}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-6 py-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="px-6">
+            <div className="py-4 space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="John" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Doe" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
-                name="firstName"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="John" />
+                      <div className="relative">
+                        <Input 
+                          {...field} 
+                          type="email" 
+                          placeholder="john.doe@example.com"
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleEmailChange(e.target.value);
+                          }}
+                        />
+                        {emailCheckQuery.isLoading && (
+                          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
+                    </FormControl>
+                    {emailCheckQuery.data?.exists && field.value !== adminToEdit?.email && (
+                      <p className="text-sm font-medium text-destructive">
+                        This email is already registered
+                      </p>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="roles"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Administrator Roles</FormLabel>
+                    <FormDescription>
+                      {isSuperAdmin 
+                        ? "Super Admin role provides full access and overrides all other roles."
+                        : "Select one or more roles. Super Admin overrides all other roles if selected."}
+                    </FormDescription>
+                    <FormControl>
+                      <div className="space-y-2">
+                        {availableRoles.map((role) => {
+                          const isSelected = field.value.includes(role.id);
+                          const isDisabled = isSuperAdmin && role.id !== "super_admin";
+
+                          return (
+                            <div
+                              key={role.id}
+                              className={`p-3 rounded-lg border transition-colors ${
+                                isDisabled
+                                  ? "opacity-50 cursor-not-allowed border-input"
+                                  : isSelected
+                                  ? "border-primary bg-primary/5 cursor-pointer"
+                                  : "border-input hover:bg-accent cursor-pointer"
+                              }`}
+                              onClick={() => !isDisabled && toggleRole(role.id)}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="font-medium">{role.name}</p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {role.description}
+                                  </p>
+                                </div>
+                                {isSelected && (
+                                  <Badge variant="secondary">Selected</Badge>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Doe" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
+              {!adminToEdit && (
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Temporary Password</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="password" placeholder="Minimum 8 characters" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input 
-                        {...field} 
-                        type="email" 
-                        placeholder="john.doe@example.com"
-                        onChange={(e) => {
-                          field.onChange(e);
-                          handleEmailChange(e.target.value);
-                        }}
-                      />
-                      {emailCheckQuery.isLoading && (
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                        </div>
-                      )}
-                    </div>
-                  </FormControl>
-                  {emailCheckQuery.data?.exists && field.value !== adminToEdit?.email && (
-                    <p className="text-sm font-medium text-destructive">
-                      This email is already registered
-                    </p>
-                  )}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="roles"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Administrator Roles</FormLabel>
-                  <FormDescription>
-                    {isSuperAdmin 
-                      ? "Super Admin role provides full access and overrides all other roles."
-                      : "Select one or more roles. Super Admin overrides all other roles if selected."}
-                  </FormDescription>
-                  <FormControl>
-                    <div className="space-y-2">
-                      {availableRoles.map((role) => {
-                        const isSelected = field.value.includes(role.id);
-                        const isDisabled = isSuperAdmin && role.id !== "super_admin";
-
-                        return (
-                          <div
-                            key={role.id}
-                            className={`p-3 rounded-lg border transition-colors ${
-                              isDisabled
-                                ? "opacity-50 cursor-not-allowed border-input"
-                                : isSelected
-                                ? "border-primary bg-primary/5 cursor-pointer"
-                                : "border-input hover:bg-accent cursor-pointer"
-                            }`}
-                            onClick={() => !isDisabled && toggleRole(role.id)}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="font-medium">{role.name}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {role.description}
-                                </p>
-                              </div>
-                              {isSelected && (
-                                <Badge variant="secondary">Selected</Badge>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {!adminToEdit && (
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Temporary Password</FormLabel>
-                    <FormControl>
-                      <Input {...field} type="password" placeholder="Minimum 8 characters" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-4 border-t mt-6">
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 py-4 border-t">
               {adminToEdit && (
                 <Button 
                   type="button" 
