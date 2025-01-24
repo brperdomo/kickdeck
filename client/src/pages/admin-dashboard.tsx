@@ -666,15 +666,15 @@ function HouseholdsView() {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Households</h2>
+        <h2 className="text-2xl font-bold">MatchPro Client</h2>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Add Household
+          Add Client
         </Button>
       </div>
       <Card>
         <CardContent className="p-6">
-          <p className="text-muted-foreground">Household management coming soon</p>
+          <p className="text-muted-foreground">Client management coming soon</p>
         </CardContent>
       </Card>
     </>
@@ -853,7 +853,7 @@ function AdminDashboard() {
               onClick={() => setActiveView('households')}
             >
               <Home className="mr-2 h-4 w-4" />
-              Households
+              MatchPro Client
             </Button>
 
             <Button
