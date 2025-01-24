@@ -88,7 +88,7 @@ export default function HouseholdPage() {
   return (
     <div className="flex-1 space-y-6 p-8 pt-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">My Household</h2>
+        <h2 className="text-3xl font-bold tracking-tight">My MatchPro Client</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -98,9 +98,9 @@ export default function HouseholdPage() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Invite Household Member</DialogTitle>
+              <DialogTitle>Invite MatchPro Client Member</DialogTitle>
               <DialogDescription>
-                Send an invitation to add someone to your household.
+                Send an invitation to add someone to your MatchPro Client group.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleInvite}>
@@ -146,7 +146,7 @@ export default function HouseholdPage() {
           <CardContent>
             <div className="text-2xl font-bold">1</div>
             <p className="text-xs text-muted-foreground">
-              Active household members
+              Active MatchPro Client members
             </p>
           </CardContent>
         </Card>
@@ -169,7 +169,7 @@ export default function HouseholdPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Household Members</CardTitle>
+          <CardTitle>MatchPro Client Members</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
