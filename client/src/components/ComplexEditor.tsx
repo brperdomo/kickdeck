@@ -26,7 +26,7 @@ const complexSchema = z.object({
   name: z.string().min(1, "Complex name is required"),
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
-  state: z.string().min(2, "State is required"),
+  state: z.string().min(2, "State is required").max(2),
   country: z.string().min(2, "Country is required"),
   openTime: z.string().min(1, "Open time is required"),
   closeTime: z.string().min(1, "Close time is required"),
@@ -116,7 +116,7 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} placeholder="Enter complex name" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -129,7 +129,7 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} placeholder="Enter street address" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -143,7 +143,7 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                   <FormItem>
                     <FormLabel>City</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} placeholder="Enter city" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -156,7 +156,7 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                   <FormItem>
                     <FormLabel>State</FormLabel>
                     <FormControl>
-                      <Input {...field} maxLength={2} />
+                      <Input {...field} maxLength={2} placeholder="CA" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -170,7 +170,7 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                 <FormItem>
                   <FormLabel>Country</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} placeholder="Enter country" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -211,7 +211,7 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                 <FormItem>
                   <FormLabel>Rules</FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
+                    <Textarea {...field} placeholder="Enter complex rules" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -224,7 +224,7 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                 <FormItem>
                   <FormLabel>Directions</FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
+                    <Textarea {...field} placeholder="Enter directions to complex" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

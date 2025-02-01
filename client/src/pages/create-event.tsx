@@ -39,6 +39,20 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { ComplexEditor } from "@/components/ComplexEditor";
 
+interface Complex {
+  id: number;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  openTime: string;
+  closeTime: string;
+  rules?: string;
+  directions?: string;
+  isOpen: boolean;
+}
+
 interface EventData {
   name: string;
   startDate: string;
@@ -150,20 +164,6 @@ const scoringRuleSchema = z.object({
 });
 
 type ScoringRuleValues = z.infer<typeof scoringRuleSchema>;
-
-interface Complex {
-  id: number;
-  name: string;
-  address: string;
-  city: string;
-  state: string;
-  country: string;
-  openTime: string;
-  closeTime: string;
-  rules?: string;
-  directions?: string;
-  isOpen: boolean;
-}
 
 interface SelectedComplex extends Complex {
   selected: boolean;
@@ -344,7 +344,7 @@ export default function CreateEvent() {
   });
 
 
-  const handleCreateComplex = async (data: ComplexFormValues) => {
+  const handleCreateComplex = async (data: Complex) => {
     try {
       const response = await fetch('/api/admin/complexes', {
         method: 'POST',
@@ -360,6 +360,8 @@ export default function CreateEvent() {
         title: "Success",
         description: "Complex created successfully",
       });
+
+      setIsComplexDialogOpen(false);
       await complexesQuery.refetch();
     } catch (error) {
         console.error('Error creating complex:', error);
@@ -371,7 +373,7 @@ export default function CreateEvent() {
     }
   };
 
-  const handleUpdateComplex = async (data: ComplexFormValues) => {
+  const handleUpdateComplex = async (data: Complex) => {
     if (!editingComplex) return;
 
     try {
@@ -389,6 +391,8 @@ export default function CreateEvent() {
         title: "Success",
         description: "Complex updated successfully",
       });
+
+      setIsComplexDialogOpen(false);
       await complexesQuery.refetch();
     } catch (error) {
         console.error('Error updating complex:', error);
@@ -893,7 +897,7 @@ export default function CreateEvent() {
                                         placeholder="0.00"
                                         step="0.01"min="0"
                                         {...field}
-                                        value={field.value ?? ''}
+                                        value={field.value?? ''}
                                         onChange={(e) => {
                                           const value = e.target.value;
                                           field.onChange(value === '' ? null : Number(value));
