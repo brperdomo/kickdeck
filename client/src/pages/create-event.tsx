@@ -228,9 +228,10 @@ export default function CreateEvent() {
   });
 
   const fieldsQuery = useQuery({
-    queryKey: [`/api/admin/complexes/${viewingComplexId}/fields`],
+    queryKey: ['/api/admin/fields', viewingComplexId],
     enabled: !!viewingComplexId,
     queryFn: async () => {
+      if (!viewingComplexId) return [];
       const response = await fetch(`/api/admin/complexes/${viewingComplexId}/fields`);
       if (!response.ok) {
         throw new Error('Failed to fetch fields');
@@ -433,6 +434,7 @@ export default function CreateEvent() {
       });
 
       setIsComplexDialogOpen(false);
+      setEditingComplex(null);
       await complexesQuery.refetch();
     } catch (error) {
       console.error('Error updating complex:', error);

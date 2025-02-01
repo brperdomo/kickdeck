@@ -62,34 +62,24 @@ export function ComplexEditor({ open, onOpenChange, onSubmit, complex }: Complex
 
   const form = useForm<ComplexFormValues>({
     resolver: zodResolver(complexSchema),
-    defaultValues: complex ? {
-      name: complex.name,
-      address: complex.address,
-      city: complex.city,
-      state: complex.state,
-      country: complex.country,
-      openTime: complex.openTime,
-      closeTime: complex.closeTime,
-      rules: complex.rules || '',
-      directions: complex.directions || '',
-      isOpen: complex.isOpen,
-    } : {
-      name: '',
-      address: '',
-      city: '',
-      state: '',
-      country: 'USA',
-      openTime: '06:00',
-      closeTime: '22:00',
-      rules: '',
-      directions: '',
-      isOpen: true,
+    defaultValues: {
+      name: complex?.name ?? '',
+      address: complex?.address ?? '',
+      city: complex?.city ?? '',
+      state: complex?.state ?? '',
+      country: complex?.country ?? 'USA',
+      openTime: complex?.openTime ?? '06:00',
+      closeTime: complex?.closeTime ?? '22:00',
+      rules: complex?.rules ?? '',
+      directions: complex?.directions ?? '',
+      isOpen: complex?.isOpen ?? true,
     },
   });
 
   const handleSubmit = async (data: ComplexFormValues) => {
     try {
       await onSubmit(data);
+      form.reset();
     } catch (error) {
       console.error('Form submission error:', error);
       toast({
