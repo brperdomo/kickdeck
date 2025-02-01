@@ -1,6 +1,3 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 const complexSchema = z.object({
@@ -38,26 +37,13 @@ const complexSchema = z.object({
 type ComplexFormValues = z.infer<typeof complexSchema>;
 
 interface ComplexEditorProps {
-  complex?: {
-    id: number;
-    name: string;
-    address: string;
-    city: string;
-    state: string;
-    country: string;
-    openTime: string;
-    closeTime: string;
-    rules?: string;
-    directions?: string;
-    isOpen: boolean;
-  };
-  onSubmit: (data: ComplexFormValues) => Promise<void>;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  title: string;
+  onSubmit: (data: ComplexFormValues) => Promise<void>;
+  complex?: ComplexFormValues & { id: number } | null;
 }
 
-export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: ComplexEditorProps) {
+export function ComplexEditor({ open, onOpenChange, onSubmit, complex }: ComplexEditorProps) {
   const { toast } = useToast();
 
   const form = useForm<ComplexFormValues>({
@@ -87,25 +73,25 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
     },
   });
 
-  async function handleSubmit(data: ComplexFormValues) {
+  const handleSubmit = async (data: ComplexFormValues) => {
     try {
       await onSubmit(data);
-      onOpenChange(false);
       form.reset();
     } catch (error) {
+      console.error('Form submission error:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "An error occurred",
         variant: "destructive",
       });
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>{complex ? 'Edit Complex' : 'Add New Complex'}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -116,12 +102,13 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter complex name" />
+                    <Input placeholder="Enter complex name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="address"
@@ -129,12 +116,13 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter street address" />
+                    <Input placeholder="Enter street address" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -143,7 +131,7 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                   <FormItem>
                     <FormLabel>City</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter city" />
+                      <Input placeholder="Enter city" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -156,13 +144,24 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                   <FormItem>
                     <FormLabel>State</FormLabel>
                     <FormControl>
-                      <Input {...field} maxLength={2} placeholder="CA" />
+                      <Input 
+                        placeholder="CA" 
+                        maxLength={2} 
+                        {...field} 
+                        onChange={e => {
+                          const value = e.target.value.toUpperCase();
+                          if (value.length <= 2) {
+                            field.onChange(value);
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+
             <FormField
               control={form.control}
               name="country"
@@ -170,12 +169,13 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                 <FormItem>
                   <FormLabel>Country</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter country" />
+                    <Input placeholder="Enter country" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -184,7 +184,7 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                   <FormItem>
                     <FormLabel>Open Time</FormLabel>
                     <FormControl>
-                      <Input {...field} type="time" />
+                      <Input type="time" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -197,46 +197,49 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                   <FormItem>
                     <FormLabel>Close Time</FormLabel>
                     <FormControl>
-                      <Input {...field} type="time" />
+                      <Input type="time" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+
             <FormField
               control={form.control}
               name="rules"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Rules</FormLabel>
+                  <FormLabel>Rules (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea {...field} placeholder="Enter complex rules" />
+                    <Textarea placeholder="Enter complex rules" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="directions"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Directions</FormLabel>
+                  <FormLabel>Directions (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea {...field} placeholder="Enter directions to complex" />
+                    <Textarea placeholder="Enter directions to complex" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="isOpen"
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center justify-between">
-                    <FormLabel>Status</FormLabel>
+                    <FormLabel>Complex Status</FormLabel>
                     <FormControl>
                       <Switch
                         checked={field.value}
@@ -248,11 +251,14 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                 </FormItem>
               )}
             />
+
             <div className="flex justify-end gap-2">
-              <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button type="submit">Save</Button>
+              <Button type="submit">
+                {complex ? 'Save Changes' : 'Create Complex'}
+              </Button>
             </div>
           </form>
         </Form>
