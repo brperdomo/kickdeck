@@ -170,8 +170,11 @@ interface Complex {
   address: string;
   city: string;
   state: string;
-  openFields: number;
-  closedFields: number;
+    country: string;
+  openTime: string;
+  closeTime: string;
+  rules?: string;
+  directions?: string;
   isOpen: boolean;
 }
 
@@ -354,41 +357,57 @@ export default function CreateEvent() {
   });
 
     const handleCreateComplex = async (data: ComplexFormValues) => {
-    const response = await fetch('/api/admin/complexes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    try {
+      const response = await fetch('/api/admin/complexes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to create complex');
+      if (!response.ok) {
+        throw new Error('Failed to create complex');
+      }
+
+      toast({
+        title: "Success",
+        description: "Complex created successfully",
+      });
+      await complexesQuery.refetch();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to create complex",
+        variant: "destructive",
+      });
     }
-
-    toast({
-      title: "Success",
-      description: "Complex created successfully",
-    });
-    await complexesQuery.refetch();
   };
 
   const handleUpdateComplex = async (data: ComplexFormValues) => {
     if (!editingComplex) return;
 
-    const response = await fetch(`/api/admin/complexes/${editingComplex.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    try {
+      const response = await fetch(`/api/admin/complexes/${editingComplex.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-    if (!response.ok) {
-      throw new Error('Failed to update complex');
+      if (!response.ok) {
+        throw new Error('Failed to update complex');
+      }
+
+      toast({
+        title: "Success",
+        description: "Complex updated successfully",
+      });
+      await complexesQuery.refetch();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update complex",
+        variant: "destructive",
+      });
     }
-
-    toast({
-      title: "Success",
-      description: "Complex updated successfully",
-    });
-    await complexesQuery.refetch();
   };
 
 
@@ -876,8 +895,7 @@ export default function CreateEvent() {
                             />
                             <FormField
                               control={ageGroupForm.control}
-                              name="amountDue"
-                              render={({ field }) => (
+                              name="amountDue"                              render={({ field }) => (
                                 <FormItem>
                                   <FormLabel>Amount Due (optional)</FormLabel>
                                   <FormControl>
@@ -1215,7 +1233,7 @@ export default function CreateEvent() {
       )}
 
       <ComplexEditor
-        complex={editingComplex || undefined}
+        complex={editingComplex}
         open={isComplexDialogOpen}
         onOpenChange={setIsComplexDialogOpen}
         title={editingComplex ? "Edit Complex" : "Add Complex"}

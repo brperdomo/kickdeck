@@ -31,6 +31,7 @@ const complexSchema = z.object({
   closeTime: z.string().min(1, "Close time is required"),
   rules: z.string().optional(),
   directions: z.string().optional(),
+  isOpen: z.boolean().default(true),
 });
 
 type ComplexFormValues = z.infer<typeof complexSchema>;
@@ -70,6 +71,7 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
       closeTime: complex.closeTime,
       rules: complex.rules,
       directions: complex.directions,
+      isOpen: complex.isOpen,
     } : {
       name: '',
       address: '',
@@ -78,6 +80,9 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
       country: 'USA',
       openTime: '06:00',
       closeTime: '22:00',
+      isOpen: true,
+      rules: '',
+      directions: '',
     },
   });
 
