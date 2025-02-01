@@ -35,13 +35,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from '@tanstack/react-query';
-import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox
-import { useToast } from "@/hooks/use-toast"; // Import useToast
+import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
 import { ComplexEditor } from "@/components/ComplexEditor";
 
-// Add these types near the top of the file, after existing imports
 interface EventData {
-  // Event Information
   name: string;
   startDate: string;
   endDate: string;
@@ -50,32 +48,24 @@ interface EventData {
   details?: string;
   agreement?: string;
   refundPolicy?: string;
-
-  // Age Groups
   ageGroups: AgeGroup[];
-
-  // Complex and Field Configuration
   complexFieldSizes: Record<number, FieldSize>;
   selectedComplexIds: number[];
 }
 
-// Add this validation function before the CreateEvent component
 function validateEventData(data: Partial<EventData>): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
 
-  // Event Information validation
   if (!data.name) errors.push("Event name is required");
   if (!data.startDate) errors.push("Event start date is required");
   if (!data.endDate) errors.push("Event end date is required");
   if (!data.timezone) errors.push("Time zone is required");
   if (!data.applicationDeadline) errors.push("Application deadline is required");
 
-  // Age Groups validation
   if (!data.ageGroups?.length) {
     errors.push("At least one age group is required");
   }
 
-  // Complex and Field validation
   if (!data.selectedComplexIds?.length) {
     errors.push("At least one complex must be selected");
   }
@@ -86,8 +76,6 @@ function validateEventData(data: Partial<EventData>): { isValid: boolean; errors
   };
 }
 
-
-// Helper function to generate unique IDs
 const generateId = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
@@ -96,7 +84,6 @@ type EventTab = 'information' | 'age-groups' | 'scoring' | 'complexes' | 'settin
 
 const TAB_ORDER: EventTab[] = ['information', 'age-groups', 'scoring', 'complexes', 'settings', 'administrators'];
 
-// USA Timezones
 const USA_TIMEZONES = [
   { value: 'America/New_York', label: 'Eastern Time (ET)' },
   { value: 'America/Chicago', label: 'Central Time (CT)' },
@@ -123,7 +110,7 @@ const ageGroupSchema = z.object({
   projectedTeams: z.number().min(0).max(200),
   birthDateStart: z.string().min(1, "Start date is required"),
   birthDateEnd: z.string().min(1, "End date is required"),
-  scoringRule: z.string().optional(), //Made optional
+  scoringRule: z.string().optional(),
   ageGroup: z.string().min(1, "Age group is required"),
   fieldSize: z.enum(['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A']),
   amountDue: z.number().nullable().optional(),
@@ -170,7 +157,7 @@ interface Complex {
   address: string;
   city: string;
   state: string;
-    country: string;
+  country: string;
   openTime: string;
   closeTime: string;
   rules?: string;
@@ -222,8 +209,9 @@ export default function CreateEvent() {
   const [viewingComplexId, setViewingComplexId] = useState<number | null>(null);
   const [eventFieldSizes, setEventFieldSizes] = useState<Record<number, FieldSize>>({});
   const { toast } = useToast();
-    const [isComplexDialogOpen, setIsComplexDialogOpen] = useState(false);
+  const [isComplexDialogOpen, setIsComplexDialogOpen] = useState(false);
   const [editingComplex, setEditingComplex] = useState<Complex | null>(null);
+
 
   const complexesQuery = useQuery({
     queryKey: ['/api/admin/complexes'],
@@ -236,7 +224,6 @@ export default function CreateEvent() {
     enabled: !!viewingComplexId,
     queryFn: () => fetch(`/api/admin/complexes/${viewingComplexId}/fields`).then(res => res.json()) as Promise<Field[]>,
   });
-
 
   const navigateTab = (direction: 'next' | 'prev') => {
     const currentIndex = TAB_ORDER.indexOf(activeTab);
@@ -254,7 +241,7 @@ export default function CreateEvent() {
       projectedTeams: 0,
       birthDateStart: '',
       birthDateEnd: '',
-      scoringRule: '', //default value changed to empty string
+      scoringRule: '',
       ageGroup: '',
       fieldSize: '11v11',
       amountDue: null,
@@ -356,7 +343,8 @@ export default function CreateEvent() {
     }
   });
 
-    const handleCreateComplex = async (data: ComplexFormValues) => {
+
+  const handleCreateComplex = async (data: ComplexFormValues) => {
     try {
       const response = await fetch('/api/admin/complexes', {
         method: 'POST',
@@ -374,6 +362,7 @@ export default function CreateEvent() {
       });
       await complexesQuery.refetch();
     } catch (error) {
+        console.error('Error creating complex:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to create complex",
@@ -402,6 +391,7 @@ export default function CreateEvent() {
       });
       await complexesQuery.refetch();
     } catch (error) {
+        console.error('Error updating complex:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to update complex",
@@ -422,9 +412,7 @@ export default function CreateEvent() {
     setSelectedComplexes(updatedComplexes);
   };
 
-  // Add new function to handle event creation
   const handleCreateEvent = async () => {
-    // Collect all event data
     const eventData = {
       name: form.getValues().name,
       startDate: form.getValues().startDate,
@@ -436,14 +424,12 @@ export default function CreateEvent() {
       refundPolicy: form.getValues().refundPolicy,
       ageGroups: ageGroups.map(({ id, ...rest }) => ({
         ...rest,
-        // Remove the client-side ID as the database will generate its own
         scoringRule: rest.scoringRule || null
       })),
       complexFieldSizes: eventFieldSizes,
       selectedComplexIds: selectedComplexes.map(complex => complex.id)
     };
 
-    // Validate all required fields
     const { isValid, errors } = validateEventData(eventData);
 
     if (!isValid) {
@@ -481,7 +467,6 @@ export default function CreateEvent() {
         variant: "default",
       });
 
-      // Add a small delay to show the success message before navigation
       setTimeout(() => {
         navigate("/admin");
       }, 1500);
@@ -895,7 +880,8 @@ export default function CreateEvent() {
                             />
                             <FormField
                               control={ageGroupForm.control}
-                              name="amountDue"                              render={({ field }) => (
+                              name="amountDue"
+                              render={({ field }) => (
                                 <FormItem>
                                   <FormLabel>Amount Due (optional)</FormLabel>
                                   <FormControl>
@@ -905,8 +891,7 @@ export default function CreateEvent() {
                                         type="number"
                                         className="pl-7"
                                         placeholder="0.00"
-                                        step="0.01"
-                                        min="0"
+                                        step="0.01"min="0"
                                         {...field}
                                         value={field.value ?? ''}
                                         onChange={(e) => {
@@ -1186,50 +1171,46 @@ export default function CreateEvent() {
       ) : complexesQuery.error ? (
         <div>Error loading complexes</div>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Complex Name</TableHead>
-              <TableHead>Address</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-center">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {complexesQuery.data?.map((complex) => (
-              <TableRow key={complex.id}>
-                <TableCell className="font-medium">{complex.name}</TableCell>
-                <TableCell>{complex.address}, {complex.city}, {complex.state}</TableCell>
-                <TableCell>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {complexesQuery.data?.map((complex) => (
+            <Card key={complex.id} className="p-4">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h4 className="font-semibold">{complex.name}</h4>
+                  <p className="text-sm text-gray-500">{complex.address}</p>
+                  <p className="text-sm text-gray-500">{complex.city}, {complex.state}</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setEditingComplex(complex);
+                      setIsComplexDialogOpen(true);
+                    }}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setViewingComplexId(complex.id)}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Status:</span>
                   <Badge variant={complex.isOpen ? "outline" : "destructive"}>
                     {complex.isOpen ? "Open" : "Closed"}
                   </Badge>
-                </TableCell>
-                <TableCell className="text-center">
-                  <div className="flex justify-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setEditingComplex(complex);
-                        setIsComplexDialogOpen(true);
-                      }}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setViewingComplexId(complex.id)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
       )}
 
       <ComplexEditor
@@ -1369,7 +1350,6 @@ export default function CreateEvent() {
                   </Button>
                   <h3 className="text-lg font-semibold">Event Settings</h3>
                 </div>
-                {/* Event settings form will be implemented here */}
                 <div className="flex justify-end mt-4">
                   <Button onClick={() => navigateTab('next')}>Save & Continue</Button>
                 </div>
@@ -1387,8 +1367,6 @@ export default function CreateEvent() {
                     <h3 className="text-lg font-semibold">Event Administrators</h3>
                   </div>
                 </div>
-
-                {/* Add your administrators management UI here */}
 
                 <div className="flex justify-end space-x-2">
                   <Button variant="outline" onClick={() => navigate("/admin/events")}>

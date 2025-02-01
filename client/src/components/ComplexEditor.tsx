@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 
@@ -69,8 +70,8 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
       country: complex.country,
       openTime: complex.openTime,
       closeTime: complex.closeTime,
-      rules: complex.rules,
-      directions: complex.directions,
+      rules: complex.rules || '',
+      directions: complex.directions || '',
       isOpen: complex.isOpen,
     } : {
       name: '',
@@ -80,9 +81,9 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
       country: 'USA',
       openTime: '06:00',
       closeTime: '22:00',
-      isOpen: true,
       rules: '',
       directions: '',
+      isOpen: true,
     },
   });
 
@@ -225,6 +226,24 @@ export function ComplexEditor({ complex, onSubmit, open, onOpenChange, title }: 
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isOpen"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Status</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
