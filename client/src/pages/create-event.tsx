@@ -216,16 +216,14 @@ export default function CreateEvent() {
   const [editingComplex, setEditingComplex] = useState<Complex | null>(null);
   const queryClient = useQueryClient();
 
-// Update the query and handlers section
   const complexesQuery = useQuery({
-    queryKey: ['complexes'],
+    queryKey: ['/api/admin/complexes'],
     enabled: activeTab === 'complexes',
     queryFn: async () => {
       try {
         const response = await fetch('/api/admin/complexes');
         if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText);
+          throw new Error('Failed to fetch complexes');
         }
         const data = await response.json();
         return data as Complex[];
@@ -237,15 +235,14 @@ export default function CreateEvent() {
   });
 
   const fieldsQuery = useQuery({
-    queryKey: ['fields', viewingComplexId],
+    queryKey: ['/api/admin/fields', viewingComplexId],
     enabled: !!viewingComplexId,
     queryFn: async () => {
       if (!viewingComplexId) return [];
       try {
         const response = await fetch(`/api/admin/complexes/${viewingComplexId}/fields`);
         if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText);
+          throw new Error('Failed to fetch fields');
         }
         const data = await response.json();
         return data as Field[];
@@ -255,102 +252,6 @@ export default function CreateEvent() {
       }
     }
   });
-
-  const handleEditComplex = (complex: Complex) => {
-    try {
-      console.log('Editing complex:', complex);
-      setEditingComplex({...complex});
-      setIsComplexDialogOpen(true);
-    } catch (error) {
-      console.error('Error setting up complex edit:', error);
-      toast({
-        title: "Error",
-        description: "Failed to open complex editor",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleViewFields = (complexId: number) => {
-    try {
-      console.log('Viewing fields for complex:', complexId);
-      setViewingComplexId(complexId);
-    } catch (error) {
-      console.error('Error setting up fields view:', error);
-      toast({
-        title: "Error",
-        description: "Failed to view fields",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleCreateComplex = async (data: ComplexFormValues) => {
-    try {
-      const response = await fetch('/api/admin/complexes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-
-      toast({
-        title: "Success",
-        description: "Complex created successfully",
-      });
-
-      setIsComplexDialogOpen(false);
-      await queryClient.invalidateQueries({ queryKey: ['complexes'] });
-    } catch (error) {
-      console.error('Error creating complex:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create complex",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleUpdateComplex = async (data: ComplexFormValues) => {
-    if (!editingComplex) return;
-
-    try {
-      const response = await fetch(`/api/admin/complexes/${editingComplex.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-
-      toast({
-        title: "Success",
-        description: "Complex updated successfully",
-      });
-
-      setIsComplexDialogOpen(false);
-      setEditingComplex(null);
-      await queryClient.invalidateQueries({ queryKey: ['complexes'] });
-    } catch (error) {
-      console.error('Error updating complex:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update complex",
-        variant: "destructive",
-      });
-    }
-  };
 
   const navigateTab = (direction: 'next' | 'prev') => {
     const currentIndex = TAB_ORDER.indexOf(activeTab);
@@ -470,6 +371,100 @@ export default function CreateEvent() {
     }
   });
 
+    const handleEditComplex = (complex: Complex) => {
+        try {
+            setEditingComplex(complex);
+            setIsComplexDialogOpen(true);
+        } catch (error) {
+            console.error('Error setting up complex edit:', error);
+            toast({
+                title: "Error",
+                description: "Failed to open complex editor",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleViewFields = (complexId: number) => {
+        try {
+            setViewingComplexId(complexId);
+        } catch (error) {
+            console.error('Error setting up fields view:', error);
+            toast({
+                title: "Error",
+                description: "Failed to view fields",
+                variant: "destructive",
+            });
+        }
+    };
+
+
+  const handleCreateComplex = async (data: ComplexFormValues) => {
+    try {
+      const response = await fetch('/api/admin/complexes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create complex');
+      }
+
+      toast({
+        title: "Success",
+        description: "Complex created successfully",
+      });
+
+      setIsComplexDialogOpen(false);
+      await queryClient.invalidateQueries(['/api/admin/complexes']);
+    } catch (error) {
+      console.error('Error creating complex:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to create complex",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateComplex = async (data: ComplexFormValues) => {
+    if (!editingComplex) return;
+
+    try {
+      const response = await fetch(`/api/admin/complexes/${editingComplex.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update complex');
+      }
+
+      toast({
+        title: "Success",
+        description: "Complex updated successfully",
+      });
+
+      setIsComplexDialogOpen(false);
+      setEditingComplex(null);
+      await queryClient.invalidateQueries(['/api/admin/complexes']);
+    } catch (error) {
+      console.error('Error updating complex:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update complex",
+        variant: "destructive",
+      });
+    }
+  };
+
+
 
   const onComplexSelectionSubmit = (data: ComplexSelectionValues) => {
     const selectedIds = data.selectedComplexIds.map(id => parseInt(id));
@@ -550,151 +545,150 @@ export default function CreateEvent() {
         }
     };
 
-  // Update the complexes rendering section
-  const renderComplexesTab = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => navigateTab('prev')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-          <h3 className="text-lg font-semibold">Available Complexes</h3>
-        </div>
-        <Button
-          onClick={() => {
-            setEditingComplex(null);
-            setIsComplexDialogOpen(true);
-          }}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Add Complex
-        </Button>
-      </div>
-
-      {complexesQuery.isLoading ? (
-        <div>Loading complexes...</div>
-      ) : complexesQuery.error ? (
-        <div>Error loading complexes: {complexesQuery.error.message}</div>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {complexesQuery.data?.map((complex) => (
-            <Card key={complex.id} className="p-4">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h4 className="font-semibold">{complex.name}</h4>
-                  <p className="text-sm text-gray-500">{complex.address}</p>
-                  <p className="text-sm text-gray-500">{complex.city}, {complex.state}</p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEditComplex(complex)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleViewFields(complex.id)}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-sm text-gray-500">Status:</span>
-                <Badge variant={complex.isOpen ? "outline" : "destructive"}>
-                  {complex.isOpen ? "Open" : "Closed"}
-                </Badge>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      <ComplexEditor
-        open={isComplexDialogOpen}
-        onOpenChange={setIsComplexDialogOpen}
-        onSubmit={editingComplex ? handleUpdateComplex : handleCreateComplex}
-        complex={editingComplex}
-      />
-
-      <Dialog open={!!viewingComplexId} onOpenChange={(open) => !open && setViewingComplexId(null)}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>
-              Fields in {complexesQuery.data?.find(c => c.id === viewingComplexId)?.name}
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="mt-4">
-            {fieldsQuery.isLoading ? (
-              <div>Loading fields...</div>
-            ) : fieldsQuery.error ? (
-              <div>Error loading fields: {fieldsQuery.error.message}</div>
-            ) : !fieldsQuery.data?.length ? (
-              <div>No fields available in this complex</div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Field Name</TableHead>
-                    <TableHead className="text-center">Features</TableHead>
-                    <TableHead>Special Instructions</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-center">Event Field Size</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {fieldsQuery.data.map((field) => (
-                    <TableRow key={field.id}>
-                      <TableCell className="font-medium">{field.name}</TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex gap-2 justify-center">
-                          {field.hasLights && <Badge variant="secondary">Lights</Badge>}
-                          {field.hasParking && <Badge variant="secondary">Parking</Badge>}
-                        </div>
-                      </TableCell>
-                      <TableCell>{field.specialInstructions || 'N/A'}</TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant={field.isOpen ? "outline" : "destructive"}>
-                          {field.isOpen ? "Open" : "Closed"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Select
-                          value={eventFieldSizes[field.id] || ''}
-                          onValueChange={(value: FieldSize) => {
-                            setEventFieldSizes(prev => ({
-                              ...prev,
-                              [field.id]: value
-                            }));
-                          }}
-                        >
-                          <SelectTrigger className="w-[120px]">
-                            <SelectValue placeholder="Select size" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
-                              <SelectItem key={size} value={size}>
-                                {size}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+    const renderComplexesTab = () => (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => navigateTab('prev')}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back
+            </Button>
+            <h3 className="text-lg font-semibold">Available Complexes</h3>
           </div>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
+          <Button
+            onClick={() => {
+              setEditingComplex(null);
+              setIsComplexDialogOpen(true);
+            }}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Add Complex
+          </Button>
+        </div>
+
+        {complexesQuery.isLoading ? (
+          <div>Loading complexes...</div>
+        ) : complexesQuery.error ? (
+          <div>Error loading complexes</div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {complexesQuery.data?.map((complex) => (
+              <Card key={complex.id} className="p-4">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h4 className="font-semibold">{complex.name}</h4>
+                    <p className="text-sm text-gray-500">{complex.address}</p>
+                    <p className="text-sm text-gray-500">{complex.city}, {complex.state}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                        onClick={() => handleEditComplex(complex)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                        onClick={() => handleViewFields(complex.id)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-sm text-gray-500">Status:</span>
+                  <Badge variant={complex.isOpen ? "outline" : "destructive"}>
+                    {complex.isOpen ? "Open" : "Closed"}
+                  </Badge>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        <ComplexEditor
+          open={isComplexDialogOpen}
+          onOpenChange={setIsComplexDialogOpen}
+          onSubmit={editingComplex ? handleUpdateComplex : handleCreateComplex}
+          complex={editingComplex}
+        />
+
+        <Dialog open={!!viewingComplexId} onOpenChange={(open) => !open && setViewingComplexId(null)}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>
+                Fields in {complexesQuery.data?.find(c => c.id === viewingComplexId)?.name}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="mt-4">
+              {fieldsQuery.isLoading ? (
+                <div>Loading fields...</div>
+              ) : !fieldsQuery.data?.length ? (
+                <div>No fields available in this complex</div>
+              ) : (
+                <div className="space-y-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Field Name</TableHead>
+                        <TableHead className="text-center">Features</TableHead>
+                        <TableHead>Special Instructions</TableHead>
+                        <TableHead className="text-center">Status</TableHead>
+                        <TableHead className="text-center">Event Field Size</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {fieldsQuery.data.map((field) => (
+                        <TableRow key={field.id}>
+                          <TableCell className="font-medium">{field.name}</TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex gap-2 justify-center">
+                              {field.hasLights && <Badge variant="secondary">Lights</Badge>}
+                              {field.hasParking && <Badge variant="secondary">Parking</Badge>}
+                            </div>
+                          </TableCell>
+                          <TableCell>{field.specialInstructions || 'N/A'}</TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant={field.isOpen ? "outline" : "destructive"}>
+                              {field.isOpen ? "Open" : "Closed"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Select
+                              value={eventFieldSizes[field.id] || ''}
+                              onValueChange={(value: FieldSize) => {
+                                setEventFieldSizes(prev => ({
+                                  ...prev,
+                                  [field.id]: value
+                                }));
+                              }}
+                            >
+                              <SelectTrigger className="w-[120px]">
+                                <SelectValue placeholder="Select size" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
+                                  <SelectItem key={size} value={size}>
+                                    {size}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
 
 
   return (
