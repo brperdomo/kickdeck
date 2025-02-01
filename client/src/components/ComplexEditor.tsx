@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useEffect } from "react";
 
 const complexSchema = z.object({
   name: z.string().min(1, "Complex name is required"),
@@ -63,23 +64,52 @@ export function ComplexEditor({ open, onOpenChange, onSubmit, complex }: Complex
   const form = useForm<ComplexFormValues>({
     resolver: zodResolver(complexSchema),
     defaultValues: {
-      name: complex?.name ?? '',
-      address: complex?.address ?? '',
-      city: complex?.city ?? '',
-      state: complex?.state ?? '',
-      country: complex?.country ?? 'USA',
-      openTime: complex?.openTime ?? '06:00',
-      closeTime: complex?.closeTime ?? '22:00',
-      rules: complex?.rules ?? '',
-      directions: complex?.directions ?? '',
-      isOpen: complex?.isOpen ?? true,
+      name: '',
+      address: '',
+      city: '',
+      state: '',
+      country: 'USA',
+      openTime: '06:00',
+      closeTime: '22:00',
+      rules: '',
+      directions: '',
+      isOpen: true,
     },
   });
+
+  useEffect(() => {
+    if (complex) {
+      form.reset({
+        name: complex.name,
+        address: complex.address,
+        city: complex.city,
+        state: complex.state,
+        country: complex.country,
+        openTime: complex.openTime,
+        closeTime: complex.closeTime,
+        rules: complex.rules || '',
+        directions: complex.directions || '',
+        isOpen: complex.isOpen,
+      });
+    } else {
+      form.reset({
+        name: '',
+        address: '',
+        city: '',
+        state: '',
+        country: 'USA',
+        openTime: '06:00',
+        closeTime: '22:00',
+        rules: '',
+        directions: '',
+        isOpen: true,
+      });
+    }
+  }, [complex, form]);
 
   const handleSubmit = async (data: ComplexFormValues) => {
     try {
       await onSubmit(data);
-      form.reset();
     } catch (error) {
       console.error('Form submission error:', error);
       toast({

@@ -34,7 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { ComplexEditor } from "@/components/ComplexEditor";
@@ -214,6 +214,7 @@ export default function CreateEvent() {
   const { toast } = useToast();
   const [isComplexDialogOpen, setIsComplexDialogOpen] = useState(false);
   const [editingComplex, setEditingComplex] = useState<Complex | null>(null);
+  const queryClient = useQueryClient();
 
   const complexesQuery = useQuery({
     queryKey: ['/api/admin/complexes'],
@@ -223,7 +224,8 @@ export default function CreateEvent() {
       if (!response.ok) {
         throw new Error('Failed to fetch complexes');
       }
-      return response.json();
+      const data = await response.json();
+      return data as Complex[];
     }
   });
 
@@ -236,7 +238,8 @@ export default function CreateEvent() {
       if (!response.ok) {
         throw new Error('Failed to fetch fields');
       }
-      return response.json();
+      const data = await response.json();
+      return data as Field[];
     }
   });
 
@@ -390,7 +393,7 @@ export default function CreateEvent() {
       });
 
       setIsComplexDialogOpen(false);
-      await complexesQuery.refetch();
+      await queryClient.invalidateQueries(['/api/admin/complexes']);
     } catch (error) {
       console.error('Error creating complex:', error);
       toast({
@@ -435,7 +438,7 @@ export default function CreateEvent() {
 
       setIsComplexDialogOpen(false);
       setEditingComplex(null);
-      await complexesQuery.refetch();
+      await queryClient.invalidateQueries(['/api/admin/complexes']);
     } catch (error) {
       console.error('Error updating complex:', error);
       toast({
@@ -445,6 +448,16 @@ export default function CreateEvent() {
       });
     }
   };
+
+    const handleEditComplex = (complex: Complex) => {
+        setEditingComplex(complex);
+        setIsComplexDialogOpen(true);
+    };
+
+    const handleViewFields = (complexId: number) => {
+        setViewingComplexId(complexId);
+    };
+
 
 
   const onComplexSelectionSubmit = (data: ComplexSelectionValues) => {
@@ -565,17 +578,14 @@ export default function CreateEvent() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => {
-                        setEditingComplex(complex);
-                        setIsComplexDialogOpen(true);
-                      }}
+                        onClick={() => handleEditComplex(complex)}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setViewingComplexId(complex.id)}
+                        onClick={() => handleViewFields(complex.id)}
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -892,7 +902,7 @@ export default function CreateEvent() {
 
             <TabsContent value="age-groups">
               <div className="space-y-6">
-                <div className="flex justify-between items-center">
+                <div className="flex justifybetween items-center">
                   <div className="flex items-center gap-2">
                     <Button variant="outline" onClick={() => navigateTab('prev')}>
                       <ArrowLeft className="mr-2 h-4 w-4" />
