@@ -532,13 +532,27 @@ function ComplexesView() {
       const response = await fetch(`/api/admin/complexes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          name: data.name,
+          address: data.address,
+          city: data.city,
+          state: data.state,
+          country: data.country,
+          openTime: data.openTime,
+          closeTime: data.closeTime,
+          rules: data.rules || null,
+          directions: data.directions || null,
+          isOpen: data.isOpen
+        }),
       });
-      if (!response.ok) throw new Error('Failed to update complex');
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || 'Failed to update complex');
+      }
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['/api/admin/complexes']);
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/complexes'] });
       toast({
         title: "Success",
         description: "Complex updated successfully",
@@ -556,10 +570,14 @@ function ComplexesView() {
   });
 
   const handleSubmit = async (data: ComplexFormValues) => {
-    if (selectedComplex) {
-      await updateComplexMutation.mutate({ id: selectedComplex.id, data });
-    } else {
-      await createComplexMutation.mutate(data);
+    try {
+      if (selectedComplex) {
+        await updateComplexMutation.mutateAsync({ id: selectedComplex.id, data });
+      } else {
+        await createComplexMutation.mutateAsync(data);
+      }
+    } catch (error) {
+      console.error('Error submitting complex:', error);
     }
   };
 
@@ -652,7 +670,7 @@ function ComplexesView() {
                           <div>
                             <p className="font-medium">{field.name}</p>
                             <p className="text-sm text-muted-foreground">
-                              {field.hasLights ? "Has lights" : "No lights"} • 
+                              {field.hasLights ? "Has lights" : "No lights"} •
                               {field.hasParking ? "Parking available" : "No parking"}
                             </p>
                           </div>
@@ -925,7 +943,7 @@ function AdminDashboard() {
           </Suspense>
         );
       default:
-        return <div>Feature coming soon</div>;
+        return <div>Featurecoming soon</div>;
     }
   };
 
