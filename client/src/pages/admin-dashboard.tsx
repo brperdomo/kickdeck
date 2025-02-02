@@ -82,6 +82,7 @@ import { Switch } from "@/components/ui/switch";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { lazy, Suspense } from "react";
 import { ComplexEditor } from "@/components/ComplexEditor";
+import { FieldEditor } from "@/components/FieldEditor";
 
 const MyAccount = lazy(() => import("./my-account"));
 
@@ -123,6 +124,24 @@ interface ComplexFormValues {
   rules?: string;
   directions?: string;
   isOpen: boolean;
+}
+
+interface Field {
+  id: number;
+  name: string;
+  hasLights: boolean;
+  hasParking: boolean;
+  isOpen: boolean;
+  specialInstructions?: string;
+  complexId: number;
+}
+
+interface FieldFormValues {
+  name: string;
+  hasLights: boolean;
+  hasParking: boolean;
+  isOpen: boolean;
+  specialInstructions?: string;
 }
 
 function AdministratorsView() {
@@ -478,6 +497,8 @@ function ComplexesView() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedComplex, setSelectedComplex] = useState<Complex | null>(null);
   const [viewingComplexId, setViewingComplexId] = useState<number | null>(null);
+  const [isFieldModalOpen, setIsFieldModalOpen] = useState(false);
+  const [selectedField, setSelectedField] = useState<Field | null>(null);
   const queryClient = useQueryClient();
 
   const complexesQuery = useQuery({
@@ -572,6 +593,75 @@ function ComplexesView() {
     },
   });
 
+  const createFieldMutation = useMutation({
+    mutationFn: async ({ complexId, data }: { complexId: number; data: FieldFormValues }) => {
+      const response = await fetch(`/api/admin/complexes/${complexId}/fields`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || 'Failed to create field');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/fields', viewingComplexId] });
+      toast({
+        title: "Success",
+        description: "Field created successfully",
+      });
+      setIsFieldModalOpen(false);
+      setSelectedField(null);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to create field",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateFieldMutation = useMutation({
+    mutationFn: async ({ complexId, fieldId, data }: { complexId: number; fieldId: number; data: FieldFormValues }) => {
+      const response = await fetch(`/api/admin/complexes/${complexId}/fields/${fieldId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || 'Failed to update field');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/fields', viewingComplexId] });
+      toast({
+        title: "Success",
+        description: "Field updated successfully",
+      });
+      setIsFieldModalOpen(false);
+      setSelectedField(null);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update field",
+        variant: "destructive",
+      });
+    },
+  });
+
+
   const handleSubmit = async (data: ComplexFormValues) => {
     try {
       if (selectedComplex) {
@@ -584,6 +674,27 @@ function ComplexesView() {
     }
   };
 
+  const handleFieldSubmit = async (data: FieldFormValues) => {
+    if (!viewingComplexId) return;
+
+    try {
+      if (selectedField) {
+        await updateFieldMutation.mutateAsync({
+          complexId: viewingComplexId,
+          fieldId: selectedField.id,
+          data
+        });
+      } else {
+        await createFieldMutation.mutateAsync({
+          complexId: viewingComplexId,
+          data
+        });
+      }
+    } catch (error) {
+      console.error('Error submitting field:', error);
+    }
+  };
+
   const handleViewFields = (complexId: number) => {
     setViewingComplexId(complexId);
   };
@@ -592,6 +703,17 @@ function ComplexesView() {
     setSelectedComplex(complex);
     setIsAddModalOpen(true);
   };
+
+  const handleAddField = () => {
+    setSelectedField(null);
+    setIsFieldModalOpen(true);
+  };
+
+  const handleEditField = (field: Field) => {
+    setSelectedField(field);
+    setIsFieldModalOpen(true);
+  };
+
 
   if (complexesQuery.isLoading) {
     return (
@@ -659,7 +781,13 @@ function ComplexesView() {
 
               {viewingComplexId === complex.id && (
                 <div className="mt-4 border-t pt-4">
-                  <h3 className="text-lg font-semibold mb-2">Fields</h3>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold">Fields</h3>
+                    <Button onClick={handleAddField} size="sm">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Add Field
+                    </Button>
+                  </div>
                   {fieldsQuery.isLoading ? (
                     <div className="flex items-center justify-center p-4">
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -668,7 +796,7 @@ function ComplexesView() {
                     <p className="text-sm text-muted-foreground">No fields available</p>
                   ) : (
                     <div className="grid gap-2">
-                      {fieldsQuery.data?.map((field: any) => (
+                      {fieldsQuery.data?.map((field: Field) => (
                         <div key={field.id} className="flex justify-between items-center p-2 bg-muted rounded-lg">
                           <div>
                             <p className="font-medium">{field.name}</p>
@@ -676,10 +804,24 @@ function ComplexesView() {
                               {field.hasLights ? "Has lights" : "No lights"} •
                               {field.hasParking ? "Parking available" : "No parking"}
                             </p>
+                            {field.specialInstructions && (
+                              <p className="text-sm text-muted-foreground mt-1">
+                                Note: {field.specialInstructions}
+                              </p>
+                            )}
                           </div>
-                          <Badge variant={field.isOpen ? "success" : "destructive"}>
-                            {field.isOpen ? "Open" : "Closed"}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge variant={field.isOpen ? "success" : "destructive"}>
+                              {field.isOpen ? "Open" : "Closed"}
+                            </Badge>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditField(field)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -697,6 +839,16 @@ function ComplexesView() {
         onSubmit={handleSubmit}
         complex={selectedComplex}
       />
+
+      {viewingComplexId && (
+        <FieldEditor
+          open={isFieldModalOpen}
+          onOpenChange={setIsFieldModalOpen}
+          onSubmit={handleFieldSubmit}
+          field={selectedField}
+          complexId={viewingComplexId}
+        />
+      )}
     </>
   );
 }
@@ -935,7 +1087,7 @@ function AdminDashboard() {
         return <SettingsView activeSettingsView={activeSettingsView} />;
       case 'reports':
         return <ReportsView />;
-      case 'chat':
+        case 'chat':
           return <ChatView />;
       case 'account':
         return (
@@ -1025,7 +1177,7 @@ function AdminDashboard() {
               <FileText className="mr-2 h-4 w-4" />
               Reports
             </Button>
-
+            
             <Button
               variant={activeView === 'chat' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
@@ -1034,7 +1186,6 @@ function AdminDashboard() {
               <MessageSquare className="mr-2 h-4 w-4" />
               Chat
             </Button>
-
 
             {/* Settings */}
             <Collapsible
