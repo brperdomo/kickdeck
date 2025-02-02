@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, lazy, Suspense } from "react";
 import { useLocation, Link } from "wouter";
 import {
   Collapsible,
@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUser } from "@/hooks/use-user";
-import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
 import { SelectUser } from "@db/schema";
@@ -80,9 +79,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { AdminModal } from "@/components/admin/AdminModal";
-import { lazy, Suspense } from "react";
 import { ComplexEditor } from "@/components/ComplexEditor";
 import { FieldEditor } from "@/components/FieldEditor";
+import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
+
 
 const MyAccount = lazy(() => import("./my-account"));
 
@@ -307,7 +307,7 @@ function AdministratorsView() {
                         <TableCell>{admin.email}</TableCell>
                         <TableCell>
                           <Badge variant="outline">
-                            {admin.roles?.[0] || "N/A"} {/* Handle cases where roles might be missing */}
+                            {admin.roles?.[0] || "N/A"}
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -1062,12 +1062,19 @@ function AdminDashboard() {
   const [activeView, setActiveView] = useState<View>('administrators');
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [showUpdatesLog, setShowUpdatesLog] = useState(false);
+
 
   useEffect(() => {
     if (!isAdminUser(user)) {
       setLocation("/");
     }
   }, [user, setLocation]);
+
+    const handleLogout = () => {
+        logout();
+    }
+
 
   const renderView = () => {
     switch (activeView) {
@@ -1177,7 +1184,7 @@ function AdminDashboard() {
               <FileText className="mr-2 h-4 w-4" />
               Reports
             </Button>
-            
+             
             <Button
               variant={activeView === 'chat' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
@@ -1256,17 +1263,40 @@ function AdminDashboard() {
               My Account
             </Button>
           </div>
+            {/* User Profile Section */}
+          <div className="p-4 border-t">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+              </div>
+              <ChevronDown className="h-4 w-4 text-gray-500" />
+            </div>
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => setShowUpdatesLog(true)}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Updates Log
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
+            </div>
+          </div>
+
 
           {/* Footer */}
           <div className="mt-auto space-y-2">
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-muted-foreground"
-              onClick={() => logout()}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
             <p className="text-xs text-center text-muted-foreground pt4">
               Powered by MatchPro
             </p>
@@ -1294,6 +1324,10 @@ function AdminDashboard() {
         </Card>
         {renderView()}
       </div>
+      <UpdatesLogModal 
+        open={showUpdatesLog} 
+        onOpenChange={setShowUpdatesLog}
+      />
     </div>
   );
 }
