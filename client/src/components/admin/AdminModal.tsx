@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -55,6 +55,27 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
       roles: adminToEdit?.roles ?? [],
     },
   });
+
+  useEffect(() => {
+    if (adminToEdit) {
+      form.reset({
+        firstName: adminToEdit.firstName,
+        lastName: adminToEdit.lastName,
+        email: adminToEdit.email,
+        password: "",
+        roles: adminToEdit.roles,
+      });
+    } else {
+      form.reset({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        roles: [],
+      });
+    }
+  }, [adminToEdit, form]);
+
 
   // Email validation query
   const emailCheckQuery = useQuery({
