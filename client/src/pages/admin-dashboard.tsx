@@ -855,6 +855,7 @@ function ComplexesView() {
 
 function EventsView() {
   const [, navigate] = useLocation();
+  const { user } = useUser();
   const eventsQuery = useQuery({
     queryKey: ['/api/admin/events'],
     queryFn: async () => {
@@ -872,10 +873,12 @@ function EventsView() {
     );
   }
 
+  const adminName = user ? `${user.firstName}'s` : 'All';
+
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Events</h2>
+        <h2 className="text-2xl font-bold">{adminName} Events</h2>
         <Button onClick={() => navigate("/admin/events/create")}>
           <Plus className="mr-2 h-4 w-4" />
           Create Event
