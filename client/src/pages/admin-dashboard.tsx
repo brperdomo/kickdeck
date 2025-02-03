@@ -185,17 +185,31 @@ function AdministratorsView() {
 
     // Group administrators by their roles
     administratorsQuery.data.forEach((admin: any) => {
-      if (admin.roles && Array.isArray(admin.roles)) {
-        admin.roles.forEach((role: string) => {
-          // Only add if it's a valid role group
-          if (role in groupedAdmins) {
-            // Avoid duplicate entries
-            if (!groupedAdmins[role].some((a: any) => a.id === admin.id)) {
-              groupedAdmins[role].push(admin);
-            }
-          }
-        });
+      // If admin has no roles or roles is null/undefined, add to super_admin
+      if (!admin.roles || !Array.isArray(admin.roles) || admin.roles.length === 0 || admin.roles[0] === null) {
+        if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
+          groupedAdmins.super_admin.push({ ...admin, roles: ['super_admin'] });
+        }
+        return;
       }
+
+      // Add admin to each role group they belong to
+      admin.roles.forEach((role: string) => {
+        if (role === null) return; // Skip null roles
+
+        // Only add if it's a valid role group
+        if (role in groupedAdmins) {
+          // Avoid duplicate entries
+          if (!groupedAdmins[role].some((a: any) => a.id === admin.id)) {
+            groupedAdmins[role].push(admin);
+          }
+        } else {
+          // If role is not recognized, add to super_admin
+          if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
+            groupedAdmins.super_admin.push(admin);
+          }
+        }
+      });
     });
 
     return groupedAdmins;
@@ -944,8 +958,7 @@ function EventsView() {
                   <TableHead>Location</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
+              </TableHeader><TableBody>
                 {eventsQuery.data?.map((event: any) => (
                   <TableRow key={event.id}>
                     <TableCell className="font-medium">{event.name}</TableCell>
