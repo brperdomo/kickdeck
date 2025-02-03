@@ -136,6 +136,13 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     mutationFn: async (data: AdminFormValues) => {
       if (!adminToEdit) throw new Error("No administrator to update");
 
+      console.log('Updating admin with data:', {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        roles: data.roles,
+      });
+
       const response = await fetch(`/api/admin/administrators/${adminToEdit.id}`, {
         method: "PATCH",
         headers: {
@@ -150,11 +157,14 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
       });
 
       if (!response.ok) {
+        console.error('Update failed with status:', response.status);
         const error = await response.text();
         throw new Error(error);
       }
 
-      return response.json();
+      const result = await response.json();
+      console.log('Update successful:', result);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/administrators"] });
@@ -184,11 +194,16 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     }
 
     console.log('Submitting form with data:', data);
+    console.log('Current admin being edited:', adminToEdit);
 
-    if (adminToEdit) {
-      await updateAdminMutation.mutateAsync(data);
-    } else {
-      await createAdminMutation.mutateAsync(data);
+    try {
+      if (adminToEdit) {
+        await updateAdminMutation.mutateAsync(data);
+      } else {
+        await createAdminMutation.mutateAsync(data);
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
     }
   };
 
@@ -215,6 +230,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
 
   const currentRoles = form.watch("roles");
   const isSuperAdmin = currentRoles.includes("super_admin");
+  console.log('Current roles:', currentRoles);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
