@@ -165,41 +165,10 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
       onOpenChange(false);
     },
     onError: (error) => {
+      console.error('Update error:', error);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to update administrator",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const deleteAdminMutation = useMutation({
-    mutationFn: async () => {
-      if (!adminToEdit) throw new Error("No administrator to delete");
-
-      const response = await fetch(`/api/admin/administrators/${adminToEdit.id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error);
-      }
-
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/administrators"] });
-      toast({
-        title: "Success",
-        description: "Administrator deleted successfully",
-      });
-      onOpenChange(false);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete administrator",
         variant: "destructive",
       });
     },
@@ -214,48 +183,34 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
       return;
     }
 
-    if (adminToEdit) {
-      updateAdminMutation.mutate(data);
-    } else {
-      createAdminMutation.mutate(data);
-    }
-  };
+    console.log('Submitting form with data:', data);
 
-  const handleDelete = () => {
-    if (confirm("Are you sure you want to delete this administrator?")) {
-      deleteAdminMutation.mutate();
+    if (adminToEdit) {
+      await updateAdminMutation.mutateAsync(data);
+    } else {
+      await createAdminMutation.mutateAsync(data);
     }
   };
 
   // Handle role selection
   const toggleRole = (roleId: string) => {
     const currentRoles = form.getValues("roles");
+    let newRoles: string[];
 
-    // If Super Admin is being selected
     if (roleId === "super_admin") {
-      // If Super Admin is already selected, remove it
+      newRoles = currentRoles.includes("super_admin") ? [] : ["super_admin"];
+    } else {
       if (currentRoles.includes("super_admin")) {
-        form.setValue("roles", [], { shouldValidate: true });
+        newRoles = [roleId];
       } else {
-        // Clear other roles and set only Super Admin
-        form.setValue("roles", ["super_admin"], { shouldValidate: true });
+        newRoles = currentRoles.includes(roleId)
+          ? currentRoles.filter(id => id !== roleId)
+          : [...currentRoles, roleId];
       }
-      return;
     }
-
-    // If another role is being selected and Super Admin is already selected
-    if (currentRoles.includes("super_admin")) {
-      // Remove Super Admin and add the new role
-      form.setValue("roles", [roleId], { shouldValidate: true });
-      return;
-    }
-
-    // Normal role toggling
-    const newRoles = currentRoles.includes(roleId)
-      ? currentRoles.filter(id => id !== roleId)
-      : [...currentRoles, roleId];
 
     form.setValue("roles", newRoles, { shouldValidate: true });
+    console.log('Updated roles:', newRoles);
   };
 
   const currentRoles = form.watch("roles");
@@ -401,16 +356,6 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
             </div>
 
             <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 py-4 border-t">
-              {adminToEdit && (
-                <Button 
-                  type="button" 
-                  variant="destructive"
-                  onClick={handleDelete}
-                  disabled={deleteAdminMutation.isPending}
-                >
-                  {deleteAdminMutation.isPending ? "Deleting..." : "Delete Administrator"}
-                </Button>
-              )}
               <Button 
                 type="button" 
                 variant="outline" 
