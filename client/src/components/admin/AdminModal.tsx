@@ -136,24 +136,21 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     mutationFn: async (data: AdminFormValues) => {
       if (!adminToEdit) throw new Error("No administrator to update");
 
-      console.log('Updating admin with data:', {
+      const updateData = {
         email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
         roles: data.roles,
-      });
+      };
+
+      console.log('Updating admin with data:', updateData);
 
       const response = await fetch(`/api/admin/administrators/${adminToEdit.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: data.email,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          roles: data.roles,
-        }),
+        body: JSON.stringify(updateData),
       });
 
       if (!response.ok) {
@@ -193,8 +190,8 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
       return;
     }
 
-    console.log('Submitting form with data:', data);
-    console.log('Current admin being edited:', adminToEdit);
+    console.log('Form data being submitted:', data);
+    console.log('Admin being edited:', adminToEdit);
 
     try {
       if (adminToEdit) {
