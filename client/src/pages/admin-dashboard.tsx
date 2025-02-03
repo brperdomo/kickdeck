@@ -1062,7 +1062,7 @@ function TeamsView() {
 function AdminDashboard() {
   const { user, logout } = useUser();
   const [, setLocation] = useLocation();
-  const [activeView, setActiveView] = useState<View>('administrators');
+  const [activeView, setActiveView] = useState<View>('events');
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [showUpdatesLog, setShowUpdatesLog] = useState(false);
@@ -1124,149 +1124,10 @@ function AdminDashboard() {
           </div>
 
           {/* Navigation */}
-          <div className="space-y-2">
-            <Button
-              variant={activeView === 'administrators' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('administrators')}
-            >
-              <Shield className="mr-2 h-4 w-4" />
-              Administrators
-            </Button>
+          <NavigationMenu user={user!}/>
 
-            <Button
-              variant={activeView === 'events' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('events')}
-            >
-              <Calendar className="mr-2 h-4 w-4" />
-              Events
-            </Button>
 
-            <Button
-              variant={activeView === 'teams' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('teams')}
-            >
-              <Users className="mr-2 h-4 w-4" />
-              Teams
-            </Button>
-
-            <Button
-              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('complexes')}
-            >
-              <Building2 className="mr-2 h-4 w-4" />
-              Field Complexes
-            </Button>
-
-            <Button
-              variant={activeView === 'households' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('households')}
-            >
-              <Home className="mr-2 h-4 w-4" />
-              MatchPro Client
-            </Button>
-
-            <Button
-              variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('scheduling')}
-            >
-              <CalendarDays className="mr-2 h-4 w-4" />
-              Scheduling
-            </Button>
-
-            <Button
-              variant={activeView === 'reports' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('reports')}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Reports
-            </Button>
-             
-            <Button
-              variant={activeView === 'chat' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('chat')}
-            >
-              <MessageSquare className="mr-2 h-4 w-4" />
-              Chat
-            </Button>
-
-            {/* Settings */}
-            <Collapsible
-              open={isSettingsOpen}
-              onOpenChange={setIsSettingsOpen}
-              className="space-y-2"
-            >
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
-                  className="w-full justify-between"
-                >
-                  <span className="flex items-center">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </span>
-                  <ChevronRight
-                    className={`h-4 w-4 transition-transform duration-200 ${
-                      isSettingsOpen ? 'rotate-90' : ''
-                    }`}
-                  />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-2 pl-4">
-                <Button
-                  variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('branding');
-                  }}
-                >
-                  <Palette className="mr-2 h-4 w-4" />
-                  Branding
-                </Button>
-                <Button
-                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('payments');
-                  }}
-                >
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Payments
-                </Button>
-                <Button
-                  variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('general');
-                  }}
-                >
-                  <Settings className="mr-2 h-4 w-4" />
-                  General
-                </Button>
-              </CollapsibleContent>
-            </Collapsible>
-
-            {/* Account */}
-            <Button
-              variant={activeView === 'account' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('account')}
-            >
-              <User className="mr-2 h-4 w-4" />
-              My Account
-            </Button>
-          </div>
-            {/* User Profile Section */}
+          {/* User Profile Section */}
           <div className="p-4 border-t">
             <div className="flex items-center gap-2 mb-4">
               <div className="flex-1 min-w-0">
@@ -1285,14 +1146,6 @@ function AdminDashboard() {
               >
                 <FileText className="mr-2 h-4 w-4" />
                 Updates Log
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-                onClick={handleLogout}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
               </Button>
             </div>
           </div>
@@ -1416,5 +1269,515 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
       );
   }
 }
+
+function NavigationMenu({ user }: { user: SelectUser }) {
+  const isSuperAdmin = user?.roles?.includes("super_admin");
+  const isTournamentAdmin = user?.roles?.includes("tournament_admin");
+
+  return (
+    <div className="space-y-4">
+      <div className="px-3 py-2">
+        <h2 className="mb-2 px-4 text-lg font-semibold">Dashboard</h2>
+        <div className="space-y-1">
+          {/* Events - Available to both super admin and tournament admin */}
+          <Link 
+            to="/admin/events" 
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+          >
+            <Calendar className="h-4 w-4" />
+            <span>Events</span>
+          </Link>
+
+          {/* Components only visible to super admin */}
+          {isSuperAdmin && (
+            <>
+              <Link 
+                to="/admin/teams" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <Users className="h-4 w-4" />
+                <span>Teams</span>
+              </Link>
+              <Link 
+                to="/admin/administrators" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <Shield className="h-4 w-4" />
+                <span>Administrators</span>
+              </Link>
+              <Link 
+                to="/admin/settings" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Settings</span>
+              </Link>
+              <Link 
+                to="/admin/households" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <Home className="h-4 w-4" />
+                <span>Households</span>
+              </Link>
+              <Link 
+                to="/admin/reports" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <FileText className="h-4 w-4" />
+                <span>Reports</span>
+              </Link>
+              <Link 
+                to="/admin/complexes" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <Building2 className="h-4 w-4" />
+                <span>Complexes</span>
+              </Link>
+            </>
+          )}
+
+          {/* My Account - Available to both */}
+          <Link 
+            to="/admin/account" 
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+          >
+            <UserCircle className="h-4 w-4" />
+            <span>My Account</span>
+          </Link>
+
+          {/* Logout - Available to both */}
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start"
+            onClick={() => {
+              // Existing logout logic remains unchanged
+            }}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+export default AdminDashboard;MenuItem>
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+function HouseholdsView() {
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">MatchPro Client</h2>
+        <Button>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Client
+        </Button>
+      </div>
+      <Card>
+        <CardContent className="p-6">
+          <p className="text-muted-foreground">Client management coming soon</p>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+function SchedulingView() {
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Scheduling</h2>
+      </div>
+      <Card>
+        <CardContent className="p-6">
+          <p className="text-muted-foreground">Game scheduling interface coming soon</p>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+
+function TeamsView() {
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Teams</h2>
+        <Button>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Team
+        </Button>
+      </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <Input
+                  placeholder="Search teams..."
+                  className="w-[300px]"
+                />
+                <Select defaultValue="all">
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Division" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Divisions</SelectItem>
+                    <SelectItem value="u10">Under 10</SelectItem>
+                    <SelectItem value="u12">Under 12</SelectItem>
+                    <SelectItem value="u14">Under 14</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Team Name</TableHead>
+                  <TableHead>Division</TableHead>
+                  <TableHead>Coach</TableHead>
+                  <TableHead>Players</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {/* Team rows will be populated from the database */}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+function AdminDashboard() {
+  const { user, logout } = useUser();
+  const [, setLocation] = useLocation();
+  const [activeView, setActiveView] = useState<View>('events');
+  const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [showUpdatesLog, setShowUpdatesLog] = useState(false);
+
+
+  useEffect(() => {
+    if (!isAdminUser(user)) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
+
+    const handleLogout = () => {
+        logout();
+    }
+
+
+  const renderView = () => {
+    switch (activeView) {
+      case 'administrators':
+        return <AdministratorsView />;
+      case 'events':
+        return <EventsView />;
+      case 'teams':
+        return <TeamsView />;
+      case 'complexes':
+        return <ComplexesView />;
+      case 'households':
+        return <HouseholdsView />;
+      case 'scheduling':
+        return <SchedulingView />;
+      case 'settings':
+        return <SettingsView activeSettingsView={activeSettingsView} />;
+      case 'reports':
+        return <ReportsView />;
+        case 'chat':
+          return <ChatView />;
+      case 'account':
+        return (
+          <Suspense fallback={<div className="flex items-center justify-center min-h-[200px]">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>}>
+            <MyAccount />
+          </Suspense>
+        );
+      default:
+        return <div>Featurecoming soon</div>;
+    }
+  };
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Sidebar */}
+      <div className="w-64 bg-card border-r flex flex-col h-full">
+        <div className="p-4 flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-6">
+            <Calendar className="h-6 w-6 text-primary" />
+            <h1 className="font-semibold text-xl">MatchPro Dashboard</h1>
+          </div>
+
+          {/* Navigation */}
+          <NavigationMenu user={user!}/>
+
+
+          {/* User Profile Section */}
+          <div className="p-4 border-t">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+              </div>
+              <ChevronDown className="h-4 w-4 text-gray-500" />
+            </div>
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => setShowUpdatesLog(true)}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Updates Log
+              </Button>
+            </div>
+          </div>
+
+
+          {/* Footer */}
+          <div className="mt-auto space-y-2">
+            <p className="text-xs text-center text-muted-foreground pt4">
+              Powered by MatchPro
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto p-8">
+        {/* Welcome Card */}
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <UserCircle className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold">Welcome back, {user?.firstName}!</h2>
+                <p className="text-muted-foreground">
+                  Manage your organization's activities and settings from this dashboard.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        {renderView()}
+      </div>
+      <UpdatesLogModal 
+        open={showUpdatesLog} 
+        onOpenChange={setShowUpdatesLog}
+      />
+    </div>
+  );
+}
+
+function ChatView() {
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const messagesQuery = useQuery({
+    queryKey: ['/api/admin/messages'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/messages');
+      if (!response.ok) throw new Error('Failed to fetch messages');
+      return response.json();
+    }
+  });
+
+  if (messagesQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center minh-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Support Chat</h2>
+      </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex flex-col space-y-4">
+              {messagesQuery.data?.map((message: any) => (
+                <div key={message.id} className={`flex ${message.isAdmin ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`rounded-lg px-4 py-2 max-w-[70%] ${
+                    message.isAdmin
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  }`}>
+                    <p className="text-sm font-medium">{message.sender}</p>
+                    <p>{message.content}</p>
+                    <p className="text-xs opacity-70">{new Date(message.timestamp).toLocaleString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Type your message..."
+                className="flex-1"
+              />
+              <Button>
+                Send
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView }) {
+  switch (activeSettingsView) {
+    case 'branding':
+      return (
+        <BrandingPreviewProvider>
+          <OrganizationSettingsForm />
+        </BrandingPreviewProvider>
+      );
+    default:
+      return (
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold">Settings</h2>
+          <Card>
+            <CardContent className="p-6">
+              <p>Settings content will be implemented here</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+  }
+}
+
+function NavigationMenu({ user }: { user: SelectUser }) {
+  const isSuperAdmin = user?.roles?.includes("super_admin");
+  const isTournamentAdmin = user?.roles?.includes("tournament_admin");
+
+  return (
+    <div className="space-y-4">
+      <div className="px-3 py-2">
+        <h2 className="mb-2 px-4 text-lg font-semibold">Dashboard</h2>
+        <div className="space-y-1">
+          {/* Events - Available to both super admin and tournament admin */}
+          <Link 
+            to="/admin/events" 
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+          >
+            <Calendar className="h-4 w-4" />
+            <span>Events</span>
+          </Link>
+
+          {/* Components only visible to super admin */}
+          {isSuperAdmin && (
+            <>
+              <Link 
+                to="/admin/teams" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <Users className="h-4 w-4" />
+                <span>Teams</span>
+              </Link>
+              <Link 
+                to="/admin/administrators" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <Shield className="h-4 w-4" />
+                <span>Administrators</span>
+              </Link>
+              <Link 
+                to="/admin/settings" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Settings</span>
+              </Link>
+              <Link 
+                to="/admin/households" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <Home className="h-4 w-4" />
+                <span>Households</span>
+              </Link>
+              <Link 
+                to="/admin/reports" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <FileText className="h-4 w-4" />
+                <span>Reports</span>
+              </Link>
+              <Link 
+                to="/admin/complexes" 
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                <Building2 className="h-4 w-4" />
+                <span>Complexes</span>
+              </Link>
+            </>
+          )}
+
+          {/* My Account - Available to both */}
+          <Link 
+            to="/admin/account" 
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+          >
+            <UserCircle className="h-4 w-4" />
+            <span>My Account</span>
+          </Link>
+
+          {/* Logout - Available to both */}
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start"
+            onClick={() => {
+              logout()
+            }}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 export default AdminDashboard;
