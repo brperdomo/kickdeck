@@ -924,12 +924,14 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
                           </FormItem>
                         )}
                       />
+                       {/* Scoring Rule Form Fields */}
                       <FormField
                         control={scoringForm.control}
                         name="tie"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Tie Points</Form                            <FormControl>
+                            <FormLabel>Tie Points</FormLabel>
+                            <FormControl>
                               <Input type="number" {...field} />
                             </FormControl>
                             <FormMessage />
