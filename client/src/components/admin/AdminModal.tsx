@@ -97,6 +97,47 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     setEmailToCheck(email);
   }, []);
 
+  const updateAdminMutation = useMutation({
+    mutationFn: async (data: AdminFormValues) => {
+      if (!adminToEdit) throw new Error("No administrator to update");
+
+      const response = await fetch(`/api/admin/administrators/${adminToEdit.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          roles: data.roles,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to update administrator");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/administrators"] });
+      toast({
+        title: "Success",
+        description: "Administrator updated successfully",
+      });
+      onOpenChange(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update administrator",
+        variant: "destructive",
+      });
+    },
+  });
+
   const createAdminMutation = useMutation({
     mutationFn: async (data: AdminFormValues) => {
       const response = await fetch("/api/admin/administrators", {
@@ -132,49 +173,6 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     },
   });
 
-  const updateAdminMutation = useMutation({
-    mutationFn: async (data: AdminFormValues) => {
-      if (!adminToEdit) throw new Error("No administrator to update");
-
-      const updateData = {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        roles: data.roles,
-      };
-
-      const response = await fetch(`/api/admin/administrators/${adminToEdit.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updateData),
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || "Failed to update administrator");
-      }
-
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/administrators"] });
-      toast({
-        title: "Success",
-        description: "Administrator updated successfully",
-      });
-      onOpenChange(false);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update administrator",
-        variant: "destructive",
-      });
-    },
-  });
-
   const onSubmit = async (data: AdminFormValues) => {
     if (emailCheckQuery.data?.exists && data.email !== adminToEdit?.email) {
       form.setError('email', {
@@ -201,11 +199,14 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     let newRoles: string[];
 
     if (roleId === "super_admin") {
+      // If selecting super_admin, remove all other roles
       newRoles = currentRoles.includes("super_admin") ? [] : ["super_admin"];
     } else {
       if (currentRoles.includes("super_admin")) {
+        // If currently super_admin and selecting another role, remove super_admin
         newRoles = [roleId];
       } else {
+        // Toggle the selected role while preserving other roles
         newRoles = currentRoles.includes(roleId)
           ? currentRoles.filter(id => id !== roleId)
           : [...currentRoles, roleId];
@@ -213,12 +214,10 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     }
 
     form.setValue("roles", newRoles, { shouldValidate: true });
-    console.log('Updated roles:', newRoles);
   };
 
   const currentRoles = form.watch("roles");
   const isSuperAdmin = currentRoles.includes("super_admin");
-  console.log('Current roles:', currentRoles);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -229,6 +228,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="px-6">
             <div className="py-4 space-y-6">
+              {/* Personal Information */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -258,6 +258,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
                 />
               </div>
 
+              {/* Email Field */}
               <FormField
                 control={form.control}
                 name="email"
@@ -292,6 +293,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
                 )}
               />
 
+              {/* Roles Selection */}
               <FormField
                 control={form.control}
                 name="roles"
@@ -342,6 +344,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
                 )}
               />
 
+              {/* Password Field (only for new administrators) */}
               {!adminToEdit && (
                 <FormField
                   control={form.control}
@@ -359,6 +362,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
               )}
             </div>
 
+            {/* Form Actions */}
             <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 py-4 border-t">
               <Button 
                 type="button" 
