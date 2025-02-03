@@ -186,6 +186,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
   const [editingAgeGroup, setEditingAgeGroup] = useState<AgeGroup | null>(null);
   const [editingScoringRule, setEditingScoringRule] = useState<ScoringRule | null>(null);
   const [editingSetting, setEditingSetting] = useState<EventSetting | null>(null);
+   const [editingAdmin, setEditingAdmin] = useState<EventAdministrator | null>(null);
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -928,8 +929,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
                         name="tie"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Tie Points</FormLabel>
-                            <FormControl>
+                            <FormLabel>Tie Points</Form                            <FormControl>
                               <Input type="number" {...field} />
                             </FormControl>
                             <FormMessage />
@@ -1166,52 +1166,53 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
             </TabsContent>
 
             {/* Administrators Tab */}
-            <TabsContent value="administrators">
-              <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Event Administrators</h3>
-                  <Button onClick={() => setIsAdminModalOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Administrator
-                  </Button>
-                </div>
+            
+              <TabsContent value="administrators">
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">Event Administrators</h3>
+                    <Button onClick={() => setIsAdminModalOpen(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Administrator
+                    </Button>
+                  </div>
+            
+                  {/* Administrators List */}
+                  <div className="grid gap-4">
+                    {initialData?.administrators?.map((admin) => (
+                      <Card key={admin.id}>
+                        <CardContent className="p-4 flex justify-between items-center">
+                          <div>
+                            <h4 className="font-semibold">{admin.user.firstName} {admin.user.lastName}</h4>
+                            <p className="text-sm text-muted-foreground">{admin.user.email}</p>
+                            <p className="text-sm">Role: {admin.role}</p>
+                          </div>
+                           <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setEditingAdmin(admin);
+                              setIsAdminModalOpen(true);
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                         </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
 
-                {/* Administrator List */}
-                <div className="space-y-4">
-                  {initialData?.administrators?.map((admin) => (
-                    <Card key={admin.id}>
-                      <CardContent className="p-4 flex justify-between items-center">
-                        <div>
-                          <h4 className="font-semibold">
-                            {admin.user.firstName} {admin.user.lastName}
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            {admin.user.email} - {admin.role}
-                          </p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-destructive"
-                          onClick={() => {
-                            // Handle removing administrator
-                          }}
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-                {isEdit && <SaveButton />}
-              </div>
+                 <AdminModal 
+                  open={isAdminModalOpen}
+                  onOpenChange={setIsAdminModalOpen}
+                  adminToEdit={editingAdmin}
+                />
 
-              {/* Administrator Modal */}
-              <AdminModal
-                isOpen={isAdminModalOpen}
-                onClose={() => setIsAdminModalOpen(false)}
-              />
-            </TabsContent>
+                  {isEdit && <SaveButton />}
+                </div>
+              </TabsContent>
           </Tabs>
         </CardContent>
       </Card>

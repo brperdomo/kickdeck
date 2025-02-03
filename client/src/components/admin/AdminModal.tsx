@@ -152,8 +152,8 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Failed to update administrator');
+        const error = await response.text();
+        throw new Error(error || "Failed to update administrator");
       }
 
       return response.json();
@@ -191,7 +191,6 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
         await createAdminMutation.mutateAsync(data);
       }
     } catch (error) {
-      // Error will be handled by mutation's onError
       console.error('Form submission error:', error);
     }
   };
