@@ -19,7 +19,7 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Editor } from "@tinymce/tinymce-react";
 
-// Types and interfaces (unchanged from original)
+// Types and interfaces
 interface EventBranding {
   logoUrl?: string;
   primaryColor?: string;
@@ -123,7 +123,7 @@ const USA_TIMEZONES = [
   { value: 'Pacific/Honolulu', label: 'Hawaii Time (HT)' },
 ];
 
-// Form Schemas (unchanged from original)
+// Form Schemas
 const eventInformationSchema = z.object({
   name: z.string().min(1, "Event name is required"),
   startDate: z.string().min(1, "Start date is required"),
@@ -435,7 +435,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     enabled: activeTab === 'complexes',
   });
 
-  // Effects
   useEffect(() => {
     if (editingScoringRule) {
       scoringForm.reset(editingScoringRule);
@@ -487,7 +486,7 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
       console.error('Submit error:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save event. Please check your connection and try again.",
+        description: error instanceof Error ? error.message : "Failed to save event",
         variant: "destructive",
       });
     } finally {
@@ -495,32 +494,7 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     }
   };
 
-  const handleAddAgeGroup = (data: AgeGroupValues) => {
-    if (editingAgeGroup) {
-      setAgeGroups(ageGroups.map(group =>
-        group.id === editingAgeGroup.id ? { ...data, id: group.id } : group
-      ));
-      setEditingAgeGroup(null);
-    } else {
-      setAgeGroups([...ageGroups, { ...data, id: Date.now().toString() }]);
-    }
-    setIsAgeGroupDialogOpen(false);
-
-    toast({
-      title: editingAgeGroup ? "Age Group Updated" : "Age Group Added",
-      description: `Successfully ${editingAgeGroup ? 'updated' : 'added'} age group`,
-    });
-  };
-
-  const handleEditAgeGroup = (ageGroup: AgeGroup) => {
-    setEditingAgeGroup(ageGroup);
-    setIsAgeGroupDialogOpen(true);
-  };
-
-  const handleDeleteAgeGroup = (id: string) => {
-    setAgeGroups(ageGroups.filter(group => group.id !== id));
-  };
-
+  // File upload handlers
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (!file) return;
@@ -574,82 +548,7 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     multiple: false,
   });
 
-  const handleAddScoringRule = (data: ScoringRuleValues) => {
-    if (editingScoringRule) {
-      setScoringRules(rules => rules.map(rule =>
-        rule.id === editingScoringRule.id ? { ...data, id: rule.id } : rule
-      ));
-      setEditingScoringRule(null);
-    } else {
-      setScoringRules([...scoringRules, { ...data, id: Date.now().toString() }]);
-    }
-    setIsScoringDialogOpen(false);
-  };
-
-  const handleAddSetting = (data: EventSettingValues) => {
-    if (editingSetting) {
-      setSettings(settings => settings.map(setting =>
-        setting.id === editingSetting.id ? { ...data, id: setting.id } : setting
-      ));
-      setEditingSetting(null);
-    } else {
-      setSettings([...settings, { ...data, id: Date.now().toString() }]);
-    }
-    setIsSettingDialogOpen(false);
-  };
-
-  const handleComplexSelection = (complexId: number) => {
-    setSelectedComplexIds(prev =>
-      prev.includes(complexId)
-        ? prev.filter(id => id !== complexId)
-        : [...prev, complexId]
-    );
-  };
-
-  const handleFieldSizeChange = (complexId: number, size: FieldSize) => {
-    setComplexFieldSizes(prev => ({
-      ...prev,
-      [complexId]: size
-    }));
-  };
-
-  const handleEditScoringRule = (rule: ScoringRule) => {
-    setEditingScoringRule(rule);
-    setIsScoringDialogOpen(true);
-  };
-
-  const handleDeleteScoringRule = (id: string) => {
-    setScoringRules(scoringRules.filter(rule => rule.id !== id));
-  };
-
-  const handleEditSetting = (setting: EventSetting) => {
-    setEditingSetting(setting);
-    setIsSettingDialogOpen(true);
-  };
-
-  const handleDeleteSetting = (id: string) => {
-    setSettings(settings.filter(setting => setting.id !== id));
-  };
-
-  const validateFile = (file: File) => {
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-    const ACCEPTED_IMAGE_TYPES = {
-      'image/jpeg': ['.jpg', '.jpeg'],
-      'image/png': ['.png'],
-      'image/svg+xml': ['.svg']
-    };
-    if (file.size > MAX_FILE_SIZE) {
-      throw new Error(`File size must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`);
-    }
-
-    const fileType = file.type;
-    if (!Object.keys(ACCEPTED_IMAGE_TYPES).includes(fileType)) {
-      throw new Error('File must be a PNG, JPEG, or SVG image');
-    }
-
-    return true;
-  };
-
+  // Save button component
   const SaveButton = () => (
     <Button
       onClick={form.handleSubmit(handleSubmit)}
@@ -666,123 +565,210 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     </Button>
   );
 
-  const renderSettingsContent = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardContent className="pt-6 space-y-6">
-          <div>
-            <h4 className="text-sm font-medium mb-4">Event Branding</h4>
-            <div className="mb-2 text-sm text-muted-foreground">
-              <p>Requirements:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>File types: PNG, JPEG, or SVG</li>
-                <li>Maximum size: 5MB</li>
-                <li>Recommended: Images with distinct colors for better color extraction</li>
-              </ul>
-            </div>
-            <div
-              {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${
-                isDragActive ? 'border-primary bg-primary/5' : 'border-border'
-              }`}
-            >
-              <input {...getInputProps()} />
-              <div className="flex flex-col items-center justify-center gap-2">
-                {isExtracting ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <p className="text-sm text-muted-foreground">Extracting colors...</p>
-                  </div>
-                ) : previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt="Event logo"
-                    className="h-20 w-20 object-contain"
-                  />
-                ) : (
-                  <ImageIcon className="h-10 w-10 text-muted-foreground" />
-                )}
-                <p className="text-sm text-muted-foreground text-center">
-                  {isDragActive
-                    ? "Drop the event logo here"
-                    : "Drag & drop your event logo here, or click to select"}
-                </p>
-              </div>
-            </div>
-          </div>
+  // Content rendering functions
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'information':
+        return renderInformationContent();
+      case 'age-groups':
+        return renderAgeGroupsContent();
+      case 'scoring':
+        return renderScoringContent();
+      case 'complexes':
+        return renderComplexesContent();
+      case 'settings':
+        return renderSettingsContent();
+      case 'administrators':
+        return renderAdministratorsContent();
+      default:
+        return null;
+    }
+  };
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="primaryColor">Primary Color</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="primaryColor"
-                  type="color"
-                  value={primaryColor}
-                  onChange={(e) => setPrimaryColor(e.target.value)}
-                  className="w-12 h-12 p-1"
-                />
-                <Input
-                  value={primaryColor}
-                  onChange={(e) => setPrimaryColor(e.target.value)}
-                  className="font-mono"
-                />
-              </div>
-            </div>
+  const renderInformationContent = () => (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Event Name *</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="Enter event name" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-            <div>
-              <Label htmlFor="secondaryColor">Secondary Color</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="secondaryColor"
-                  type="color"
-                  value={secondaryColor}
-                  onChange={(e) => setSecondaryColor(e.target.value)}
-                  className="w-12 h-12 p-1"
-                />
-                <Input
-                  value={secondaryColor}
-                  onChange={(e) => setSecondaryColor(e.target.value)}
-                  className="font-mono"
-                />
-              </div>
-            </div>
-          </div>
+        <div className="grid grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="startDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Start Date *</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="border rounded-lg p-4">
-            <h4 className="text-sm font-medium mb-4">Brand Preview</h4>
-            <div className="space-y-4">
-              {previewUrl && (
-                <div className="flex justify-center p-4 bg-background rounded-lg">
-                  <img
-                    src={previewUrl}
-                    alt="Event logo preview"
-                    className="h-20 w-20 object-contain"
-                  />
-                </div>
-              )}
-              <div className="flex items-center gap-4">
-                <div>
-                  <div
-                    className="w-8 h-8 rounded"
-                    style={{ backgroundColor: primaryColor }}
-                  />
-                  <span className="text-sm">Primary</span>
-                </div>
-                <div>
-                  <div
-                    className="w-8 h-8 rounded"
-                    style={{ backgroundColor: secondaryColor }}
-                  />
-                  <span className="text-sm">Secondary</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      {isEdit && <SaveButton />}
-    </div>
+          <FormField
+            control={form.control}
+            name="endDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>End Date *</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <FormField
+          control={form.control}
+          name="timezone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Time Zone *</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select time zone" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {USA_TIMEZONES.map((timezone) => (
+                    <SelectItem key={timezone.value} value={timezone.value}>
+                      {timezone.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="applicationDeadline"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Application Submission Deadline *</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="details"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Details About This Event</FormLabel>
+              <FormControl>
+                <Editor
+                  apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                  init={{
+                    height: 300,
+                    menubar: true,
+                    plugins: [
+                      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                      'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                    ],
+                    toolbar: 'undo redo | formatselect | ' +
+                      'bold italic backcolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent | ' +
+                      'removeformat | help',
+                  }}
+                  value={field.value}
+                  onEditorChange={(content) => field.onChange(content)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="agreement"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Agreement</FormLabel>
+              <FormControl>
+                <Editor
+                  apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                  init={{
+                    height: 300,
+                    menubar: true,
+                    plugins: [
+                      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                      'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                    ],
+                    toolbar: 'undo redo | formatselect | ' +
+                      'bold italic backcolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent | ' +
+                      'removeformat | help',
+                  }}
+                  value={field.value}
+                  onEditorChange={(content) => field.onChange(content)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="refundPolicy"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Refund Policy</FormLabel>
+              <FormControl>
+                <Editor
+                  apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                  init={{
+                    height: 300,
+                    menubar: true,
+                    plugins: [
+                      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                      'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                    ],
+                    toolbar: 'undo redo | formatselect | ' +
+                      'bold italic backcolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent | ' +
+                      'removeformat | help',
+                  }}
+                  value={field.value}
+                  onEditorChange={(content) => field.onChange(content)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex justify-end">
+          <SaveButton />
+        </div>
+      </form>
+    </Form>
   );
 };
 
@@ -941,7 +927,7 @@ const renderScoringContent = () => (
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
-                  <<FormMessage />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -995,8 +981,7 @@ const renderScoringContent = () => (
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-              )}
-            />
+              )}            />
             <FormField
               control={scoringForm.control}
               name="tieBreaker"
@@ -1437,18 +1422,13 @@ const renderInformationContent = () => (
 const complexesQuery = useQuery({
   queryKey: ['complexes'],
   queryFn: async () => {
-    try {
-      const response = await fetch('/api/complexes');
-      if (!response.ok) {
-        throw new Error('Failed to fetch complexes');
-      }
-      return response.json() as Promise<Complex[]>;
-    } catch (error) {
-      console.error('Error fetching complexes:', error);
-      throw error;
+    const response = await fetch('/api/complexes');
+    if (!response.ok) {
+      throw new Error('Failed to fetch complexes');
     }
+    return response.json() as Promise<Complex[]>;
   },
-  enabled: activeTab === 'complexes'
+  enabled: activeTab === 'complexes',
 });
 
 
@@ -1494,15 +1474,16 @@ const renderContent = () => {
     case 'administrators':
       return renderAdministratorsContent();
     default:
-      return renderInformationContent();
+      return null;
   }
 };
 
 return (
-  <div className="container max-w-4xl mx-auto py-6 space-y-6">
+  <div className="container mx-auto py-6 space-y-6">
     <div className="flex items-center gap-4">
       <Button variant="ghost" size="icon" onClick={() => setLocation('/admin')}>
         <ArrowLeft className="h-4 w-4" />
+        Back to Admin
       </Button>
       <h2 className="text-2xl font-bold">
         {isEdit ? 'Edit Event' : 'Create Event'}
@@ -1517,15 +1498,17 @@ return (
           </TabsTrigger>
         ))}
       </TabsList>
-
-      {TAB_ORDER.map((tab) => (
-        <TabsContent key={tab} value={tab}>
-          {renderContent()}
-        </TabsContent>
-      ))}
+      <TabsContent value={activeTab}>
+        {renderContent()}
+      </TabsContent>
     </Tabs>
 
-    {/* Dialogs and Modals */}
+    <AdminModal
+      open={isAdminModalOpen}
+      onOpenChange={setIsAdminModalOpen}
+      adminToEdit={editingAdmin}
+    />
+
     <AgeGroupDialog
       open={isAgeGroupDialogOpen}
       onClose={() => {
@@ -1535,12 +1518,6 @@ return (
       onSubmit={handleAddAgeGroup}
       defaultValues={editingAgeGroup || undefined}
       isEdit={!!editingAgeGroup}
-    />
-
-    <AdminModal
-      open={isAdminModalOpen}
-      onOpenChange={setIsAdminModalOpen}
-      adminToEdit={editingAdmin}
     />
   </div>
 );
