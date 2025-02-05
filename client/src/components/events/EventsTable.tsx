@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -9,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { formatDate } from "@/lib/utils";
@@ -21,6 +23,8 @@ import {
   TagsIcon,
   Printer,
   AlertTriangle,
+  MoreHorizontal,
+  Plus,
 } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import {
@@ -31,6 +35,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 interface Event {
   id: number;
@@ -93,39 +98,41 @@ export function EventsTable() {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-md border">
+    <Card className="shadow-sm">
+      <div className="p-6">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Event Name</TableHead>
-              <TableHead>Date Range</TableHead>
-              <TableHead>Applications</TableHead>
-              <TableHead>Teams</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="font-semibold">Event Name</TableHead>
+              <TableHead className="font-semibold">Date Range</TableHead>
+              <TableHead className="font-semibold">Applications</TableHead>
+              <TableHead className="font-semibold">Teams</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="text-right font-semibold">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {eventsQuery.data?.map((event) => (
-              <TableRow key={event.id}>
+              <TableRow key={event.id} className="hover:bg-muted/50">
                 <TableCell className="font-medium">{event.name}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1.5">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
                     <span>{formatDate(event.startDate)} - {formatDate(event.endDate)}</span>
                   </div>
                 </TableCell>
                 <TableCell>{event.applicationsReceived}</TableCell>
                 <TableCell>{event.teamsAccepted}</TableCell>
                 <TableCell>
-                  <span className="capitalize">{event.status.replace('_', ' ')}</span>
+                  <Badge variant="outline" className="capitalize">
+                    {event.status.replace('_', ' ')}
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        Actions
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
@@ -164,6 +171,6 @@ export function EventsTable() {
           </TableBody>
         </Table>
       </div>
-    </div>
+    </Card>
   );
 }

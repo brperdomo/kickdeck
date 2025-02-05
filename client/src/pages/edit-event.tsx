@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
 import { EventForm } from "@/components/forms/EventForm";
@@ -27,28 +28,34 @@ export default function EditEvent() {
         startDate: data.startDate?.split('T')[0] || '',
         endDate: data.endDate?.split('T')[0] || '',
         applicationDeadline: data.applicationDeadline?.split('T')[0] || '',
+        ageGroups: data.ageGroups || [],
+        scoringRules: data.scoringRules || [],
+        settings: data.settings || [],
+        administrators: data.administrators || [],
+        selectedComplexIds: data.selectedComplexIds || [],
+        complexFieldSizes: data.complexFieldSizes || {},
+        branding: {
+          primaryColor: data.branding?.primaryColor || '#000000',
+          secondaryColor: data.branding?.secondaryColor || '#ffffff',
+          logoUrl: data.branding?.logoUrl || null,
+        }
       };
     },
-    retry: 1,
-    refetchOnWindowFocus: false,
-    staleTime: 30000,
   });
 
   const updateEventMutation = useMutation({
     mutationFn: async (data: any) => {
       const formData = new FormData();
 
-      // Handle the logo file if it exists
       if (data.branding?.logo instanceof File) {
         formData.append('logo', data.branding.logo);
       }
 
-      // Remove the logo File object before stringifying
       const dataToSend = {
         ...data,
         branding: {
           ...data.branding,
-          logo: undefined // Remove the File object
+          logo: undefined
         }
       };
 
