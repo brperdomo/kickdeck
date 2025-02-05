@@ -101,7 +101,7 @@ export default function EditEvent() {
         <h2 className="text-2xl font-bold">Edit Event</h2>
       </div>
 
-      <Card>
+      <Card className="mx-auto">
         <CardContent className="p-6">
           {eventQuery.isLoading ? (
             <div className="flex items-center justify-center min-h-[200px]">
