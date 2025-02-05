@@ -6,21 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Plus, Minus, Edit, Trash, Eye, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Editor } from '@tinymce/tinymce-react';
 import { useForm } from "react-hook-form";
@@ -436,8 +423,8 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
         // Update preview URL with the server URL
         setPreviewUrl(logoUrl);
 
-        // Import and use node-vibrant
-        const { Vibrant } = await import('node-vibrant');
+        // Import and use node-vibrant with CommonJS syntax
+        const Vibrant = (await import('node-vibrant')).default;
         const v = new Vibrant(objectUrl);
         const palette = await v.getPalette();
 
@@ -929,8 +916,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => handleEditAgeGroup(group)}
-                          >
+                            onClick={() => handleEditAgeGroup(group)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
