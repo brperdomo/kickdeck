@@ -182,6 +182,13 @@ interface EventFormProps {
   isEdit?: boolean;
 }
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ACCEPTED_IMAGE_TYPES = {
+  'image/jpeg': ['.jpg', '.jpeg'],
+  'image/png': ['.png'],
+  'image/svg+xml': ['.svg']
+};
+
 export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormProps) {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<EventTab>('information');
@@ -204,6 +211,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.branding?.logoUrl || null);
   const [primaryColor, setPrimaryColor] = useState(initialData?.branding?.primaryColor || '#000000');
   const [secondaryColor, setSecondaryColor] = useState(initialData?.branding?.secondaryColor || '#ffffff');
+  const [isExtracting, setIsExtracting] = useState(false);
 
   // Fetch available complexes
   const complexesQuery = useQuery<Complex[]>({
@@ -375,53 +383,82 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
     setScoringRules(scoringRules.filter(rule => rule.id !== id));
   };
 
+  const validateFile = (file: File) => {
+    if (file.size > MAX_FILE_SIZE) {
+      throw new Error(`File size must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`);
+    }
+
+    const fileType = file.type;
+    if (!Object.keys(ACCEPTED_IMAGE_TYPES).includes(fileType)) {
+      throw new Error('File must be a PNG, JPEG, or SVG image');
+    }
+
+    return true;
+  };
+
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (!file) return;
 
-    const objectUrl = URL.createObjectURL(file);
-    setPreviewUrl(objectUrl);
-    setLogo(file);
-
     try {
+      validateFile(file);
+
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
+      setLogo(file);
+      setIsExtracting(true);
+
+      // Load the image first to ensure it's valid
+      const img = new Image();
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = () => reject(new Error('Failed to load image. Please try a different file.'));
+        img.src = objectUrl;
+      });
+
       const Vibrant = (await import('node-vibrant')).default;
       const v = new Vibrant(objectUrl);
       const palette = await v.getPalette();
 
-      if (palette.Vibrant) {
-        setPrimaryColor(palette.Vibrant.hex);
-        console.log('Primary color extracted:', palette.Vibrant.hex);
+      if (!palette.Vibrant) {
+        throw new Error('Could not extract primary color from image. Try an image with more distinct colors.');
       }
 
-      if (palette.LightVibrant) {
-        setSecondaryColor(palette.LightVibrant.hex);
-        console.log('Secondary color (Light Vibrant) extracted:', palette.LightVibrant.hex);
-      } else if (palette.Muted) {
-        setSecondaryColor(palette.Muted.hex);
-        console.log('Secondary color (Muted) extracted:', palette.Muted.hex);
+      setPrimaryColor(palette.Vibrant.hex);
+
+      // For secondary color, prefer LightVibrant, fallback to Muted
+      const secondaryPalette = palette.LightVibrant || palette.Muted;
+      if (!secondaryPalette) {
+        throw new Error('Could not extract secondary color from image. Try an image with more color variety.');
       }
+
+      setSecondaryColor(secondaryPalette.hex);
 
       toast({
-        title: "Colors extracted",
+        title: "Colors extracted successfully",
         description: "Brand colors have been updated based on your logo.",
       });
     } catch (error) {
       console.error('Color extraction error:', error);
       toast({
-        title: "Error",
-        description: "Failed to extract colors from the logo. Please try a different image.",
+        title: "Logo Upload Error",
+        description: error instanceof Error ? error.message : "An unexpected error occurred while processing the image.",
         variant: "destructive",
       });
+      // Reset the logo state if there was an error
+      setLogo(null);
+      setPreviewUrl(null);
+    } finally {
+      setIsExtracting(false);
     }
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.svg']
-    },
+    accept: ACCEPTED_IMAGE_TYPES,
     maxFiles: 1,
-    multiple: false
+    multiple: false,
+    maxSize: MAX_FILE_SIZE,
   });
 
 
@@ -489,6 +526,14 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
         <CardContent className="pt-6 space-y-6">
           <div>
             <h4 className="text-sm font-medium mb-4">Event Branding</h4>
+            <div className="mb-2 text-sm text-muted-foreground">
+              <p>Requirements:</p>
+              <ul className="list-disc pl-4 space-y-1">
+                <li>File types: PNG, JPEG, or SVG</li>
+                <li>Maximum size: 5MB</li>
+                <li>Recommended: Images with distinct colors for better color extraction</li>
+              </ul>
+            </div>
             <div
               {...getRootProps()}
               className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${
@@ -497,7 +542,12 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
             >
               <input {...getInputProps()} />
               <div className="flex flex-col items-center justify-center gap-2">
-                {previewUrl ? (
+                {isExtracting ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-sm text-muted-foreground">Extracting colors...</p>
+                  </div>
+                ) : previewUrl ? (
                   <img
                     src={previewUrl}
                     alt="Event logo"
