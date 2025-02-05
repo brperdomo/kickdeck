@@ -176,6 +176,179 @@ const ACCEPTED_IMAGE_TYPES = {
   'image/svg+xml': ['.svg']
 };
 
+function AgeGroupDialog({
+  open,
+  onClose,
+  onSubmit,
+  defaultValues,
+  isEdit,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (data: AgeGroupValues) => void;
+  defaultValues?: AgeGroup;
+  isEdit?: boolean;
+}) {
+  const form = useForm<AgeGroupValues>({
+    resolver: zodResolver(ageGroupSchema),
+    defaultValues: defaultValues || {
+      gender: 'Male',
+      projectedTeams: 0,
+      birthDateStart: '',
+      birthDateEnd: '',
+      scoringRule: '',
+      ageGroup: '',
+      fieldSize: '11v11',
+      amountDue: null,
+    }
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{isEdit ? 'Edit Age Group' : 'Add Age Group'}</DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="ageGroup"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Age Group Name *</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="e.g., U10, U12, etc." />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gender *</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="Coed">Coed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="birthDateStart"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Birth Date Start *</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="birthDateEnd"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Birth Date End *</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="fieldSize"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Field Size *</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select field size" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
+                        <SelectItem key={size} value={size}>{size}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="projectedTeams"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Projected Teams *</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="amountDue"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Amount Due</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      {...field} 
+                      onChange={e => field.onChange(e.target.value ? parseInt(e.target.value) : null)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end gap-4 pt-4">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type="submit">
+                {isEdit ? 'Update' : 'Add'} Age Group
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+
 export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormProps) {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<EventTab>('information');
@@ -352,7 +525,6 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
 
   const handleEditAgeGroup = (ageGroup: AgeGroup) => {
     setEditingAgeGroup(ageGroup);
-    ageGroupForm.reset(ageGroup);
     setIsAgeGroupDialogOpen(true);
   };
 
@@ -658,6 +830,74 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
     </div>
   );
 
+  const renderAgeGroupsContent = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Age Groups</h3>
+        <Button onClick={() => {
+          setEditingAgeGroup(null);
+          setIsAgeGroupDialogOpen(true);
+        }}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Age Group
+        </Button>
+      </div>
+
+      {/* Age Groups List */}
+      <div className="grid gap-4">
+        {ageGroups.map((group) => (
+          <Card key={group.id}>
+            <CardContent className="p-4">
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <h4 className="font-semibold">{group.ageGroup} ({group.gender})</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Birth Date Range: {new Date(group.birthDateStart).toLocaleDateString()} to {new Date(group.birthDateEnd).toLocaleDateString()}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Field Size: {group.fieldSize} | Projected Teams: {group.projectedTeams}
+                  </p>
+                  {group.amountDue && (
+                    <p className="text-sm text-muted-foreground">
+                      Amount Due: ${group.amountDue}
+                    </p>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleEditAgeGroup(group)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeleteAgeGroup(group.id)}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Add/Edit Age Group Dialog */}
+      <AgeGroupDialog
+        open={isAgeGroupDialogOpen}
+        onClose={() => setIsAgeGroupDialogOpen(false)}
+        onSubmit={handleAddAgeGroup}
+        defaultValues={editingAgeGroup || undefined}
+        isEdit={!!editingAgeGroup}
+      />
+
+      {isEdit && <SaveButton />}
+    </div>
+  );
+
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl">
       <div className="flex items-center gap-4 mb-6">
@@ -888,197 +1128,7 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
 
             {/* Age Groups Tab */}
             <TabsContent value="age-groups">
-              <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Age Groups</h3>
-                  <Button onClick={() => {
-                    setEditingAgeGroup(null);
-                    ageGroupForm.reset();
-                    setIsAgeGroupDialogOpen(true);
-                  }}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Age Group
-                  </Button>
-                </div>
-
-                {/* Age Groups List */}
-                <div className="grid gap-4">
-                  {ageGroups.map((group) => (
-                    <Card key={group.id}>
-                      <CardContent className="p-4 flex justify-between items-center">
-                        <div>
-                          <h4 className="font-semibold">{group.ageGroup} ({group.gender})</h4>
-                          <p className="text-sm text-muted-foreground">
-                            Birth Date Range: {group.birthDateStart} to {group.birthDateEnd}
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEditAgeGroup(group)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteAgeGroup(group.id)}
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-                {isEdit && <SaveButton />}
-              </div>
-
-              {/* Age Group Dialog */}
-              <Dialog open={isAgeGroupDialogOpen} onOpenChange={setIsAgeGroupDialogOpen}>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>
-                      {editingAgeGroup ? 'Edit Age Group' : 'Add Age Group'}
-                    </DialogTitle>
-                  </DialogHeader>
-                  <Form {...ageGroupForm}>
-                    <form onSubmit={ageGroupForm.handleSubmit(handleAddAgeGroup)} className="space-y-4">
-                      <FormField
-                        control={ageGroupForm.control}
-                        name="gender"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Gender</FormLabel>
-                            <FormControl>
-                              <Select {...field}>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select gender" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="Male">Male</SelectItem>
-                                  <SelectItem value="Female">Female</SelectItem>
-                                  <SelectItem value="Coed">Coed</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={ageGroupForm.control}
-                        name="projectedTeams"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Projected Teams</FormLabel>
-                            <FormControl>
-                              <Input type="number" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={ageGroupForm.control}
-                        name="birthDateStart"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Birth Date Start</FormLabel>
-                            <FormControl>
-                              <Input type="date" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={ageGroupForm.control}
-                        name="birthDateEnd"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Birth Date End</FormLabel>
-                            <FormControl>
-                              <Input type="date" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={ageGroupForm.control}
-                        name="scoringRule"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Scoring Rule</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={ageGroupForm.control}
-                        name="ageGroup"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Age Group</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={ageGroupForm.control}
-                        name="fieldSize"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Field Size</FormLabel>
-                            <FormControl>
-                              <Select {...field}>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select field size" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="3v3">3v3</SelectItem>
-                                  <SelectItem value="4v4">4v4</SelectItem>
-                                  <SelectItem value="5v5">5v5</SelectItem>
-                                  <SelectItem value="6v6">6v6</SelectItem>
-                                  <SelectItem value="7v7">7v7</SelectItem>
-                                  <SelectItem value="8v8">8v8</SelectItem>
-                                  <SelectItem value="9v9">9v9</SelectItem>
-                                  <SelectItem value="10v10">10v10</SelectItem>
-                                  <SelectItem value="11v11">11v11</SelectItem>
-                                  <SelectItem value="N/A">N/A</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={ageGroupForm.control}
-                        name="amountDue"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Amount Due</FormLabel>
-                            <FormControl>
-                              <Input type="number" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button type="submit">
-                        {editingAgeGroup ? 'Update Age Group' : 'Add Age Group'}
-                      </Button>
-                    </form>
-                  </Form>
-                </DialogContent>
-              </Dialog>
+              {renderAgeGroupsContent()}
             </TabsContent>
 
             {/* Scoring Settings Tab */}
