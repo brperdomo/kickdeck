@@ -1,10 +1,10 @@
-
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
 import { EventForm } from "@/components/forms/EventForm";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function EditEvent() {
   const { id } = useParams();
@@ -98,7 +98,7 @@ export default function EditEvent() {
           ) : eventQuery.data ? (
             <EventForm
               initialData={eventQuery.data}
-              onSubmit={(data) => updateEventMutation.mutate(data)}
+              onSubmit={updateEventMutation.mutate}
               isEdit={true}
             />
           ) : null}

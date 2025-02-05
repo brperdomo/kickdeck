@@ -224,25 +224,146 @@ function AgeGroupDialog({
     onClose();
   };
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'information':
-        return renderInformationContent();
-      case 'age-groups':
-        return renderAgeGroupsContent();
-      case 'scoring':
-        return renderScoringContent();
-      case 'complexes':
-        return renderComplexesContent();
-      case 'settings':
-        return renderSettingsContent();
-      case 'administrators':
-        return renderAdministratorsContent();
-      default:
-        return null;
-    }
-  };
-};
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {isEdit ? 'Edit Age Group' : 'Add Age Group'}
+          </DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gender</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="Coed">Coed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="ageGroup"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Age Group</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="e.g., U10, U12" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="birthDateStart"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Birth Date Start</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="birthDateEnd"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Birth Date End</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="projectedTeams"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Projected Teams</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="fieldSize"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Field Size</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select field size" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
+                        <SelectItem key={size} value={size}>
+                          {size}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="amountDue"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Amount Due (optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">
+              {isEdit ? 'Update Age Group' : 'Add Age Group'}
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) => {
   // State declarations
@@ -545,24 +666,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     </Button>
   );
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'information':
-        return renderInformationContent();
-      case 'age-groups':
-        return renderAgeGroupsContent();
-      case 'scoring':
-        return renderScoringContent();
-      case 'complexes':
-        return renderComplexesContent();
-      case 'settings':
-        return renderSettingsContent();
-      case 'administrators':
-        return renderAdministratorsContent();
-      default:
-        return null;
-    }
-  };
 
   const renderInformationContent = () => (
     <Form {...form}>
