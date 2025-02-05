@@ -1,3 +1,6 @@
+
+import { LogoutOverlay } from "@/components/ui/logout-overlay";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/hooks/use-user";
@@ -12,12 +15,13 @@ import { Link } from "wouter";
 export default function UserDashboard() {
   const { user, logout } = useUser();
 
-  const handleLogout = async () => {
-    try {
+  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
+
+  const handleLogout = () => {
+    setShowLogoutOverlay(true);
+    setTimeout(async () => {
       await logout();
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    }, 1500);
   };
 
   return (
@@ -53,6 +57,11 @@ export default function UserDashboard() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
                   {user?.firstName} {user?.lastName}
+
+      {showLogoutOverlay && (
+        <LogoutOverlay onFinished={() => setShowLogoutOverlay(false)} />
+      )}
+
                 </p>
                 <p className="text-xs text-gray-500 truncate">{user?.email}</p>
               </div>

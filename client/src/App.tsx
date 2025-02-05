@@ -29,16 +29,11 @@ function Router() {
 
   // Handle unauthenticated routes
   if (!user) {
-    if (window.location.pathname !== "/" && 
-        window.location.pathname !== "/forgot-password" && 
-        window.location.pathname !== "/register") {
-      window.location.href = "/";
-      return null;
-    }
     return (
       <Switch>
         <Route path="/register" component={Register} />
         <Route path="/forgot-password" component={ForgotPassword} />
+        <Route path="/" component={AuthPage} />
         <Route component={AuthPage} />
       </Switch>
     );
