@@ -20,7 +20,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Editor } from "@tinymce/tinymce-react";
 
 // Types and interfaces remain unchanged
-
 interface EventBranding {
   logoUrl?: string;
   primaryColor?: string;
@@ -366,13 +365,6 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
   const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(initialData?.complexFieldSizes || {});
   const [isAgeGroupDialogOpen, setIsAgeGroupDialogOpen] = useState(false);
   const [editingAgeGroup, setEditingAgeGroup] = useState<AgeGroup | null>(null);
-  const { toast } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
-  const [logo, setLogo] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.branding?.logoUrl || null);
-  const [primaryColor, setPrimaryColor] = useState(initialData?.branding?.primaryColor || '#000000');
-  const [secondaryColor, setSecondaryColor] = useState(initialData?.branding?.secondaryColor || '#ffffff');
-  const [isExtracting, setIsExtracting] = useState(false);
   const [scoringRules, setScoringRules] = useState<ScoringRule[]>(initialData?.scoringRules || []);
   const [settings, setSettings] = useState<EventSetting[]>(initialData?.settings || []);
   const [isScoringDialogOpen, setIsScoringDialogOpen] = useState(false);
@@ -381,17 +373,26 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
   const [editingSetting, setEditingSetting] = useState<EventSetting | null>(null);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState<EventAdministrator | null>(null);
+  const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
+  const [logo, setLogo] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.branding?.logoUrl || null);
+  const [primaryColor, setPrimaryColor] = useState(initialData?.branding?.primaryColor || '#000000');
+  const [secondaryColor, setSecondaryColor] = useState(initialData?.branding?.secondaryColor || '#ffffff');
+  const [isExtracting, setIsExtracting] = useState(false);
 
-
-  const complexesQuery = useQuery<Complex[]>({
-    queryKey: ['/api/admin/complexes'],
-    enabled: activeTab === 'complexes',
-    initialData: [],
-  });
-
-  const administratorsQuery = useQuery({
-    queryKey: ['/api/admin/users'],
-    enabled: activeTab === 'administrators',
+  const scoringForm = useForm<ScoringRuleValues>({
+    resolver: zodResolver(scoringRuleSchema),
+    defaultValues: editingScoringRule || {
+      title: "",
+      win: 0,
+      loss: 0,
+      tie: 0,
+      goalCapped: 0,
+      shutout: 0,
+      redCard: 0,
+      tieBreaker: "",
+    },
   });
 
   const form = useForm<EventInformationValues>({
@@ -609,21 +610,19 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
   };
 
   const SaveButton = () => (
-    <div className="flex justify-end pt-6">
-      <Button
-        onClick={form.handleSubmit(handleSubmit)}
-        disabled={isSaving}
-      >
-        {isSaving ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Saving...
-          </>
-        ) : (
-          isEdit ? 'Save Changes' : 'Create Event'
-        )}
-      </Button>
-    </div>
+    <Button
+      onClick={form.handleSubmit(handleSubmit)}
+      disabled={isSaving}
+    >
+      {isSaving ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Saving...
+        </>
+      ) : (
+        isEdit ? 'Save Changes' : 'Create Event'
+      )}
+    </Button>
   );
 
   const renderSettingsContent = () => (
@@ -939,8 +938,7 @@ const renderScoringContent = () => (
                   <FormLabel>Shutout Points</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
+                  </FormControl><FormMessage />
                 </FormItem>
               )}
             />
@@ -1216,6 +1214,213 @@ const renderComplexesContent = () => (
 );
 
 
+const renderInformationContent = () => (
+  <Form {...form}>
+    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <FormField
+        control={form.control}
+        name="name"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Event Name *</FormLabel>
+            <FormControl>
+              <Input {...field} placeholder="Enter event name" />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <div className="grid grid-cols-2 gap-6">
+        <FormField
+          control={form.control}
+          name="startDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Start Date *</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="endDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>End Date *</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <FormField
+        control={form.control}
+        name="timezone"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Time Zone *</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select time zone" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {USA_TIMEZONES.map((timezone) => (
+                  <SelectItem key={timezone.value} value={timezone.value}>
+                    {timezone.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="applicationDeadline"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Application Submission Deadline *</FormLabel>
+            <FormControl>
+              <Input type="date" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="details"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Details About This Event</FormLabel>
+            <FormControl>
+              <Editor
+                apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                init={{
+                  height: 300,
+                  menubar: true,
+                  plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                  ],
+                  toolbar: 'undo redo | formatselect | ' +
+                    'bold italic backcolor | alignleft aligncenter ' +
+                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                    'removeformat | help',
+                }}
+                value={field.value}
+                onEditorChange={(content) => field.onChange(content)}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="agreement"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Agreement</FormLabel>
+            <FormControl>
+              <Editor
+                apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                init={{
+                  height: 300,
+                  menubar: true,
+                  plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                  ],
+                  toolbar: 'undo redo | formatselect | ' +
+                    'bold italic backcolor | alignleft aligncenter ' +
+                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                    'removeformat | help',
+                }}
+                value={field.value}
+                onEditorChange={(content) => field.onChange(content)}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="refundPolicy"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Refund Policy</FormLabel>
+            <FormControl>
+              <Editor
+                apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                init={{
+                  height: 300,
+                  menubar: true,
+                  plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                  ],
+                  toolbar: 'undo redo | formatselect | ' +
+                    'bold italic backcolor | alignleft aligncenter ' +
+                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                    'removeformat | help',
+                }}
+                value={field.value}
+                onEditorChange={(content) => field.onChange(content)}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <div className="flex justify-end">
+        <SaveButton />
+      </div>
+    </form>
+  </Form>
+);
+
+const complexesQuery = useQuery<Complex[]>({
+  queryKey: ['/api/admin/complexes'],
+  enabled: activeTab === 'complexes',
+  initialData: [],
+});
+
+const administratorsQuery = useQuery({
+  queryKey: ['/api/admin/users'],
+  enabled: activeTab === 'administrators',
+});
+
+const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  onDrop,
+  accept: {
+    'image/png': ['.png'],
+    'image/jpeg': ['.jpg', '.jpeg'],
+    'image/svg+xml': ['.svg']
+  },
+  maxFiles: 1,
+  multiple: false,
+});
 
 return (
   <div className="container mx-auto py-8 space-y-8">
@@ -1224,234 +1429,63 @@ return (
         variant="ghost"
         size="icon"
         onClick={() => setLocation("/admin")}
+        className="h-8 w-8 p-0"
       >
         <ArrowLeft className="h-4 w-4" />
       </Button>
-      <h2 className="text-2xl font-bold">
+      <h1 className="text-2xl font-bold">
         {isEdit ? 'Edit Event' : 'Create Event'}
-      </h2>
+      </h1>
     </div>
 
     <Card>
       <CardContent className="pt-6">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as EventTab)}>
-          <TabsList className="grid grid-cols-6 gap-4 mb-6">
-            <TabsTrigger value="information">Information</TabsTrigger>
-            <TabsTrigger value="age-groups">Age Groups</TabsTrigger>
-            <TabsTrigger value="scoring">Scoring</TabsTrigger>
-            <TabsTrigger value="complexes">Complexes</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
-            <TabsTrigger value="administrators">Administrators</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-6">
+            {TAB_ORDER.map((tab) => (
+              <TabsTrigger key={tab} value={tab} className="capitalize">
+                {tab.replace('-', ' ')}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
-          <TabsContent value="information">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Event Name *</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Enter event name" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="startDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Start Date *</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="endDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>End Date *</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="timezone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Time Zone *</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select time zone" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {USA_TIMEZONES.map((timezone) => (
-                            <SelectItem key={timezone.value} value={timezone.value}>
-                              {timezone.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="applicationDeadline"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Application Submission Deadline *</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="details"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Details About This Event</FormLabel>
-                      <FormControl>
-                        <Editor
-                          apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
-                          init={{
-                            height: 300,
-                            menubar: true,
-                            plugins: [
-                              'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                              'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                              'insertdatetime', 'media', 'table', 'help', 'wordcount'
-                            ],
-                            toolbar: 'undo redo | formatselect | ' +
-                              'bold italic backcolor | alignleft aligncenter ' +
-                              'alignright alignjustify | bullist numlist outdent indent | ' +
-                              'removeformat | help',
-                          }}
-                          value={field.value}
-                          onEditorChange={(content) => field.onChange(content)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="agreement"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Agreement</FormLabel>
-                      <FormControl>
-                        <Editor
-                          apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
-                          init={{
-                            height: 300,
-                            menubar: true,
-                            plugins: [
-                              'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                              'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                              'insertdatetime', 'media', 'table', 'help', 'wordcount'
-                            ],
-                            toolbar: 'undo redo | formatselect | ' +
-                              'bold italic backcolor | alignleft aligncenter ' +
-                              'alignright alignjustify | bullist numlist outdent indent | ' +
-                              'removeformat | help',
-                          }}
-                          value={field.value}
-                          onEditorChange={(content) => field.onChange(content)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="refundPolicy"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Refund Policy</FormLabel>
-                      <FormControl>
-                        <Editor
-                          apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
-                          init={{
-                            height: 300,
-                            menubar: true,
-                            plugins: [
-                              'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                              'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                              'insertdatetime', 'media', 'table', 'help', 'wordcount'
-                            ],
-                            toolbar: 'undo redo | formatselect | ' +
-                              'bold italic backcolor | alignleft aligncenter ' +
-                              'alignright alignjustify | bullist numlist outdent indent | ' +
-                              'removeformat | help',
-                          }}
-                          value={field.value}
-                          onEditorChange={(content) => field.onChange(content)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex justify-end">
-                  <SaveButton />
-                </div>
-              </form>
-            </Form>
+          <TabsContent value="information" className="space-y-6">
+            {renderInformationContent()}
           </TabsContent>
 
-          <TabsContent value="age-groups">
+          <TabsContent value="age-groups" className="space-y-6">
             {renderAgeGroupsContent()}
           </TabsContent>
 
-          <TabsContent value="scoring">
+          <TabsContent value="scoring" className="space-y-6">
             {renderScoringContent()}
           </TabsContent>
 
-          <TabsContent value="complexes">
+          <TabsContent value="complexes" className="space-y-6">
             {renderComplexesContent()}
           </TabsContent>
 
-          <TabsContent value="settings">
+          <TabsContent value="settings" className="space-y-6">
             {renderSettingsContent()}
           </TabsContent>
 
-          <TabsContent value="administrators">
+          <TabsContent value="administrators" className="space-y-6">
             {renderAdministratorsContent()}
           </TabsContent>
         </Tabs>
       </CardContent>
     </Card>
+
+    <AgeGroupDialog
+      open={isAgeGroupDialogOpen}
+      onClose={() => {
+        setIsAgeGroupDialogOpen(false);
+        setEditingAgeGroup(null);
+      }}
+      onSubmit={handleAddAgeGroup}
+      defaultValues={editingAgeGroup || undefined}
+      isEdit={!!editingAgeGroup}
+    />
   </div>
 );
 }
