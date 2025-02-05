@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Plus, Minus, Edit, Trash, Eye, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label"; // Added import for Label
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -416,28 +416,33 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
         img.src = objectUrl;
       });
 
-      const Vibrant = (await import('node-vibrant')).default;
-      const v = new Vibrant(objectUrl);
-      const palette = await v.getPalette();
+      try {
+        // Dynamically import node-vibrant
+        const Vibrant = await import('node-vibrant');
+        const vibrant = new Vibrant.default(objectUrl);
+        const palette = await vibrant.getPalette();
 
-      if (!palette.Vibrant) {
-        throw new Error('Could not extract primary color from image. Try an image with more distinct colors.');
+        if (!palette.Vibrant) {
+          throw new Error('Could not extract primary color from image. Try an image with more distinct colors.');
+        }
+
+        setPrimaryColor(palette.Vibrant.hex);
+
+        // For secondary color, prefer LightVibrant, fallback to Muted
+        const secondaryPalette = palette.LightVibrant || palette.Muted;
+        if (!secondaryPalette) {
+          throw new Error('Could not extract secondary color from image. Try an image with more color variety.');
+        }
+
+        setSecondaryColor(secondaryPalette.hex);
+
+        toast({
+          title: "Colors extracted successfully",
+          description: "Brand colors have been updated based on your logo.",
+        });
+      } catch (error) {
+        throw new Error('Failed to extract colors. Please try a different image with more distinct colors.');
       }
-
-      setPrimaryColor(palette.Vibrant.hex);
-
-      // For secondary color, prefer LightVibrant, fallback to Muted
-      const secondaryPalette = palette.LightVibrant || palette.Muted;
-      if (!secondaryPalette) {
-        throw new Error('Could not extract secondary color from image. Try an image with more color variety.');
-      }
-
-      setSecondaryColor(secondaryPalette.hex);
-
-      toast({
-        title: "Colors extracted successfully",
-        description: "Brand colors have been updated based on your logo.",
-      });
     } catch (error) {
       console.error('Color extraction error:', error);
       toast({
