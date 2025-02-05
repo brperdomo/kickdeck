@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Plus, Edit, Trash, Loader2 } from "lucide-react";
+import { ArrowLeft, Plus, Edit, Trash, Loader2, ImageIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,12 +15,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
 import { useDropzone } from 'react-dropzone';
-import { ImageIcon } from 'lucide-react';
 import { AdminModal } from "@/components/admin/AdminModal";
-import {Checkbox} from "@/components/ui/checkbox";
-import {Editor} from "@tinymce/tinymce-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Editor } from "@tinymce/tinymce-react";
 
-// Types and interfaces
+// Types and interfaces remain unchanged
+
 interface EventBranding {
   logoUrl?: string;
   primaryColor?: string;
@@ -360,7 +360,7 @@ function AgeGroupDialog({
 
 export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormProps) {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<EventTab>('information');
+  const [activeTab, setActiveTab] = useState<EventTab>("information");
   const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(initialData?.ageGroups || []);
   const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(initialData?.selectedComplexIds || []);
   const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(initialData?.complexFieldSizes || {});
@@ -408,20 +408,6 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
     },
   });
 
-  const scoringForm = useForm<ScoringRuleValues>({
-    resolver: zodResolver(scoringRuleSchema),
-    defaultValues: {
-      title: "",
-      win: 3,
-      loss: 0,
-      tie: 1,
-      goalCapped: 5,
-      shutout: 1,
-      redCard: -1,
-      tieBreaker: "head_to_head",
-    },
-  });
-
   useEffect(() => {
     if (initialData && isEdit) {
       form.reset(initialData);
@@ -455,10 +441,12 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
       };
 
       await onSubmit(combinedData);
+
       toast({
         title: "Success",
         description: isEdit ? "Event updated successfully" : "Event created successfully",
       });
+
       setLocation("/admin");
     } catch (error) {
       toast({
@@ -472,29 +460,83 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
   };
 
   const handleAddAgeGroup = (data: AgeGroupValues) => {
-    try {
-      if (editingAgeGroup) {
-        setAgeGroups(ageGroups.map(group =>
-          group.id === editingAgeGroup.id ? { ...data, id: group.id } : group
-        ));
-      } else {
-        setAgeGroups([...ageGroups, { ...data, id: Date.now().toString() }]);
-      }
-      setIsAgeGroupDialogOpen(false);
+    if (editingAgeGroup) {
+      setAgeGroups(ageGroups.map(group =>
+        group.id === editingAgeGroup.id ? { ...data, id: group.id } : group
+      ));
       setEditingAgeGroup(null);
+    } else {
+      setAgeGroups([...ageGroups, { ...data, id: Date.now().toString() }]);
+    }
+    setIsAgeGroupDialogOpen(false);
+
+    toast({
+      title: editingAgeGroup ? "Age Group Updated" : "Age Group Added",
+      description: `Successfully ${editingAgeGroup ? 'updated' : 'added'} age group`,
+    });
+  };
+
+  const handleEditAgeGroup = (ageGroup: AgeGroup) => {
+    setEditingAgeGroup(ageGroup);
+    setIsAgeGroupDialogOpen(true);
+  };
+
+  const handleDeleteAgeGroup = (id: string) => {
+    setAgeGroups(ageGroups.filter(group => group.id !== id));
+  };
+
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    if (!file) return;
+
+    try {
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewUrl(objectUrl);
+      setLogo(file);
+      setIsExtracting(true);
+
+      const formData = new FormData();
+      formData.append('logo', file);
+
+      const uploadResponse = await fetch('/api/upload/logo', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload logo');
+      }
+
+      const { url: logoUrl } = await uploadResponse.json();
+      setPreviewUrl(logoUrl);
 
       toast({
-        title: editingAgeGroup ? "Age Group Updated" : "Age Group Added",
-        description: `Successfully ${editingAgeGroup ? 'updated' : 'added'} age group`,
+        title: "Success",
+        description: "Logo uploaded successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "An error occurred",
-        variant: "destructive"
+        description: error instanceof Error ? error.message : "Failed to upload logo",
+        variant: "destructive",
       });
+      setLogo(null);
+      setPreviewUrl(null);
+    } finally {
+      setIsExtracting(false);
     }
-  };
+  }, [toast]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/png': ['.png'],
+      'image/jpeg': ['.jpg', '.jpeg'],
+      'image/svg+xml': ['.svg']
+    },
+    maxFiles: 1,
+    multiple: false,
+  });
 
   const handleAddScoringRule = (data: ScoringRuleValues) => {
     if (editingScoringRule) {
@@ -535,22 +577,9 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
     }));
   };
 
-  const handleEditAgeGroup = (ageGroup: AgeGroup) => {
-    setEditingAgeGroup(ageGroup);
-    setIsAgeGroupDialogOpen(true);
-  };
-
   const handleEditScoringRule = (rule: ScoringRule) => {
     setEditingScoringRule(rule);
     setIsScoringDialogOpen(true);
-  };
-
-  const handleDeleteAgeGroup = (id: string) => {
-    setAgeGroups(ageGroups.filter(group => group.id !== id));
-    toast({
-      title: "Age Group Deleted",
-      description: "Successfully removed age group",
-    });
   };
 
   const handleDeleteScoringRule = (id: string) => {
@@ -577,119 +606,6 @@ export function EventForm({ initialData, onSubmit, isEdit = false }: EventFormPr
     }
 
     return true;
-  };
-
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    if (!file) return;
-
-    try {
-      validateFile(file);
-      const objectUrl = URL.createObjectURL(file);
-
-      await new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = resolve;
-        img.onerror = () => reject(new Error('Failed to load image. Please try a different file.'));
-        img.src = objectUrl;
-      });
-
-      setPreviewUrl(objectUrl);
-      setLogo(file);
-      setIsExtracting(true);
-
-      try {
-        const formData = new FormData();
-        formData.append('logo', file);
-
-        const uploadResponse = await fetch('/api/upload/logo', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!uploadResponse.ok) {
-          throw new Error('Failed to upload logo. Please try again.');
-        }
-
-        const { url: logoUrl } = await uploadResponse.json();
-        setPreviewUrl(logoUrl);
-
-        toast({
-          title: "Success",
-          description: "Logo uploaded successfully.",
-        });
-      } catch (error) {
-        console.error('Processing error:', error);
-        toast({
-          title: "Processing Error",
-          description: error instanceof Error
-            ? error.message
-            : "Failed to process the image. Please try a different image.",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error('File error:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error
-          ? error.message
-          : "An unexpected error occurred while processing the file.",
-        variant: "destructive",
-      });
-      setLogo(null);
-      setPreviewUrl(null);
-    } finally {
-      setIsExtracting(false);
-    }
-  }, [toast]);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: Object.keys(ACCEPTED_IMAGE_TYPES).map(key => `${key}/*`).join(','),
-    maxFiles: 1,
-    multiple: false,
-    maxSize: MAX_FILE_SIZE,
-  });
-
-  const handleSaveChanges = async () => {
-    setIsSaving(true);
-    try {
-      const formData = new FormData();
-      const data = {
-        ...form.getValues(),
-        ageGroups,
-        scoringRules,
-        settings,
-        complexFieldSizes,
-        selectedComplexIds,
-        administrators: initialData?.administrators || [],
-        branding: {
-          primaryColor,
-          secondaryColor,
-          logoUrl: previewUrl
-        }
-      };
-
-      formData.append('data', JSON.stringify(data));
-      if (logo) {
-        formData.append('logo', logo);
-      }
-
-      await onSubmit(data);
-      toast({
-        title: "Success",
-        description: "Event updated successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update event",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
-    }
   };
 
   const SaveButton = () => (
@@ -956,7 +872,7 @@ const renderScoringContent = () => (
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Title</FormLabel>
-                  <FormControl><FormControl>
+                  <FormControl>
                     <Input {...field} />
                   </FormControl>
                   <FormMessage />
@@ -1229,6 +1145,78 @@ const renderAdministratorsContent = () => (
   </div>
 );
 
+const renderComplexesContent = () => (
+  <div className="space-y-6">
+    <div className="flex justify-between items-center">
+      <h3 className="text-lg font-semibold">Complexes and Fields</h3>
+    </div>
+
+    {complexesQuery.isLoading ? (
+      <div>Loading complexes...</div>
+    ) : complexesQuery.error ? (
+      <div>Error loading complexes</div>
+    ) : (
+      <div className="space-y-4">
+        {(complexesQuery.data || []).map((complex: Complex) => (
+          <Card key={complex.id}>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <Checkbox
+                    checked={selectedComplexIds.includes(complex.id)}
+                    onCheckedChange={() => handleComplexSelection(complex.id)}
+                  />
+                  <h4 className="font-semibold">{complex.name}</h4>
+                </div>
+                {selectedComplexIds.includes(complex.id) && (
+                  <Select
+                    value={complexFieldSizes[complex.id] || '11v11'}
+                    onValueChange={(value: FieldSize) => handleFieldSizeChange(complex.id, value)}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select field size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="3v3">3v3</SelectItem>
+                      <SelectItem value="4v4">4v4</SelectItem>
+                      <SelectItem value="5v5">5v5</SelectItem>
+                      <SelectItem value="6v6">6v6</SelectItem>
+                      <SelectItem value="7v7">7v7</SelectItem>
+                      <SelectItem value="8v8">8v8</SelectItem>
+                      <SelectItem value="9v9">9v9</SelectItem>
+                      <SelectItem value="10v10">10v10</SelectItem>
+                      <SelectItem value="11v11">11v11</SelectItem>
+                      <SelectItem value="N/A">N/A</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+
+              {selectedComplexIds.includes(complex.id) && complex.fields && (
+                <div className="pl-8">
+                  <h5 className="text-sm font-medium mb-2">Available Fields:</h5>
+                  <ul className="space-y-2">
+                    {complex.fields.map(field => (
+                      <li key={field.id} className="text-sm text-muted-foreground">
+                        {field.name}
+                        {field.hasLights && " (Lights)"}
+                        {field.hasParking && " (Parking)"}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )}
+    <SaveButton />
+  </div>
+);
+
+
+
 return (
   <div className="container mx-auto py-8 space-y-8">
     <div className="flex items-center gap-4">
@@ -1236,7 +1224,6 @@ return (
         variant="ghost"
         size="icon"
         onClick={() => setLocation("/admin")}
-        className="shrink-0"
       >
         <ArrowLeft className="h-4 w-4" />
       </Button>
@@ -1280,9 +1267,9 @@ return (
                     name="startDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Event Start Date *</FormLabel>
+                        <FormLabel>Start Date *</FormLabel>
                         <FormControl>
-                          <Input type="datetime-local" {...field} />
+                          <Input type="date" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -1294,9 +1281,9 @@ return (
                     name="endDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Event End Date *</FormLabel>
+                        <FormLabel>End Date *</FormLabel>
                         <FormControl>
-                          <Input type="datetime-local" {...field} />
+                          <Input type="date" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -1336,7 +1323,7 @@ return (
                     <FormItem>
                       <FormLabel>Application Submission Deadline *</FormLabel>
                       <FormControl>
-                        <Input type="datetime-local" {...field} />
+                        <Input type="date" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1452,73 +1439,7 @@ return (
           </TabsContent>
 
           <TabsContent value="complexes">
-            <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">Complexes and Fields</h3>
-              </div>
-
-              {complexesQuery.isLoading ? (
-                <div>Loading complexes...</div>
-              ) : complexesQuery.error ? (
-                <div>Error loading complexes</div>
-              ) : (
-                <div className="space-y-4">
-                  {(complexesQuery.data || []).map((complex: Complex) => (
-                    <Card key={complex.id}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-4">
-                            <Checkbox
-                              checked={selectedComplexIds.includes(complex.id)}
-                              onCheckedChange={() => handleComplexSelection(complex.id)}
-                            />
-                            <h4 className="font-semibold">{complex.name}</h4>
-                          </div>
-                          {selectedComplexIds.includes(complex.id) && (
-                            <Select
-                              value={complexFieldSizes[complex.id] || '11v11'}
-                              onValueChange={(value: FieldSize) => handleFieldSizeChange(complex.id, value)}
-                            >
-                              <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select field size" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="3v3">3v3</SelectItem>
-                                <SelectItem value="4v4">4v4</SelectItem>
-                                <SelectItem value="5v5">5v5</SelectItem>
-                                <SelectItem value="6v6">6v6</SelectItem>
-                                <SelectItem value="7v7">7v7</SelectItem>
-                                <SelectItem value="8v8">8v8</SelectItem>
-                                <SelectItem value="9v9">9v9</SelectItem>
-                                <SelectItem value="10v10">10v10</SelectItem>
-                                <SelectItem value="11v11">11v11</SelectItem>
-                                <SelectItem value="N/A">N/A</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          )}
-                        </div>
-
-                        {selectedComplexIds.includes(complex.id) && complex.fields && (
-                          <div className="pl-8">
-                            <h5 className="text-sm font-medium mb-2">Available Fields:</h5>
-                            <ul className="space-y-2">
-                              {complex.fields.map(field => (
-                                <li key={field.id} className="text-sm text-muted-foreground">
-                                  {field.name}
-                                  {field.hasLights && " (Lights)"}
-                                  {field.hasParking && " (Parking)"}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-              <SaveButton />
-            </div>
+            {renderComplexesContent()}
           </TabsContent>
 
           <TabsContent value="settings">
