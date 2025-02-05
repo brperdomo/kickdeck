@@ -19,7 +19,7 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Editor } from "@tinymce/tinymce-react";
 
-// Types and interfaces remain unchanged
+// Types and interfaces (unchanged from original)
 interface EventBranding {
   logoUrl?: string;
   primaryColor?: string;
@@ -47,7 +47,14 @@ export interface EventData {
 interface Complex {
   id: number;
   name: string;
-  fields: Field[];
+  fields: {
+    id: number;
+    name: string;
+    complexId: number;
+    hasLights: boolean;
+    hasParking: boolean;
+    isOpen: boolean;
+  }[];
 }
 
 interface Field {
@@ -116,7 +123,7 @@ const USA_TIMEZONES = [
   { value: 'Pacific/Honolulu', label: 'Hawaii Time (HT)' },
 ];
 
-// Form Schemas
+// Form Schemas (unchanged from original)
 const eventInformationSchema = z.object({
   name: z.string().min(1, "Event name is required"),
   startDate: z.string().min(1, "Start date is required"),
@@ -164,6 +171,18 @@ interface EventFormProps {
   initialData?: EventData;
   onSubmit: (data: EventData) => void;
   isEdit?: boolean;
+}
+
+interface AdminModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  adminToEdit?: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    roles: string[];
+  } | null;
 }
 
 function AgeGroupDialog({
@@ -350,7 +369,7 @@ function AgeGroupDialog({
   );
 }
 
-const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) => {
+export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) => {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<EventTab>("information");
   const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(initialData?.ageGroups || []);
@@ -365,7 +384,7 @@ const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) =>
   const [isSettingDialogOpen, setIsSettingDialogOpen] = useState(false);
   const [editingSetting, setEditingSetting] = useState<EventSetting | null>(null);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
-  const [editingAdmin, setEditingAdmin] = useState<EventAdministrator | null>(null);
+  const [editingAdmin, setEditingAdmin] = useState<AdminModalProps['adminToEdit'] | null>(null);
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [logo, setLogo] = useState<File | null>(null);
@@ -374,6 +393,7 @@ const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) =>
   const [secondaryColor, setSecondaryColor] = useState(initialData?.branding?.secondaryColor || '#ffffff');
   const [isExtracting, setIsExtracting] = useState(false);
 
+  // Form initialization
   const form = useForm<EventInformationValues>({
     resolver: zodResolver(eventInformationSchema),
     defaultValues: initialData || {
@@ -402,6 +422,20 @@ const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) =>
     },
   });
 
+  // Query hooks
+  const complexesQuery = useQuery({
+    queryKey: ['complexes'],
+    queryFn: async () => {
+      const response = await fetch('/api/complexes');
+      if (!response.ok) {
+        throw new Error('Failed to fetch complexes');
+      }
+      return response.json() as Promise<Complex[]>;
+    },
+    enabled: activeTab === 'complexes',
+  });
+
+  // Effects
   useEffect(() => {
     if (editingScoringRule) {
       scoringForm.reset(editingScoringRule);
@@ -422,6 +456,7 @@ const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) =>
     }
   }, [initialData, isEdit, form]);
 
+  // Handlers
   const handleSubmit = async (data: EventInformationValues) => {
     setIsSaving(true);
     try {
@@ -436,8 +471,8 @@ const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) =>
         branding: {
           primaryColor,
           secondaryColor,
-          logoUrl: previewUrl || undefined
-        }
+          logoUrl: previewUrl || undefined,
+        },
       };
 
       await onSubmit(combinedData);
@@ -815,7 +850,7 @@ const renderAgeGroupsContent = () => (
       defaultValues={editingAgeGroup || undefined}
       isEdit={!!editingAgeGroup}
     />
-    <SaveButton />
+    {isEdit && <SaveButton />}
   </div>
 );
 
@@ -906,7 +941,7 @@ const renderScoringContent = () => (
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <<FormMessage />
                 </FormItem>
               )}
             />
@@ -1158,57 +1193,50 @@ const renderComplexesContent = () => (
 
     {complexesQuery.isLoading ? (
       <div>Loading complexes...</div>
-    ) : complexesQuery.error ? (
-      <div>Error loading complexes</div>
+    ) : complexesQuery.isError ? (
+      <div>Error loading complexes: {complexesQuery.error instanceof Error ? complexesQuery.error.message : 'Unknown error'}</div>
+    ) : !complexesQuery.data || complexesQuery.data.length === 0 ? (
+      <div>No complexes found.</div>
     ) : (
       <div className="space-y-4">
-        {(complexesQuery.data || []).map((complex: Complex) => (
+        {complexesQuery.data.map((complex) => (
           <Card key={complex.id}>
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <Checkbox
-                    checked={selectedComplexIds.includes(complex.id)}
-                    onCheckedChange={() => handleComplexSelection(complex.id)}
-                  />
+                <div>
                   <h4 className="font-semibold">{complex.name}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    {complex.fields.length} fields
+                  </p>
                 </div>
-                {selectedComplexIds.includes(complex.id) && (
+                <Checkbox
+                  checked={selectedComplexIds.includes(complex.id)}
+                  onCheckedChange={() => handleComplexSelection(complex.id)}
+                />
+              </div>
+
+              {selectedComplexIds.includes(complex.id) && (
+                <div>
+                  <Label>Field Size</Label>
                   <Select
                     value={complexFieldSizes[complex.id] || '11v11'}
-                    onValueChange={(value: FieldSize) => handleFieldSizeChange(complex.id, value)}
+                    onValueChange={(value: FieldSize) =>
+                      handleFieldSizeChange(complex.id, value)
+                    }
                   >
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger>
                       <SelectValue placeholder="Select field size" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="3v3">3v3</SelectItem>
-                      <SelectItem value="4v4">4v4</SelectItem>
-                      <SelectItem value="5v5">5v5</SelectItem>
-                      <SelectItem value="6v6">6v6</SelectItem>
-                      <SelectItem value="7v7">7v7</SelectItem>
-                      <SelectItem value="8v8">8v8</SelectItem>
-                      <SelectItem value="9v9">9v9</SelectItem>
-                      <SelectItem value="10v10">10v10</SelectItem>
-                      <SelectItem value="11v11">11v11</SelectItem>
-                      <SelectItem value="N/A">N/A</SelectItem>
+                      {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map(
+                        (size) => (
+                          <SelectItem key={size} value={size}>
+                            {size}
+                          </SelectItem>
+                        )
+                      )}
                     </SelectContent>
                   </Select>
-                )}
-              </div>
-
-              {selectedComplexIds.includes(complex.id) && complex.fields && (
-                <div className="pl-8">
-                  <h5 className="text-sm font-medium mb-2">Available Fields:</h5>
-                  <ul className="space-y-2">
-                    {complex.fields.map(field => (
-                      <li key={field.id} className="text-sm text-muted-foreground">
-                        {field.name}
-                        {field.hasLights && " (Lights)"}
-                        {field.hasParking && " (Parking)"}
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               )}
             </CardContent>
@@ -1216,7 +1244,7 @@ const renderComplexesContent = () => (
         ))}
       </div>
     )}
-    <SaveButton />
+    {isEdit && <SaveButton />}
   </div>
 );
 
@@ -1409,13 +1437,20 @@ const renderInformationContent = () => (
 const complexesQuery = useQuery({
   queryKey: ['complexes'],
   queryFn: async () => {
-    const response = await fetch('/api/complexes');
-    if (!response.ok) {
-      throw new Error('Failed to fetch complexes');
+    try {
+      const response = await fetch('/api/complexes');
+      if (!response.ok) {
+        throw new Error('Failed to fetch complexes');
+      }
+      return response.json() as Promise<Complex[]>;
+    } catch (error) {
+      console.error('Error fetching complexes:', error);
+      throw error;
     }
-    return response.json() as Promise<Complex[]>;
   },
+  enabled: activeTab === 'complexes'
 });
+
 
 const administratorsQuery = useQuery({
   queryKey: ['/api/admin/users'],
@@ -1444,32 +1479,69 @@ const handleEditAdmin = (admin: EventAdministrator) => {
   setIsAdminModalOpen(true);
 };
 
+const renderContent = () => {
+  switch (activeTab) {
+    case 'information':
+      return renderInformationContent();
+    case 'age-groups':
+      return renderAgeGroupsContent();
+    case 'scoring':
+      return renderScoringContent();
+    case 'complexes':
+      return renderComplexesContent();
+    case 'settings':
+      return renderSettingsContent();
+    case 'administrators':
+      return renderAdministratorsContent();
+    default:
+      return renderInformationContent();
+  }
+};
+
 return (
   <div className="container max-w-4xl mx-auto py-6 space-y-6">
     <div className="flex items-center gap-4">
       <Button variant="ghost" size="icon" onClick={() => setLocation('/admin')}>
         <ArrowLeft className="h-4 w-4" />
       </Button>
-      <h2 className="text-2xl font-bold">{isEdit ? 'Edit Event' : 'Create Event'}</h2>
+      <h2 className="text-2xl font-bold">
+        {isEdit ? 'Edit Event' : 'Create Event'}
+      </h2>
     </div>
 
     <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as EventTab)}>
-      <TabsList className="grid grid-cols-6 w-full">
-        <TabsTrigger value="information">Information</TabsTrigger>
-        <TabsTrigger value="age-groups">Age Groups</TabsTrigger>
-        <TabsTrigger value="scoring">Scoring</TabsTrigger>
-        <TabsTrigger value="complexes">Complexes</TabsTrigger>
-        <TabsTrigger value="settings">Settings</TabsTrigger>
-        <TabsTrigger value="administrators">Administrators</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-6">
+        {TAB_ORDER.map((tab) => (
+          <TabsTrigger key={tab} value={tab} className="capitalize">
+            {tab.replace('-', ' ')}
+          </TabsTrigger>
+        ))}
       </TabsList>
 
-      <TabsContent value="information">{renderInformationContent()}</TabsContent>
-      <TabsContent value="age-groups">{renderAgeGroupsContent()}</TabsContent>
-      <TabsContent value="scoring">{renderScoringContent()}</TabsContent>
-      <TabsContent value="complexes">{renderComplexesContent()}</TabsContent>
-      <TabsContent value="settings">{renderSettingsContent()}</TabsContent>
-      <TabsContent value="administrators">{renderAdministratorsContent()}</TabsContent>
+      {TAB_ORDER.map((tab) => (
+        <TabsContent key={tab} value={tab}>
+          {renderContent()}
+        </TabsContent>
+      ))}
     </Tabs>
+
+    {/* Dialogs and Modals */}
+    <AgeGroupDialog
+      open={isAgeGroupDialogOpen}
+      onClose={() => {
+        setIsAgeGroupDialogOpen(false);
+        setEditingAgeGroup(null);
+      }}
+      onSubmit={handleAddAgeGroup}
+      defaultValues={editingAgeGroup || undefined}
+      isEdit={!!editingAgeGroup}
+    />
+
+    <AdminModal
+      open={isAdminModalOpen}
+      onOpenChange={setIsAdminModalOpen}
+      adminToEdit={editingAdmin}
+    />
   </div>
 );
 };
