@@ -556,16 +556,18 @@ export function registerRoutes(app: Express): Server {
           .insert(seasonalScopes)
           .values({
             name,
-            startYear: parseInt(startYear),
-            endYear: parseInt(endYear),
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            start_year: parseInt(startYear),
+            end_year: parseInt(endYear),
+            is_active: false,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           })
           .returning();
 
         res.json(newScope);
       } catch (error) {
         console.error('Error creating seasonal scope:', error);
+        console.error('Detailed error:', error instanceof Error ? error.message : error);
         res.status(500).send("Failed to create seasonal scope");
       }
     });

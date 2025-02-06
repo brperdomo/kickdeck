@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation } from "wouter";
 import { Link2 } from "lucide-react";
+import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import { useToast } from "@/hooks/use-toast";
 import {
   Collapsible,
