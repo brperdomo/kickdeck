@@ -78,17 +78,45 @@ interface EventData {
 
 function validateEventData(data: Partial<EventData>): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
+  const requiredFields = {
+    'name': 'Event name',
+    'startDate': 'Start date',
+    'endDate': 'End date',
+    'timezone': 'Time zone',
+    'applicationDeadline': 'Application deadline'
+  };
 
-  if (!data.name) errors.push("Event name is required");
-  if (!data.startDate) errors.push("Event start date is required");
-  if (!data.endDate) errors.push("Event end date is required");
-  if (!data.timezone) errors.push("Time zone is required");
-  if (!data.applicationDeadline) errors.push("Application deadline is required");
+  // Check required text fields
+  Object.entries(requiredFields).forEach(([field, label]) => {
+    if (!data[field as keyof typeof data] || data[field as keyof typeof data]?.trim() === '') {
+      errors.push(`${label} is required`);
+    }
+  });
 
-  if (!data.ageGroups?.length) {
-    errors.push("At least one age group is required");
+  // Validate dates are in the future
+  const now = new Date();
+  if (data.startDate && new Date(data.startDate) < now) {
+    errors.push("Start date must be in the future");
+  }
+  if (data.endDate && new Date(data.endDate) < new Date(data.startDate || '')) {
+    errors.push("End date must be after start date");
+  }
+  if (data.applicationDeadline && new Date(data.applicationDeadline) > new Date(data.startDate || '')) {
+    errors.push("Application deadline must be before event start date");
   }
 
+  // Check age groups
+  if (!data.ageGroups?.length) {
+    errors.push("At least one age group is required");
+  } else {
+    data.ageGroups.forEach((group, index) => {
+      if (!group.ageGroup || !group.gender || !group.fieldSize) {
+        errors.push(`Age group ${index + 1} is missing required information`);
+      }
+    });
+  }
+
+  // Check complexes
   if (!data.selectedComplexIds?.length) {
     errors.push("At least one complex must be selected");
   }
@@ -228,6 +256,7 @@ export default function CreateEvent() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [primaryColor, setPrimaryColor] = useState('#000000');
   const [secondaryColor, setSecondaryColor] = useState('#ffffff');
+  const [isSaving, setIsSaving] = useState(false);
 
 
   const complexesQuery = useQuery({
@@ -794,78 +823,130 @@ export default function CreateEvent() {
   );
 
   const handleCreateEvent = async () => {
-    const eventData = {
-      name: form.getValues().name,
-      startDate: form.getValues().startDate,
-      endDate: form.getValues().endDate,
-      timezone: form.getValues().timezone,
-      applicationDeadline: form.getValues().applicationDeadline,
-      details: form.getValues().details,
-      agreement: form.getValues().agreement,
-      refundPolicy: form.getValues().refundPolicy,
-      ageGroups: ageGroups.map(({ id, ...rest }) => ({
-        ...rest,
-        scoringRule: rest.scoringRule || null
-      })),
-      complexFieldSizes: eventFieldSizes,
-      selectedComplexIds: selectedComplexes.map(complex => complex.id),
-      branding: {
-        primaryColor,
-        secondaryColor,
-      }
-    };
-
-    const { isValid, errors } = validateEventData(eventData);
-
-    if (!isValid) {
-      toast({
-        title: "Missing Required Fields",
-        description: (
-          <ul className="list-disc pl-4">
-            {errors.map((error, index) => (
-              <li key={index}>{error}</li>
-            ))}
-          </ul>
-        ),
-        variant: "destructive",
-      });
-      return;
-    }
-
+    setIsSaving(true);
     try {
-      const formData = new FormData();
-      formData.append('data', JSON.stringify(eventData));
-      if (logo) {
-        formData.append('logo', logo);
+      // Get form values first
+      const formValues = form.getValues();
+      
+      // Validate required fields
+      const requiredFields = ['name', 'startDate', 'endDate', 'timezone', 'applicationDeadline'];
+      const missingFields = requiredFields.filter(field => !formValues[field] || formValues[field].toString().trim() === '');
+
+      if (missingFields.length > 0) {
+        // Mark invalid fields
+        missingFields.forEach(field => {
+          form.setError(field as any, {
+            type: 'required',
+            message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`
+          });
+        });
+
+        toast({
+          title: "Missing Required Fields",
+          description: `Please fill in: ${missingFields.map(f => f.charAt(0).toUpperCase() + f.slice(1)).join(', ')}`,
+          variant: "destructive",
+        });
+        setIsSaving(false);
+        return;
       }
 
-      const response = await fetch('/api/admin/events', {
-        method: 'POST',
-        body: formData,
-      });
+      const eventData = {
+        name: formValues.name?.trim() || '',
+        startDate: formValues.startDate?.trim() || '',
+        endDate: formValues.endDate?.trim() || '',
+        timezone: formValues.timezone?.trim() || '',
+        applicationDeadline: formValues.applicationDeadline?.trim() || '',
+        details: formValues.details || "",
+        agreement: formValues.agreement || "",
+        refundPolicy: formValues.refundPolicy || "",
+        ageGroups: ageGroups.map(({ id, ...rest }) => ({
+          ...rest,
+          scoringRule: rest.scoringRule || null
+        })),
+        complexFieldSizes: eventFieldSizes,
+        selectedComplexIds: selectedComplexes.map(complex => complex.id),
+        branding: {
+          primaryColor,
+          secondaryColor,
+          logoUrl: previewUrl,
+        }
+      };
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
+      const validationResult = validateEventData(eventData);
+
+      if (!validationResult.isValid) {
+        toast({
+          title: "Form Validation Error",
+          description: (
+            <div className="space-y-2">
+              <p className="font-medium text-destructive">Please correct the following issues:</p>
+              <ul className="list-disc pl-4 space-y-1">
+                {errors.map((error, index) => (
+                  <li key={index} className="text-sm">{error}</li>
+                ))}
+              </ul>
+            </div>
+          ),
+          variant: "destructive",
+          duration: 5000,
+        });
+        return;
       }
 
-      toast({
-        title: "Success",
-        description: "Event created successfully! Redirecting to dashboard...",
-        variant: "default",
-      });
+      try {
+        const formData = new FormData();
+        formData.append('data', JSON.stringify(eventData));
+        if (logo) {
+          formData.append('logo', logo);
+        }
 
-      setTimeout(() => {
-        navigate("/admin");
-      }, 1500);
+        const response = await fetch('/api/admin/events', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          if (responseData.missingFields) {
+            // Handle specific missing fields error
+            responseData.missingFields.forEach((field: string) => {
+              form.setError(field as any, {
+                type: 'required',
+                message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`
+              });
+            });
+            throw new Error(`Missing required fields: ${responseData.missingFields.join(', ')}`);
+          }
+          throw new Error(responseData.error || 'Failed to create event');
+        }
+
+        toast({
+          title: "Success",
+          description: "Event created successfully! Redirecting to dashboard...",
+          variant: "default",
+        });
+
+        setTimeout(() => {
+          navigate("/admin");
+        }, 1500);
+      } catch (error) {
+        console.error('Error creating event:', error);
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to create event. Please try again.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error('Error creating event:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create event. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create event.",
         variant: "destructive",
       });
-    }
+    } finally {
+      setIsSaving(false);    }
   };
 
   return (
@@ -995,6 +1076,7 @@ export default function CreateEvent() {
                             init={{
                               height: 300,
                               menubar: true,
+                              document_base_url: 'https://matchpro.replit.app',
                               plugins: [
                                 'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                                 'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
@@ -1026,6 +1108,7 @@ export default function CreateEvent() {
                             init={{
                               height: 300,
                               menubar: true,
+                              document_base_url: 'https://matchpro.replit.app',
                               plugins: [
                                 'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                                 'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
@@ -1057,6 +1140,7 @@ export default function CreateEvent() {
                             init={{
                               height: 300,
                               menubar: true,
+                              document_base_url: 'https://matchpro.replit.app',
                               plugins: [
                                 'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                                 'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',

@@ -1204,13 +1204,13 @@ export function registerRoutes(app: Express): Server {
       try {
         const eventData = req.body;
 
-        // Validate required fields
+        // Validate required fields with trimming
         const missingFields = [];
-        if (!eventData.name) missingFields.push('name');
-        if (!eventData.startDate) missingFields.push('startDate');
-        if (!eventData.endDate) missingFields.push('endDate');
-        if (!eventData.timezone) missingFields.push('timezone');
-        if (!eventData.applicationDeadline) missingFields.push('applicationDeadline');
+        if (!eventData.name?.trim()) missingFields.push('name');
+        if (!eventData.startDate?.trim()) missingFields.push('startDate');
+        if (!eventData.endDate?.trim()) missingFields.push('endDate');
+        if (!eventData.timezone?.trim()) missingFields.push('timezone');
+        if (!eventData.applicationDeadline?.trim()) missingFields.push('applicationDeadline');
 
         if (missingFields.length > 0) {
           console.log('Missing fields:', missingFields);
@@ -1219,6 +1219,19 @@ export function registerRoutes(app: Express): Server {
             missingFields 
           });
         }
+
+        // Sanitize the data
+        const sanitizedEventData = {
+          ...eventData,
+          name: eventData.name.trim(),
+          startDate: eventData.startDate.trim(),
+          endDate: eventData.endDate.trim(),
+          timezone: eventData.timezone.trim(),
+          applicationDeadline: eventData.applicationDeadline.trim(),
+          details: eventData.details?.trim() || "",
+          agreement: eventData.agreement?.trim() || "",
+          refundPolicy: eventData.refundPolicy?.trim() || ""
+        };
 
         // Start a transaction to create event and related records
         await db.transaction(async (tx) => {

@@ -65,6 +65,23 @@ export default function EventRegistration() {
     );
   }
 
+  const isDeadlinePassed = new Date(event.applicationDeadline) < new Date();
+  if (isDeadlinePassed) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardContent className="p-6 text-center">
+            <h2 className="text-xl font-semibold text-amber-600">Registration Closed</h2>
+            <p className="mt-2 text-gray-600">
+              The registration deadline for this event ({new Date(event.applicationDeadline).toLocaleDateString()}) has passed. 
+              Registration is no longer available.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen relative">
       <SoccerFieldBackground className="opacity-50" />
