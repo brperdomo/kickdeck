@@ -77,7 +77,9 @@ const AgeGroupDialog = ({
     }
   }, [defaultValues, form]);
 
-  const handleSubmit = (data: AgeGroupValues) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const data = form.getValues();
     onSubmit(data);
     form.reset();
     onClose();
@@ -304,8 +306,19 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
   const handleSubmit = async (data: EventInformationValues) => {
     setIsSaving(true);
     try {
+      if (!data.name || !data.startDate || !data.endDate || !data.timezone || !data.applicationDeadline) {
+        throw new Error('Required fields are missing');
+      }
+      
       const combinedData: EventData = {
-        ...data,
+        name: data.name,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        timezone: data.timezone,
+        applicationDeadline: data.applicationDeadline,
+        details: data.details || "",
+        agreement: data.agreement || "",
+        refundPolicy: data.refundPolicy || "",
         ageGroups,
         scoringRules,
         settings,
@@ -330,9 +343,22 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
       setLocation("/admin");
     } catch (error) {
       console.error('Submit error:', error);
+      let errorMessage = "Failed to save event";
+      if (error instanceof Error) {
+        try {
+          const errorData = JSON.parse(error.message);
+          if (errorData.missingFields) {
+            errorMessage = `Missing fields: ${errorData.missingFields.join(', ')}`;
+          } else {
+            errorMessage = error.message;
+          }
+        } catch {
+          errorMessage = error.message;
+        }
+      }
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save event",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

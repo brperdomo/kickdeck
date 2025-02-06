@@ -1083,9 +1083,9 @@ export default function CreateEvent() {
               </Form>
             </TabsContent>
 
-            <TabsContent value="agegroups">
+            <TabsContent value="age-groups">
               <div className="space-y-6">
-                <div className="flex justifybetween items-center">
+                <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
                     <Button variant="outline" onClick={() => navigateTab('prev')}>
                       <ArrowLeft className="mr-2 h-4 w-4" />
@@ -1096,7 +1096,8 @@ export default function CreateEvent() {
                   <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                       <Button onClick={() => {
-                        setEditingAgeGroup(null);ageGroupForm.reset();
+                        setEditingAgeGroup(null);
+                        ageGroupForm.reset();
                       }}>
                         <Plus className="mr-2 h-4 w-4" />
                         Add New Age Group

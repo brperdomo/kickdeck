@@ -52,6 +52,33 @@ export function registerRoutes(app: Express): Server {
   setupWebSocketServer(httpServer);
 
   try {
+    // Public event endpoint
+    app.get('/api/events/:id', async (req, res) => {
+      try {
+        const eventId = req.params.id;
+        const [event] = await db
+          .select({
+            id: events.id,
+            name: events.name,
+            startDate: events.startDate,
+            endDate: events.endDate,
+            applicationDeadline: events.applicationDeadline,
+            details: events.details,
+          })
+          .from(events)
+          .where(eq(events.id, eventId));
+
+        if (!event) {
+          return res.status(404).send("Event not found");
+        }
+
+        res.json(event);
+      } catch (error) {
+        console.error('Error fetching event:', error);
+        res.status(500).send("Failed to fetch event details");
+      }
+    });
+
     // Set up authentication first
     setupAuth(app);
     log("Authentication routes registered successfully");
@@ -505,7 +532,79 @@ export function registerRoutes(app: Express): Server {
 
         // Mark invitation as accepted
         await db
-          .update(householdInvitations)
+
+    // Seasonal Scope Management Routes
+    app.get('/api/admin/seasonal-scopes', isAdmin, async (req, res) => {
+      try {
+        const scopes = await db
+          .select()
+          .from(seasonalScopes)
+          .orderBy(seasonalScopes.startYear);
+
+        res.json(scopes);
+      } catch (error) {
+        console.error('Error fetching seasonal scopes:', error);
+        res.status(500).send("Failed to fetch seasonal scopes");
+      }
+    });
+
+    app.post('/api/admin/seasonal-scopes', isAdmin, async (req, res) => {
+      try {
+        const { name, startYear, endYear } = req.body;
+
+        const [newScope] = await db
+          .insert(seasonalScopes)
+          .values({
+            name,
+            startYear: parseInt(startYear),
+            endYear: parseInt(endYear),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          })
+          .returning();
+
+        res.json(newScope);
+      } catch (error) {
+        console.error('Error creating seasonal scope:', error);
+        res.status(500).send("Failed to create seasonal scope");
+      }
+    });
+
+    app.put('/api/admin/seasonal-scopes/:id/age-groups', isAdmin, async (req, res) => {
+      try {
+        const scopeId = parseInt(req.params.id);
+        const { ageGroups } = req.body;
+
+        await db.transaction(async (tx) => {
+          // Delete existing age groups for this scope
+          await tx
+            .delete(ageGroupSettings)
+            .where(eq(ageGroupSettings.seasonalScopeId, scopeId));
+
+          // Insert new age groups
+          for (const group of ageGroups) {
+            await tx
+              .insert(ageGroupSettings)
+              .values({
+                seasonalScopeId: scopeId,
+                ageGroup: group.ageGroup,
+                minBirthYear: group.minBirthYear,
+                maxBirthYear: group.maxBirthYear,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              });
+          }
+        });
+
+        res.json({ message: "Age groups updated successfully" });
+      } catch (error) {
+        console.error('Error updating age groups:', error);
+        res.status(500).send("Failed to update age groups");
+      }
+    });
+
+    // Continue with household invitations update
+    await db
           .set({ status: 'accepted' })
           .where(eq(householdInvitations.id, invitation.id));
 
@@ -1103,12 +1202,29 @@ export function registerRoutes(app: Express): Server {
       try {
         const eventData = req.body;
 
+        // Validate required fields
+        const missingFields = [];
+        if (!eventData.name) missingFields.push('name');
+        if (!eventData.startDate) missingFields.push('startDate');
+        if (!eventData.endDate) missingFields.push('endDate');
+        if (!eventData.timezone) missingFields.push('timezone');
+        if (!eventData.applicationDeadline) missingFields.push('applicationDeadline');
+
+        if (missingFields.length > 0) {
+          console.log('Missing fields:', missingFields);
+          return res.status(400).json({ 
+            error: "Missing required fields",
+            missingFields 
+          });
+        }
+
         // Start a transaction to create event and related records
         await db.transaction(async (tx) => {
           // Create the event
           const [event] = await tx
             .insert(events)
             .values({
+              id: String(Math.floor(Math.random() * 1000000) + 1),
               name: eventData.name,
               startDate: eventData.startDate,
               endDate: eventData.endDate,
@@ -1180,7 +1296,7 @@ export function registerRoutes(app: Express): Server {
     // Add this new update endpoint after the existing event creation endpoint
     app.patch('/api/admin/events/:id', isAdmin, async (req, res) => {
       try {
-        const eventId = parseInt(req.params.id);
+        const eventId = req.params.id;
         const eventData = req.body;
 
         // Start a transaction to update event and related records
@@ -1363,7 +1479,7 @@ export function registerRoutes(app: Express): Server {
     // Add this new endpoint to get event details for editing
     app.get('/api/admin/events/:id/edit', isAdmin, async (req, res) => {
       try {
-        const eventId = parseInt(req.params.id);
+        const eventId = req.params.id;
 
         // Get event details
         const [event] = await db
@@ -1481,7 +1597,7 @@ export function registerRoutes(app: Express): Server {
     // Add this new endpoint after the existing event endpoints
     app.get('/api/admin/events/:id', isAdmin, async (req, res) => {
       try {
-        const eventId = parseInt(req.params.id);
+        const eventId = req.params.id;
 
         // Get event details
         const [event] = await db
@@ -1924,7 +2040,7 @@ export function registerRoutes(app: Express): Server {
           .returning();
 
         if (!deletedTeam) {
-          return res.status(404).send("Team not found");
+          return res.status(404).send("Team notfound");
         }
 
         res.json(deletedTeam);
@@ -1968,7 +2084,7 @@ export function registerRoutes(app: Express): Server {
 
     app.delete('/api/admin/events/:id', isAdmin, async (req, res) => {
       try {
-        const eventId = parseInt(req.params.id);
+        const eventId = req.params.id;
 
         // Start a transaction to handle cascade deletion
         await db.transaction(async (tx) => {

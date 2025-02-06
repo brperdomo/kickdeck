@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
-import { useLocation, Link } from "wouter";
+import { useLocation } from "wouter";
+import { Link2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import {
   Collapsible,
   CollapsibleContent,
@@ -13,7 +15,7 @@ import { useUser } from "@/hooks/use-user";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
 import { SelectUser } from "@db/schema";
-import { useToast } from "@/hooks/use-toast";
+import { LogoutOverlay } from "@/components/ui/logout-overlay";
 import {
   Calendar,
   Shield,
@@ -1117,6 +1119,7 @@ function ComplexesView() {
 function EventsView() {
   const [, navigate] = useLocation();
   const { user } = useUser();
+  const { toast } = useToast();
   const eventsQuery = useQuery({
     queryKey: ['/api/admin/events'],
     queryFn: async () => {
@@ -1209,6 +1212,26 @@ function EventsView() {
                           <DropdownMenuItem>
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem 
+                            onClick={() => {
+                              const registrationUrl = `${window.location.origin}/register/event/${event.id}`;
+                              navigator.clipboard.writeText(registrationUrl);
+                              toast({
+                                title: "Registration Link Generated",
+                                description: (
+                                  <div className="mt-2 p-2 bg-muted rounded text-sm font-mono break-all">
+                                    {registrationUrl}
+                                  </div>
+                                ),
+                                duration: 5000,
+                              });
+                            }}
+                            className="text-blue-600 hover:text-blue-700"
+                          >
+                            <Link2 className="mr-2 h-4 w-4" />
+                            Generate Registration Link
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className="text-red-600">
@@ -1333,9 +1356,14 @@ function AdminDashboard() {
     }
   }, [user, setLocation]);
 
+  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
+
   const handleLogout = () => {
-    logout();
-  }
+    setShowLogoutOverlay(true);
+    setTimeout(async () => {
+      await logout();
+    }, 1500);
+  };
 
   const renderView = () => {
     switch (activeView) {
@@ -1352,6 +1380,9 @@ function AdminDashboard() {
       case 'scheduling':
         return <SchedulingView />;
       case 'settings':
+        if (activeSettingsView === 'general') {
+          return <GeneralSettingsView />;
+        }
         return <SettingsView activeSettingsView={activeSettingsView} />;
       case 'reports':
         return <ReportsView />;
@@ -1564,6 +1595,9 @@ function AdminDashboard() {
         open={showUpdatesLog} 
         onOpenChange={setShowUpdatesLog}
       />
+      {showLogoutOverlay && (
+        <LogoutOverlay onFinished={() => setShowLogoutOverlay(false)} />
+      )}
     </div>
   );
 }
@@ -1636,6 +1670,8 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
           <OrganizationSettingsForm />
         </BrandingPreviewProvider>
       );
+    case 'general':
+      return <GeneralSettingsView />;
     default:
       return (
         <div className="space-y-6">
