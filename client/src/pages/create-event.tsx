@@ -864,7 +864,7 @@ export default function CreateEvent() {
         name: formValues.name,
         startDate: formValues.startDate,
         endDate: formValues.endDate,
-        timezone: formValues.timezone,
+        timezone: formValues.timezone || 'America/New_York', // Set default timezone if not selected
         applicationDeadline: formValues.applicationDeadline,
         details: formValues.details || "",
         agreement: formValues.agreement || "",
@@ -928,7 +928,7 @@ export default function CreateEvent() {
           size="icon"
           onClick={() => navigate("/admin")}
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h4 w-4" />
         </Button>
         <h2 className="text-2xl font-bold">Create Event</h2>
       </div>
@@ -995,45 +995,48 @@ export default function CreateEvent() {
                       )}
                     />
                   </div>
-
-                  <FormField
-                    control={form.control}
-                    name="timezone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Time Zone *</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <div className="grid grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="timezone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Time Zone *</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select time zone" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {USA_TIMEZONES.map((tz) => (
+                                <SelectItem key={tz.value} value={tz.value}>
+                                  {tz.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="applicationDeadline"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Registration Deadline *</FormLabel>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select time zone" />
-                            </SelectTrigger>
+                            <Input type="datetime-local" {...field} />
                           </FormControl>
-                          <SelectContent>
-                            {USA_TIMEZONES.map((timezone) => (
-                              <SelectItem key={timezone.value} value={timezone.value}>
-                                {timezone.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="applicationDeadline"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Application Submission Deadline *</FormLabel>
-                        <FormControl>
-                          <Input type="datetime-local" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
