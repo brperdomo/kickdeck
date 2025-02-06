@@ -506,7 +506,6 @@ export default function CreateEvent() {
     }
   };
 
-
   const onComplexSelectionSubmit = (data: ComplexSelectionValues) => {
     const selectedIds = data.selectedComplexIds.map(id => parseInt(id));
     const updatedComplexes = complexesQuery.data?.filter(complex =>
@@ -825,25 +824,36 @@ export default function CreateEvent() {
   const handleCreateEvent = async () => {
     setIsSaving(true);
     try {
-      // Get form values first
       const formValues = form.getValues();
-      
-      // Validate required fields
-      const requiredFields = ['name', 'startDate', 'endDate', 'timezone', 'applicationDeadline'];
-      const missingFields = requiredFields.filter(field => !formValues[field] || formValues[field].toString().trim() === '');
 
-      if (missingFields.length > 0) {
-        // Mark invalid fields
-        missingFields.forEach(field => {
-          form.setError(field as any, {
-            type: 'required',
-            message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`
-          });
-        });
-
+      // Validate form values
+      const formValidation = form.trigger();
+      if (!formValidation) {
         toast({
-          title: "Missing Required Fields",
-          description: `Please fill in: ${missingFields.map(f => f.charAt(0).toUpperCase() + f.slice(1)).join(', ')}`,
+          title: "Validation Error",
+          description: "Please fill in all required fields",
+          variant: "destructive",
+        });
+        setIsSaving(false);
+        return;
+      }
+
+      // Validate age groups
+      if (!ageGroups.length) {
+        toast({
+          title: "Validation Error",
+          description: "Please add at least one age group",
+          variant: "destructive",
+        });
+        setIsSaving(false);
+        return;
+      }
+
+      // Validate complex selection
+      if (!selectedComplexes.length) {
+        toast({
+          title: "Validation Error",
+          description: "Please select at least one complex",
           variant: "destructive",
         });
         setIsSaving(false);
@@ -851,11 +861,11 @@ export default function CreateEvent() {
       }
 
       const eventData = {
-        name: formValues.name?.trim() || '',
-        startDate: formValues.startDate?.trim() || '',
-        endDate: formValues.endDate?.trim() || '',
-        timezone: formValues.timezone?.trim() || '',
-        applicationDeadline: formValues.applicationDeadline?.trim() || '',
+        name: formValues.name,
+        startDate: formValues.startDate,
+        endDate: formValues.endDate,
+        timezone: formValues.timezone,
+        applicationDeadline: formValues.applicationDeadline,
         details: formValues.details || "",
         agreement: formValues.agreement || "",
         refundPolicy: formValues.refundPolicy || "",
@@ -872,81 +882,42 @@ export default function CreateEvent() {
         }
       };
 
-      const validationResult = validateEventData(eventData);
+      // Create FormData instance
+      const formData = new FormData();
+      if (logo) {
+        formData.append('logo', logo);
+      }
+      formData.append('data', JSON.stringify(eventData));
 
-      if (!validationResult.isValid) {
-        toast({
-          title: "Form Validation Error",
-          description: (
-            <div className="space-y-2">
-              <p className="font-medium text-destructive">Please correct the following issues:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                {errors.map((error, index) => (
-                  <li key={index} className="text-sm">{error}</li>
-                ))}
-              </ul>
-            </div>
-          ),
-          variant: "destructive",
-          duration: 5000,
-        });
-        return;
+      const response = await fetch('/api/admin/events', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create event');
       }
 
-      try {
-        const formData = new FormData();
-        formData.append('data', JSON.stringify(eventData));
-        if (logo) {
-          formData.append('logo', logo);
-        }
+      toast({
+        title: "Success",
+        description: "Event created successfully! Redirecting to dashboard...",
+        variant: "default",
+      });
 
-        const response = await fetch('/api/admin/events', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          if (responseData.missingFields) {
-            // Handle specific missing fields error
-            responseData.missingFields.forEach((field: string) => {
-              form.setError(field as any, {
-                type: 'required',
-                message: `${field.charAt(0).toUpperCase() + field.slice(1)} is required`
-              });
-            });
-            throw new Error(`Missing required fields: ${responseData.missingFields.join(', ')}`);
-          }
-          throw new Error(responseData.error || 'Failed to create event');
-        }
-
-        toast({
-          title: "Success",
-          description: "Event created successfully! Redirecting to dashboard...",
-          variant: "default",
-        });
-
-        setTimeout(() => {
-          navigate("/admin");
-        }, 1500);
-      } catch (error) {
-        console.error('Error creating event:', error);
-        toast({
-          title: "Error",
-          description: error instanceof Error ? error.message : "Failed to create event. Please try again.",
-          variant: "destructive",
-        });
-      }
+      setTimeout(() => {
+        navigate("/admin");
+      }, 1500);
     } catch (error) {
       console.error('Error creating event:', error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create event.",
+        description: error instanceof Error ? error.message : "Failed to create event",
         variant: "destructive",
       });
     } finally {
-      setIsSaving(false);    }
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -1000,14 +971,14 @@ export default function CreateEvent() {
                       control={form.control}
                       name="startDate"
                       render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Event Start Date *</FormLabel>
-                        <FormControl>
-                          <Input type="datetime-local" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                        <FormItem>
+                          <FormLabel>Event Start Date *</FormLabel>
+                          <FormControl>
+                            <Input type="datetime-local" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
 
                     <FormField
