@@ -7,7 +7,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import { type Server } from "http";
 import viteConfig from "../vite.config";
-import cors from 'cors';
 
 const viteLogger = createLogger();
 
@@ -23,7 +22,6 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
-  process.env.VITE_PROXY_PORT = '5000';
   const vite = await createViteServer({
     ...viteConfig,
     configFile: false,
@@ -41,7 +39,6 @@ export async function setupVite(app: Express, server: Server) {
     appType: "custom",
   });
 
-  app.use(cors()); // Add CORS middleware
   app.use(vite.middlewares);
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
