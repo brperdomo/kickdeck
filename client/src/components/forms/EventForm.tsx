@@ -237,6 +237,7 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<EventTab>("information");
   const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
 
   // Initialize all state variables
   const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(initialData?.ageGroups || []);
@@ -252,7 +253,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
   const [editingSetting, setEditingSetting] = useState<EventSetting | null>(null);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState<AdminModalProps['adminToEdit'] | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
   const [logo, setLogo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.branding?.logoUrl || null);
   const [primaryColor, setPrimaryColor] = useState(initialData?.branding?.primaryColor || '#007AFF');
@@ -309,7 +309,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     }
   }, [editingScoringRule, scoringForm]);
 
-  // Event handlers
   const handleSubmit = async (data: EventInformationValues) => {
     setIsSaving(true);
     try {
@@ -321,6 +320,13 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
       if (selectedComplexIds.length === 0) {
         throw new Error('Please select at least one complex');
       }
+
+      // Log the data being sent for debugging
+      console.log('Submitting event data:', {
+        ...data,
+        selectedComplexIds,
+        complexFieldSizes
+      });
 
       const combinedData: EventData = {
         name: data.name,
@@ -335,24 +341,30 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
         scoringRules,
         settings,
         complexFieldSizes,
-        selectedComplexIds: selectedComplexIds,
+        selectedComplexIds,
         administrators: initialData?.administrators || [],
         branding: {
           primaryColor,
           secondaryColor,
-          logo,
           logoUrl: previewUrl || undefined,
+          logo: logo || undefined,
         },
       };
 
-      await onSubmit(combinedData);
+      // Add error handling for the API call
+      try {
+        await onSubmit(combinedData);
 
-      toast({
-        title: "Success",
-        description: isEdit ? "Event updated successfully" : "Event created successfully",
-      });
+        toast({
+          title: "Success",
+          description: isEdit ? "Event updated successfully" : "Event created successfully",
+        });
 
-      setLocation("/admin");
+        setLocation("/admin");
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
     } catch (error) {
       console.error('Submit error:', error);
       let errorMessage = "Failed to save event";
@@ -523,7 +535,7 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     } finally {
       setIsExtracting(false);
     }
-  }, [toast, validateFile]);
+  }, [toast]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -536,10 +548,24 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     multiple: false,
   });
 
+  const getTabValidationState = () => {
+    const errors: Record<EventTab, boolean> = {
+      'information': !form.formState.isValid,
+      'age-groups': ageGroups.length === 0,
+      'scoring': scoringRules.length === 0,
+      'complexes': selectedComplexIds.length === 0,
+      'settings': false, // Settings are optional
+      'administrators': false, // Administrators are managed separately
+    };
+    return errors;
+  };
+
   const SaveButton = () => (
     <Button
+      type="button"
       onClick={form.handleSubmit(handleSubmit)}
       disabled={isSaving}
+      className="w-full"
     >
       {isSaving ? (
         <>
@@ -552,7 +578,7 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     </Button>
   );
 
-
+  // Render functions...
   const renderInformationContent = () => (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
@@ -740,429 +766,504 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
       </form>
     </Form>
   );
+};
 
-  const renderAgeGroupsContent = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Age Groups</h3>
-        <Button onClick={() => {
-          setEditingAgeGroup(null);
-          setIsAgeGroupDialogOpen(true);
-        }}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Age Group
-        </Button>
-      </div>
-
-      <div className="grid gap-4">
-        {ageGroups.map((group) => (
-          <Card key={group.id}>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start">
-                <div className="space-y-1">
-                  <h4 className="font-semibold">{group.ageGroup} ({group.gender})</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Birth Date Range: {new Date(group.birthDateStart).toLocaleDateString()} to {new Date(group.birthDateEnd).toLocaleDateString()}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Field Size: {group.fieldSize} | Projected Teams: {group.projectedTeams}
-                  </p>
-                  {group.amountDue && (
-                    <p className="text-sm text-muted-foreground">
-                      Amount Due: ${group.amountDue}
-                    </p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleEditAgeGroup(group)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDeleteAgeGroup(group.id)}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <AgeGroupDialog
-        open={isAgeGroupDialogOpen}
-        onClose={() => {
-          setIsAgeGroupDialogOpen(false);
-          setEditingAgeGroup(null);
-        }}
-        onSubmit={handleAddAgeGroup}
-        defaultValues={editingAgeGroup || undefined}
-        isEdit={!!editingAgeGroup}
-      />
-      {isEdit && (
-        <div className="flex justify-end mt-6">
-          <SaveButton />
-        </div>
-      )}
+const renderAgeGroupsContent = () => (
+  <div className="space-y-6">
+    <div className="flex justify-between items-center">
+      <h3 className="text-lg font-semibold">Age Groups</h3>
+      <Button onClick={() => {
+        setEditingAgeGroup(null);
+        setIsAgeGroupDialogOpen(true);
+      }}>
+        <Plus className="h-4 w-4 mr-2" />
+        Add Age Group
+      </Button>
     </div>
-  );
 
-  const renderScoringContent = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Scoring Rules</h3>
-        <Button onClick={() => {
-          setEditingScoringRule(null);
-          setIsScoringDialogOpen(true);
-        }}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Scoring Rule
-        </Button>
-      </div>
-
-      <div className="grid gap-4">
-        {scoringRules.map((rule) => (
-          <Card key={rule.id}>
-            <CardContent className="p-4 flex justify-between itemscenter">
-              <div>
-                <h4 className="font-semibold">{rule.title}</h4>
+    <div className="grid gap-4">
+      {ageGroups.map((group) => (
+        <Card key={group.id}>
+          <CardContent className="p-4">
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <h4 className="font-semibold">{group.ageGroup} ({group.gender})</h4>
                 <p className="text-sm text-muted-foreground">
-                  Win: {rule.win} | Tie: {rule.tie} | Loss: {rule.loss}
+                  Birth Date Range: {new Date(group.birthDateStart).toLocaleDateString()} to {new Date(group.birthDateEnd).toLocaleDateString()}
                 </p>
+                <p className="text-sm text-muted-foreground">
+                  Field Size: {group.fieldSize} | Projected Teams: {group.projectedTeams}
+                </p>
+                {group.amountDue && (
+                  <p className="text-sm text-muted-foreground">
+                    Amount Due: ${group.amountDue}
+                  </p>
+                )}
               </div>
               <div className="flex gap-2">
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleEditScoringRule(rule)}
+                  onClick={() => handleEditAgeGroup(group)}
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-destructive"
-                  onClick={() => handleDeleteScoringRule(rule.id)}
+                  onClick={() => handleDeleteAgeGroup(group.id)}
                 >
                   <Trash className="h-4 w-4" />
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <Dialog open={isScoringDialogOpen} onOpenChange={setIsScoringDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editingScoringRule ? 'Edit Scoring Rule' : 'Add Scoring Rule'}
-            </DialogTitle>
-          </DialogHeader>
-          <Form {...scoringForm}>
-            <form onSubmit={scoringForm.handleSubmit(handleAddScoringRule)} className="space-y-4">
-              <FormField
-                control={scoringForm.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="win"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Win Points</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="loss"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Loss Points</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="tie"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tie Points</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="goalCapped"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Goal Cap</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="shutout"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Shutout Points</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="redCard"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Red Card Points</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="tieBreaker"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tie Breaker</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">
-                {editingScoringRule ? 'Update Scoring Rule' : 'Add Scoring Rule'}
-              </Button>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-
-      {isEdit && (
-        <div className="flex justify-end mt-6">
-          <SaveButton />
-        </div>
-      )}
-    </div>
-  );
-
-  const renderSettingsContent = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardContent className="pt-6 space-y-6">
-          <div>
-            <h4 className="text-sm font-medium mb-4">Event Branding</h4>
-            <div className="mb-2 text-sm text-muted-foreground">
-              <p>Requirements:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>File types: PNG, JPEG, or SVG</li>
-                <li>Maximum size: 5MB</li>
-                <li>Recommended: Images with distinct colors for better color extraction</li>
-              </ul>
             </div>
-            <div
-              {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${
-                isDragActive ? 'border-primary bg-primary/5' : 'border-border'
-              }`}
-            >
-              <input {...getInputProps()} />
-              <div className="flex flex-col items-center justify-center gap-2">
-                {isExtracting ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <p className="text-sm text-muted-foreground">Extracting colors...</p>
-                  </div>
-                ) : previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt="Event logo"
-                    className="h-20 w-20 object-contain"
-                  />
-                ) : (
-                  <ImageIcon className="h-10 w-10 text-muted-foreground" />
-                )}
-                <p className="text-sm text-muted-foreground text-center">
-                  {isDragActive
-                    ? "Drop the event logo here"
-                    : "Drag & drop your event logo here, or click to select"}
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+
+    <AgeGroupDialog
+      open={isAgeGroupDialogOpen}
+      onClose={() => {
+        setIsAgeGroupDialogOpen(false);
+        setEditingAgeGroup(null);
+      }}
+      onSubmit={handleAddAgeGroup}
+      defaultValues={editingAgeGroup || undefined}
+      isEdit={!!editingAgeGroup}
+    />
+    {isEdit && (
+      <div className="flex justify-end mt-6">
+        <SaveButton />
+      </div>
+    )}
+  </div>
+);
+
+const renderScoringContent = () => (
+  <div className="space-y-6">
+    <div className="flex justify-between items-center">
+      <h3 className="text-lg font-semibold">Scoring Rules</h3>
+      <Button onClick={() => {
+        setEditingScoringRule(null);
+        setIsScoringDialogOpen(true);
+      }}>
+        <Plus className="h-4 w-4 mr-2" />
+        Add Scoring Rule
+      </Button>
+    </div>
+
+    <div className="grid gap-4">
+      {scoringRules.map((rule) => (
+        <Card key={rule.id}>
+          <CardContent className="p-4 flex justify-between itemscenter">
+            <div>
+              <h4 className="font-semibold">{rule.title}</h4>
+              <p className="text-sm text-muted-foreground">
+                Win: {rule.win} | Tie: {rule.tie} | Loss: {rule.loss}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleEditScoringRule(rule)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-destructive"
+                onClick={() => handleDeleteScoringRule(rule.id)}
+              >
+                <Trash className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+
+    <Dialog open={isScoringDialogOpen} onOpenChange={setIsScoringDialogOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {editingScoringRule ? 'Edit Scoring Rule' : 'Add Scoring Rule'}
+          </DialogTitle>
+        </DialogHeader>
+        <Form {...scoringForm}>
+          <form onSubmit={scoringForm.handleSubmit(handleAddScoringRule)} className="space-y-4">
+            <FormField
+              control={scoringForm.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={scoringForm.control}
+              name="win"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Win Points</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={scoringForm.control}
+              name="loss"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Loss Points</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={scoringForm.control}
+              name="tie"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tie Points</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={scoringForm.control}
+              name="goalCapped"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Goal Cap</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={scoringForm.control}
+              name="shutout"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Shutout Points</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={scoringForm.control}
+              name="redCard"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Red Card Points</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={scoringForm.control}
+              name="tieBreaker"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tie Breaker</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">
+              {editingScoringRule ? 'Update Scoring Rule' : 'Add Scoring Rule'}
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+
+    {isEdit && (
+      <div className="flex justify-end mt-6">
+        <SaveButton />
+      </div>
+    )}
+  </div>
+);
+
+const renderSettingsContent = () => (
+  <div className="space-y-6">
+    <Card>
+      <CardContent className="pt-6 space-y-6">
+        <div>
+          <h4 className="text-sm font-medium mb-4">Event Branding</h4>
+          <div className="mb-2 text-sm text-muted-foreground">
+            <p>Requirements:</p>
+            <ul className="list-disc pl-4 space-y-1">
+              <li>File types: PNG, JPEG, or SVG</li>
+              <li>Maximum size: 5MB</li>
+              <li>Recommended: Images with distinct colors for better color extraction</li>
+            </ul>
+          </div>
+          <div
+            {...getRootProps()}
+            className={`border-2 borderdashed rounded-lg p-6 cursor-pointer transition-colors ${
+              isDragActive ? 'border-primary bg-primary/5' : 'border-border'
+            }`}
+          >
+            <input {...getInputProps()} />
+            <div className="flex flex-col items-center justify-center gap-2">
+              {isExtracting ? (
+                <div className="flex flex-col items-center gap-2">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <p className="text-sm text-muted-foreground">Extracting colors...</p>
+                </div>
+              ) : previewUrl ? (
+                <img
+                  src={previewUrl}
+                  alt="Event logo"
+                  className="h-20 w-20 object-contain"
+                />
+              ) : (
+                <ImageIcon className="h-10 w-10 text-muted-foreground" />
+              )}
+              <p className="text-sm text-muted-foreground text-center">
+                {isDragActive
+                  ? "Drop the event logo here"
+                  : "Drag & drop your event logo here, or click to select"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="primaryColor">Primary Color</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="primaryColor"
+                type="color"
+                value={primaryColor}
+                onChange={(e) => setPrimaryColor(e.target.value)}
+                className="w-12 h-12 p-1"
+              />
+              <Input
+                value={primaryColor}
+                onChange={(e) => setPrimaryColor(e.target.value)}
+                className="font-mono"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="secondaryColor">Secondary Color</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="secondaryColor"
+                type="color"
+                value={secondaryColor}
+                onChange={(e) => setSecondaryColor(e.target.value)}
+                className="w-12 h-12 p-1"
+              />
+              <Input
+                value={secondaryColor}
+                onChange={(e) => setSecondaryColor(e.target.value)}
+                className="font-mono"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="border rounded-lg p-4">
+          <h4 className="text-sm font-medium mb-4">Brand Preview</h4>
+          <div className="space-y-4">
+            {previewUrl && (
+              <div className="flex justify-center p-4 bg-background rounded-lg">
+                <img
+                  src={previewUrl}
+                  alt="Event logo preview"
+                  className="h-20 w-20 object-contain"
+                />
+              </div>
+            )}
+            <div className="flex items-center gap-4">
+              <div>
+                <div
+                  className="w-8 h-8 rounded"
+                  style={{ backgroundColor: primaryColor }}
+                />
+                <span className="text-sm">Primary</span>
+              </div>
+              <div>
+                <div
+                  className="w-8 h-8 rounded"
+                  style={{ backgroundColor: secondaryColor }}
+                />
+                <span className="text-sm">Secondary</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+    {isEdit && (
+      <div className="flex justify-end mt-6">
+        <SaveButton />
+      </div>
+    )}
+  </div>
+);
+
+const renderAdministratorsContent = () => (
+  <div className="space-y-6">
+    <div className="flex justify-between items-center">
+      <h3 className="text-lg font-semibold">Event Administrators</h3>
+      <Button onClick={() => {
+        setEditingAdmin(null);
+        setIsAdminModalOpen(true);
+      }}>
+        <Plus className="h-4 w-4 mr-2" />
+        Add Administrator
+      </Button>
+    </div>
+
+    <div className="grid gap-4">
+      {initialData?.administrators.map((admin) => (
+        <Card key={admin.id}>
+          <CardContent className="p-4">
+            <div className="flex justify-between items-center">
+              <div className="space-y-1">
+                <h4 className="font-semibold">
+                  {admin.user.firstName} {admin.user.lastName}
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  {admin.user.email}
+                </p>
+                <p className="text-sm text-muted-foreground capitalize">
+                  Role: {admin.role}
                 </p>
               </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="primaryColor">Primary Color</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="primaryColor"
-                  type="color"
-                  value={primaryColor}
-                  onChange={(e) => setPrimaryColor(e.target.value)}
-                  className="w-12 h-12 p-1"
-                />
-                <Input
-                  value={primaryColor}
-                  onChange={(e) => setPrimaryColor(e.target.value)}
-                  className="font-mono"
-                />
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setEditingAdmin({
+                      id: admin.id,
+                      email: admin.user.email,
+                      firstName: admin.user.firstName,
+                      lastName: admin.user.lastName,
+                      roles: [admin.role],
+                    });
+                    setIsAdminModalOpen(true);
+                  }}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
               </div>
             </div>
-
-            <div>
-              <Label htmlFor="secondaryColor">Secondary Color</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="secondaryColor"
-                  type="color"
-                  value={secondaryColor}
-                  onChange={(e) => setSecondaryColor(e.target.value)}
-                  className="w-12 h-12 p-1"
-                />
-                <Input
-                  value={secondaryColor}
-                  onChange={(e) => setSecondaryColor(e.target.value)}
-                  className="font-mono"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="border rounded-lg p-4">
-            <h4 className="text-sm font-medium mb-4">Brand Preview</h4>
-            <div className="space-y-4">
-              {previewUrl && (
-                <div className="flex justify-center p-4 bg-background rounded-lg">
-                  <img
-                    src={previewUrl}
-                    alt="Event logo preview"
-                    className="h-20 w-20 object-contain"
-                  />
-                </div>
-              )}
-              <div className="flex items-center gap-4">
-                <div>
-                  <div
-                    className="w-8 h-8 rounded"
-                    style={{ backgroundColor: primaryColor }}
-                  />
-                  <span className="text-sm">Primary</span>
-                </div>
-                <div>
-                  <div
-                    className="w-8 h-8 rounded"
-                    style={{ backgroundColor: secondaryColor }}
-                  />
-                  <span className="text-sm">Secondary</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      {isEdit && (
-        <div className="flex justify-end mt-6">
-          <SaveButton />
-        </div>
-      )}
+          </CardContent>
+        </Card>
+      ))}
     </div>
-  );
 
-  const renderAdministratorsContent = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Event Administrators</h3>
-        <Button onClick={() => {
-          setEditingAdmin(null);
-          setIsAdminModalOpen(true);
-        }}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Administrator
-        </Button>
+    {isEdit && (
+      <div className="flex justify-end mt-6">
+        <SaveButton />
       </div>
+    )}
+  </div>
+);
 
+const renderComplexesContent = () => {
+  if (complexesQuery.isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (complexesQuery.isError) {
+    return (
+      <div className="text-center text-destructive">
+        Failed to load complexes. Please try again.
+      </div>
+    );
+  }
+
+  if (!complexesQuery.data?.length) {
+    return (
+      <div className="text-center text-muted-foreground">
+        No complexes found.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
       <div className="grid gap-4">
-        {initialData?.administrators.map((admin) => (
-          <Card key={admin.id}>
+        {complexesQuery.data.map((complex) => (
+          <Card key={complex.id}>
             <CardContent className="p-4">
-              <div className="flex justify-between items-center">
-                <div className="space-y-1">
-                  <h4 className="font-semibold">
-                    {admin.user.firstName} {admin.user.lastName}
-                  </h4>
+              <div className="flex items-center gap-4">
+                <Checkbox
+                  checked={selectedComplexIds.includes(complex.id)}
+                  onCheckedChange={() => handleComplexSelection(complex.id)}
+                />
+                <div className="flex-1">
+                  <h4 className="font-semibold">{complex.name}</h4>
                   <p className="text-sm text-muted-foreground">
-                    {admin.user.email}
-                  </p>
-                  <p className="text-sm text-muted-foreground capitalize">
-                    Role: {admin.role}
+                    {complex.fields?.length || 0} fields available
                   </p>
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setEditingAdmin({
-                        id: admin.id,
-                        email: admin.user.email,
-                        firstName: admin.user.firstName,
-                        lastName: admin.user.lastName,
-                        roles: [admin.role],
-                      });
-                      setIsAdminModalOpen(true);
-                    }}
+                {selectedComplexIds.includes(complex.id) && (
+                  <Select
+                    value={complexFieldSizes[complex.id] || '11v11'}
+                    onValueChange={(size) =>
+                      handleFieldSizeChange(complex.id, size as FieldSize)
+                    }
                   >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
+                    <SelectTrigger className="w-[120px]">
+                      <SelectValue placeholder="Select size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
+                        <SelectItem key={size} value={size}>
+                          {size}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
-
       {isEdit && (
         <div className="flex justify-end mt-6">
           <SaveButton />
@@ -1170,165 +1271,77 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
       )}
     </div>
   );
+};
 
-  const renderComplexesContent = () => {
-    if (complexesQuery.isLoading) {
-      return (
-        <div className="flex justify-center items-center h-[200px]">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      );
-    }
+const tabErrors = getTabValidationState();
 
-    if (complexesQuery.isError) {
-      return (
-        <div className="text-center text-destructive">
-          Failed to load complexes. Please try again.
-        </div>
-      );
-    }
+return (
+  <div className="w-full max-w-7xl mx-auto px-4 py-6">
+    <Card className="bg-white shadow-sm border border-gray-200">
+      <CardContent className="p-6">
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as EventTab)}>
+          <TabsList className="w-full grid grid-cols-6 gap-4 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
+            {TAB_ORDER.map((tab) => (
+              <TabsTrigger
+                key={tab}
+                value={tab}
+                className="w-full px-4 py-2 rounded-md text-sm font-medium transition-colors
+                  data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm
+                  text-[#1C1C1E] hover:text-[#007AFF]"
+              >
+                {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-    if (!complexesQuery.data?.length) {
-      return (
-        <div className="text-center text-muted-foreground">
-          No complexes found.
-        </div>
-      );
-    }
+          <div className="mt-6">
+            <TabsContent value="information" className="space-y-6">
+              {renderInformationContent()}
+            </TabsContent>
 
-    return (
-      <div className="space-y-6">
-        <div className="grid gap-4">
-          {complexesQuery.data.map((complex) => (
-            <Card key={complex.id}>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  <Checkbox
-                    checked={selectedComplexIds.includes(complex.id)}
-                    onCheckedChange={() => handleComplexSelection(complex.id)}
-                  />
-                  <div className="flex-1">
-                    <h4 className="font-semibold">{complex.name}</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {complex.fields.length} fields available
-                    </p>
-                  </div>
-                  {selectedComplexIds.includes(complex.id) && (
-                    <Select
-                      value={complexFieldSizes[complex.id] || '11v11'}
-                      onValueChange={(size) =>
-                        handleFieldSizeChange(complex.id, size as FieldSize)
-                      }
-                    >
-                      <SelectTrigger className="w-[120px]">
-                        <SelectValue placeholder="Select size" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
-                          <SelectItem key={size} value={size}>
-                            {size}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        {isEdit && (
-          <div className="flex justify-end mt-6">
-            <SaveButton />
+            <TabsContent value="age-groups" className="space-y-6">
+              {renderAgeGroupsContent()}
+            </TabsContent>
+
+            <TabsContent value="scoring" className="space-y-6">
+              {renderScoringContent()}
+            </TabsContent>
+
+            <TabsContent value="complexes" className="space-y-6">
+              {renderComplexesContent()}
+            </TabsContent>
+
+            <TabsContent value="settings" className="space-y-6">
+              {renderSettingsContent()}
+            </TabsContent>
+
+            <TabsContent value="administrators" className="space-y-6">
+              {renderAdministratorsContent()}
+            </TabsContent>
           </div>
-        )}
-      </div>
-    );
-  };
+        </Tabs>
 
-  // State declarations using existing component context
+        {/* Additional UI components */}
+        <AgeGroupDialog
+          open={isAgeGroupDialogOpen}
+          onClose={() => {
+            setIsAgeGroupDialogOpen(false);
+            setEditingAgeGroup(null);
+          }}
+          onSubmit={handleAddAgeGroup}
+          defaultValues={editingAgeGroup || undefined}
+          isEdit={!!editingAgeGroup}
+        />
 
-  const getTabValidationState = () => {
-    const errors: Record<EventTab, boolean> = {
-      'information': !form.formState.isValid,
-      'age-groups': ageGroups.length === 0,
-      'scoring': scoringRules.length === 0,
-      'complexes': selectedComplexIds.length === 0,
-      'settings': false, // Settings are optional
-      'administrators': false, // Administrators are managed separately
-    };
-    return errors;
-  };
-
-  const tabErrors = getTabValidationState();
-
-  return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-6">
-      <Card className="bg-white shadow-sm border border-gray-200">
-        <CardContent className="p-6">
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as EventTab)}>
-            <TabsList className="w-full grid grid-cols-6 gap-4 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
-              {TAB_ORDER.map((tab) => (
-                <TabsTrigger
-                  key={tab}
-                  value={tab}
-                  className="w-full px-4 py-2 rounded-md text-sm font-medium transition-colors
-                    data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm
-                    text-[#1C1C1E] hover:text-[#007AFF]"
-                >
-                  {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            <div className="mt-6">
-              <TabsContent value="information" className="space-y-6">
-                {renderInformationContent()}
-              </TabsContent>
-
-              <TabsContent value="age-groups" className="space-y-6">
-                {renderAgeGroupsContent()}
-              </TabsContent>
-
-              <TabsContent value="scoring" className="space-y-6">
-                {renderScoringContent()}
-              </TabsContent>
-
-              <TabsContent value="complexes" className="space-y-6">
-                {renderComplexesContent()}
-              </TabsContent>
-
-              <TabsContent value="settings" className="space-y-6">
-                {renderSettingsContent()}
-              </TabsContent>
-
-              <TabsContent value="administrators" className="space-y-6">
-                {renderAdministratorsContent()}
-              </TabsContent>
-            </div>
-          </Tabs>
-
-          {/* Dialogs and Modals */}
-          <AgeGroupDialog
-            open={isAgeGroupDialogOpen}
-            onClose={() => {
-              setIsAgeGroupDialogOpen(false);
-              setEditingAgeGroup(null);
-            }}
-            onSubmit={handleAddAgeGroup}
-            defaultValues={editingAgeGroup || undefined}
-            isEdit={!!editingAgeGroup}
-          />
-
-          <AdminModal
-            open={isAdminModalOpen}
-            onOpenChange={setIsAdminModalOpen}
-            adminToEdit={editingAdmin}
-          />
-        </CardContent>
-      </Card>
-    </div>
-  );
+        <AdminModal
+          open={isAdminModalOpen}
+          onOpenChange={setIsAdminModalOpen}
+          adminToEdit={editingAdmin}
+        />
+      </CardContent>
+    </Card>
+  </div>
+);
 };
 
 export default EventForm;
