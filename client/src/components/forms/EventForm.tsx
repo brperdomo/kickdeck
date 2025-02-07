@@ -77,9 +77,7 @@ const AgeGroupDialog = ({
     }
   }, [defaultValues, form]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const data = form.getValues();
+  const handleSubmit = (data: AgeGroupValues) => {
     onSubmit(data);
     form.reset();
     onClose();
@@ -209,6 +207,7 @@ const AgeGroupDialog = ({
                     <Input
                       type="number"
                       {...field}
+                      value={field.value ?? ''}
                       onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                     />
                   </FormControl>
@@ -225,6 +224,14 @@ const AgeGroupDialog = ({
     </Dialog>
   );
 };
+
+interface EventAdministrator {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  roles: string[];
+}
 
 export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) => {
   const [, setLocation] = useLocation();
@@ -309,7 +316,7 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
       if (!data.name || !data.startDate || !data.endDate || !data.timezone || !data.applicationDeadline) {
         throw new Error('Required fields are missing');
       }
-      
+
       const combinedData: EventData = {
         name: data.name,
         startDate: data.startDate,

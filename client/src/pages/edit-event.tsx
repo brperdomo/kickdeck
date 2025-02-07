@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
 import { EventForm } from "@/components/forms/EventForm";
@@ -115,7 +114,9 @@ export default function EditEvent() {
           ) : eventQuery.data ? (
             <EventForm
               initialData={eventQuery.data}
-              onSubmit={updateEventMutation.mutate}
+              onSubmit={async (data) => {
+                await updateEventMutation.mutateAsync(data);
+              }}
               isEdit={true}
             />
           ) : null}
