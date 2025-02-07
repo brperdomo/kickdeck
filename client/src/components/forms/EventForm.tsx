@@ -233,7 +233,7 @@ interface EventAdministrator {
   roles: string[];
 }
 
-export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) => {
+// Component implementation continues...
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<EventTab>("information");
   const { toast } = useToast();
@@ -766,7 +766,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
       </form>
     </Form>
   );
-};
 
 const renderAgeGroupsContent = () => (
   <div className="space-y-6">
@@ -1023,118 +1022,118 @@ const renderSettingsContent = () => (
           <div className="mb-2 text-sm text-muted-foreground">
             <p>Requirements:</p>
             <ul className="list-disc pl-4 space-y-1">
-              <li>File types: PNG, JPEG, or SVG</li>
+              <li>File types: PNG, JPEG,or SVG</li>
               <li>Maximum size: 5MB</li>
               <li>Recommended: Images with distinct colors for better color extraction</li>
             </ul>
-          </div>
-          <div
-            {...getRootProps()}
-            className={`border-2 borderdashed rounded-lg p-6 cursor-pointer transition-colors ${
-              isDragActive ? 'border-primary bg-primary/5' : 'border-border'
-            }`}
-          >
-            <input {...getInputProps()} />
-            <div className="flex flex-col items-center justify-center gap-2">
-              {isExtracting ? (
-                <div className="flex flex-col items-center gap-2">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <p className="text-sm text-muted-foreground">Extracting colors...</p>
-                </div>
-              ) : previewUrl ? (
-                <img
-                  src={previewUrl}
-                  alt="Event logo"
-                  className="h-20 w-20 object-contain"
-                />
-              ) : (
-                <ImageIcon className="h-10 w-10 text-muted-foreground" />
-              )}
-              <p className="text-sm text-muted-foreground text-center">
-                {isDragActive
-                  ? "Drop the event logo here"
-                  : "Drag & drop your event logo here, or click to select"}
-              </p>
-            </div>
-          </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="primaryColor">Primary Color</Label>
-            <div className="flex items-center gap-2">
-              <Input
-                id="primaryColor"
-                type="color"
-                value={primaryColor}
-                onChange={(e) => setPrimaryColor(e.target.value)}
-                className="w-12 h-12 p-1"
-              />
-              <Input
-                value={primaryColor}
-                onChange={(e) => setPrimaryColor(e.target.value)}
-                className="font-mono"
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label htmlFor="secondaryColor">Secondary Color</Label>
-            <div className="flex items-center gap-2">
-              <Input
-                id="secondaryColor"
-                type="color"
-                value={secondaryColor}
-                onChange={(e) => setSecondaryColor(e.target.value)}
-                className="w-12 h-12 p-1"
-              />
-              <Input
-                value={secondaryColor}
-                onChange={(e) => setSecondaryColor(e.target.value)}
-                className="font-mono"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="border rounded-lg p-4">
-          <h4 className="text-sm font-medium mb-4">Brand Preview</h4>
-          <div className="space-y-4">
-            {previewUrl && (
-              <div className="flex justify-center p-4 bg-background rounded-lg">
-                <img
-                  src={previewUrl}
-                  alt="Event logo preview"
-                  className="h-20 w-20 object-contain"
-                />
+        <div
+          {...getRootProps()}
+          className={`border-2 borderdashed rounded-lg p-6 cursor-pointer transition-colors ${
+            isDragActive ? 'border-primary bg-primary/5' : 'border-border'
+          }`}
+        >
+          <input {...getInputProps()} />
+          <div className="flex flex-col items-center justify-center gap-2">
+            {isExtracting ? (
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">Extracting colors...</p>
               </div>
+            ) : previewUrl ? (
+              <img
+                src={previewUrl}
+                alt="Event logo"
+                className="h-20 w-20 object-contain"
+              />
+            ) : (
+              <ImageIcon className="h-10 w-10 text-muted-foreground" />
             )}
-            <div className="flex items-center gap-4">
-              <div>
-                <div
-                  className="w-8 h-8 rounded"
-                  style={{ backgroundColor: primaryColor }}
-                />
-                <span className="text-sm">Primary</span>
-              </div>
-              <div>
-                <div
-                  className="w-8 h-8 rounded"
-                  style={{ backgroundColor: secondaryColor }}
-                />
-                <span className="text-sm">Secondary</span>
-              </div>
+            <p className="text-sm text-muted-foreground text-center">
+              {isDragActive
+                ? "Drop the event logo here"
+                : "Drag & drop your event logo here, or click to select"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="primaryColor">Primary Color</Label>
+          <div className="flex items-center gap-2">
+            <Input
+              id="primaryColor"
+              type="color"
+              value={primaryColor}
+              onChange={(e) => setPrimaryColor(e.target.value)}
+              className="w-12 h-12 p-1"
+            />
+            <Input
+              value={primaryColor}
+              onChange={(e) => setPrimaryColor(e.target.value)}
+              className="font-mono"
+            />
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="secondaryColor">Secondary Color</Label>
+          <div className="flex items-center gap-2">
+            <Input
+              id="secondaryColor"
+              type="color"
+              value={secondaryColor}
+              onChange={(e) => setSecondaryColor(e.target.value)}
+              className="w-12 h-12 p-1"
+            />
+            <Input
+              value={secondaryColor}
+              onChange={(e) => setSecondaryColor(e.target.value)}
+              className="font-mono"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="border rounded-lg p-4">
+        <h4 className="text-sm font-medium mb-4">Brand Preview</h4>
+        <div className="space-y-4">
+          {previewUrl && (
+            <div className="flex justify-center p-4 bg-background rounded-lg">
+              <img
+                src={previewUrl}
+                alt="Event logo preview"
+                className="h-20 w-20 object-contain"
+              />
+            </div>
+          )}
+          <div className="flex items-center gap-4">
+            <div>
+              <div
+                className="w-8 h-8 rounded"
+                style={{ backgroundColor: primaryColor }}
+              />
+              <span className="text-sm">Primary</span>
+            </div>
+            <div>
+              <div
+                className="w-8 h-8 rounded"
+                style={{ backgroundColor: secondaryColor }}
+              />
+              <span className="text-sm">Secondary</span>
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
-    {isEdit && (
-      <div className="flex justify-end mt-6">
-        <SaveButton />
       </div>
-    )}
-  </div>
+    </CardContent>
+  </Card>
+  {isEdit && (
+    <div className="flex justify-end mt-6">
+      <SaveButton />
+    </div>
+  )}
+</div>
 );
 
 const renderAdministratorsContent = () => (
@@ -1273,13 +1272,14 @@ const renderComplexesContent = () => {
   );
 };
 
-const tabErrors = getTabValidationState();
-
-return (
-  <div className="w-full max-w-7xl mx-auto px-4 py-6">
-    <Card className="bg-white shadow-sm border border-gray-200">
-      <CardContent className="p-6">
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as EventTab)}>
+const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) => {
+  const tabErrors = getTabValidationState();
+  
+  return (
+    <div className="w-full max-w-7xl mx-auto px-4 py-6">
+      <Card className="bg-white shadow-sm border border-gray-200">
+        <CardContent className="p-6">
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as EventTab)}>
           <TabsList className="w-full grid grid-cols-6 gap-4 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
             {TAB_ORDER.map((tab) => (
               <TabsTrigger
@@ -1321,27 +1321,26 @@ return (
           </div>
         </Tabs>
 
-        {/* Additional UI components */}
-        <AgeGroupDialog
-          open={isAgeGroupDialogOpen}
-          onClose={() => {
-            setIsAgeGroupDialogOpen(false);
-            setEditingAgeGroup(null);
-          }}
-          onSubmit={handleAddAgeGroup}
-          defaultValues={editingAgeGroup || undefined}
-          isEdit={!!editingAgeGroup}
-        />
+          <AgeGroupDialog
+            open={isAgeGroupDialogOpen}
+            onClose={() => {
+              setIsAgeGroupDialogOpen(false);
+              setEditingAgeGroup(null);
+            }}
+            onSubmit={handleAddAgeGroup}
+            defaultValues={editingAgeGroup || undefined}
+            isEdit={!!editingAgeGroup}
+          />
 
-        <AdminModal
-          open={isAdminModalOpen}
-          onOpenChange={setIsAdminModalOpen}
-          adminToEdit={editingAdmin}
-        />
-      </CardContent>
-    </Card>
-  </div>
-);
+          <AdminModal
+            open={isAdminModalOpen}
+            onOpenChange={setIsAdminModalOpen}
+            adminToEdit={editingAdmin}
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
 };
 
 export default EventForm;
