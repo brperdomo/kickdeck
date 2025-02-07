@@ -236,6 +236,27 @@ const complexFormSchema = z.object({
 
 type ComplexFormValues = z.infer<typeof complexFormSchema>;
 
+const ProgressIndicator = ({ tabs, completedTabs }: { tabs: EventTab[], completedTabs: EventTab[] }) => {
+  return (
+    <div className="flex justify-center mb-6">
+      {tabs.map((tab, index) => (
+        <div key={tab} className="flex items-center">
+          <div
+            className={`w-8 h-8 rounded-full flex items-center justify-center
+              ${completedTabs.includes(tab) ? 'bg-[#43A047] text-white' : 'bg-gray-300'}
+            `}
+          >
+            {index + 1}
+          </div>
+          {index < tabs.length - 1 && (
+            <div className={`w-4 h-px bg-gray-300 ${completedTabs.includes(tab) ? 'bg-[#43A047]' : ''}`} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
 export default function CreateEvent() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<EventTab>('information');
@@ -257,6 +278,14 @@ export default function CreateEvent() {
   const [primaryColor, setPrimaryColor] = useState('#000000');
   const [secondaryColor, setSecondaryColor] = useState('#ffffff');
   const [isSaving, setIsSaving] = useState(false);
+  const [tabErrors, setTabErrors] = useState<Record<EventTab, boolean>>({
+    information: false,
+    'age-groups': false,
+    scoring: false,
+    complexes: false,
+    settings: false,
+    administrators: false,
+  });
 
 
   const complexesQuery = useQuery({
@@ -933,20 +962,43 @@ export default function CreateEvent() {
         <h2 className="text-2xl font-bold">Create Event</h2>
       </div>
 
-      <Card className="mx-auto">
+      <Card className="mx-auto bg-white shadow-lg rounded-lg">
         <CardContent className="p-6">
+          <ProgressIndicator
+            tabs={TAB_ORDER}
+            completedTabs={TAB_ORDER.filter(tab => !tabErrors[tab])}
+          />
           <Tabs
             value={activeTab}
             onValueChange={(value) => setActiveTab(value as EventTab)}
             className="space-y-6"
           >
             <TabsList className="grid grid-cols-6 gap-4">
-              <TabsTrigger value="information">Event Information</TabsTrigger>
-              <TabsTrigger value="age-groups">Age Groups</TabsTrigger>
-              <TabsTrigger value="scoring">Scoring Settings</TabsTrigger>
-              <TabsTrigger value="complexes">Complexes & Fields</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
-              <TabsTrigger value="administrators">Administrators</TabsTrigger>
+              {TAB_ORDER.map((tab, index) => {
+                const isComplete = !tabErrors[tab];
+                return (
+                  <TabsTrigger
+                    key={tab}
+                    value={tab}
+                    className={`relative flex items-center justify-center gap-2 ${
+                      isComplete ? 'text-[#43A047]' : ''
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className={`w-6 h-6 flex items-center justify-center rounded-full text-sm
+                        ${isComplete ? 'bg-[#43A047] text-white' : 'bg-gray-200'}`}>
+                        {index + 1}
+                      </span>
+                      {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
+                    </span>
+                    {isComplete && (
+                      <svg className="w-4 h-4 text-[#43A047]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </TabsTrigger>
+                );
+              })}
             </TabsList>
 
             <TabsContent value="information">

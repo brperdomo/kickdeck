@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-primary: #1E88E5;
+  --color-secondary: #43A047;
+  --color-background: #F5F5F5;
+  --color-text: #333333;
+  --color-accent: #FFC107;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
 @layer base {
   * {
     @apply border-border;
