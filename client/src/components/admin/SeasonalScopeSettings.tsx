@@ -48,6 +48,19 @@ export function SeasonalScopeSettings() {
   const [editingScope, setEditingScope] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<SeasonalScope>>({});
   const [viewingScope, setViewingScope] = useState<SeasonalScope | null>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+
+  // Helper function to safely handle scope viewing
+  const handleViewScope = (scope: SeasonalScope) => {
+    console.log('Opening view modal for scope:', scope);
+    setViewingScope(scope);
+    setIsViewModalOpen(true);
+  };
+
+  const handleCloseViewModal = () => {
+    setIsViewModalOpen(false);
+    setViewingScope(null);
+  };
 
   const scopesQuery = useQuery({
     queryKey: ['/api/admin/seasonal-scopes'],
@@ -56,7 +69,7 @@ export function SeasonalScopeSettings() {
       if (!response.ok) throw new Error('Failed to fetch seasonal scopes');
       const data = await response.json();
       console.log('Fetched seasonal scopes:', data);
-      return data;
+      return data as SeasonalScope[];
     }
   });
 
@@ -409,7 +422,7 @@ export function SeasonalScopeSettings() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setViewingScope(scope)}
+                            onClick={() => handleViewScope(scope)} // Updated line
                           >
                             <Eye className="h-4 w-4 mr-2" />
                             View
@@ -431,58 +444,62 @@ export function SeasonalScopeSettings() {
             )}
           </div>
 
-          {/* View Modal */}
-          <Dialog open={!!viewingScope} onOpenChange={() => setViewingScope(null)}>
+          {/* Updated View Modal */}
+          <Dialog open={isViewModalOpen} onOpenChange={handleCloseViewModal}>
             <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>{viewingScope?.name}</DialogTitle>
-              </DialogHeader>
-              <div className="mt-4">
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <span className="text-sm text-muted-foreground">Start Year:</span>
-                    <span className="ml-2 font-medium">{viewingScope?.startYear}</span>
-                  </div>
-                  <div>
-                    <span className="text-sm text-muted-foreground">End Year:</span>
-                    <span className="ml-2 font-medium">{viewingScope?.endYear}</span>
-                  </div>
-                </div>
-                {viewingScope?.ageGroups && viewingScope.ageGroups.length > 0 ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Birth Year</TableHead>
-                        <TableHead>Division Code</TableHead>
-                        <TableHead>Age Group</TableHead>
-                        <TableHead>Gender</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {viewingScope.ageGroups
-                        .sort((a, b) => {
-                          // Sort by birth year (descending) and then by gender
-                          if (a.birthYear !== b.birthYear) {
-                            return b.birthYear - a.birthYear;
-                          }
-                          return a.gender.localeCompare(b.gender);
-                        })
-                        .map((group) => (
-                          <TableRow key={`${group.gender}-${group.birthYear}-${group.id}`}>
-                            <TableCell className="font-medium">{group.birthYear}</TableCell>
-                            <TableCell>{group.divisionCode}</TableCell>
-                            <TableCell>{group.ageGroup}</TableCell>
-                            <TableCell>{group.gender}</TableCell>
+              {viewingScope && (
+                <>
+                  <DialogHeader>
+                    <DialogTitle>{viewingScope.name}</DialogTitle>
+                  </DialogHeader>
+                  <div className="mt-4">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <span className="text-sm text-muted-foreground">Start Year:</span>
+                        <span className="ml-2 font-medium">{viewingScope.startYear}</span>
+                      </div>
+                      <div>
+                        <span className="text-sm text-muted-foreground">End Year:</span>
+                        <span className="ml-2 font-medium">{viewingScope.endYear}</span>
+                      </div>
+                    </div>
+
+                    {Array.isArray(viewingScope.ageGroups) && viewingScope.ageGroups.length > 0 ? (
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Birth Year</TableHead>
+                            <TableHead>Division Code</TableHead>
+                            <TableHead>Age Group</TableHead>
+                            <TableHead>Gender</TableHead>
                           </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                ) : (
-                  <div className="text-center py-4">
-                    <p className="text-sm text-muted-foreground">No age groups found for this seasonal scope.</p>
+                        </TableHeader>
+                        <TableBody>
+                          {viewingScope.ageGroups
+                            .sort((a, b) => {
+                              if (a.birthYear !== b.birthYear) {
+                                return b.birthYear - a.birthYear;
+                              }
+                              return a.gender.localeCompare(b.gender);
+                            })
+                            .map((group) => (
+                              <TableRow key={`${group.gender}-${group.birthYear}-${group.id}`}>
+                                <TableCell>{group.birthYear}</TableCell>
+                                <TableCell>{group.divisionCode}</TableCell>
+                                <TableCell>{group.ageGroup}</TableCell>
+                                <TableCell>{group.gender}</TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-sm text-muted-foreground">No age groups found for this seasonal scope.</p>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                </>
+              )}
             </DialogContent>
           </Dialog>
         </div>
