@@ -1,36 +1,36 @@
+
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { Plus } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface AgeGroup {
-  division: string;
-  ageGroup: string;
   birthYear: number;
+  ageGroup: string;
+  gender: string;
+  divisionCode: string;
 }
 
 interface SeasonalScope {
   name: string;
   startYear: number;
   endYear: number;
+  ageGroups: AgeGroup[];
 }
 
 export function SeasonalScopeSettings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [newScope, setNewScope] = useState({ name: "", startYear: "", endYear: "" });
+  const [selectedStartYear, setSelectedStartYear] = useState<string>("");
+  const [selectedEndYear, setSelectedEndYear] = useState<string>("");
+  const [scopeName, setScopeName] = useState<string>("");
+  const [ageGroupMappings, setAgeGroupMappings] = useState<AgeGroup[]>([]);
 
   const scopesQuery = useQuery({
     queryKey: ['/api/admin/seasonal-scopes'],
@@ -54,28 +54,75 @@ export function SeasonalScopeSettings() {
     onSuccess: () => {
       queryClient.invalidateQueries(['/api/admin/seasonal-scopes']);
       toast({ title: "Success", description: "Seasonal scope created successfully" });
-      setNewScope({ name: "", startYear: "", endYear: "" });
+      resetForm();
     },
   });
 
-  const calculateAgeGroups = (startYear: number): AgeGroup[] => {
-    const ageGroups: AgeGroup[] = [];
-    const competitionYear = startYear;
+  const resetForm = () => {
+    setSelectedStartYear("");
+    setSelectedEndYear("");
+    setScopeName("");
+    setAgeGroupMappings([]);
+  };
 
-    for (let age = 4; age <= 21; age++) {
-      const birthYear = competitionYear - age;
-      const genders = ['B', 'G'];
+  const calculateAgeGroup = (birthYear: number, endYear: number) => {
+    const age = endYear - birthYear;
+    return `U${age}`;
+  };
 
-      genders.forEach(gender => {
-        ageGroups.push({
-          division: `U${age}`,
-          ageGroup: `${gender}${birthYear}`,
+  const handleEndYearChange = (endYear: string) => {
+    setSelectedEndYear(endYear);
+    if (endYear) {
+      const year = parseInt(endYear);
+      const initialMappings: AgeGroup[] = [];
+      
+      // Generate 15 years of age groups (U4 to U19)
+      for (let i = 0; i < 15; i++) {
+        const birthYear = year - (4 + i);
+        const ageGroup = calculateAgeGroup(birthYear, year);
+        
+        // Add both boys and girls divisions
+        initialMappings.push({
           birthYear,
+          ageGroup,
+          gender: 'Boys',
+          divisionCode: `B${birthYear}`
         });
+        initialMappings.push({
+          birthYear,
+          ageGroup,
+          gender: 'Girls',
+          divisionCode: `G${birthYear}`
+        });
+      }
+      setAgeGroupMappings(initialMappings);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!scopeName || !selectedStartYear || !selectedEndYear) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
       });
+      return;
     }
 
-    return ageGroups.sort((a, b) => b.birthYear - a.birthYear);
+    try {
+      await createScopeMutation.mutateAsync({
+        name: scopeName,
+        startYear: parseInt(selectedStartYear),
+        endYear: parseInt(selectedEndYear),
+        ageGroups: ageGroupMappings
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create seasonal scope",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -85,12 +132,12 @@ export function SeasonalScopeSettings() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <Label>Name</Label>
               <Input
-                value={newScope.name}
-                onChange={(e) => setNewScope({ ...newScope, name: e.target.value })}
+                value={scopeName}
+                onChange={(e) => setScopeName(e.target.value)}
                 placeholder="2024-2025 Season"
               />
             </div>
@@ -98,8 +145,8 @@ export function SeasonalScopeSettings() {
               <Label>Start Year</Label>
               <Input
                 type="number"
-                value={newScope.startYear}
-                onChange={(e) => setNewScope({ ...newScope, startYear: e.target.value })}
+                value={selectedStartYear}
+                onChange={(e) => setSelectedStartYear(e.target.value)}
                 placeholder="2024"
               />
             </div>
@@ -107,66 +154,69 @@ export function SeasonalScopeSettings() {
               <Label>End Year</Label>
               <Input
                 type="number"
-                value={newScope.endYear}
-                onChange={(e) => setNewScope({ ...newScope, endYear: e.target.value })}
+                value={selectedEndYear}
+                onChange={(e) => handleEndYearChange(e.target.value)}
                 placeholder="2025"
               />
             </div>
-            <div className="flex items-end">
-              <Button 
-                onClick={async () => {
-                  try {
-                    if (!newScope.name || !newScope.startYear || !newScope.endYear) {
-                      toast({
-                        title: "Error",
-                        description: "Please fill in all fields",
-                        variant: "destructive"
-                      });
-                      return;
-                    }
-
-                    await createScopeMutation.mutateAsync({
-                      name: newScope.name,
-                      start_year: Number(newScope.startYear),
-                      end_year: Number(newScope.endYear)
-                    });
-
-                    setNewScope({ name: "", startYear: "", endYear: "" });
-                  } catch (error) {
-                    toast({
-                      title: "Error",
-                      description: "Failed to create seasonal scope",
-                      variant: "destructive"
-                    });
-                  }
-                }}
-                className="w-full"
-                disabled={createScopeMutation.isLoading}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                {createScopeMutation.isLoading ? "Adding..." : "Add Scope"}
-              </Button>
-            </div>
           </div>
 
-          {scopesQuery.data?.map((scope) => (
+          {selectedEndYear && (
+            <Card className="mt-4">
+              <CardContent className="p-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Birth Year</TableHead>
+                      <TableHead>Division Code</TableHead>
+                      <TableHead>Age Group</TableHead>
+                      <TableHead>Gender</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {ageGroupMappings.map((mapping) => (
+                      <TableRow key={`${mapping.gender}-${mapping.birthYear}`}>
+                        <TableCell>{mapping.birthYear}</TableCell>
+                        <TableCell>{mapping.divisionCode}</TableCell>
+                        <TableCell>{mapping.ageGroup}</TableCell>
+                        <TableCell>{mapping.gender}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          )}
+
+          <Button 
+            onClick={handleSubmit}
+            className="w-full mt-4"
+            disabled={createScopeMutation.isLoading}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {createScopeMutation.isLoading ? "Adding..." : "Add Scope"}
+          </Button>
+
+          {scopesQuery.data?.map((scope: any) => (
             <Card key={scope.id} className="mt-4">
               <CardContent className="p-4">
                 <h3 className="text-lg font-semibold mb-4">{scope.name}</h3>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Division</TableHead>
-                      <TableHead>Age Groups</TableHead>
                       <TableHead>Birth Year</TableHead>
+                      <TableHead>Division Code</TableHead>
+                      <TableHead>Age Group</TableHead>
+                      <TableHead>Gender</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {calculateAgeGroups(scope.startYear).map((group) => (
-                      <TableRow key={`${group.division}-${group.ageGroup}`}>
-                        <TableCell>{group.division}</TableCell>
-                        <TableCell>{group.ageGroup}</TableCell>
+                    {scope.ageGroups?.map((group: AgeGroup) => (
+                      <TableRow key={`${group.gender}-${group.birthYear}`}>
                         <TableCell>{group.birthYear}</TableCell>
+                        <TableCell>{group.divisionCode}</TableCell>
+                        <TableCell>{group.ageGroup}</TableCell>
+                        <TableCell>{group.gender}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
