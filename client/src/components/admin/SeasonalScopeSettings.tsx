@@ -55,7 +55,7 @@ export function SeasonalScopeSettings() {
       const response = await fetch('/api/admin/seasonal-scopes');
       if (!response.ok) throw new Error('Failed to fetch seasonal scopes');
       const data = await response.json();
-      console.log('Raw API response:', data); // Debug log
+      console.log('Fetched seasonal scopes:', data);
       return data;
     }
   });
@@ -77,11 +77,10 @@ export function SeasonalScopeSettings() {
             divisionCode: group.divisionCode,
             minBirthYear: group.minBirthYear,
             maxBirthYear: group.maxBirthYear,
-            seasonalScopeId: data.id || 0, 
-            id: group.id, 
-            createdAt: group.createdAt, 
-            updatedAt: group.updatedAt, 
-
+            seasonalScopeId: data.id || 0,
+            id: group.id,
+            createdAt: group.createdAt,
+            updatedAt: group.updatedAt,
           }))
         }),
       });
@@ -95,16 +94,16 @@ export function SeasonalScopeSettings() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/seasonal-scopes'] });
-      toast({ 
-        title: "Success", 
+      toast({
+        title: "Success",
         description: "Seasonal scope created successfully",
         variant: "default"
       });
       resetForm();
     },
     onError: (error) => {
-      toast({ 
-        title: "Error", 
+      toast({
+        title: "Error",
         description: error instanceof Error ? error.message : "Failed to create seasonal scope",
         variant: "destructive"
       });
@@ -128,8 +127,8 @@ export function SeasonalScopeSettings() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/seasonal-scopes'] });
-      toast({ 
-        title: "Success", 
+      toast({
+        title: "Success",
         description: "Seasonal scope updated successfully",
         variant: "default"
       });
@@ -137,8 +136,8 @@ export function SeasonalScopeSettings() {
       setEditForm({});
     },
     onError: (error) => {
-      toast({ 
-        title: "Error", 
+      toast({
+        title: "Error",
         description: error instanceof Error ? error.message : "Failed to update seasonal scope",
         variant: "destructive"
       });
@@ -170,28 +169,28 @@ export function SeasonalScopeSettings() {
 
         // Add both boys and girls divisions
         initialMappings.push({
-          id: 0, 
-          seasonalScopeId: 0, 
+          id: 0,
+          seasonalScopeId: 0,
           birthYear,
           ageGroup,
           gender: 'Boys',
           divisionCode: `B${birthYear}`,
           minBirthYear: birthYear,
           maxBirthYear: birthYear,
-          createdAt: "", 
-          updatedAt: "" 
+          createdAt: "",
+          updatedAt: ""
         });
         initialMappings.push({
-          id: 0, 
-          seasonalScopeId: 0, 
+          id: 0,
+          seasonalScopeId: 0,
           birthYear,
           ageGroup,
           gender: 'Girls',
           divisionCode: `G${birthYear}`,
           minBirthYear: birthYear,
           maxBirthYear: birthYear,
-          createdAt: "", 
-          updatedAt: "" 
+          createdAt: "",
+          updatedAt: ""
         });
       }
       setAgeGroupMappings(initialMappings);
@@ -323,7 +322,7 @@ export function SeasonalScopeSettings() {
             </Card>
           )}
 
-          <Button 
+          <Button
             onClick={handleSubmit}
             className="w-full mt-4"
             disabled={createScopeMutation.isPending}
@@ -442,39 +441,47 @@ export function SeasonalScopeSettings() {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
                     <span className="text-sm text-muted-foreground">Start Year:</span>
-                    <span className="ml-2">{viewingScope?.startYear}</span>
+                    <span className="ml-2 font-medium">{viewingScope?.startYear}</span>
                   </div>
                   <div>
                     <span className="text-sm text-muted-foreground">End Year:</span>
-                    <span className="ml-2">{viewingScope?.endYear}</span>
+                    <span className="ml-2 font-medium">{viewingScope?.endYear}</span>
                   </div>
                 </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Birth Year</TableHead>
-                      <TableHead>Division Code</TableHead>
-                      <TableHead>Age Group</TableHead>
-                      <TableHead>Gender</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {viewingScope?.ageGroups?.sort((a, b) => {
-                      // Sort first by birthYear, then by gender
-                      if (a.birthYear !== b.birthYear) {
-                        return b.birthYear - a.birthYear;
-                      }
-                      return a.gender.localeCompare(b.gender);
-                    }).map((group: AgeGroupSettings) => (
-                      <TableRow key={`${group.gender}-${group.birthYear}`}>
-                        <TableCell>{group.birthYear}</TableCell>
-                        <TableCell>{group.divisionCode}</TableCell>
-                        <TableCell>{group.ageGroup}</TableCell>
-                        <TableCell>{group.gender}</TableCell>
+                {viewingScope?.ageGroups && viewingScope.ageGroups.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Birth Year</TableHead>
+                        <TableHead>Division Code</TableHead>
+                        <TableHead>Age Group</TableHead>
+                        <TableHead>Gender</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {viewingScope.ageGroups
+                        .sort((a, b) => {
+                          // Sort by birth year (descending) and then by gender
+                          if (a.birthYear !== b.birthYear) {
+                            return b.birthYear - a.birthYear;
+                          }
+                          return a.gender.localeCompare(b.gender);
+                        })
+                        .map((group) => (
+                          <TableRow key={`${group.gender}-${group.birthYear}-${group.id}`}>
+                            <TableCell className="font-medium">{group.birthYear}</TableCell>
+                            <TableCell>{group.divisionCode}</TableCell>
+                            <TableCell>{group.ageGroup}</TableCell>
+                            <TableCell>{group.gender}</TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-muted-foreground">No age groups found for this seasonal scope.</p>
+                  </div>
+                )}
               </div>
             </DialogContent>
           </Dialog>
