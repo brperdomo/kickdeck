@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, Edit, Save, X } from "lucide-react";
 import { z } from "zod";
 
 interface AgeGroup {
@@ -40,6 +40,8 @@ export function SeasonalScopeSettings() {
   const [selectedEndYear, setSelectedEndYear] = useState<string>("");
   const [scopeName, setScopeName] = useState<string>("");
   const [ageGroupMappings, setAgeGroupMappings] = useState<AgeGroup[]>([]);
+  const [editingScope, setEditingScope] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState<Partial<SeasonalScope>>({});
 
   const scopesQuery = useQuery({
     queryKey: ['/api/admin/seasonal-scopes'],
@@ -89,6 +91,40 @@ export function SeasonalScopeSettings() {
       toast({ 
         title: "Error", 
         description: error instanceof Error ? error.message : "Failed to create seasonal scope",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const updateScopeMutation = useMutation({
+    mutationFn: async (data: { id: number; scope: Partial<SeasonalScope> }) => {
+      const response = await fetch(`/api/admin/seasonal-scopes/${data.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data.scope),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || 'Failed to update seasonal scope');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/seasonal-scopes'] });
+      toast({ 
+        title: "Success", 
+        description: "Seasonal scope updated successfully",
+        variant: "default"
+      });
+      setEditingScope(null);
+      setEditForm({});
+    },
+    onError: (error) => {
+      toast({ 
+        title: "Error", 
+        description: error instanceof Error ? error.message : "Failed to update seasonal scope",
         variant: "destructive"
       });
     }
@@ -176,6 +212,31 @@ export function SeasonalScopeSettings() {
     }
   };
 
+  const handleEdit = (scope: SeasonalScope) => {
+    setEditingScope(scope.id ?? null);
+    setEditForm({
+      name: scope.name,
+      startYear: scope.startYear,
+      endYear: scope.endYear
+    });
+  };
+
+  const handleUpdate = async (id: number) => {
+    try {
+      await updateScopeMutation.mutateAsync({
+        id,
+        scope: editForm
+      });
+    } catch (error) {
+      console.error('Failed to update scope:', error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingScope(null);
+    setEditForm({});
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -257,33 +318,113 @@ export function SeasonalScopeSettings() {
             )}
           </Button>
 
-          {scopesQuery.data?.map((scope: SeasonalScope) => (
-            <Card key={scope.id} className="mt-4">
-              <CardContent className="p-4">
-                <h3 className="text-lg font-semibold mb-4">{scope.name}</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Birth Year</TableHead>
-                      <TableHead>Division Code</TableHead>
-                      <TableHead>Age Group</TableHead>
-                      <TableHead>Gender</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {scope.ageGroups?.map((group: AgeGroup) => (
-                      <TableRow key={`${group.gender}-${group.birthYear}`}>
-                        <TableCell>{group.birthYear}</TableCell>
-                        <TableCell>{group.divisionCode}</TableCell>
-                        <TableCell>{group.ageGroup}</TableCell>
-                        <TableCell>{group.gender}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          ))}
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold mb-4">Existing Seasonal Scopes</h3>
+            {scopesQuery.data?.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No seasonal scopes created yet.</p>
+            ) : (
+              scopesQuery.data?.map((scope: SeasonalScope) => (
+                <Card key={scope.id} className="mt-4">
+                  <CardContent className="p-4">
+                    {editingScope === scope.id ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label>Name</Label>
+                            <Input
+                              value={editForm.name}
+                              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <Label>Start Year</Label>
+                            <Input
+                              type="number"
+                              value={editForm.startYear}
+                              onChange={(e) => setEditForm({ ...editForm, startYear: parseInt(e.target.value) })}
+                            />
+                          </div>
+                          <div>
+                            <Label>End Year</Label>
+                            <Input
+                              type="number"
+                              value={editForm.endYear}
+                              onChange={(e) => setEditForm({ ...editForm, endYear: parseInt(e.target.value) })}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex justify-end space-x-2">
+                          <Button
+                            variant="outline"
+                            onClick={handleCancelEdit}
+                            disabled={updateScopeMutation.isPending}
+                          >
+                            <X className="h-4 w-4 mr-2" />
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={() => handleUpdate(scope.id!)}
+                            disabled={updateScopeMutation.isPending}
+                          >
+                            {updateScopeMutation.isPending ? (
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            ) : (
+                              <Save className="h-4 w-4 mr-2" />
+                            )}
+                            Save
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="text-lg font-semibold">{scope.name}</h3>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(scope)}
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <span className="text-sm text-muted-foreground">Start Year:</span>
+                            <span className="ml-2">{scope.startYear}</span>
+                          </div>
+                          <div>
+                            <span className="text-sm text-muted-foreground">End Year:</span>
+                            <span className="ml-2">{scope.endYear}</span>
+                          </div>
+                        </div>
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Birth Year</TableHead>
+                              <TableHead>Division Code</TableHead>
+                              <TableHead>Age Group</TableHead>
+                              <TableHead>Gender</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {scope.ageGroups?.map((group: AgeGroup) => (
+                              <TableRow key={`${group.gender}-${group.birthYear}`}>
+                                <TableCell>{group.birthYear}</TableCell>
+                                <TableCell>{group.divisionCode}</TableCell>
+                                <TableCell>{group.ageGroup}</TableCell>
+                                <TableCell>{group.gender}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
     // Create age group settings for the scope
     if (ageGroups && ageGroups.length > 0) {
       await db.insert(ageGroupSettings).values(
-        ageGroups.map(group => ({
+        ageGroups.map((group: { ageGroup: string; minBirthYear: number; maxBirthYear: number; gender: string }) => ({
           seasonalScopeId: scope.id,
           ageGroup: group.ageGroup,
           minBirthYear: group.minBirthYear,
@@ -57,6 +57,43 @@ router.post('/', async (req, res) => {
   } catch (error) {
     console.error('Error creating seasonal scope:', error);
     res.status(500).json({ message: 'Failed to create seasonal scope' });
+  }
+});
+
+// Update a seasonal scope
+router.patch('/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { name, startYear, endYear, isActive } = req.body;
+
+    // Update the seasonal scope
+    const [updatedScope] = await db.update(seasonalScopes)
+      .set({
+        name,
+        startYear,
+        endYear,
+        isActive,
+        updatedAt: new Date().toISOString(),
+      })
+      .where(eq(seasonalScopes.id, id))
+      .returning();
+
+    if (!updatedScope) {
+      return res.status(404).json({ message: 'Seasonal scope not found' });
+    }
+
+    // Fetch the updated scope with its age groups
+    const scope = await db.query.seasonalScopes.findFirst({
+      where: eq(seasonalScopes.id, id),
+      with: {
+        ageGroups: true
+      }
+    });
+
+    res.json(scope);
+  } catch (error) {
+    console.error('Error updating seasonal scope:', error);
+    res.status(500).json({ message: 'Failed to update seasonal scope' });
   }
 });
 
