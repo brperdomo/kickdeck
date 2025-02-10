@@ -15,8 +15,8 @@ interface AgeGroup {
   ageGroup: string;
   gender: string;
   divisionCode: string;
-  minBirthYear: number;
-  maxBirthYear: number;
+  minBirthYear?: number;
+  maxBirthYear?: number;
 }
 
 interface SeasonalScope {
@@ -50,7 +50,18 @@ export function SeasonalScopeSettings() {
     queryFn: async () => {
       const response = await fetch('/api/admin/seasonal-scopes');
       if (!response.ok) throw new Error('Failed to fetch seasonal scopes');
-      return response.json();
+      const data = await response.json();
+      return data.map((scope: any) => ({
+        ...scope,
+        ageGroups: scope.ageGroups.map((group: any) => ({
+          birthYear: group.birthYear,
+          ageGroup: group.ageGroup,
+          gender: group.gender,
+          divisionCode: group.divisionCode,
+          minBirthYear: group.minBirthYear,
+          maxBirthYear: group.maxBirthYear
+        }))
+      }));
     }
   });
 
@@ -66,9 +77,9 @@ export function SeasonalScopeSettings() {
           isActive: true,
           ageGroups: data.ageGroups.map(group => ({
             ageGroup: group.ageGroup,
-            minBirthYear: group.birthYear,
-            maxBirthYear: group.birthYear,
-            gender: group.gender
+            birthYear: group.birthYear,
+            gender: group.gender,
+            divisionCode: group.divisionCode
           }))
         }),
       });

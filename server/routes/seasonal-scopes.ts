@@ -36,11 +36,19 @@ router.post('/', async (req, res) => {
     // Create age group settings for the scope
     if (ageGroups && ageGroups.length > 0) {
       await db.insert(ageGroupSettings).values(
-        ageGroups.map((group: { ageGroup: string; minBirthYear: number; maxBirthYear: number; gender: string }) => ({
+        ageGroups.map((group: { 
+          ageGroup: string; 
+          birthYear: number;
+          gender: string;
+          divisionCode: string;
+        }) => ({
           seasonalScopeId: scope.id,
           ageGroup: group.ageGroup,
-          minBirthYear: group.minBirthYear,
-          maxBirthYear: group.maxBirthYear,
+          minBirthYear: group.birthYear,
+          maxBirthYear: group.birthYear,
+          birthYear: group.birthYear,
+          gender: group.gender,
+          divisionCode: group.divisionCode
         }))
       );
     }
@@ -56,6 +64,7 @@ router.post('/', async (req, res) => {
     res.status(200).json(createdScope);
   } catch (error) {
     console.error('Error creating seasonal scope:', error);
+    console.error('Detailed error:', error instanceof Error ? error.message : error);
     res.status(500).json({ message: 'Failed to create seasonal scope' });
   }
 });
@@ -72,7 +81,7 @@ router.patch('/:id', async (req, res) => {
         name,
         startYear,
         endYear,
-        updatedAt: new Date(), // Changed from toISOString() to passing Date object directly
+        updatedAt: new Date(),
       })
       .where(eq(seasonalScopes.id, id))
       .returning();
@@ -92,7 +101,6 @@ router.patch('/:id', async (req, res) => {
     res.json(scope);
   } catch (error) {
     console.error('Error updating seasonal scope:', error);
-    // Add more detailed error logging
     console.error('Detailed error:', error instanceof Error ? error.message : error);
     res.status(500).json({ message: 'Failed to update seasonal scope' });
   }
