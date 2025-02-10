@@ -64,7 +64,7 @@ router.post('/', async (req, res) => {
 router.patch('/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const { name, startYear, endYear, isActive } = req.body;
+    const { name, startYear, endYear } = req.body;
 
     // Update the seasonal scope
     const [updatedScope] = await db.update(seasonalScopes)
@@ -72,8 +72,7 @@ router.patch('/:id', async (req, res) => {
         name,
         startYear,
         endYear,
-        isActive,
-        updatedAt: new Date().toISOString(),
+        updatedAt: new Date(), // Changed from toISOString() to passing Date object directly
       })
       .where(eq(seasonalScopes.id, id))
       .returning();
@@ -93,6 +92,8 @@ router.patch('/:id', async (req, res) => {
     res.json(scope);
   } catch (error) {
     console.error('Error updating seasonal scope:', error);
+    // Add more detailed error logging
+    console.error('Detailed error:', error instanceof Error ? error.message : error);
     res.status(500).json({ message: 'Failed to update seasonal scope' });
   }
 });
