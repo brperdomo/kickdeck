@@ -491,14 +491,17 @@ export function SeasonalScopeSettings() {
                               const yearDiff = b.birthYear - a.birthYear;
                               return yearDiff !== 0 ? yearDiff : a.gender.localeCompare(b.gender);
                             })
-                            .map((group) => (
-                              <TableRow key={`${group.gender}-${group.birthYear}-${group.id}`}>
-                                <TableCell>{group.birthYear}</TableCell>
-                                <TableCell>{group.divisionCode}</TableCell>
-                                <TableCell>{group.ageGroup}</TableCell>
-                                <TableCell>{group.gender}</TableCell>
-                              </TableRow>
-                            ))}
+                            .map((group) => {
+                              console.log('Rendering group:', group); // Debug log
+                              return (
+                                <TableRow key={`${group.gender}-${group.birthYear}-${group.id}`}>
+                                  <TableCell>{group.birthYear.toString()}</TableCell>
+                                  <TableCell>{group.divisionCode}</TableCell>
+                                  <TableCell>{group.ageGroup}</TableCell>
+                                  <TableCell>{group.gender}</TableCell>
+                                </TableRow>
+                              );
+                            })}
                         </TableBody>
                       </Table>
                     ) : (
