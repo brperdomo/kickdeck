@@ -486,11 +486,10 @@ export function SeasonalScopeSettings() {
                         </TableHeader>
                         <TableBody>
                           {viewingScope.ageGroups
-                            .filter(group => group !== null && group.birthYear)
                             .sort((a, b) => {
-                              if (!a || !b) return 0;
+                              // Sort by birth year (descending) and then by gender
                               const yearDiff = b.birthYear - a.birthYear;
-                              return yearDiff !== 0 ? yearDiff : (a.gender || '').localeCompare(b.gender || '');
+                              return yearDiff !== 0 ? yearDiff : a.gender.localeCompare(b.gender);
                             })
                             .map((group) => (
                               <TableRow key={`${group.gender}-${group.birthYear}-${group.id}`}>
