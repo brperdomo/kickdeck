@@ -50,19 +50,21 @@ export function SeasonalScopeSettings() {
   const [viewingScope, setViewingScope] = useState<SeasonalScope | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
+  // Helper function to safely handle scope viewing
   const handleViewScope = (scope: SeasonalScope) => {
-    try {
-      console.log('Opening view modal for scope:', scope);
-      setViewingScope(scope);
-      setIsViewModalOpen(true);
-    } catch (error) {
-      console.error('Error in handleViewScope:', error);
+    if (!scope || !scope.ageGroups) {
+      console.error('Invalid scope data:', scope);
       toast({
         title: "Error",
-        description: "Failed to open scope details",
+        description: "Invalid scope data",
         variant: "destructive"
       });
+      return;
     }
+    console.log('Opening view modal for scope:', scope);
+    console.log('Age groups data:', scope.ageGroups);
+    setViewingScope(scope);
+    setIsViewModalOpen(true);
   };
 
   const handleCloseViewModal = () => {
@@ -183,10 +185,12 @@ export function SeasonalScopeSettings() {
       const year = parseInt(endYear);
       const initialMappings: AgeGroupSettings[] = [];
 
+      // Generate 15 years of age groups (U4 to U19)
       for (let i = 0; i < 15; i++) {
         const birthYear = year - (4 + i);
         const ageGroup = calculateAgeGroup(birthYear, year);
 
+        // Add both boys and girls divisions
         initialMappings.push({
           id: 0,
           seasonalScopeId: 0,
@@ -218,6 +222,7 @@ export function SeasonalScopeSettings() {
 
   const handleSubmit = async () => {
     try {
+      // Validate the form data
       const validatedData = seasonalScopeSchema.parse({
         name: scopeName,
         startYear: parseInt(selectedStartYear),
@@ -275,76 +280,6 @@ export function SeasonalScopeSettings() {
   const handleCancelEdit = () => {
     setEditingScope(null);
     setEditForm({});
-  };
-
-
-  const renderAgeGroupsTable = (scope: SeasonalScope | null) => {
-    try {
-      console.log('Rendering table for scope:', scope);
-
-      if (!scope || !scope.ageGroups) {
-        console.log('No scope or age groups provided');
-        return (
-          <div className="text-center py-4">
-            <p className="text-sm text-muted-foreground">No age groups found for this seasonal scope.</p>
-          </div>
-        );
-      }
-
-      const validGroups = scope.ageGroups.filter(group => 
-        group && 
-        typeof group.minBirthYear === 'number' && 
-        typeof group.gender === 'string'
-      );
-
-      console.log('Valid groups:', validGroups);
-
-      if (validGroups.length === 0) {
-        return (
-          <div className="text-center py-4">
-            <p className="text-sm text-muted-foreground">No age groups found for this seasonal scope.</p>
-          </div>
-        );
-      }
-
-      // Sort the age groups by birth year (descending) and gender
-      const sortedGroups = [...validGroups].sort((a, b) => {
-        const yearDiff = b.minBirthYear - a.minBirthYear;
-        return yearDiff !== 0 ? yearDiff : a.gender.localeCompare(b.gender);
-      });
-
-      return (
-        <div className="mt-4 overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-24">Age Group</TableHead>
-                <TableHead className="w-24">Birth Year</TableHead>
-                <TableHead className="w-32">Division Code</TableHead>
-                <TableHead className="w-24">Gender</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedGroups.map((group) => (
-                <TableRow key={`${group.gender}-${group.minBirthYear}-${group.id}`}>
-                  <TableCell className="font-medium">{group.ageGroup}</TableCell>
-                  <TableCell>{group.minBirthYear}</TableCell>
-                  <TableCell>{group.divisionCode}</TableCell>
-                  <TableCell>{group.gender}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      );
-    } catch (error) {
-      console.error('Error rendering age groups table:', error);
-      return (
-        <div className="text-center py-4">
-          <p className="text-sm text-muted-foreground">Error displaying age groups.</p>
-        </div>
-      );
-    }
   };
 
   return (
@@ -519,6 +454,7 @@ export function SeasonalScopeSettings() {
             )}
           </div>
 
+          {/* View Modal */}
           <Dialog open={isViewModalOpen} onOpenChange={handleCloseViewModal}>
             <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
               {viewingScope && (
@@ -537,7 +473,40 @@ export function SeasonalScopeSettings() {
                         <span className="ml-2 font-medium">{viewingScope.endYear}</span>
                       </div>
                     </div>
-                    {renderAgeGroupsTable(viewingScope)}
+
+                    {viewingScope.ageGroups && viewingScope.ageGroups.length > 0 ? (
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Birth Year</TableHead>
+                            <TableHead>Division Code</TableHead>
+                            <TableHead>Age Group</TableHead>
+                            <TableHead>Gender</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {viewingScope.ageGroups
+                            .filter(group => group !== null)
+                            .sort((a, b) => {
+                              if (!a || !b) return 0;
+                              const yearDiff = b.birthYear - a.birthYear;
+                              return yearDiff !== 0 ? yearDiff : (a.gender || '').localeCompare(b.gender || '');
+                            })
+                            .map((group) => (
+                              <TableRow key={`${group.gender}-${group.birthYear}-${group.id}`}>
+                                <TableCell>{group.birthYear}</TableCell>
+                                <TableCell>{group.divisionCode}</TableCell>
+                                <TableCell>{group.ageGroup}</TableCell>
+                                <TableCell>{group.gender}</TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-sm text-muted-foreground">No age groups found for this seasonal scope.</p>
+                      </div>
+                    )}
                   </div>
                 </>
               )}
