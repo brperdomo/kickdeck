@@ -282,13 +282,8 @@ export function SeasonalScopeSettings() {
     try {
       console.log('Rendering table for scope:', scope);
 
-      if (!scope) {
-        console.log('No scope provided');
-        return null;
-      }
-
-      if (!Array.isArray(scope.ageGroups)) {
-        console.log('ageGroups is not an array:', scope.ageGroups);
+      if (!scope || !scope.ageGroups || scope.ageGroups.length === 0) {
+        console.log('No scope or age groups provided');
         return (
           <div className="text-center py-4">
             <p className="text-sm text-muted-foreground">No age groups found for this seasonal scope.</p>
@@ -296,8 +291,13 @@ export function SeasonalScopeSettings() {
         );
       }
 
-      // Simple null check for age groups
-      const validGroups = scope.ageGroups.filter(Boolean);
+      const validGroups = scope.ageGroups.filter(group => 
+        group && 
+        (typeof group.birthYear === 'number' || typeof group.minBirthYear === 'number') && 
+        typeof group.gender === 'string' &&
+        typeof group.ageGroup === 'string'
+      );
+
       console.log('Valid groups:', validGroups);
 
       if (validGroups.length === 0) {
