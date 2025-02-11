@@ -61,8 +61,6 @@ export function SeasonalScopeSettings() {
       });
       return;
     }
-    console.log('Opening view modal for scope:', scope);
-    console.log('Age groups data:', scope.ageGroups);
     setViewingScope(scope);
     setIsViewModalOpen(true);
   };
@@ -78,7 +76,6 @@ export function SeasonalScopeSettings() {
       const response = await fetch('/api/admin/seasonal-scopes');
       if (!response.ok) throw new Error('Failed to fetch seasonal scopes');
       const data = await response.json();
-      console.log('Fetched seasonal scopes:', data);
       return data as SeasonalScope[];
     }
   });
@@ -373,6 +370,7 @@ export function SeasonalScopeSettings() {
             )}
           </Button>
 
+          {/* Existing Seasonal Scopes Section */}
           <div className="mt-8">
             <h3 className="text-lg font-semibold mb-4">Existing Seasonal Scopes</h3>
             {scopesQuery.data?.length === 0 ? (
@@ -464,64 +462,65 @@ export function SeasonalScopeSettings() {
             )}
           </div>
 
-          {/* View Modal */}
+          {/* Enhanced View Modal with Demographics */}
           <Dialog open={isViewModalOpen} onOpenChange={handleCloseViewModal}>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto" aria-describedby="scope-view-description">
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
               {viewingScope && (
                 <>
                   <DialogHeader>
-                    <DialogTitle>{viewingScope.name}</DialogTitle>
-                    <p id="scope-view-description" className="text-sm text-muted-foreground">
-                      View age groups and divisions for this seasonal scope
-                    </p>
-                  </DialogHeader>
-                  <div className="mt-4">
-                    <div className="mb-4 flex gap-4">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">Start Year:</span>
+                    <DialogTitle className="text-xl font-semibold">
+                      {viewingScope.name}
+                    </DialogTitle>
+                    <div className="flex gap-4 text-sm text-muted-foreground mt-2">
+                      <div>
+                        <span className="font-medium">Start Year:</span>{" "}
                         <span>{viewingScope.startYear}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">End Year:</span>
+                      <div>
+                        <span className="font-medium">End Year:</span>{" "}
                         <span>{viewingScope.endYear}</span>
                       </div>
                     </div>
+                  </DialogHeader>
+
+                  <div className="mt-6">
+                    <h4 className="text-lg font-semibold mb-4">Demographics & Divisions</h4>
 
                     {viewingScope.ageGroups && viewingScope.ageGroups.length > 0 ? (
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Birth Year</TableHead>
-                            <TableHead>Division Code</TableHead>
-                            <TableHead>Age Group</TableHead>
-                            <TableHead>Gender</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {viewingScope.ageGroups
-                            .filter(group => group !== null)
-                            .sort((a, b) => {
-                              // Sort by birth year (descending) and then by gender
-                              const yearDiff = b.birthYear - a.birthYear;
-                              if (yearDiff !== 0) return yearDiff;
-                              return a.gender.localeCompare(b.gender);
-                            })
-                            .map((group) => {
-                              console.log('Rendering group:', group); // Debug log
-                              return (
-                                <TableRow key={`${group.id}-${group.gender}-${group.birthYear}`}>
-                                  <TableCell className="font-medium">{group.birthYear}</TableCell>
+                      <div className="rounded-md border">
+                        <Table>
+                          <TableHeader>
+                            <TableRow className="bg-muted/50">
+                              <TableHead className="font-semibold">Age Group</TableHead>
+                              <TableHead className="font-semibold">Birth Year</TableHead>
+                              <TableHead className="font-semibold">Division Code</TableHead>
+                              <TableHead className="font-semibold">Gender</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {viewingScope.ageGroups
+                              .sort((a, b) => {
+                                const yearDiff = b.birthYear - a.birthYear;
+                                if (yearDiff !== 0) return yearDiff;
+                                return a.gender.localeCompare(b.gender);
+                              })
+                              .map((group) => (
+                                <TableRow 
+                                  key={`${group.id}-${group.gender}-${group.birthYear}`}
+                                  className="hover:bg-muted/50"
+                                >
+                                  <TableCell className="font-medium">{group.ageGroup}</TableCell>
+                                  <TableCell>{group.birthYear}</TableCell>
                                   <TableCell>{group.divisionCode}</TableCell>
-                                  <TableCell>{group.ageGroup}</TableCell>
                                   <TableCell>{group.gender}</TableCell>
                                 </TableRow>
-                              );
-                            })}
-                        </TableBody>
-                      </Table>
+                              ))}
+                          </TableBody>
+                        </Table>
+                      </div>
                     ) : (
-                      <div className="text-center py-4">
-                        <p className="text-sm text-muted-foreground">No age groups found for this seasonal scope.</p>
+                      <div className="text-center py-8 text-muted-foreground">
+                        <p>No age groups or divisions defined for this scope.</p>
                       </div>
                     )}
                   </div>
