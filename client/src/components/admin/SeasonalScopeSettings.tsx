@@ -6,10 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Loader2, Edit, Eye, Save, X, Trash2 } from "lucide-react";
+import { Plus, Loader2, Edit, Eye, Save, X } from "lucide-react";
 import { z } from "zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface AgeGroupSettings {
   id: number;
@@ -50,29 +49,20 @@ export function SeasonalScopeSettings() {
   const [editForm, setEditForm] = useState<Partial<SeasonalScope>>({});
   const [viewingScope, setViewingScope] = useState<SeasonalScope | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [deleteScope, setDeleteScope] = useState<SeasonalScope | null>(null);
 
+  // Helper function to safely handle scope viewing
   const handleViewScope = (scope: SeasonalScope) => {
-    try {
-      if (!scope || !Array.isArray(scope.ageGroups)) {
-        console.error('Invalid scope data:', scope);
-        toast({
-          title: "Error",
-          description: "Invalid scope data",
-          variant: "destructive"
-        });
-        return;
-      }
-      setViewingScope(scope);
-      setIsViewModalOpen(true);
-    } catch (error) {
-      console.error('Error viewing scope:', error);
+    if (!scope || !scope.ageGroups) {
+      console.error('Invalid scope data:', scope);
       toast({
         title: "Error",
-        description: "Failed to view scope details",
+        description: "Invalid scope data",
         variant: "destructive"
       });
+      return;
     }
+    setViewingScope(scope);
+    setIsViewModalOpen(true);
   };
 
   const handleCloseViewModal = () => {
@@ -90,33 +80,6 @@ export function SeasonalScopeSettings() {
     }
   });
 
-  const deleteScopeMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await fetch(`/api/admin/seasonal-scopes/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete seasonal scope');
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/seasonal-scopes'] });
-      toast({
-        title: "Success",
-        description: "Seasonal scope deleted successfully",
-        variant: "default"
-      });
-      setDeleteScope(null);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete seasonal scope",
-        variant: "destructive"
-      });
-    }
-  });
-
   const createScopeMutation = useMutation({
     mutationFn: async (data: SeasonalScope) => {
       const response = await fetch('/api/admin/seasonal-scopes', {
@@ -127,7 +90,18 @@ export function SeasonalScopeSettings() {
           startYear: data.startYear,
           endYear: data.endYear,
           isActive: true,
-          ageGroups: data.ageGroups
+          ageGroups: data.ageGroups.map(group => ({
+            ageGroup: group.ageGroup,
+            birthYear: group.birthYear,
+            gender: group.gender,
+            divisionCode: group.divisionCode,
+            minBirthYear: group.minBirthYear,
+            maxBirthYear: group.maxBirthYear,
+            seasonalScopeId: data.id || 0,
+            id: group.id,
+            createdAt: group.createdAt,
+            updatedAt: group.updatedAt,
+          }))
         }),
       });
 
@@ -242,6 +216,7 @@ export function SeasonalScopeSettings() {
         });
       }
 
+      // Sort the mappings by birth year (descending) and gender
       const sortedMappings = initialMappings.sort((a, b) => {
         const yearDiff = b.birthYear - a.birthYear;
         if (yearDiff !== 0) return yearDiff;
@@ -254,6 +229,7 @@ export function SeasonalScopeSettings() {
 
   const handleSubmit = async () => {
     try {
+      // Validate the form data
       const validatedData = seasonalScopeSchema.parse({
         name: scopeName,
         startYear: parseInt(selectedStartYear),
@@ -311,16 +287,6 @@ export function SeasonalScopeSettings() {
   const handleCancelEdit = () => {
     setEditingScope(null);
     setEditForm({});
-  };
-
-  const handleDelete = (scope: SeasonalScope) => {
-    setDeleteScope(scope);
-  };
-
-  const confirmDelete = async () => {
-    if (deleteScope?.id) {
-      await deleteScopeMutation.mutateAsync(deleteScope.id);
-    }
   };
 
   return (
@@ -487,14 +453,6 @@ export function SeasonalScopeSettings() {
                             <Edit className="h-4 w-4 mr-2" />
                             Edit
                           </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDelete(scope)}
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
-                          </Button>
                         </div>
                       </div>
                     )}
@@ -547,7 +505,7 @@ export function SeasonalScopeSettings() {
                                 return a.gender.localeCompare(b.gender);
                               })
                               .map((group) => (
-                                <TableRow
+                                <TableRow 
                                   key={`${group.id}-${group.gender}-${group.birthYear}`}
                                   className="hover:bg-muted/50"
                                 >
@@ -570,31 +528,6 @@ export function SeasonalScopeSettings() {
               )}
             </DialogContent>
           </Dialog>
-
-          {/* Delete Confirmation Dialog */}
-          <AlertDialog open={!!deleteScope} onOpenChange={() => setDeleteScope(null)}>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will permanently delete the seasonal scope "{deleteScope?.name}". This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={confirmDelete}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                >
-                  {deleteScopeMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    "Delete"
-                  )}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
         </div>
       </CardContent>
     </Card>
