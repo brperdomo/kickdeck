@@ -487,18 +487,19 @@ export function SeasonalScopeSettings() {
                         <TableBody>
                           {viewingScope.ageGroups
                             .sort((a, b) => {
-                              // Sort by birth year (descending) and then by gender
-                              const yearDiff = b.birthYear - a.birthYear;
-                              return yearDiff !== 0 ? yearDiff : a.gender.localeCompare(b.gender);
+                              // First sort by birth year
+                              const yearDiff = (b?.birthYear || 0) - (a?.birthYear || 0);
+                              // If birth years are the same, sort by gender
+                              return yearDiff !== 0 ? yearDiff : (a?.gender || '').localeCompare(b?.gender || '');
                             })
                             .map((group) => {
-                              console.log('Rendering group:', group); // Debug log
+                              if (!group) return null;
                               return (
-                                <TableRow key={`${group.gender}-${group.birthYear}-${group.id}`}>
-                                  <TableCell>{group.birthYear.toString()}</TableCell>
-                                  <TableCell>{group.divisionCode}</TableCell>
-                                  <TableCell>{group.ageGroup}</TableCell>
-                                  <TableCell>{group.gender}</TableCell>
+                                <TableRow key={`${group.gender || 'unknown'}-${group.birthYear || 0}-${group.id}`}>
+                                  <TableCell>{group.birthYear || 'N/A'}</TableCell>
+                                  <TableCell>{group.divisionCode || 'N/A'}</TableCell>
+                                  <TableCell>{group.ageGroup || 'N/A'}</TableCell>
+                                  <TableCell>{group.gender || 'N/A'}</TableCell>
                                 </TableRow>
                               );
                             })}
