@@ -505,7 +505,7 @@ export function SeasonalScopeSettings() {
                                 return a.gender.localeCompare(b.gender);
                               })
                               .map((group) => (
-                                <TableRow 
+                                <TableRow
                                   key={`${group.id}-${group.gender}-${group.birthYear}`}
                                   className="hover:bg-muted/50"
                                 >
