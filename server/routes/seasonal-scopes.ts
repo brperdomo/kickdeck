@@ -53,19 +53,21 @@ router.post('/', async (req, res) => {
 
     // Create age group settings for the scope
     if (ageGroups && ageGroups.length > 0) {
-      const ageGroupsToInsert = ageGroups.map((group: { 
-        ageGroup: string; 
+      const ageGroupsToInsert = ageGroups.map((group: {
+        ageGroup: string;
         birthYear: number;
         gender: string;
         divisionCode: string;
+        minBirthYear: number;
+        maxBirthYear: number;
       }) => ({
         seasonalScopeId: scope.id,
         ageGroup: group.ageGroup,
         birthYear: group.birthYear,
-        minBirthYear: group.birthYear,
-        maxBirthYear: group.birthYear,
         gender: group.gender,
         divisionCode: group.divisionCode,
+        minBirthYear: group.minBirthYear,
+        maxBirthYear: group.maxBirthYear,
         createdAt: new Date(),
         updatedAt: new Date()
       }));

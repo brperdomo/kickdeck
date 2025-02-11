@@ -190,33 +190,43 @@ export function SeasonalScopeSettings() {
         const birthYear = year - (4 + i);
         const ageGroup = calculateAgeGroup(birthYear, year);
 
-        // Add both boys and girls divisions
+        // Add boys division
         initialMappings.push({
           id: 0,
           seasonalScopeId: 0,
-          birthYear,
           ageGroup,
+          birthYear,
           gender: 'Boys',
           divisionCode: `B${birthYear}`,
           minBirthYear: birthYear,
           maxBirthYear: birthYear,
-          createdAt: "",
-          updatedAt: ""
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         });
+
+        // Add girls division
         initialMappings.push({
           id: 0,
           seasonalScopeId: 0,
-          birthYear,
           ageGroup,
+          birthYear,
           gender: 'Girls',
           divisionCode: `G${birthYear}`,
           minBirthYear: birthYear,
           maxBirthYear: birthYear,
-          createdAt: "",
-          updatedAt: ""
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         });
       }
-      setAgeGroupMappings(initialMappings);
+
+      // Sort the mappings by birth year (descending) and gender
+      const sortedMappings = initialMappings.sort((a, b) => {
+        const yearDiff = b.birthYear - a.birthYear;
+        if (yearDiff !== 0) return yearDiff;
+        return a.gender.localeCompare(b.gender);
+      });
+
+      setAgeGroupMappings(sortedMappings);
     }
   };
 
