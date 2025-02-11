@@ -486,7 +486,7 @@ export function SeasonalScopeSettings() {
                         </TableHeader>
                         <TableBody>
                           {viewingScope.ageGroups
-                            .filter(group => group !== null)
+                            .filter(group => group !== null && group.birthYear)
                             .sort((a, b) => {
                               if (!a || !b) return 0;
                               const yearDiff = b.birthYear - a.birthYear;
