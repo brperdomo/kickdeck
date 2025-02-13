@@ -220,7 +220,7 @@ export function SeasonalScopeSettings() {
       const sortedMappings = initialMappings.sort((a, b) => {
         const yearDiff = b.birthYear - a.birthYear;
         if (yearDiff !== 0) return yearDiff;
-        return a.gender.localeCompare(b.gender);
+        return (a.gender || '').localeCompare(b.gender || '');
       });
 
       setAgeGroupMappings(sortedMappings);
@@ -502,17 +502,17 @@ export function SeasonalScopeSettings() {
                               .sort((a, b) => {
                                 const yearDiff = b.birthYear - a.birthYear;
                                 if (yearDiff !== 0) return yearDiff;
-                                return a.gender.localeCompare(b.gender);
+                                return (a.gender || '').localeCompare(b.gender || '');
                               })
                               .map((group) => (
-                                <TableRow 
+                                <TableRow
                                   key={`${group.id}-${group.gender}-${group.birthYear}`}
                                   className="hover:bg-muted/50"
                                 >
                                   <TableCell className="font-medium">{group.ageGroup}</TableCell>
                                   <TableCell>{group.birthYear}</TableCell>
                                   <TableCell>{group.divisionCode}</TableCell>
-                                  <TableCell>{group.gender}</TableCell>
+                                  <TableCell>{group.gender || 'N/A'}</TableCell>
                                 </TableRow>
                               ))}
                           </TableBody>
