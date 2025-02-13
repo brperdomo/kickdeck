@@ -179,17 +179,18 @@ export function SeasonalScopeSettings() {
 
       // Generate age groups (U4 to U18)
       for (let i = 4; i <= 18; i++) {
-        const ageGroup = `U${i}`;
         const birthYear = year - i;
+        const ageGroup = `U${i}`;
 
         // Add boys division
+        const boysDivisionCode = `B${birthYear}`;
         initialMappings.push({
           id: 0,
           seasonalScopeId: 0,
           ageGroup,
           birthYear,
           gender: 'Boys',
-          divisionCode: `B${birthYear}`,
+          divisionCode: boysDivisionCode,
           minBirthYear: birthYear,
           maxBirthYear: birthYear,
           createdAt: new Date().toISOString(),
@@ -197,13 +198,14 @@ export function SeasonalScopeSettings() {
         });
 
         // Add girls division
+        const girlsDivisionCode = `G${birthYear}`;
         initialMappings.push({
           id: 0,
           seasonalScopeId: 0,
           ageGroup,
           birthYear,
           gender: 'Girls',
-          divisionCode: `G${birthYear}`,
+          divisionCode: girlsDivisionCode,
           minBirthYear: birthYear,
           maxBirthYear: birthYear,
           createdAt: new Date().toISOString(),
@@ -500,7 +502,7 @@ export function SeasonalScopeSettings() {
                               })
                               .map((group) => (
                                 <TableRow
-                                  key={`${group.id}-${group.gender}-${group.birthYear}`}
+                                  key={`${group.divisionCode}`}
                                   className="hover:bg-muted/50"
                                 >
                                   <TableCell>{group.birthYear}</TableCell>
