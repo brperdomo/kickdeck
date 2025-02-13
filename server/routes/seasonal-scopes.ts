@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { db } from '../../db';
-import { seasonalScopes, ageGroupSettings, events, eventAgeGroups } from '@db/schema';
+import { seasonalScopes, ageGroupSettings, events } from '@db/schema';
 import { z } from 'zod';
 
 const router = Router();
@@ -44,14 +44,15 @@ router.get('/:id/in-use', async (req, res) => {
     const { id } = req.params;
     const scopeId = parseInt(id);
 
-    // Get all events using this seasonal scope through event age groups
-    const eventsUsingScope = await db.query.events.findFirst({
-      where: (events, { eq }) => eq(events.seasonalScopeId, scopeId),
-    });
+    const result = await db.select().from(events)
+      .where(eq(events.seasonalScopeId, scopeId))
+      .limit(1);
+
+    const inUse = result.length > 0;
 
     res.json({
-      inUse: !!eventsUsingScope,
-      message: eventsUsingScope 
+      inUse,
+      message: inUse 
         ? 'This seasonal scope is currently in use by an event and cannot be deleted.'
         : 'Seasonal scope can be safely deleted.',
     });
@@ -67,32 +68,38 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     const scopeId = parseInt(id);
 
-    // Check if the scope is in use by any events
-    const eventsUsingScope = await db.query.events.findFirst({
-      where: (events, { eq }) => eq(events.seasonalScopeId, scopeId),
-    });
+    // Check if the scope is in use
+    const result = await db.select().from(events)
+      .where(eq(events.seasonalScopeId, scopeId))
+      .limit(1);
 
-    if (eventsUsingScope) {
+    if (result.length > 0) {
       return res.status(400).json({
         error: 'This seasonal scope is currently in use by an event and cannot be deleted.'
       });
     }
 
-    // If not in use, proceed with deletion
+    // If not in use, proceed with deletion using a transaction
     await db.transaction(async (tx) => {
-      // Delete age groups first (cascade will handle this, but being explicit)
+      // Delete age groups first
       await tx.delete(ageGroupSettings)
         .where(eq(ageGroupSettings.seasonalScopeId, scopeId));
 
       // Then delete the scope
-      await tx.delete(seasonalScopes)
+      const deleteResult = await tx.delete(seasonalScopes)
         .where(eq(seasonalScopes.id, scopeId));
+
+      if (!deleteResult) {
+        throw new Error('Failed to delete seasonal scope');
+      }
     });
 
     res.json({ message: 'Seasonal scope deleted successfully' });
   } catch (error) {
     console.error('Error deleting seasonal scope:', error);
-    res.status(500).json({ error: 'Failed to delete seasonal scope' });
+    res.status(500).json({ 
+      error: error instanceof Error ? error.message : 'Failed to delete seasonal scope'
+    });
   }
 });
 
