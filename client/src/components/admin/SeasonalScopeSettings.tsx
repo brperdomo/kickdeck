@@ -171,21 +171,16 @@ export function SeasonalScopeSettings() {
     setAgeGroupMappings([]);
   };
 
-  const calculateAgeGroup = (birthYear: number, endYear: number) => {
-    const age = endYear - birthYear;
-    return `U${age}`;
-  };
-
   const handleEndYearChange = (endYear: string) => {
     setSelectedEndYear(endYear);
     if (endYear) {
       const year = parseInt(endYear);
       const initialMappings: AgeGroupSettings[] = [];
 
-      // Generate 15 years of age groups (U4 to U19)
-      for (let i = 0; i < 15; i++) {
-        const birthYear = year - (4 + i);
-        const ageGroup = calculateAgeGroup(birthYear, year);
+      // Generate age groups (U4 to U18)
+      for (let i = 4; i <= 18; i++) {
+        const ageGroup = `U${i}`;
+        const birthYear = year - i;
 
         // Add boys division
         initialMappings.push({
@@ -216,11 +211,11 @@ export function SeasonalScopeSettings() {
         });
       }
 
-      // Sort the mappings by birth year (descending) and gender
+      // Sort by birth year (descending) and gender
       const sortedMappings = initialMappings.sort((a, b) => {
         const yearDiff = b.birthYear - a.birthYear;
         if (yearDiff !== 0) return yearDiff;
-        return (a.gender || '').localeCompare(b.gender || '');
+        return (a.gender).localeCompare(b.gender);
       });
 
       setAgeGroupMappings(sortedMappings);
