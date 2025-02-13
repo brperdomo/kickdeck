@@ -511,10 +511,10 @@ export function SeasonalScopeSettings() {
                                   key={`${group.id}-${group.gender}-${group.birthYear}`}
                                   className="hover:bg-muted/50"
                                 >
-                                  <TableCell>{group.birthYear}</TableCell>
-                                  <TableCell>{group.divisionCode}</TableCell>
-                                  <TableCell>{group.ageGroup}</TableCell>
-                                  <TableCell>{group.gender}</TableCell>
+                                  <TableCell>{group.birthYear || 'N/A'}</TableCell>
+                                  <TableCell>{group.divisionCode || 'N/A'}</TableCell>
+                                  <TableCell>{group.ageGroup || 'N/A'}</TableCell>
+                                  <TableCell>{group.gender || 'N/A'}</TableCell>
                                 </TableRow>
                               ))}
                           </TableBody>
