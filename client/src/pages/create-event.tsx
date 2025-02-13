@@ -76,12 +76,45 @@ interface EventData {
   branding?: EventBranding;
 }
 
-function validateEventData(data: Partial<EventData>): { isValid: boolean; errors: string[] } {
+const validateEventData = (data: Partial<EventData>): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+
+  // Validate basic event information
+  if (!data.name) errors.push("Event name is required");
+  if (!data.startDate) errors.push("Start date is required");
+  if (!data.endDate) errors.push("End date is required");
+  if (!data.timezone) errors.push("Timezone is required");
+  if (!data.applicationDeadline) errors.push("Application deadline is required");
+
+  // Validate age groups
+  if (!data.ageGroups || data.ageGroups.length === 0) {
+    errors.push("At least one age group is required");
+  } else {
+    data.ageGroups.forEach((group, index) => {
+      if (!group.gender) errors.push(`Gender is required for age group ${index + 1}`);
+      if (!group.ageGroup) errors.push(`Age group name is required for group ${index + 1}`);
+      if (!group.fieldSize) errors.push(`Field size is required for age group ${index + 1}`);
+      if (!group.birthDateStart) errors.push(`Birth date start is required for age group ${index + 1}`);
+      if (!group.birthDateEnd) errors.push(`Birth date end is required for age group ${index + 1}`);
+      if (typeof group.projectedTeams !== 'number') errors.push(`Projected teams count is required for age group ${index + 1}`);
+    });
+  }
+
+  // Validate complex selection
+  if (!data.selectedComplexIds || data.selectedComplexIds.length === 0) {
+    errors.push("At least one complex must be selected");
+  }
+
+  // Validate field sizes for selected complexes
+  if (Object.keys(data.complexFieldSizes || {}).length === 0) {
+    errors.push("Field sizes must be specified for selected complexes");
+  }
+
   return {
-    isValid: true,
-    errors: []
+    isValid: errors.length === 0,
+    errors
   };
-}
+};
 
 const generateId = () => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -851,6 +884,7 @@ export default function CreateEvent() {
         selectedAgeGroupIds.includes(group.id)
       ) || [];
 
+      // Prepare event data
       const eventData = {
         name: formValues.name || "",
         startDate: formValues.startDate || "",
@@ -860,16 +894,19 @@ export default function CreateEvent() {
         details: formValues.details || "",
         agreement: formValues.agreement || "",
         refundPolicy: formValues.refundPolicy || "",
-        ageGroups: selectedAgeGroups.map(group => ({
-          gender: group.gender as "Male" | "Female" | "Coed",
-          projectedTeams: 0,
-          birthDateStart: new Date(group.birthYear, 0, 1).toISOString(),
-          birthDateEnd: new Date(group.birthYear, 11, 31).toISOString(),
-          scoringRule: "",
-          ageGroup: group.ageGroup,
-          fieldSize: "11v11" as FieldSize,
-          amountDue: null
-        })),
+        ageGroups: selectedAgeGroups.map(group => {
+          const scoringRule = scoringRules.length > 0 ? scoringRules[0].id : ''; // Default to first scoring rule
+          return {
+            gender: group.gender as "Male" | "Female" | "Coed",
+            projectedTeams: 0,
+            birthDateStart: new Date(group.birthYear, 0, 1).toISOString(),
+            birthDateEnd: new Date(group.birthYear, 11, 31).toISOString(),
+            scoringRule: scoringRule,
+            ageGroup: group.ageGroup,
+            fieldSize: "11v11" as FieldSize,
+            amountDue: 0 // Set a default value
+          };
+        }),
         complexFieldSizes: eventFieldSizes,
         selectedComplexIds: selectedComplexes.map(complex => complex.id),
         branding: {
@@ -879,12 +916,21 @@ export default function CreateEvent() {
         }
       };
 
+      // Validate the event data
+      const validation = validateEventData(eventData);
+      if (!validation.isValid) {
+        throw new Error(`Validation failed:\n${validation.errors.join('\n')}`);
+      }
+
       // Create FormData instance
       const formData = new FormData();
       if (logo) {
         formData.append('logo', logo);
       }
       formData.append('data', JSON.stringify(eventData));
+
+      // Log the data being sent
+      console.log('Submitting event data:', eventData);
 
       const response = await fetch('/api/admin/events', {
         method: 'POST',
@@ -921,7 +967,7 @@ export default function CreateEvent() {
     const validateTabs = () => {
       const formValues = form.getValues();
       const errors: Record<EventTab, boolean> = {
-        information: !formValues.name || !formValues.startDate || !formValues.endDate || !formValues.timezone,
+        information: !formValues.name || !formValues.startDate || !formValues.endDate || !formValues.timezone || !formValues.applicationDeadline,
         'age-groups': !selectedScopeId || selectedAgeGroupIds.length === 0,
         scoring: scoringRules.length === 0,
         complexes: selectedComplexIds.length === 0,
