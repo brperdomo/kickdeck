@@ -49,10 +49,14 @@ router.get('/:id/in-use', async (req, res) => {
       where: eq(ageGroupSettings.seasonalScopeId, scopeId),
     });
 
-    // Check if any age groups from this scope are used in events
-    const ageGroupIds = ageGroups.map(group => group.id);
-    const eventsUsingScope = await db.query.eventAgeGroups.findFirst({
-      where: (fields, { inArray }) => inArray(fields.id, ageGroupIds),
+    // Check if any events are using age groups from this scope
+    const eventsUsingScope = await db.query.events.findFirst({
+      where: (fields, { exists, and, eq: eqOp }) =>
+        exists(eventAgeGroups, (eventAgeGroup) =>
+          and(
+            eqOp(eventAgeGroup.seasonalScopeId, scopeId)
+          )
+        ),
     });
 
     res.json({
@@ -73,14 +77,14 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     const scopeId = parseInt(id);
 
-    // Check if scope is in use first
-    const ageGroups = await db.query.ageGroupSettings.findMany({
-      where: eq(ageGroupSettings.seasonalScopeId, scopeId),
-    });
-
-    const ageGroupIds = ageGroups.map(group => group.id);
-    const eventsUsingScope = await db.query.eventAgeGroups.findFirst({
-      where: (fields, { inArray }) => inArray(fields.id, ageGroupIds),
+    // Check if any events are using age groups from this scope
+    const eventsUsingScope = await db.query.events.findFirst({
+      where: (fields, { exists, and, eq: eqOp }) =>
+        exists(eventAgeGroups, (eventAgeGroup) =>
+          and(
+            eqOp(eventAgeGroup.seasonalScopeId, scopeId)
+          )
+        ),
     });
 
     if (eventsUsingScope) {
