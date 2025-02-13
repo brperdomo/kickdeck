@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { eq } from 'drizzle-orm';
-import { db } from '../db';
+import { db } from '../../db';
 import { seasonalScopes, ageGroupSettings } from '@db/schema';
 import { z } from 'zod';
 

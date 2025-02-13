@@ -1135,8 +1135,8 @@ export function registerRoutes(app: Express): Server {
             return res.status(400).send("Invalid event data format");
         }
 
-        if (!eventData || !Array.isArray(eventData.ageGroups)) {
-            return res.status(400).json({ error: "Missing or invalid age groups data" });
+        if (!eventData || !Array.isArray(eventData.selectedAgeGroupIds) || eventData.selectedAgeGroupIds.length === 0) {
+            return res.status(400).json({ error: "Please select at least one age group" });
         }
 
         // Sanitize the data
