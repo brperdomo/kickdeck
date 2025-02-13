@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Loader2, Trash2 } from "lucide-react";
+import { Plus, Loader2, Trash2, Eye } from "lucide-react";
 import { z } from "zod";
 import {
   AlertDialog,
@@ -18,6 +18,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 
 interface AgeGroupSettings {
@@ -51,6 +57,7 @@ export function SeasonalScopeSettings() {
   const [ageGroupMappings, setAgeGroupMappings] = useState<AgeGroupSettings[]>([]);
   const [scopeToDelete, setScopeToDelete] = useState<SeasonalScope | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [viewingScope, setViewingScope] = useState<SeasonalScope | null>(null);
 
   // Query to fetch all seasonal scopes
   const scopesQuery = useQuery({
@@ -222,6 +229,10 @@ export function SeasonalScopeSettings() {
       typeof group.gender === 'string';
   };
 
+  const handleViewDetails = (scope: SeasonalScope) => {
+    setViewingScope(scope);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -324,13 +335,22 @@ export function SeasonalScopeSettings() {
                         <Badge variant={scope.isActive ? "default" : "secondary"}>
                           {scope.isActive ? "Active" : "Inactive"}
                         </Badge>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDeleteClick(scope)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleViewDetails(scope)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteClick(scope)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </Card>
@@ -359,6 +379,38 @@ export function SeasonalScopeSettings() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
+          <Dialog open={!!viewingScope} onOpenChange={(open) => !open && setViewingScope(null)}>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>
+                  {viewingScope?.name} ({viewingScope?.startYear}-{viewingScope?.endYear})
+                </DialogTitle>
+              </DialogHeader>
+              <div className="mt-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Age Group</TableHead>
+                      <TableHead>Division Code</TableHead>
+                      <TableHead>Gender</TableHead>
+                      <TableHead>Birth Year</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {viewingScope?.ageGroups.map((group) => (
+                      <TableRow key={group.id}>
+                        <TableCell>{group.ageGroup}</TableCell>
+                        <TableCell>{group.divisionCode}</TableCell>
+                        <TableCell>{group.gender}</TableCell>
+                        <TableCell>{group.birthYear}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </CardContent>
     </Card>
