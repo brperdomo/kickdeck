@@ -6,9 +6,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Loader2, Edit, Eye } from "lucide-react";
+import { Plus, Loader2, Trash2 } from "lucide-react";
 import { z } from "zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 
 interface AgeGroupSettings {
   id: number;
@@ -39,8 +49,8 @@ export function SeasonalScopeSettings() {
   const [selectedEndYear, setSelectedEndYear] = useState<string>("");
   const [scopeName, setScopeName] = useState<string>("");
   const [ageGroupMappings, setAgeGroupMappings] = useState<AgeGroupSettings[]>([]);
-  const [viewingScope, setViewingScope] = useState<SeasonalScope | null>(null);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [scopeToDelete, setScopeToDelete] = useState<SeasonalScope | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Query to fetch all seasonal scopes
   const scopesQuery = useQuery({
@@ -84,6 +94,67 @@ export function SeasonalScopeSettings() {
       });
     }
   });
+
+  const handleDeleteClick = async (scope: SeasonalScope) => {
+    try {
+      // Check if scope is in use first
+      const response = await fetch(`/api/admin/seasonal-scopes/${scope.id}/in-use`);
+      const data = await response.json();
+
+      if (data.inUse) {
+        toast({
+          title: "Cannot Delete",
+          description: data.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // If not in use, show confirmation dialog
+      setScopeToDelete(scope);
+      setDeleteDialogOpen(true);
+    } catch (error) {
+      console.error('Error checking scope usage:', error);
+      toast({
+        title: "Error",
+        description: "Failed to check if seasonal scope can be deleted",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!scopeToDelete) return;
+
+    try {
+      const response = await fetch(`/api/admin/seasonal-scopes/${scopeToDelete.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete seasonal scope');
+      }
+
+      toast({
+        title: "Success",
+        description: "Seasonal scope deleted successfully",
+      });
+
+      // Invalidate and refetch
+      await queryClient.invalidateQueries({ queryKey: ['/api/admin/seasonal-scopes'] });
+    } catch (error) {
+      console.error('Error deleting scope:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete seasonal scope",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteDialogOpen(false);
+      setScopeToDelete(null);
+    }
+  };
 
   const resetForm = () => {
     setSelectedStartYear("");
@@ -166,16 +237,6 @@ export function SeasonalScopeSettings() {
     }
   };
 
-  const handleViewScope = (scope: SeasonalScope) => {
-    setViewingScope(scope);
-    setIsViewModalOpen(true);
-  };
-
-  const handleCloseViewModal = () => {
-    setIsViewModalOpen(false);
-    setViewingScope(null);
-  };
-
   const isValidAgeGroup = (group: any): group is AgeGroupSettings => {
     return group &&
       typeof group.divisionCode === 'string' &&
@@ -183,7 +244,6 @@ export function SeasonalScopeSettings() {
       typeof group.ageGroup === 'string' &&
       typeof group.gender === 'string';
   };
-
 
   return (
     <Card>
@@ -283,14 +343,16 @@ export function SeasonalScopeSettings() {
                           {scope.startYear} - {scope.endYear}
                         </p>
                       </div>
-                      <div className="flex space-x-2">
+                      <div className="flex items-center gap-4">
+                        <Badge variant={scope.isActive ? "default" : "secondary"}>
+                          {scope.isActive ? "Active" : "Inactive"}
+                        </Badge>
                         <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleViewScope(scope)}
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteClick(scope)}
                         >
-                          <Eye className="h-4 w-4 mr-2" />
-                          View
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -300,74 +362,26 @@ export function SeasonalScopeSettings() {
             )}
           </div>
 
-
-          <Dialog open={isViewModalOpen} onOpenChange={handleCloseViewModal}>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-              {viewingScope && (
-                <>
-                  <DialogHeader>
-                    <DialogTitle className="text-xl font-semibold">
-                      {viewingScope.name}
-                    </DialogTitle>
-                    <div className="flex gap-4 text-sm text-muted-foreground mt-2">
-                      <div>
-                        <span className="font-medium">Start Year:</span>{" "}
-                        <span>{viewingScope.startYear}</span>
-                      </div>
-                      <div>
-                        <span className="font-medium">End Year:</span>{" "}
-                        <span>{viewingScope.endYear}</span>
-                      </div>
-                    </div>
-                  </DialogHeader>
-
-                  <div className="mt-6">
-                    <h4 className="text-lg font-semibold mb-4">Demographics & Divisions</h4>
-                    {viewingScope.ageGroups && viewingScope.ageGroups.length > 0 ? (
-                      <div className="rounded-md border">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Division Code</TableHead>
-                              <TableHead>Birth Year</TableHead>
-                              <TableHead>Age Group</TableHead>
-                              <TableHead>Gender</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {viewingScope.ageGroups
-                              .filter(isValidAgeGroup)
-                              .sort((a, b) => {
-                                // Sort by birth year first (descending)
-                                const yearDiff = b.birthYear - a.birthYear;
-                                if (yearDiff !== 0) return yearDiff;
-                                // Then by gender (B before G)
-                                return (a.gender || '').localeCompare(b.gender || '');
-                              })
-                              .map((group) => (
-                                <TableRow
-                                  key={group.divisionCode}
-                                  className="hover:bg-muted/50"
-                                >
-                                  <TableCell>{group.divisionCode}</TableCell>
-                                  <TableCell>{group.birthYear}</TableCell>
-                                  <TableCell>{group.ageGroup}</TableCell>
-                                  <TableCell>{group.gender}</TableCell>
-                                </TableRow>
-                              ))}
-                          </TableBody>
-                        </Table>
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        <p>No age groups or divisions defined for this scope.</p>
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
-            </DialogContent>
-          </Dialog>
+          <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete the seasonal scope "{scopeToDelete?.name}".
+                  This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={confirmDelete}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </CardContent>
     </Card>
