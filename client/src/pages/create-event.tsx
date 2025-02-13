@@ -876,6 +876,24 @@ export default function CreateEvent() {
   );
 
   const handleCreateEvent = async () => {
+    if (!selectedScopeId) {
+      toast({
+        title: "Error",
+        description: "Please select a seasonal scope first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (selectedAgeGroupIds.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one age group from the seasonal scope",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSaving(true);
     try {
       const formValues = form.getValues();
@@ -895,16 +913,21 @@ export default function CreateEvent() {
         agreement: formValues.agreement || "",
         refundPolicy: formValues.refundPolicy || "",
         ageGroups: selectedAgeGroups.map(group => {
-          const scoringRule = scoringRules.length > 0 ? scoringRules[0].id : ''; // Default to first scoring rule
+          const scoringRule = scoringRules.find(rule => 
+            rule.id === (editingScoringRule?.id || scoringRules[0]?.id)
+          )?.id || '';
+
+          // Ensure all required fields are present
           return {
+            id: generateId(), // Add required id field
             gender: group.gender as "Male" | "Female" | "Coed",
-            projectedTeams: 0,
-            birthDateStart: new Date(group.birthYear, 0, 1).toISOString(),
-            birthDateEnd: new Date(group.birthYear, 11, 31).toISOString(),
-            scoringRule: scoringRule,
+            projectedTeams: 20, // Set a reasonable default
+            birthDateStart: new Date(group.minBirthYear, 0, 1).toISOString(),
+            birthDateEnd: new Date(group.maxBirthYear, 11, 31).toISOString(),
+            scoringRule,
             ageGroup: group.ageGroup,
-            fieldSize: "11v11" as FieldSize,
-            amountDue: 0 // Set a default value
+            fieldSize: "11v11" as FieldSize, // Set default field size
+            amountDue: 0
           };
         }),
         complexFieldSizes: eventFieldSizes,
