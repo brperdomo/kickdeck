@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { eq } from 'drizzle-orm';
 import { db } from '../../db';
-import { seasonalScopes, ageGroupSettings } from '@db/schema';
+import { seasonalScopes, ageGroupSettings, events, eventAgeGroups } from '@db/schema';
 import { z } from 'zod';
 
 const router = Router();
@@ -35,6 +35,75 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Error fetching seasonal scopes:', error);
     res.status(500).json({ error: 'Failed to fetch seasonal scopes' });
+  }
+});
+
+// Check if a seasonal scope is in use
+router.get('/:id/in-use', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const scopeId = parseInt(id);
+
+    // Get all age groups for this scope
+    const ageGroups = await db.query.ageGroupSettings.findMany({
+      where: eq(ageGroupSettings.seasonalScopeId, scopeId),
+    });
+
+    // Check if any age groups from this scope are used in events
+    const ageGroupIds = ageGroups.map(group => group.id);
+    const eventsUsingScope = await db.query.eventAgeGroups.findFirst({
+      where: (fields, { inArray }) => inArray(fields.id, ageGroupIds),
+    });
+
+    res.json({
+      inUse: !!eventsUsingScope,
+      message: eventsUsingScope 
+        ? 'This seasonal scope is currently in use by an event and cannot be deleted.'
+        : 'Seasonal scope can be safely deleted.',
+    });
+  } catch (error) {
+    console.error('Error checking if seasonal scope is in use:', error);
+    res.status(500).json({ error: 'Failed to check if seasonal scope is in use' });
+  }
+});
+
+// Delete a seasonal scope
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const scopeId = parseInt(id);
+
+    // Check if scope is in use first
+    const ageGroups = await db.query.ageGroupSettings.findMany({
+      where: eq(ageGroupSettings.seasonalScopeId, scopeId),
+    });
+
+    const ageGroupIds = ageGroups.map(group => group.id);
+    const eventsUsingScope = await db.query.eventAgeGroups.findFirst({
+      where: (fields, { inArray }) => inArray(fields.id, ageGroupIds),
+    });
+
+    if (eventsUsingScope) {
+      return res.status(400).json({
+        error: 'This seasonal scope is currently in use by an event and cannot be deleted.'
+      });
+    }
+
+    // If not in use, proceed with deletion
+    await db.transaction(async (tx) => {
+      // Delete age groups first (cascade will handle this, but being explicit)
+      await tx.delete(ageGroupSettings)
+        .where(eq(ageGroupSettings.seasonalScopeId, scopeId));
+
+      // Then delete the scope
+      await tx.delete(seasonalScopes)
+        .where(eq(seasonalScopes.id, scopeId));
+    });
+
+    res.json({ message: 'Seasonal scope deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting seasonal scope:', error);
+    res.status(500).json({ error: 'Failed to delete seasonal scope' });
   }
 });
 
