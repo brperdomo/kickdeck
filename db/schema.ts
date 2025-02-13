@@ -148,31 +148,30 @@ export const events = pgTable("events", {
 export const eventAgeGroups = pgTable("event_age_groups", {
   id: serial("id").primaryKey(),
   eventId: text("event_id").notNull().references(() => events.id),
-  gender: text("gender").notNull(),
-  projectedTeams: integer("projected_teams").notNull(),
-  birthDateStart: text("birth_date_start").notNull(),
-  birthDateEnd: text("birth_date_end").notNull(),
-  scoringRule: text("scoring_rule"),
   ageGroup: text("age_group").notNull(),
+  birthYear: integer("birth_year").notNull(),
+  gender: text("gender").notNull(),
+  divisionCode: text("division_code").notNull(),
+  projectedTeams: integer("projected_teams").notNull(),
+  scoringRule: text("scoring_rule"),
   fieldSize: text("field_size").notNull(),
   amountDue: integer("amount_due"),
   createdAt: text("created_at").notNull(),
 });
 
-export const eventComplexes = pgTable("event_complexes", {
-  id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
-  complexId: integer("complex_id").notNull().references(() => complexes.id),
-  createdAt: text("created_at").notNull(),
+export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {
+  ageGroup: z.string().min(1, "Age group is required"),
+  birthYear: z.number().int("Birth year must be a valid year"),
+  gender: z.enum(["Boys", "Girls"], "Gender must be either Boys or Girls"),
+  divisionCode: z.string().min(1, "Division code is required"),
+  projectedTeams: z.number().int().min(0, "Projected teams must be 0 or greater"),
+  fieldSize: z.string().min(1, "Field size is required"),
+  amountDue: z.number().int().min(0, "Amount due must be 0 or greater").optional(),
+  scoringRule: z.string().optional(),
 });
 
-export const eventFieldSizes = pgTable("event_field_sizes", {
-  id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
-  fieldId: integer("field_id").notNull().references(() => fields.id),
-  fieldSize: text("field_size").notNull(),
-  createdAt: text("created_at").notNull(),
-});
+export type InsertEventAgeGroup = typeof eventAgeGroups.$inferInsert;
+export type SelectEventAgeGroup = typeof eventAgeGroups.$inferSelect;
 
 export const insertEventSchema = createInsertSchema(events, {
   name: z.string().min(1, "Event name is required"),
@@ -429,7 +428,6 @@ export type SelectComplex = typeof complexes.$inferSelect;
 export type InsertField = typeof fields.$inferInsert;
 export type SelectField = typeof fields.$inferSelect;
 
-
 export const roles = pgTable("roles", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
@@ -485,40 +483,4 @@ export const selectUpdateSchema = createSelectSchema(updates);
 export type InsertUpdate = typeof updates.$inferInsert;
 export type SelectUpdate = typeof updates.$inferSelect;
 
-export const seasonalScopes = pgTable("seasonal_scopes", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  startYear: integer("start_year").notNull(),
-  endYear: integer("end_year").notNull(),
-  isActive: boolean("is_active").default(false).notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
-
-export const ageGroupSettings = pgTable("age_group_settings", {
-  id: serial("id").primaryKey(),
-  seasonalScopeId: integer("seasonal_scope_id").notNull().references(() => seasonalScopes.id, { onDelete: 'cascade' }),
-  ageGroup: text("age_group").notNull(),
-  birthYear: integer("birth_year").notNull(),
-  gender: text("gender").notNull(),
-  divisionCode: text("division_code").notNull(),
-  minBirthYear: integer("min_birth_year").notNull(),
-  maxBirthYear: integer("max_birth_year").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
-
-export const insertSeasonalScopeSchema = createInsertSchema(seasonalScopes);
-export const insertAgeGroupSettingSchema = createInsertSchema(ageGroupSettings);
-
-// Add relationship definitions
-export const seasonalScopesRelations = relations(seasonalScopes, ({ many }) => ({
-  ageGroups: many(ageGroupSettings),
-}));
-
-export const ageGroupSettingsRelations = relations(ageGroupSettings, ({ one }) => ({
-  scope: one(seasonalScopes, {
-    fields: [ageGroupSettings.seasonalScopeId],
-    references: [seasonalScopes.id],
-  }),
-}));
+//Removed seasonalScopes and ageGroupSettings tables and related schemas.

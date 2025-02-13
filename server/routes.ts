@@ -10,8 +10,6 @@ import {
   fields,
   events,
   eventAgeGroups,
-  eventComplexes,
-  eventFieldSizes,
   gameTimeSlots,
   tournamentGroups,
   teams,
@@ -33,7 +31,7 @@ import session from "express-session";
 import passport from "passport";
 import { setupWebSocketServer } from "./websocket";
 import { randomBytes } from "crypto";
-import seasonalScopesRouter from './routes/seasonal-scopes';
+
 
 // Admin middleware
 const isAdmin = (req: Request, res: Response, next: Function) => {
@@ -57,9 +55,6 @@ export function registerRoutes(app: Express): Server {
     setupAuth(app);
     log("Authentication routes registered successfully");
 
-
-    // Register the seasonal scopes router with admin middleware
-    app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
 
     // Public event endpoint
     app.get('/api/events/:id', async (req, res) => {
@@ -87,7 +82,6 @@ export function registerRoutes(app: Express): Server {
         res.status(500).send("Failed to fetch event details");
       }
     });
-
 
     // Admin email check endpoint
     app.get('/api/admin/check-email', isAdmin, async (req, res) => {
@@ -845,7 +839,6 @@ export function registerRoutes(app: Express): Server {
     });
 
 
-
     // Organization settings endpoints
     app.get('/api/admin/organization-settings', isAdmin, async (req, res) => {
       try {
@@ -992,14 +985,13 @@ export function registerRoutes(app: Express): Server {
 
         if (!deletedField) {
           return res.status(404).send("Field not found");
-}
+        }
 
         res.json(deletedField);
       } catch (error) {
         console.error('Error deleting field:', error);
         // Added basic error logging for white screen debugging.
-        console.error("Error details:", error);
-        res.status(500).send("Failed to delete field");
+        console.error("Error details:", error);        res.status(500).send("Failed to delete field");
       }
     });
 
@@ -2282,83 +2274,9 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    // Seasonal Scope Management Routes
-    app.get('/api/admin/seasonal-scopes', isAdmin, async (req, res) => {
-      try {
-        const scopes = await db
-          .select()
-          .from(seasonalScopes)
-          .orderBy(seasonalScopes.startYear);
-
-        res.json(scopes);
-      } catch (error) {
-        console.error('Error fetching seasonal scopes:', error);
-        res.status(500).send("Failed to fetch seasonal scopes");
-      }
-    });
-
-    app.post('/api/admin/seasonal-scopes', isAdmin, async (req, res) => {
-      try {
-        const { name, startYear, endYear } = req.body;
-
-        const [newScope] = await db
-          .insert(seasonalScopes)
-          .values({
-            name,
-            start_year: parseInt(startYear),
-            end_year: parseInt(endYear),
-            is_active: false,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
-          .returning();
-
-        res.json(newScope);
-      } catch (error) {
-        console.error('Error creating seasonal scope:', error);
-        console.error('Detailed error:', error instanceof Error ? error.message : error);
-        res.status(500).send("Failed to create seasonal scope");
-      }
-    });
-
-    app.put('/api/admin/seasonal-scopes/:id/age-groups', isAdmin, async (req, res) => {
-      try {
-        const scopeId = parseInt(req.params.id);
-        const { ageGroups } = req.body;
-
-        await db.transaction(async (tx) => {
-          // Delete existing age groups for this scope
-          await tx
-            .delete(ageGroupSettings)
-            .where(eq(ageGroupSettings.seasonalScopeId, scopeId));
-
-          // Insert new age groups
-          for (const group of ageGroups) {
-            await tx
-              .insert(ageGroupSettings)
-              .values({
-                seasonalScopeId: scopeId,
-                ageGroup: group.ageGroup,
-                minBirthYear: group.minBirthYear,
-                maxBirthYear: group.maxBirthYear,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-              });
-          }
-        });
-
-        res.json({ message: "Age groups updated successfully" });
-      } catch (error) {
-        console.error('Error updating age groups:', error);
-        res.status(500).send("Failed to update age groups");
-      }
-    });
-
     return httpServer;
   } catch (error) {
-    console.error('Error setting up routes:', error);
-    // Added basic error logging for white screen debugging.
-    console.error("Error details:", error);
+    log("Error registering routes:", error);
     throw error;
   }
 }

@@ -19,13 +19,21 @@ import { AdminModal } from "@/components/admin/AdminModal";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Editor } from "@tinymce/tinymce-react";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  PREDEFINED_AGE_GROUPS,
   EventBranding,
   EventData,
   Complex,
   Field,
   EventSetting,
   EventAdministrator,
-  Gender,
   FieldSize,
   AgeGroup,
   ScoringRule,
@@ -33,205 +41,14 @@ import {
   TAB_ORDER,
   USA_TIMEZONES,
   eventInformationSchema,
-  ageGroupSchema,
   scoringRuleSchema,
   eventSettingSchema,
   EventInformationValues,
-  AgeGroupValues,
   ScoringRuleValues,
   EventSettingValues,
   EventFormProps,
   AdminModalProps,
 } from "./event-form-types";
-
-const AgeGroupDialog = ({
-  open,
-  onClose,
-  onSubmit,
-  defaultValues,
-  isEdit,
-}: {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (data: AgeGroupValues) => void;
-  defaultValues?: AgeGroup;
-  isEdit?: boolean;
-}) => {
-  const form = useForm<AgeGroupValues>({
-    resolver: zodResolver(ageGroupSchema),
-    defaultValues: defaultValues || {
-      gender: 'Male',
-      projectedTeams: 0,
-      birthDateStart: '',
-      birthDateEnd: '',
-      scoringRule: '',
-      ageGroup: '',
-      fieldSize: '11v11',
-      amountDue: null,
-    }
-  });
-
-  useEffect(() => {
-    if (defaultValues) {
-      form.reset(defaultValues);
-    }
-  }, [defaultValues, form]);
-
-  const handleSubmit = (data: AgeGroupValues) => {
-    onSubmit(data);
-    form.reset();
-    onClose();
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {isEdit ? 'Edit Age Group' : 'Add Age Group'}
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Gender</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Male">Male</SelectItem>
-                      <SelectItem value="Female">Female</SelectItem>
-                      <SelectItem value="Coed">Coed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="ageGroup"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Age Group</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="e.g., U10, U12" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="birthDateStart"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Birth Date Start</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="birthDateEnd"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Birth Date End</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormField
-              control={form.control}
-              name="projectedTeams"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Projected Teams</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="fieldSize"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Field Size</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select field size" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
-                        <SelectItem key={size} value={size}>
-                          {size}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="amountDue"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amount Due (optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      value={field.value ?? ''}
-                      onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">
-              {isEdit ? 'Update Age Group' : 'Add Age Group'}
-            </Button>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-interface EventAdministrator {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  roles: string[];
-}
 
 export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) => {
   const [, setLocation] = useLocation();
@@ -242,8 +59,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
   const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(initialData?.ageGroups || []);
   const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(initialData?.selectedComplexIds || []);
   const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(initialData?.complexFieldSizes || {});
-  const [isAgeGroupDialogOpen, setIsAgeGroupDialogOpen] = useState(false);
-  const [editingAgeGroup, setEditingAgeGroup] = useState<AgeGroup | null>(null);
   const [scoringRules, setScoringRules] = useState<ScoringRule[]>(initialData?.scoringRules || []);
   const [settings, setSettings] = useState<EventSetting[]>(initialData?.settings || []);
   const [isScoringDialogOpen, setIsScoringDialogOpen] = useState(false);
@@ -251,7 +66,7 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
   const [isSettingDialogOpen, setIsSettingDialogOpen] = useState(false);
   const [editingSetting, setEditingSetting] = useState<EventSetting | null>(null);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
-  const [editingAdmin, setEditingAdmin] = useState<AdminModalProps['adminToEdit'] | null>(null);
+  const [editingAdmin, setEditingAdmin] = useState<AdminModalProps['adminToEdit']>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [logo, setLogo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.branding?.logoUrl || null);
@@ -274,21 +89,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     },
   });
 
-  // Scoring form setup
-  const scoringForm = useForm<ScoringRuleValues>({
-    resolver: zodResolver(scoringRuleSchema),
-    defaultValues: editingScoringRule || {
-      title: "",
-      win: 0,
-      loss: 0,
-      tie: 0,
-      goalCapped: 0,
-      shutout: 0,
-      redCard: 0,
-      tieBreaker: "",
-    },
-  });
-
   // Query hooks
   const complexesQuery = useQuery({
     queryKey: ['complexes'],
@@ -302,13 +102,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     enabled: activeTab === 'complexes',
   });
 
-  // Effects
-  useEffect(() => {
-    if (editingScoringRule) {
-      scoringForm.reset(editingScoringRule);
-    }
-  }, [editingScoringRule, scoringForm]);
-
   // Event handlers
   const handleSubmit = async (data: EventInformationValues) => {
     setIsSaving(true);
@@ -317,25 +110,13 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
         throw new Error('Required fields are missing');
       }
 
-      // Validate complex selections
-      if (selectedComplexIds.length === 0) {
-        throw new Error('Please select at least one complex');
-      }
-
       const combinedData: EventData = {
-        name: data.name,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        timezone: data.timezone,
-        applicationDeadline: data.applicationDeadline,
-        details: data.details || "",
-        agreement: data.agreement || "",
-        refundPolicy: data.refundPolicy || "",
+        ...data,
         ageGroups,
         scoringRules,
         settings,
         complexFieldSizes,
-        selectedComplexIds: selectedComplexIds,
+        selectedComplexIds,
         administrators: initialData?.administrators || [],
         branding: {
           primaryColor,
@@ -355,95 +136,14 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
       setLocation("/admin");
     } catch (error) {
       console.error('Submit error:', error);
-      let errorMessage = "Failed to save event";
-      if (error instanceof Error) {
-        try {
-          const errorData = JSON.parse(error.message);
-          if (errorData.missingFields) {
-            errorMessage = `Missing fields: ${errorData.missingFields.join(', ')}`;
-          } else {
-            errorMessage = error.message;
-          }
-        } catch {
-          errorMessage = error.message;
-        }
-      }
       toast({
         title: "Error",
-        description: errorMessage,
+        description: error instanceof Error ? error.message : "Failed to save event",
         variant: "destructive",
       });
     } finally {
       setIsSaving(false);
     }
-  };
-
-  const handleAddAgeGroup = (data: AgeGroupValues) => {
-    if (editingAgeGroup) {
-      setAgeGroups(ageGroups.map(group =>
-        group.id === editingAgeGroup.id ? { ...data, id: group.id } : group
-      ));
-      setEditingAgeGroup(null);
-    } else {
-      setAgeGroups([...ageGroups, { ...data, id: Date.now().toString() }]);
-    }
-    setIsAgeGroupDialogOpen(false);
-
-    toast({
-      title: editingAgeGroup ? "Age Group Updated" : "Age Group Added",
-      description: `Successfully ${editingAgeGroup ? 'updated' : 'added'} age group`,
-    });
-  };
-
-  const handleEditAgeGroup = (ageGroup: AgeGroup) => {
-    setEditingAgeGroup(ageGroup);
-    setIsAgeGroupDialogOpen(true);
-  };
-
-  const handleDeleteAgeGroup = (id: string) => {
-    setAgeGroups(ageGroups.filter(group => group.id !== id));
-  };
-
-  const handleAddScoringRule = (data: ScoringRuleValues) => {
-    if (editingScoringRule) {
-      setScoringRules(rules => rules.map(rule =>
-        rule.id === editingScoringRule.id ? { ...data, id: rule.id } : rule
-      ));
-      setEditingScoringRule(null);
-    } else {
-      setScoringRules([...scoringRules, { ...data, id: Date.now().toString() }]);
-    }
-    setIsScoringDialogOpen(false);
-  };
-
-  const handleEditScoringRule = (rule: ScoringRule) => {
-    setEditingScoringRule(rule);
-    setIsScoringDialogOpen(true);
-  };
-
-  const handleDeleteScoringRule = (id: string) => {
-    setScoringRules(scoringRules.filter(rule => rule.id !== id));
-  };
-
-  const handleAddSetting = (data: EventSettingValues) => {
-    if (editingSetting) {
-      setSettings(settings => settings.map(setting =>
-        setting.id === editingSetting.id ? { ...data, id: setting.id } : setting
-      ));
-      setEditingSetting(null);
-    } else {
-      setSettings([...settings, { ...data, id: Date.now().toString() }]);
-    }
-    setIsSettingDialogOpen(false);
-  };
-
-  const handleEditSetting = (setting: EventSetting) => {
-    setEditingSetting(setting);
-    setIsSettingDialogOpen(true);
-  };
-
-  const handleDeleteSetting = (id: string) => {
-    setSettings(settings.filter(setting => setting.id !== id));
   };
 
   const handleComplexSelection = (complexId: number) => {
@@ -461,81 +161,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     }));
   };
 
-  const validateFile = (file: File) => {
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-    const ACCEPTED_IMAGE_TYPES = {
-      'image/jpeg': ['.jpg', '.jpeg'],
-      'image/png': ['.png'],
-      'image/svg+xml': ['.svg']
-    };
-
-    if (file.size > MAX_FILE_SIZE) {
-      throw new Error(`File size must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`);
-    }
-
-    const fileType = file.type;
-    if (!Object.keys(ACCEPTED_IMAGE_TYPES).includes(fileType)) {
-      throw new Error('File must be a PNG, JPEG, or SVG image');
-    }
-
-    return true;
-  };
-
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    if (!file) return;
-
-    try {
-      if (!validateFile(file)) return;
-
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewUrl(objectUrl);
-      setLogo(file);
-      setIsExtracting(true);
-
-      const formData = new FormData();
-      formData.append('logo', file);
-
-      const uploadResponse = await fetch('/api/upload/logo', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error('Failed to upload logo');
-      }
-
-      const { url: logoUrl } = await uploadResponse.json();
-      setPreviewUrl(logoUrl);
-
-      toast({
-        title: "Success",
-        description: "Logo uploaded successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to upload logo",
-        variant: "destructive",
-      });
-      setLogo(null);
-      setPreviewUrl(null);
-    } finally {
-      setIsExtracting(false);
-    }
-  }, [toast, validateFile]);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'image/jpeg': ['.jpg', '.jpeg'],
-      'image/png': ['.png'],
-      'image/svg+xml': ['.svg']
-    },
-    maxFiles: 1,
-    multiple: false,
-  });
-
   const SaveButton = () => (
     <Button
       onClick={form.handleSubmit(handleSubmit)}
@@ -551,7 +176,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
       )}
     </Button>
   );
-
 
   const renderInformationContent = () => (
     <Form {...form}>
@@ -745,423 +369,135 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Age Groups</h3>
-        <Button onClick={() => {
-          setEditingAgeGroup(null);
-          setIsAgeGroupDialogOpen(true);
-        }}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Age Group
-        </Button>
       </div>
 
-      <div className="grid gap-4">
-        {ageGroups.map((group) => (
-          <Card key={group.id}>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start">
-                <div className="space-y-1">
-                  <h4 className="font-semibold">{group.ageGroup} ({group.gender})</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Birth Date Range: {new Date(group.birthDateStart).toLocaleDateString()} to {new Date(group.birthDateEnd).toLocaleDateString()}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Field Size: {group.fieldSize} | Projected Teams: {group.projectedTeams}
-                  </p>
-                  {group.amountDue && (
-                    <p className="text-sm text-muted-foreground">
-                      Amount Due: ${group.amountDue}
-                    </p>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleEditAgeGroup(group)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDeleteAgeGroup(group.id)}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[50px]">Select</TableHead>
+            <TableHead>Age Group</TableHead>
+            <TableHead>Birth Year</TableHead>
+            <TableHead>Gender</TableHead>
+            <TableHead>Division Code</TableHead>
+            <TableHead>Field Size</TableHead>
+            <TableHead>Projected Teams</TableHead>
+            <TableHead>Amount Due</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {PREDEFINED_AGE_GROUPS.map((group) => {
+            const existingGroup = ageGroups.find(
+              (ag) => ag.divisionCode === group.divisionCode
+            );
 
-      <AgeGroupDialog
-        open={isAgeGroupDialogOpen}
-        onClose={() => {
-          setIsAgeGroupDialogOpen(false);
-          setEditingAgeGroup(null);
-        }}
-        onSubmit={handleAddAgeGroup}
-        defaultValues={editingAgeGroup || undefined}
-        isEdit={!!editingAgeGroup}
-      />
-      {isEdit && (
-        <div className="flex justify-end mt-6">
-          <SaveButton />
-        </div>
-      )}
-    </div>
-  );
-
-  const renderScoringContent = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Scoring Rules</h3>
-        <Button onClick={() => {
-          setEditingScoringRule(null);
-          setIsScoringDialogOpen(true);
-        }}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Scoring Rule
-        </Button>
-      </div>
-
-      <div className="grid gap-4">
-        {scoringRules.map((rule) => (
-          <Card key={rule.id}>
-            <CardContent className="p-4 flex justify-between itemscenter">
-              <div>
-                <h4 className="font-semibold">{rule.title}</h4>
-                <p className="text-sm text-muted-foreground">
-                  Win: {rule.win} | Tie: {rule.tie} | Loss: {rule.loss}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleEditScoringRule(rule)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-destructive"
-                  onClick={() => handleDeleteScoringRule(rule.id)}
-                >
-                  <Trash className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <Dialog open={isScoringDialogOpen} onOpenChange={setIsScoringDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editingScoringRule ? 'Edit Scoring Rule' : 'Add Scoring Rule'}
-            </DialogTitle>
-          </DialogHeader>
-          <Form {...scoringForm}>
-            <form onSubmit={scoringForm.handleSubmit(handleAddScoringRule)} className="space-y-4">
-              <FormField
-                control={scoringForm.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="win"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Win Points</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="loss"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Loss Points</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="tie"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tie Points</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="goalCapped"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Goal Cap</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="shutout"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Shutout Points</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="redCard"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Red Card Points</FormLabel>
-                    <FormControl>
-                      <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={scoringForm.control}
-                name="tieBreaker"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tie Breaker</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">
-                {editingScoringRule ? 'Update Scoring Rule' : 'Add Scoring Rule'}
-              </Button>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-
-      {isEdit && (
-        <div className="flex justify-end mt-6">
-          <SaveButton />
-        </div>
-      )}
-    </div>
-  );
-
-  const renderSettingsContent = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardContent className="pt-6 space-y-6">
-          <div>
-            <h4 className="text-sm font-medium mb-4">Event Branding</h4>
-            <div className="mb-2 text-sm text-muted-foreground">
-              <p>Requirements:</p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>File types: PNG, JPEG, or SVG</li>
-                <li>Maximum size: 5MB</li>
-                <li>Recommended: Images with distinct colors for better color extraction</li>
-              </ul>
-            </div>
-            <div
-              {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${
-                isDragActive ? 'border-primary bg-primary/5' : 'border-border'
-              }`}
-            >
-              <input {...getInputProps()} />
-              <div className="flex flex-col items-center justify-center gap-2">
-                {isExtracting ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <p className="text-sm text-muted-foreground">Extracting colors...</p>
-                  </div>
-                ) : previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt="Event logo"
-                    className="h-20 w-20 object-contain"
-                  />
-                ) : (
-                  <ImageIcon className="h-10 w-10 text-muted-foreground" />
-                )}
-                <p className="text-sm text-muted-foreground text-center">
-                  {isDragActive
-                    ? "Drop the event logo here"
-                    : "Drag & drop your event logo here, or click to select"}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="primaryColor">Primary Color</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="primaryColor"
-                  type="color"
-                  value={primaryColor}
-                  onChange={(e) => setPrimaryColor(e.target.value)}
-                  className="w-12 h-12 p-1"
-                />
-                <Input
-                  value={primaryColor}
-                  onChange={(e) => setPrimaryColor(e.target.value)}
-                  className="font-mono"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="secondaryColor">Secondary Color</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="secondaryColor"
-                  type="color"
-                  value={secondaryColor}
-                  onChange={(e) => setSecondaryColor(e.target.value)}
-                  className="w-12 h-12 p-1"
-                />
-                <Input
-                  value={secondaryColor}
-                  onChange={(e) => setSecondaryColor(e.target.value)}
-                  className="font-mono"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="border rounded-lg p-4">
-            <h4 className="text-sm font-medium mb-4">Brand Preview</h4>
-            <div className="space-y-4">
-              {previewUrl && (
-                <div className="flex justify-center p-4 bg-background rounded-lg">
-                  <img
-                    src={previewUrl}
-                    alt="Event logo preview"
-                    className="h-20 w-20 object-contain"
-                  />
-                </div>
-              )}
-              <div className="flex items-center gap-4">
-                <div>
-                  <div
-                    className="w-8 h-8 rounded"
-                    style={{ backgroundColor: primaryColor }}
-                  />
-                  <span className="text-sm">Primary</span>
-                </div>
-                <div>
-                  <div
-                    className="w-8 h-8 rounded"
-                    style={{ backgroundColor: secondaryColor }}
-                  />
-                  <span className="text-sm">Secondary</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      {isEdit && (
-        <div className="flex justify-end mt-6">
-          <SaveButton />
-        </div>
-      )}
-    </div>
-  );
-
-  const renderAdministratorsContent = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Event Administrators</h3>
-        <Button onClick={() => {
-          setEditingAdmin(null);
-          setIsAdminModalOpen(true);
-        }}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Administrator
-        </Button>
-      </div>
-
-      <div className="grid gap-4">
-        {initialData?.administrators.map((admin) => (
-          <Card key={admin.id}>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-center">
-                <div className="space-y-1">
-                  <h4 className="font-semibold">
-                    {admin.user.firstName} {admin.user.lastName}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    {admin.user.email}
-                  </p>
-                  <p className="text-sm text-muted-foreground capitalize">
-                    Role: {admin.role}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setEditingAdmin({
-                        id: admin.id,
-                        email: admin.user.email,
-                        firstName: admin.user.firstName,
-                        lastName: admin.user.lastName,
-                        roles: [admin.role],
-                      });
-                      setIsAdminModalOpen(true);
+            return (
+              <TableRow key={group.divisionCode}>
+                <TableCell>
+                  <Checkbox
+                    checked={!!existingGroup}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setAgeGroups([
+                          ...ageGroups,
+                          {
+                            id: Date.now().toString(),
+                            ...group,
+                            projectedTeams: 0,
+                            fieldSize: '11v11' as FieldSize,
+                            amountDue: null,
+                          },
+                        ]);
+                      } else {
+                        setAgeGroups(
+                          ageGroups.filter(
+                            (ag) => ag.divisionCode !== group.divisionCode
+                          )
+                        );
+                      }
                     }}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                  />
+                </TableCell>
+                <TableCell>{group.ageGroup}</TableCell>
+                <TableCell>{group.birthYear}</TableCell>
+                <TableCell>{group.gender}</TableCell>
+                <TableCell>{group.divisionCode}</TableCell>
+                <TableCell>
+                  {existingGroup ? (
+                    <Select
+                      value={existingGroup.fieldSize}
+                      onValueChange={(value: FieldSize) => {
+                        setAgeGroups(
+                          ageGroups.map((ag) =>
+                            ag.id === existingGroup.id
+                              ? { ...ag, fieldSize: value }
+                              : ag
+                          )
+                        );
+                      }}
+                    >
+                      <SelectTrigger className="w-[120px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
+                          <SelectItem key={size} value={size}>
+                            {size}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    "-"
+                  )}
+                </TableCell>
+                <TableCell>
+                  {existingGroup ? (
+                    <Input
+                      type="number"
+                      value={existingGroup.projectedTeams}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value) || 0;
+                        setAgeGroups(
+                          ageGroups.map((ag) =>
+                            ag.id === existingGroup.id
+                              ? { ...ag, projectedTeams: value }
+                              : ag
+                          )
+                        );
+                      }}
+                      className="w-[80px]"
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </TableCell>
+                <TableCell>
+                  {existingGroup ? (
+                    <Input
+                      type="number"
+                      value={existingGroup.amountDue || ""}
+                      onChange={(e) => {
+                        const value = e.target.value ? parseInt(e.target.value) : null;
+                        setAgeGroups(
+                          ageGroups.map((ag) =>
+                            ag.id === existingGroup.id
+                              ? { ...ag, amountDue: value }
+                              : ag
+                          )
+                        );
+                      }}
+                      className="w-[100px]"
+                      placeholder="Optional"
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
 
       {isEdit && (
         <div className="flex justify-end mt-6">
@@ -1246,8 +582,62 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     );
   };
 
-  // State declarations using existing component context
+  const renderAdministratorsContent = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Event Administrators</h3>
+        <Button onClick={() => {
+          setEditingAdmin(null);
+          setIsAdminModalOpen(true);
+        }}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Administrator
+        </Button>
+      </div>
 
+      <div className="grid gap-4">
+        {initialData?.administrators?.map((admin) => (
+          <Card key={admin.id}>
+            <CardContent className="p-4">
+              <div className="flex justify-between items-center">
+                <div className="space-y-1">
+                  <h4 className="font-semibold">
+                    {admin.firstName} {admin.lastName}
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    {admin.email}
+                  </p>
+                  <p className="text-sm text-muted-foreground capitalize">
+                    Roles: {admin.roles.join(', ')}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setEditingAdmin(admin);
+                      setIsAdminModalOpen(true);
+                    }}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {isEdit && (
+        <div className="flex justify-end mt-6">
+          <SaveButton />
+        </div>
+      )}
+    </div>
+  );
+
+  // State declarations using existing component context
   const getTabValidationState = () => {
     const errors: Record<EventTab, boolean> = {
       'information': !form.formState.isValid,
@@ -1272,9 +662,9 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
                 <TabsTrigger
                   key={tab}
                   value={tab}
-                  className="w-full px-4 py-2 rounded-md text-sm font-medium transition-colors
+                  className={`w-full px-4 py-2 rounded-md text-sm font-medium transition-colors
                     data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm
-                    text-[#1C1C1E] hover:text-[#007AFF]"
+                    text-[#1C1C1E] hover:text-[#007AFF]`}
                 >
                   {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
                 </TabsTrigger>
@@ -1282,51 +672,39 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
             </TabsList>
 
             <div className="mt-6">
-              <TabsContent value="information" className="space-y-6">
+              <TabsContent value="information">
                 {renderInformationContent()}
               </TabsContent>
 
-              <TabsContent value="age-groups" className="space-y-6">
+              <TabsContent value="age-groups">
                 {renderAgeGroupsContent()}
               </TabsContent>
 
-              <TabsContent value="scoring" className="space-y-6">
+              <TabsContent value="scoring">
                 {renderScoringContent()}
               </TabsContent>
 
-              <TabsContent value="complexes" className="space-y-6">
+              <TabsContent value="complexes">
                 {renderComplexesContent()}
               </TabsContent>
 
-              <TabsContent value="settings" className="space-y-6">
+              <TabsContent value="settings">
                 {renderSettingsContent()}
               </TabsContent>
 
-              <TabsContent value="administrators" className="space-y-6">
+              <TabsContent value="administrators">
                 {renderAdministratorsContent()}
               </TabsContent>
             </div>
           </Tabs>
-
-          {/* Dialogs and Modals */}
-          <AgeGroupDialog
-            open={isAgeGroupDialogOpen}
-            onClose={() => {
-              setIsAgeGroupDialogOpen(false);
-              setEditingAgeGroup(null);
-            }}
-            onSubmit={handleAddAgeGroup}
-            defaultValues={editingAgeGroup || undefined}
-            isEdit={!!editingAgeGroup}
-          />
-
-          <AdminModal
-            open={isAdminModalOpen}
-            onOpenChange={setIsAdminModalOpen}
-            adminToEdit={editingAdmin}
-          />
         </CardContent>
       </Card>
+
+      <AdminModal
+        open={isAdminModalOpen}
+        onOpenChange={setIsAdminModalOpen}
+        adminToEdit={editingAdmin}
+      />
     </div>
   );
 };
