@@ -215,7 +215,7 @@ export function SeasonalScopeSettings() {
       const sortedMappings = initialMappings.sort((a, b) => {
         const yearDiff = b.birthYear - a.birthYear;
         if (yearDiff !== 0) return yearDiff;
-        return (a.gender).localeCompare(b.gender);
+        return a.gender.localeCompare(b.gender);
       });
 
       setAgeGroupMappings(sortedMappings);
@@ -480,36 +480,33 @@ export function SeasonalScopeSettings() {
 
                   <div className="mt-6">
                     <h4 className="text-lg font-semibold mb-4">Demographics & Divisions</h4>
-
                     {viewingScope.ageGroups && viewingScope.ageGroups.length > 0 ? (
                       <div className="rounded-md border">
                         <Table>
                           <TableHeader>
-                            <TableRow className="bg-muted/50">
-                              <TableHead className="font-semibold">Birth Year</TableHead>
-                              <TableHead className="font-semibold">Division Code</TableHead>
-                              <TableHead className="font-semibold">Age Group</TableHead>
-                              <TableHead className="font-semibold">Gender</TableHead>
+                            <TableRow>
+                              <TableHead>Birth Year</TableHead>
+                              <TableHead>Division Code</TableHead>
+                              <TableHead>Age Group</TableHead>
+                              <TableHead>Gender</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {viewingScope.ageGroups
                               .sort((a, b) => {
-                                // Sort by birth year first (descending)
                                 const yearDiff = b.birthYear - a.birthYear;
                                 if (yearDiff !== 0) return yearDiff;
-                                // Then by gender
-                                return (a.gender || '').localeCompare(b.gender || '');
+                                return a.gender.localeCompare(b.gender);
                               })
                               .map((group) => (
                                 <TableRow
                                   key={`${group.id}-${group.gender}-${group.birthYear}`}
                                   className="hover:bg-muted/50"
                                 >
-                                  <TableCell>{group.birthYear || 'N/A'}</TableCell>
-                                  <TableCell>{group.divisionCode || 'N/A'}</TableCell>
-                                  <TableCell>{group.ageGroup || 'N/A'}</TableCell>
-                                  <TableCell>{group.gender || 'N/A'}</TableCell>
+                                  <TableCell>{group.birthYear}</TableCell>
+                                  <TableCell>{group.divisionCode}</TableCell>
+                                  <TableCell>{group.ageGroup}</TableCell>
+                                  <TableCell>{group.gender}</TableCell>
                                 </TableRow>
                               ))}
                           </TableBody>
