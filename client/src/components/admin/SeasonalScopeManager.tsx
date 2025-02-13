@@ -10,6 +10,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -20,7 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Trash2 } from "lucide-react";
+import { Trash2, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SeasonalScope {
@@ -43,6 +49,7 @@ interface AgeGroup {
 export function SeasonalScopeManager() {
   const [scopeToDelete, setScopeToDelete] = useState<SeasonalScope | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [viewingScope, setViewingScope] = useState<SeasonalScope | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -81,6 +88,10 @@ export function SeasonalScopeManager() {
         variant: "destructive",
       });
     }
+  };
+
+  const handleViewDetails = (scope: SeasonalScope) => {
+    setViewingScope(scope);
   };
 
   const confirmDelete = async () => {
@@ -143,13 +154,22 @@ export function SeasonalScopeManager() {
               </TableCell>
               <TableCell>{scope.ageGroups.length} groups</TableCell>
               <TableCell className="text-right">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDeleteClick(scope)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleViewDetails(scope)}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeleteClick(scope)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}
@@ -176,6 +196,38 @@ export function SeasonalScopeManager() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={!!viewingScope} onOpenChange={(open) => !open && setViewingScope(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>
+              {viewingScope?.name} ({viewingScope?.startYear}-{viewingScope?.endYear})
+            </DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Age Group</TableHead>
+                  <TableHead>Division Code</TableHead>
+                  <TableHead>Gender</TableHead>
+                  <TableHead>Birth Year</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {viewingScope?.ageGroups.map((group) => (
+                  <TableRow key={group.id}>
+                    <TableCell>{group.ageGroup}</TableCell>
+                    <TableCell>{group.divisionCode}</TableCell>
+                    <TableCell>{group.gender}</TableCell>
+                    <TableCell>{group.birthYear}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -95,32 +95,9 @@ export function SeasonalScopeSettings() {
     }
   });
 
-  const handleDeleteClick = async (scope: SeasonalScope) => {
-    try {
-      // Check if scope is in use first
-      const response = await fetch(`/api/admin/seasonal-scopes/${scope.id}/in-use`);
-      const data = await response.json();
-
-      if (data.inUse) {
-        toast({
-          title: "Cannot Delete",
-          description: data.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // If not in use, show confirmation dialog
-      setScopeToDelete(scope);
-      setDeleteDialogOpen(true);
-    } catch (error) {
-      console.error('Error checking scope usage:', error);
-      toast({
-        title: "Error",
-        description: "Failed to check if seasonal scope can be deleted",
-        variant: "destructive",
-      });
-    }
+  const handleDeleteClick = (scope: SeasonalScope) => {
+    setScopeToDelete(scope);
+    setDeleteDialogOpen(true);
   };
 
   const confirmDelete = async () => {

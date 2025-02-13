@@ -38,29 +38,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Check if a seasonal scope is in use
-router.get('/:id/in-use', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const scopeId = parseInt(id);
 
-    const result = await db.select().from(events)
-      .where(eq(events.seasonalScopeId, scopeId))
-      .limit(1);
-
-    const inUse = result.length > 0;
-
-    res.json({
-      inUse,
-      message: inUse 
-        ? 'This seasonal scope is currently in use by an event and cannot be deleted.'
-        : 'Seasonal scope can be safely deleted.',
-    });
-  } catch (error) {
-    console.error('Error checking if seasonal scope is in use:', error);
-    res.status(500).json({ error: 'Failed to check if seasonal scope is in use' });
-  }
-});
 
 // Delete a seasonal scope
 router.delete('/:id', async (req, res) => {
@@ -68,18 +46,7 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     const scopeId = parseInt(id);
 
-    // Check if the scope is in use
-    const result = await db.select().from(events)
-      .where(eq(events.seasonalScopeId, scopeId))
-      .limit(1);
-
-    if (result.length > 0) {
-      return res.status(400).json({
-        error: 'This seasonal scope is currently in use by an event and cannot be deleted.'
-      });
-    }
-
-    // If not in use, proceed with deletion using a transaction
+    // Proceed with deletion using a transaction
     await db.transaction(async (tx) => {
       // Delete age groups first
       await tx.delete(ageGroupSettings)
