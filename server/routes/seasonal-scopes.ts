@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
     }).returning();
 
     // Create age group settings for the scope
-    if (ageGroups && ageGroups.length > 0) {
+    if (ageGroups && Array.isArray(ageGroups) && ageGroups.length > 0) {
       const ageGroupsToInsert = ageGroups.map(group => ({
         seasonalScopeId: scope.id,
         ageGroup: group.ageGroup,

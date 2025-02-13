@@ -507,11 +507,10 @@ export function SeasonalScopeSettings() {
                               .filter(isValidAgeGroup)
                               .sort((a, b) => {
                                 // Sort by birth year first (descending)
-                                const yearDiffB = parseInt(b.divisionCode.slice(1));
-                                const yearDiffA = parseInt(a.divisionCode.slice(1));
-                                if (yearDiffB - yearDiffA !== 0) return yearDiffB - yearDiffA;
+                                const yearDiff = b.birthYear - a.birthYear;
+                                if (yearDiff !== 0) return yearDiff;
                                 // Then by gender (B before G)
-                                return a.divisionCode.slice(0, 1).localeCompare(b.divisionCode.slice(0, 1));
+                                return (a.gender || '').localeCompare(b.gender || '');
                               })
                               .map((group) => (
                                 <TableRow
