@@ -103,10 +103,11 @@ export function FileManager({ className }: FileManagerProps) {
         description: "File uploaded successfully",
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      const errorMessage = error?.response?.data?.error || error?.message || "Failed to upload file";
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to upload file",
+        description: errorMessage,
         variant: "destructive",
       });
     },
