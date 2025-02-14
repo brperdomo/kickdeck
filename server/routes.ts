@@ -216,17 +216,51 @@ export function registerRoutes(app: Express): Server {
 
         // Verify admin exists
         const [existingAdmin] = await db
-          .select()
+          .select({
+            admin: users,
+            roles: sql<string[]>`array_agg(${roles.name})`,
+          })
           .from(users)
+          .leftJoin(adminRoles, eq(users.id, adminRoles.userId))
+          .leftJoin(roles, eq(adminRoles.roleId, roles.id))
           .where(eq(users.id, adminId))
+          .groupBy(users.id)
           .limit(1);
 
         if (!existingAdmin) {
           return res.status(404).send("Administrator not found");
         }
 
+        // If removing super_admin role, check if this is the last super admin
+        const isSuperAdmin = existingAdmin.roles.includes('super_admin');
+        const willRemoveSuperAdmin = isSuperAdmin && !roles.includes('super_admin');
+
+        if (willRemoveSuperAdmin) {
+          // Count other super admins
+          const [{ count }] = await db
+            .select({
+              count: sql`COUNT(*)`,
+            })
+            .from(users)
+            .innerJoin(adminRoles, eq(users.id, adminRoles.userId))
+            .innerJoin(roles, eq(adminRoles.roleId, roles.id))
+            .where(
+              and(
+                eq(roles.name, 'super_admin'),
+                sql`${users.id} != ${adminId}`
+              )
+            );
+
+          if (count === 0) {
+            return res.status(400).json({
+              error: "Cannot remove super_admin role from the last super administrator",
+              code: "LAST_SUPER_ADMIN"
+            });
+          }
+        }
+
         // If email is being changed, check if new email is available
-        if (email !== existingAdmin.email) {
+        if (email !== existingAdmin.admin.email) {
           const [emailExists] = await db
             .select()
             .from(users)
@@ -234,7 +268,10 @@ export function registerRoutes(app: Express): Server {
             .limit(1);
 
           if (emailExists) {
-            return res.status(400).send("Email already registered");
+            return res.status(400).json({
+              error: "Email already registered",
+              code: "EMAIL_EXISTS"
+            });
           }
         }
 
@@ -287,11 +324,33 @@ export function registerRoutes(app: Express): Server {
           }
         });
 
-        res.json({ message: "Administrator updated successfully" });
+        // Fetch updated admin data
+        const [updatedAdmin] = await db
+          .select({
+            id: users.id,
+            email: users.email,
+            firstName: users.firstName,
+            lastName: users.lastName,
+            roles: sql<string[]>`array_agg(${roles.name})`,
+          })
+          .from(users)
+          .leftJoin(adminRoles, eq(users.id, adminRoles.userId))
+          .leftJoin(roles, eq(adminRoles.roleId, roles.id))
+          .where(eq(users.id, adminId))
+          .groupBy(users.id)
+          .limit(1);
+
+        res.json({
+          message: "Administrator updated successfully",
+          admin: updatedAdmin
+        });
       } catch (error) {
         console.error('Error updating administrator:', error);
         console.error("Error details:", error);
-        res.status(500).send(error instanceof Error ? error.message : "Failed to update administrator");
+        res.status(500).json({
+          error: error instanceof Error ? error.message : "Failed to update administrator",
+          code: "UPDATE_FAILED"
+        });
       }
     });
 
@@ -995,7 +1054,7 @@ export function registerRoutes(app: Express): Server {
           .where(eq(fields.id, fieldId))
           .returning();
 
-        if(!deletedField) {
+        if (!deletedField) {
           return res.status(404).send("Field not found");
         }
 
@@ -1848,7 +1907,7 @@ export function registerRoutes(app: Express): Server {
           return res.status(404).send("Age group not found");
         }
 
-        // Create the team
+        //        // Create the team
         const [newTeam] = await db
           .insert(teams)
           .values({

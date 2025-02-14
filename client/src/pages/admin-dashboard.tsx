@@ -89,7 +89,6 @@ import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
 import { useDropzone } from 'react-dropzone';
 
 
-
 const MyAccount = lazy(() => import("./my-account"));
 
 // Type guard function to check if user is admin
@@ -170,6 +169,7 @@ function AdministratorsView() {
     lastName: string;
     roles: string[];
   } | null>(null);
+  const queryClient = useQueryClient();
 
   const administratorsQuery = useQuery({
     queryKey: ['/api/admin/administrators'],
@@ -275,6 +275,64 @@ function AdministratorsView() {
         return 'Unknown Type';
     }
   };
+
+  const updateAdminMutation = useMutation({
+    mutationFn: async (data: {
+      id: number;
+      email: string;
+      firstName: string;
+      lastName: string;
+      roles: string[];
+    }) => {
+      const response = await fetch(`/api/admin/administrators/${data.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update administrator');
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(['/api/admin/administrators']);
+      toast({
+        title: "Success",
+        description: "Administrator updated successfully",
+        variant: "default"
+      });
+      setIsAddModalOpen(false);
+      setSelectedAdmin(null);
+    },
+    onError: (error: Error) => {
+      const errorMessage = error.message;
+
+      // Provide specific error messages based on error codes
+      if (errorMessage.includes("LAST_SUPER_ADMIN")) {
+        toast({
+          title: "Cannot Update Role",
+          description: "You cannot remove the super_admin role from the last super administrator",
+          variant: "destructive"
+        });
+      } else if (errorMessage.includes("EMAIL_EXISTS")) {
+        toast({
+          title: "Email Already Exists",
+          description: "The email address is already registered",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: errorMessage || "Failed to update administrator",
+          variant: "destructive"
+        });
+      }
+    }
+  });
+
 
   if (administratorsQuery.isLoading) {
     return (
@@ -932,7 +990,7 @@ function ComplexesView() {
       if (selectedComplex) {
         await updateComplexMutation.mutateAsync({ id: selectedComplex.id, data });
       } else {
-        await createComplexMutation.mutateAsync(data);
+                await createComplexMutation.mutateAsync(data);
       }
     } catch (error) {
       console.error('Error submitting complex:', error);
@@ -1215,7 +1273,7 @@ function EventsView() {
                             View Details
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             onClick={() => {
                               const registrationUrl = `${window.location.origin}/register/event/${event.id}`;
                               navigator.clipboard.writeText(registrationUrl);
@@ -1592,8 +1650,8 @@ function AdminDashboard() {
         {renderView()}
       </div>
 
-      <UpdatesLogModal 
-        open={showUpdatesLog} 
+      <UpdatesLogModal
+        open={showUpdatesLog}
         onOpenChange={setShowUpdatesLog}
       />
       {showLogoutOverlay && (
