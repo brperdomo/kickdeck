@@ -2,13 +2,13 @@ import { useState, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter 
+  DialogFooter
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,8 +52,9 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
   const queryClient = useQueryClient();
   const [emailToCheck, setEmailToCheck] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRoleChangeConfirmOpen, setIsRoleChangeConfirmOpen] = useState(false);
+  const [pendingRoleChange, setPendingRoleChange] = useState<string | null>(null);
 
-  // Initialize form with adminToEdit data or empty values
   const form = useForm<AdminFormValues>({
     resolver: zodResolver(adminFormSchema),
     defaultValues: {
@@ -65,7 +66,6 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     },
   });
 
-  // Reset form when adminToEdit changes
   useEffect(() => {
     if (adminToEdit) {
       form.reset({
@@ -86,7 +86,6 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     }
   }, [adminToEdit, form]);
 
-  // Email validation query
   const emailCheckQuery = useQuery({
     queryKey: ['checkAdminEmail', emailToCheck],
     queryFn: async () => {
@@ -100,7 +99,6 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     enabled: !!emailToCheck && emailToCheck.includes('@'),
   });
 
-  // Debounced email check
   const handleEmailChange = useCallback((email: string) => {
     setEmailToCheck(email);
   }, []);
@@ -129,7 +127,10 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
           throw new Error(errorData.error || "Failed to update administrator");
         }
 
-        return response.json();
+        const result = await response.json();
+        return result;
+      } catch (error) {
+        throw error;
       } finally {
         setIsSubmitting(false);
       }
@@ -149,6 +150,12 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
         toast({
           title: "Cannot Update Role",
           description: "You cannot remove the super_admin role from the last super administrator",
+          variant: "destructive",
+        });
+      } else if (errorMessage.includes("ROLE_CHANGE_NOT_ALLOWED")) {
+        toast({
+          title: "Role Change Not Allowed",
+          description: "You don't have permission to modify this administrator's roles",
           variant: "destructive",
         });
       } else {
@@ -221,20 +228,22 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     }
   };
 
-  // Handle role selection
   const toggleRole = (roleId: string) => {
     const currentRoles = form.getValues("roles");
     let newRoles: string[];
 
+    if (adminToEdit?.roles.includes("super_admin") && roleId !== "super_admin") {
+      setPendingRoleChange(roleId);
+      setIsRoleChangeConfirmOpen(true);
+      return;
+    }
+
     if (roleId === "super_admin") {
-      // If selecting super_admin, remove all other roles
       newRoles = currentRoles.includes("super_admin") ? [] : ["super_admin"];
     } else {
       if (currentRoles.includes("super_admin")) {
-        // If currently super_admin and selecting another role, remove super_admin
         newRoles = [roleId];
       } else {
-        // Toggle the selected role while preserving other roles
         newRoles = currentRoles.includes(roleId)
           ? currentRoles.filter(id => id !== roleId)
           : [...currentRoles, roleId];
@@ -244,182 +253,215 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     form.setValue("roles", newRoles, { shouldValidate: true });
   };
 
+  const handleConfirmedRoleChange = () => {
+    if (pendingRoleChange) {
+      form.setValue("roles", [pendingRoleChange], { shouldValidate: true });
+    }
+    setIsRoleChangeConfirmOpen(false);
+    setPendingRoleChange(null);
+  };
+
   const currentRoles = form.watch("roles");
   const isSuperAdmin = currentRoles.includes("super_admin");
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="px-6 pt-6 pb-4 sticky top-0 bg-background z-10 border-b">
-          <DialogTitle>{adminToEdit ? 'Edit Administrator' : 'Add New Administrator'}</DialogTitle>
-          <DialogDescription>
-            {adminToEdit 
-              ? 'Update the administrator details and roles below.' 
-              : 'Create a new administrator by filling out the information below.'}
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="px-6">
-            <div className="py-4 space-y-6">
-              {/* Personal Information */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="px-6 pt-6 pb-4 sticky top-0 bg-background z-10 border-b">
+            <DialogTitle>{adminToEdit ? 'Edit Administrator' : 'Add New Administrator'}</DialogTitle>
+            <DialogDescription>
+              {adminToEdit
+                ? 'Update the administrator details and roles below.'
+                : 'Create a new administrator by filling out the information below.'}
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="px-6">
+              <div className="py-4 space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="John" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Doe" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <FormField
                   control={form.control}
-                  name="firstName"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>First Name</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="John" />
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            type="email"
+                            placeholder="john.doe@example.com"
+                            onChange={(e) => {
+                              field.onChange(e);
+                              handleEmailChange(e.target.value);
+                            }}
+                          />
+                          {emailCheckQuery.isLoading && (
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
+                      {emailCheckQuery.data?.exists && field.value !== adminToEdit?.email && (
+                        <p className="text-sm font-medium text-destructive">
+                          This email is already registered
+                        </p>
+                      )}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="roles"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Administrator Roles</FormLabel>
+                      <FormDescription>
+                        {isSuperAdmin
+                          ? "Super Admin role provides full access and overrides all other roles."
+                          : "Select one or more roles. Super Admin overrides all other roles if selected."}
+                      </FormDescription>
+                      <FormControl>
+                        <div className="space-y-2">
+                          {availableRoles.map((role) => {
+                            const isSelected = field.value.includes(role.id);
+                            const isDisabled = isSuperAdmin && role.id !== "super_admin";
+
+                            return (
+                              <div
+                                key={role.id}
+                                className={`p-3 rounded-lg border transition-colors ${
+                                  isDisabled
+                                    ? "opacity-50 cursor-not-allowed border-input"
+                                    : isSelected
+                                    ? "border-primary bg-primary/5 cursor-pointer"
+                                    : "border-input hover:bg-accent cursor-pointer"
+                                }`}
+                                onClick={() => !isDisabled && toggleRole(role.id)}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <p className="font-medium">{role.name}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {role.description}
+                                    </p>
+                                  </div>
+                                  {isSelected && (
+                                    <Badge variant="secondary">Selected</Badge>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Doe" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
+                {!adminToEdit && (
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Temporary Password</FormLabel>
+                        <FormControl>
+                          <Input {...field} type="password" placeholder="Minimum 8 characters" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
 
-              {/* Email Field */}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input 
-                          {...field} 
-                          type="email" 
-                          placeholder="john.doe@example.com"
-                          onChange={(e) => {
-                            field.onChange(e);
-                            handleEmailChange(e.target.value);
-                          }}
-                        />
-                        {emailCheckQuery.isLoading && (
-                          <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                          </div>
-                        )}
-                      </div>
-                    </FormControl>
-                    {emailCheckQuery.data?.exists && field.value !== adminToEdit?.email && (
-                      <p className="text-sm font-medium text-destructive">
-                        This email is already registered
-                      </p>
-                    )}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 py-4 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={
+                    isSubmitting ||
+                    emailCheckQuery.isLoading ||
+                    (emailCheckQuery.data?.exists && form.getValues("email") !== adminToEdit?.email)
+                  }
+                >
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {adminToEdit ? "Update Administrator" : "Create Administrator"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
-              {/* Roles Selection */}
-              <FormField
-                control={form.control}
-                name="roles"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Administrator Roles</FormLabel>
-                    <FormDescription>
-                      {isSuperAdmin 
-                        ? "Super Admin role provides full access and overrides all other roles."
-                        : "Select one or more roles. Super Admin overrides all other roles if selected."}
-                    </FormDescription>
-                    <FormControl>
-                      <div className="space-y-2">
-                        {availableRoles.map((role) => {
-                          const isSelected = field.value.includes(role.id);
-                          const isDisabled = isSuperAdmin && role.id !== "super_admin";
-
-                          return (
-                            <div
-                              key={role.id}
-                              className={`p-3 rounded-lg border transition-colors ${
-                                isDisabled
-                                  ? "opacity-50 cursor-not-allowed border-input"
-                                  : isSelected
-                                  ? "border-primary bg-primary/5 cursor-pointer"
-                                  : "border-input hover:bg-accent cursor-pointer"
-                              }`}
-                              onClick={() => !isDisabled && toggleRole(role.id)}
-                            >
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">{role.name}</p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {role.description}
-                                  </p>
-                                </div>
-                                {isSelected && (
-                                  <Badge variant="secondary">Selected</Badge>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Password Field (only for new administrators) */}
-              {!adminToEdit && (
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Temporary Password</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="password" placeholder="Minimum 8 characters" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-            </div>
-
-            {/* Form Actions */}
-            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 py-4 border-t">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={() => onOpenChange(false)}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button 
-                type="submit" 
-                disabled={
-                  isSubmitting ||
-                  emailCheckQuery.isLoading || 
-                  (emailCheckQuery.data?.exists && form.getValues("email") !== adminToEdit?.email)
-                }
-              >
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {adminToEdit ? "Update Administrator" : "Create Administrator"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+      <Dialog open={isRoleChangeConfirmOpen} onOpenChange={setIsRoleChangeConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Role Change</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to remove the Super Admin role? This action may affect system access and permissions.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end space-x-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsRoleChangeConfirmOpen(false);
+                setPendingRoleChange(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="default"
+              onClick={handleConfirmedRoleChange}
+            >
+              Confirm Change
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
