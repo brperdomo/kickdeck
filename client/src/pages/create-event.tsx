@@ -791,7 +791,8 @@ export default function CreateEvent() {
       )}
 
       <Dialog open={!!viewingComplexId} onOpenChange={(open) => !open && setViewingComplexId(null)}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl" aria-describedby="dialog-description">
+  <div id="dialog-description" className="sr-only">Field details and configuration options</div>
           <DialogHeader>
             <DialogTitle>
               Fields in {complexesQuery.data?.find(c => c.id === viewingComplexId)?.name}

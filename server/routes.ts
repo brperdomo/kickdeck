@@ -153,8 +153,16 @@ export function registerRoutes(app: Express): Server {
               password: hashedPassword,
               isAdmin: true,
               createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
             })
-            .returning();
+            .returning({
+              id: users.id,
+              email: users.email,
+              username: users.username,
+              firstName: users.firstName,
+              lastName: users.lastName,
+              isAdmin: users.isAdmin
+            });
 
           // Ensure we have valid roles
           if (!Array.isArray(roles) || roles.length === 0) {
@@ -987,7 +995,7 @@ export function registerRoutes(app: Express): Server {
           .where(eq(fields.id, fieldId))
           .returning();
 
-        if (!deletedField) {
+        if(!deletedField) {
           return res.status(404).send("Field not found");
         }
 
@@ -1909,16 +1917,24 @@ export function registerRoutes(app: Express): Server {
         const [newAdmin] = await db
           .insert(users)
           .values({
-            email,
+            email: email,
             username: email,
             password: hashedPassword,
-            firstName,
-            lastName,
+            firstName: firstName,
+            lastName: lastName,
             isAdmin: true,
             isParent: false,
             createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
           })
-          .returning();
+          .returning({
+            id: users.id,
+            email: users.email,
+            username: users.username,
+            firstName: users.firstName,
+            lastName: users.lastName,
+            isAdmin: users.isAdmin
+          });
 
         // Remove password from response
         const { password, ...adminWithoutPassword } = newAdmin;
