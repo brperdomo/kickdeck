@@ -4,6 +4,7 @@ import { setupAuth } from "./auth";
 import { log } from "./vite";
 import { db } from "@db";
 import seasonalScopesRouter from "./routes/seasonal-scopes";
+import uploadRouter from "./routes/upload";
 import { sql, eq, and, or } from "drizzle-orm";
 import {
   users,
@@ -991,6 +992,9 @@ export function registerRoutes(app: Express): Server {
         res.status(500).send("Internal server error");
       }
     });
+
+    // File management routes
+    app.use('/api/admin/files', isAdmin, uploadRouter);
 
     // Theme update endpoint
     app.post('/api/theme', async (req, res) => {
