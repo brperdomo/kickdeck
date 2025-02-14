@@ -105,10 +105,10 @@ async function testDbConnection() {
     // Create WebSocket server
     const wss = new WebSocketServer({ 
       server,
-      path: "/ws",
-      // Ignore Vite HMR WebSocket connections
+      path: "/api/ws",
       verifyClient: (info) => {
-        return info.req.headers['sec-websocket-protocol'] !== 'vite-hmr';
+        const protocol = info.req.headers['sec-websocket-protocol'];
+        return !protocol || protocol !== 'vite-hmr';
       }
     });
 

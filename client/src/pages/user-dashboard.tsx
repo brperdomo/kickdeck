@@ -85,31 +85,7 @@ export default function UserDashboard() {
       {/* Main Content */}
       <div className="flex-1 p-8 overflow-auto">
         <div className="max-w-4xl mx-auto">
-          {/* Brand Logo Section */}
-          <Card className="mb-6">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl font-bold text-gray-900">Brand Logo</CardTitle>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowFileManager(true)}
-                  className="flex items-center gap-2"
-                >
-                  <Upload className="h-4 w-4" />
-                  Select Logo
-                </Button>
-              </div>
-              {selectedLogo && (
-                <div className="mt-4 flex justify-center">
-                  <img 
-                    src={selectedLogo} 
-                    alt="Brand Logo" 
-                    className="max-h-32 object-contain"
-                  />
-                </div>
-              )}
-            </CardHeader>
-          </Card>
+          
 
           {/* Welcome Card */}
           <Card className="mb-6">

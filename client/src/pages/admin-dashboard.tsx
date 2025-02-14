@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation } from "wouter";
-import { Link2 } from "lucide-react";
+import { Link2, X } from "lucide-react";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -91,14 +91,16 @@ import { FileManager } from "@/components/admin/FileManager";
 
 
 function AdminBanner() {
+  const { settings } = useOrganizationSettings();
+  
   return (
-    <div className="w-full bg-white shadow-sm border-b">
-      <div className="container mx-auto px-4 py-4">
+    <div className="w-full bg-white shadow-sm border-b sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-2">
         <div className="flex justify-center items-center">
           <img
-            src="/attached_assets/MatchPro.ai_Stacked_Color.png"
-            alt="MatchPro Logo"
-            className="h-16 object-contain"
+            src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"}
+            alt="Organization Logo"
+            className="w-auto h-48 md:h-60 max-w-[840px] md:max-w-[960px] object-contain"
           />
         </div>
       </div>
@@ -1422,15 +1424,27 @@ function AdminDashboard() {
   const { user, logout } = useUser();
   const [, setLocation] = useLocation();
   const [activeView, setActiveView] = useState<View>('events');
+  const [showWelcome, setShowWelcome] = useState(true);
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
 
   useEffect(() => {
+    if (!user) {
+      return; // Wait for user data to load
+    }
     if (!isAdminUser(user)) {
       setLocation("/");
     }
   }, [user, setLocation]);
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
 
@@ -1663,25 +1677,36 @@ function AdminDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 overflow-auto">
-        {/* Welcome Card */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <UserCircle className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold">Welcome back, {user?.firstName}!</h2>
-                <p className="text-muted-foreground">
-                  Manage your organization's activities and settings from this dashboard.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="flex-1 overflow-auto">
+        <AdminBanner />
+        <div className="p-8">
+          {/* Welcome Card */}
+          {showWelcome && (
+            <Card className="mb-6 relative">
+              <button 
+                onClick={() => setShowWelcome(false)}
+                className="absolute top-2 right-2 p-2 hover:bg-muted rounded-full"
+              >
+                <X className="h-4 w-4" />
+              </button>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <UserCircle className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold">Welcome back, {user?.firstName}!</h2>
+                    <p className="text-muted-foreground">
+                      Manage your organization's activities and settings from this dashboard.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
         {renderView()}
+      </div>
       </div>
 
       <UpdatesLogModal
@@ -1761,7 +1786,9 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
       return (
         <BrandingPreviewProvider>
           <div className="grid grid-cols-2 gap-6">
-            <OrganizationSettingsForm />
+            <div className="col-span-1">
+              <OrganizationSettingsForm />
+            </div>
             <BrandingPreview />
           </div>
         </BrandingPreviewProvider>

@@ -13,6 +13,7 @@ const formSchema = z.object({
   email: z.string().email("Invalid email format").optional(),
   phone: z.string().optional(),
   address: z.string().optional(),
+  logoUrl: z.string().optional(), // Added logoUrl to the schema
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -28,6 +29,7 @@ export function OrganizationSettingsForm() {
       email: settings?.email || "",
       phone: settings?.phone || "",
       address: settings?.address || "",
+      logoUrl: settings?.logoUrl || "", // Added default value for logoUrl
     },
   });
 
@@ -113,6 +115,21 @@ export function OrganizationSettingsForm() {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="logoUrl"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Logo URL</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="/uploads/your-logo.png" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        /> {/* Added a new FormField for logoUrl */}
+
 
         <Button type="submit" disabled={isUpdating} className="w-full">
           {isUpdating ? (
