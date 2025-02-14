@@ -18,8 +18,11 @@ const storage = multer.diskStorage({
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
-    const uniqueFilename = `${uuidv4()}${path.extname(file.originalname)}`;
-    cb(null, uniqueFilename);
+    const baseName = path.parse(file.originalname).name;
+    const ext = path.extname(file.originalname);
+    const uniqueId = uuidv4().slice(0, 8);
+    const safeFileName = `${baseName}-${uniqueId}${ext}`.replace(/[^a-zA-Z0-9-_.]/g, '_');
+    cb(null, safeFileName);
   }
 });
 
@@ -97,11 +100,46 @@ router.get('/', async (req, res) => {
 });
 
 // Delete file
+router.patch('/:id/rename', (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newName } = req.body;
+    
+    if (!newName) {
+      return res.status(400).json({ error: 'New name is required' });
+    }
+
+    const files = fs.readdirSync(uploadsDir);
+    const fileToRename = files.find(f => path.parse(f).name.startsWith(id));
+
+    if (!fileToRename) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+
+    const ext = path.extname(fileToRename);
+    const uniqueId = path.parse(fileToRename).name.split('-').pop();
+    const newFileName = `${newName}-${uniqueId}${ext}`.replace(/[^a-zA-Z0-9-_.]/g, '_');
+    
+    fs.renameSync(
+      path.join(uploadsDir, fileToRename),
+      path.join(uploadsDir, newFileName)
+    );
+
+    res.json({ 
+      message: 'File renamed successfully',
+      newFileName: newFileName
+    });
+  } catch (error) {
+    console.error('Error renaming file:', error);
+    res.status(500).json({ error: 'Failed to rename file' });
+  }
+});
+
 router.delete('/:id', (req, res) => {
   try {
     const { id } = req.params;
     const files = fs.readdirSync(uploadsDir);
-    const fileToDelete = files.find(f => path.parse(f).name === id);
+    const fileToDelete = files.find(f => path.parse(f).name.startsWith(id));
 
     if (!fileToDelete) {
       return res.status(404).json({ error: 'File not found' });

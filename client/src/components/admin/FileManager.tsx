@@ -25,6 +25,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Copy, Trash2, Loader2, Upload, Eye } from "lucide-react";
 
@@ -33,10 +34,38 @@ export function FileManager({ className }: FileManagerProps) {
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
   const [newFileName, setNewFileName] = useState("");
-  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
-  const [previewFile, setPreviewFile] = useState<FileItem | null>(null);
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const renameMutation = useMutation({
+    mutationFn: async ({ fileId, newName }: { fileId: string; newName: string }) => {
+      const response = await fetch(`/api/files/${fileId}/rename`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newName }),
+      });
+      if (!response.ok) throw new Error('Failed to rename file');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['files'] });
+      setRenameDialogOpen(false);
+      toast({ title: "Success", description: "File renamed successfully" });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to rename file",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleRename = () => {
+    if (!selectedFile || !newFileName.trim()) return;
+    renameMutation.mutate({ fileId: selectedFile.id, newName: newFileName.trim() });
+  };
 
   // Query for fetching files
   const filesQuery = useQuery({
@@ -54,7 +83,7 @@ export function FileManager({ className }: FileManagerProps) {
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', file, file.name); // Use original filename
 
       const response = await fetch('/api/files/upload', {
         method: 'POST',
@@ -206,10 +235,7 @@ export function FileManager({ className }: FileManagerProps) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => {
-                            setPreviewFile(file);
-                            setPreviewDialogOpen(true);
-                          }}
+                          onClick={() => window.open(file.url, '_blank')}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -231,6 +257,17 @@ export function FileManager({ className }: FileManagerProps) {
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setSelectedFile(file);
+                            setRenameDialogOpen(true);
+                          }}
+                        >
+                          {/* Add a rename icon here */}
+                          Rename
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -240,16 +277,34 @@ export function FileManager({ className }: FileManagerProps) {
           )}
         </CardContent>
       </Card>
-      <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
-        <DialogHeader>
-          <DialogTitle>
-            {previewFile ? previewFile.name : 'File Preview'}
-          </DialogTitle>
-        </DialogHeader>
-        <DialogContent>
-          {previewFile && (
-            <iframe src={previewFile.url} title={previewFile.name} width="100%" height="400px"/>
-          )}
+      <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Rename File</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <Input
+              placeholder="New file name"
+              value={newFileName}
+              onChange={(e) => setNewFileName(e.target.value)}
+              className="w-full"
+            />
+          </div>
+          <DialogFooter className="sm:justify-between">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setRenameDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              onClick={handleRename}
+            >
+              Rename
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
