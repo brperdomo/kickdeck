@@ -93,8 +93,8 @@ import { RolesSettingsView } from "@/components/admin/RolesSettingsView";
 const MyAccount = lazy(() => import("./my-account"));
 
 // Type guard function to check if user is admin
-function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
-  return user !== null && user.isAdmin === true;
+function isAdminUser(user: SelectUser | null): user is SelectUser & { roles?: string[] } {
+  return user !== null && Array.isArray(user.roles) && user.roles.includes('super_admin');
 }
 
 type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat';
@@ -991,8 +991,7 @@ function ComplexesView() {
       if (selectedComplex) {
         await updateComplexMutation.mutateAsync({ id: selectedComplex.id, data });
       } else {
-        await createComplexMutation.mutateAsync(data);
-      }
+        await createComplexMutation.mutateAsync(data);      }
     } catch (error) {
       console.error('Error submitting complex:', error);
     }
@@ -1723,7 +1722,7 @@ function SettingsContent() {
   const [activeView, setActiveView] = useState<SettingsView>('general');
   const { user } = useUser();
 
-  // Only show roles tab for super admins
+  // Check if user has super_admin role
   const isSuperAdmin = user?.roles?.includes('super_admin');
 
   return (
