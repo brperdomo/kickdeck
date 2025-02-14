@@ -126,10 +126,10 @@ const USA_TIMEZONES = [
 
 const eventInformationSchema = z.object({
   name: z.string().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
+  startDate: z.string().optional(), // Just date
+  endDate: z.string().optional(), // Just date
   timezone: z.string().optional(),
-  applicationDeadline: z.string().optional(),
+  applicationDeadline: z.string().optional(), // Date with time
   details: z.string().optional(),
   agreement: z.string().optional(),
   refundPolicy: z.string().optional(),
@@ -1078,6 +1078,351 @@ export default function CreateEvent() {
     </div>
   );
 
+  const renderInformationTab = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">Event Information</h3>
+        <Button variant="outline" onClick={() => navigateTab('next')}>
+          Continue
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Event Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter event name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="startDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Start Date</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>End Date</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="timezone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Timezone</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select timezone" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {USA_TIMEZONES.map((tz) => (
+                              <SelectItem key={tz.value} value={tz.value}>
+                                {tz.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="applicationDeadline"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Registration Deadline</FormLabel>
+                        <FormControl>
+                          <Input type="datetime-local" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="details"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Event Details</FormLabel>
+                      <FormControl>
+                        <Editor
+                          value={field.value}
+                          onEditorChange={(content) => field.onChange(content)}
+                          init={{
+                            height: 300,
+                            menubar: false,
+                            plugins: [
+                              'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                              'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                              'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                            ],
+                            toolbar: 'undo redo | blocks | ' +
+                              'bold italic forecolor | alignleft aligncenter ' +
+                              'alignright alignjustify | bullist numlist outdent indent | ' +
+                              'removeformat | help',
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="agreement"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Terms & Agreement</FormLabel>
+                      <FormControl>
+                        <Editor
+                          value={field.value}
+                          onEditorChange={(content) => field.onChange(content)}
+                          init={{
+                            height: 200,
+                            menubar: false,
+                            plugins: [
+                              'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
+                              'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                              'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                            ],
+                            toolbar: 'undo redo | blocks | ' +
+                              'bold italic forecolor | alignleft aligncenter ' +
+                              'alignright alignjustify | bullist numlist outdent indent | ' +
+                              'removeformat | help',
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="refundPolicy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Refund Policy</FormLabel>
+                      <FormControl>
+                        <Editor
+                          value={field.value}
+                          onEditorChange={(content) => field.onChange(content)}
+                          init={{
+                            height: 200,
+                            menubar: false,
+                            plugins: [
+                              'advlist', 'autolink', 'lists', 'link', 'charmap', 'preview',
+                              'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                              'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                            ],
+                            toolbar: 'undo redo | blocks | ' +
+                              'bold italic forecolor | alignleft aligncenter ' +
+                              'alignright alignjustify | bullist numlist outdent indent | ' +
+                              'removeformat | help',
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </form>
+      </Form>
+    </div>
+  );
+
+  const renderScoringTab = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => navigateTab('prev')}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+          <h3 className="text-lg font-semibold">Scoring Rules</h3>
+        </div>
+        <Button onClick={() => {
+          scoringForm.reset();
+          setIsScoringModalOpen(true);
+          setEditingScoringRule(null);
+        }}>
+          <Plus className="mr-2 h-4 w-4" />
+          Create New Rule
+        </Button>
+      </div>
+
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Rule Name</TableHead>
+                <TableHead className="text-center">Win</TableHead>
+                <TableHead className="text-center">Tie</TableHead>
+                <TableHead className="text-center">Loss</TableHead>
+                <TableHead className="text-center">Goal Cap</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {scoringRules.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-4">
+                    No scoring rules created yet
+                  </TableCell>
+                </TableRow>
+              ) : (
+                scoringRules.map((rule) => (
+                  <TableRow key={rule.id}>
+                    <TableCell>{rule.title}</TableCell>
+                    <TableCell className="text-center">{rule.win}</TableCell>
+                    <TableCell className="text-center">{rule.tie}</TableCell>
+                    <TableCell className="text-center">{rule.loss}</TableCell>
+                    <TableCell className="text-center">{rule.goalCapped}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditScoringRule(rule)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDeleteScoringRule(rule.id)}
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <div className="mt-8">
+        <h3 className="text-lg font-semibold mb-4">Age Group Scoring Rules</h3>
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Age Group</TableHead>
+                  <TableHead>Gender</TableHead>
+                  <TableHead>Field Size</TableHead>
+                  <TableHead>Current Rule</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {ageGroups.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-4">
+                      No age groups created yet. Create age groups first to assign scoring rules.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  ageGroups.map((group) => (
+                    <TableRow key={group.id}>
+                      <TableCell>{group.ageGroup}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{group.gender}</Badge>
+                      </TableCell>
+                      <TableCell>{group.fieldSize}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-center">
+                          <Select
+                            value={group.scoringRule || "none"}
+                            onValueChange={(value) => {
+                              setAgeGroups(groups =>
+                                groups.map(g =>
+                                  g.id === group.id
+                                    ? { ...g, scoringRule: value === "none" ? null : value }
+                                    : g
+                                )
+                              );
+                            }}
+                          >
+                            <SelectTrigger className="w-[200px]">
+                              <SelectValue placeholder="Select a rule" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">No Rule</SelectItem>
+                              {scoringRules.map((rule) => (
+                                <SelectItem key={rule.id} value={rule.id}>
+                                  {rule.title}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="flex justify-end mt-4">
+        <Button onClick={() => navigateTab('next')}>Continue
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl">
       <div className="flex items-center gap-4 mb-6">
@@ -1131,195 +1476,7 @@ export default function CreateEvent() {
             </TabsList>
 
             <TabsContent value="information">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-4xl mx-auto">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Event Name</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="Enter event name" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="startDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Event Start Date</FormLabel>
-                          <FormControl>
-                            <Input type="datetime-local" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="endDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Event End Date</FormLabel>
-                          <FormControl>
-                            <Input type="datetime-local" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="timezone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Time Zone</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select time zone" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {USA_TIMEZONES.map((tz) => (
-                                <SelectItem key={tz.value} value={tz.value}>
-                                  {tz.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="applicationDeadline"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Registration Deadline</FormLabel>
-                          <FormControl>
-                            <Input type="datetime-local" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="details"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Details About This Event</FormLabel>
-                        <FormControl>
-                          <Editor
-                            apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
-                            init={{
-                              height: 300,
-                              menubar: true,
-                              document_base_url: 'https://matchpro.replit.app',
-                              plugins: [
-                                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                                'insertdatetime', 'media', 'table', 'help', 'wordcount'
-                              ],
-                              toolbar: 'undo redo | formatselect | ' +
-                                'bold italic backcolor | alignleft aligncenter ' +
-                                'alignright alignjustify | bullist numlist outdent indent | ' +
-                                'removeformat | help',
-                            }}
-                            value={field.value}
-                            onEditorChange={(content) => field.onChange(content)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="agreement"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Agreement</FormLabel>
-                        <FormControl>
-                          <Editor
-                            apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
-                            init={{
-                              height: 300,
-                              menubar: true,
-                              document_base_url: 'https://matchpro.replit.app',
-                              plugins: [
-                                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                                'insertdatetime', 'media', 'table', 'help', 'wordcount'
-                              ],
-                              toolbar: 'undo redo | formatselect | ' +
-                                'bold italic backcolor | alignleft aligncenter ' +
-                                'alignright alignjustify | bullist numlist outdent indent | ' +
-                                'removeformat | help',
-                            }}
-                            value={field.value}
-                            onEditorChange={(content) => field.onChange(content)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="refundPolicy"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Refund Policy</FormLabel>
-                        <FormControl>
-                          <Editor
-                            apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
-                            init={{
-                              height: 300,
-                              menubar: true,
-                              document_base_url: 'https://matchpro.replit.app',
-                              plugins: [
-                                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                                'insertdatetime', 'media', 'table', 'help', 'wordcount'
-                              ],
-                              toolbar: 'undo redo | formatselect | ' +
-                                'bold italic backcolor | alignleft aligncenter ' +
-                                'alignright alignjustify | bullist numlist outdent indent | ' +
-                                'removeformat | help',
-                            }}
-                            value={field.value}
-                            onEditorChange={(content) => field.onChange(content)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="flex justify-end">
-                    <Button type="submit">Save & Continue</Button>
-                  </div>
-                </form>
-              </Form>
+              {renderInformationTab()}
             </TabsContent>
 
             <TabsContent value="age-groups">
@@ -1327,151 +1484,7 @@ export default function CreateEvent() {
             </TabsContent>
 
             <TabsContent value="scoring">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" onClick={() => navigateTab('prev')}>
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      Back
-                    </Button>
-                    <h3 className="text-lg font-semibold">Scoring Rules</h3>
-                  </div>
-                  <Button onClick={() => {
-                    scoringForm.reset();
-                    setIsScoringModalOpen(true);
-                    setEditingScoringRule(null);
-                  }}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create New Rule
-                  </Button>
-                </div>
-
-                <Card>
-                  <CardContent className="p-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Rule Name</TableHead>
-                          <TableHead className="text-center">Win</TableHead>
-                          <TableHead className="text-center">Tie</TableHead>
-                          <TableHead className="text-center">Loss</TableHead>
-                          <TableHead className="text-center">Goal Cap</TableHead>
-                          <TableHead className="text-center">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {scoringRules.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={6} className="text-center py-4">
-                              No scoring rules created yet
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          scoringRules.map((rule) => (
-                            <TableRow key={rule.id}>
-                              <TableCell>{rule.title}</TableCell>
-                              <TableCell className="text-center">{rule.win}</TableCell>
-                              <TableCell className="text-center">{rule.tie}</TableCell>
-                              <TableCell className="text-center">{rule.loss}</TableCell>
-                              <TableCell className="text-center">{rule.goalCapped}</TableCell>
-                              <TableCell>
-                                <div className="flex items-center justify-center gap-2">
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleEditScoringRule(rule)}
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                  <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={() => handleDeleteScoringRule(rule.id)}
-                                  >
-                                    <Trash className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
-
-                <div className="mt-8">
-                  <h3 className="text-lg font-semibold mb-4">Age Group Scoring Rules</h3>
-                  <Card>
-                    <CardContent className="p-0">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Age Group</TableHead>
-                            <TableHead>Gender</TableHead>
-                            <TableHead>Field Size</TableHead>
-                            <TableHead>Current Rule</TableHead>
-                            <TableHead className="text-center">Actions</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {ageGroups.length === 0 ? (
-                            <TableRow>
-                              <TableCell colSpan={5} className="text-center py-4">
-                                No age groups created yet. Create age groups first to assign scoring rules.
-                              </TableCell>
-                            </TableRow>
-                          ) : (
-                            ageGroups.map((group) => (
-                              <TableRow key={group.id}>
-                                <TableCell>{group.ageGroup}</TableCell>
-                                <TableCell>
-                                  <Badge variant="outline">{group.gender}</Badge>
-                                </TableCell>
-                                <TableCell>{group.fieldSize}</TableCell>
-                                <TableCell>
-                                  <div className="flex items-center justify-center">
-                                    <Select
-                                      value={group.scoringRule || "none"}
-                                      onValueChange={(value) => {
-                                        setAgeGroups(groups =>
-                                          groups.map(g =>
-                                            g.id === group.id
-                                              ? { ...g, scoringRule: value === "none" ? null : value }
-                                              : g
-                                          )
-                                        );
-                                      }}
-                                    >
-                                      <SelectTrigger className="w-[200px]">
-                                        <SelectValue placeholder="Select a rule" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="none">No Rule</SelectItem>
-                                        {scoringRules.map((rule) => (
-                                          <SelectItem key={rule.id} value={rule.id}>
-                                            {rule.title}
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))
-                          )}
-                        </TableBody>
-                      </Table>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <div className="flex justify-end mt-4">
-                  <Button onClick={() => navigateTab('next')}>Continue
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+              {renderScoringTab()}
             </TabsContent>
 
             <TabsContent value="complexes">
