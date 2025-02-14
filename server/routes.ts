@@ -29,11 +29,39 @@ import {
 } from "@db/schema";
 import fs from "fs/promises";
 import path from "path";
+import express from "express";
 import { crypto } from "./crypto";
 import session from "express-session";
 import passport from "passport";
 import { setupWebSocketServer } from "./websocket";
 import { randomBytes } from "crypto";
+import multer from "multer";
+
+// Configure multer for logo uploads
+const storage = multer.diskStorage({
+  destination: 'uploads/logos',
+  filename: (req, file, cb) => {
+    // Generate a random filename to prevent collisions
+    const uniqueSuffix = randomBytes(16).toString('hex');
+    cb(null, `logo-${uniqueSuffix}${path.extname(file.originalname)}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept only image files
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/svg+xml'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only JPEG, PNG and SVG files are allowed.'));
+    }
+  }
+});
 
 // Admin middleware (unchanged)
 const isAdmin = (req: Request, res: Response, next: Function) => {
@@ -56,6 +84,9 @@ export function registerRoutes(app: Express): Server {
     // Set up authentication first
     setupAuth(app);
     log("Authentication routes registered successfully");
+
+    // Configure static file serving for uploads
+    app.use('/uploads/logos', express.static(path.join(process.cwd(), 'uploads/logos')));
 
     // Register seasonal scopes routes with admin middleware
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
@@ -935,20 +966,35 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    app.post('/api/admin/organization-settings', isAdmin, async (req, res) => {
+    app.post('/api/admin/organization-settings', isAdmin, upload.single('logo'), async (req, res) => {
       try {
         const [existingSettings] = await db
           .select()
           .from(organizationSettings)
           .limit(1);
 
+        // Handle file upload
+        const logoUrl = req.file ? `/uploads/logos/${req.file.filename}` : undefined;
+
+        // Parse other form fields
         const updatedSettings = {
           ...req.body,
+          ...(logoUrl && { logoUrl }),
           updatedAt: new Date().toISOString(),
         };
 
         let settings;
         if (existingSettings) {
+          // If updating and we have a new logo, try to delete the old one
+          if (logoUrl && existingSettings.logoUrl) {
+            try {
+              const oldLogoPath = path.join(process.cwd(), existingSettings.logoUrl);
+              await fs.unlink(oldLogoPath);
+            } catch (error) {
+              console.error('Error deleting old logo:', error);
+            }
+          }
+
           [settings] = await db
             .update(organizationSettings)
             .set(updatedSettings)
@@ -967,7 +1013,6 @@ export function registerRoutes(app: Express): Server {
         res.json(settings);
       } catch (error) {
         console.error('Error updating organization settings:', error);
-        // Added basic error logging for white screen debugging.
         console.error("Error details:", error);
         res.status(500).send("Internal server error");
       }

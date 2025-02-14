@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean, jsonb, time, integer, date, timestamp, bigint } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, integer, jsonb, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
@@ -6,12 +6,32 @@ import { z } from "zod";
 export const organizationSettings = pgTable("organization_settings", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  primaryColor: text("primary_color").notNull(),
+  email: text("email"),
+  phone: text("phone"),
+  address: text("address"),
+  primaryColor: text("primary_color").notNull().default('#000000'),
   secondaryColor: text("secondary_color"),
   logoUrl: text("logo_url"),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
 });
+
+// Update schema validation
+export const insertOrganizationSettingsSchema = createInsertSchema(organizationSettings, {
+  name: z.string().min(1, "Organization name is required"),
+  email: z.string().email("Invalid email format").optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  primaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color format"),
+  secondaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color format").optional(),
+  logoUrl: z.string().optional(),
+});
+
+export const selectOrganizationSettingsSchema = createSelectSchema(organizationSettings);
+
+// Export types for TypeScript
+export type InsertOrganizationSettings = typeof organizationSettings.$inferInsert;
+export type SelectOrganizationSettings = typeof organizationSettings.$inferSelect;
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -70,15 +90,6 @@ const passwordSchema = z.string()
   .min(8, "Password must be at least 8 characters")
   .regex(/[0-9]/, "Password must contain at least one number")
   .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character");
-
-export const insertOrganizationSettingsSchema = createInsertSchema(organizationSettings, {
-  name: z.string().min(1, "Organization name is required"),
-  primaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color format"),
-  secondaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color format").optional(),
-  logoUrl: z.string().url("Invalid URL format").optional(),
-});
-
-export const selectOrganizationSettingsSchema = createSelectSchema(organizationSettings);
 
 export const insertUserSchema = createInsertSchema(users, {
   email: z.string().email("Please enter a valid email address").min(1, "Email is required"),
@@ -436,8 +447,6 @@ export type InsertUser = typeof users.$inferInsert;
 export type SelectUser = typeof users.$inferSelect;
 export type InsertHousehold = typeof households.$inferInsert;
 export type SelectHousehold = typeof households.$inferSelect;
-export type InsertOrganizationSettings = typeof organizationSettings.$inferInsert;
-export type SelectOrganizationSettings = typeof organizationSettings.$inferSelect;
 export type InsertComplex = typeof complexes.$inferInsert;
 export type SelectComplex = typeof complexes.$inferSelect;
 export type InsertField = typeof fields.$inferInsert;
