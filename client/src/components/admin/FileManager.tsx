@@ -26,13 +26,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Copy, Trash2, Loader2, Upload } from "lucide-react";
+import { Copy, Trash2, Loader2, Upload, Eye } from "lucide-react";
 
 export function FileManager({ className }: FileManagerProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
   const [newFileName, setNewFileName] = useState("");
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+  const [previewFile, setPreviewFile] = useState<FileItem | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -53,16 +55,16 @@ export function FileManager({ className }: FileManagerProps) {
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append('file', file);
-      
+
       const response = await fetch('/api/files/upload', {
         method: 'POST',
         body: formData,
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to upload file');
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -204,6 +206,16 @@ export function FileManager({ className }: FileManagerProps) {
                         <Button
                           variant="ghost"
                           size="icon"
+                          onClick={() => {
+                            setPreviewFile(file);
+                            setPreviewDialogOpen(true);
+                          }}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => handleCopyUrl(file.url)}
                         >
                           <Copy className="h-4 w-4" />
@@ -228,6 +240,18 @@ export function FileManager({ className }: FileManagerProps) {
           )}
         </CardContent>
       </Card>
+      <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
+        <DialogHeader>
+          <DialogTitle>
+            {previewFile ? previewFile.name : 'File Preview'}
+          </DialogTitle>
+        </DialogHeader>
+        <DialogContent>
+          {previewFile && (
+            <iframe src={previewFile.url} title={previewFile.name} width="100%" height="400px"/>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

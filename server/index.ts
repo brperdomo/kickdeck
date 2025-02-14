@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Register upload routes
-app.use('/api/upload', uploadRouter);
+app.use('/api/files', uploadRouter);
 
 // Add request logging middleware
 app.use((req, res, next) => {

@@ -62,9 +62,8 @@ router.post('/upload', upload.single('file'), (req, res) => {
       updatedAt: new Date().toISOString(),
     };
 
-    // Store file info in database (we'll implement this later)
-
-    res.json(fileInfo);
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(fileInfo);
   } catch (error) {
     console.error('File upload error:', error);
     res.status(500).json({ 
