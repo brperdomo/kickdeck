@@ -1956,7 +1956,7 @@ export function registerRoutes(app: Express): Server {
     // Add administrators endpoint
     app.post('/api/admin/administrators', isAdmin, async (req, res) => {
       try {
-        const { firstName, lastName, email, temporaryPassword } = req.body;
+        const { firstName, lastName, email, password, roles } = req.body;
 
         // Check if user exists
         const [existingUser] = await db
@@ -1969,35 +1969,57 @@ export function registerRoutes(app: Express): Server {
           return res.status(400).send("User with this email already exists");
         }
 
-        // Hash the temporary password
-        const hashedPassword = await crypto.hash(temporaryPassword);
+        // Hash the password
+        const hashedPassword = await crypto.hash(password);
 
-        // Create the administrator
-        const [newAdmin] = await db
-          .insert(users)
-          .values({
-            email: email,
-            username: email,
-            password: hashedPassword,
-            firstName: firstName,
-            lastName: lastName,
-            isAdmin: true,
-            isParent: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          })
-          .returning({
-            id: users.id,
-            email: users.email,
-            username: users.username,
-            firstName: users.firstName,
-            lastName: users.lastName,
-            isAdmin: users.isAdmin
-          });
+        // Start a transaction
+        await db.transaction(async (tx) => {
+          // Create the administrator
+          const [newAdmin] = await tx
+            .insert(users)
+            .values({
+              email,
+              username: email,
+              password: hashedPassword,
+              firstName,
+              lastName,
+              isAdmin: true,
+              isParent: false,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            })
+            .returning();
 
-        // Remove password from response
-        const { password, ...adminWithoutPassword } = newAdmin;
-        res.status(201).json(adminWithoutPassword);
+          // Create roles if they don't exist and assign them
+          for (const roleName of roles) {
+            let [role] = await tx
+              .select()
+              .from(roles)
+              .where(eq(roles.name, roleName))
+              .limit(1);
+
+            if (!role) {
+              [role] = await tx
+                .insert(roles)
+                .values({
+                  name: roleName,
+                  description: `${roleName} role`
+                })
+                .returning();
+            }
+
+            await tx
+              .insert(adminRoles)
+              .values({
+                userId: newAdmin.id,
+                roleId: role.id
+              });
+          }
+
+          // Send response without password
+          const { password: _, ...adminWithoutPassword } = newAdmin;
+          res.status(201).json(adminWithoutPassword);
+        });
       } catch (error) {
         console.error('Error creating administrator:', error);
         // Added basic error logging for white screen debugging.
