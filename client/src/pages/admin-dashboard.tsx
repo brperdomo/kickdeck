@@ -1726,9 +1726,10 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
     case 'branding':
       return (
         <BrandingPreviewProvider>
-          <BrandingPreviewProvider>
-  <OrganizationSettingsForm />
-</BrandingPreviewProvider>
+          <div className="grid grid-cols-2 gap-6">
+            <OrganizationSettingsForm />
+            <BrandingPreview />
+          </div>
         </BrandingPreviewProvider>
       );
     case 'general':
