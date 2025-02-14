@@ -87,6 +87,7 @@ import { ComplexEditor } from "@/components/ComplexEditor";
 import { FieldEditor } from "@/components/FieldEditor";
 import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
 import { useDropzone } from 'react-dropzone';
+import { FileManager } from "@/components/admin/FileManager";
 
 
 function AdminBanner() {
@@ -94,7 +95,7 @@ function AdminBanner() {
     <div className="w-full bg-white shadow-sm border-b">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-center items-center">
-          <img 
+          <img
             src="/attached_assets/MatchPro.ai_Stacked_Color.png"
             alt="MatchPro Logo"
             className="h-16 object-contain"
@@ -112,7 +113,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files';
 type SettingsView = 'branding' | 'general' | 'payments';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -994,7 +995,7 @@ function ComplexesView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update field",
+        description: error instanceof Error ? error.message: "Failed to update field",
         variant: "destructive",
       });
     },
@@ -1473,6 +1474,15 @@ function AdminDashboard() {
             <MyAccount />
           </Suspense>
         );
+      case 'files':
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">File Manager</h2>
+            </div>
+            <FileManager />
+          </div>
+        );
       default:
         return <div>Feature coming soon</div>;
     }
@@ -1561,6 +1571,14 @@ function AdminDashboard() {
             >
               <MessageSquare className="mr-2 h-4 w-4" />
               Chat
+            </Button>
+            <Button
+              variant={activeView === 'files' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('files')}
+            >
+              <ImageIcon className="mr-2 h-4 w-4" />
+              File Manager
             </Button>
 
             {/* Settings */}
