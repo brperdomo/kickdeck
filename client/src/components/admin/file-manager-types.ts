@@ -19,6 +19,7 @@ export type FileFormValues = z.infer<typeof fileSchema>;
 
 export interface FileManagerProps {
   className?: string;
+  onFileSelect?: (file: FileItem) => void;
 }
 
 export const ALLOWED_FILE_TYPES = {

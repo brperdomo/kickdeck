@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import { Copy, Trash2, Loader2, Upload, Eye } from "lucide-react";
 
-export function FileManager({ className }: FileManagerProps) {
+export function FileManager({ className, onFileSelect }: FileManagerProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
@@ -67,7 +67,6 @@ export function FileManager({ className }: FileManagerProps) {
     renameMutation.mutate({ fileId: selectedFile.id, newName: newFileName.trim() });
   };
 
-  // Query for fetching files
   const filesQuery = useQuery({
     queryKey: ['files'],
     queryFn: async () => {
@@ -79,11 +78,10 @@ export function FileManager({ className }: FileManagerProps) {
     },
   });
 
-  // Mutation for file upload
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
-      formData.append('file', file, file.name); // Use original filename
+      formData.append('file', file, file.name); 
 
       const response = await fetch('/api/files/upload', {
         method: 'POST',
@@ -113,7 +111,6 @@ export function FileManager({ className }: FileManagerProps) {
     },
   });
 
-  // Mutation for file deletion
   const deleteMutation = useMutation({
     mutationFn: async (fileId: string) => {
       const response = await fetch(`/api/files/${fileId}`, {
@@ -132,7 +129,6 @@ export function FileManager({ className }: FileManagerProps) {
     },
   });
 
-  // Dropzone configuration
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: async (acceptedFiles) => {
       setIsUploading(true);
@@ -172,6 +168,12 @@ export function FileManager({ className }: FileManagerProps) {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const handleSelect = (file: FileItem) => {
+    if (onFileSelect) {
+      onFileSelect(file);
+    }
   };
 
   return (
@@ -236,7 +238,7 @@ export function FileManager({ className }: FileManagerProps) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => window.open(file.url, '_blank')}
+                          onClick={() => handleSelect(file)}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -266,7 +268,6 @@ export function FileManager({ className }: FileManagerProps) {
                             setRenameDialogOpen(true);
                           }}
                         >
-                          {/* Add a rename icon here */}
                           Rename
                         </Button>
                       </div>

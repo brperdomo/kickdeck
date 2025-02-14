@@ -1,21 +1,29 @@
-
+import { useState } from "react";
 import { LogoutOverlay } from "@/components/ui/logout-overlay";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/hooks/use-user";
+import { FileManager } from "@/components/admin/FileManager";
 import {
   LucideHome,
   User,
   ChevronDown,
   LogOut,
+  Upload,
 } from "lucide-react";
 import { Link } from "wouter";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function UserDashboard() {
   const { user, logout } = useUser();
-
   const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
+  const [showFileManager, setShowFileManager] = useState(false);
+  const [selectedLogo, setSelectedLogo] = useState<string | null>(null);
 
   const handleLogout = () => {
     setShowLogoutOverlay(true);
@@ -57,11 +65,6 @@ export default function UserDashboard() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
                   {user?.firstName} {user?.lastName}
-
-      {showLogoutOverlay && (
-        <LogoutOverlay onFinished={() => setShowLogoutOverlay(false)} />
-      )}
-
                 </p>
                 <p className="text-xs text-gray-500 truncate">{user?.email}</p>
               </div>
@@ -82,6 +85,33 @@ export default function UserDashboard() {
       {/* Main Content */}
       <div className="flex-1 p-8 overflow-auto">
         <div className="max-w-4xl mx-auto">
+          {/* Brand Logo Section */}
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl font-bold text-gray-900">Brand Logo</CardTitle>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowFileManager(true)}
+                  className="flex items-center gap-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  Select Logo
+                </Button>
+              </div>
+              {selectedLogo && (
+                <div className="mt-4 flex justify-center">
+                  <img 
+                    src={selectedLogo} 
+                    alt="Brand Logo" 
+                    className="max-h-32 object-contain"
+                  />
+                </div>
+              )}
+            </CardHeader>
+          </Card>
+
+          {/* Welcome Card */}
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-gray-900">
@@ -91,6 +121,25 @@ export default function UserDashboard() {
           </Card>
         </div>
       </div>
+
+      {/* File Manager Dialog */}
+      <Dialog open={showFileManager} onOpenChange={setShowFileManager}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Select Logo</DialogTitle>
+          </DialogHeader>
+          <FileManager 
+            onFileSelect={(file) => {
+              setSelectedLogo(file.url);
+              setShowFileManager(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {showLogoutOverlay && (
+        <LogoutOverlay onFinished={() => setShowLogoutOverlay(false)} />
+      )}
     </div>
   );
 }
