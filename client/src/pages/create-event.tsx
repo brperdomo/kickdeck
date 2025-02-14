@@ -86,15 +86,6 @@ const validateEventData = (data: Partial<EventData>, selectedScopeId: number | n
   if (!data.timezone) errors.push("Timezone is required");
   if (!data.applicationDeadline) errors.push("Application deadline is required");
 
-  // Validate seasonal scope and age groups
-  if (!selectedScopeId) {
-    errors.push("A seasonal scope must be selected");
-  }
-
-  if (selectedAgeGroupIds.length === 0) {
-    errors.push("At least one age group must be selected from the chosen seasonal scope");
-  }
-
   // Validate complex selection
   if (!data.selectedComplexIds || data.selectedComplexIds.length === 0) {
     errors.push("At least one complex must be selected");
@@ -867,24 +858,6 @@ export default function CreateEvent() {
 
   const handleCreateEvent = async () => {
     try {
-      if (!selectedScopeId) {
-        toast({
-          title: "Error",
-          description: "Please select a seasonal scope first",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (selectedAgeGroupIds.length === 0) {
-        toast({
-          title: "Error",
-          description: "Please select at least one age group from the chosen seasonal scope",
-          variant: "destructive",
-        });
-        return;
-      }
-
       setIsSaving(true);
       const formValues = form.getValues();
       const selectedScope = seasonalScopesQuery.data?.find(scope => scope.id === selectedScopeId);
@@ -909,7 +882,8 @@ export default function CreateEvent() {
 
           return {
             id: generateId(),
-            gender: group.gender as "Male" | "Female" | "Coed",            projectedTeams: 20,
+            gender: group.gender as "Male" | "Female" | "Coed",
+            projectedTeams: 20,
             birthDateStart: new Date(group.minBirthYear, 0, 1).toISOString(),
             birthDateEnd: new Date(group.maxBirthYear, 11, 31).toISOString(),
             scoringRule,
@@ -930,7 +904,7 @@ export default function CreateEvent() {
       // Validate the event data with seasonal scope context
       const validation = validateEventData(eventData, selectedScopeId, selectedAgeGroupIds);
       if (!validation.isValid) {
-        throw new Error(`Validation failed:\n${validation.errors.join('\n')}`);
+        throw new Error(`Validation failed: ${validation.errors.join('\n')}`);
       }
 
       // Create FormData instance
