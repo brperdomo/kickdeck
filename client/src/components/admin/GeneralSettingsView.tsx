@@ -1,8 +1,6 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrganizationSettingsForm } from "./OrganizationSettingsForm";
 import { SeasonalScopeSettings } from "./SeasonalScopeSettings";
-import { BrandingPreviewProvider } from "@/hooks/use-branding-preview";
 
 export function GeneralSettingsView() {
   return (
@@ -14,9 +12,7 @@ export function GeneralSettingsView() {
           <CardTitle>Organization Settings</CardTitle>
         </CardHeader>
         <CardContent>
-          <BrandingPreviewProvider>
-            <OrganizationSettingsForm />
-          </BrandingPreviewProvider>
+          <OrganizationSettingsForm />
         </CardContent>
       </Card>
 
