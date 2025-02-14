@@ -89,6 +89,23 @@ import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
 import { useDropzone } from 'react-dropzone';
 
 
+// Add banner component at the top of the file content
+function AdminBanner() {
+  return (
+    <div className="w-full bg-white shadow-sm border-b">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex justify-center items-center">
+          <img 
+            src="/attached_assets/MatchPro.ai_Stacked_Color.png"
+            alt="MatchPro Logo"
+            className="h-16 object-contain"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const MyAccount = lazy(() => import("./my-account"));
 
 // Type guard function to check if user is admin
@@ -978,7 +995,7 @@ function ComplexesView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update field",
+description: error instanceof Error ? error.message : "Failed to update field",
         variant: "destructive",
       });
     },
@@ -990,7 +1007,7 @@ function ComplexesView() {
       if (selectedComplex) {
         await updateComplexMutation.mutateAsync({ id: selectedComplex.id, data });
       } else {
-                await createComplexMutation.mutateAsync(data);
+        await createComplexMutation.mutateAsync(data);
       }
     } catch (error) {
       console.error('Error submitting complex:', error);
@@ -1582,7 +1599,7 @@ function AdminDashboard() {
                   Branding
                 </Button>
                 <Button
-                   variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
+                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
                   onClick={() => {
                     setActiveView('settings');
@@ -1592,7 +1609,7 @@ function AdminDashboard() {
                   <CreditCard className="mr-2 h-4 w-4" />
                   Payments
                 </Button>
-                 <Button
+                <Button
                   variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
                   onClick={() => {
@@ -1600,14 +1617,14 @@ function AdminDashboard() {
                     setActiveSettingsView('general');
                   }}
                 >
-                   <Settings className="mr-2 h-4 w-4" />
+                  <Settings className="mr-2 h-4 w-4" />
                   General
                 </Button>
               </CollapsibleContent>
             </Collapsible>
 
             {/* Account */}
-             <Button
+            <Button
               variant={activeView === 'account' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
               onClick={() => setActiveView('account')}
@@ -1616,7 +1633,7 @@ function AdminDashboard() {
               My Account
             </Button>
 
-             <Button
+            <Button
               variant="ghost"
               className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
               onClick={handleLogout}
