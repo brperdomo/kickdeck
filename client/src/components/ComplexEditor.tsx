@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const complexSchema = z.object({
   name: z.string().min(1, "Complex name is required"),
@@ -297,5 +297,61 @@ export function ComplexEditor({ open, onOpenChange, onSubmit, complex }: Complex
         </Form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+export default function ComplexManager() {
+  const [open, setOpen] = useState(false);
+  const [selectedComplex, setSelectedComplex] = useState<Complex | null>(null);
+  const { toast } = useToast();
+
+  const handleSubmit = async (data: ComplexFormValues) => {
+    try {
+      const response = await fetch('/api/complexes', {
+        method: selectedComplex ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(selectedComplex ? { ...data, id: selectedComplex.id } : data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save complex');
+      }
+
+      toast({
+        title: "Success",
+        description: `Complex ${selectedComplex ? 'updated' : 'created'} successfully`,
+      });
+      setOpen(false);
+    } catch (error) {
+      console.error('Error saving complex:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save complex",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Complex Management</h2>
+        <Button onClick={() => {
+          setSelectedComplex(null);
+          setOpen(true);
+        }}>
+          Add Complex
+        </Button>
+      </div>
+
+      <ComplexEditor
+        open={open}
+        onOpenChange={setOpen}
+        onSubmit={handleSubmit}
+        complex={selectedComplex}
+      />
+    </div>
   );
 }

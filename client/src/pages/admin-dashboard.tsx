@@ -2,13 +2,29 @@ import { useState, lazy, Suspense } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
-import { LogOut, User, Home } from "lucide-react";
+import { 
+  LogOut, 
+  User, 
+  Home,
+  CalendarDays,
+  Users,
+  Building2,
+  MessageSquare,
+  Settings,
+  Trophy
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 
 // Lazy loaded components
 const MyAccount = lazy(() => import("./my-account"));
+const EventManager = lazy(() => import("@/components/events/EventManager"));
+const TeamManager = lazy(() => import("@/components/teams/TeamManager"));
+const ComplexManager = lazy(() => import("@/components/ComplexEditor"));
+const ChatManager = lazy(() => import("./chat"));
+const AdminModal = lazy(() => import("@/components/admin/AdminModal"));
+
+type AdminView = 'organization' | 'account' | 'events' | 'teams' | 'complexes' | 'chat' | 'administrators';
 
 function OrganizationBanner() {
   const { settings } = useOrganizationSettings();
@@ -31,7 +47,7 @@ function OrganizationBanner() {
 }
 
 function AdminDashboard() {
-  const [view, setView] = useState<'organization' | 'account'>('organization');
+  const [view, setView] = useState<AdminView>('organization');
   const { user } = useUser();
   const { toast } = useToast();
 
@@ -55,6 +71,51 @@ function AdminDashboard() {
               >
                 <Home className="mr-2 h-4 w-4" />
                 Organization
+              </Button>
+
+              <Button
+                variant={view === 'events' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setView('events')}
+              >
+                <CalendarDays className="mr-2 h-4 w-4" />
+                Events
+              </Button>
+
+              <Button
+                variant={view === 'teams' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setView('teams')}
+              >
+                <Trophy className="mr-2 h-4 w-4" />
+                Teams
+              </Button>
+
+              <Button
+                variant={view === 'complexes' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setView('complexes')}
+              >
+                <Building2 className="mr-2 h-4 w-4" />
+                Complexes
+              </Button>
+
+              <Button
+                variant={view === 'chat' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setView('chat')}
+              >
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Chat
+              </Button>
+
+              <Button
+                variant={view === 'administrators' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setView('administrators')}
+              >
+                <Users className="mr-2 h-4 w-4" />
+                Administrators
               </Button>
 
               <Button
@@ -84,11 +145,13 @@ function AdminDashboard() {
         <div className="flex-1 overflow-auto">
           <div className="container mx-auto p-6">
             <Suspense fallback={<div>Loading...</div>}>
-              {view === 'organization' ? (
-                <GeneralSettingsView />
-              ) : (
-                <MyAccount />
-              )}
+              {view === 'organization' && <GeneralSettingsView />}
+              {view === 'account' && <MyAccount />}
+              {view === 'events' && <EventManager />}
+              {view === 'teams' && <TeamManager />}
+              {view === 'complexes' && <ComplexManager />}
+              {view === 'chat' && <ChatManager />}
+              {view === 'administrators' && <AdminModal />}
             </Suspense>
           </div>
         </div>
