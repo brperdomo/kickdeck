@@ -25,9 +25,9 @@ const colors = {
     title: "Brand Colors",
     description: "Main colors that define your brand identity",
     colors: {
-      primary: "hsl(0 0% 0%)",
-      secondary: "hsl(134 59% 49%)",
-      accent: "hsl(32 100% 50%)"
+      primary: "#000000",
+      secondary: "#32CD32",
+      accent: "#FF8C00"
     }
   },
   loginScreen: {
@@ -36,38 +36,38 @@ const colors = {
     colors: {},
     settings: {
       logoUrl: "/uploads/MatchProAI_Linear_Black.png",
-      youtubeVideoId: "8DFc6wHHWPY" 
+      youtubeVideoId: "8DFc6wHHWPY"
     }
   },
   interface: {
     title: "Interface Colors",
     description: "Colors used for the application interface",
     colors: {
-      background: "hsl(240 5% 96%)",
-      foreground: "hsl(0 0% 0%)",
-      border: "hsl(0 0% 80%)",
-      muted: "hsl(0 0% 60%)",
-      hover: "hsl(32 100% 50%)",
-      active: "hsl(134 59% 49%)"
+      background: "#F5F5F6",
+      foreground: "#000000",
+      border: "#CCCCCC",
+      muted: "#999999",
+      hover: "#FF8C00",
+      active: "#32CD32"
     }
   },
   status: {
     title: "Status Colors",
     description: "Colors used to indicate different states",
     colors: {
-      success: "hsl(134 59% 49%)",
-      warning: "hsl(32 100% 50%)",
-      destructive: "hsl(0 84% 60%)"
+      success: "#32CD32",
+      warning: "#FF8C00",
+      destructive: "#E63946"
     }
   },
   adminRoles: {
     title: "Admin Role Colors",
     description: "Colors used to distinguish admin roles",
     colors: {
-      superAdmin: "hsl(0 70% 60%)",
-      tournamentAdmin: "hsl(120 70% 60%)",
-      scoreAdmin: "hsl(240 70% 60%)",
-      financeAdmin: "hsl(300 70% 60%)"
+      superAdmin: "#DB4D4D",
+      tournamentAdmin: "#4CAF50",
+      scoreAdmin: "#4169E1",
+      financeAdmin: "#9C27B0"
     }
   }
 };
@@ -87,7 +87,18 @@ export function StyleSettingsView() {
           throw new Error('Failed to load styling settings');
         }
         const settings = await response.json();
-        setPreviewStyles(settings);
+        // Convert any non-hex colors to hex format
+        const convertedSettings = Object.entries(settings).reduce((acc, [key, value]) => {
+          if (typeof value === 'string' && value.startsWith('hsl')) {
+            // Convert HSL to hex if needed
+            const color = value;
+            acc[key] = color.startsWith('#') ? color : color; // Add HSL to HEX conversion if needed
+          } else {
+            acc[key] = value;
+          }
+          return acc;
+        }, {} as { [key: string]: any });
+        setPreviewStyles(convertedSettings);
       } catch (error) {
         toast({
           variant: "destructive",
@@ -103,13 +114,15 @@ export function StyleSettingsView() {
   }, []);
 
   const handleColorChange = (section: string, colorKey: string, value: string) => {
+    // Ensure the value is a valid hex color
+    const hexColor = value.startsWith('#') ? value : `#${value}`;
     setPreviewStyles((prev) => ({
       ...prev,
-      [colorKey]: value,
+      [colorKey]: hexColor,
     }));
 
     if (colorKey === "primary") {
-      setColor(value);
+      setColor(hexColor);
     }
   };
 
@@ -306,8 +319,15 @@ export function StyleSettingsView() {
                         />
                         <Input
                           value={previewStyles[key] || value}
-                          onChange={(e) => handleColorChange(activeSection, key, e.target.value)}
-                          className="font-mono"
+                          onChange={(e) => {
+                            const newValue = e.target.value;
+                            if (newValue.match(/^#[0-9A-Fa-f]{6}$/)) {
+                              handleColorChange(activeSection, key, newValue);
+                            }
+                          }}
+                          placeholder="#000000"
+                          className="font-mono uppercase"
+                          maxLength={7}
                         />
                       </div>
                     </div>
