@@ -86,7 +86,7 @@ async function testDbConnection() {
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
-
+      
       CREATE TABLE IF NOT EXISTS age_group_settings (
         id SERIAL PRIMARY KEY,
         seasonal_scope_id INTEGER NOT NULL REFERENCES seasonal_scopes(id) ON DELETE CASCADE,
@@ -98,6 +98,7 @@ async function testDbConnection() {
       );
     `);
 
+
     // Register routes first to ensure all middleware is set up
     const server = registerRoutes(app);
 
@@ -105,7 +106,7 @@ async function testDbConnection() {
     const wss = new WebSocketServer({ 
       server,
       path: "/api/ws",
-      verifyClient: (info: { req: { headers: { [key: string]: string | undefined } } }) => {
+      verifyClient: (info) => {
         const protocol = info.req.headers['sec-websocket-protocol'];
         return !protocol || protocol !== 'vite-hmr';
       }
@@ -156,8 +157,7 @@ async function testDbConnection() {
       }
     };
 
-    // Set default port to 5000 
-    const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
+    const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
     const finalPort = await tryPort(PORT);
     server.listen(finalPort, "0.0.0.0", () => {
       log(`Server started successfully on port ${finalPort}`);

@@ -96,50 +96,19 @@ router.post('/upload', (req, res) => {
 // Get all files
 router.get('/', async (req, res) => {
   try {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    
-    console.log('Checking uploads directory:', uploadsDir);
-    const files = [];
-    
-    if (!fs.existsSync(uploadsDir)) {
-      console.log('Creating uploads directory');
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-    
-    const filenames = fs.readdirSync(uploadsDir);
-    console.log('Found files:', filenames);
-    
-    for (const filename of filenames) {
-      try {
-        const filePath = path.join(uploadsDir, filename);
-        const stats = fs.statSync(filePath);
-        
-        if (stats.isFile()) {
-          const ext = path.extname(filename).toLowerCase();
-          const type = 
-            ['.jpg', '.jpeg', '.png', '.gif'].includes(ext) ? 'image' :
-            ['.mp4', '.webm'].includes(ext) ? 'video' :
-            'document';
-          
-          files.push({
-            id: path.parse(filename).name,
-            name: filename,
-            url: `/uploads/${filename}`,
-            type,
-            size: stats.size,
-            createdAt: stats.birthtime.toISOString(),
-            updatedAt: stats.mtime.toISOString(),
-            folderId: null
-          });
-        }
-      } catch (err) {
-        console.error(`Error processing file ${filename}:`, err);
-      }
-    }
-    
-    console.log('Returning files:', files.length);
+    // We'll implement database fetching here later
+    const files = fs.readdirSync(uploadsDir).map(filename => {
+      const stats = fs.statSync(path.join(uploadsDir, filename));
+      return {
+        id: path.parse(filename).name,
+        name: filename,
+        url: `/uploads/${filename}`,
+        type: path.extname(filename).slice(1),
+        size: stats.size,
+        createdAt: stats.birthtime.toISOString(),
+        updatedAt: stats.mtime.toISOString(),
+      };
+    });
     res.json(files);
   } catch (error) {
     console.error('Error fetching files:', error);
