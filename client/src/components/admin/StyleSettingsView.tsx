@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,40 +20,40 @@ const defaultColors = {
   primary: {
     title: "Primary Colors",
     colors: {
-      primary: "hsl(221.2 83.2% 53.3%)",
-      secondary: "hsl(215 20.2% 65.1%)",
+      primary: "#0066FF",
+      secondary: "#A4B5C6",
     },
   },
   buttons: {
     title: "Button Colors",
     colors: {
-      buttonDefault: "hsl(221.2 83.2% 53.3%)",
-      buttonHover: "hsl(221.2 83.2% 47.3%)",
-      buttonActive: "hsl(221.2 83.2% 43.3%)",
+      buttonDefault: "#0066FF",
+      buttonHover: "#0052CC",
+      buttonActive: "#004499",
     },
   },
   interactive: {
     title: "Interactive Elements",
     colors: {
-      hoverBackground: "hsl(220 14.3% 95.9%)",
-      activeBackground: "hsl(220 14.3% 93.9%)",
+      hoverBackground: "#F5F6F7",
+      activeBackground: "#ECEDEF",
     },
   },
   navigation: {
     title: "Navigation Colors",
     colors: {
-      navBackground: "hsl(0 0% 100%)",
-      navText: "hsl(222.2 47.4% 11.2%)",
-      navHover: "hsl(220 14.3% 95.9%)",
+      navBackground: "#FFFFFF",
+      navText: "#1A1B1E",
+      navHover: "#F5F6F7",
     },
   },
   adminRoles: {
     title: "Admin Role Colors",
     colors: {
-      superAdmin: "hsl(0 72.2% 50.6%)",
-      tournamentAdmin: "hsl(221.2 83.2% 53.3%)",
-      scoreAdmin: "hsl(142.1 76.2% 36.3%)",
-      financeAdmin: "hsl(262.1 83.3% 57.8%)",
+      superAdmin: "#E63946",
+      tournamentAdmin: "#0066FF",
+      scoreAdmin: "#2A9D8F",
+      financeAdmin: "#7B61FF",
     },
   },
 };
@@ -76,7 +77,6 @@ export function StyleSettingsView() {
       },
     }));
 
-    // Update preview immediately
     setPreviewStyles((prev) => ({
       ...prev,
       [colorKey]: value,
@@ -85,10 +85,8 @@ export function StyleSettingsView() {
 
   const handleSave = async () => {
     try {
-      // Save primary color through the theme system
       await setColor(colors.primary.colors.primary);
 
-      // Save other colors through a new API endpoint (to be implemented)
       const response = await fetch('/api/admin/styling', {
         method: 'POST',
         headers: {
@@ -129,10 +127,7 @@ export function StyleSettingsView() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Style Settings</h2>
-        <Button
-          onClick={handleSave}
-          disabled={isLoading}
-        >
+        <Button onClick={handleSave} disabled={isLoading}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -145,27 +140,30 @@ export function StyleSettingsView() {
       </div>
 
       <div className="grid grid-cols-3 gap-6">
-        <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Color Sections</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TabsList className="flex flex-col w-full space-y-2">
-              {Object.entries(colors).map(([key, section]) => (
-                <TabsTrigger
-                  key={key}
-                  value={key}
-                  onClick={() => setActiveSection(key)}
-                  className={`justify-start w-full ${
-                    activeSection === key ? "bg-primary/10" : ""
-                  }`}
-                >
-                  {section.title}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </CardContent>
-        </Card>
+        <div className="col-span-1">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle>Color Sections</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <Tabs value={activeSection} onValueChange={setActiveSection} orientation="vertical">
+                <TabsList className="flex flex-col w-full space-y-2">
+                  {Object.entries(colors).map(([key, section]) => (
+                    <TabsTrigger
+                      key={key}
+                      value={key}
+                      className={`justify-start w-full ${
+                        activeSection === key ? "bg-primary/10" : ""
+                      }`}
+                    >
+                      {section.title}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
 
         <Card className="col-span-2">
           <CardHeader className="flex flex-row justify-between items-center">

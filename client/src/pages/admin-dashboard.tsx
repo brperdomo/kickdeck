@@ -1795,6 +1795,8 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
       );
     case 'general':
       return <GeneralSettingsView />;
+    case 'styling':
+      return <StyleSettingsView />;
     default:
       return (
         <div className="space-y-6">
