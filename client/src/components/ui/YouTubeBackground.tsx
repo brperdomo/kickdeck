@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 
 interface YouTubeBackgroundProps {
@@ -13,7 +14,7 @@ export function YouTubeBackground({
     <div className={cn("absolute inset-0 -z-10 overflow-hidden", className)}>
       <iframe
         className="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-screen min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2"
-        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&playsinline=1`}
+        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&playsinline=1&modestbranding=1&showinfo=0&rel=0&enablejsapi=1&origin=${window.location.origin}`}
         title="Background Video"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         frameBorder="0"
