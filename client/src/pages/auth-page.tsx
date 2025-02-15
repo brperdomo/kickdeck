@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type InsertUser } from "@db/schema";
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
+import { YouTubeBackground } from "@/components/ui/YouTubeBackground";
 import {
   Form,
   FormControl,
@@ -79,20 +80,7 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen w-full relative">
-      {/* Video Background */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-      >
-        <source src="/videos/soccer1.mp4" type="video/mp4" />
-        <source src="/videos/soccer2.mp4" type="video/mp4" />
-      </video>
-
-      {/* Overlay for better text visibility */}
-      <div className="absolute inset-0 bg-black/30" />
+      <YouTubeBackground />
 
       {/* Login Form Container */}
       <div className="relative z-10 flex items-center justify-center min-h-screen">
