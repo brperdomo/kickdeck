@@ -8,8 +8,7 @@ interface VideoBackgroundProps {
 export function VideoBackground({ className }: VideoBackgroundProps) {
   const videos = [
     "/videos/soccer1.mp4",
-    "/videos/soccer2.mp4",
-    "/videos/soccer3.mp4"
+    "/videos/soccer2.mp4"
   ];
 
   return (
@@ -19,13 +18,13 @@ export function VideoBackground({ className }: VideoBackgroundProps) {
         muted
         loop
         playsInline
-        className="absolute w-full h-full object-cover"
+        className="absolute top-0 left-0 w-full h-full object-cover"
       >
         {videos.map((src, index) => (
           <source key={index} src={src} type="video/mp4" />
         ))}
       </video>
-      <div className="absolute inset-0 bg-black/40" /> {/* Overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/20" /> {/* Overlay for better text readability */}
     </div>
   );
 }
