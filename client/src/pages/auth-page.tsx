@@ -80,7 +80,7 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen w-full relative">
-      <YouTubeBackground videoId="8DFc6wHHWPY" />
+      <YouTubeBackground videoId="OdObDXBzNYk" />
 
       <div className="relative z-10 flex items-center justify-center min-h-screen">
         <div className="w-full max-w-[min(400px,100%-2rem)] mx-auto">
