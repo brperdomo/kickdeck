@@ -80,18 +80,17 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen w-full relative">
-      <YouTubeBackground />
+      <YouTubeBackground videoId="8DFc6wHHWPY" />
 
-      {/* Login Form Container */}
       <div className="relative z-10 flex items-center justify-center min-h-screen">
         <div className="w-full max-w-[min(400px,100%-2rem)] mx-auto">
           <Card className="w-full bg-white/50 backdrop-blur-md shadow-xl border-0">
             <CardHeader className="space-y-3 pb-6">
               <div className="flex justify-center">
                 <div className="w-100 h-100">
-                  <img 
-                    src="/uploads/MatchProAI_Linear_Black.png" 
-                    alt="MatchPro Logo" 
+                  <img
+                    src="/uploads/MatchProAI_Linear_Black.png"
+                    alt="MatchPro Logo"
                     className="w-full h-full object-contain"
                   />
                 </div>
