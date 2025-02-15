@@ -975,6 +975,88 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Styling settings endpoints
+    app.get('/api/admin/styling', isAdmin, async (req, res) => {
+      try {
+        const [settings] = await db
+          .select({
+            id: organizationSettings.id,
+            name: organizationSettings.name,
+            primaryColor: organizationSettings.primaryColor,
+            secondaryColor: organizationSettings.secondaryColor,
+            logoUrl: organizationSettings.logoUrl,
+          })
+          .from(organizationSettings)
+          .limit(1);
+
+        // Convert database values to style config format
+        const styleConfig = {
+          primary: settings?.primaryColor || '#000000',
+          secondary: settings?.secondaryColor || '#32CD32',
+          accent: '#FF8C00',
+          background: '#F5F5F6',
+          foreground: '#000000',
+          border: '#CCCCCC',
+          muted: '#999999',
+          hover: '#FF8C00',
+          active: '#32CD32',
+          success: '#32CD32',
+          warning: '#FF8C00',
+          destructive: '#E63946',
+          superAdmin: '#DB4D4D',
+          tournamentAdmin: '#4CAF50',
+          scoreAdmin: '#4169E1',
+          financeAdmin: '#9C27B0',
+          logoUrl: settings?.logoUrl || '/uploads/MatchProAI_Linear_Black.png',
+          youtubeVideoId: '8DFc6wHHWPY'
+        };
+
+        res.json(styleConfig);
+      } catch (error) {
+        console.error('Error fetching styling settings:', error);
+        res.status(500).send("Internal server error");
+      }
+    });
+
+    app.post('/api/admin/styling', isAdmin, async (req, res) => {
+      try {
+        const styleConfig = req.body;
+        
+        // Update organization settings with the new colors
+        const [settings] = await db
+          .select()
+          .from(organizationSettings)
+          .limit(1);
+
+        if (settings) {
+          await db
+            .update(organizationSettings)
+            .set({
+              primaryColor: styleConfig.primary,
+              secondaryColor: styleConfig.secondary,
+              logoUrl: styleConfig.logoUrl,
+              updatedAt: new Date().toISOString(),
+            })
+            .where(eq(organizationSettings.id, settings.id));
+        } else {
+          await db
+            .insert(organizationSettings)
+            .values({
+              primaryColor: styleConfig.primary,
+              secondaryColor: styleConfig.secondary,
+              logoUrl: styleConfig.logoUrl,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            });
+        }
+
+        res.json({ message: "Styling settings updated successfully" });
+      } catch (error) {
+        console.error('Error updating styling settings:', error);
+        res.status(500).send("Failed to update styling settings");
+      }
+    });
+
     // Admin routes
     app.get('/api/admin/users', isAdmin, async (req, res) => {
       try {

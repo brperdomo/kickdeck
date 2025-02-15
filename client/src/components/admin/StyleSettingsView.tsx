@@ -73,7 +73,7 @@ const colors = {
 };
 
 export function StyleSettingsView() {
-  const { currentColor, setColor, isLoading } = useTheme();
+  const { currentColor, setColor, styleConfig, updateStyleConfig, isLoading } = useTheme();
   const [activeSection, setActiveSection] = useState("branding");
   const [previewStyles, setPreviewStyles] = useState<{ [key: string]: string }>({});
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
@@ -87,19 +87,9 @@ export function StyleSettingsView() {
           throw new Error('Failed to load styling settings');
         }
         const settings = await response.json();
-        // Convert any non-hex colors to hex format
-        const convertedSettings = Object.entries(settings).reduce((acc, [key, value]) => {
-          if (typeof value === 'string' && value.startsWith('hsl')) {
-            // Convert HSL to hex if needed
-            const color = value;
-            acc[key] = color.startsWith('#') ? color : color; // Add HSL to HEX conversion if needed
-          } else {
-            acc[key] = value;
-          }
-          return acc;
-        }, {} as { [key: string]: any });
-        setPreviewStyles(convertedSettings);
+        setPreviewStyles(settings);
       } catch (error) {
+        console.error('Error loading styling settings:', error);
         toast({
           variant: "destructive",
           title: "Error",
@@ -120,10 +110,6 @@ export function StyleSettingsView() {
       ...prev,
       [colorKey]: hexColor,
     }));
-
-    if (colorKey === "primary") {
-      setColor(hexColor);
-    }
   };
 
   const handleReset = (section: string) => {
@@ -148,17 +134,16 @@ export function StyleSettingsView() {
 
   const handleSave = async () => {
     try {
+      // Update theme color
       await setColor(previewStyles.primary || colors.branding.colors.primary);
-      const updatedStyles = {
-        ...previewStyles,
-      };
 
+      // Update all styling settings
       const response = await fetch('/api/admin/styling', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedStyles),
+        body: JSON.stringify(previewStyles),
       });
 
       if (!response.ok) {
@@ -170,6 +155,7 @@ export function StyleSettingsView() {
         description: "UI styling updated successfully",
       });
     } catch (error) {
+      console.error('Error saving styling changes:', error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -251,12 +237,12 @@ export function StyleSettingsView() {
                     <div className="flex-1">
                       <Input
                         placeholder="Enter logo URL (e.g., /uploads/logo.png)"
-                        value={previewStyles.logoUrl}
+                        value={previewStyles.logoUrl || ''}
                         onChange={(e) => handleColorChange('loginScreen', 'logoUrl', e.target.value)}
                       />
                     </div>
                     <img
-                      src={previewStyles.logoUrl}
+                      src={previewStyles.logoUrl || ''}
                       alt="Login logo preview"
                       className="h-16 w-16 object-contain bg-gray-50 rounded p-2"
                     />
@@ -269,13 +255,13 @@ export function StyleSettingsView() {
                     <div className="flex-1">
                       <Input
                         placeholder="Enter YouTube video ID (e.g., OdObDXBzNYk)"
-                        value={previewStyles.youtubeVideoId}
+                        value={previewStyles.youtubeVideoId || ''}
                         onChange={(e) => handleColorChange('loginScreen', 'youtubeVideoId', e.target.value)}
                       />
                     </div>
                     <div className="h-16 w-28 overflow-hidden rounded bg-gray-50">
                       <img
-                        src={`https://img.youtube.com/vi/${previewStyles.youtubeVideoId}/default.jpg`}
+                        src={`https://img.youtube.com/vi/${previewStyles.youtubeVideoId || ''}/default.jpg`}
                         alt="YouTube thumbnail preview"
                         className="w-full h-full object-cover"
                       />
@@ -285,21 +271,6 @@ export function StyleSettingsView() {
                     Enter the YouTube video ID from the video URL. For example, in 'https://youtube.com/watch?v=OdObDXBzNYk', the ID is 'OdObDXBzNYk'.
                   </p>
                 </div>
-
-                <Button
-                  onClick={handleSave}
-                  disabled={isLoading}
-                  className="mt-4"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving Changes
-                    </>
-                  ) : (
-                    'Save Changes'
-                  )}
-                </Button>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-6">
