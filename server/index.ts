@@ -157,7 +157,7 @@ async function testDbConnection() {
       }
     };
 
-    const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+    const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
     const finalPort = await tryPort(PORT);
     server.listen(finalPort, "0.0.0.0", () => {
       log(`Server started successfully on port ${finalPort}`);
