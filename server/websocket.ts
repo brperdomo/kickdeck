@@ -1,7 +1,7 @@
 import { WebSocket, WebSocketServer } from 'ws';
 import type { Server } from 'http';
 import { db } from '@db';
-import { messages } from '@db/schema';
+import { messages, files } from '@db/schema';
 import { eq } from 'drizzle-orm';
 
 interface ChatClient extends WebSocket {
@@ -55,8 +55,9 @@ export function setupWebSocketServer(server: Server) {
             try {
               // Store message in database
               const [newMessage] = await db.insert(messages).values({
-                content: message.content,
+                chatRoomId: ws.chatRoomId,
                 userId: ws.userId,
+                content: message.content,
                 type: 'text',
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()

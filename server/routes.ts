@@ -5,7 +5,7 @@ import { log } from "./vite";
 import { db } from "@db";
 import seasonalScopesRouter from "./routes/seasonal-scopes";
 import uploadRouter from "./routes/upload";
-import { sql, eq, and, or } from "drizzle-orm";
+import { sql, eq, and, or, inArray } from "drizzle-orm";
 import {
   users,
   organizationSettings,
@@ -27,6 +27,7 @@ import {
   adminRoles,
   eventComplexes,
   eventFieldSizes,
+  files,
 } from "@db/schema";
 import fs from "fs/promises";
 import path from "path";
@@ -995,6 +996,72 @@ export function registerRoutes(app: Express): Server {
 
     // File management routes
     app.use('/api/admin/files', isAdmin, uploadRouter);
+
+    // Add bulk action endpoint after the upload router registration
+    app.post('/api/files/bulk', isAdmin, async (req, res) => {
+      try {
+        const { action, fileIds, targetFolderId } = req.body;
+
+        if (!Array.isArray(fileIds) || fileIds.length === 0) {
+          return res.status(400).json({ error: "No files selected" });
+        }
+
+        switch (action) {
+          case 'delete':
+            // Delete files from storage and database
+            for (const fileId of fileIds) {
+              try {
+                // Get file info first
+                const [file] = await db
+                  .select()
+                  .from(files)
+                  .where(eq(files.id, fileId))
+                  .limit(1);
+
+                if (file) {
+                  // Delete physical file
+                  const filePath = path.join(process.cwd(), 'uploads', path.basename(file.url));
+                  await fs.unlink(filePath).catch(() => {
+                    // Ignore error if file doesn't exist
+                    console.log(`Physical file not found: ${filePath}`);
+                  });
+
+                  // Delete from database
+                  await db
+                    .delete(files)
+                    .where(eq(files.id, fileId));
+                }
+              } catch (error) {
+                console.error(`Error deleting file ${fileId}:`, error);
+              }
+            }
+            break;
+
+          case 'move':
+            if (!targetFolderId) {
+              return res.status(400).json({ error: "Target folder not specified" });
+            }
+
+            // Update file records with new folder ID
+            await db
+              .update(files)
+              .set({ 
+                folderId: targetFolderId,
+                updatedAt: new Date().toISOString()
+              })
+              .where(inArray(files.id, fileIds));
+            break;
+
+          default:
+            return res.status(400).json({ error: "Invalid action" });
+        }
+
+        res.json({ success: true });
+      } catch (error) {
+        console.error('Error performing bulk action:', error);
+        res.status(500).json({ error: "Failed to perform bulk action" });
+      }
+    });
 
     // Theme update endpoint
     app.post('/api/theme', async (req, res) => {

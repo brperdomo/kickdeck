@@ -450,7 +450,70 @@ export const roles = pgTable("roles", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// Add seasonal scopes tables
+export const files = pgTable("files", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  url: text("url").notNull(),
+  type: text("type").notNull(),
+  size: bigint("size", { mode: "number" }).notNull(),
+  folderId: text("folder_id"),
+  thumbnailUrl: text("thumbnail_url"),
+  uploadedById: integer("uploaded_by_id").references(() => users.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const folders = pgTable("folders", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  parentId: text("parent_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const foldersRelations = relations(folders, ({ one, many }) => ({
+  parent: one(folders, {
+    fields: [folders.parentId],
+    references: [folders.id],
+  }),
+  files: many(files),
+  children: many(folders),
+}));
+
+export const filesRelations = relations(files, ({ one }) => ({
+  folder: one(folders, {
+    fields: [files.folderId],
+    references: [folders.id],
+  }),
+  uploadedBy: one(users, {
+    fields: [files.uploadedById],
+    references: [users.id],
+  }),
+}));
+
+export const insertFileSchema = createInsertSchema(files, {
+  name: z.string().min(1, "File name is required"),
+  url: z.string().min(1, "File URL is required"),
+  type: z.string().min(1, "File type is required"),
+  size: z.number().positive("File size must be positive"),
+  folderId: z.string().nullable().optional(),
+  thumbnailUrl: z.string().nullable().optional(),
+  uploadedById: z.number().optional(),
+});
+
+export const insertFolderSchema = createInsertSchema(folders, {
+  name: z.string().min(1, "Folder name is required"),
+  parentId: z.string().nullable().optional(),
+});
+
+export const selectFileSchema = createSelectSchema(files);
+export const selectFolderSchema = createSelectSchema(folders);
+
+export type InsertFile = typeof files.$inferInsert;
+export type SelectFile = typeof files.$inferSelect;
+export type InsertFolder = typeof folders.$inferInsert;
+export type SelectFolder = typeof folders.$inferSelect;
+
 export const seasonalScopes = pgTable("seasonal_scopes", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -476,7 +539,6 @@ export const ageGroupSettings = pgTable("age_group_settings", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Add relations
 export const seasonalScopesRelations = relations(seasonalScopes, ({ many }) => ({
   ageGroups: many(ageGroupSettings),
 }));
@@ -488,7 +550,6 @@ export const ageGroupSettingsRelations = relations(ageGroupSettings, ({ one }) =
   }),
 }));
 
-// Add insert/select schemas
 export const insertSeasonalScopeSchema = createInsertSchema(seasonalScopes, {
   name: z.string().min(1, "Name is required"),
   startYear: z.number().int().min(2000).max(2100),
@@ -520,7 +581,6 @@ export const adminRoles = pgTable("admin_roles", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// Add role schemas
 export const insertRoleSchema = createInsertSchema(roles, {
   name: z.string().min(1, "Role name is required"),
   description: z.string().optional(),
@@ -533,7 +593,6 @@ export type SelectRole = typeof roles.$inferSelect;
 export type InsertAdminRole = typeof adminRoles.$inferInsert;
 export type SelectAdminRole = typeof adminRoles.$inferSelect;
 
-// Update admin form schema to support multiple roles
 export const adminFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   firstName: z.string().min(1, "First name is required"),
@@ -544,14 +603,12 @@ export const adminFormSchema = z.object({
 
 export type AdminFormValues = z.infer<typeof adminFormSchema>;
 
-// Add updates table definition after the adminRoles table
 export const updates = pgTable("updates", {
   id: serial("id").primaryKey(),
   content: text("content").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// Add update schemas after adminFormSchema
 export const insertUpdateSchema = createInsertSchema(updates, {
   content: z.string().min(1, "Update content is required"),
 });

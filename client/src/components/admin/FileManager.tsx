@@ -120,13 +120,23 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action, fileIds, targetFolderId }),
       });
-      if (!response.ok) throw new Error(`Failed to ${action} files`);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || `Failed to ${action} files`);
+      }
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['files'] });
       setState(prev => ({ ...prev, selectedFiles: new Set() }));
-      toast({ title: "Success", description: "Bulk action completed successfully" });
+      toast({ title: "Success", description: "Files deleted successfully" });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to perform action",
+        variant: "destructive",
+      });
     },
   });
 
@@ -331,10 +341,20 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
                       }}>
                         Rename
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => bulkActionMutation.mutate({
-                        action: 'delete',
-                        fileIds: [file.id]
-                      })}>
+                      <DropdownMenuItem 
+                        onClick={async () => {
+                          if (confirm('Are you sure you want to delete this file?')) {
+                            try {
+                              await bulkActionMutation.mutateAsync({
+                                action: 'delete',
+                                fileIds: [file.id]
+                              });
+                            } catch (error) {
+                              // Error will be handled by onError callback
+                            }
+                          }
+                        }}
+                      >
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
