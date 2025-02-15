@@ -1000,7 +1000,7 @@ export function registerRoutes(app: Express): Server {
     app.post('/api/theme', async (req, res) => {
       try {
         const themeData = req.body;
-        const themePath = path.resolve(processcwd(), 'theme.json');
+        const themePath = path.resolve(process.cwd(), 'theme.json');
 
         await fs.writeFile(themePath, JSON.stringify(themeData, null, 2));
 
