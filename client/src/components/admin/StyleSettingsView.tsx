@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +36,7 @@ const colors = {
     colors: {},
     settings: {
       logoUrl: "/uploads/MatchProAI_Linear_Black.png",
-      youtubeVideoId: "8DFc6wHHWPY"
+      youtubeVideoId: "8DFc6wHHWPY" 
     }
   },
   interface: {
@@ -76,7 +76,31 @@ export function StyleSettingsView() {
   const { currentColor, setColor, isLoading } = useTheme();
   const [activeSection, setActiveSection] = useState("branding");
   const [previewStyles, setPreviewStyles] = useState<{ [key: string]: string }>({});
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const loadStylingSettings = async () => {
+      try {
+        const response = await fetch('/api/admin/styling');
+        if (!response.ok) {
+          throw new Error('Failed to load styling settings');
+        }
+        const settings = await response.json();
+        setPreviewStyles(settings);
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load current styling settings",
+        });
+      } finally {
+        setIsLoadingSettings(false);
+      }
+    };
+
+    loadStylingSettings();
+  }, []);
 
   const handleColorChange = (section: string, colorKey: string, value: string) => {
     setPreviewStyles((prev) => ({
@@ -95,6 +119,14 @@ export function StyleSettingsView() {
       handleColorChange(section, key, value);
     });
 
+    if (section === 'loginScreen') {
+      setPreviewStyles((prev) => ({
+        ...prev,
+        logoUrl: colors.loginScreen.settings.logoUrl,
+        youtubeVideoId: colors.loginScreen.settings.youtubeVideoId,
+      }));
+    }
+
     toast({
       title: "Reset Complete",
       description: `${colors[section as keyof typeof colors].title} reset to defaults`,
@@ -106,8 +138,6 @@ export function StyleSettingsView() {
       await setColor(previewStyles.primary || colors.branding.colors.primary);
       const updatedStyles = {
         ...previewStyles,
-        logoUrl: previewStyles.logoUrl || colors.loginScreen.settings.logoUrl,
-        youtubeVideoId: previewStyles.youtubeVideoId || colors.loginScreen.settings.youtubeVideoId
       };
 
       const response = await fetch('/api/admin/styling', {
@@ -128,12 +158,20 @@ export function StyleSettingsView() {
       });
     } catch (error) {
       toast({
+        variant: "destructive",
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to update styling",
-        variant: "destructive",
       });
     }
   };
+
+  if (isLoadingSettings) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -200,12 +238,12 @@ export function StyleSettingsView() {
                     <div className="flex-1">
                       <Input
                         placeholder="Enter logo URL (e.g., /uploads/logo.png)"
-                        value={previewStyles.logoUrl || colors.loginScreen.settings.logoUrl}
+                        value={previewStyles.logoUrl}
                         onChange={(e) => handleColorChange('loginScreen', 'logoUrl', e.target.value)}
                       />
                     </div>
                     <img
-                      src={previewStyles.logoUrl || colors.loginScreen.settings.logoUrl}
+                      src={previewStyles.logoUrl}
                       alt="Login logo preview"
                       className="h-16 w-16 object-contain bg-gray-50 rounded p-2"
                     />
@@ -217,21 +255,21 @@ export function StyleSettingsView() {
                   <div className="flex gap-4">
                     <div className="flex-1">
                       <Input
-                        placeholder="Enter YouTube video ID (e.g., 8DFc6wHHWPY)"
-                        value={previewStyles.youtubeVideoId || colors.loginScreen.settings.youtubeVideoId}
+                        placeholder="Enter YouTube video ID (e.g., OdObDXBzNYk)"
+                        value={previewStyles.youtubeVideoId}
                         onChange={(e) => handleColorChange('loginScreen', 'youtubeVideoId', e.target.value)}
                       />
                     </div>
                     <div className="h-16 w-28 overflow-hidden rounded bg-gray-50">
                       <img
-                        src={`https://img.youtube.com/vi/${previewStyles.youtubeVideoId || colors.loginScreen.settings.youtubeVideoId}/default.jpg`}
+                        src={`https://img.youtube.com/vi/${previewStyles.youtubeVideoId}/default.jpg`}
                         alt="YouTube thumbnail preview"
                         className="w-full h-full object-cover"
                       />
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Enter the YouTube video ID from the video URL. For example, in 'https://youtube.com/watch?v=8DFc6wHHWPY', the ID is '8DFc6wHHWPY'.
+                    Enter the YouTube video ID from the video URL. For example, in 'https://youtube.com/watch?v=OdObDXBzNYk', the ID is 'OdObDXBzNYk'.
                   </p>
                 </div>
 
