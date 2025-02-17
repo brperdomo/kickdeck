@@ -1354,51 +1354,23 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    // Add this new event creation endpoint
+    // Event creation endpoint
     app.post('/api/admin/events', isAdmin, async (req, res) => {
       try {
-        let eventData;
-        try {
-            eventData = typeof req.body.data === 'string' ? JSON.parse(req.body.data) : req.body;
-        } catch (error) {
-            console.error('Error parsing event data:', error);
-            return res.status(400).send("Invalid event data format");
-        }
+        const eventData = req.body;
+        console.log('Creating event with data:', JSON.stringify(eventData));
 
-        // Age groups selection has been moved to seasonal scope selection
-        // No validation needed here as it's handled in the UI
-
-        // Sanitize the data
-        const sanitizedEventData = {
-          name: eventData.name?.trim() || "Untitled Event",
-          startDate: eventData.startDate?.trim() || new Date().toISOString().split('T')[0],
-          endDate: eventData.endDate?.trim() || new Date().toISOString().split('T')[0],
-          timezone: eventData.timezone?.trim() || "America/New_York",
-          applicationDeadline: eventData.applicationDeadline?.trim() || new Date().toISOString().split('T')[0],
-          details: eventData.details?.trim() || null,
-          agreement: eventData.agreement?.trim() || null,
-          refundPolicy: eventData.refundPolicy?.trim() || null,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-
-        // Start a transaction to create event and related records
-        await db.transaction(async (tx) => {
-          // Skip age group validation if seasonal scope is being used
-          if ((!eventData.ageGroups || eventData.ageGroups.length === 0) && (!eventData.selectedAgeGroupIds || eventData.selectedAgeGroupIds.length === 0)) {
-            throw new Error("Please select at least one age group");
-          }
-
-          // Create the event
-          const [event] = await tx
+        // Create event using a transaction
+        const event = await db.transaction(async (tx) => {
+          // Create the event first
+          const [newEvent] = await tx
             .insert(events)
             .values({
-              id: String(Math.floor(Math.random() * 1000000) + 1),
-              name: eventData.name || "Untitled Event",
-              startDate: eventData.startDate || new Date().toISOString(),
-              endDate: eventData.endDate || new Date().toISOString(),
-              timezone: eventData.timezone || "America/New_York",
-              applicationDeadline: eventData.applicationDeadline || new Date().toISOString(),
+              name: eventData.name,
+              startDate: eventData.startDate,
+              endDate: eventData.endDate,
+              timezone: eventData.timezone,
+              applicationDeadline: eventData.applicationDeadline,
               details: eventData.details || null,
               agreement: eventData.agreement || null,
               refundPolicy: eventData.refundPolicy || null,
@@ -1407,55 +1379,48 @@ export function registerRoutes(app: Express): Server {
             })
             .returning();
 
-          // Create age groups
-          for (const group of eventData.ageGroups) {
-            await tx
-              .insert(eventAgeGroups)
-              .values({
-                eventId: event.id,
-                gender: group.gender,
-                projectedTeams: group.projectedTeams,
-                birthDateStart: group.birthDateStart,
-                birthDateEnd: group.birthDateEnd,
-                scoringRule: group.scoringRule,
-                ageGroup: group.ageGroup,
-                fieldSize: group.fieldSize,
-                amountDue: group.amountDue || null,
-                createdAt: new Date().toISOString(),
-              });
+          // Log age groups being added (if any)
+          if (eventData.ageGroups && eventData.ageGroups.length > 0) {
+            console.log('Adding age groups:', eventData.ageGroups);
+            const ageGroupsToInsert = eventData.ageGroups.map(group => ({
+              eventId: newEvent.id,
+              ageGroup: group.ageGroup,
+              gender: group.gender,
+              projectedTeams: group.projectedTeams || 0,
+              birthDateStart: group.birthDateStart,
+              birthDateEnd: group.birthDateEnd,
+              fieldSize: group.fieldSize || '11v11',
+              amountDue: group.amountDue || 0,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            }));
+
+            await tx.insert(eventAgeGroups).values(ageGroupsToInsert);
           }
 
-          // Create complex assignments
-          for(const complexId of eventData.selectedComplexIds) {
-            await tx.execute(
-              sql`INSERT INTO event_complexes (event_id, complex_id, created_at) 
-                  VALUES (${event.id}, ${complexId}, ${new Date().toISOString()})`
-            );
+          // Process complexes if provided
+          if (eventData.selectedComplexIds && eventData.selectedComplexIds.length > 0) {
+            const complexesToInsert = eventData.selectedComplexIds.map(complexId => ({
+              eventId: newEvent.id,
+              complexId: complexId,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            }));
+
+            await tx.insert(eventComplexes).values(complexesToInsert);
           }
 
-          // Create field size assignments
-          for (const [fieldId, fieldSize] of Object.entries(eventData.complexFieldSizes)) {
-            await tx
-              .insert(eventFieldSizes)
-              .values({
-                eventId: event.id,
-                fieldId: parseInt(fieldId),
-                fieldSize: fieldSize,
-                createdAt: new Date().toISOString(),
-              } as typeof eventFieldSizes.$inferInsert);
-          }
+          return newEvent;
         });
 
-        res.json({ message: "Event created successfully" });
+        res.status(201).json({ message: "Event created successfully", event });
       } catch (error) {
         console.error('Error creating event:', error);
-        // Added basic error logging for white screen debugging.
         console.error("Error details:", error);
-        let errorMessage = "Failed to create event";
-        if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-        res.status(500).send(errorMessage);
+        res.status(500).json({ 
+          error: error instanceof Error ? error.message : "Failed to create event",
+          details: error instanceof Error ? error.stack : undefined
+        });
       }
     });
 
