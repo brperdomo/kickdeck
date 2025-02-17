@@ -92,7 +92,7 @@ import { FileManager } from "@/components/admin/FileManager";
 
 function AdminBanner() {
   const { settings } = useOrganizationSettings();
-  
+
   return (
     <div className="w-full bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4 py-2">
@@ -116,7 +116,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
 }
 
 type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files';
-type SettingsView = 'branding' | 'general' | 'payments';
+type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
 
@@ -1651,6 +1651,17 @@ function AdminDashboard() {
                   <Settings className="mr-2 h-4 w-4" />
                   General
                 </Button>
+                <Button
+                  variant={activeSettingsView === 'styling' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('styling');
+                  }}
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Theme
+                </Button>
               </CollapsibleContent>
             </Collapsible>
 
@@ -1705,8 +1716,8 @@ function AdminDashboard() {
             </Card>
           )}
 
-        {renderView()}
-      </div>
+          {renderView()}
+        </div>
       </div>
 
       <UpdatesLogModal
@@ -1796,7 +1807,18 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
     case 'general':
       return <GeneralSettingsView />;
     case 'styling':
-      return <StyleSettingsView />;
+      return <ThemeEditor />;
+    case 'payments':
+      return (
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold">Payments Settings</h2>
+          <Card>
+            <CardContent className="p-6">
+              <p>Payments settings content will be implemented here</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
     default:
       return (
         <div className="space-y-6">
@@ -1810,5 +1832,61 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
       );
   }
 }
+
+function ThemeEditor() {
+  const [theme, setTheme] = useState({
+    backgroundColor: '#ffffff',
+    textColor: '#000000',
+    buttonColor: '#4CAF50',
+    // Add more colors as needed
+  });
+
+  const handleColorChange = (color: string, value: string) => {
+    setTheme({ ...theme, [color]: value });
+  };
+
+  return (
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold">Theme Editor</h2>
+      <div className="space-y-2">
+        <div>
+          <Label htmlFor="backgroundColor">Background Color</Label>
+          <Input
+            id="backgroundColor"
+            type="color"
+            value={theme.backgroundColor}
+            onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="textColor">Text Color</Label>
+          <Input
+            id="textColor"
+            type="color"
+            value={theme.textColor}
+            onChange={(e) => handleColorChange('textColor', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="buttonColor">Button Color</Label>
+          <Input
+            id="buttonColor"
+            type="color"
+            value={theme.buttonColor}
+            onChange={(e) => handleColorChange('buttonColor', e.target.value)}
+          />
+        </div>
+        {/* Add more color pickers as needed */}
+      </div>
+      <Button onClick={() => {
+        // Apply theme changes here
+        console.log("Theme updated:", theme);
+      }}>
+        Apply Theme
+      </Button>
+    </div>
+  );
+}
+
 
 export default AdminDashboard;

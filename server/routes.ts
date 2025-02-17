@@ -996,7 +996,7 @@ export function registerRoutes(app: Express): Server {
           accent: '#FF8C00',
           background: '#F5F5F6',
           foreground: '#000000',
-          border: '#CCCCCC',
+          border: '#CCCCCCCC',
           muted: '#999999',
           hover: '#FF8C00',
           active: '#32CD32',
@@ -1021,7 +1021,7 @@ export function registerRoutes(app: Express): Server {
     app.post('/api/admin/styling', isAdmin, async (req, res) => {
       try {
         const styleConfig = req.body;
-        
+
         // Update organization settings with the new colors
         const [settings] = await db
           .select()
@@ -1365,9 +1365,8 @@ export function registerRoutes(app: Express): Server {
             return res.status(400).send("Invalid event data format");
         }
 
-        if (!eventData || !Array.isArray(eventData.selectedAgeGroupIds) || eventData.selectedAgeGroupIds.length === 0) {
-            return res.status(400).json({ error: "Please select at least one age group" });
-        }
+        // Age groups selection has been moved to seasonal scope selection
+        // No validation needed here as it's handled in the UI
 
         // Sanitize the data
         const sanitizedEventData = {
@@ -1385,7 +1384,8 @@ export function registerRoutes(app: Express): Server {
 
         // Start a transaction to create event and related records
         await db.transaction(async (tx) => {
-          if (!eventData.ageGroups || eventData.ageGroups.length === 0) {
+          // Skip age group validation if seasonal scope is being used
+          if ((!eventData.ageGroups || eventData.ageGroups.length === 0) && (!eventData.selectedAgeGroupIds || eventData.selectedAgeGroupIds.length === 0)) {
             throw new Error("Please select at least one age group");
           }
 
@@ -1678,7 +1678,7 @@ export function registerRoutes(app: Express): Server {
     });
 
     // Add this new endpoint to get event details for editing
-    app.get('/api/admin/events/:id/edit', isAdmin, async (req, res) => {
+    app.get('/api/admin/events/:id/edit', async (req, res) => {
       try {
         const eventId = req.params.id;
 

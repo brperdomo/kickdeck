@@ -16,7 +16,9 @@ export default function EditEvent() {
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${id}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch event');
+        const errorData = await response.json().catch(() => null);
+        console.error('Error fetching event:', errorData);
+        throw new Error(errorData?.message || 'Failed to fetch event');
       }
       const data = await response.json();
       if (!data) {
