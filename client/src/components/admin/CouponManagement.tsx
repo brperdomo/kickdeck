@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useLocation } from "@/hooks/use-location";
@@ -16,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { CouponModal } from "@/components/CouponModal";
-import type { SelectCoupon } from "@/db/schema";
+import type { SelectCoupon } from "@db/schema";
 
 export function CouponManagement() {
   const { toast } = useToast();
@@ -29,16 +28,25 @@ export function CouponManagement() {
   const couponsQuery = useQuery({
     queryKey: ['/api/admin/coupons', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/coupons?eventId=${eventId}`, {
-        headers: {
-          "Accept": "application/json"
+      try {
+        const response = await fetch(`/api/admin/coupons?eventId=${eventId}`, {
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          throw new Error(errorData?.message || 'Failed to fetch coupons');
         }
-      });
-      const contentType = response.headers.get("content-type");
-      if (!response.ok || !contentType?.includes("application/json")) {
-        throw new Error('Failed to fetch coupons');
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching coupons:', error);
+        throw error;
       }
-      return response.json();
     }
   });
 
@@ -47,18 +55,20 @@ export function CouponManagement() {
       const response = await fetch(`/api/admin/coupons/${couponId}`, {
         method: 'DELETE',
         headers: {
+          'Accept': 'application/json',
           'Content-Type': 'application/json'
         }
       });
+
       if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to delete coupon');
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || 'Failed to delete coupon');
       }
-      const data = await response.json();
-      return data;
+
+      return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['/api/admin/coupons', eventId]);
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/coupons', eventId] });
       toast({
         title: "Success",
         description: "Coupon deleted successfully",

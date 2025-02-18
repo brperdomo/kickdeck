@@ -53,7 +53,7 @@ interface CouponModalProps {
 export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: CouponModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [hasExpiration, setHasExpiration] = useState(false);
+  const [hasExpiration, setHasExpiration] = useState(couponToEdit?.expirationDate ? true : false);
 
   const form = useForm<CouponFormValues>({
     resolver: zodResolver(couponFormSchema),
@@ -61,7 +61,7 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
       code: couponToEdit?.code || "",
       discountType: couponToEdit?.discountType || "fixed",
       amount: couponToEdit?.amount || 0,
-      hasExpiration: false,
+      hasExpiration: !!couponToEdit?.expirationDate,
       expirationDate: couponToEdit?.expirationDate || "",
       description: couponToEdit?.description || "",
     },
@@ -69,22 +69,31 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
 
   const createCouponMutation = useMutation({
     mutationFn: async (data: CouponFormValues) => {
-      const response = await fetch("/api/admin/coupons", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          eventId,
-          expirationDate: data.hasExpiration ? data.expirationDate : null,
-        }),
-      });
+      try {
+        const response = await fetch("/api/admin/coupons", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ...data,
+            eventId,
+            expirationDate: data.hasExpiration ? data.expirationDate : null,
+          }),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message || "Failed to create coupon");
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          throw new Error(errorData?.message || "Failed to create coupon");
+        }
+
+        const responseData = await response.json();
+        return responseData;
+      } catch (error) {
+        console.error('Error creating coupon:', error);
+        throw error;
       }
-
-      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/coupons"] });
@@ -93,6 +102,7 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
         description: "Coupon created successfully",
       });
       onOpenChange(false);
+      form.reset();
     },
     onError: (error: Error) => {
       toast({
@@ -105,22 +115,31 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
 
   const updateCouponMutation = useMutation({
     mutationFn: async (data: CouponFormValues) => {
-      const response = await fetch(`/api/admin/coupons/${couponToEdit.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          eventId,
-          expirationDate: data.hasExpiration ? data.expirationDate : null,
-        }),
-      });
+      try {
+        const response = await fetch(`/api/admin/coupons/${couponToEdit.id}`, {
+          method: "PATCH",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ...data,
+            eventId,
+            expirationDate: data.hasExpiration ? data.expirationDate : null,
+          }),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message || "Failed to update coupon");
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          throw new Error(errorData?.message || "Failed to update coupon");
+        }
+
+        const responseData = await response.json();
+        return responseData;
+      } catch (error) {
+        console.error('Error updating coupon:', error);
+        throw error;
       }
-
-      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/coupons"] });
@@ -129,6 +148,7 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
         description: "Coupon updated successfully",
       });
       onOpenChange(false);
+      form.reset();
     },
     onError: (error: Error) => {
       toast({
@@ -139,11 +159,15 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
     },
   });
 
-  const onSubmit = (data: CouponFormValues) => {
-    if (couponToEdit) {
-      updateCouponMutation.mutate(data);
-    } else {
-      createCouponMutation.mutate(data);
+  const onSubmit = async (data: CouponFormValues) => {
+    try {
+      if (couponToEdit) {
+        await updateCouponMutation.mutateAsync(data);
+      } else {
+        await createCouponMutation.mutateAsync(data);
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
     }
   };
 
