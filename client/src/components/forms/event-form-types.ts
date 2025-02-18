@@ -96,14 +96,8 @@ export interface EventData {
 
 export interface ScoringRule {
   id: string;
-  title: string;
-  win: number;
-  loss: number;
-  tie: number;
-  goalCapped: number;
-  shutout: number;
-  redCard: number;
-  tieBreaker: string;
+  name: string;
+  points: number;
 }
 
 export const TAB_ORDER: EventTab[] = ['information', 'age-groups', 'scoring', 'complexes', 'settings', 'administrators'];

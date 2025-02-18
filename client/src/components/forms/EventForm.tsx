@@ -582,6 +582,120 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     );
   };
 
+  const renderScoringContent = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Scoring Rules</h3>
+        <Button onClick={() => {
+          setEditingScoringRule(null);
+          setIsScoringDialogOpen(true);
+        }}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Rule
+        </Button>
+      </div>
+
+      <div className="grid gap-4">
+        {scoringRules.map((rule) => (
+          <Card key={rule.id}>
+            <CardContent className="p-4">
+              <div className="flex justify-between items-center">
+                <div className="space-y-1">
+                  <h4 className="font-semibold">{rule.name}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Points: {rule.points}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setEditingScoringRule(rule);
+                      setIsScoringDialogOpen(true);
+                    }}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setScoringRules(scoringRules.filter(r => r.id !== rule.id));
+                    }}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {isEdit && (
+        <div className="flex justify-end mt-6">
+          <SaveButton />
+        </div>
+      )}
+
+      <Dialog open={isScoringDialogOpen} onOpenChange={setIsScoringDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingScoringRule ? 'Edit Scoring Rule' : 'Add Scoring Rule'}
+            </DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const newRule = {
+                id: editingScoringRule?.id || Date.now().toString(),
+                name: formData.get('name') as string,
+                points: parseInt(formData.get('points') as string),
+              };
+
+              if (editingScoringRule) {
+                setScoringRules(scoringRules.map(r =>
+                  r.id === editingScoringRule.id ? newRule : r
+                ));
+              } else {
+                setScoringRules([...scoringRules, newRule]);
+              }
+
+              setIsScoringDialogOpen(false);
+            }}
+            className="space-y-4"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="name">Rule Name</Label>
+              <Input
+                id="name"
+                name="name"
+                defaultValue={editingScoringRule?.name}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="points">Points</Label>
+              <Input
+                id="points"
+                name="points"
+                type="number"
+                defaultValue={editingScoringRule?.points}
+                required
+              />
+            </div>
+            <Button type="submit">
+              {editingScoringRule ? 'Update Rule' : 'Add Rule'}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+
   const renderAdministratorsContent = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
