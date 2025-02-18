@@ -873,51 +873,63 @@ export default function CreateEvent() {
         throw new Error('Registration deadline is required');
       }
 
-      // Format dates to ISO string
+      // Create the base event data with required fields
       const eventData = {
         name: formValues.name.trim(),
         startDate: new Date(formValues.startDate).toISOString(),
         endDate: new Date(formValues.endDate).toISOString(),
         applicationDeadline: new Date(formValues.applicationDeadline).toISOString(),
-        // Optional fields
-        timezone: formValues.timezone || "America/New_York",
-        details: formValues.details || "",
-        agreement: formValues.agreement || "",
-        refundPolicy: formValues.refundPolicy || "",
+      };
+
+      // Add optional fields only if they have values
+      const optionalFields = {
+        timezone: formValues.timezone || undefined,
+        details: formValues.details || undefined,
+        agreement: formValues.agreement || undefined,
+        refundPolicy: formValues.refundPolicy || undefined,
         ageGroups: [],
-        complexFieldSizes: eventFieldSizes,
-        selectedComplexIds: selectedComplexes.map(complex => complex.id),
+        complexFieldSizes: Object.keys(eventFieldSizes).length > 0 ? eventFieldSizes : undefined,
+        selectedComplexIds: selectedComplexes.length > 0 ? selectedComplexes.map(complex => complex.id) : undefined,
         branding: {
-          primaryColor,
-          secondaryColor,
+          primaryColor: primaryColor || undefined,
+          secondaryColor: secondaryColor || undefined,
           logoUrl: previewUrl || undefined,
         }
       };
 
-      // Log the data being sent for debugging
-      console.log('Submitting event data:', eventData);
+      // Combine required and optional fields
+      const completeEventData = {
+        ...eventData,
+        ...optionalFields
+      };
 
-      // Create FormData instance for file upload
+      // Log the complete data for debugging
+      console.log('Creating event with data:', JSON.stringify(completeEventData, null, 2));
+
+      // Create FormData instance
       const formData = new FormData();
+
+      // Append the logo file if exists
       if (logo) {
         formData.append('logo', logo);
       }
-      formData.append('data', JSON.stringify(eventData));
+
+      // Append the stringified event data
+      formData.append('data', JSON.stringify(completeEventData));
 
       // Make the API request
       const response = await fetch('/api/admin/events', {
         method: 'POST',
         body: formData,
-        headers: {
-          'Accept': 'application/json',
-        }
       });
 
+      // Parse response data
       const responseData = await response.json();
 
+      // Check for errors
       if (!response.ok) {
-        console.error('Server response:', responseData);
-                throw new Error(responseData.message || 'Failed to create event');
+        console.error('Server error response:', responseData);
+        throw new Error(responseData.message || responseData.error || 'Failed to create event');
       }
 
       // Handle successful creation
