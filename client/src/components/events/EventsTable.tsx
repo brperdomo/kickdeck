@@ -243,7 +243,7 @@ export function EventsTable() {
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/coupons`)}>
                           <Ticket className="h-4 w-4 mr-2" /> Coupons
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/game-cards`)}>
+                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/print-game-cards`)}>
                           <Printer className="h-4 w-4 mr-2" /> Print Game Cards
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/red-cards`)}>
