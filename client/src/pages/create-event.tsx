@@ -34,7 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { ComplexEditor } from "@/components/ComplexEditor";
@@ -259,7 +259,7 @@ export default function CreateEvent() {
   const { toast } = useToast();
   const [isComplexDialogOpen, setIsComplexDialogOpen] = useState(false);
   const [editingComplex, setEditingComplex] = useState<Complex | null>(null);
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient(); // Add queryClient hook
   const [logo, setLogo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [primaryColor, setPrimaryColor] = useState('#000000');
@@ -898,6 +898,9 @@ export default function CreateEvent() {
         title: "Success",
         description: "Event created successfully",
       });
+
+      // Invalidate events query to trigger a refresh
+      await queryClient.invalidateQueries({ queryKey: ['/api/admin/events'] });
 
       // Navigate to admin dashboard
       navigate("/admin");
