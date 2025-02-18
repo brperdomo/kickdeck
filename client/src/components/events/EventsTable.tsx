@@ -34,7 +34,6 @@ import {
   ChevronUp,
   ChevronDown,
   Search,
-  Eye,
 } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import {
@@ -46,8 +45,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Event {
   id: number;
@@ -102,49 +99,6 @@ export function EventsTable() {
       }));
     },
   });
-
-  const updateEventStatusMutation = useMutation({
-    mutationFn: async ({ eventId, status }: { eventId: number; status: string }) => {
-      const response = await fetch(`/api/admin/events/${eventId}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to update event status");
-      }
-
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/events"] });
-      toast({
-        title: "Success",
-        description: "Event status updated successfully",
-        variant: "default",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update event status",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortDirection("asc");
-    }
-  };
 
   const filterEvents = (events: Event[]) => {
     return events.filter((event) => {
@@ -233,19 +187,13 @@ export function EventsTable() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead
-                  className="font-semibold cursor-pointer"
-                  onClick={() => handleSort("name")}
-                >
+                <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("name")}>
                   <div className="flex items-center">
                     Name
                     <SortIcon field="name" />
                   </div>
                 </TableHead>
-                <TableHead
-                  className="font-semibold cursor-pointer"
-                  onClick={() => handleSort("date")}
-                >
+                <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("date")}>
                   <div className="flex items-center">
                     Start Date
                     <SortIcon field="date" />
