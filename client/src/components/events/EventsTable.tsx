@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link2, Trash } from "lucide-react"; // Added Trash import
+import { Link2, Trash } from "lucide-react";
 import { useLocation } from "wouter";
 import {
   Table,
@@ -25,7 +25,6 @@ import { formatDate } from "@/lib/utils";
 import {
   Calendar,
   Edit,
-  //Trash2, // Removed as Trash is used instead
   FileQuestion,
   User,
   TagsIcon,
@@ -47,6 +46,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import {Checkbox} from "@/components/ui/checkbox"
 
 interface Event {
   id: number;
@@ -56,7 +56,7 @@ interface Event {
   status: "draft" | "published" | "in_progress" | "completed" | "cancelled";
   applicationsReceived: number;
   teamsAccepted: number;
-  applicationDeadline: string; // Added missing field
+  applicationDeadline: string;
 }
 
 type SortField = "name" | "date" | "applications" | "teams" | "status";
@@ -70,7 +70,7 @@ export function EventsTable() {
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
-  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [selectedEventIds, setSelectedEventIds] = useState<number[]>([]);
   const [showBulkActions, setShowBulkActions] = useState(false);
 
   const eventsQuery = useQuery<Event[]>({
@@ -89,7 +89,7 @@ export function EventsTable() {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({ eventIds: selectedEvents }),
+        body: JSON.stringify({ eventIds: selectedEventIds }),
       });
 
       if (!response.ok) {
@@ -101,7 +101,7 @@ export function EventsTable() {
         description: "Selected events deleted successfully",
       });
 
-      setSelectedEvents([]);
+      setSelectedEventIds([]);
       eventsQuery.refetch();
     } catch (error) {
       console.error('Error deleting events:', error);
@@ -182,11 +182,11 @@ export function EventsTable() {
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-            {selectedEvents.length > 0 && (
+            {selectedEventIds.length > 0 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline">
-                    Bulk Actions ({selectedEvents.length})
+                    Bulk Actions ({selectedEventIds.length})
                     <ChevronDown className="ml-2 h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -229,18 +229,17 @@ export function EventsTable() {
               <TableRow className="bg-muted/50">
                 <TableHead className="w-[50px]">
                   <Checkbox
-                    checked={selectedEvents.length === filteredEvents.length}
+                    checked={selectedEventIds.length === filteredEvents.length}
                     onCheckedChange={(checked) => {
                       if (checked) {
-                        setSelectedEvents(filteredEvents.map(e => e.id.toString()));
+                        setSelectedEventIds(filteredEvents.map(e => e.id));
                       } else {
-                        setSelectedEvents([]);
+                        setSelectedEventIds([]);
                       }
-                      setShowBulkActions(!!checked);
                     }}
                   />
                 </TableHead>
-                <TableHead 
+                <TableHead
                   className="font-semibold cursor-pointer"
                   onClick={() => handleSort("name")}
                 >
@@ -249,7 +248,7 @@ export function EventsTable() {
                     <SortIcon field="name" />
                   </div>
                 </TableHead>
-                <TableHead 
+                <TableHead
                   className="font-semibold cursor-pointer"
                   onClick={() => handleSort("date")}
                 >
@@ -268,14 +267,13 @@ export function EventsTable() {
                 <TableRow key={event.id} className="hover:bg-muted/50">
                   <TableCell>
                     <Checkbox
-                      checked={selectedEvents.includes(event.id.toString())}
+                      checked={selectedEventIds.includes(event.id)}
                       onCheckedChange={(checked) => {
                         if (checked) {
-                          setSelectedEvents([...selectedEvents, event.id.toString()]);
+                          setSelectedEventIds([...selectedEventIds, event.id]);
                         } else {
-                          setSelectedEvents(selectedEvents.filter(id => id !== event.id.toString()));
+                          setSelectedEventIds(selectedEventIds.filter(id => id !== event.id));
                         }
-                        setShowBulkActions(selectedEvents.length > 0);
                       }}
                     />
                   </TableCell>
@@ -312,7 +310,7 @@ export function EventsTable() {
                           <AlertTriangle className="h-4 w-4 mr-2" /> Red Card Report
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => {
                             const registrationUrl = `${window.location.origin}/register/event/${event.id.toString()}`;
                             navigator.clipboard.writeText(registrationUrl);
@@ -326,7 +324,7 @@ export function EventsTable() {
                           <Link2 className="mr-2 h-4 w-4" />
                           Generate Registration Link
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => {
                             const registrationUrl = `${window.location.origin}/register/event/${event.id}`;
                             toast({
@@ -364,13 +362,13 @@ export function EventsTable() {
                             if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
                               return;
                             }
-                            
+
                             try {
                               toast({
                                 title: "Deleting event...",
                                 description: "Please wait while the event is being deleted.",
                               });
-                              
+
                               const response = await fetch(`/api/admin/events/${event.id}`, {
                                 method: 'DELETE',
                                 headers: {
