@@ -71,7 +71,7 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
     mutationFn: async (data: CouponFormValues) => {
       const response = await fetch("/api/admin/coupons", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
           eventId,
@@ -79,26 +79,15 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
         }),
       });
 
-      const contentType = response.headers.get("content-type");
       if (!response.ok) {
-        const errorText = await response.text();
-        try {
-          const errorJson = JSON.parse(errorText);
-          throw new Error(errorJson.message || "Failed to create coupon");
-        } catch {
-          throw new Error(errorText || "Failed to create coupon");
-        }
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || "Failed to create coupon");
       }
 
-      const responseData = await response.text();
-      try {
-        return JSON.parse(responseData);
-      } catch {
-        throw new Error("Invalid response format from server");
-      }
+      return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["/api/admin/coupons"]);
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/coupons"] });
       toast({
         title: "Success",
         description: "Coupon created successfully",
@@ -118,7 +107,7 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
     mutationFn: async (data: CouponFormValues) => {
       const response = await fetch(`/api/admin/coupons/${couponToEdit.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
           eventId,
@@ -126,25 +115,15 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
         }),
       });
 
-      const contentType = response.headers.get("content-type");
       if (!response.ok) {
-        if (contentType && contentType.includes("application/json")) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to update coupon");
-        } else {
-          const errorText = await response.text();
-          throw new Error("Invalid server response");
-        }
-      }
-
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Invalid response format from server");
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || "Failed to update coupon");
       }
 
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["/api/admin/coupons"]);
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/coupons"] });
       toast({
         title: "Success",
         description: "Coupon updated successfully",
@@ -288,13 +267,9 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
             <DialogFooter>
               <Button
                 type="submit"
-                disabled={
-                  createCouponMutation.isLoading ||
-                  updateCouponMutation.isLoading
-                }
+                disabled={createCouponMutation.isPending || updateCouponMutation.isPending}
               >
-                {createCouponMutation.isLoading ||
-                updateCouponMutation.isLoading ? (
+                {(createCouponMutation.isPending || updateCouponMutation.isPending) ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : null}
                 {couponToEdit ? "Update" : "Create"} Coupon
