@@ -54,11 +54,25 @@ interface Event {
   name: string;
   startDate: string;
   endDate: string;
-  status: "draft" | "published" | "in_progress" | "completed" | "cancelled" | "archived";
+  status: "past" | "active" | "upcoming";
   applicationsReceived: number;
   teamsAccepted: number;
   applicationDeadline: string;
 }
+
+const calculateEventStatus = (startDate: string, endDate: string): Event["status"] => {
+  const now = new Date();
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (now > end) {
+    return "past";
+  } else if (now >= start && now <= end) {
+    return "active";
+  } else {
+    return "upcoming";
+  }
+};
 
 type SortField = "name" | "date" | "applications" | "teams" | "status";
 type SortDirection = "asc" | "desc";
@@ -77,21 +91,26 @@ export function EventsTable() {
 
   const eventsQuery = useQuery<Event[]>({
     queryKey: ["/api/admin/events"],
+    select: (events) =>
+      events.map((event) => ({
+        ...event,
+        status: calculateEventStatus(event.startDate, event.endDate),
+      })),
   });
 
   const updateEventStatusMutation = useMutation({
     mutationFn: async ({ eventId, status }: { eventId: number; status: string }) => {
       const response = await fetch(`/api/admin/events/${eventId}/status`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ status }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update event status');
+        throw new Error(errorData.message || "Failed to update event status");
       }
 
       return response.json();
@@ -143,7 +162,7 @@ export function EventsTable() {
   };
 
   const filterEvents = (events: Event[]) => {
-    return events.filter(event => {
+    return events.filter((event) => {
       const matchesSearch = event.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus = statusFilter === "all" || event.status === statusFilter;
       const matchesArchiveStatus = activeTab === "archived" ? event.status === "archived" : event.status !== "archived";
@@ -209,13 +228,10 @@ export function EventsTable() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
-                  </SelectContent>
+                    <SelectItem value="past">Past</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="upcoming">Upcoming</SelectItem>
+                    </SelectContent>
                 </Select>
               </div>
             </div>
@@ -243,6 +259,7 @@ export function EventsTable() {
                       </div>
                     </TableHead>
                     <TableHead className="font-semibold">End Date</TableHead>
+                    <TableHead className="font-semibold">Status</TableHead>
                     <TableHead className="font-semibold">Application Deadline</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
@@ -253,6 +270,15 @@ export function EventsTable() {
                       <TableCell className="font-medium">{event.name}</TableCell>
                       <TableCell>{formatDate(event.startDate)}</TableCell>
                       <TableCell>{formatDate(event.endDate)}</TableCell>
+                      <TableCell>
+                        <Badge variant={
+                          event.status === "past" ? "secondary" :
+                          event.status === "active" ? "success" :
+                          "default"
+                        }>
+                          {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                        </Badge>
+                      </TableCell>
                       <TableCell>{formatDate(event.applicationDeadline)}</TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
