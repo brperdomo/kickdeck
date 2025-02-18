@@ -29,45 +29,73 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { InsertCoupon, SelectCoupon, insertCouponSchema } from "@db/schema";
+import { Loader2 } from "lucide-react";
+import { z } from "zod";
+
+const couponFormSchema = z.object({
+  code: z.string().min(1, "Coupon code is required"),
+  discountType: z.enum(["fixed", "percentage"]),
+  amount: z.number().min(0, "Amount must be positive"),
+  hasExpiration: z.boolean(),
+  expirationDate: z.string().optional(),
+  description: z.string().optional(),
+});
+
+type CouponFormValues = z.infer<typeof couponFormSchema>;
 
 interface CouponModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  couponToEdit?: SelectCoupon;
+  eventId?: string;
+  couponToEdit?: any;
 }
 
-export function CouponModal({ open, onOpenChange, couponToEdit }: CouponModalProps) {
+export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: CouponModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [hasExpiration, setHasExpiration] = useState(false);
 
-  const form = useForm<InsertCoupon>({
-    resolver: zodResolver(insertCouponSchema),
+  const form = useForm<CouponFormValues>({
+    resolver: zodResolver(couponFormSchema),
     defaultValues: {
       code: couponToEdit?.code || "",
       discountType: couponToEdit?.discountType || "fixed",
       amount: couponToEdit?.amount || 0,
-      expirationDate: couponToEdit?.expirationDate || new Date().toISOString(),
+      hasExpiration: false,
+      expirationDate: couponToEdit?.expirationDate || "",
       description: couponToEdit?.description || "",
-      maxUses: couponToEdit?.maxUses || undefined,
-      isActive: couponToEdit?.isActive ?? true,
     },
   });
 
   const createCouponMutation = useMutation({
-    mutationFn: async (data: InsertCoupon) => {
+    mutationFn: async (data: CouponFormValues) => {
       const response = await fetch("/api/admin/coupons", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          eventId,
+          expirationDate: data.hasExpiration ? data.expirationDate : null,
+        }),
       });
 
+      const contentType = response.headers.get("content-type");
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to create coupon");
+        const errorText = await response.text();
+        try {
+          const errorJson = JSON.parse(errorText);
+          throw new Error(errorJson.message || "Failed to create coupon");
+        } catch {
+          throw new Error(errorText || "Failed to create coupon");
+        }
       }
 
-      return response.json();
+      const responseData = await response.text();
+      try {
+        return JSON.parse(responseData);
+      } catch {
+        throw new Error("Invalid response format from server");
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["/api/admin/coupons"]);
@@ -87,16 +115,30 @@ export function CouponModal({ open, onOpenChange, couponToEdit }: CouponModalPro
   });
 
   const updateCouponMutation = useMutation({
-    mutationFn: async (data: InsertCoupon & { id: number }) => {
-      const response = await fetch(`/api/admin/coupons/${data.id}`, {
+    mutationFn: async (data: CouponFormValues) => {
+      const response = await fetch(`/api/admin/coupons/${couponToEdit.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          eventId,
+          expirationDate: data.hasExpiration ? data.expirationDate : null,
+        }),
       });
 
+      const contentType = response.headers.get("content-type");
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to update coupon");
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to update coupon");
+        } else {
+          const errorText = await response.text();
+          throw new Error("Invalid server response");
+        }
+      }
+
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Invalid response format from server");
       }
 
       return response.json();
@@ -118,9 +160,9 @@ export function CouponModal({ open, onOpenChange, couponToEdit }: CouponModalPro
     },
   });
 
-  const onSubmit = (data: InsertCoupon) => {
+  const onSubmit = (data: CouponFormValues) => {
     if (couponToEdit) {
-      updateCouponMutation.mutate({ ...data, id: couponToEdit.id });
+      updateCouponMutation.mutate(data);
     } else {
       createCouponMutation.mutate(data);
     }
@@ -128,9 +170,9 @@ export function CouponModal({ open, onOpenChange, couponToEdit }: CouponModalPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent className="sm:max-w-[500px] p-6 bg-white rounded-xl shadow-lg">
+        <DialogHeader className="mb-6">
+          <DialogTitle className="text-2xl font-bold text-gray-900">
             {couponToEdit ? "Edit Coupon" : "Create New Coupon"}
           </DialogTitle>
         </DialogHeader>
@@ -143,7 +185,7 @@ export function CouponModal({ open, onOpenChange, couponToEdit }: CouponModalPro
                 <FormItem>
                   <FormLabel>Coupon Code</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="SUMMER2025" />
+                    <Input {...field} placeholder="SUMMER2024" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -156,18 +198,15 @@ export function CouponModal({ open, onOpenChange, couponToEdit }: CouponModalPro
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Discount Type</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select discount type" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="fixed">Fixed Amount</SelectItem>
-                      <SelectItem value="percentage">Percentage</SelectItem>
+                      <SelectItem value="fixed">Fixed Amount ($)</SelectItem>
+                      <SelectItem value="percentage">Percentage (%)</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -180,7 +219,9 @@ export function CouponModal({ open, onOpenChange, couponToEdit }: CouponModalPro
               name="amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Amount</FormLabel>
+                  <FormLabel>
+                    {form.watch("discountType") === "fixed" ? "Amount ($)" : "Percentage (%)"}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -195,43 +236,40 @@ export function CouponModal({ open, onOpenChange, couponToEdit }: CouponModalPro
 
             <FormField
               control={form.control}
-              name="expirationDate"
+              name="hasExpiration"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Expiration Date</FormLabel>
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel>Set Expiration Date</FormLabel>
+                  </div>
                   <FormControl>
-                    <Input
-                      type="datetime-local"
-                      {...field}
-                      value={field.value?.split('.')[0]}
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={(checked) => {
+                        field.onChange(checked);
+                        setHasExpiration(checked);
+                      }}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="maxUses"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Maximum Uses</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value ? Number(e.target.value) : undefined
-                        )
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {hasExpiration && (
+              <FormField
+                control={form.control}
+                name="expirationDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Expiration Date</FormLabel>
+                    <FormControl>
+                      <Input type="datetime-local" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
@@ -243,24 +281,6 @@ export function CouponModal({ open, onOpenChange, couponToEdit }: CouponModalPro
                     <Textarea {...field} />
                   </FormControl>
                   <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="isActive"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Active</FormLabel>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
                 </FormItem>
               )}
             />

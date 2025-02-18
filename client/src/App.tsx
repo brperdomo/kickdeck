@@ -10,6 +10,9 @@ import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import AdminDashboard from "@/pages/admin-dashboard";
 import CreateEvent from "@/pages/create-event";
+
+import CouponManagement from "@/pages/coupon-management";
+
 import UserDashboard from "@/pages/user-dashboard";
 import HouseholdPage from "@/pages/household";
 import ChatPage from "@/pages/chat";
@@ -48,6 +51,9 @@ function Router() {
       </Route>
       <Route path="/admin/events/:id">
         {user.isAdmin ? <EditEvent /> : <NotFound />}
+      </Route>
+      <Route path="/admin/events/:id/coupons">
+        {user.isAdmin ? <CouponManagement /> : <NotFound />}
       </Route>
       <Route path="/admin">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}

@@ -1383,6 +1383,10 @@ function EventsView() {
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/coupons`)}>
+                            <Ticket className="mr-2 h-4 w-4" />
+                            Create Coupons
+                          </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => {
@@ -2021,14 +2025,40 @@ function CouponManagement() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState<SelectCoupon | null>(null);
   const queryClient = useQueryClient();
+  const [, params] = useLocation();
+  const eventId = params.split('/')[2];
 
   const couponsQuery = useQuery({
-    queryKey: ['/api/admin/coupons'],
+    queryKey: ['/api/admin/coupons', eventId],
     queryFn: async () => {
-      const response = await fetch('/api/admin/coupons');
+      const response = await fetch(`/api/admin/coupons?eventId=${eventId}`);
       if (!response.ok) throw new Error('Failed to fetch coupons');
       return response.json();
     }
+  });
+
+  const deleteCouponMutation = useMutation({
+    mutationFn: async (couponId: number) => {
+      const response = await fetch(`/api/admin/coupons/${couponId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete coupon');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['/api/admin/coupons', eventId]);
+      toast({
+        title: "Success",
+        description: "Coupon deleted successfully",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   if (couponsQuery.isLoading) {
@@ -2038,6 +2068,19 @@ function CouponManagement() {
       </div>
     );
   }
+
+  const handleEditCoupon = (coupon: SelectCoupon) => {
+    setSelectedCoupon(coupon);
+    setIsAddModalOpen(true);
+  };
+
+  const handleDeleteCoupon = async (couponId: number) => {
+    try {
+      await deleteCouponMutation.mutateAsync(couponId);
+    } catch (error) {
+      console.error('Error deleting coupon:', error);
+    }
+  };
 
   return (
     <>
@@ -2059,6 +2102,7 @@ function CouponManagement() {
                 <TableHead>Amount</TableHead>
                 <TableHead>Expires</TableHead>
                 <TableHead>Uses</TableHead>
+                <TableHead>Description</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -2073,10 +2117,16 @@ function CouponManagement() {
                     </Badge>
                   </TableCell>
                   <TableCell>{coupon.amount}</TableCell>
-                  <TableCell>{new Date(coupon.expirationDate).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    {coupon.expirationDate ? 
+                      new Date(coupon.expirationDate).toLocaleDateString() : 
+                      'No expiration'
+                    }
+                  </TableCell>
                   <TableCell>
                     {coupon.usageCount} {coupon.maxUses ? `/ ${coupon.maxUses}` : ''}
                   </TableCell>
+                  <TableCell>{coupon.description}</TableCell>
                   <TableCell>
                     <Badge variant={coupon.isActive ? 'success' : 'secondary'}>
                       {coupon.isActive ? 'Active' : 'Inactive'}
@@ -2090,12 +2140,15 @@ function CouponManagement() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setSelectedCoupon(coupon)}>
+                        <DropdownMenuItem onClick={() => handleEditCoupon(coupon)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-600">
+                        <DropdownMenuItem 
+                          onClick={() => handleDeleteCoupon(coupon.id)}
+                          className="text-red-600"
+                        >
                           <Trash className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>
@@ -2109,7 +2162,12 @@ function CouponManagement() {
         </CardContent>
       </Card>
 
-      {/* Add Coupon Modal Component will be added later */}
+      <CouponModal
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+        eventId={eventId}
+        couponToEdit={selectedCoupon}
+      />
     </>
   );
 }
