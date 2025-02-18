@@ -1,6 +1,7 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, Ticket, MoreHorizontal, ChevronUp, ChevronDown, Search } from "lucide-react";
+import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search } from "lucide-react";
 import { useLocation } from "wouter";
 import {
   Table,
@@ -31,7 +32,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
-import { toast } from "@/components/ui/use-toast";
 
 interface Event {
   id: number;
@@ -214,8 +214,8 @@ export function EventsTable() {
                           : "outline"
                       }
                     >
-                      {calculateEventStatus(event.startDate, event.endDate).charAt(0).toUpperCase() +
-                        calculateEventStatus(event.startDate, event.endDate).slice(1)}
+                      {calculateEventStatus(event.startDate, event.endDate).charAt(0).toUpperCase() + 
+                       calculateEventStatus(event.startDate, event.endDate).slice(1)}
                     </Badge>
                   </TableCell>
                   <TableCell>{formatDate(event.applicationDeadline)}</TableCell>
@@ -241,26 +241,11 @@ export function EventsTable() {
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/discounts`)}>
                           <TagsIcon className="h-4 w-4 mr-2" /> Discounts
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/coupons`)}>
-                          <Ticket className="h-4 w-4 mr-2" /> Coupons
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/print-game-cards`)}>
+                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/game-cards`)}>
                           <Printer className="h-4 w-4 mr-2" /> Print Game Cards
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/red-cards`)}>
                           <AlertTriangle className="h-4 w-4 mr-2" /> Red Card Report
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => {
-                          const registrationUrl = `${window.location.origin}/register/event/${event.id}`;
-                          navigator.clipboard.writeText(registrationUrl);
-                          toast({
-                            title: "Registration Link Copied",
-                            description: "The registration link has been copied to your clipboard.",
-                          });
-                        }}>
-                          <Link2 className="h-4 w-4 mr-2" /> Copy Registration Link
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

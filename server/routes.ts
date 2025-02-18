@@ -28,8 +28,6 @@ import {
   eventComplexes,
   eventFieldSizes,
   files,
-  coupons,
-  insertCouponSchema,
 } from "@db/schema";
 import fs from "fs/promises";
 import path from "path";
@@ -92,107 +90,6 @@ export function registerRoutes(app: Express): Server {
     });
 
     // Admin event details endpoint
-    // Event coupon management routes
-    app.get('/api/admin/events/:id/coupons', isAdmin, async (req, res) => {
-      try {
-        const eventId = req.params.id;
-        
-        const eventCoupons = await db
-          .select()
-          .from(coupons)
-          .where(eq(coupons.eventId, eventId))
-          .orderBy(coupons.createdAt);
-
-        res.json(eventCoupons);
-      } catch (error) {
-        console.error('Error fetching coupons:', error);
-        res.status(500).send("Failed to fetch coupons");
-      }
-    });
-
-    app.post('/api/admin/events/:id/coupons', isAdmin, async (req, res) => {
-      try {
-        const eventId = req.params.id;
-        const couponData = req.body;
-
-        // Validate the coupon data
-        const validatedData = insertCouponSchema.parse({
-          ...couponData,
-          eventId,
-        });
-
-        const [newCoupon] = await db
-          .insert(coupons)
-          .values({
-            ...validatedData,
-            timesRedeemed: 0,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          })
-          .returning();
-
-        res.json(newCoupon);
-      } catch (error) {
-        console.error('Error creating coupon:', error);
-        res.status(500).send("Failed to create coupon");
-      }
-    });
-
-    app.delete('/api/admin/events/:eventId/coupons/:couponId', isAdmin, async (req, res) => {
-      try {
-        const { eventId, couponId } = req.params;
-
-        const [deletedCoupon] = await db
-          .delete(coupons)
-          .where(
-            and(
-              eq(coupons.id, parseInt(couponId)),
-              eq(coupons.eventId, eventId)
-            )
-          )
-          .returning();
-
-        if (!deletedCoupon) {
-          return res.status(404).send("Coupon not found");
-        }
-
-        res.json({ message: "Coupon deleted successfully" });
-      } catch (error) {
-        console.error('Error deleting coupon:', error);
-        res.status(500).send("Failed to delete coupon");
-      }
-    });
-
-    app.patch('/api/admin/events/:eventId/coupons/:couponId', isAdmin, async (req, res) => {
-      try {
-        const { eventId, couponId } = req.params;
-        const updates = req.body;
-
-        const [updatedCoupon] = await db
-          .update(coupons)
-          .set({
-            ...updates,
-            updatedAt: new Date().toISOString(),
-          })
-          .where(
-            and(
-              eq(coupons.id, parseInt(couponId)),
-              eq(coupons.eventId, eventId)
-            )
-          )
-          .returning();
-
-        if (!updatedCoupon) {
-          return res.status(404).send("Coupon not found");
-        }
-
-        res.json(updatedCoupon);
-      } catch (error) {
-        console.error('Error updating coupon:', error);
-        res.status(500).send("Failed to update coupon");
-      }
-    });
-
     app.get('/api/admin/events/:id', isAdmin, async (req, res) => {
       try {
         const eventId = req.params.id; // Remove parseInt since ID is string

@@ -617,30 +617,3 @@ export const selectUpdateSchema = createSelectSchema(updates);
 
 export type InsertUpdate = typeof updates.$inferInsert;
 export type SelectUpdate = typeof updates.$inferSelect;
-
-// Previous imports remain unchanged
-export const coupons = pgTable("coupons", {
-  id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
-  code: text("code").notNull(),
-  discountType: text("discount_type").notNull(),
-  discountValue: integer("discount_value").notNull(),
-  expirationDate: text("expiration_date"),
-  description: text("description"),
-  timesRedeemed: integer("times_redeemed").notNull().default(0),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
-
-export const insertCouponSchema = createInsertSchema(coupons, {
-  code: z.string().min(1, "Coupon code is required"),
-  discountType: z.enum(["fixed", "percentage"]),
-  discountValue: z.number().min(0, "Discount value must be positive"),
-  expirationDate: z.string().nullable(),
-  description: z.string().nullable(),
-});
-
-export const selectCouponSchema = createSelectSchema(coupons);
-
-export type InsertCoupon = typeof coupons.$inferInsert;
-export type SelectCoupon = typeof coupons.$inferSelect;
