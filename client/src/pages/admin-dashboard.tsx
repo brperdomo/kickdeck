@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation } from "wouter";
-import { Link2, X } from "lucide-react";
+import { Link2, X, Ticket } from "lucide-react";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -115,7 +115,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -1612,6 +1612,8 @@ function AdminDashboard() {
             <FileManager />
           </div>
         );
+      case 'coupons':
+        return <CouponManagement />;
       default:
         return <div>Feature coming soon</div>;
     }
@@ -1885,7 +1887,7 @@ function ChatView() {
                   }`}>
                     <p className="text-sm font-medium">{message.sender}</p>
                     <p>{message.content}</p>
-                    <p className="text-xs opacity-70">{new Date(message.timestamp).toLocaleString()}</p>
+                    <p className="text-xs opacity-70">{new Date(message.timestamp).toLocaleDateString()}</p>
                   </div>
                 </div>
               ))}
@@ -2003,5 +2005,131 @@ function ThemeEditor() {
   );
 }
 
+interface SelectCoupon {
+  id: number;
+  code: string;
+  discountType: 'percentage' | 'amount';
+  amount: number;
+  expirationDate: string;
+  usageCount: number;
+  maxUses: number | null;
+  isActive: boolean;
+}
+
+function CouponManagement() {
+  const { toast } = useToast();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedCoupon, setSelectedCoupon] = useState<SelectCoupon | null>(null);
+  const queryClient = useQueryClient();
+
+  const couponsQuery = useQuery({
+    queryKey: ['/api/admin/coupons'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/coupons');
+      if (!response.ok) throw new Error('Failed to fetch coupons');
+      return response.json();
+    }
+  });
+
+  if (couponsQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Coupon Management</h2>
+        <Button onClick={() => setIsAddModalOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Coupon
+        </Button>
+      </div>
+
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Code</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Expires</TableHead>
+                <TableHead>Uses</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {couponsQuery.data?.map((coupon: SelectCoupon) => (
+                <TableRow key={coupon.id}>
+                  <TableCell className="font-medium">{coupon.code}</TableCell>
+                  <TableCell>
+                    <Badge variant={coupon.discountType === 'percentage' ? 'secondary' : 'outline'}>
+                      {coupon.discountType === 'percentage' ? `${coupon.amount}%` : `$${coupon.amount}`}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{coupon.amount}</TableCell>
+                  <TableCell>{new Date(coupon.expirationDate).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    {coupon.usageCount} {coupon.maxUses ? `/ ${coupon.maxUses}` : ''}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={coupon.isActive ? 'success' : 'secondary'}>
+                      {coupon.isActive ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setSelectedCoupon(coupon)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-red-600">
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Add Coupon Modal Component will be added later */}
+    </>
+  );
+}
+
+const navigationItems = [
+  { icon: Shield, label: "Administrators", value: "administrators" as const },
+  { icon: Calendar, label: "Events", value: "events" as const },
+  { icon: Users, label: "Teams", value: "teams" as const },
+  { icon: Building2, label: "Field Complexes", value: "complexes" as const },
+  { icon: Home, label: "MatchPro Client", value: "households" as const },
+  { icon: CalendarDays, label: "Scheduling", value: "scheduling" as const },
+  { icon: FileText, label: "Reports", value: "reports" as const },
+  { icon: MessageSquare, label: "Chat", value: "chat" as const },
+  { icon: ImageIcon, label: "File Manager", value: "files" as const },
+  {
+    icon: Ticket,
+    label: "Coupons",
+    value: "coupons" as const,
+  },
+  { icon: User, label: "My Account", value: "account" as const },
+];
 
 export default AdminDashboard;

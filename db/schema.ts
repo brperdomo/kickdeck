@@ -617,3 +617,34 @@ export const selectUpdateSchema = createSelectSchema(updates);
 
 export type InsertUpdate = typeof updates.$inferInsert;
 export type SelectUpdate = typeof updates.$inferSelect;
+
+export const coupons = pgTable("coupons", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  discountType: text("discount_type").notNull(),  // 'fixed' or 'percentage'
+  amount: integer("amount").notNull(),
+  expirationDate: timestamp("expiration_date").notNull(),
+  description: text("description"),
+  eventId: text("event_id").references(() => events.id),
+  maxUses: integer("max_uses"),
+  usageCount: integer("usage_count").notNull().default(0),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertCouponSchema = createInsertSchema(coupons, {
+  code: z.string().min(1, "Coupon code is required"),
+  discountType: z.enum(['fixed', 'percentage'], "Invalid discount type"),
+  amount: z.number().positive("Amount must be positive"),
+  expirationDate: z.string().min(1, "Expiration date is required"),
+  description: z.string().optional(),
+  eventId: z.string().optional(),
+  maxUses: z.number().int().positive("Maximum uses must be positive").optional(),
+  isActive: z.boolean().default(true),
+});
+
+export const selectCouponSchema = createSelectSchema(coupons);
+
+export type InsertCoupon = typeof coupons.$inferInsert;
+export type SelectCoupon = typeof coupons.$inferSelect;
