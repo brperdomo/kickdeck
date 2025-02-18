@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
+import { toast } from "@/components/ui/use-toast";
 
 interface Event {
   id: number;
@@ -243,11 +244,23 @@ export function EventsTable() {
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/coupons`)}>
                           <Ticket className="h-4 w-4 mr-2" /> Coupons
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/print-game-cards`)}>
                           <Printer className="h-4 w-4 mr-2" /> Print Game Cards
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/red-cards`)}>
                           <AlertTriangle className="h-4 w-4 mr-2" /> Red Card Report
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => {
+                          const registrationUrl = `${window.location.origin}/register/event/${event.id}`;
+                          navigator.clipboard.writeText(registrationUrl);
+                          toast({
+                            title: "Registration Link Copied",
+                            description: "The registration link has been copied to your clipboard.",
+                          });
+                        }}>
+                          <Link2 className="h-4 w-4 mr-2" /> Copy Registration Link
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
