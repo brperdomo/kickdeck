@@ -1411,15 +1411,16 @@ export function registerRoutes(app: Express): Server {
         }
 
         // Create the event
+        const eventId = crypto.generateEventId();
         const [newEvent] = await db
           .insert(events)
           .values({
+            id: eventId,
             name,
             startDate,
             endDate,
             timezone: timezone || 'America/New_York',
             applicationDeadline,
-            status: 'draft',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           })

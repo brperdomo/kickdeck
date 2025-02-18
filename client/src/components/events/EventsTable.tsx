@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link2 } from "lucide-react";
+import { Link2, Trash } from "lucide-react"; // Added Trash import
 import { useLocation } from "wouter";
 import {
   Table,
@@ -25,7 +25,7 @@ import { formatDate } from "@/lib/utils";
 import {
   Calendar,
   Edit,
-  Trash2,
+  //Trash2, // Removed as Trash is used instead
   FileQuestion,
   User,
   TagsIcon,
@@ -56,6 +56,7 @@ interface Event {
   status: "draft" | "published" | "in_progress" | "completed" | "cancelled";
   applicationsReceived: number;
   teamsAccepted: number;
+  applicationDeadline: string; // Added missing field
 }
 
 type SortField = "name" | "date" | "applications" | "teams" | "status";
@@ -276,7 +277,37 @@ export function EventsTable() {
                           <Eye className="mr-2 h-4 w-4" />
                           View Registration Link
                         </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          className="text-red-600"
+                          onClick={async () => {
+                            try {
+                              const response = await fetch(`/api/admin/events/${event.id}`, {
+                                method: 'DELETE',
+                              });
 
+                              if (!response.ok) {
+                                throw new Error('Failed to delete event');
+                              }
+
+                              toast({
+                                title: "Success",
+                                description: "Event deleted successfully",
+                              });
+
+                              // Refetch events
+                              eventsQuery.refetch();
+                            } catch (error) {
+                              toast({
+                                title: "Error",
+                                description: error instanceof Error ? error.message : "Failed to delete event",
+                                variant: "destructive",
+                              });
+                            }
+                          }}
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
