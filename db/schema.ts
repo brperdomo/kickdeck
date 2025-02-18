@@ -623,9 +623,9 @@ export const coupons = pgTable("coupons", {
   code: text("code").notNull().unique(),
   discountType: text("discount_type").notNull(),  // 'fixed' or 'percentage'
   amount: integer("amount").notNull(),
-  expirationDate: timestamp("expiration_date").notNull(),
+  expirationDate: timestamp("expiration_date"),
   description: text("description"),
-  eventId: text("event_id").references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).references(() => events.id),
   maxUses: integer("max_uses"),
   usageCount: integer("usage_count").notNull().default(0),
   isActive: boolean("is_active").notNull().default(true),
