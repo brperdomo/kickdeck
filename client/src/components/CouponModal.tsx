@@ -29,18 +29,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
 
 const couponFormSchema = z.object({
-  code: z.string().min(1, "Coupon code is required"),
+  code: z.string().min(1, "Coupon code is required").trim(),
   discountType: z.enum(["fixed", "percentage"]),
   amount: z.number().min(0, "Amount must be positive"),
   hasExpiration: z.boolean(),
   expirationDate: z.string().optional(),
   description: z.string().optional(),
-  accountingNumber: z.string().optional(),
+  isActive: z.boolean().default(true),
 });
 
 type CouponFormValues = z.infer<typeof couponFormSchema>;
@@ -73,7 +72,7 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
       discountType: couponToEdit?.discount_type || "fixed",
       amount: couponToEdit?.amount || 0,
       hasExpiration: !!couponToEdit?.expiration_date,
-      expirationDate: couponToEdit?.expiration_date || "",
+      expirationDate: couponToEdit?.expiration_date ? new Date(couponToEdit.expiration_date).toISOString().slice(0, 16) : "",
       description: couponToEdit?.description || "",
       eventId: couponToEdit?.event_id?.toString() || eventId?.toString() || "",
     },
@@ -173,10 +172,15 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
 
   const onSubmit = async (data: CouponFormValues) => {
     try {
+      const submissionData = {
+        ...data,
+        eventId: eventId ? Number(eventId) : null
+      };
+
       if (couponToEdit) {
-        await updateCouponMutation.mutateAsync(data);
+        await updateCouponMutation.mutateAsync(submissionData);
       } else {
-        await createCouponMutation.mutateAsync(data);
+        await createCouponMutation.mutateAsync(submissionData);
       }
     } catch (error) {
       console.error('Form submission error:', error);
@@ -198,33 +202,25 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
               name="eventId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Event Labels</FormLabel>
-                  <div className="flex flex-wrap gap-2 p-2 border rounded-md">
-                    {eventsQuery.data?.map((event: any) => (
-                      <Badge
-                        key={event.id}
-                        variant={field.value?.toString() === event.id.toString() ? "default" : "outline"}
-                        className="cursor-pointer"
-                        onClick={() => field.onChange(event.id.toString())}
-                      >
-                        {event.name}
-                      </Badge>
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="accountingNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Accounting Number</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="Enter accounting number" />
-                  </FormControl>
+                  <FormLabel>Event</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value?.toString()}
+                    disabled={!!eventId && !couponToEdit}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an event" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {eventsQuery.data?.map((event: any) => (
+                        <SelectItem key={event.id} value={event.id.toString()}>
+                          {event.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -239,6 +235,9 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
                   <FormControl>
                     <Input {...field} placeholder="SUMMER2024" />
                   </FormControl>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Note: Coupon codes are case-sensitive and must be unique for this event.
+                  </p>
                   <FormMessage />
                 </FormItem>
               )}

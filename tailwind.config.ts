@@ -53,8 +53,8 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(240 5% 96%)", // #F2F2F7
-        text: "hsl(240 1% 12%)", // #1C1C1E
+        background: "hsl(0 0% 10%)", // #1A1A1A
+        text: "hsl(0 0% 88%)", // #E0E0E0
         chart: {
           "1": "hsl(var(--chart-1))",
           "2": "hsl(var(--chart-2))",

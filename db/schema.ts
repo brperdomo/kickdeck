@@ -629,7 +629,6 @@ export const coupons = pgTable("coupons", {
   maxUses: integer("max_uses"),
   usageCount: integer("usage_count").notNull().default(0),
   isActive: boolean("is_active").notNull().default(true),
-  accountingNumber: text("accounting_number"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

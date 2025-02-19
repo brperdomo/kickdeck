@@ -25,7 +25,9 @@ export function CouponManagement() {
   const [selectedCoupon, setSelectedCoupon] = useState<SelectCoupon | null>(null);
   const queryClient = useQueryClient();
   const [location, navigate] = useLocation();
-  const eventId = location?.split('/').pop() || '';
+  const eventId = location?.includes('/events/') ? 
+    parseInt(location.split('/events/')[1]?.split('/')[0], 10) : 
+    null;
 
   const eventsQuery = useQuery({
     queryKey: ['/api/admin/events'],
@@ -42,7 +44,7 @@ export function CouponManagement() {
     queryKey: ['/api/admin/coupons', eventId],
     queryFn: async () => {
       try {
-        const url = eventId ? `/api/admin/coupons?eventId=${eventId}` : '/api/admin/coupons';
+        const url = `/api/admin/coupons${eventId ? `?eventId=${eventId}` : ''}`;
         const response = await fetch(url, {
           headers: {
             "Accept": "application/json",
@@ -134,7 +136,10 @@ export function CouponManagement() {
         <h2 className="text-3xl font-bold text-gray-900 font-inter">Coupon Management</h2>
         <div className="flex gap-4">
           <Button 
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => {
+              setSelectedCoupon(null);
+              setIsAddModalOpen(true);
+            }}
             disabled={!eventId}
             className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white"
           >
@@ -150,67 +155,89 @@ export function CouponManagement() {
           </Button>
         </div>
       </div>
-      <Card className="border border-gray-200 shadow-sm rounded-lg mb-8">
-        <CardContent className="p-4">
+      <Card className="border border-gray-100 shadow-xl rounded-xl mb-8 overflow-hidden bg-white">
+        <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow className="border-b border-gray-200 bg-gray-50">
-                <TableHead className="font-semibold text-gray-700">Code</TableHead>
-                <TableHead className="font-semibold text-gray-700">Type</TableHead>
-                <TableHead className="font-semibold text-gray-700">Amount</TableHead>
-                <TableHead className="font-semibold text-gray-700">Expires</TableHead>
-                <TableHead className="font-semibold text-gray-700">Uses</TableHead>
-                <TableHead className="font-semibold text-gray-700">Event</TableHead>
-                <TableHead className="text-right font-semibold text-gray-700">Actions</TableHead>
+                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Code</TableHead>
+                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Type</TableHead>
+                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Amount</TableHead>
+                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Expires</TableHead>
+                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Uses</TableHead>
+                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Event</TableHead>
+                <TableHead className="text-right font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {couponsQuery.data?.map((coupon: SelectCoupon) => (
                 <TableRow 
                   key={coupon.id}
-                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                  className="border-b border-gray-100 hover:bg-blue-50/30 transition-all duration-200"
                 >
-                  <TableCell className="font-medium text-gray-900">{coupon.code}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-medium text-gray-900 px-6 py-5">{coupon.code}</TableCell>
+                  <TableCell className="px-6 py-4">
                     <Badge 
-                      variant={coupon.discountType === 'percentage' ? 'secondary' : 'outline'}
+                      variant={coupon.discount_type === 'percentage' ? 'secondary' : 'outline'}
                       className={
-                        coupon.discountType === 'percentage' 
+                        coupon.discount_type === 'percentage' 
                           ? 'bg-[#6B7280] text-white' 
                           : 'border-[#6B7280] text-[#6B7280]'
                       }
                     >
-                      {coupon.discountType === 'percentage' ? 'Percentage' : 'Dollar'}
+                      {coupon.discount_type === 'percentage' ? 'Percentage' : 'Fixed'}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-gray-700">{coupon.amount}</TableCell>
                   <TableCell className="text-gray-700">
-                    {coupon.expirationDate ? 
-                      new Date(coupon.expirationDate).toLocaleDateString() : 
-                      'No expiration'
-                    }
+                    {coupon.discount_type === 'percentage' ? `${coupon.amount}%` : `$${coupon.amount}`}
                   </TableCell>
-                  <TableCell className="text-gray-700">
-                    {coupon.usageCount} {coupon.maxUses ? `/ ${coupon.maxUses}` : ''}
+                  <TableCell className="px-6 py-4">
+                    {coupon.expiration_date ? (
+                      <span className={`${
+                        new Date(coupon.expiration_date) < new Date() 
+                          ? 'text-red-500' 
+                          : 'text-green-500'
+                      }`}>
+                        {new Date(coupon.expiration_date).toLocaleDateString()} 
+                        {new Date(coupon.expiration_date) < new Date() && ' (Expired)'}
+                      </span>
+                    ) : (
+                      <span className="text-gray-500">No expiration</span>
+                    )}
                   </TableCell>
-                  <TableCell>
-                    {events?.find(event => event.id === coupon.eventId)?.name || 'Global Coupon'}
+                  <TableCell className="px-6 py-4 text-gray-700">
+                    <span className="inline-flex items-center gap-1">
+                      <span>{coupon.usageCount}</span>
+                      {coupon.maxUses && (
+                        <>
+                          <span className="text-gray-400">/</span>
+                          <span>{coupon.maxUses}</span>
+                        </>
+                      )}
+                    </span>
                   </TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button 
-                      variant="ghost" 
-                      onClick={() => handleEditCoupon(coupon)}
-                      className="text-[#6B7280] hover:text-[#2563EB] hover:bg-blue-50"
-                    >
-                      Edit
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      onClick={() => handleDeleteCoupon(coupon.id)}
-                      className="text-[#EF4444] hover:bg-red-50"
-                    >
-                      Delete
-                    </Button>
+                  <TableCell className="px-6 py-4">
+                    <span className="text-gray-700">
+                      {events?.find(event => event.id === coupon.eventId)?.name || 'Global Coupon'}
+                    </span>
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button 
+                        variant="ghost" 
+                        onClick={() => handleEditCoupon(coupon)}
+                        className="text-[#6B7280] hover:text-[#2563EB] hover:bg-blue-50/80 transition-colors"
+                      >
+                        Edit
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        onClick={() => handleDeleteCoupon(coupon.id)}
+                        className="text-[#EF4444] hover:bg-red-50/80 transition-colors"
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

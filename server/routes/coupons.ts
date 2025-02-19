@@ -8,12 +8,11 @@ const couponSchema = z.object({
   code: z.string().min(1, "Code is required"),
   discountType: z.enum(["percentage", "fixed"]),
   amount: z.coerce.number().min(0, "Amount must be 0 or greater"),
-  expirationDate: z.string().datetime().nullable().optional(),
+  expirationDate: z.string().nullable().optional().transform(val => val ? new Date(val).toISOString() : null),
   description: z.string().nullable().optional(),
   eventId: z.union([z.coerce.number().positive(), z.null()]).optional(),
   maxUses: z.coerce.number().positive("Max uses must be positive").nullable().optional(),
   isActive: z.boolean().default(true),
-  accountingNumber: z.string().optional(),
 });
 
 export async function createCoupon(req: Request, res: Response) {
@@ -26,12 +25,16 @@ export async function createCoupon(req: Request, res: Response) {
     // Check if code exists for this event
     const existingCoupon = await db.execute(sql`
       SELECT id FROM coupons 
-      WHERE code = ${validatedData.code}
-      AND event_id = ${eventIdToUse}
+      WHERE LOWER(code) = LOWER(${validatedData.code})
+      AND (expiration_date IS NULL OR expiration_date > NOW())
+      AND is_active = true
     `);
 
     if (existingCoupon.rows.length > 0) {
-      return res.status(400).json({ error: "Coupon code already exists for this event" });
+      return res.status(400).json({ 
+        error: "Coupon code already exists",
+        code: "DUPLICATE_CODE"
+      });
     }
 
     const result = await db.execute(sql`
@@ -43,8 +46,7 @@ export async function createCoupon(req: Request, res: Response) {
         description,
         event_id,
         max_uses,
-        is_active,
-        accounting_number
+        is_active
       ) VALUES (
         ${validatedData.code},
         ${validatedData.discountType},
@@ -53,8 +55,7 @@ export async function createCoupon(req: Request, res: Response) {
         ${validatedData.description || null},
         ${validatedData.eventId || null},
         ${validatedData.maxUses || null},
-        ${validatedData.isActive},
-        ${validatedData.accountingNumber || null}
+        ${validatedData.isActive}
       ) RETURNING *;
     `);
 
@@ -71,10 +72,16 @@ export async function createCoupon(req: Request, res: Response) {
 export async function getCoupons(req: Request, res: Response) {
   try {
     const eventId = req.query.eventId;
-    let query = sql`SELECT * FROM coupons`;
+    let query;
 
-    if (eventId && !isNaN(Number(eventId))) {
-      query = sql`SELECT * FROM coupons WHERE event_id = ${Number(eventId)} OR event_id IS NULL`;
+    if (!eventId) {
+      query = sql`SELECT * FROM coupons`;
+    } else {
+      const numericEventId = parseInt(eventId as string, 10);
+      if (isNaN(numericEventId)) {
+        return res.status(400).json({ error: "Invalid event ID format" });
+      }
+      query = sql`SELECT * FROM coupons WHERE event_id = ${numericEventId}`;
     }
 
     const result = await db.execute(query);
@@ -92,15 +99,14 @@ export async function updateCoupon(req: Request, res: Response) {
 
     const result = await db.execute(sql`
       UPDATE coupons SET 
-        code = ${validatedData.code},
-        discount_type = ${validatedData.discountType},
-        amount = ${validatedData.amount},
+        code = ${validatedData.code || null},
+        discount_type = ${validatedData.discountType || null},
+        amount = ${validatedData.amount || null},
         expiration_date = ${validatedData.expirationDate ? new Date(validatedData.expirationDate) : null},
-        description = ${validatedData.description},
-        event_id = ${validatedData.eventId},
-        max_uses = ${validatedData.maxUses},
-        is_active = ${validatedData.isActive},
-        accounting_number = ${validatedData.accountingNumber},
+        description = ${validatedData.description || null},
+        event_id = ${validatedData.eventId || null},
+        max_uses = ${validatedData.maxUses || null},
+        is_active = ${validatedData.isActive === undefined ? true : validatedData.isActive},
         updated_at = NOW()
       WHERE id = ${Number(id)}
       RETURNING *;
