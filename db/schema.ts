@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean, jsonb, time, integer, date, timestamp, bigint } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, jsonb, time, integer, date, timestamp, bigint, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
@@ -648,3 +648,124 @@ export const selectCouponSchema = createSelectSchema(coupons);
 
 export type InsertCoupon = typeof coupons.$inferInsert;
 export type SelectCoupon = typeof coupons.$inferSelect;
+
+export const eventFormTemplates = pgTable("event_form_templates", {
+  id: serial("id").primaryKey(),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
+  name: text("name").notNull(),
+  description: text("description"),
+  isPublished: boolean("is_published").default(false).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const formFields = pgTable("form_fields", {
+  id: serial("id").primaryKey(),
+  templateId: integer("template_id").notNull().references(() => eventFormTemplates.id, { onDelete: 'cascade' }),
+  label: text("label").notNull(),
+  type: text("type").notNull(), // 'dropdown', 'paragraph', 'input'
+  required: boolean("required").default(false).notNull(),
+  order: integer("order").notNull(),
+  placeholder: text("placeholder"),
+  helpText: text("help_text"),
+  validation: jsonb("validation"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const formFieldOptions = pgTable("form_field_options", {
+  id: serial("id").primaryKey(),
+  fieldId: integer("field_id").notNull().references(() => formFields.id, { onDelete: 'cascade' }),
+  label: text("label").notNull(),
+  value: text("value").notNull(),
+  order: integer("order").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const formResponses = pgTable("form_responses", {
+  id: serial("id").primaryKey(),
+  templateId: integer("template_id").notNull().references(() => eventFormTemplates.id),
+  teamId: integer("team_id").notNull().references(() => teams.id),
+  responses: jsonb("responses").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Add Zod schemas for the new tables
+export const insertEventFormTemplateSchema = createInsertSchema(eventFormTemplates, {
+  name: z.string().min(1, "Template name is required"),
+description: z.string().optional(),
+  isPublished: z.boolean().default(false),
+});
+
+export const insertFormFieldSchema = createInsertSchema(formFields, {
+  label: z.string().min(1, "Field label is required"),
+  type: z.enum(["dropdown", "paragraph", "input"]),
+  required: z.boolean().default(false),
+  order: z.number().int().min(0),
+  placeholder: z.string().optional(),
+  helpText: z.string().optional(),
+  validation: z.record(z.unknown()).optional(),
+});
+
+export const insertFormFieldOptionSchema = createInsertSchema(formFieldOptions, {
+  label: z.string().min(1, "Option label is required"),
+  value: z.string().min(1, "Option value is required"),
+  order: z.number().int().min(0),
+});
+
+export const insertFormResponseSchema = createInsertSchema(formResponses, {
+  responses: z.record(z.unknown()).refine((data) => Object.keys(data).length > 0, "Responses cannot be empty"),
+});
+
+// Add select schemas
+export const selectEventFormTemplateSchema = createSelectSchema(eventFormTemplates);
+export const selectFormFieldSchema = createSelectSchema(formFields);
+export const selectFormFieldOptionSchema = createSelectSchema(formFieldOptions);
+export const selectFormResponseSchema = createSelectSchema(formResponses);
+
+// Add types
+export type InsertEventFormTemplate = typeof eventFormTemplates.$inferInsert;
+export type SelectEventFormTemplate = typeof eventFormTemplates.$inferSelect;
+export type InsertFormField = typeof formFields.$inferInsert;
+export type SelectFormField = typeof formFields.$inferSelect;
+export type InsertFormFieldOption = typeof formFieldOptions.$inferInsert;
+export type SelectFormFieldOption = typeof formFieldOptions.$inferSelect;
+export type InsertFormResponse = typeof formResponses.$inferInsert;
+export type SelectFormResponse = typeof formResponses.$inferSelect;
+
+// Add relations
+export const eventFormTemplatesRelations = relations(eventFormTemplates, ({ one, many }) => ({
+  event: one(events, {
+    fields: [eventFormTemplates.eventId],
+    references: [events.id],
+  }),
+  fields: many(formFields),
+  responses: many(formResponses),
+}));
+
+export const formFieldsRelations = relations(formFields, ({ one, many }) => ({
+  template: one(eventFormTemplates, {
+    fields: [formFields.templateId],
+    references: [eventFormTemplates.id],
+  }),
+  options: many(formFieldOptions),
+}));
+
+export const formFieldOptionsRelations = relations(formFieldOptions, ({ one }) => ({
+  field: one(formFields, {
+    fields: [formFieldOptions.fieldId],
+    references: [formFields.id],
+  }),
+}));
+
+export const formResponsesRelations = relations(formResponses, ({ one }) => ({
+  template: one(eventFormTemplates, {
+    fields: [formResponses.templateId],
+    references: [eventFormTemplates.id],
+  }),
+  team: one(teams, {
+    fields: [formResponses.teamId],
+    references: [teams.id],
+  }),
+}));

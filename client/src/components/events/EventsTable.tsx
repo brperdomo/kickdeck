@@ -1,7 +1,7 @@
-
+<replit_final_file>
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search } from "lucide-react";
+import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput } from "lucide-react";
 import { useLocation } from "wouter";
 import {
   Table,
@@ -214,8 +214,8 @@ export function EventsTable() {
                           : "outline"
                       }
                     >
-                      {calculateEventStatus(event.startDate, event.endDate).charAt(0).toUpperCase() + 
-                       calculateEventStatus(event.startDate, event.endDate).slice(1)}
+                      {calculateEventStatus(event.startDate, event.endDate).charAt(0).toUpperCase() +
+                        calculateEventStatus(event.startDate, event.endDate).slice(1)}
                     </Badge>
                   </TableCell>
                   <TableCell>{formatDate(event.applicationDeadline)}</TableCell>
@@ -231,6 +231,9 @@ export function EventsTable() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/edit`)}>
                           <Edit className="h-4 w-4 mr-2" /> Edit Event
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/application-form`)}>
+                          <FormInput className="h-4 w-4 mr-2" /> Application Form
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/application-questions`)}>
                           <FileQuestion className="h-4 w-4 mr-2" /> Application Questions
