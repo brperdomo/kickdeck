@@ -19,7 +19,7 @@ const couponSchema = z.object({
 export async function createCoupon(req: Request, res: Response) {
   try {
     const validatedData = couponSchema.parse(req.body);
-    
+
     // Allow null eventId for global coupons
     const eventIdToUse = validatedData.eventId || null;
 
@@ -33,7 +33,7 @@ export async function createCoupon(req: Request, res: Response) {
     if (existingCoupon.rows.length > 0) {
       return res.status(400).json({ error: "Coupon code already exists for this event" });
     }
-    
+
     const result = await db.execute(sql`
       INSERT INTO coupons (
         code,
@@ -43,7 +43,8 @@ export async function createCoupon(req: Request, res: Response) {
         description,
         event_id,
         max_uses,
-        is_active
+        is_active,
+        accounting_number
       ) VALUES (
         ${validatedData.code},
         ${validatedData.discountType},
@@ -52,7 +53,8 @@ export async function createCoupon(req: Request, res: Response) {
         ${validatedData.description || null},
         ${validatedData.eventId || null},
         ${validatedData.maxUses || null},
-        ${validatedData.isActive}
+        ${validatedData.isActive},
+        ${validatedData.accountingNumber || null}
       ) RETURNING *;
     `);
 
@@ -70,11 +72,11 @@ export async function getCoupons(req: Request, res: Response) {
   try {
     const eventId = req.query.eventId;
     let query = sql`SELECT * FROM coupons`;
-    
+
     if (eventId && !isNaN(Number(eventId))) {
       query = sql`SELECT * FROM coupons WHERE event_id = ${Number(eventId)} OR event_id IS NULL`;
     }
-    
+
     const result = await db.execute(query);
     res.json(result.rows);
   } catch (error) {
@@ -87,7 +89,7 @@ export async function updateCoupon(req: Request, res: Response) {
   try {
     const { id } = req.params;
     const validatedData = couponSchema.partial().parse(req.body);
-    
+
     const result = await db.execute(sql`
       UPDATE coupons SET 
         code = ${validatedData.code},
@@ -98,6 +100,7 @@ export async function updateCoupon(req: Request, res: Response) {
         event_id = ${validatedData.eventId},
         max_uses = ${validatedData.maxUses},
         is_active = ${validatedData.isActive},
+        accounting_number = ${validatedData.accountingNumber},
         updated_at = NOW()
       WHERE id = ${Number(id)}
       RETURNING *;
