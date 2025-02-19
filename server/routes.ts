@@ -5,6 +5,7 @@ import { log } from "./vite";
 import { db } from "@db";
 import seasonalScopesRouter from "./routes/seasonal-scopes";
 import uploadRouter from "./routes/upload";
+import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { sql, eq, and, or, inArray } from "drizzle-orm";
 import {
   users,
@@ -62,6 +63,12 @@ export function registerRoutes(app: Express): Server {
 
     // Register seasonal scopes routes with admin middleware
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
+
+    // Register coupon routes
+    app.post('/api/admin/coupons', isAdmin, createCoupon);
+    app.get('/api/admin/coupons', isAdmin, getCoupons);
+    app.patch('/api/admin/coupons/:id', isAdmin, updateCoupon);
+    app.delete('/api/admin/coupons/:id', isAdmin, deleteCoupon);
 
     // Public event endpoint
     app.get('/api/events/:id', async (req, res) => {
