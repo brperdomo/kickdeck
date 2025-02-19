@@ -50,6 +50,7 @@ import {
   Flag,
   CalendarDays,
   ImageIcon,
+  FormInput,
 } from "lucide-react";
 import {
   Table,
@@ -115,7 +116,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -1622,6 +1623,8 @@ function AdminDashboard() {
         );
       case 'coupons':
         return <CouponManagement />;
+      case 'formTemplates':
+        return <FormTemplatesView />; // Add this line
       default:
         return <div>Feature coming soon</div>;
     }
@@ -2022,6 +2025,7 @@ interface SelectCoupon {
   usageCount: number;
   maxUses: number | null;
   isActive: boolean;
+  description: string;
 }
 
 function CouponManagement() {
@@ -2186,11 +2190,8 @@ const navigationItems = [
   { icon: FileText, label: "Reports", value: "reports" as const },
   { icon: MessageSquare, label: "Chat", value: "chat" as const },
   { icon: ImageIcon, label: "File Manager", value: "files" as const },
-  {
-    icon: Ticket,
-    label: "Coupons",
-    value: "coupons" as const,
-  },
+  { icon: Ticket, label: "Coupons", value: "coupons" as const },
+  { icon: FormInput, label: "Form Templates", value: "formTemplates" as const },
   { icon: User, label: "My Account", value: "account" as const },
 ];
 
