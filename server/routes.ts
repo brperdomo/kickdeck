@@ -1321,10 +1321,10 @@ export function registerRoutes(app: Express): Server {
         const styleConfig = {
           primary: settings?.primaryColor || '#000000',
           secondary: settings?.secondaryColor || '#32CD32',
-          accent: '#FF8C00',
-          background: '#F5F5F6',
-          foreground: '#000000',
-          border: '#CCCCCCCC',
+          accent: settings?.accentColor || '#FF8C00',
+          background: settings?.backgroundColor || '#F5F5F6',
+          foreground: settings?.foregroundColor || '#000000',
+          border: settings?.borderColor || '#CCCCCCCC',
           muted: '#999999',
           hover: '#FF8C00',
           active: '#32CD32',
@@ -1356,29 +1356,35 @@ export function registerRoutes(app: Express): Server {
           .from(organizationSettings)
           .limit(1);
 
+        const updatedSettings = {
+          primaryColor: styleConfig.primary,
+          secondaryColor: styleConfig.secondary,
+          backgroundColor: styleConfig.background,
+          foregroundColor: styleConfig.foreground,
+          accentColor: styleConfig.accent,
+          borderColor: styleConfig.border,
+          logoUrl: styleConfig.logoUrl,
+          updatedAt: new Date().toISOString(),
+        };
+
         if (settings) {
           await db
             .update(organizationSettings)
-            .set({
-              primaryColor: styleConfig.primary,
-              secondaryColor: styleConfig.secondary,
-              logoUrl: styleConfig.logoUrl,
-              updatedAt: new Date().toISOString(),
-            })
+            .set(updatedSettings)
             .where(eq(organizationSettings.id, settings.id));
         } else {
           await db
             .insert(organizationSettings)
             .values({
-              primaryColor: styleConfig.primary,
-              secondaryColor: styleConfig.secondary,
-              logoUrl: styleConfig.logoUrl,
+              ...updatedSettings,
               createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
             });
         }
 
-        res.json({ message: "Styling settings updated successfully" });
+        res.json({ 
+          message: "Styling settings updated successfully",
+          settings: updatedSettings
+        });
       } catch (error) {
         console.error('Error updating styling settings:', error);
         res.status(500).send("Failed to update styling settings");
