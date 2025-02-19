@@ -58,11 +58,12 @@ export function StyleSettingsView() {
 
   const handleSave = async () => {
     try {
+      // Convert color values to CSS variables format
       const colorValues = Object.entries(colors).reduce((acc, [_, section]) => ({
         ...acc,
         ...Object.entries(section.colors).reduce((colAcc, [key, { value }]) => ({
           ...colAcc,
-          [key]: value
+          [`--${key}`]: value // Prefix with -- for CSS variable naming
         }), {})
       }), {});
 
@@ -78,17 +79,15 @@ export function StyleSettingsView() {
         throw new Error('Failed to update style configuration');
       }
 
-      // Update local state with returned settings
-      const result = await response.json();
-      if (result.settings) {
-        // Apply colors to document
-        Object.entries(result.settings).forEach(([key, value]) => {
-          document.documentElement.style.setProperty(`--${key}`, value as string);
-          if (key === 'backgroundColor') {
-            document.body.style.backgroundColor = value as string;
-          }
-        });
-      }
+      // Update CSS variables in the document
+      Object.entries(colorValues).forEach(([key, value]) => {
+        document.documentElement.style.setProperty(key, value as string);
+
+        // Special handling for background color
+        if (key === '--background') {
+          document.body.style.backgroundColor = value as string;
+        }
+      });
 
       toast({
         title: "Success",
