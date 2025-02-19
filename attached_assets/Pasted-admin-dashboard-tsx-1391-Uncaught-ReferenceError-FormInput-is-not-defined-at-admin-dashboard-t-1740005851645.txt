@@ -1,0 +1,29 @@
+admin-dashboard.tsx:1391 Uncaught ReferenceError: FormInput is not defined
+    at admin-dashboard.tsx:1391:30
+    at Array.map (<anonymous>)
+    at EventsView (admin-dashboard.tsx:1328:33)
+admin-dashboard.tsx:1391 Uncaught ReferenceError: FormInput is not defined
+    at admin-dashboard.tsx:1391:30
+    at Array.map (<anonymous>)
+    at EventsView (admin-dashboard.tsx:1328:33)
+chunk-RPCDYKBN.js?v=3d18db57:14032 The above error occurred in the <EventsView> component:
+
+    at EventsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:1794:24)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2532:28)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=3d18db57:191:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=3d18db57:247:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:40:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-JJS7DLG7.js?v=3d18db57:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=3d18db57:63:5)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=3d18db57:2829:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-RPCDYKBN.js?v=3d18db57:19413 Uncaught ReferenceError: FormInput is not defined
+    at admin-dashboard.tsx:1391:30
+    at Array.map (<anonymous>)
+    at EventsView (admin-dashboard.tsx:1328:33)
