@@ -255,6 +255,15 @@ export default function EventApplicationForm() {
     <>
       <AdminBanner />
       <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-end mb-4">
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={isPreviewMode}
+              onCheckedChange={setIsPreviewMode}
+            />
+            <Label>Preview Mode</Label>
+          </div>
+        </div>
         {isPreviewMode ? (
           renderPreview()
         ) : (
