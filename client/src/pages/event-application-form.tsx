@@ -292,9 +292,9 @@ export default function EventApplicationForm() {
         </div>
         {!isPreviewMode && (
           <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Form Settings</CardTitle>
-          </CardHeader>
+            <CardHeader>
+              <CardTitle>Form Settings</CardTitle>
+            </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="formName">Form Name</Label>
