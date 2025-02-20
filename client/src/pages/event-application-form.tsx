@@ -116,7 +116,10 @@ export default function EventApplicationForm() {
       const response = await fetch(`/api/admin/events/${eventId}/form-template`, {
         method: template.id ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(template),
+        body: JSON.stringify({
+          ...template,
+          eventId // Ensure eventId is included
+        }),
       });
       if (!response.ok) throw new Error('Failed to save form template');
       return response.json();
