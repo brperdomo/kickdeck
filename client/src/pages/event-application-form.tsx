@@ -44,11 +44,56 @@ export default function EventApplicationForm() {
   const eventId = parseInt(location.split('/events/')[1]?.split('/')[0], 10);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [formTemplate, setFormTemplate] = useState<FormTemplate>({
     name: "",
     isPublished: false,
     fields: [],
   });
+
+  const renderPreview = () => {
+    return (
+      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow">
+        <h1 className="text-2xl font-bold mb-6">{formTemplate.name}</h1>
+        {formTemplate.description && (
+          <p className="text-gray-600 mb-6">{formTemplate.description}</p>
+        )}
+        <div className="space-y-6">
+          {formTemplate.fields.map((field, index) => (
+            <div key={index} className="space-y-2">
+              <label className="block font-medium">
+                {field.label}
+                {field.required && <span className="text-red-500 ml-1">*</span>}
+              </label>
+              {field.helpText && (
+                <p className="text-sm text-gray-500">{field.helpText}</p>
+              )}
+              {field.type === "input" && (
+                <Input placeholder={field.placeholder || ""} disabled />
+              )}
+              {field.type === "paragraph" && (
+                <Textarea placeholder={field.placeholder || ""} disabled />
+              )}
+              {field.type === "dropdown" && (
+                <Select disabled>
+                  <SelectTrigger>
+                    <SelectValue placeholder={field.placeholder || "Select an option"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {field.options?.map((option, i) => (
+                      <SelectItem key={i} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   const templateQuery = useQuery({
     queryKey: ['/api/admin/events', eventId, 'form-template'],
@@ -210,9 +255,17 @@ export default function EventApplicationForm() {
     <>
       <AdminBanner />
       <div className="container mx-auto px-4 py-8">
+        {isPreviewMode ? renderPreview() : (
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Event Application Form</h2>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-2 mr-4">
+              <Switch
+                checked={isPreviewMode}
+                onCheckedChange={setIsPreviewMode}
+              />
+              <Label>Preview Mode</Label>
+            </div>
             <Button variant="outline" onClick={() => window.history.back()}>
               Cancel
             </Button>
@@ -401,6 +454,7 @@ export default function EventApplicationForm() {
             ))}
           </div>
         </div>
+      )}
       </div>
     </>
   );
