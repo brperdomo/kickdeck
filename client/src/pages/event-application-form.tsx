@@ -113,12 +113,13 @@ export default function EventApplicationForm() {
 
   const saveTemplateMutation = useMutation({
     mutationFn: async (template: FormTemplate) => {
-      const response = await fetch(`/api/admin/events/${eventId}/form-template`, {
+      const endpoint = `/api/admin/events/${eventId}/form-template`;
+      const response = await fetch(endpoint, {
         method: template.id ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...template,
-          eventId // Ensure eventId is included
+          eventId
         }),
       });
       if (!response.ok) throw new Error('Failed to save form template');
