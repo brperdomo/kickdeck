@@ -255,41 +255,44 @@ export default function EventApplicationForm() {
     <>
       <AdminBanner />
       <div className="container mx-auto px-4 py-8">
-        {isPreviewMode ? renderPreview() : (
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Event Application Form</h2>
-          <div className="flex gap-2 items-center">
-            <div className="flex items-center gap-2 mr-4">
-              <Switch
-                checked={isPreviewMode}
-                onCheckedChange={setIsPreviewMode}
-              />
-              <Label>Preview Mode</Label>
+        {isPreviewMode ? (
+          renderPreview()
+        ) : (
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Event Application Form</h2>
+              <div className="flex gap-2 items-center">
+                <div className="flex items-center gap-2 mr-4">
+                  <Switch
+                    checked={isPreviewMode}
+                    onCheckedChange={setIsPreviewMode}
+                  />
+                  <Label>Preview Mode</Label>
+                </div>
+                <Button variant="outline" onClick={() => window.history.back()}>
+                  Cancel
+                </Button>
+                <Button 
+                  variant="secondary"
+                  onClick={() => saveAsTemplateMutation.mutate(formTemplate)}
+                >
+                  Save as Template
+                </Button>
+                <Button 
+                  onClick={() => saveTemplateMutation.mutate(formTemplate)}
+                  disabled={saveTemplateMutation.isLoading}
+                >
+                  {saveTemplateMutation.isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Save Changes'
+                  )}
+                </Button>
+              </div>
             </div>
-            <Button variant="outline" onClick={() => window.history.back()}>
-              Cancel
-            </Button>
-            <Button 
-              variant="secondary"
-              onClick={() => saveAsTemplateMutation.mutate(formTemplate)}
-            >
-              Save as Template
-            </Button>
-            <Button 
-              onClick={() => saveTemplateMutation.mutate(formTemplate)}
-              disabled={saveTemplateMutation.isLoading}
-            >
-              {saveTemplateMutation.isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                'Save Changes'
-              )}
-            </Button>
-          </div>
-        </div>
         {!isPreviewMode && (
           <Card className="mb-6">
             <CardHeader>
