@@ -147,7 +147,7 @@ export default function EventApplicationForm() {
           description: template.description,
           isPublished: false,
           fields: template.fields,
-          eventId: null
+          eventId: eventId
         })
       });
 
