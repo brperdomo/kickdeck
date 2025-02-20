@@ -69,13 +69,13 @@ export default function EventApplicationForm() {
                 <p className="text-sm text-gray-500">{field.helpText}</p>
               )}
               {field.type === "input" && (
-                <Input placeholder={field.placeholder || ""} disabled />
+                <Input placeholder={field.placeholder || ""} />
               )}
               {field.type === "paragraph" && (
-                <Textarea placeholder={field.placeholder || ""} disabled />
+                <Textarea placeholder={field.placeholder || ""} />
               )}
               {field.type === "dropdown" && (
-                <Select disabled>
+                <Select>
                   <SelectTrigger>
                     <SelectValue placeholder={field.placeholder || "Select an option"} />
                   </SelectTrigger>
