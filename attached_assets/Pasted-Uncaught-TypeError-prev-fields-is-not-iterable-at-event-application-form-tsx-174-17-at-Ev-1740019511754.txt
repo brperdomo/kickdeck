@@ -1,0 +1,41 @@
+Uncaught TypeError: prev.fields is not iterable
+    at event-application-form.tsx:174:17
+    at EventApplicationForm (event-application-form.tsx:48:43)
+(anonymous)	@	event-application-form.tsx:174
+EventApplicationForm	@	event-application-form.tsx:48
+event-application-form.tsx:174 Uncaught TypeError: prev.fields is not iterable
+    at event-application-form.tsx:174:17
+    at EventApplicationForm (event-application-form.tsx:48:43)
+(anonymous)	@	event-application-form.tsx:174
+EventApplicationForm	@	event-application-form.tsx:48
+chunk-RPCDYKBN.js?v=3d18db57:14032 The above error occurred in the <EventApplicationForm> component:
+
+    at EventApplicationForm (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/event-application-form.tsx:39:22)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=3d18db57:191:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=3d18db57:247:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:40:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-JJS7DLG7.js?v=3d18db57:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=3d18db57:63:5)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=3d18db57:2829:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError	@	chunk-RPCDYKBN.js?v=3d18db57:14032
+update.callback	@	chunk-RPCDYKBN.js?v=3d18db57:14052
+callCallback	@	chunk-RPCDYKBN.js?v=3d18db57:11248
+commitUpdateQueue	@	chunk-RPCDYKBN.js?v=3d18db57:11265
+commitLayoutEffectOnFiber	@	chunk-RPCDYKBN.js?v=3d18db57:17093
+commitLayoutMountEffects_complete	@	chunk-RPCDYKBN.js?v=3d18db57:17980
+commitLayoutEffects_begin	@	chunk-RPCDYKBN.js?v=3d18db57:17969
+commitLayoutEffects	@	chunk-RPCDYKBN.js?v=3d18db57:17920
+commitRootImpl	@	chunk-RPCDYKBN.js?v=3d18db57:19353
+commitRoot	@	chunk-RPCDYKBN.js?v=3d18db57:19277
+performSyncWorkOnRoot	@	chunk-RPCDYKBN.js?v=3d18db57:18895
+flushSyncCallbacks	@	chunk-RPCDYKBN.js?v=3d18db57:9119
+(anonymous)	@	chunk-RPCDYKBN.js?v=3d18db57:18627
+chunk-RPCDYKBN.js?v=3d18db57:9129 Uncaught TypeError: prev.fields is not iterable
+    at event-application-form.tsx:174:17
+    at EventApplicationForm (event-application-form.tsx:48:43)
+(anonymous)	@	event-application-form.tsx:174
+EventApplicationForm	@	event-application-form.tsx:48

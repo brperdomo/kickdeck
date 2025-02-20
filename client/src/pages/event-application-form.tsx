@@ -59,7 +59,7 @@ export default function EventApplicationForm() {
           <p className="text-gray-600 mb-6">{formTemplate.description}</p>
         )}
         <div className="space-y-6">
-          {formTemplate.fields.map((field, index) => (
+          {formTemplate.fields?.map((field, index) => (
             <div key={index} className="space-y-2">
               <label className="block font-medium">
                 {field.label}
@@ -255,6 +255,15 @@ export default function EventApplicationForm() {
     <>
       <AdminBanner />
       <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-end mb-4">
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={isPreviewMode}
+              onCheckedChange={setIsPreviewMode}
+            />
+            <Label>Preview Mode</Label>
+          </div>
+        </div>
         {isPreviewMode ? (
           renderPreview()
         ) : (
@@ -262,13 +271,6 @@ export default function EventApplicationForm() {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold">Event Application Form</h2>
               <div className="flex gap-2 items-center">
-                <div className="flex items-center gap-2 mr-4">
-                  <Switch
-                    checked={isPreviewMode}
-                    onCheckedChange={setIsPreviewMode}
-                  />
-                  <Label>Preview Mode</Label>
-                </div>
                 <Button variant="outline" onClick={() => window.history.back()}>
                   Cancel
                 </Button>
