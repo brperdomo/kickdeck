@@ -143,11 +143,11 @@ export default function EventApplicationForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: template.name,
+          name: `${template.name} (Copy)`,
           description: template.description,
-          isPublished: template.isPublished,
+          isPublished: false,
           fields: template.fields,
-          eventId
+          eventId: null
         })
       });
 

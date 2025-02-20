@@ -44,7 +44,7 @@ export function FormTemplatesView() {
 
   const deleteTemplateMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await fetch(`/api/admin/events/${id}/form-template/${id}`, {
+      const response = await fetch(`/api/admin/form-templates/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete template');
@@ -108,13 +108,15 @@ export function FormTemplatesView() {
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={() => deleteTemplateMutation.mutate(template.id)}
-                          className="text-red-600"
-                        >
-                          <Trash className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
+                        {!template.eventId && (
+                          <DropdownMenuItem 
+                            onClick={() => deleteTemplateMutation.mutate(template.id)}
+                            className="text-red-600"
+                          >
+                            <Trash className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
