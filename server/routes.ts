@@ -2576,6 +2576,37 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    app.get('/api/admin/form-templates', isAdmin, async (req, res) => {
+      try {
+        const templates = await db
+          .select({
+            id: eventFormTemplates.id,
+            name: eventFormTemplates.name,
+            description: eventFormTemplates.description,
+            isPublished: eventFormTemplates.isPublished,
+            createdAt: eventFormTemplates.createdAt,
+            updatedAt: eventFormTemplates.updatedAt,
+            fields: sql<any[]>`json_agg(
+              CASE WHEN ${formFields.id} IS NOT NULL THEN
+                json_build_object(
+                  'id', ${formFields.id},
+                  'label', ${formFields.label},
+                  'type', ${formFields.type}
+                )
+              ELSE NULL END
+            ) FILTER (WHERE ${formFields.id} IS NOT NULL)`.mapWith(f => f || [])
+          })
+          .from(eventFormTemplates)
+          .leftJoin(formFields, eq(formFields.templateId, eventFormTemplates.id))
+          .groupBy(eventFormTemplates.id);
+
+        res.json(templates);
+      } catch (error) {
+        console.error('Error fetching form templates:', error);
+        res.status(500).json({ error: "Failed to fetch form templates" });
+      }
+    });
+
     app.post('/api/admin/form-templates', isAdmin, async (req, res) => {
       try {
         const { name, description, isPublished, fields, eventId } = req.body;

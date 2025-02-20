@@ -34,13 +34,17 @@ export function FormTemplatesView() {
     queryFn: async () => {
       const response = await fetch('/api/admin/form-templates');
       if (!response.ok) throw new Error('Failed to fetch templates');
-      return response.json();
+      const templates = await response.json();
+      return templates.map((template: any) => ({
+        ...template,
+        eventName: template.eventId?.toString() || 'No Event'
+      }));
     }
   });
 
   const deleteTemplateMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await fetch(`/api/admin/form-templates/${id}`, {
+      const response = await fetch(`/api/admin/events/${id}/form-template/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete template');
@@ -76,6 +80,7 @@ export function FormTemplatesView() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Description</TableHead>
+                <TableHead>Event</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Fields</TableHead>
                 <TableHead>Last Modified</TableHead>
@@ -87,6 +92,7 @@ export function FormTemplatesView() {
                 <TableRow key={template.id}>
                   <TableCell className="font-medium">{template.name}</TableCell>
                   <TableCell>{template.description}</TableCell>
+                  <TableCell>{template.eventName || 'No Event'}</TableCell>
                   <TableCell>{template.isPublished ? 'Published' : 'Draft'}</TableCell>
                   <TableCell>{template.fields?.length || 0} fields</TableCell>
                   <TableCell>{new Date(template.updatedAt).toLocaleDateString()}</TableCell>
