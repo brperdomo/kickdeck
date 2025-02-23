@@ -76,12 +76,14 @@ export function FeeManagement() {
   const feesQuery = useQuery({
     queryKey: [`/api/admin/events/${eventId}/fees`],
     queryFn: async () => {
+      if (!eventId) return [];
       const response = await fetch(`/api/admin/events/${eventId}/fees`);
       if (!response.ok) {
         throw new Error("Failed to fetch fees");
       }
       return response.json();
     },
+    enabled: !!eventId
   });
 
   const createFeeMutation = useMutation({
