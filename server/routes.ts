@@ -6,6 +6,7 @@ import { db } from "@db";
 import seasonalScopesRouter from "./routes/seasonal-scopes";
 import uploadRouter from "./routes/upload";
 import accountingCodesRouter from "./routes/admin/accounting-codes";
+import feesRouter from "./routes/admin/fees";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { sql, eq, and, or, inArray } from "drizzle-orm";
 import {
@@ -71,6 +72,9 @@ export function registerRoutes(app: Express): Server {
 
     // Register seasonal scopes routes with admin middleware
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
+
+    // Register fee management routes with admin middleware
+    app.use('/api/admin/events', isAdmin, feesRouter);
 
     // Register coupon routes
     app.post('/api/admin/coupons', isAdmin, createCoupon);
