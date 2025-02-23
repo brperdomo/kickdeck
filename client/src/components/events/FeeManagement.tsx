@@ -68,7 +68,7 @@ type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
   const [, params] = useLocation();
-  const eventId = params.split('/').pop();
+  const eventId = params?.split('/').pop();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
