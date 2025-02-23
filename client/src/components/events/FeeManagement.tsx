@@ -67,7 +67,8 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  const params = useParams();
+  // Destructure eventId directly from the route parameters
+  const [, params] = useParams("/admin/events/:eventId/fees");
   const eventId = params?.eventId;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -89,6 +90,7 @@ export function FeeManagement() {
   const eventQuery = useQuery({
     queryKey: [`/api/admin/events/${eventId}`],
     queryFn: async () => {
+      if (!eventId) throw new Error("Event ID is required");
       const response = await fetch(`/api/admin/events/${eventId}`);
       if (!response.ok) throw new Error("Failed to fetch event details");
       return response.json();
@@ -99,6 +101,7 @@ export function FeeManagement() {
   const feesQuery = useQuery({
     queryKey: [`/api/admin/events/${eventId}/fees`],
     queryFn: async () => {
+      if (!eventId) throw new Error("Event ID is required");
       const response = await fetch(`/api/admin/events/${eventId}/fees`);
       if (!response.ok) throw new Error("Failed to fetch fees");
       return response.json();
@@ -108,9 +111,7 @@ export function FeeManagement() {
 
   const createFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues) => {
-      if (!eventId) {
-        throw new Error("Event ID is required");
-      }
+      if (!eventId) throw new Error("Event ID is required");
 
       const response = await fetch(`/api/admin/events/${eventId}/fees`, {
         method: "POST",
