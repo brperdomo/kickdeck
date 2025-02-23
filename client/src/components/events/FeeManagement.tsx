@@ -67,9 +67,7 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  // Get eventId from useParams
-  const params = useParams<{ eventId: string }>();
-  const eventId = params?.eventId;
+  const { eventId } = useParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -90,7 +88,7 @@ export function FeeManagement() {
   const eventQuery = useQuery({
     queryKey: [`/api/admin/events/${eventId}`],
     queryFn: async () => {
-      if (!eventId) throw new Error("Event ID is required");
+      if (!eventId) return null;
       const response = await fetch(`/api/admin/events/${eventId}`);
       if (!response.ok) throw new Error("Failed to fetch event details");
       return response.json();
@@ -101,7 +99,7 @@ export function FeeManagement() {
   const feesQuery = useQuery({
     queryKey: [`/api/admin/events/${eventId}/fees`],
     queryFn: async () => {
-      if (!eventId) throw new Error("Event ID is required");
+      if (!eventId) return [];
       const response = await fetch(`/api/admin/events/${eventId}/fees`);
       if (!response.ok) throw new Error("Failed to fetch fees");
       return response.json();
@@ -111,27 +109,22 @@ export function FeeManagement() {
 
   const createFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues) => {
-      if (!eventId) throw new Error("Event ID is required");
-
+      if (!eventId) {
+        throw new Error("Event ID is required");
+      }
       const response = await fetch(`/api/admin/events/${eventId}/fees`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
           amount: Math.round(Number(values.amount) * 100), // Convert to cents
-          eventId: parseInt(eventId), // Include eventId in the request body
         }),
       });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to create fee");
-      }
-
+      if (!response.ok) throw new Error("Failed to create fee");
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries([`/api/admin/events/${eventId}/fees`]);
+      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/fees`] });
       setIsDialogOpen(false);
       form.reset();
       toast({
@@ -139,7 +132,7 @@ export function FeeManagement() {
         description: "Fee created successfully",
       });
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       toast({
         title: "Error",
         description: error.message,
@@ -184,7 +177,6 @@ export function FeeManagement() {
     createFeeMutation.mutate(values);
   };
 
-  // Show loading state
   if (feesQuery.isLoading || eventQuery.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -193,23 +185,8 @@ export function FeeManagement() {
     );
   }
 
-  // Show error state
-  if (feesQuery.error || eventQuery.error || !eventId) {
-    return (
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-red-500">Error</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Unable to load fee management. Please make sure you have selected a valid event.</p>
-            <Button className="mt-4" onClick={() => window.history.back()}>
-              Go Back
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
+  if (feesQuery.error || eventQuery.error) {
+    return <div>Error loading data</div>;
   }
 
   const sortedFees = sortData(feesQuery.data || []);

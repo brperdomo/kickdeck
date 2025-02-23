@@ -7,7 +7,7 @@ import { authenticateAdmin } from "../../middleware/auth";
 const router = Router();
 
 // Get all fees for an event
-router.get("/events/:eventId/fees", authenticateAdmin, async (req, res) => {
+router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
     if (!eventId || isNaN(parseInt(eventId))) {
@@ -20,35 +20,21 @@ router.get("/events/:eventId/fees", authenticateAdmin, async (req, res) => {
     res.json(fees);
   } catch (error) {
     console.error("Error fetching event fees:", error);
-    if (error instanceof Error) {
-      res.status(400).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "Failed to fetch event fees" });
-    }
+    res.status(500).json({ message: "Failed to fetch event fees" });
   }
 });
 
 // Create a new fee
-router.post("/events/:eventId/fees", authenticateAdmin, async (req, res) => {
+router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
-    if (!eventId || isNaN(parseInt(eventId))) {
-      return res.status(400).json({ message: "Invalid event ID" });
-    }
-
-    const parsedEventId = parseInt(eventId);
     const validatedData = insertEventFeeSchema.parse({
       ...req.body,
-      eventId: parsedEventId,
+      eventId: parseInt(eventId),
     });
 
     const newFee = await db.insert(eventFees).values({
-      eventId: parsedEventId,
-      name: validatedData.name,
-      amount: validatedData.amount,
-      beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
-      endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
-      applyToAll: validatedData.applyToAll,
+      ...validatedData,
       createdAt: new Date(),
       updatedAt: new Date(),
     }).returning();
@@ -56,36 +42,23 @@ router.post("/events/:eventId/fees", authenticateAdmin, async (req, res) => {
     res.status(201).json(newFee[0]);
   } catch (error) {
     console.error("Error creating event fee:", error);
-    if (error instanceof Error) {
-      res.status(400).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "Failed to create event fee" });
-    }
+    res.status(500).json({ message: "Failed to create event fee" });
   }
 });
 
 // Update a fee
-router.patch("/events/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
+router.patch("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
   try {
     const { eventId, feeId } = req.params;
-    if (!eventId || isNaN(parseInt(eventId)) || !feeId || isNaN(parseInt(feeId))) {
-      return res.status(400).json({ message: "Invalid event ID or fee ID" });
-    }
-
-    const parsedEventId = parseInt(eventId);
     const validatedData = insertEventFeeSchema.parse({
       ...req.body,
-      eventId: parsedEventId,
+      eventId: parseInt(eventId),
     });
 
     const updatedFee = await db
       .update(eventFees)
       .set({
-        name: validatedData.name,
-        amount: validatedData.amount,
-        beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
-        endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
-        applyToAll: validatedData.applyToAll,
+        ...validatedData,
         updatedAt: new Date(),
       })
       .where(eq(eventFees.id, parseInt(feeId)))
@@ -98,22 +71,14 @@ router.patch("/events/:eventId/fees/:feeId", authenticateAdmin, async (req, res)
     res.json(updatedFee[0]);
   } catch (error) {
     console.error("Error updating event fee:", error);
-    if (error instanceof Error) {
-      res.status(400).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "Failed to update event fee" });
-    }
+    res.status(500).json({ message: "Failed to update event fee" });
   }
 });
 
 // Delete a fee
-router.delete("/events/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
+router.delete("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
   try {
     const { eventId, feeId } = req.params;
-    if (!eventId || isNaN(parseInt(eventId)) || !feeId || isNaN(parseInt(feeId))) {
-      return res.status(400).json({ message: "Invalid event ID or fee ID" });
-    }
-
     const deletedFee = await db
       .delete(eventFees)
       .where(eq(eventFees.id, parseInt(feeId)))
