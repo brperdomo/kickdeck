@@ -491,44 +491,8 @@ function AdministratorsView() {
 
 function ReportsView() {
   const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
-  const [accountingCodes, setAccountingCodes] = useState<any[]>([]);
-  const [selectedCode, setSelectedCode] = useState<any>(null);
-  const [isAddingAccountingCode, setIsAddingAccountingCode] = useState(false);
   const { isExporting, startExport } = useExportProcess();
   const { toast } = useToast();
-
-  const handleSaveCode = async (data: { code: string; description: string }) => {
-    try {
-      const response = await fetch('/api/admin/accounting-codes', {
-        method: selectedCode ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          id: selectedCode?.id
-        }),
-      });
-
-      if (!response.ok) throw new Error('Failed to save accounting code');
-
-      // Refresh accounting codes
-      const updatedCodes = await fetch('/api/admin/accounting-codes').then(res => res.json());
-      setAccountingCodes(updatedCodes);
-
-      toast({
-        title: "Success",
-        description: `Accounting code ${selectedCode ? 'updated' : 'created'} successfully`,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save accounting code",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleDeleteCode = async () => {
-    if (!selectedCode) return;
 
     try {
       const response = await fetch(`/api/admin/accounting-codes/${selectedCode.id}`, {
@@ -602,44 +566,7 @@ function ReportsView() {
             </Card>
           </div>
         );
-      case 'accounting-codes':
-        return (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Accounting Codes</h3>
-              <Button onClick={() => setIsAddingAccountingCode(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Code
-              </Button>
-            </div>
-            <Card>
-              <CardContent className="p-6">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Code</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {accountingCodes.map((code) => (
-                      <TableRow key={code.id}>
-                        <TableCell>{code.code}</TableCell>
-                        <TableCell>{code.description}</TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm" onClick={() => handleEditCode(code)}>
-                            Edit
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </div>
-        );
+      
       default:
         return null;
     }
@@ -676,15 +603,7 @@ function ReportsView() {
                 <FileText className="mr-2 h-4 w-4" />
                 Event Financial Reports
               </Button>
-              <Button
-                variant={selectedReport === 'accounting-codes' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setSelectedReport('accounting-codes')}
-                disabled={isExporting !== null}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Accounting Codes
-              </Button>
+              
             </div>
           </CardContent>
         </Card>
