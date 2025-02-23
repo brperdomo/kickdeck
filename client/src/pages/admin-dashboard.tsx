@@ -1390,7 +1390,7 @@ function EventsView() {
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/application-form`)}>
                             <FormInput className="mr-2 h-4 w-4" />
-                            Application Form
+                            Registration Form
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem

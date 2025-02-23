@@ -2517,7 +2517,7 @@ export function registerRoutes(app: Express): Server {
     });
 
     // Form Template endpoints
-    app.get('/api/admin/events/:id/form-template', isAdmin, async (req, res) => {
+    app.get('/api/admin/events/:id/registration-form', isAdmin, async (req, res) => {
       try {
         const eventId = req.params.id;
         const [template] = await db
