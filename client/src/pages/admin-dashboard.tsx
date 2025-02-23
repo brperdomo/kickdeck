@@ -1988,7 +1988,7 @@ function AdminDashboard() {
             </Button>
 
             <Button
-              variant={activeView === 'complexes' ? 'secondary' : ''ghost'}
+              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
               onClick={() => setActiveView('complexes')}
             >
