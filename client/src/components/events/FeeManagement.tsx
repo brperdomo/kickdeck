@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "wouter";
+import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -53,6 +53,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
+
 const feeFormSchema = z.object({
   name: z.string().min(1, "Fee name is required"),
   amount: z.string().min(1, "Amount is required").refine(
@@ -67,9 +68,10 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  // Correctly destructure eventId from useParams
-  const [params] = useParams<{ eventId: string }>("/admin/events/:eventId/fees");
-  const eventId = params.eventId;
+  const { pathname } = useLocation();
+  const params = pathname.split('/').filter(p => p);
+  const eventId = params.pop() || '';
+  const decodedEventId = decodeURIComponent(eventId);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -88,50 +90,45 @@ export function FeeManagement() {
   });
 
   const eventQuery = useQuery({
-    queryKey: [`/api/admin/events/${eventId}`],
+    queryKey: [`/api/admin/events/${decodedEventId}`],
     queryFn: async () => {
-      if (!eventId) throw new Error("Event ID is required");
-      const response = await fetch(`/api/admin/events/${eventId}`);
+      if (!decodedEventId) return null;
+      const response = await fetch(`/api/admin/events/${decodedEventId}`);
       if (!response.ok) throw new Error("Failed to fetch event details");
       return response.json();
     },
-    enabled: !!eventId,
+    enabled: !!decodedEventId,
   });
 
   const feesQuery = useQuery({
-    queryKey: [`/api/admin/events/${eventId}/fees`],
+    queryKey: [`/api/admin/events/${decodedEventId}/fees`],
     queryFn: async () => {
-      if (!eventId) throw new Error("Event ID is required");
-      const response = await fetch(`/api/admin/events/${eventId}/fees`);
+      if (!decodedEventId) return [];
+      const response = await fetch(`/api/admin/events/${decodedEventId}/fees`);
       if (!response.ok) throw new Error("Failed to fetch fees");
       return response.json();
     },
-    enabled: !!eventId,
+    enabled: !!decodedEventId,
   });
 
   const createFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues) => {
-      if (!eventId) throw new Error("Event ID is required");
-
-      const response = await fetch(`/api/admin/events/${eventId}/fees`, {
+      if (!decodedEventId) {
+        throw new Error("Event ID is required");
+      }
+      const response = await fetch(`/api/admin/events/${decodedEventId}/fees`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
           amount: Math.round(Number(values.amount) * 100), // Convert to cents
-          eventId: parseInt(eventId), // Include eventId in the request body
         }),
       });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to create fee");
-      }
-
+      if (!response.ok) throw new Error("Failed to create fee");
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries([`/api/admin/events/${eventId}/fees`]);
+      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${decodedEventId}/fees`] });
       setIsDialogOpen(false);
       form.reset();
       toast({
@@ -139,7 +136,7 @@ export function FeeManagement() {
         description: "Fee created successfully",
       });
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       toast({
         title: "Error",
         description: error.message,
@@ -184,7 +181,6 @@ export function FeeManagement() {
     createFeeMutation.mutate(values);
   };
 
-  // Show loading state
   if (feesQuery.isLoading || eventQuery.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -193,23 +189,8 @@ export function FeeManagement() {
     );
   }
 
-  // Show error state
-  if (feesQuery.error || eventQuery.error || !eventId) {
-    return (
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-red-500">Error</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Unable to load fee management. Please make sure you have selected a valid event.</p>
-            <Button className="mt-4" onClick={() => window.history.back()}>
-              Go Back
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
+  if (feesQuery.error || eventQuery.error) {
+    return <div>Error loading data</div>;
   }
 
   const sortedFees = sortData(feesQuery.data || []);
