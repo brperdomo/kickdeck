@@ -48,7 +48,7 @@ export default function EventApplicationForm() {
   const [formTemplate, setFormTemplate] = useState<FormTemplate>({
     name: "",
     isPublished: false,
-    fields: [],
+    fields: [] as FormField[],
   });
 
   const renderPreview = () => {
@@ -69,13 +69,13 @@ export default function EventApplicationForm() {
                 <p className="text-sm text-gray-500">{field.helpText}</p>
               )}
               {field.type === "input" && (
-                <Input placeholder={field.placeholder || ""} disabled />
+                <Input placeholder={field.placeholder || ""} />
               )}
               {field.type === "paragraph" && (
-                <Textarea placeholder={field.placeholder || ""} disabled />
+                <Textarea placeholder={field.placeholder || ""} />
               )}
               {field.type === "dropdown" && (
-                <Select disabled>
+                <Select>
                   <SelectTrigger>
                     <SelectValue placeholder={field.placeholder || "Select an option"} />
                   </SelectTrigger>
@@ -113,10 +113,14 @@ export default function EventApplicationForm() {
 
   const saveTemplateMutation = useMutation({
     mutationFn: async (template: FormTemplate) => {
-      const response = await fetch(`/api/admin/events/${eventId}/form-template`, {
+      const endpoint = `/api/admin/events/${eventId}/form-template`;
+      const response = await fetch(endpoint, {
         method: template.id ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(template),
+        body: JSON.stringify({
+          ...template,
+          eventId
+        }),
       });
       if (!response.ok) throw new Error('Failed to save form template');
       return response.json();
@@ -143,11 +147,11 @@ export default function EventApplicationForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: template.name,
+          name: `${template.name} (Copy)`,
           description: template.description,
-          isPublished: template.isPublished,
+          isPublished: false,
           fields: template.fields,
-          eventId
+          eventId: eventId
         })
       });
 
@@ -171,12 +175,12 @@ export default function EventApplicationForm() {
     setFormTemplate(prev => ({
       ...prev,
       fields: [
-        ...prev.fields,
+        ...(prev.fields || []),
         {
           type,
           label: "",
           required: false,
-          order: prev.fields.length,
+          order: (prev.fields || []).length,
           options: type === "dropdown" ? [{ label: "", value: "" }] : undefined,
         },
       ],

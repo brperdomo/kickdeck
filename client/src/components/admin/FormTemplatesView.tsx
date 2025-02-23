@@ -35,16 +35,22 @@ export function FormTemplatesView() {
       const response = await fetch('/api/admin/form-templates');
       if (!response.ok) throw new Error('Failed to fetch templates');
       const templates = await response.json();
-      return templates.map((template: any) => ({
-        ...template,
-        eventName: template.eventId?.toString() || 'No Event'
-      }));
+      // Only return templates that don't have an eventId (copies)
+      return templates
+        .filter((template: any) => !template.eventId)
+        .map((template: any) => ({
+          ...template,
+          eventName: 'Template'
+        }));
     }
   });
 
   const deleteTemplateMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await fetch(`/api/admin/events/${id}/form-template/${id}`, {
+      const template = templatesQuery.data?.find(t => t.id === id);
+      if (!template) throw new Error('Template not found');
+      
+      const response = await fetch(`/api/admin/events/${template.eventId}/form-template/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete template');
@@ -108,13 +114,15 @@ export function FormTemplatesView() {
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={() => deleteTemplateMutation.mutate(template.id)}
-                          className="text-red-600"
-                        >
-                          <Trash className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
+                        {!template.eventId && (
+                          <DropdownMenuItem 
+                            onClick={() => deleteTemplateMutation.mutate(template.id)}
+                            className="text-red-600"
+                          >
+                            <Trash className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
