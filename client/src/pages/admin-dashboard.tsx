@@ -119,7 +119,8 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
 
 type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
-type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
+type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
+type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player' | 'accounting-codes';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
 
 interface RoleGroup {
@@ -128,6 +129,20 @@ interface RoleGroup {
   tournament_admin: any[];
   score_admin: any[];
   finance_admin: any[];
+}
+
+interface AccountingCodeModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (code: string, description: string) => Promise<void>;
+}
+
+interface AccountingCode {
+  id: number;
+  code: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface Complex {
@@ -319,7 +334,7 @@ function AdministratorsView() {
       return response.json();
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries(['/api/admin/administrators']);
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/administrators'] });
       toast({
         title: "Success",
         description: "Administrator updated successfully",
@@ -446,7 +461,7 @@ function AdministratorsView() {
                           ))}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="secondary" className="bg-green-50 text-green-700">
+                          <Badge variant="default" className="bg-green-50 text-green-700">
                             Active
                           </Badge>
                         </TableCell>
@@ -490,37 +505,52 @@ function AdministratorsView() {
 }
 
 function ReportsView() {
+  const { toast } = useToast();
   const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
-  const [accountingCodes, setAccountingCodes] = useState<any[]>([]);
   const [isAddingAccountingCode, setIsAddingAccountingCode] = useState(false);
   const { isExporting, startExport } = useExportProcess();
-  const [newCode, setNewCode] = useState('');
-  const [newDescription, setNewDescription] = useState('');
   const queryClient = useQueryClient();
+
+  // Add query to fetch accounting codes
+  const accountingCodesQuery = useQuery({
+    queryKey: ['/api/admin/accounting-codes'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/accounting-codes');
+      if (!response.ok) throw new Error('Failed to fetch accounting codes');
+      return response.json();
+    }
+  });
+
+  const handleSaveCode = async (code: string, description: string) => {
+    try {
+      const response = await fetch('/api/admin/accounting-codes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, description })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save accounting code');
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ['/api/admin/accounting-codes'] });
+      toast({
+        title: "Success", 
+        description: "Accounting code added successfully",
+      });
+      setIsAddingAccountingCode(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save accounting code",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleEditCode = (code: any) => {
     // TODO: Implement edit functionality
-  };
-
-  const handleSaveCode = (code: string, description: string) => {
-    // Add the new accounting code to the database
-    fetch('/api/admin/accounting-codes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, description })
-    })
-      .then(response => response.json())
-      .then(data => {
-        setAccountingCodes([...accountingCodes, data]);
-        setNewCode('');
-        setNewDescription('');
-        setIsAddingAccountingCode(false);
-        queryClient.invalidateQueries(['/api/admin/accounting-codes'])
-      })
-      .catch(error => {
-        console.error('Error saving accounting code:', error);
-        // Handle the error appropriately (e.g., display an error message)
-      });
+    console.log("Edit code:", code);
   };
 
   const renderReportContent = () => {
@@ -580,17 +610,26 @@ function ReportsView() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {accountingCodes.map((code) => (
-                      <TableRow key={code.id}>
-                        <TableCell>{code.code}</TableCell>
-                        <TableCell>{code.description}</TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm" onClick={() => handleEditCode(code)}>
-                            Edit
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {accountingCodesQuery.isLoading ? (
+                      <div className="flex items-center justify-center py-4">
+                        <Loader2 className="h-6 w-6 animate-spin" />
+                      </div>
+                    ) : (
+                      <>
+                        {accountingCodesQuery.data?.map((code: any) => (
+                          <TableRow key={code.id}>
+                            <TableCell>{code.code}</TableCell>
+                            <TableCell>{code.description}</TableCell>
+                            <TableCell>
+                              <Button variant="ghost" size="sm" onClick={() => handleEditCode(code)}>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </>
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -956,7 +995,7 @@ function ComplexesView() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['/api/admin/complexes']);
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/complexes'] });
       toast({
         title: "Success",
         description: "Complex created successfully",
