@@ -502,12 +502,12 @@ function ReportsView() {
     // TODO: Implement edit functionality
   };
 
-  const handleSaveCode = () => {
+  const handleSaveCode = (code: string, description: string) => {
     // Add the new accounting code to the database
     fetch('/api/admin/accounting-codes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: newCode, description: newDescription })
+      body: JSON.stringify({ code, description })
     })
       .then(response => response.json())
       .then(data => {
