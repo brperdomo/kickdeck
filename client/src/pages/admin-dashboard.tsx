@@ -1200,9 +1200,7 @@ function EventsView() {
   const { user } = useUser();
   const { toast } = useToast();
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
-  const [selectedEvents, setSelectedEvents] = useState<number[]>([]);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [eventToDelete, setEventToDelete] = useState<{ id: number; name: string } | null>(null);
+  const [selectedEvents, setSelectedEvents] = useState<number[]>([]); // Add state for selected events
   const eventsQuery = useQuery({
     queryKey: ['/api/admin/events'],
     queryFn: async () => {
@@ -1417,33 +1415,11 @@ function EventsView() {
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
                             className="text-red-600"
-                            onClick={() => {
-                              setEventToDelete({ id: event.id, name: event.name });
-                              setDeleteModalOpen(true);
-                            }}
-                          >
-                            <Trash className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <DeleteEventModal
-              isOpen={deleteModalOpen}
-              onClose={() => {
-                setDeleteModalOpen(false);
-                setEventToDelete(null);
-              }}
-              onConfirm={async () => {
-                if (!eventToDelete) return;
-                try {
-                  const response = await fetch(`/api/admin/events/${eventToDelete.id}`, {
-                    method: 'DELETE',
-                  });
+                            onClick={async () => {
+                              try {
+                                const response = await fetch(`/api/admin/events/${event.id}`, {
+                                  method: 'DELETE',
+                                });
 
                                 if (!response.ok) throw new Error('Failed to delete event');
 
