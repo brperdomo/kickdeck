@@ -566,25 +566,27 @@ function ReportsView() {
                 </select>
               </div>
               <div className="flex gap-2">
+                {selectedFinancialReport === 'accounting-codes' && (
+                  <Button onClick={() => setIsAccountingCodeModalOpen(true)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Accounting Code
+                  </Button>
+                )}
                 <Button
                   onClick={() => startExport('financial')}
-                  disabled={isExporting === 'financial'}
+                  disabled={isExporting}
                 >
-                  {isExporting === 'financial' ? (
+                  {isExporting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Exporting...
                     </>
                   ) : (
                     <>
-                      <FileText className="mr-2 h-4 w-4" />
-                      Export Report
+                      <Download className="mr-2 h-4 w-4" />
+                      Export
                     </>
                   )}
-                </Button>
-                <Button onClick={() => setIsAccountingCodeModalOpen(true)}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Accounting Code
                 </Button>
               </div>
             </div>
@@ -1986,7 +1988,7 @@ function AdminDashboard() {
             </Button>
 
             <Button
-              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
+              variant={activeView === 'complexes' ? 'secondary' : ''ghost'}
               className="w-full justify-start"
               onClick={() => setActiveView('complexes')}
             >
