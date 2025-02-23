@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash } from "lucide-react";
 import { useLocation } from "wouter";
+import { useToast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -62,6 +63,7 @@ type SortDirection = "asc" | "desc";
 
 export function EventsTable() {
   const [, navigate] = useLocation();
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"past" | "active" | "upcoming" | "all">("all");
   const [sortField, setSortField] = useState<SortField>("date");
@@ -121,6 +123,23 @@ export function EventsTable() {
     } else {
       setSortField(field);
       setSortDirection("asc");
+    }
+  };
+
+  const handleGenerateRegistrationLink = async (eventId: number) => {
+    try {
+      const registrationUrl = `${window.location.origin}/register/event/${eventId}`;
+      await navigator.clipboard.writeText(registrationUrl);
+      toast({
+        title: "Success",
+        description: "Registration link copied to clipboard",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to copy registration link",
+        variant: "destructive",
+      });
     }
   };
 
@@ -240,7 +259,7 @@ export function EventsTable() {
                           <FormInput className="mr-2 h-4 w-4" />
                           Registration Form
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => window.navigator.clipboard.writeText(`${window.location.origin}/register/event/${event.id}`)}>
+                        <DropdownMenuItem onClick={() => handleGenerateRegistrationLink(event.id)}>
                           <Link2 className="mr-2 h-4 w-4" />
                           Generate Registration Link
                         </DropdownMenuItem>
