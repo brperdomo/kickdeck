@@ -2314,8 +2314,7 @@ function AccountingCodeModal({ isOpen, onClose, onSave }: { isOpen: boolean; onC
         </div>
       </DialogContent>
       <DialogFooter>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={() => { onSave(); setCode(''); setDescription(''); }}>Save</Button>
+        
       </DialogFooter>
     </Dialog>
   );
