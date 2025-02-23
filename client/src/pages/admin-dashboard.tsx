@@ -990,7 +990,7 @@ function ComplexesView() {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/fields', viewingComplexId] });
       toast({
         title: "Success",
-        description: "Field updated successfully",
+description: "Field updated successfully",
       });
       setIsFieldModalOpen(false);
       setSelectedField(null);
@@ -1414,7 +1414,7 @@ function EventsView() {
                             Generate Registration Link
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem 
+                          <DropdownMenuItem
                             className="text-red-600"
                             onClick={() => {
                               setEventToDelete({ id: event.id, name: event.name });
@@ -1434,6 +1434,25 @@ function EventsView() {
           </div>
         </CardContent>
       </Card>
+      <DeleteEventModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={async () => {
+          try {
+            if (eventToDelete) {
+              await fetch(`/api/admin/events/${eventToDelete.id}`, {
+                method: 'DELETE',
+              });
+              eventsQuery.refetch();
+              setDeleteModalOpen(false);
+              setEventToDelete(null);
+            }
+          } catch (error) {
+            console.error('Failed to delete event:', error);
+          }
+        }}
+        eventToDelete={eventToDelete}
+      />
     </>
   );
 }
