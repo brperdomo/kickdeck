@@ -52,7 +52,6 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
 
 const feeFormSchema = z.object({
   name: z.string().min(1, "Fee name is required"),
@@ -190,21 +189,7 @@ export function FeeManagement() {
   const sortedFees = sortData(feesQuery.data || []);
 
   return (
-    <div className="space-y-6">
-      {/* Breadcrumb Navigation */}
-      <Breadcrumb>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/admin/events">Events</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbItem>
-          <span className="text-muted-foreground">Manage Fees</span>
-        </BreadcrumbItem>
-      </Breadcrumb>
-
-      {/* Main Content */}
+    <div className="max-w-5xl mx-auto px-4 py-6">
       <Card>
         <CardHeader>
           <CardTitle>Manage Fees for {eventQuery.data?.name}</CardTitle>
