@@ -1,15 +1,9 @@
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 interface AccountingCodeModalProps {
@@ -44,7 +38,6 @@ export function AccountingCodeModal({ isOpen, onClose, onSave }: AccountingCodeM
                 id="code"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                placeholder="Enter code"
                 required
               />
             </div>
@@ -54,7 +47,6 @@ export function AccountingCodeModal({ isOpen, onClose, onSave }: AccountingCodeM
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter description"
                 required
               />
             </div>
@@ -63,7 +55,9 @@ export function AccountingCodeModal({ isOpen, onClose, onSave }: AccountingCodeM
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">Save</Button>
+            <Button type="submit">
+              Save
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
