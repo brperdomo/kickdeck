@@ -11,11 +11,12 @@ import ForgotPassword from "@/pages/forgot-password";
 import AdminDashboard from "@/pages/admin-dashboard";
 import CreateEvent from "@/pages/create-event";
 import CouponManagement from "@/pages/coupon-management";
+import AccountingCodeManagement from "@/pages/accounting-code-management";
 import UserDashboard from "@/pages/user-dashboard";
 import HouseholdPage from "@/pages/household";
 import ChatPage from "@/pages/chat";
 import EditEvent from "@/pages/edit-event";
-import EventApplicationForm from "@/pages/event-application-form"; // Added import
+import EventApplicationForm from "@/pages/event-application-form";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 
@@ -56,6 +57,9 @@ function Router() {
       </Route>
       <Route path="/admin/events/:id/coupons">
         {user.isAdmin ? <CouponManagement /> : <NotFound />}
+      </Route>
+      <Route path="/admin/accounting-codes">
+        {user.isAdmin ? <AccountingCodeManagement /> : <NotFound />}
       </Route>
       <Route path="/admin">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}

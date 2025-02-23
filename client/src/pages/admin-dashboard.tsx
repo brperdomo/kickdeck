@@ -90,7 +90,7 @@ import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
 import { useDropzone } from 'react-dropzone';
 import { FileManager } from "@/components/admin/FileManager";
 import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
-
+import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
 
 function AdminBanner() {
   const { settings } = useOrganizationSettings();
@@ -492,6 +492,59 @@ function AdministratorsView() {
 function ReportsView() {
   const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
   const { isExporting, startExport } = useExportProcess();
+  const [isAccountingCodeModalOpen, setIsAccountingCodeModalOpen] = useState(false);
+  const [selectedAccountingCode, setSelectedAccountingCode] = useState<{
+    id: number;
+    code: string;
+    name: string;
+    description?: string;
+  } | null>(null);
+  const queryClient = useQueryClient();
+
+  const accountingCodesQuery = useQuery({
+    queryKey: ['/api/admin/accounting-codes'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/accounting-codes');
+      if (!response.ok) throw new Error('Failed to fetch accounting codes');
+      return response.json();
+    }
+  });
+
+  const deleteAccountingCodeMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/admin/accounting-codes/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete accounting code');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['/api/admin/accounting-codes']);
+      toast({
+        title: "Success",
+        description: "Accounting code deleted successfully",
+        variant: "success"
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete accounting code",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleEditCode = (code: typeof selectedAccountingCode) => {
+    setSelectedAccountingCode(code);
+    setIsAccountingCodeModalOpen(true);
+  };
+
+  const handleDeleteCode = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this accounting code?')) {
+      await deleteAccountingCodeMutation.mutateAsync(id);
+    }
+  };
 
   const renderReportContent = () => {
     switch (selectedReport) {
@@ -499,12 +552,99 @@ function ReportsView() {
         return (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Event Financial Reports</h3>
+              <h3 className="text-lg font-semibold">Financial Management</h3>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => startExport('financial')}
+                  disabled={isExporting === 'financial'}
+                >
+                  {isExporting === 'financial' ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Exporting...
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="mr-2 h-4 w-4" />
+                      Export Report
+                    </>
+                  )}
+                </Button>
+                <Button onClick={() => setIsAccountingCodeModalOpen(true)}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Accounting Code
+                </Button>
+              </div>
+            </div>
+
+            {/* Accounting Codes Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Accounting Codes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {accountingCodesQuery.isLoading ? (
+                  <div className="flex justify-center p-4">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                ) : accountingCodesQuery.isError ? (
+                  <div className="text-center text-red-500">
+                    Error loading accounting codes
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Code</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {accountingCodesQuery.data?.map((code: any) => (
+                        <TableRow key={code.id}>
+                          <TableCell className="font-medium">{code.code}</TableCell>
+                          <TableCell>{code.name}</TableCell>
+                          <TableCell>{code.description || '-'}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditCode(code)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteCode(code.id)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        );
+      case 'manager':
+        return (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Manager Reports</h3>
               <Button
-                onClick={() => startExport('financial')}
-                disabled={isExporting !== 'financial'}
+                onClick={() => startExport('manager')}
+                disabled={isExporting !== 'manager'}
               >
-                {isExporting === 'financial' ? (
+                {isExporting === 'manager' ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Exporting...
@@ -519,12 +659,98 @@ function ReportsView() {
             </div>
             <Card>
               <CardContent className="p-6">
-                <p className="text-muted-foreground">Financial report content will be implemented here</p>
+                <p className="text-muted-foreground">Manager report content will be implemented here</p>
               </CardContent>
             </Card>
           </div>
         );
-      // ... other report types ...
+      case 'player':
+        return (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Player Reports</h3>
+              <Button
+                onClick={() => startExport('player')}
+                disabled={isExporting !== 'player'}
+              >
+                {isExporting === 'player' ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Export Report
+                  </>
+                )}
+              </Button>
+            </div>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Player report content will be implemented here</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      case 'schedule':
+        return (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Schedule Reports</h3>
+              <Button
+                onClick={() => startExport('schedule')}
+                disabled={isExporting !== 'schedule'}
+              >
+                {isExporting === 'schedule' ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Export Report
+                  </>
+                )}
+              </Button>
+            </div>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Schedule report content will be implemented here</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      case 'guest-player':
+        return (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Guest Player Reports</h3>
+              <Button
+                onClick={() => startExport('guest-player')}
+                disabled={isExporting !== 'guest-player'}
+              >
+                {isExporting === 'guest-player' ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Exporting...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Export Report
+                  </>
+                )}
+              </Button>
+            </div>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Guest player report content will be implemented here</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
       default:
         return null;
     }
@@ -551,22 +777,59 @@ function ReportsView() {
                 disabled={isExporting !== null}
               >
                 <FileText className="mr-2 h-4 w-4" />
-                Event Financial Reports
+                Financial Reports
               </Button>
-              {/* ... other report type buttons ... */}
+              <Button
+                variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('manager')}
+                disabled={isExporting !== null}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Manager Reports
+              </Button>
+              <Button
+                variant={selectedReport === 'player' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('player')}
+                disabled={isExporting !== null}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Player Reports
+              </Button>
+              <Button
+                variant={selectedReport === 'schedule' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('schedule')}
+                disabled={isExporting !== null}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Schedule Reports
+              </Button>
+              <Button
+                variant={selectedReport === 'guest-player' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('guest-player')}
+                disabled={isExporting !== null}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Guest Player Reports
+              </Button>
             </div>
           </CardContent>
         </Card>
 
         {/* Report Content */}
         <div className="col-span-3">
-          <Card>
-            <CardContent className="p-6">
-              {renderReportContent()}
-            </CardContent>
-          </Card>
+          {renderReportContent()}
         </div>
       </div>
+
+      <AccountingCodeModal
+        open={isAccountingCodeModalOpen}
+        onOpenChange={setIsAccountingCodeModalOpen}
+        codeToEdit={selectedAccountingCode}
+      />
     </>
   );
 }

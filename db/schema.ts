@@ -618,6 +618,28 @@ export const selectUpdateSchema = createSelectSchema(updates);
 export type InsertUpdate = typeof updates.$inferInsert;
 export type SelectUpdate = typeof updates.$inferSelect;
 
+// Add after the updates table and before the coupons table
+
+export const accountingCodes = pgTable("accounting_codes", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  name: text("name").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertAccountingCodeSchema = createInsertSchema(accountingCodes, {
+  code: z.string().min(1, "Code is required"),
+  name: z.string().min(1, "Name is required"),
+  description: z.string().optional(),
+});
+
+export const selectAccountingCodeSchema = createSelectSchema(accountingCodes);
+
+export type InsertAccountingCode = typeof accountingCodes.$inferInsert;
+export type SelectAccountingCode = typeof accountingCodes.$inferSelect;
+
 export const coupons = pgTable("coupons", {
   id: serial("id").primaryKey(),
   code: text("code").notNull().unique(),
@@ -694,7 +716,7 @@ export const formResponses = pgTable("form_responses", {
 // Add Zod schemas for the new tables
 export const insertEventFormTemplateSchema = createInsertSchema(eventFormTemplates, {
   name: z.string().min(1, "Template name is required"),
-description: z.string().optional(),
+  description: z.string().optional(),
   isPublished: z.boolean().default(false),
 });
 

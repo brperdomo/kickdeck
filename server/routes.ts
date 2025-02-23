@@ -5,6 +5,7 @@ import { log } from "./vite";
 import { db } from "@db";
 import seasonalScopesRouter from "./routes/seasonal-scopes";
 import uploadRouter from "./routes/upload";
+import accountingCodesRouter from "./routes/admin/accounting-codes";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { sql, eq, and, or, inArray } from "drizzle-orm";
 import {
@@ -64,6 +65,9 @@ export function registerRoutes(app: Express): Server {
     // Set up authentication first
     setupAuth(app);
     log("Authentication routes registered successfully");
+
+    // Register accounting codes routes with admin middleware
+    app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
 
     // Register seasonal scopes routes with admin middleware
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
