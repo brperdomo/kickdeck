@@ -2,7 +2,8 @@
 import { useParams } from "wouter";
 
 import { useState, useEffect } from "react";
-import { useParams, Link } from "wouter";
+import { Link } from "wouter";
+import { useParams } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
