@@ -618,7 +618,64 @@ export const selectUpdateSchema = createSelectSchema(updates);
 export type InsertUpdate = typeof updates.$inferInsert;
 export type SelectUpdate = typeof updates.$inferSelect;
 
-// Add after the updates table and before the coupons table
+export const eventFees = pgTable("event_fees", {
+  id: serial("id").primaryKey(),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
+  name: text("name").notNull(),
+  amount: integer("amount").notNull(),  // Store amount in cents
+  beginDate: timestamp("begin_date"),
+  endDate: timestamp("end_date"),
+  applyToAll: boolean("apply_to_all").default(false).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const eventAgeGroupFees = pgTable("event_age_group_fees", {
+  id: serial("id").primaryKey(),
+  ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id, { onDelete: 'cascade' }),
+  feeId: integer("fee_id").notNull().references(() => eventFees.id, { onDelete: 'cascade' }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Add relations
+export const eventFeesRelations = relations(eventFees, ({ one, many }) => ({
+  event: one(events, {
+    fields: [eventFees.eventId],
+    references: [events.id],
+  }),
+  ageGroupFees: many(eventAgeGroupFees),
+}));
+
+export const eventAgeGroupFeesRelations = relations(eventAgeGroupFees, ({ one }) => ({
+  fee: one(eventFees, {
+    fields: [eventAgeGroupFees.feeId],
+    references: [eventFees.id],
+  }),
+  ageGroup: one(eventAgeGroups, {
+    fields: [eventAgeGroupFees.ageGroupId],
+    references: [eventAgeGroups.id],
+  }),
+}));
+
+// Add validation schemas
+export const insertEventFeeSchema = createInsertSchema(eventFees, {
+  name: z.string().min(1, "Fee name is required"),
+  amount: z.number().int().positive("Amount must be positive"),
+  beginDate: z.string().optional(),
+  endDate: z.string().optional(),
+  applyToAll: z.boolean().default(false),
+});
+
+export const insertEventAgeGroupFeeSchema = createInsertSchema(eventAgeGroupFees);
+
+export const selectEventFeeSchema = createSelectSchema(eventFees);
+export const selectEventAgeGroupFeeSchema = createSelectSchema(eventAgeGroupFees);
+
+// Add types
+export type InsertEventFee = typeof eventFees.$inferInsert;
+export type SelectEventFee = typeof eventFees.$inferSelect;
+export type InsertEventAgeGroupFee = typeof eventAgeGroupFees.$inferInsert;
+export type SelectEventAgeGroupFee = typeof eventAgeGroupFees.$inferSelect;
 
 export const accountingCodes = pgTable("accounting_codes", {
   id: serial("id").primaryKey(),

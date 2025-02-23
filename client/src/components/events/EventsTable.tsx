@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput } from "lucide-react";
+import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign } from "lucide-react";
 import { useLocation } from "wouter";
 import {
   Table,
@@ -231,6 +231,10 @@ export function EventsTable() {
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/edit`)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit Event
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/fees`)}>
+                          <DollarSign className="mr-2 h-4 w-4" />
+                          Manage Fees
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/application-form`)}>
                           <FormInput className="mr-2 h-4 w-4" />
