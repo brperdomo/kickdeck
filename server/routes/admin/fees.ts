@@ -35,6 +35,8 @@ router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
 
     const newFee = await db.insert(eventFees).values({
       ...validatedData,
+      beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
+      endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
       createdAt: new Date(),
       updatedAt: new Date(),
     }).returning();

@@ -1,0 +1,39 @@
+FeeManagement.tsx:285 Uncaught ReferenceError: DialogFooter is not defined
+    at FeeManagement (FeeManagement.tsx:285:22)
+FeeManagement	@	FeeManagement.tsx:285
+Promise.then		
+onSuccess	@	use-user.ts:94
+await in execute		
+onSubmit	@	auth-page.tsx:47
+
+FeeManagement.tsx:285 Uncaught ReferenceError: DialogFooter is not defined
+    at FeeManagement (FeeManagement.tsx:285:22)
+FeeManagement	@	FeeManagement.tsx:285
+Promise.then		
+onSuccess	@	use-user.ts:94
+await in execute		
+onSubmit	@	auth-page.tsx:47
+use-user.ts:94 The above error occurred in the <FeeManagement> component:
+
+    at FeeManagement (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/events/FeeManagement.tsx:73:22)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=143ddc79:206:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=143ddc79:262:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:42:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-JJS7DLG7.js?v=143ddc79:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=143ddc79:63:5)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=143ddc79:2829:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+Promise.then		
+onSuccess	@	use-user.ts:94
+await in execute		
+onSubmit	@	auth-page.tsx:47
+chunk-RPCDYKBN.js?v=143ddc79:9129 Uncaught ReferenceError: DialogFooter is not defined
+    at FeeManagement (FeeManagement.tsx:285:22)
+FeeManagement	@	FeeManagement.tsx:285
+Promise.then		
+onSuccess	@	use-user.ts:94
+await in execute		
+onSubmit	@	auth-page.tsx:47
