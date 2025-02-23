@@ -67,9 +67,9 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  // Destructure eventId directly from the route parameters
-  const [, params] = useParams("/admin/events/:eventId/fees");
-  const eventId = params?.eventId;
+  // Correctly destructure eventId from useParams
+  const [params] = useParams<{ eventId: string }>("/admin/events/:eventId/fees");
+  const eventId = params.eventId;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
