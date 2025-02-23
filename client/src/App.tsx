@@ -19,6 +19,7 @@ import EditEvent from "@/pages/edit-event";
 import EventApplicationForm from "@/pages/event-application-form";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
+import { FeeManagement } from "@/components/events/FeeManagement";
 
 function Router() {
   const { user, isLoading } = useUser();
@@ -51,6 +52,9 @@ function Router() {
       </Route>
       <Route path="/admin/events/:id/application-form">
         {user.isAdmin ? <EventApplicationForm /> : <NotFound />}
+      </Route>
+      <Route path="/admin/events/:id/fees">
+        {user.isAdmin ? <FeeManagement /> : <NotFound />}
       </Route>
       <Route path="/admin/events/:id">
         {user.isAdmin ? <EditEvent /> : <NotFound />}
