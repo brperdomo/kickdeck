@@ -491,6 +491,7 @@ function AdministratorsView() {
 
 function ReportsView() {
   const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
+  const [selectedFinancialReport, setSelectedFinancialReport] = useState<string>('accounting-codes');
   const { isExporting, startExport } = useExportProcess();
   const [isAccountingCodeModalOpen, setIsAccountingCodeModalOpen] = useState(false);
   const [selectedAccountingCode, setSelectedAccountingCode] = useState<{
@@ -552,7 +553,18 @@ function ReportsView() {
         return (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Financial Management</h3>
+              <div className="flex items-center gap-4">
+                <h3 className="text-lg font-semibold">Financial Management</h3>
+                <select 
+                  className="border rounded px-2 py-1"
+                  value={selectedFinancialReport}
+                  onChange={(e) => setSelectedFinancialReport(e.target.value)}
+                >
+                  <option value="accounting-codes">Accounting Codes</option>
+                  <option value="fees-by-event">Fees by Event</option>
+                  <option value="fees-by-age-group">Fees by Age Group</option>
+                </select>
+              </div>
               <div className="flex gap-2">
                 <Button
                   onClick={() => startExport('financial')}
@@ -578,11 +590,12 @@ function ReportsView() {
             </div>
 
             {/* Accounting Codes Table */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Accounting Codes</CardTitle>
-              </CardHeader>
-              <CardContent>
+            {selectedFinancialReport === 'accounting-codes' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Accounting Codes</CardTitle>
+                </CardHeader>
+                <CardContent>
                 {accountingCodesQuery.isLoading ? (
                   <div className="flex justify-center p-4">
                     <Loader2 className="h-6 w-6 animate-spin" />
@@ -633,6 +646,31 @@ function ReportsView() {
                 )}
               </CardContent>
             </Card>
+            )}
+            {selectedFinancialReport === 'fees-by-event' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Fees by Event</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center text-muted-foreground">
+                    Event fees report coming soon
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            {selectedFinancialReport === 'fees-by-age-group' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Fees by Age Group</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center text-muted-foreground">
+                    Age group fees report coming soon
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         );
       case 'manager':
