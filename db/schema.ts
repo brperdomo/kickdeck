@@ -661,8 +661,8 @@ export const eventAgeGroupFeesRelations = relations(eventAgeGroupFees, ({ one })
 export const insertEventFeeSchema = createInsertSchema(eventFees, {
   name: z.string().min(1, "Fee name is required"),
   amount: z.number().int().positive("Amount must be positive"),
-  beginDate: z.string().optional(),
-  endDate: z.string().optional(),
+  beginDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
   applyToAll: z.boolean().default(false),
 });
 
