@@ -42,6 +42,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "@/hooks/use-location";
 
 const feeFormSchema = z.object({
   name: z.string().min(1, "Fee name is required"),
