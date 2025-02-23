@@ -26,13 +26,13 @@ export function AccountingCodeModal({ isOpen, onClose, onSave }: AccountingCodeM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add Accounting Code</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
               <Label htmlFor="code">Code</Label>
               <Input
                 id="code"
@@ -41,7 +41,7 @@ export function AccountingCodeModal({ isOpen, onClose, onSave }: AccountingCodeM
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="grid gap-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
@@ -55,9 +55,7 @@ export function AccountingCodeModal({ isOpen, onClose, onSave }: AccountingCodeM
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">
-              Save
-            </Button>
+            <Button type="submit">Save</Button>
           </DialogFooter>
         </form>
       </DialogContent>
