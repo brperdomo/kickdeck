@@ -491,7 +491,37 @@ function AdministratorsView() {
 
 function ReportsView() {
   const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
+  const [accountingCodes, setAccountingCodes] = useState<any[]>([]);
+  const [isAddingAccountingCode, setIsAddingAccountingCode] = useState(false);
   const { isExporting, startExport } = useExportProcess();
+  const [newCode, setNewCode] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const queryClient = useQueryClient();
+
+  const handleEditCode = (code: any) => {
+    // TODO: Implement edit functionality
+  };
+
+  const handleSaveCode = (code: string, description: string) => {
+    // Add the new accounting code to the database
+    fetch('/api/admin/accounting-codes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, description })
+    })
+      .then(response => response.json())
+      .then(data => {
+        setAccountingCodes([...accountingCodes, data]);
+        setNewCode('');
+        setNewDescription('');
+        setIsAddingAccountingCode(false);
+        queryClient.invalidateQueries(['/api/admin/accounting-codes'])
+      })
+      .catch(error => {
+        console.error('Error saving accounting code:', error);
+        // Handle the error appropriately (e.g., display an error message)
+      });
+  };
 
   const renderReportContent = () => {
     switch (selectedReport) {
@@ -524,7 +554,49 @@ function ReportsView() {
             </Card>
           </div>
         );
-      // ... other report types ...
+      case 'accounting-codes':
+        return (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Accounting Codes</h3>
+              <Button onClick={() => setIsAddingAccountingCode(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Code
+              </Button>
+            </div>
+            <AccountingCodeModal
+              isOpen={isAddingAccountingCode}
+              onClose={() => setIsAddingAccountingCode(false)}
+              onSave={handleSaveCode}
+            />
+            <Card>
+              <CardContent className="p-6">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Code</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {accountingCodes.map((code) => (
+                      <TableRow key={code.id}>
+                        <TableCell>{code.code}</TableCell>
+                        <TableCell>{code.description}</TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="sm" onClick={() => handleEditCode(code)}>
+                            Edit
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        );
       default:
         return null;
     }
@@ -533,7 +605,7 @@ function ReportsView() {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Reports</h2>
+        <h2 className="text-2xl font-bold">Reports and Financials</h2>
       </div>
 
       <div className="grid grid-cols-4 gap-6">
@@ -553,7 +625,15 @@ function ReportsView() {
                 <FileText className="mr-2 h-4 w-4" />
                 Event Financial Reports
               </Button>
-              {/* ... other report type buttons ... */}
+              <Button
+                variant={selectedReport === 'accounting-codes' ? 'secondary' : 'ghost'}
+                className="w-full justify-start"
+                onClick={() => setSelectedReport('accounting-codes')}
+                disabled={isExporting !== null}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Accounting Codes
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -975,7 +1055,8 @@ function ComplexesView() {
     mutationFn: async ({ complexId, fieldId, data }: { complexId: number; fieldId: number; data: FieldFormValues }) => {
       const response = await fetch(`/api/admin/complexes/${complexId}/fields/${fieldId}`, {
         method: 'PATCH',
-        headers: {          'Content-Type': 'application/json',
+        headers: {
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
@@ -998,7 +1079,7 @@ function ComplexesView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message: "Failed to update field",
+        description: error instanceof Error ? error.message : "Failed to update field",
         variant: "destructive",
       });
     }
@@ -1199,9 +1280,7 @@ function EventsView() {
   const { user } = useUser();
   const { toast } = useToast();
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
-  const [selectedEvents, setSelectedEvents] = useState<number[]>([]);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [eventToDelete, setEventToDelete] = useState<{ id: number; name: string } | null>(null);
+  const [selectedEvents, setSelectedEvents] = useState<number[]>([]); // Add state for selected events
   const eventsQuery = useQuery({
     queryKey: ['/api/admin/events'],
     queryFn: async () => {
@@ -1391,7 +1470,7 @@ function EventsView() {
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/application-form`)}>
                             <FormInput className="mr-2 h-4 w-4" />
-                            Application Form
+                            Registration Form
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
@@ -1416,9 +1495,26 @@ function EventsView() {
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
                             className="text-red-600"
-                            onClick={() => {
-                              setEventToDelete({ id: event.id, name: event.name });
-                              setDeleteModalOpen(true);
+                            onClick={async () => {
+                              try {
+                                const response = await fetch(`/api/admin/events/${event.id}`, {
+                                  method: 'DELETE',
+                                });
+
+                                if (!response.ok) throw new Error('Failed to delete event');
+
+                                eventsQuery.refetch();
+                                toast({
+                                  title: "Success",
+                                  description: "Event deleted successfully",
+                                });
+                              } catch (error) {
+                                toast({
+                                  title: "Error",
+                                  description: "Failed to delete event",
+                                  variant: "destructive",
+                                });
+                              }
                             }}
                           >
                             <Trash className="mr-2 h-4 w-4" />
@@ -1536,8 +1632,8 @@ function AdminDashboard() {
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
-  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
 
+  // Add Form Templates to the navigation
   const formTemplatesButton = (
     <Button
       variant={activeView === 'formTemplates' ? 'secondary' : 'ghost'}
@@ -1565,6 +1661,8 @@ function AdminDashboard() {
       </div>
     );
   }
+
+  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
 
   const handleLogout = () => {
     setShowLogoutOverlay(true);
@@ -1625,180 +1723,554 @@ function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <AdminBanner />
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
-            <UserCircle className="h-12 w-12 text-muted-foreground" />
-            <div>
-              <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-              <p className="text-sm text-muted-foreground">
-                Manage your organization's events and settings
-              </p>
-            </div>
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Sidebar */}
+      <div className="w-64 bg-card border-r flex flex-col h-full">
+        <div className="p-4 flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-6">
+            <Calendar className="h-6 w-6 text-primary" />
+            <h1 className="font-semibold text-xl">MatchPro Dashboard</h1>
           </div>
-          <Button variant="outline" onClick={() => setShowLogoutOverlay(true)}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
-          </Button>
-        </div>
 
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          {/* Quick stats cards */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Events</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">12</div>
-              <p className="text-xs text-muted-foreground">Events this month</p>
-            </CardContent>
-          </Card>
-          {/* Add other stat cards as needed */}
-        </div>
-
-        <Tabs defaultValue="events" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="events">
-              <Calendar className="mr-2 h-4 w-4" />
-              Events
-            </TabsTrigger>
-            <TabsTrigger value="administrators">
+          {/* Navigation */}
+          <div className="space-y-2">
+            <Button
+              variant={activeView === 'administrators' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('administrators')}
+            >
               <Shield className="mr-2 h-4 w-4" />
               Administrators
-            </TabsTrigger>
-            <TabsTrigger value="reports">
-              <FileText className="mr-2 h-4 w-4" />
-              Reports
-            </TabsTrigger>
-            <TabsTrigger value="settings">
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
-            </TabsTrigger>
-            <TabsTrigger value="complexes">
+            </Button>
+
+            {formTemplatesButton}
+
+            <Button
+              variant={activeView === 'events' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('events')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Events
+            </Button>
+
+            <Button
+              variant={activeView === 'teams' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('teams')}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Teams
+            </Button>
+
+            <Button
+              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('complexes')}
+            >
               <Building2 className="mr-2 h-4 w-4" />
-              Complexes
-            </TabsTrigger>
-            <TabsTrigger value="chat">
+              Field Complexes
+            </Button>
+
+            <Button
+              variant={activeView === 'households' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('households')}
+            >
+              <Home className="mr-2 h-4 w-4" />
+              MatchPro Client
+            </Button>
+
+            <Button
+              variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('scheduling')}
+            >
+              <CalendarDays className="mr-2 h-4 w-4" />
+              Scheduling
+            </Button>
+
+            <Button
+              variant={activeView === 'reports' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('reports')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Reports and Financials
+            </Button>
+
+            <Button
+              variant={activeView === 'chat' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('chat')}
+            >
               <MessageSquare className="mr-2 h-4 w-4" />
               Chat
-            </TabsTrigger>
-            <TabsTrigger value="files">
-              <Link2 className="mr-2 h-4 w-4" />
-              Files
-            </TabsTrigger>
-            <TabsTrigger value="coupons">
-              <Percent className="mr-2 h-4 w-4" />
-              Coupons
-            </TabsTrigger>
-            <TabsTrigger value="formTemplates">
-              <FormInput className="mr-2 h-4 w-4" />
-              Form Templates
-            </TabsTrigger>
-          </TabsList>
+            </Button>
+            <Button
+              variant={activeView === 'files' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('files')}
+            >
+              <ImageIcon className="mr-2 h-4 w-4" />
+              File Manager
+            </Button>
 
-          <TabsContent value="events" className="space-y-4">
-            <EventsView />
-          </TabsContent>
+            {/* Settings */}
+            <Collapsible
+              open={isSettingsOpen}
+              onOpenChange={setIsSettingsOpen}
+              className="space-y-2"
+            >
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+                  className="w-full justify-between"
+                >
+                  <span className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </span>
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isSettingsOpen ? 'rotate-90' : ''
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 pl-4">
+                <Button
+                  variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('branding');
+                  }}
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Branding
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('payments');
+                  }}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Payments
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('general');
+                  }}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  General
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'styling' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('styling');
+                  }}
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Theme
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
 
-          <TabsContent value="administrators" className="space-y-4">
-            <AdministratorsView />
-          </TabsContent>
+            {/* Account */}
+            <Button
+              variant={activeView === 'account' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('account')}
+            >
+              <User className="mr-2 h-4 w-4" />
+              My Account
+            </Button>
 
-          <TabsContent value="reports" className="space-y-4">
-            <ReportsView />
-          </TabsContent>
-
-          <TabsContent value="settings" className="space-y-4">
-            <BrandingPreviewProvider>
-              <OrganizationSettingsForm />
-            </BrandingPreviewProvider>
-          </TabsContent>
-
-          <TabsContent value="complexes" className="space-y-4">
-            <ComplexesView />
-          </TabsContent>
-
-          <TabsContent value="chat" className="space-y-4">
-            <ChatPage />
-          </TabsContent>
-
-          <TabsContent value="files" className="space-y-4">
-            <FileManager />
-          </TabsContent>
-
-          <TabsContent value="coupons" className="space-y-4">
-            <CouponManagement />
-          </TabsContent>
-
-          <TabsContent value="formTemplates" className="space-y-4">
-            <FormTemplatesView />
-          </TabsContent>
-        </Tabs>
-
-        <LogoutOverlay
-          open={showLogoutOverlay}
-          onOpenChange={setShowLogoutOverlay}
-        />
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          </div>
+        </div>
       </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        <AdminBanner />
+        <div className="p-8">
+          {/* Welcome Card */}
+          {showWelcome && (
+            <Card className="mb-6 relative">
+              <button 
+                onClick={() => setShowWelcome(false)}
+                className="absolute top-2 right-2 p-2 hover:bg-muted rounded-full"
+              >
+                <X className="h-4 w-4" />
+              </button>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <UserCircle className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold">Welcome back, {user?.firstName}!</h2>
+                    <p className="text-muted-foreground">
+                      Manage your organization's activities and settings from this dashboard.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {renderView()}
+        </div>
+      </div>
+
+      <UpdatesLogModal
+        open={showUpdatesLog}
+        onOpenChange={setShowUpdatesLog}
+      />
+      {showLogoutOverlay && (
+        <LogoutOverlay onFinished={() => setShowLogoutOverlay(false)} />
+      )}
     </div>
   );
 }
 
-export default AdminDashboard;
+function ChatView() {
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-function ChatPage() {
+  const messagesQuery = useQuery({
+    queryKey: ['/api/admin/messages'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/messages');
+      if (!response.ok) throw new Error('Failed to fetch messages');
+      return response.json();
+    }
+  });
+
+  if (messagesQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center minh-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div>Chat Page</div>
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Support Chat</h2>
+      </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex flex-col space-y-4">
+              {messagesQuery.data?.map((message: any) => (
+                <div key={message.id} className={`flex ${message.isAdmin ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`rounded-lg px-4 py-2 max-w-[70%] ${
+                    message.isAdmin
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  }`}>
+                    <p className="text-sm font-medium">{message.sender}</p>
+                    <p>{message.content}</p>
+                    <p className="text-xs opacity-70">{new Date(message.timestamp).toLocaleDateString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Type your message..."
+                className="flex-1"
+              />
+              <Button>
+                Send
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 }
 
-function EventsTable() {
+function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView }) {
+  switch (activeSettingsView) {
+    case 'branding':
+      return (
+        <BrandingPreviewProvider>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="col-span-1">
+              <OrganizationSettingsForm />
+            </div>
+            <BrandingPreview />
+          </div>
+        </BrandingPreviewProvider>
+      );
+    case 'general':
+      return <GeneralSettingsView />;
+    case 'styling':
+      return <ThemeEditor />;
+    case 'payments':
+      return (
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold">Payments Settings</h2>
+          <Card>
+            <CardContent className="p-6">
+              <p>Payments settings content will be implemented here</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    default:
+      return (
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold">Settings</h2>
+          <Card>
+            <CardContent className="p-6">
+              <p>Settings content will be implemented here</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+  }
+}
+
+function ThemeEditor() {
+  const [theme, setTheme] = useState({
+    backgroundColor: '#ffffff',
+    textColor: '#000000',
+    buttonColor: '#4CAF50',
+    // Add more colors as needed
+  });
+
+  const handleColorChange = (color: string, value: string) => {
+    setTheme({ ...theme, [color]: value });
+  };
+
   return (
-    <div>Events Table</div>
+    <div className="space-y-4">
+      <h2 className="text-xl font-semibold">Theme Editor</h2>
+      <div className="space-y-2">
+        <div>
+          <Label htmlFor="backgroundColor">Background Color</Label>
+          <Input
+            id="backgroundColor"
+            type="color"
+            value={theme.backgroundColor}
+            onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="textColor">Text Color</Label>
+          <Input
+            id="textColor"
+            type="color"
+            value={theme.textColor}
+            onChange={(e) => handleColorChange('textColor', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="buttonColor">Button Color</Label>
+          <Input
+            id="buttonColor"
+            type="color"
+            value={theme.buttonColor}
+            onChange={(e) => handleColorChange('buttonColor', e.target.value)}
+          />
+        </div>
+        {/* Add more color pickers as needed */}
+      </div>
+      <Button onClick={() => {
+        // Apply theme changes here
+        console.log("Theme updated:", theme);
+      }}>
+        Apply Theme
+      </Button>
+    </div>
   );
 }
 
-function CouponModal({ open, onOpenChange, eventId, couponToEdit }: { open: boolean; onOpenChange: (value: boolean) => void; eventId: string; couponToEdit: SelectCoupon | null }) {
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogHeader>
-        <DialogTitle>
-          {couponToEdit ? 'Edit Coupon' : 'Add Coupon'}
-        </DialogTitle>
-      </DialogHeader>
-      <DialogContent>
-        <div>Coupon Modal Content</div>
-      </DialogContent>
-      <DialogFooter>
-        <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-        <Button type="submit">Save</Button>
-      </DialogFooter>
-    </Dialog>
-  );
+interface SelectCoupon {
+  id: number;
+  code: string;
+  discountType: 'percentage' | 'amount';
+  amount: number;
+  expirationDate: string;
+  usageCount: number;
+  maxUses: number | null;
+  isActive: boolean;
+  description: string;
 }
 
+function CouponManagement() {
+  const { toast } = useToast();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedCoupon, setSelectedCoupon] = useState<SelectCoupon | null>(null);
+  const queryClient = useQueryClient();
+  const [, params] = useLocation();
+  const eventId = params.split('/')[2];
 
-function DeleteEventModal({ isOpen, onClose, onConfirm, eventToDelete }: { isOpen: boolean; onClose: () => void; onConfirm: () => Promise<void>; eventToDelete: { id: number; name: string } | null }) {
+  const couponsQuery = useQuery({
+    queryKey: ['/api/admin/coupons', eventId],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/coupons?eventId=${eventId}`);
+      if (!response.ok) throw new Error('Failed to fetch coupons');
+      return response.json();
+    }
+  });
+
+  const deleteCouponMutation = useMutation({
+    mutationFn: async (couponId: number) => {
+      const response = await fetch(`/api/admin/coupons/${couponId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete coupon');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['/api/admin/coupons', eventId]);
+      toast({
+        title: "Success",
+        description: "Coupon deleted successfully",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  if (couponsQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  const handleEditCoupon = (coupon: SelectCoupon) => {
+    setSelectedCoupon(coupon);
+    setIsAddModalOpen(true);
+  };
+
+  const handleDeleteCoupon = async (couponId: number) => {
+    try {
+      await deleteCouponMutation.mutateAsync(couponId);
+    } catch (error) {
+      console.error('Error deleting coupon:', error);
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogHeader>
-        <DialogTitle>Delete Event</DialogTitle>
-      </DialogHeader>
-      <DialogContent>
-        <p>Are you sure you want to delete the event "{eventToDelete?.name}"?</p>
-      </DialogContent>
-      <DialogFooter>
-        <Button variant="outline" onClick={onClose}>
-          Cancel
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Coupon Management</h2>
+        <Button onClick={() => setIsAddModalOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Coupon
         </Button>
-        <Button variant="destructive" onClick={onConfirm}>
-          Delete
-        </Button>
-      </DialogFooter>
-    </Dialog>
+      </div>
+
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Code</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Expires</TableHead>
+                <TableHead>Uses</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {couponsQuery.data?.map((coupon: SelectCoupon) => (
+                <TableRow key={coupon.id}>
+                  <TableCell className="font-medium">{coupon.code}</TableCell>
+                  <TableCell>
+                    <Badge variant={coupon.discountType === 'percentage' ? 'secondary' : 'outline'}>
+                      {coupon.discountType === 'percentage' ? `${coupon.amount}%` : `$${coupon.amount}`}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{coupon.amount}</TableCell>
+                  <TableCell>
+                    {coupon.expirationDate ? 
+                      new Date(coupon.expirationDate).toLocaleDateString() : 
+                      'No expiration'
+                    }
+                  </TableCell>
+                  <TableCell>
+                    {coupon.usageCount} {coupon.maxUses ? `/ ${coupon.maxUses}` : ''}
+                  </TableCell>
+                  <TableCell>{coupon.description}</TableCell>
+                  <TableCell>
+                    <Badge variant={coupon.isActive ? 'success' : 'secondary'}>
+                      {coupon.isActive ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEditCoupon(coupon)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={() => handleDeleteCoupon(coupon.id)}
+                          className="text-red-600"
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <CouponModal
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+        eventId={eventId}
+        couponToEdit={selectedCoupon}
+      />
+    </>
   );
 }
 
@@ -1809,7 +2281,7 @@ const navigationItems = [
   { icon: Building2, label: "Field Complexes", value: "complexes" as const },
   { icon: Home, label: "MatchPro Client", value: "households" as const },
   { icon: CalendarDays, label: "Scheduling", value: "scheduling" as const },
-  { icon: FileText, label: "Reports", value: "reports" as const },
+  { icon: FileText, label: "Reports and Financials", value: "reports" as const },
   { icon: MessageSquare, label: "Chat", value: "chat" as const },
   { icon: ImageIcon, label: "File Manager", value: "files" as const },
   { icon: Ticket, label: "Coupons", value: "coupons" as const },
@@ -1818,3 +2290,137 @@ const navigationItems = [
 ];
 
 export default AdminDashboard;
+
+// AccountingCodeModal Component
+function AccountingCodeModal({ isOpen, onClose, onSave }: { isOpen: boolean; onClose: () => void; onSave: () => void }) {
+  const [code, setCode] = useState('');
+  const [description, setDescription] = useState('');
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogHeader>
+        <DialogTitle>Add Accounting Code</DialogTitle>
+      </DialogHeader>
+      <DialogContent>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="code">Code</Label>
+            <Input id="code" value={code} onChange={e => setCode(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} />
+          </div>
+        </div>
+      </DialogContent>
+      <DialogFooter>
+        
+      </DialogFooter>
+    </Dialog>
+  );
+}
+
+//CouponModal Component
+function CouponModal({ open, onOpenChange, eventId, couponToEdit }: { open: boolean; onOpenChange: (open: boolean) => void; eventId: string; couponToEdit: SelectCoupon | null }) {
+  const [code, setCode] = useState(couponToEdit?.code || '');
+  const [discountType, setDiscountType] = useState(couponToEdit?.discountType || 'percentage');
+  const [amount, setAmount] = useState(couponToEdit?.amount || 0);
+  const [expirationDate, setExpirationDate] = useState(couponToEdit?.expirationDate || '');
+  const [maxUses, setMaxUses] = useState(couponToEdit?.maxUses || null);
+  const [isActive, setIsActive] = useState(couponToEdit?.isActive || true);
+  const [description, setDescription] = useState(couponToEdit?.description || '');
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`/api/admin/coupons${couponToEdit ? `/${couponToEdit.id}` : ''}`, {
+        method: couponToEdit ? 'PATCH' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code,
+          discountType,
+          amount,
+          expirationDate,
+          maxUses,
+          isActive,
+          description,
+          eventId: parseInt(eventId)
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save coupon');
+      }
+
+      const data = await response.json();
+      queryClient.invalidateQueries(['/api/admin/coupons', eventId]);
+      toast({
+        title: "Success",
+        description: "Coupon saved successfully",
+      });
+      onOpenChange(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to save coupon',
+        variant: 'destructive'
+      });
+    }
+  };
+
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogHeader>
+        <DialogTitle>{couponToEdit ? 'Edit Coupon' : 'Add Coupon'}</DialogTitle>
+      </DialogHeader>
+      <DialogContent>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="code">Code</Label>
+            <Input id="code" value={code} onChange={(e) => setCode(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="discountType">Discount Type</Label>
+            <Select value={discountType} onValueChange={setDiscountType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select discount type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="percentage">Percentage</SelectItem>
+                <SelectItem value="amount">Amount</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="amount">Amount</Label>
+            <Input type="number" id="amount" value={amount} onChange={(e) => setAmount(parseInt(e.target.value, 10))} />
+          </div>
+          <div>
+            <Label htmlFor="expirationDate">Expiration Date</Label>
+            <Input type="date" id="expirationDate" value={expirationDate} onChange={(e) => setExpirationDate(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="maxUses">Max Uses</Label>
+            <Input type="number" id="maxUses" value={maxUses} onChange={(e) => setMaxUses(e.target.value ? parseInt(e.target.value, 10) : null)} />
+          </div>
+          <div>
+            <Label htmlFor="isActive">Is Active</Label>
+            <Switch id="isActive" checked={isActive} onCheckedChange={setIsActive} />
+          </div>
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
+          </div>
+        </div>
+      </DialogContent>
+      <DialogFooter>
+        <Button onClick={onOpenChange}>Cancel</Button>
+        <Button onClick={handleSubmit}>Save</Button>
+      </DialogFooter>
+    </Dialog>
+  );
+}

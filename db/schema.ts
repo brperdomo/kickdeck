@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean, jsonb, time, integer, date, timestamp, bigint, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, jsonb, time, integer, date, timestamp, bigint, uuid, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
@@ -694,12 +694,12 @@ export const formResponses = pgTable("form_responses", {
 // Add Zod schemas for the new tables
 export const insertEventFormTemplateSchema = createInsertSchema(eventFormTemplates, {
   name: z.string().min(1, "Template name is required"),
-description: z.string().optional(),
+  description: z.string().optional(),
   isPublished: z.boolean().default(false),
 });
 
 export const insertFormFieldSchema = createInsertSchema(formFields, {
-  label: z.string().min(1, "Field label is required"),
+  label: z.string().min(1, "Field labelis required"),
   type: z.enum(["dropdown", "paragraph", "input"]),
   required: z.boolean().default(false),
   order: z.number().int().min(0),
@@ -769,3 +769,16 @@ export const formResponsesRelations = relations(formResponses, ({ one }) => ({
     references: [teams.id],
   }),
 }));
+
+export const accountingCodes = pgTable('accounting_codes', {
+  id: serial('id').primaryKey(),
+  code: varchar('code', { length: 50 }).notNull(),
+  description: varchar('description', { length: 255 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export type SelectCoupon = typeof coupons.$inferSelect;
+export type InsertCoupon = typeof coupons.$inferInsert;
+export type SelectAccountingCode = typeof accountingCodes.$inferSelect;
+export type InsertAccountingCode = typeof accountingCodes.$inferInsert;
