@@ -119,8 +119,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
 
 type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
-type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
-type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player' | 'accounting-codes';
+type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
 
 interface RoleGroup {
@@ -129,20 +128,6 @@ interface RoleGroup {
   tournament_admin: any[];
   score_admin: any[];
   finance_admin: any[];
-}
-
-interface AccountingCodeModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (code: string, description: string) => Promise<void>;
-}
-
-interface AccountingCode {
-  id: number;
-  code: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 interface Complex {
@@ -334,7 +319,7 @@ function AdministratorsView() {
       return response.json();
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/administrators'] });
+      queryClient.invalidateQueries(['/api/admin/administrators']);
       toast({
         title: "Success",
         description: "Administrator updated successfully",
@@ -461,7 +446,7 @@ function AdministratorsView() {
                           ))}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="default" className="bg-green-50 text-green-700">
+                          <Badge variant="secondary" className="bg-green-50 text-green-700">
                             Active
                           </Badge>
                         </TableCell>
@@ -505,53 +490,8 @@ function AdministratorsView() {
 }
 
 function ReportsView() {
-  const { toast } = useToast();
   const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
-  const [isAddingAccountingCode, setIsAddingAccountingCode] = useState(false);
   const { isExporting, startExport } = useExportProcess();
-  const queryClient = useQueryClient();
-
-  // Add query to fetch accounting codes
-  const accountingCodesQuery = useQuery({
-    queryKey: ['/api/admin/accounting-codes'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/accounting-codes');
-      if (!response.ok) throw new Error('Failed to fetch accounting codes');
-      return response.json();
-    }
-  });
-
-  const handleSaveCode = async (code: string, description: string) => {
-    try {
-      const response = await fetch('/api/admin/accounting-codes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, description })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save accounting code');
-      }
-
-      await queryClient.invalidateQueries({ queryKey: ['/api/admin/accounting-codes'] });
-      toast({
-        title: "Success", 
-        description: "Accounting code added successfully",
-      });
-      setIsAddingAccountingCode(false);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save accounting code",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleEditCode = (code: any) => {
-    // TODO: Implement edit functionality
-    console.log("Edit code:", code);
-  };
 
   const renderReportContent = () => {
     switch (selectedReport) {
@@ -584,58 +524,7 @@ function ReportsView() {
             </Card>
           </div>
         );
-      case 'accounting-codes':
-        return (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Accounting Codes</h3>
-              <Button onClick={() => setIsAddingAccountingCode(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Code
-              </Button>
-            </div>
-            <AccountingCodeModal
-              isOpen={isAddingAccountingCode}
-              onClose={() => setIsAddingAccountingCode(false)}
-              onSave={handleSaveCode}
-            />
-            <Card>
-              <CardContent className="p-6">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Code</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {accountingCodesQuery.isLoading ? (
-                      <div className="flex items-center justify-center py-4">
-                        <Loader2 className="h-6 w-6 animate-spin" />
-                      </div>
-                    ) : (
-                      <>
-                        {accountingCodesQuery.data?.map((code: any) => (
-                          <TableRow key={code.id}>
-                            <TableCell>{code.code}</TableCell>
-                            <TableCell>{code.description}</TableCell>
-                            <TableCell>
-                              <Button variant="ghost" size="sm" onClick={() => handleEditCode(code)}>
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </>
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </div>
-        );
+      // ... other report types ...
       default:
         return null;
     }
@@ -664,15 +553,7 @@ function ReportsView() {
                 <FileText className="mr-2 h-4 w-4" />
                 Event Financial Reports
               </Button>
-              <Button
-                variant={selectedReport === 'accounting-codes' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setSelectedReport('accounting-codes')}
-                disabled={isExporting !== null}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Accounting Codes
-              </Button>
+              {/* ... other report type buttons ... */}
             </div>
           </CardContent>
         </Card>
@@ -995,7 +876,7 @@ function ComplexesView() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/complexes'] });
+      queryClient.invalidateQueries(['/api/admin/complexes']);
       toast({
         title: "Success",
         description: "Complex created successfully",
@@ -1118,7 +999,7 @@ function ComplexesView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update field",
+        description: error instanceof Error ? error.message: "Failed to update field",
         variant: "destructive",
       });
     }
@@ -2329,137 +2210,3 @@ const navigationItems = [
 ];
 
 export default AdminDashboard;
-
-// AccountingCodeModal Component
-function AccountingCodeModal({ isOpen, onClose, onSave }: { isOpen: boolean; onClose: () => void; onSave: () => void }) {
-  const [code, setCode] = useState('');
-  const [description, setDescription] = useState('');
-
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogHeader>
-        <DialogTitle>Add Accounting Code</DialogTitle>
-      </DialogHeader>
-      <DialogContent>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="code">Code</Label>
-            <Input id="code" value={code} onChange={e => setCode(e.target.value)} />
-          </div>
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} />
-          </div>
-        </div>
-      </DialogContent>
-      <DialogFooter>
-        
-      </DialogFooter>
-    </Dialog>
-  );
-}
-
-//CouponModal Component
-function CouponModal({ open, onOpenChange, eventId, couponToEdit }: { open: boolean; onOpenChange: (open: boolean) => void; eventId: string; couponToEdit: SelectCoupon | null }) {
-  const [code, setCode] = useState(couponToEdit?.code || '');
-  const [discountType, setDiscountType] = useState(couponToEdit?.discountType || 'percentage');
-  const [amount, setAmount] = useState(couponToEdit?.amount || 0);
-  const [expirationDate, setExpirationDate] = useState(couponToEdit?.expirationDate || '');
-  const [maxUses, setMaxUses] = useState(couponToEdit?.maxUses || null);
-  const [isActive, setIsActive] = useState(couponToEdit?.isActive || true);
-  const [description, setDescription] = useState(couponToEdit?.description || '');
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch(`/api/admin/coupons${couponToEdit ? `/${couponToEdit.id}` : ''}`, {
-        method: couponToEdit ? 'PATCH' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          code,
-          discountType,
-          amount,
-          expirationDate,
-          maxUses,
-          isActive,
-          description,
-          eventId: parseInt(eventId)
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save coupon');
-      }
-
-      const data = await response.json();
-      queryClient.invalidateQueries(['/api/admin/coupons', eventId]);
-      toast({
-        title: "Success",
-        description: "Coupon saved successfully",
-      });
-      onOpenChange(false);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to save coupon',
-        variant: 'destructive'
-      });
-    }
-  };
-
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogHeader>
-        <DialogTitle>{couponToEdit ? 'Edit Coupon' : 'Add Coupon'}</DialogTitle>
-      </DialogHeader>
-      <DialogContent>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="code">Code</Label>
-            <Input id="code" value={code} onChange={(e) => setCode(e.target.value)} />
-          </div>
-          <div>
-            <Label htmlFor="discountType">Discount Type</Label>
-            <Select value={discountType} onValueChange={setDiscountType}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select discount type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="percentage">Percentage</SelectItem>
-                <SelectItem value="amount">Amount</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="amount">Amount</Label>
-            <Input type="number" id="amount" value={amount} onChange={(e) => setAmount(parseInt(e.target.value, 10))} />
-          </div>
-          <div>
-            <Label htmlFor="expirationDate">Expiration Date</Label>
-            <Input type="date" id="expirationDate" value={expirationDate} onChange={(e) => setExpirationDate(e.target.value)} />
-          </div>
-          <div>
-            <Label htmlFor="maxUses">Max Uses</Label>
-            <Input type="number" id="maxUses" value={maxUses} onChange={(e) => setMaxUses(e.target.value ? parseInt(e.target.value, 10) : null)} />
-          </div>
-          <div>
-            <Label htmlFor="isActive">Is Active</Label>
-            <Switch id="isActive" checked={isActive} onCheckedChange={setIsActive} />
-          </div>
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
-          </div>
-        </div>
-      </DialogContent>
-      <DialogFooter>
-        <Button onClick={onOpenChange}>Cancel</Button>
-        <Button onClick={handleSubmit}>Save</Button>
-      </DialogFooter>
-    </Dialog>
-  );
-}
