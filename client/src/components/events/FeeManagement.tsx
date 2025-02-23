@@ -45,6 +45,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "@/hooks/use-location";
 
 const feeFormSchema = z.object({
+  id: z.number().optional(),
   name: z.string().min(1, "Fee name is required"),
   amount: z.string().min(1, "Amount is required").refine(
     (val) => !isNaN(Number(val)) && Number(val) > 0,
