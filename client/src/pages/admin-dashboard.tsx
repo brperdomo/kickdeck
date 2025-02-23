@@ -492,12 +492,84 @@ function AdministratorsView() {
 function ReportsView() {
   const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
   const [accountingCodes, setAccountingCodes] = useState<any[]>([]);
+  const [selectedCode, setSelectedCode] = useState<any>(null);
   const [isAddingAccountingCode, setIsAddingAccountingCode] = useState(false);
   const { isExporting, startExport } = useExportProcess();
+  const { toast } = useToast();
+
+  const handleSaveCode = async (data: { code: string; description: string }) => {
+    try {
+      const response = await fetch('/api/admin/accounting-codes', {
+        method: selectedCode ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...data,
+          id: selectedCode?.id
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to save accounting code');
+
+      // Refresh accounting codes
+      const updatedCodes = await fetch('/api/admin/accounting-codes').then(res => res.json());
+      setAccountingCodes(updatedCodes);
+
+      toast({
+        title: "Success",
+        description: `Accounting code ${selectedCode ? 'updated' : 'created'} successfully`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save accounting code",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteCode = async () => {
+    if (!selectedCode) return;
+
+    try {
+      const response = await fetch(`/api/admin/accounting-codes/${selectedCode.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) throw new Error('Failed to delete accounting code');
+
+      // Refresh accounting codes
+      const updatedCodes = await fetch('/api/admin/accounting-codes').then(res => res.json());
+      setAccountingCodes(updatedCodes);
+
+      toast({
+        title: "Success",
+        description: "Accounting code deleted successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete accounting code",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleEditCode = (code: any) => {
-    // TODO: Implement edit functionality
+    setSelectedCode(code);
+    setIsAddingAccountingCode(true);
   };
+
+  const accountingCodesQuery = useQuery({
+    queryKey: ['/api/admin/accounting-codes'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/accounting-codes');
+      if (!response.ok) throw new Error('Failed to fetch accounting codes');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setAccountingCodes(data);
+    }
+  });
 
   const renderReportContent = () => {
     switch (selectedReport) {
@@ -573,6 +645,14 @@ function ReportsView() {
     }
   };
 
+  if (accountingCodesQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="flex justify-between items-center mb-6">
@@ -618,6 +698,13 @@ function ReportsView() {
           </Card>
         </div>
       </div>
+      <AccountingCodeModal
+        open={isAddingAccountingCode}
+        onOpenChange={setIsAddingAccountingCode}
+        onSave={handleSaveCode}
+        onDelete={handleDeleteCode}
+        code={selectedCode}
+      />
     </>
   );
 }
@@ -906,7 +993,7 @@ function ComplexesView() {
   });
 
   const fieldsQuery = useQuery({
-    queryKey: ['/api/admin/fields', viewingComplexId],
+    queryKey: ['/api/admin/fields, viewingComplexId],
     enabled: !!viewingComplexId,
     queryFn: async () => {
       if (!viewingComplexId) return [];
@@ -1902,8 +1989,7 @@ function AdminDashboard() {
                     <h2 className="text-2xl font-bold">Welcome back, {user?.firstName}!</h2>
                     <p className="text-muted-foreground">
                       Manage your organization's activities and settings from this dashboard.
-                    </p>
-                  </div>
+                    </p>                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -2261,3 +2347,149 @@ const navigationItems = [
 ];
 
 export default AdminDashboard;
+
+function AccountingCodeModal({ open, onOpenChange, onSave, onDelete, code }: { open: boolean; onOpenChange: (value: boolean) => void; onSave: (data: { code: string; description: string }) => Promise<void>; onDelete: () => Promise<void>; code: any }) {
+  const [formValues, setFormValues] = useState({ code: code?.code || '', description: code?.description || '' });
+  const { toast } = useToast();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormValues({ ...formValues, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = async () => {
+    try {
+      await onSave(formValues);
+      onOpenChange(false);
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to save code", variant: "destructive" });
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this accounting code?')) return;
+    try {
+      await onDelete();
+      onOpenChange(false);
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to delete code", variant: "destructive" });
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogHeader>
+        <DialogTitle>{code ? "Edit Accounting Code" : "Add Accounting Code"}</DialogTitle>
+      </DialogHeader>
+      <DialogContent>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="code">Code</Label>
+            <Input id="code" name="code" type="text" value={formValues.code} onChange={handleInputChange} />
+          </div>
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" name="description" value={formValues.description} onChange={handleInputChange} />
+          </div>
+        </div>
+      </DialogContent>
+      <DialogFooter>
+        <Button onClick={onOpenChange}>Cancel</Button>
+        {code && <Button variant="destructive" onClick={handleDelete}>Delete</Button>}
+        <Button type="submit" onClick={handleSave}>Save</Button>
+      </DialogFooter>
+    </Dialog>
+  );
+}
+
+
+function CouponModal({ open, onOpenChange, eventId, couponToEdit }: { open: boolean; onOpenChange: (value: boolean) => void; eventId: string; couponToEdit: SelectCoupon | null }) {
+  const [formValues, setFormValues] = useState({
+    code: couponToEdit?.code || '',
+    discountType: couponToEdit?.discountType || 'percentage',
+    amount: couponToEdit?.amount || 0,
+    expirationDate: couponToEdit?.expirationDate || '',
+    maxUses: couponToEdit?.maxUses || null,
+    isActive: couponToEdit?.isActive || true,
+    description: couponToEdit?.description || '',
+  });
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormValues({ ...formValues, [name]: type === 'checkbox' ? checked : value });
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`/api/admin/coupons${couponToEdit ? `/${couponToEdit.id}` : ''}`, {
+        method: couponToEdit ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formValues, eventId: parseInt(eventId) }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save coupon');
+      }
+
+      queryClient.invalidateQueries(['/api/admin/coupons', eventId]);
+      toast({ title: 'Success', description: `Coupon ${couponToEdit ? 'updated' : 'created'} successfully` });
+      onOpenChange(false);
+    } catch (error) {
+      toast({ title: 'Error', description: error instanceof Error ? error.message : 'Failed to save coupon', variant: 'destructive' });
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogHeader>
+        <DialogTitle>{couponToEdit ? 'Edit Coupon' : 'Add Coupon'}</DialogTitle>
+      </DialogHeader>
+      <DialogContent>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="code">Code</Label>
+            <Input id="code" name="code" type="text" value={formValues.code} onChange={handleInputChange} />
+          </div>
+          <div>
+            <Label htmlFor="discountType">Discount Type</Label>
+            <Select value={formValues.discountType} onValueChange={handleInputChange} name="discountType">
+              <SelectTrigger>
+                <SelectValue placeholder="Select discount type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="percentage">Percentage</SelectItem>
+                <SelectItem value="amount">Amount</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="amount">Amount</Label>
+            <Input id="amount" name="amount" type="number" value={formValues.amount} onChange={handleInputChange} />
+          </div>
+          <div>
+            <Label htmlFor="expirationDate">Expiration Date</Label>
+            <Input id="expirationDate" name="expirationDate" type="date" value={formValues.expirationDate} onChange={handleInputChange} />
+          </div>
+          <div>
+            <Label htmlFor="maxUses">Max Uses</Label>
+            <Input id="maxUses" name="maxUses" type="number" value={formValues.maxUses} onChange={handleInputChange} />
+          </div>
+          <div>
+            <Label htmlFor="isActive">Is Active</Label>
+            <Switch id="isActive" name="isActive" checked={formValues.isActive} onChange={handleInputChange} />
+          </div>
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" name="description" value={formValues.description} onChange={handleInputChange} />
+          </div>
+        </div>
+      </DialogContent>
+      <DialogFooter>
+        <Button onClick={onOpenChange}>Cancel</Button>
+        <Button type="submit" onClick={handleSave}>Save</Button>
+      </DialogFooter>
+    </Dialog>
+  );
+}
