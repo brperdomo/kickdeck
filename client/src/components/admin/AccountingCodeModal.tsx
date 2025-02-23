@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,6 @@ export function AccountingCodeModal({ isOpen, onClose, onSave }: AccountingCodeM
     onSave(code, description);
     setCode("");
     setDescription("");
-    onClose();
   };
 
   return (
@@ -51,11 +49,17 @@ export function AccountingCodeModal({ isOpen, onClose, onSave }: AccountingCodeM
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+          <DialogFooter className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+            >
               Cancel
             </Button>
-            <Button type="submit">Save</Button>
+            <Button type="submit" variant="default">
+              Save Changes
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
