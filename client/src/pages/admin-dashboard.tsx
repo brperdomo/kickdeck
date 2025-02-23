@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation } from "wouter";
-import { Link2, X, Ticket } from "lucide-react";
+import { Link2, X, Ticket, Plus } from "lucide-react";
+import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -30,7 +31,6 @@ import {
   Loader2,
   CreditCard,
   Search,
-  Plus,
   ClipboardList,
   MoreHorizontal,
   Building2,
@@ -121,6 +121,22 @@ type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
+
+function EventsView() {
+  const navigate = useLocation()[1];
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Events</h2>
+        <Button onClick={() => navigate("/admin/events/create")}>
+          <Plus className="mr-2 h-4 w-4" />
+          Create Event
+        </Button>
+      </div>
+      <EventsTable />
+    </div>
+  );
+}
 
 interface RoleGroup {
   [key: string]: any[];
@@ -1498,264 +1514,7 @@ function ComplexesView() {
   );
 }
 
-function EventsView() {
-  const [, navigate] = useLocation();
-  const { user } = useUser();
-  const { toast } = useToast();
-  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
-  const [selectedEvents, setSelectedEvents] = useState<number[]>([]); // Add state for selected events
-  const eventsQuery = useQuery({
-    queryKey: ['/api/admin/events'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/events');
-      if (!response.ok) throw new Error('Failed to fetch events');
-      return response.json();
-    }
-  });
-
-  useEffect(() => {
-    if (eventsQuery.data) {
-      setFilteredEvents(eventsQuery.data);
-    }
-  }, [eventsQuery.data]);
-
-  if (eventsQuery.isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  const adminName = user ? `${user.firstName}'s` : 'All';
-
-  return (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">{adminName} Events</h2>
-        <Button onClick={() => navigate("/admin/events/create")}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Event
-        </Button>
-      </div>
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                {selectedEvents.length > 0 && (
-                  <Button
-                    variant="destructive"
-                    onClick={async () => {
-                      try {
-                        const response = await fetch('/api/admin/events/bulk', {
-                          method: 'DELETE',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ eventIds: selectedEvents }),
-                        });
-
-                        if (!response.ok) throw new Error('Failed to delete events');
-
-                        setSelectedEvents([]);
-                        eventsQuery.refetch();
-                        toast({
-                          title: "Success",
-                          description: `${selectedEvents.length} events deleted successfully`,
-                        });
-                      } catch (error) {
-                        toast({
-                          title: "Error",
-                          description: "Failed to delete events",
-                          variant: "destructive",
-                        });
-                      }
-                    }}
-                  >
-                    <Trash className="mr-2 h-4 w-4" />
-                    Delete Selected ({selectedEvents.length})
-                  </Button>
-                )}
-                <Input
-                  placeholder="Search events..."
-                  className="w-[300px]"
-                />
-                <Select defaultValue="all" onValueChange={(value) => {
-                  if (!eventsQuery.data) return;
-                  const now = new Date();
-                  const events = eventsQuery.data.filter((event: any) => {
-                    if (value === 'all') return true;
-
-                    const start = new Date(event.startDate);
-                    const end = new Date(event.endDate);
-                    end.setHours(23, 59, 59, 999);
-
-                    if (value === 'past' && now > end) return true;
-                    if (value === 'active' && now >= start && now <= end) return true;
-                    if (value === 'upcoming' && now < start) return true;
-
-                    return false;
-                  });
-                  setFilteredEvents(events);
-                }}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Events</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="upcoming">Upcoming</SelectItem>
-                    <SelectItem value="past">Past</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>
-                    <input type="checkbox" onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedEvents(filteredEvents.map((event: any) => event.id));
-                      } else {
-                        setSelectedEvents([]);
-                      }
-                    }} />
-                  </TableHead>
-                  <TableHead>Event Name</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredEvents.map((event: any) => (
-                  <TableRow key={event.id}>
-                    <TableCell>
-                      <input
-                        type="checkbox"
-                        checked={selectedEvents.includes(event.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedEvents([...selectedEvents, event.id]);
-                          } else {
-                            setSelectedEvents(selectedEvents.filter((id) => id !== event.id));
-                          }
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium">{event.name}</TableCell>
-                    <TableCell>{event.startDate} - {event.endDate}</TableCell>
-                    <TableCell>
-                      {(() => {
-                        const now = new Date();
-                        const start = new Date(event.startDate);
-                        const end = new Date(event.endDate);
-                        end.setHours(23, 59, 59, 999);
-
-                        let status = "Upcoming";
-                        let colorClass = "bg-yellow-50 text-yellow-700";
-
-                        if (now > end) {
-                          status = "Past";
-                          colorClass = "bg-red-50 text-red-700";
-                        } else if (now >= start && now <= end) {
-                          status = "Active";
-                          colorClass = "bg-green-50 text-green-700";
-                        }
-
-                        return (
-                          <Badge variant="outline" className={colorClass}>
-                            {status}
-                          </Badge>
-                        );
-                      })()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}`)}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/coupons`)}>
-                            <Ticket className="mr-2 h-4 w-4" />
-                            Create Coupons
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/application-form`)}>
-                            <FormInput className="mr-2 h-4 w-4" />
-                            Registration Form
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => {
-                              const registrationUrl = `${window.location.origin}/register/event/${event.id}`;
-                              navigator.clipboard.writeText(registrationUrl);
-                              toast({
-                                title: "Registration Link Generated",
-                                description: (
-                                  <div className="mt-2 p-2 bg-muted rounded text-sm font-mono break-all">
-                                    {registrationUrl}
-                                  </div>
-                                ),
-                                duration: 5000,
-                              });
-                            }}
-                            className="text-blue-600 hover:text-blue-700"
-                          >
-                            <Link2 className="mr-2 h-4 w-4" />
-                            Generate Registration Link
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem 
-                            className="text-red-600"
-                            onClick={async () => {
-                              try {
-                                const response = await fetch(`/api/admin/events/${event.id}`, {
-                                  method: 'DELETE',
-                                });
-
-                                if (!response.ok) throw new Error('Failed to delete event');
-
-                                eventsQuery.refetch();
-                                toast({
-                                  title: "Success",
-                                  description: "Event deleted successfully",
-                                });
-                              } catch (error) {
-                                toast({
-                                  title: "Error",
-                                  description: "Failed to delete event",
-                                  variant: "destructive",
-                                });
-                              }
-                            }}
-                          >
-                            <Trash className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-    </>
-  );
-}
+// Using the simpler EventsView implementation from line 126
 
 function HouseholdsView() {
   return (

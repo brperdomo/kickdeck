@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign } from "lucide-react";
+import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash } from "lucide-react";
 import { useLocation } from "wouter";
 import {
   Table,
@@ -228,9 +228,9 @@ export function EventsTable() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Event Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/edit`)}>
+                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}`)}>
                           <Edit className="mr-2 h-4 w-4" />
-                          Edit Event
+                          Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/fees`)}>
                           <DollarSign className="mr-2 h-4 w-4" />
@@ -238,27 +238,19 @@ export function EventsTable() {
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/application-form`)}>
                           <FormInput className="mr-2 h-4 w-4" />
-                          Application Form
+                          Registration Form
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/application-questions`)}>
-                          <FileQuestion className="mr-2 h-4 w-4" />
-                          Application Questions
+                        <DropdownMenuItem onClick={() => window.navigator.clipboard.writeText(`${window.location.origin}/register/event/${event.id}`)}>
+                          <Link2 className="mr-2 h-4 w-4" />
+                          Generate Registration Link
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/player-questions`)}>
-                          <User className="mr-2 h-4 w-4" />
-                          Player Questions
+                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/coupons`)}>
+                          <Ticket className="mr-2 h-4 w-4" />
+                          Create Coupons
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/discounts`)}>
-                          <TagsIcon className="mr-2 h-4 w-4" />
-                          Discounts
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/game-cards`)}>
-                          <Printer className="mr-2 h-4 w-4" />
-                          Print Game Cards
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/red-cards`)}>
-                          <AlertTriangle className="mr-2 h-4 w-4" />
-                          Red Card Report
+                        <DropdownMenuItem className="text-red-600">
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
