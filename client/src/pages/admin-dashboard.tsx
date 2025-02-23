@@ -494,9 +494,33 @@ function ReportsView() {
   const [accountingCodes, setAccountingCodes] = useState<any[]>([]);
   const [isAddingAccountingCode, setIsAddingAccountingCode] = useState(false);
   const { isExporting, startExport } = useExportProcess();
+  const [newCode, setNewCode] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const queryClient = useQueryClient();
 
   const handleEditCode = (code: any) => {
     // TODO: Implement edit functionality
+  };
+
+  const handleSaveCode = () => {
+    // Add the new accounting code to the database
+    fetch('/api/admin/accounting-codes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: newCode, description: newDescription })
+    })
+      .then(response => response.json())
+      .then(data => {
+        setAccountingCodes([...accountingCodes, data]);
+        setNewCode('');
+        setNewDescription('');
+        setIsAddingAccountingCode(false);
+        queryClient.invalidateQueries(['/api/admin/accounting-codes'])
+      })
+      .catch(error => {
+        console.error('Error saving accounting code:', error);
+        // Handle the error appropriately (e.g., display an error message)
+      });
   };
 
   const renderReportContent = () => {
@@ -540,6 +564,11 @@ function ReportsView() {
                 Add Code
               </Button>
             </div>
+            <AccountingCodeModal
+              isOpen={isAddingAccountingCode}
+              onClose={() => setIsAddingAccountingCode(false)}
+              onSave={handleSaveCode}
+            />
             <Card>
               <CardContent className="p-6">
                 <Table>
@@ -1050,7 +1079,7 @@ function ComplexesView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message: "Failed to update field",
+        description: error instanceof Error ? error.message : "Failed to update field",
         variant: "destructive",
       });
     }
@@ -2261,3 +2290,138 @@ const navigationItems = [
 ];
 
 export default AdminDashboard;
+
+// AccountingCodeModal Component
+function AccountingCodeModal({ isOpen, onClose, onSave }: { isOpen: boolean; onClose: () => void; onSave: () => void }) {
+  const [code, setCode] = useState('');
+  const [description, setDescription] = useState('');
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogHeader>
+        <DialogTitle>Add Accounting Code</DialogTitle>
+      </DialogHeader>
+      <DialogContent>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="code">Code</Label>
+            <Input id="code" value={code} onChange={e => setCode(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} />
+          </div>
+        </div>
+      </DialogContent>
+      <DialogFooter>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={() => { onSave(); setCode(''); setDescription(''); }}>Save</Button>
+      </DialogFooter>
+    </Dialog>
+  );
+}
+
+//CouponModal Component
+function CouponModal({ open, onOpenChange, eventId, couponToEdit }: { open: boolean; onOpenChange: (open: boolean) => void; eventId: string; couponToEdit: SelectCoupon | null }) {
+  const [code, setCode] = useState(couponToEdit?.code || '');
+  const [discountType, setDiscountType] = useState(couponToEdit?.discountType || 'percentage');
+  const [amount, setAmount] = useState(couponToEdit?.amount || 0);
+  const [expirationDate, setExpirationDate] = useState(couponToEdit?.expirationDate || '');
+  const [maxUses, setMaxUses] = useState(couponToEdit?.maxUses || null);
+  const [isActive, setIsActive] = useState(couponToEdit?.isActive || true);
+  const [description, setDescription] = useState(couponToEdit?.description || '');
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`/api/admin/coupons${couponToEdit ? `/${couponToEdit.id}` : ''}`, {
+        method: couponToEdit ? 'PATCH' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code,
+          discountType,
+          amount,
+          expirationDate,
+          maxUses,
+          isActive,
+          description,
+          eventId: parseInt(eventId)
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save coupon');
+      }
+
+      const data = await response.json();
+      queryClient.invalidateQueries(['/api/admin/coupons', eventId]);
+      toast({
+        title: "Success",
+        description: "Coupon saved successfully",
+      });
+      onOpenChange(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to save coupon',
+        variant: 'destructive'
+      });
+    }
+  };
+
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogHeader>
+        <DialogTitle>{couponToEdit ? 'Edit Coupon' : 'Add Coupon'}</DialogTitle>
+      </DialogHeader>
+      <DialogContent>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="code">Code</Label>
+            <Input id="code" value={code} onChange={(e) => setCode(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="discountType">Discount Type</Label>
+            <Select value={discountType} onValueChange={setDiscountType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select discount type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="percentage">Percentage</SelectItem>
+                <SelectItem value="amount">Amount</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="amount">Amount</Label>
+            <Input type="number" id="amount" value={amount} onChange={(e) => setAmount(parseInt(e.target.value, 10))} />
+          </div>
+          <div>
+            <Label htmlFor="expirationDate">Expiration Date</Label>
+            <Input type="date" id="expirationDate" value={expirationDate} onChange={(e) => setExpirationDate(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="maxUses">Max Uses</Label>
+            <Input type="number" id="maxUses" value={maxUses} onChange={(e) => setMaxUses(e.target.value ? parseInt(e.target.value, 10) : null)} />
+          </div>
+          <div>
+            <Label htmlFor="isActive">Is Active</Label>
+            <Switch id="isActive" checked={isActive} onCheckedChange={setIsActive} />
+          </div>
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
+          </div>
+        </div>
+      </DialogContent>
+      <DialogFooter>
+        <Button onClick={onOpenChange}>Cancel</Button>
+        <Button onClick={handleSubmit}>Save</Button>
+      </DialogFooter>
+    </Dialog>
+  );
+}
