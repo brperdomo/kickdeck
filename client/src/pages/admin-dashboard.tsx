@@ -533,7 +533,7 @@ function ReportsView() {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Reports</h2>
+        <h2 className="text-2xl font-bold">Reports and Financials</h2>
       </div>
 
       <div className="grid grid-cols-4 gap-6">
@@ -2201,7 +2201,7 @@ const navigationItems = [
   { icon: Building2, label: "Field Complexes", value: "complexes" as const },
   { icon: Home, label: "MatchPro Client", value: "households" as const },
   { icon: CalendarDays, label: "Scheduling", value: "scheduling" as const },
-  { icon: FileText, label: "Reports", value: "reports" as const },
+  { icon: FileText, label: "Reports and Financials", value: "reports" as const },
   { icon: MessageSquare, label: "Chat", value: "chat" as const },
   { icon: ImageIcon, label: "File Manager", value: "files" as const },
   { icon: Ticket, label: "Coupons", value: "coupons" as const },
