@@ -67,17 +67,13 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  const { eventId } = useParams();
+  const params = useParams();
+  const eventId = params?.eventId;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
-  // If eventId is not available, show an error
-  if (!eventId) {
-    return <div>Error: Event ID is missing</div>;
-  }
 
   const form = useForm<FeeFormValues>({
     resolver: zodResolver(feeFormSchema),
@@ -112,6 +108,10 @@ export function FeeManagement() {
 
   const createFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues) => {
+      if (!eventId) {
+        throw new Error("Event ID is required");
+      }
+
       const response = await fetch(`/api/admin/events/${eventId}/fees`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -130,7 +130,7 @@ export function FeeManagement() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/fees`] });
+      queryClient.invalidateQueries([`/api/admin/events/${eventId}/fees`]);
       setIsDialogOpen(false);
       form.reset();
       toast({
@@ -183,6 +183,7 @@ export function FeeManagement() {
     createFeeMutation.mutate(values);
   };
 
+  // Show loading state
   if (feesQuery.isLoading || eventQuery.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -191,8 +192,23 @@ export function FeeManagement() {
     );
   }
 
-  if (feesQuery.error || eventQuery.error) {
-    return <div>Error loading data</div>;
+  // Show error state
+  if (feesQuery.error || eventQuery.error || !eventId) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-red-500">Error</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>Unable to load fee management. Please make sure you have selected a valid event.</p>
+            <Button className="mt-4" onClick={() => window.history.back()}>
+              Go Back
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   const sortedFees = sortData(feesQuery.data || []);
