@@ -8,16 +8,16 @@ import { Textarea } from "@/components/ui/textarea";
 interface AccountingCodeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (code: string, description: string) => void;
+  onSave: (code: string, description: string) => Promise<void>;
 }
 
 export function AccountingCodeModal({ isOpen, onClose, onSave }: AccountingCodeModalProps) {
   const [code, setCode] = useState("");
   const [description, setDescription] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(code, description);
+    await onSave(code, description);
     setCode("");
     setDescription("");
   };
@@ -28,38 +28,38 @@ export function AccountingCodeModal({ isOpen, onClose, onSave }: AccountingCodeM
         <DialogHeader>
           <DialogTitle>Add Accounting Code</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
+            <div className="space-y-2">
               <Label htmlFor="code">Code</Label>
               <Input
                 id="code"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
+                placeholder="Enter code"
                 required
               />
             </div>
-            <div className="grid gap-2">
+            <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter description"
                 required
               />
             </div>
           </div>
-          <DialogFooter className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" variant="default">
-              Save Changes
-            </Button>
+          <DialogFooter>
+            <div className="flex justify-end gap-2 w-full">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="default">
+                Save
+              </Button>
+            </div>
           </DialogFooter>
         </form>
       </DialogContent>
