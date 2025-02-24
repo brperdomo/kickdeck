@@ -73,7 +73,7 @@ export default function UserDashboard() {
           <div className="p-4 border-t">
             <Button
               variant="outline"
-              className="w-full justify-start gap-3 p-4 text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="w-full justify-start gap-3 text-red-600 hover:text-red-700 hover:bg-red-50"
               onClick={handleLogout}
             >
               <LogOut className="h-6 w-6" />
@@ -136,11 +136,11 @@ export default function UserDashboard() {
       {isMobile && <MobileMenu />}
 
       {/* Main Content */}
-      <main className={`p-4 ${!isMobile ? 'ml-64' : ''}`}>
-        <div className="max-w-2xl mx-auto space-y-6">
+      <main className={`${isMobile ? 'pt-16' : 'ml-64'} p-4`}>
+        <div className="max-w-2xl mx-auto space-y-4">
           {/* Welcome Card */}
           <Card className="border-none shadow-sm">
-            <CardHeader className="pb-4">
+            <CardHeader className="pb-2">
               <CardTitle className="text-xl font-semibold">
                 Welcome, {user?.firstName}!
               </CardTitle>
@@ -155,24 +155,20 @@ export default function UserDashboard() {
           {/* Quick Actions */}
           <div className="grid grid-cols-2 gap-4">
             <Link href="/household">
-              <a>
-                <Card className="border-none shadow-sm hover:shadow transition-shadow">
-                  <CardContent className="p-4 text-center">
-                    <Home className="h-6 w-6 mx-auto mb-2 text-primary" />
-                    <p className="font-medium">Household</p>
-                  </Card>
+              <Card className="border-none shadow-sm hover:shadow transition-shadow cursor-pointer">
+                <CardContent className="p-4 text-center">
+                  <Home className="h-6 w-6 mx-auto mb-2 text-primary" />
+                  <p className="font-medium">Household</p>
                 </CardContent>
-              </a>
+              </Card>
             </Link>
             <Link href="/account">
-              <a>
-                <Card className="border-none shadow-sm hover:shadow transition-shadow">
-                  <CardContent className="p-4 text-center">
-                    <User className="h-6 w-6 mx-auto mb-2 text-primary" />
-                    <p className="font-medium">Account</p>
-                  </CardContent>
-                </Card>
-              </a>
+              <Card className="border-none shadow-sm hover:shadow transition-shadow cursor-pointer">
+                <CardContent className="p-4 text-center">
+                  <User className="h-6 w-6 mx-auto mb-2 text-primary" />
+                  <p className="font-medium">Account</p>
+                </CardContent>
+              </Card>
             </Link>
           </div>
         </div>
