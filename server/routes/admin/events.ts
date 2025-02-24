@@ -44,13 +44,14 @@ router.patch('/:id', async (req, res) => {
       if (selectedAgeGroupIds && selectedAgeGroupIds.length > 0) {
         // First delete existing age group associations
         await tx.delete(eventAgeGroups)
-          .where(eq(eventAgeGroups.eventId, parseInt(id)));
+          .where(eq(eventAgeGroups.eventId, id.toString()));
 
         // Then insert new age group associations
         const ageGroupValues = selectedAgeGroupIds.map(ageGroupId => ({
-          eventId: parseInt(id),
-          ageGroupSettingsId: parseInt(ageGroupId),
-          seasonalScopeId: parseInt(seasonalScopeId),
+          event_id: id.toString(),
+          age_group_settings_id: parseInt(ageGroupId),
+          seasonal_scope_id: parseInt(seasonalScopeId),
+          created_at: new Date().toISOString()
         }));
 
         await tx.insert(eventAgeGroups).values(ageGroupValues);
