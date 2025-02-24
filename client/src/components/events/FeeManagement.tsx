@@ -358,6 +358,7 @@ export function FeeManagement() {
             </Table>
           </div>
         </CardContent>
+      </CardHeader>
       </Card>
     </div>
   );
