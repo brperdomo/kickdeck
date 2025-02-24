@@ -51,10 +51,10 @@ import {
   TAB_ORDER,
   USA_TIMEZONES,
 } from "@/components/forms/event-form-types";
-import { 
+import {
   createEventSchema,
   ageGroupSchema,
-  scoringRuleSchema 
+  scoringRuleSchema
 } from "@/lib/validations/event";
 import { z } from "zod";
 
@@ -132,6 +132,13 @@ export default function EditEvent() {
         setSecondaryColor(data.branding.secondaryColor || '#ffffff');
         if (data.branding.logoUrl) {
           setPreviewUrl(data.branding.logoUrl);
+        }
+      }
+      // Set seasonal scope and age group selections
+      if (data.seasonalScope) {
+        setSelectedScopeId(data.seasonalScope.id);
+        if (data.selectedAgeGroups) {
+          setSelectedAgeGroupIds(data.selectedAgeGroups.map((group: any) => group.id));
         }
       }
 
@@ -226,6 +233,8 @@ export default function EditEvent() {
             primaryColor,
             secondaryColor,
           },
+          seasonalScopeId: selectedScopeId,
+          selectedAgeGroupIds,
         })
       });
 
@@ -857,8 +866,9 @@ export default function EditEvent() {
                           <Select
                             value={selectedScopeId?.toString() || ""}
                             onValueChange={(value) => {
-                              setSelectedScopeId(parseInt(value));
-                              setSelectedAgeGroupIds([]);
+                              const scopeId = parseInt(value);
+                              setSelectedScopeId(scopeId);
+                              setSelectedAgeGroupIds([]); // Reset selections when scope changes
                             }}
                           >
                             <SelectTrigger className="w-full">
