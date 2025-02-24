@@ -49,8 +49,8 @@ router.patch('/:id', async (req, res) => {
         // Then insert new age group associations
         const ageGroupValues = selectedAgeGroupIds.map(ageGroupId => ({
           eventId: parseInt(id),
-          ageGroupSettingsId: ageGroupId,
-          seasonalScopeId: seasonalScopeId,
+          ageGroupSettingsId: parseInt(ageGroupId),
+          seasonalScopeId: parseInt(seasonalScopeId),
         }));
 
         await tx.insert(eventAgeGroups).values(ageGroupValues);

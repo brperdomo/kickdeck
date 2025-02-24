@@ -103,7 +103,6 @@ export default function EditEvent() {
   const [selectedAgeGroupIds, setSelectedAgeGroupIds] = useState<number[]>([]);
 
 
-
   const eventQuery = useQuery({
     queryKey: ['event', id],
     queryFn: async () => {
@@ -224,7 +223,7 @@ export default function EditEvent() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...data,
+          ...form.getValues(),
           complexes: selectedComplexes,
           fieldSizes: eventFieldSizes,
           ageGroups,
@@ -241,7 +240,7 @@ export default function EditEvent() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to update event');
+        throw new Error(error.error || 'Failed to update event');
       }
 
       return response.json();
@@ -254,6 +253,7 @@ export default function EditEvent() {
       navigate("/admin");
     },
     onError: (error: Error) => {
+      console.error('Update error:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to update event",
