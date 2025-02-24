@@ -10,13 +10,13 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
+  DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 export default function UserDashboard() {
   const { user, logout } = useUser();
   const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const handleLogout = () => {
@@ -38,12 +38,23 @@ export default function UserDashboard() {
     </Link>
   );
 
-  const MobileMenu = () => (
-    <Drawer open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+  const MobileNavigation = () => (
+    <Drawer>
+      <DrawerTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
+      </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="border-b">
           <DrawerTitle className="text-center">
-            <h2 className="text-xl font-semibold">Menu</h2>
+            <div className="flex items-center justify-center gap-2">
+              <h2 className="text-xl font-semibold">Menu</h2>
+            </div>
           </DrawerTitle>
         </DrawerHeader>
         <div className="px-2 py-4">
@@ -93,14 +104,7 @@ export default function UserDashboard() {
       {/* Mobile Header */}
       {isMobile && (
         <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b px-4 py-3 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setIsMobileMenuOpen(true)}
-          >
-            <Menu className="h-6 w-6" />
-          </Button>
+          <MobileNavigation />
           <h1 className="text-lg font-semibold text-primary">MatchPro</h1>
           <div className="w-10" /> {/* Spacer for symmetry */}
         </header>
@@ -134,9 +138,6 @@ export default function UserDashboard() {
           </div>
         </div>
       )}
-
-      {/* Mobile Menu */}
-      {isMobile && <MobileMenu />}
 
       {/* Main Content */}
       <main className={`${isMobile ? 'pt-16' : 'ml-64'} p-4 md:p-6`}>
