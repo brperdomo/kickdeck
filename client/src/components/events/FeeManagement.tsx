@@ -181,16 +181,16 @@ export function FeeManagement() {
   }
 
   return (
-    <div className="container mx-auto py-6 max-w-4xl">
-      <div className="flex justify-between items-center mb-6">
+    <div className="container mx-auto py-8 max-w-4xl">
+      <div className="flex justify-between items-center mb-8">
         <Button variant="outline" onClick={() => window.history.back()}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Dashboard
         </Button>
       </div>
-      <Card>
-        <CardContent>
-          <div className="flex justify-between items-center">
+      <Card className="shadow-lg">
+        <CardContent className="p-6">
+          <div className="flex justify-between items-center mb-6">
             <div className="space-y-2">
               <CardTitle>Event Fees</CardTitle>
               <CardDescription>
@@ -308,12 +308,12 @@ export function FeeManagement() {
             </Dialog>
           </div>
 
-          <div className="rounded-md border">
+          <div className="rounded-md border mt-6">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Amount</TableHead>
+                <TableRow className="hover:bg-muted/50">
+                  <TableHead className="py-4">Name</TableHead>
+                  <TableHead className="py-4">Amount</TableHead>
                   <TableHead>Begin Date</TableHead>
                   <TableHead>End Date</TableHead>
                   <TableHead>Apply to All</TableHead>
