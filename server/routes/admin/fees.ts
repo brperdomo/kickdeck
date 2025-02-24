@@ -61,6 +61,8 @@ router.patch("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
       .update(eventFees)
       .set({
         ...validatedData,
+        beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
+        endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
         updatedAt: new Date(),
       })
       .where(eq(eventFees.id, parseInt(feeId)))
