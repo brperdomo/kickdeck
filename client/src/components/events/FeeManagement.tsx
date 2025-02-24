@@ -202,7 +202,6 @@ export function FeeManagement() {
                 <Button>Add New Fee</Button>
               </DialogTrigger>
               <DialogContent>
-          
                 <DialogHeader>
                   <DialogTitle>
                     {feeToEdit ? "Update Fee" : "Create New Fee"}
@@ -358,6 +357,7 @@ export function FeeManagement() {
             </Table>
           </div>
         </CardContent>
+        </CardHeader>
       </Card>
     </div>
   );
