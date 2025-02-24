@@ -701,7 +701,7 @@ export const coupons = pgTable("coupons", {
   amount: integer("amount").notNull(),
   expirationDate: timestamp("expiration_date"),
   description: text("description"),
-  eventId: bigint("event_id", { mode: "number").references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).references(() => events.id),
   maxUses: integer("max_uses"),
   usageCount: integer("usage_count").notNull().default(0),
   isActive: boolean("is_active").notNull().default(true),
