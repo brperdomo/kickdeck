@@ -637,7 +637,6 @@ export const eventAgeGroupFees = pgTable("event_age_group_fees", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// Add relations
 export const eventFeesRelations = relations(eventFees, ({ one, many }) => ({
   event: one(events, {
     fields: [eventFees.eventId],
@@ -657,7 +656,6 @@ export const eventAgeGroupFeesRelations = relations(eventAgeGroupFees, ({ one })
   }),
 }));
 
-// Add validation schemas
 export const insertEventFeeSchema = createInsertSchema(eventFees, {
   name: z.string().min(1, "Fee name is required"),
   amount: z.number().int().positive("Amount must be positive"),
@@ -671,7 +669,6 @@ export const insertEventAgeGroupFeeSchema = createInsertSchema(eventAgeGroupFees
 export const selectEventFeeSchema = createSelectSchema(eventFees);
 export const selectEventAgeGroupFeeSchema = createSelectSchema(eventAgeGroupFees);
 
-// Add types
 export type InsertEventFee = typeof eventFees.$inferInsert;
 export type SelectEventFee = typeof eventFees.$inferSelect;
 export type InsertEventAgeGroupFee = typeof eventAgeGroupFees.$inferInsert;
@@ -770,7 +767,6 @@ export const formResponses = pgTable("form_responses", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Add Zod schemas for the new tables
 export const insertEventFormTemplateSchema = createInsertSchema(eventFormTemplates, {
   name: z.string().min(1, "Template name is required"),
   description: z.string().optional(),
@@ -797,13 +793,11 @@ export const insertFormResponseSchema = createInsertSchema(formResponses, {
   responses: z.record(z.unknown()).refine((data) => Object.keys(data).length > 0, "Responses cannot be empty"),
 });
 
-// Add select schemas
 export const selectEventFormTemplateSchema = createSelectSchema(eventFormTemplates);
 export const selectFormFieldSchema = createSelectSchema(formFields);
 export const selectFormFieldOptionSchema = createSelectSchema(formFieldOptions);
 export const selectFormResponseSchema = createSelectSchema(formResponses);
 
-// Add types
 export type InsertEventFormTemplate = typeof eventFormTemplates.$inferInsert;
 export type SelectEventFormTemplate = typeof eventFormTemplates.$inferSelect;
 export type InsertFormField = typeof formFields.$inferInsert;
@@ -813,7 +807,6 @@ export type SelectFormFieldOption = typeof formFieldOptions.$inferSelect;
 export type InsertFormResponse = typeof formResponses.$inferInsert;
 export type SelectFormResponse = typeof formResponses.$inferSelect;
 
-// Add relations
 export const eventFormTemplatesRelations = relations(eventFormTemplates, ({ one, many }) => ({
   event: one(events, {
     fields: [eventFormTemplates.eventId],
@@ -912,7 +905,6 @@ export const eventAgeGroupFees = pgTable("event_age_group_fees", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// Add relations
 export const eventFeesRelations = relations(eventFees, ({ one, many }) => ({
   event: one(events, {
     fields: [eventFees.eventId],
@@ -932,7 +924,6 @@ export const eventAgeGroupFeesRelations = relations(eventAgeGroupFees, ({ one })
   }),
 }));
 
-// Add validation schemas
 export const insertEventFeeSchema = createInsertSchema(eventFees, {
   name: z.string().min(1, "Fee name is required"),
   amount: z.number().int().positive("Amount must be positive"),
@@ -946,7 +937,6 @@ export const insertEventAgeGroupFeeSchema = createInsertSchema(eventAgeGroupFees
 export const selectEventFeeSchema = createSelectSchema(eventFees);
 export const selectEventAgeGroupFeeSchema = createSelectSchema(eventAgeGroupFees);
 
-// Add types
 export type InsertEventFee = typeof eventFees.$inferInsert;
 export type SelectEventFee = typeof eventFees.$inferSelect;
 export type InsertEventAgeGroupFee = typeof eventAgeGroupFees.$inferInsert;
@@ -1045,7 +1035,6 @@ export const formResponses = pgTable("form_responses", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Add Zod schemas for the new tables
 export const insertEventFormTemplateSchema = createInsertSchema(eventFormTemplates, {
   name: z.string().min(1, "Template name is required"),
   description: z.string().optional(),
@@ -1072,13 +1061,11 @@ export const insertFormResponseSchema = createInsertSchema(formResponses, {
   responses: z.record(z.unknown()).refine((data) => Object.keys(data).length > 0, "Responses cannot be empty"),
 });
 
-// Add select schemas
 export const selectEventFormTemplateSchema = createSelectSchema(eventFormTemplates);
 export const selectFormFieldSchema = createSelectSchema(formFields);
 export const selectFormFieldOptionSchema = createSelectSchema(formFieldOptions);
 export const selectFormResponseSchema = createSelectSchema(formResponses);
 
-// Add types
 export type InsertEventFormTemplate = typeof eventFormTemplates.$inferInsert;
 export type SelectEventFormTemplate = typeof eventFormTemplates.$inferSelect;
 export type InsertFormField = typeof formFields.$inferInsert;
@@ -1088,7 +1075,6 @@ export type SelectFormFieldOption = typeof formFieldOptions.$inferSelect;
 export type InsertFormResponse = typeof formResponses.$inferInsert;
 export type SelectFormResponse = typeof formResponses.$inferSelect;
 
-// Add relations
 export const eventFormTemplatesRelations = relations(eventFormTemplates, ({ one, many }) => ({
   event: one(events, {
     fields: [eventFormTemplates.eventId],
@@ -1187,7 +1173,6 @@ export const eventAgeGroupFees = pgTable("event_age_group_fees", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// Add relations
 export const eventFeesRelations = relations(eventFees, ({ one, many }) => ({
   event: one(events, {
     fields: [eventFees.eventId],
@@ -1207,7 +1192,6 @@ export const eventAgeGroupFeesRelations = relations(eventAgeGroupFees, ({ one })
   }),
 }));
 
-// Add validation schemas
 export const insertEventFeeSchema = createInsertSchema(eventFees, {
   name: z.string().min(1, "Fee name is required"),
   amount: z.number().int().positive("Amount must be positive"),
@@ -1221,7 +1205,6 @@ export const insertEventAgeGroupFeeSchema = createInsertSchema(eventAgeGroupFees
 export const selectEventFeeSchema = createSelectSchema(eventFees);
 export const selectEventAgeGroupFeeSchema = createSelectSchema(eventAgeGroupFees);
 
-// Add types
 export type InsertEventFee = typeof eventFees.$inferInsert;
 export type SelectEventFee = typeof eventFees.$inferSelect;
 export type InsertEventAgeGroupFee = typeof eventAgeGroupFees.$inferInsert;
@@ -1320,7 +1303,6 @@ export const formResponses = pgTable("form_responses", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Add Zod schemas for the new tables
 export const insertEventFormTemplateSchema = createInsertSchema(eventFormTemplates, {
   name: z.string().min(1, "Template name is required"),
   description: z.string().optional(),
@@ -1347,13 +1329,11 @@ export const insertFormResponseSchema = createInsertSchema(formResponses, {
   responses: z.record(z.unknown()).refine((data) => Object.keys(data).length > 0, "Responses cannot be empty"),
 });
 
-// Add select schemas
 export const selectEventFormTemplateSchema = createSelectSchema(eventFormTemplates);
 export const selectFormFieldSchema = createSelectSchema(formFields);
 export const selectFormFieldOptionSchema = createSelectSchema(formFieldOptions);
 export const selectFormResponseSchema = createSelectSchema(formResponses);
 
-// Add types
 export type InsertEventFormTemplate = typeof eventFormTemplates.$inferInsert;
 export type SelectEventFormTemplate = typeof eventFormTemplates.$inferSelect;
 export type InsertFormField = typeof formFields.$inferInsert;
@@ -1363,7 +1343,6 @@ export type SelectFormFieldOption = typeof formFieldOptions.$inferSelect;
 export type InsertFormResponse = typeof formResponses.$inferInsert;
 export type SelectFormResponse = typeof formResponses.$inferSelect;
 
-// Add relations
 export const eventFormTemplatesRelations = relations(eventFormTemplates, ({ one, many }) => ({
   event: one(events, {
     fields: [eventFormTemplates.eventId],
