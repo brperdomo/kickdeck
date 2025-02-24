@@ -103,6 +103,7 @@ export default function EditEvent() {
   const [selectedAgeGroupIds, setSelectedAgeGroupIds] = useState<number[]>([]);
 
 
+
   const eventQuery = useQuery({
     queryKey: ['event', id],
     queryFn: async () => {
