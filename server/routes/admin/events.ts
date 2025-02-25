@@ -1,10 +1,82 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { events, eventAgeGroups, seasonalScopes } from '@db/schema';
+import { events, eventAgeGroups, seasonalScopes, eventScoringRules, eventComplexes, eventFieldSizes } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router = Router();
+
+// Get event details endpoint
+router.get('/:id', async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.id);
+
+    // Get event details
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId));
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Get age groups with seasonal scope info
+    const ageGroupsWithScope = await db
+      .select({
+        ageGroup: eventAgeGroups,
+        seasonalScope: {
+          id: seasonalScopes.id,
+          name: seasonalScopes.name,
+          startYear: seasonalScopes.startYear,
+          endYear: seasonalScopes.endYear,
+          isActive: seasonalScopes.isActive
+        }
+      })
+      .from(eventAgeGroups)
+      .leftJoin(seasonalScopes, eq(eventAgeGroups.seasonalScopeId, seasonalScopes.id))
+      .where(eq(eventAgeGroups.eventId, eventId.toString()));
+
+    // Get scoring rules
+    const scoringRules = await db
+      .select()
+      .from(eventScoringRules)
+      .where(eq(eventScoringRules.eventId, eventId));
+
+    // Get complex assignments
+    const complexAssignments = await db
+      .select()
+      .from(eventComplexes)
+      .where(eq(eventComplexes.eventId, eventId));
+
+    // Get field sizes
+    const fieldSizes = await db
+      .select()
+      .from(eventFieldSizes)
+      .where(eq(eventFieldSizes.eventId, eventId));
+
+    // Get seasonal scope from the first age group
+    const seasonalScope = ageGroupsWithScope.length > 0 ? ageGroupsWithScope[0].seasonalScope : null;
+
+    // Format response
+    const response = {
+      ...event,
+      ageGroups: ageGroupsWithScope.map(ag => ag.ageGroup),
+      scoringRules,
+      seasonalScope,
+      selectedComplexIds: complexAssignments.map(a => a.complexId),
+      complexFieldSizes: Object.fromEntries(
+        fieldSizes.map(f => [f.fieldId, f.fieldSize])
+      )
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error('Error fetching event details:', error);
+    console.error("Error details:", error);
+    res.status(500).json({ message: "Failed to fetch event details" });
+  }
+});
 
 // Update event endpoint
 router.patch('/:id', async (req, res) => {
@@ -48,10 +120,10 @@ router.patch('/:id', async (req, res) => {
 
         // Then insert new age group associations
         const ageGroupValues = selectedAgeGroupIds.map(ageGroupId => ({
-          event_id: id.toString(),
-          age_group_settings_id: parseInt(ageGroupId),
-          seasonal_scope_id: parseInt(seasonalScopeId),
-          created_at: new Date().toISOString()
+          eventId: id.toString(),
+          ageGroupSettingsId: parseInt(ageGroupId),
+          seasonalScopeId: parseInt(seasonalScopeId),
+          createdAt: new Date().toISOString()
         }));
 
         await tx.insert(eventAgeGroups).values(ageGroupValues);
