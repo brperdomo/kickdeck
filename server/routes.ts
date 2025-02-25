@@ -989,7 +989,7 @@ export function registerRoutes(app: Express): Server {
       } catch (error) {
         console.error('Error fetching organization settings:', error);
         // Added basic error logging for white screen debugging.
-        console.error(""Error details:", error);
+        console.error("Error details:", error);
         res.status(500).send("Internal server error");
       }
     });
