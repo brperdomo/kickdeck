@@ -1,16 +1,11 @@
+
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
-import { useMediaQuery } from "@/hooks/use-media-query";
 
 export function AdminBanner() {
   const { settings } = useOrganizationSettings();
-  const isMobile = useMediaQuery("(max-width: 768px)");
-
-  if (isMobile) {
-    return null; // Don't show banner on mobile, we'll use the header instead
-  }
 
   return (
-    <div className="w-full bg-white shadow-sm border-b sticky top-0 z-50 hidden md:block">
+    <div className="w-full bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4 py-2">
         <div className="flex justify-center items-center">
           <img

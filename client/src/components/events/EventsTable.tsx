@@ -1,21 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Search,
-  Plus,
-  ChevronDown,
-  ChevronUp,
-  Loader2,
-  MoreHorizontal,
-  Edit,
-  Trash,
-  Link2,
-  FormInput,
-  DollarSign,
-  Ticket
-} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -34,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,15 +38,10 @@ interface Event {
   name: string;
   startDate: string;
   endDate: string;
+  applicationsReceived: number;
+  teamsAccepted: number;
   applicationDeadline: string;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
-  isActive: boolean;
 }
-
-type SortField = "name" | "date" | "status";
-type SortDirection = "asc" | "desc";
 
 const calculateEventStatus = (startDate: string, endDate: string) => {
   const now = new Date();
@@ -75,6 +58,9 @@ const calculateEventStatus = (startDate: string, endDate: string) => {
   }
 };
 
+type SortField = "name" | "date" | "applications" | "status";
+type SortDirection = "asc" | "desc";
+
 export function EventsTable() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
@@ -86,22 +72,12 @@ export function EventsTable() {
   const eventsQuery = useQuery<Event[]>({
     queryKey: ["/api/admin/events"],
     queryFn: async () => {
-      try {
-        const response = await fetch("/api/admin/events");
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || "Failed to fetch events");
-        }
-        return response.json();
-      } catch (error) {
-        console.error("Error fetching events:", error);
-        toast({
-          title: "Error",
-          description: error instanceof Error ? error.message : "Failed to fetch events",
-          variant: "destructive"
-        });
-        return [];
+      const response = await fetch("/api/admin/events");
+      if (!response.ok) {
+        throw new Error("Failed to fetch events");
       }
+      const events = await response.json();
+      return events;
     },
   });
 
@@ -122,12 +98,32 @@ export function EventsTable() {
           return multiplier * a.name.localeCompare(b.name);
         case "date":
           return multiplier * (new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+        case "applications":
+          return multiplier * (a.applicationsReceived - b.applicationsReceived);
         case "status":
           return multiplier * calculateEventStatus(a.startDate, a.endDate).localeCompare(calculateEventStatus(b.startDate, b.endDate));
         default:
           return 0;
       }
     });
+  };
+
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortField !== field) return null;
+    return sortDirection === "asc" ? (
+      <ChevronUp className="ml-1 h-4 w-4" />
+    ) : (
+      <ChevronDown className="ml-1 h-4 w-4" />
+    );
+  };
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
   };
 
   const handleGenerateRegistrationLink = async (eventId: number) => {
@@ -155,25 +151,15 @@ export function EventsTable() {
     );
   }
 
-  const filteredEvents = filterEvents(sortEvents(eventsQuery.data || []));
-
-  const SortIcon = ({ field }: { field: SortField }) => {
-    if (sortField !== field) return null;
-    return sortDirection === "asc" ? (
-      <ChevronUp className="ml-1 h-4 w-4" />
-    ) : (
-      <ChevronDown className="ml-1 h-4 w-4" />
+  if (eventsQuery.error) {
+    return (
+      <div className="text-center py-8 text-destructive">
+        Failed to load events data
+      </div>
     );
-  };
+  }
 
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortDirection("asc");
-    }
-  };
+  const filteredEvents = filterEvents(sortEvents(eventsQuery.data || []));
 
   return (
     <Card className="shadow-sm">
@@ -215,7 +201,7 @@ export function EventsTable() {
                 </TableHead>
                 <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("date")}>
                   <div className="flex items-center">
-                    Start Date
+                    Date
                     <SortIcon field="date" />
                   </div>
                 </TableHead>
@@ -279,9 +265,9 @@ export function EventsTable() {
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/coupons`)}>
                           <Ticket className="mr-2 h-4 w-4" />
-                          Manage Coupons
+                          Create Coupons
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem className="text-red-600">
                           <Trash className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>
