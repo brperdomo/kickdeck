@@ -149,7 +149,13 @@ export function registerRoutes(app: Express): Server {
 
         // Get seasonal scope
         const [seasonalScope] = await db
-          .select()
+          .select({
+            id: seasonalScopes.id,
+            name: seasonalScopes.name,
+            startYear: seasonalScopes.startYear,
+            endYear: seasonalScopes.endYear,
+            isActive: seasonalScopes.isActive
+          })
           .from(seasonalScopes)
           .innerJoin(eventAgeGroups, eq(seasonalScopes.id, eventAgeGroups.seasonalScopeId))
           .where(eq(eventAgeGroups.eventId, eventId.toString()))
