@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import { EventsTable } from "@/components/events/EventsTable";
 
 export function EventsView() {
-  const navigate = useLocation()[1];
+  const [, navigate] = useLocation();
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
