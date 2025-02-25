@@ -36,6 +36,7 @@ import {
   formFields,
   formFieldOptions,
   formResponses,
+  seasonalScopes
 } from "@db/schema";
 import fs from "fs/promises";
 import path from "path";
@@ -988,7 +989,7 @@ export function registerRoutes(app: Express): Server {
       } catch (error) {
         console.error('Error fetching organization settings:', error);
         // Added basic error logging for white screen debugging.
-        console.error("Error details:", error);
+        console.error(""Error details:", error);
         res.status(500).send("Internal server error");
       }
     });
@@ -1161,7 +1162,7 @@ export function registerRoutes(app: Express): Server {
         console.error('Error updating coupon:', error);
         res.status(500).json({ message: "Failed to update coupon" });
       }
-    }); 
+    });
 
     // Coupon management endpoints
     app.get('/api/admin/coupons', isAdmin, async (req, res) => {
@@ -1999,7 +2000,7 @@ export function registerRoutes(app: Express): Server {
                   'hasLights', ${fields.hasLights},
                   'hasParking', ${fields.hasParking},
                   'isOpen', ${fields.isOpen},
-                  'specialInstructions', ${fields.specialInstructions}
+                  `specialInstructions', ${fields.specialInstructions}
                 )
               ELSE NULL
               END
@@ -2977,18 +2978,20 @@ export function registerRoutes(app: Express): Server {
         await db.transaction(async (tx) => {
           // Delete chat rooms associated with the event
           await tx.delete(chatRooms).where(eq(chatRooms.eventId, eventId));
-          
+
           // Delete teams first to handle foreign key constraints
           await tx.delete(teams).where(eq(teams.eventId, eventId));
 
           // Delete tournament groups
           await tx.delete(tournamentGroups).where(eq(tournamentGroups.eventId, eventId));
-          
+
           // Delete other related records
           await tx.delete(eventAgeGroups).where(eq(eventAgeGroups.eventId, eventId));
           await tx.execute(sql`DELETE FROM event_complexes WHERE event_id = ${eventId}`);
           await tx.delete(eventFieldSizes).where(eq(eventFieldSizes.eventId, eventId));
           await tx.delete(eventScoringRules).where(eq(eventScoringRules.eventId, eventId));
+          await tx.delete(coupons).where(eq(coupons.eventId, eventId));
+          await tx.delete(eventFormTemplates).where(eq(eventFormTemplates.eventId, eventId));
 
           // Finally delete the event
           const [deletedEvent] = await tx
@@ -3004,13 +3007,8 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: "Event deleted successfully" });
       } catch (error) {
         console.error('Error deleting event:', error);
-        // Added basic error logging for white screen debugging.
         console.error("Error details:", error);
-        let errorMessage = "Failed to delete event";
-        if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-        res.status(500).send(errorMessage);
+        res.status(500).json({ error: "Failed to delete event" });
       }
     });
 
