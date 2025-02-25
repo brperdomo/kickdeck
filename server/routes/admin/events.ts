@@ -33,13 +33,11 @@ router.get('/:id', async (req, res) => {
         scoringRule: eventAgeGroups.scoringRule,
         fieldSize: eventAgeGroups.fieldSize,
         amountDue: eventAgeGroups.amountDue,
-        seasonalScope: {
-          id: seasonalScopes.id,
-          name: seasonalScopes.name,
-          startYear: seasonalScopes.startYear,
-          endYear: seasonalScopes.endYear,
-          isActive: seasonalScopes.isActive
-        }
+        seasonalScopeId: seasonalScopes.id,
+        seasonalScopeName: seasonalScopes.name,
+        seasonalScopeStartYear: seasonalScopes.startYear,
+        seasonalScopeEndYear: seasonalScopes.endYear,
+        seasonalScopeIsActive: seasonalScopes.isActive
       })
       .from(eventAgeGroups)
       .leftJoin(seasonalScopes, eq(eventAgeGroups.seasonalScopeId, seasonalScopes.id))
