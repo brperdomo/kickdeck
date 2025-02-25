@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "wouter";
+import { useLocation } from "wouter";
 import { ArrowLeft } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,7 +43,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation } from "@/hooks/use-location";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 const feeFormSchema = z.object({
   id: z.number().optional(),
@@ -55,13 +56,21 @@ const feeFormSchema = z.object({
   beginDate: z.string().optional(),
   endDate: z.string().optional(),
   applyToAll: z.boolean().default(false),
+  selectedAgeGroups: z.array(z.string()).optional(),
 });
 
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
+interface AgeGroup {
+  id: string;
+  divisionCode: string;
+  ageGroup: string;
+  gender: string;
+}
+
 export function FeeManagement() {
   const [location] = useLocation();
-  const eventId = location.split('/')[3]; // URL pattern is /admin/events/:eventId/fees
+  const eventId = location.split('/')[3];
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -74,6 +83,7 @@ export function FeeManagement() {
       beginDate: "",
       endDate: "",
       applyToAll: false,
+      selectedAgeGroups: [],
     },
   });
 
@@ -90,6 +100,19 @@ export function FeeManagement() {
     enabled: !!eventId
   });
 
+  const ageGroupsQuery = useQuery({
+    queryKey: [`/api/admin/events/${eventId}/age-groups`],
+    queryFn: async () => {
+      if (!eventId) return [];
+      const response = await fetch(`/api/admin/events/${eventId}/age-groups`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch age groups");
+      }
+      return response.json();
+    },
+    enabled: !!eventId
+  });
+
   const createFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues) => {
       const response = await fetch(`/api/admin/events/${eventId}/fees`, {
@@ -97,9 +120,10 @@ export function FeeManagement() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
-          amount: Math.round(Number(values.amount) * 100), // Convert to cents
+          amount: Math.round(Number(values.amount) * 100),
           beginDate: values.beginDate ? new Date(values.beginDate).toISOString() : null,
           endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
+          ageGroupIds: values.applyToAll ? [] : values.selectedAgeGroups,
         }),
       });
       if (!response.ok) {
@@ -135,6 +159,7 @@ export function FeeManagement() {
           amount: Math.round(Number(values.amount) * 100),
           beginDate: values.beginDate ? new Date(values.beginDate).toISOString() : null,
           endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
+          ageGroupIds: values.applyToAll ? [] : values.selectedAgeGroups,
         }),
       });
       if (!response.ok) {
@@ -168,17 +193,22 @@ export function FeeManagement() {
     }
   };
 
-  const feeToEdit = form.watch("id"); // Track if an id is set for editing
+  const watchApplyToAll = form.watch("applyToAll");
+  const watchSelectedAgeGroups = form.watch("selectedAgeGroups");
 
+  const feeToEdit = form.watch("id");
   const isSubmitting = createFeeMutation.isLoading || updateFeeMutation.isLoading;
 
-  if (feesQuery.isLoading) {
+  if (feesQuery.isLoading || ageGroupsQuery.isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (feesQuery.error) {
-    return <div>Error loading fees</div>;
+  if (feesQuery.error || ageGroupsQuery.error) {
+    return <div>Error loading data</div>;
   }
+
+  const getAgeGroupLabel = (ageGroup: AgeGroup) =>
+    `${ageGroup.ageGroup} ${ageGroup.gender} (${ageGroup.divisionCode})`;
 
   return (
     <div className="container mx-auto py-8 max-w-4xl">
@@ -201,7 +231,7 @@ export function FeeManagement() {
               <DialogTrigger asChild>
                 <Button>Add New Fee</Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-xl">
                 <DialogHeader>
                   <DialogTitle>
                     {feeToEdit ? "Update Fee" : "Create New Fee"}
@@ -209,7 +239,7 @@ export function FeeManagement() {
                   <DialogDescription>
                     {feeToEdit
                       ? "Update an existing fee for this event."
-                      : "Add a new fee for this event. You can specify dates and whether it applies to all registrants."}
+                      : "Add a new fee for this event. You can specify dates and whether it applies to all registrants or specific age groups."}
                   </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -245,32 +275,34 @@ export function FeeManagement() {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="beginDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Begin Date (Optional)</FormLabel>
-                          <FormControl>
-                            <Input type="date" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="endDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>End Date (Optional)</FormLabel>
-                          <FormControl>
-                            <Input type="date" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="beginDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Begin Date (Optional)</FormLabel>
+                            <FormControl>
+                              <Input type="date" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="endDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>End Date (Optional)</FormLabel>
+                            <FormControl>
+                              <Input type="date" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     <FormField
                       control={form.control}
                       name="applyToAll"
@@ -279,18 +311,68 @@ export function FeeManagement() {
                           <FormControl>
                             <Checkbox
                               checked={field.value}
-                              onCheckedChange={field.onChange}
+                              onCheckedChange={(checked) => {
+                                field.onChange(checked);
+                                if (checked) {
+                                  form.setValue("selectedAgeGroups", []);
+                                }
+                              }}
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
                             <FormLabel>Apply to All Registrants</FormLabel>
                             <FormDescription>
-                              If checked, this fee will be applied to all registrations
+                              If checked, this fee will be applied to all registrations regardless of age group
                             </FormDescription>
                           </div>
                         </FormItem>
                       )}
                     />
+                    {!watchApplyToAll && (
+                      <FormField
+                        control={form.control}
+                        name="selectedAgeGroups"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Age Groups</FormLabel>
+                            <FormDescription>
+                              Select the age groups this fee applies to
+                            </FormDescription>
+                            <div className="space-y-2">
+                              {ageGroupsQuery.data.map((ageGroup: AgeGroup) => (
+                                <FormField
+                                  key={ageGroup.id}
+                                  control={form.control}
+                                  name="selectedAgeGroups"
+                                  render={({ field }) => (
+                                    <FormItem
+                                      key={ageGroup.id}
+                                      className="flex flex-row items-start space-x-3 space-y-0"
+                                    >
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.includes(ageGroup.id)}
+                                          onCheckedChange={(checked) => {
+                                            const updatedSelection = checked
+                                              ? [...(field.value || []), ageGroup.id]
+                                              : field.value?.filter((id) => id !== ageGroup.id) || [];
+                                            form.setValue("selectedAgeGroups", updatedSelection);
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="font-normal">
+                                        {getAgeGroupLabel(ageGroup)}
+                                      </FormLabel>
+                                    </FormItem>
+                                  )}
+                                />
+                              ))}
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                     <DialogFooter>
                       <Button type="submit" disabled={isSubmitting}>
                         {isSubmitting
@@ -316,7 +398,7 @@ export function FeeManagement() {
                   <TableHead className="py-4">Amount</TableHead>
                   <TableHead>Begin Date</TableHead>
                   <TableHead>End Date</TableHead>
-                  <TableHead>Apply to All</TableHead>
+                  <TableHead>Age Groups</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -331,20 +413,38 @@ export function FeeManagement() {
                     <TableCell>
                       {fee.endDate ? format(new Date(fee.endDate), "PP") : "-"}
                     </TableCell>
-                    <TableCell>{fee.applyToAll ? "Yes" : "No"}</TableCell>
+                    <TableCell>
+                      {fee.applyToAll ? (
+                        <Badge variant="secondary">All Age Groups</Badge>
+                      ) : (
+                        <div className="flex flex-wrap gap-1">
+                          {fee.ageGroupIds?.map((agId: string) => {
+                            const ageGroup = ageGroupsQuery.data?.find(
+                              (ag: AgeGroup) => ag.id === agId
+                            );
+                            return ageGroup ? (
+                              <Badge key={agId} variant="outline">
+                                {getAgeGroupLabel(ageGroup)}
+                              </Badge>
+                            ) : null;
+                          })}
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => {
                           form.reset({
+                            id: fee.id,
                             name: fee.name,
                             amount: (fee.amount / 100).toString(),
                             beginDate: fee.beginDate ? new Date(fee.beginDate).toISOString().split('T')[0] : "",
                             endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
                             applyToAll: fee.applyToAll,
+                            selectedAgeGroups: fee.ageGroupIds || [],
                           });
-                          form.setValue("id", fee.id);
                           setIsDialogOpen(true);
                         }}
                       >
