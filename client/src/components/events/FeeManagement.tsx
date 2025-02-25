@@ -43,7 +43,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation } from "@/hooks/use-location";
 
 const feeFormSchema = z.object({
   id: z.number().optional(),
@@ -85,6 +84,7 @@ export function FeeManagement() {
         const response = await fetch(`/api/admin/events/${eventId}/fees`);
         if (!response.ok) {
           const errorData = await response.json();
+          console.error("Error response:", errorData);
           throw new Error(errorData.message || 'Failed to fetch fees');
         }
         const data = await response.json();
@@ -108,6 +108,9 @@ export function FeeManagement() {
   const createFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues) => {
       if (!eventId) throw new Error("Event ID is required");
+
+      console.log("Creating fee for event:", eventId, "with values:", values);
+
       const response = await fetch(`/api/admin/events/${eventId}/fees`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -121,6 +124,7 @@ export function FeeManagement() {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error("Create fee error:", errorData);
         throw new Error(errorData.message || "Failed to create fee");
       }
       return response.json();
@@ -135,9 +139,10 @@ export function FeeManagement() {
       });
     },
     onError: (error: Error) => {
+      console.error("Create fee mutation error:", error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to create fee",
         variant: "destructive",
       });
     },
@@ -145,6 +150,10 @@ export function FeeManagement() {
 
   const updateFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues & { id?: number }) => {
+      if (!eventId) throw new Error("Event ID is required");
+
+      console.log("Updating fee:", values.id, "for event:", eventId);
+
       const response = await fetch(`/api/admin/events/${eventId}/fees/${values.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -155,8 +164,11 @@ export function FeeManagement() {
           endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
         }),
       });
+
       if (!response.ok) {
-        throw new Error("Failed to update fee");
+        const errorData = await response.json();
+        console.error("Update fee error:", errorData);
+        throw new Error(errorData.message || "Failed to update fee");
       }
       return response.json();
     },
@@ -169,10 +181,11 @@ export function FeeManagement() {
         description: "Fee updated successfully",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
+      console.error("Update fee mutation error:", error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to update fee",
         variant: "destructive",
       });
     },
@@ -186,6 +199,7 @@ export function FeeManagement() {
         await createFeeMutation.mutateAsync(values);
       }
     } catch (error) {
+      console.error("Form submission error:", error);
       toast({
         title: "Error",
         description: "Failed to save fee. Please check all fields are valid.",
@@ -194,16 +208,16 @@ export function FeeManagement() {
     }
   };
 
-  const feeToEdit = form.watch("id"); // Track if an id is set for editing
-
-  const isSubmitting = createFeeMutation.isLoading || updateFeeMutation.isLoading;
+  const feeToEdit = form.watch("id");
+  const isSubmitting = createFeeMutation.isPending || updateFeeMutation.isPending;
 
   if (feesQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading fees...</div>;
   }
 
   if (feesQuery.error) {
-    return <div>Error loading fees</div>;
+    console.error("Fees query error:", feesQuery.error);
+    return <div>Error loading fees: {(feesQuery.error as Error).message}</div>;
   }
 
   return (
@@ -364,13 +378,13 @@ export function FeeManagement() {
                         size="sm"
                         onClick={() => {
                           form.reset({
+                            id: fee.id,
                             name: fee.name,
                             amount: (fee.amount / 100).toString(),
                             beginDate: fee.beginDate ? new Date(fee.beginDate).toISOString().split('T')[0] : "",
                             endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
                             applyToAll: fee.applyToAll,
                           });
-                          form.setValue("id", fee.id);
                           setIsDialogOpen(true);
                         }}
                       >

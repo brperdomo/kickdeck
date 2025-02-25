@@ -14,16 +14,13 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
       return res.status(400).json({ message: "Invalid event ID" });
     }
 
-    // Handle both numeric and bigint IDs
-    const parsedEventId = isNaN(parseInt(eventId)) ? eventId : parseInt(eventId);
-    console.log("Fetching fees for event:", parsedEventId);
-
+    // Convert eventId to bigint for comparison
     const fees = await db.query.eventFees.findMany({
-      where: eq(eventFees.eventId, parsedEventId),
+      where: eq(eventFees.eventId, BigInt(eventId)),
       orderBy: (eventFees) => [eventFees.createdAt],
     });
 
-    console.log("Found fees:", fees);
+    console.log("Found fees for event", eventId, ":", fees);
     res.json(fees);
   } catch (error) {
     console.error("Error fetching event fees:", error);
@@ -37,12 +34,12 @@ router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
     const { eventId } = req.params;
     const validatedData = insertEventFeeSchema.parse({
       ...req.body,
-      eventId: isNaN(parseInt(eventId)) ? eventId : parseInt(eventId),
+      eventId: BigInt(eventId),
     });
 
     const newFee = await db.insert(eventFees).values({
       ...validatedData,
-      eventId: validatedData.eventId,
+      eventId: BigInt(eventId),
       beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
       endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
       createdAt: new Date(),
@@ -67,13 +64,14 @@ router.patch("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
     const { eventId, feeId } = req.params;
     const validatedData = insertEventFeeSchema.parse({
       ...req.body,
-      eventId: isNaN(parseInt(eventId)) ? eventId : parseInt(eventId),
+      eventId: BigInt(eventId),
     });
 
     const updatedFee = await db
       .update(eventFees)
       .set({
         ...validatedData,
+        eventId: BigInt(eventId),
         beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
         endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
         updatedAt: new Date(),
