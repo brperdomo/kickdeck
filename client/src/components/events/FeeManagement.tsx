@@ -105,13 +105,14 @@ export function FeeManagement() {
           endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
         }),
       });
+      const data = await response.json();
       if (!response.ok) {
-        throw new Error("Failed to create fee");
+        throw new Error(data.message || "Failed to create fee");
       }
-      return response.json();
+      return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/fees`] });
+      queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
       setIsDialogOpen(false);
       form.reset();
       toast({
