@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Plus, Edit, Trash, Loader2, ImageIcon } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -46,38 +46,57 @@ import {
   EventInformationValues,
   ScoringRuleValues,
   EventSettingValues,
-  EventFormProps,
   AdminModalProps,
 } from "./event-form-types";
 
-export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormProps) => {
+interface EventFormValues extends EventInformationValues {
+  ageGroups: AgeGroup[];
+  selectedComplexIds: number[];
+  complexFieldSizes: Record<number, FieldSize>;
+  scoringRules: ScoringRule[];
+  settings: EventSetting[];
+  administrators: EventAdministrator[];
+  branding: EventBranding;
+}
+
+interface EventFormProps {
+  mode: 'create' | 'edit';
+  defaultValues?: EventFormValues;
+  onSubmit: (data: EventFormValues) => Promise<void>;
+  isSubmitting?: boolean;
+  activeTab: EventTab;
+  onTabChange: (tab: EventTab) => void;
+  completedTabs: EventTab[];
+  onCompletedTabsChange: (tabs: EventTab[]) => void;
+  navigateTab: (direction: 'next' | 'prev') => void;
+}
+
+
+export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false, activeTab, onTabChange, completedTabs, onCompletedTabsChange, navigateTab }: EventFormProps) => {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<EventTab>("information");
   const { toast } = useToast();
 
-  // Initialize all state variables
-  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(initialData?.ageGroups || []);
-  const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(initialData?.selectedComplexIds || []);
-  const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(initialData?.complexFieldSizes || {});
-  const [scoringRules, setScoringRules] = useState<ScoringRule[]>(initialData?.scoringRules || []);
-  const [settings, setSettings] = useState<EventSetting[]>(initialData?.settings || []);
+  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(defaultValues?.ageGroups || []);
+  const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(defaultValues?.selectedComplexIds || []);
+  const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(defaultValues?.complexFieldSizes || {});
+  const [scoringRules, setScoringRules] = useState<ScoringRule[]>(defaultValues?.scoringRules || []);
+  const [settings, setSettings] = useState<EventSetting[]>(defaultValues?.settings || []);
   const [isScoringDialogOpen, setIsScoringDialogOpen] = useState(false);
   const [editingScoringRule, setEditingScoringRule] = useState<ScoringRule | null>(null);
   const [isSettingDialogOpen, setIsSettingDialogOpen] = useState(false);
   const [editingSetting, setEditingSetting] = useState<EventSetting | null>(null);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState<AdminModalProps['adminToEdit']>(null);
-  const [isSaving, setIsSaving] = useState(false);
   const [logo, setLogo] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.branding?.logoUrl || null);
-  const [primaryColor, setPrimaryColor] = useState(initialData?.branding?.primaryColor || '#007AFF');
-  const [secondaryColor, setSecondaryColor] = useState(initialData?.branding?.secondaryColor || '#34C759');
+  const [previewUrl, setPreviewUrl] = useState<string | null>(defaultValues?.branding?.logoUrl || null);
+  const [primaryColor, setPrimaryColor] = useState(defaultValues?.branding?.primaryColor || '#007AFF');
+  const [secondaryColor, setSecondaryColor] = useState(defaultValues?.branding?.secondaryColor || '#34C759');
   const [isExtracting, setIsExtracting] = useState(false);
 
-  // Form setup
+
   const form = useForm<EventInformationValues>({
     resolver: zodResolver(eventInformationSchema),
-    defaultValues: initialData || {
+    defaultValues: defaultValues?.information || {
       name: "",
       startDate: "",
       endDate: "",
@@ -89,7 +108,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     },
   });
 
-  // Query hooks
   const complexesQuery = useQuery({
     queryKey: ['complexes'],
     queryFn: async () => {
@@ -102,22 +120,21 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     enabled: activeTab === 'complexes',
   });
 
-  // Event handlers
-  const handleSubmit = async (data: EventInformationValues) => {
+  const handleSubmitForm = async (data: EventInformationValues) => {
     setIsSaving(true);
     try {
       if (!data.name || !data.startDate || !data.endDate || !data.timezone || !data.applicationDeadline) {
         throw new Error('Required fields are missing');
       }
 
-      const combinedData: EventData = {
+      const combinedData: EventFormValues = {
         ...data,
         ageGroups,
         scoringRules,
         settings,
         complexFieldSizes,
         selectedComplexIds,
-        administrators: initialData?.administrators || [],
+        administrators: defaultValues?.administrators || [],
         branding: {
           primaryColor,
           secondaryColor,
@@ -130,7 +147,7 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
 
       toast({
         title: "Success",
-        description: isEdit ? "Event updated successfully" : "Event created successfully",
+        description: mode === 'edit' ? "Event updated successfully" : "Event created successfully",
       });
 
       setLocation("/admin");
@@ -163,23 +180,23 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
 
   const SaveButton = () => (
     <Button
-      onClick={form.handleSubmit(handleSubmit)}
-      disabled={isSaving}
+      onClick={form.handleSubmit(handleSubmitForm)}
+      disabled={isSubmitting}
     >
-      {isSaving ? (
+      {isSubmitting ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Saving...
         </>
       ) : (
-        isEdit ? 'Save Changes' : 'Create Event'
+        mode === 'edit' ? 'Save Changes' : 'Create Event'
       )}
     </Button>
   );
 
   const renderInformationContent = () => (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -355,12 +372,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
             </FormItem>
           )}
         />
-
-        {isEdit && (
-          <div className="flex justify-end">
-            <SaveButton />
-          </div>
-        )}
       </form>
     </Form>
   );
@@ -498,12 +509,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
           })}
         </TableBody>
       </Table>
-
-      {isEdit && (
-        <div className="flex justify-end mt-6">
-          <SaveButton />
-        </div>
-      )}
     </div>
   );
 
@@ -573,11 +578,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
             </Card>
           ))}
         </div>
-        {isEdit && (
-          <div className="flex justify-end mt-6">
-            <SaveButton />
-          </div>
-        )}
       </div>
     );
   };
@@ -632,12 +632,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
           </Card>
         ))}
       </div>
-
-      {isEdit && (
-        <div className="flex justify-end mt-6">
-          <SaveButton />
-        </div>
-      )}
 
       <Dialog open={isScoringDialogOpen} onOpenChange={setIsScoringDialogOpen}>
         <DialogContent>
@@ -710,7 +704,7 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
       </div>
 
       <div className="grid gap-4">
-        {initialData?.administrators?.map((admin) => (
+        {defaultValues?.administrators?.map((admin) => (
           <Card key={admin.id}>
             <CardContent className="p-4">
               <div className="flex justify-between items-center">
@@ -742,24 +736,17 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
           </Card>
         ))}
       </div>
-
-      {isEdit && (
-        <div className="flex justify-end mt-6">
-          <SaveButton />
-        </div>
-      )}
     </div>
   );
 
-  // State declarations using existing component context
   const getTabValidationState = () => {
     const errors: Record<EventTab, boolean> = {
       'information': !form.formState.isValid,
       'age-groups': ageGroups.length === 0,
       'scoring': scoringRules.length === 0,
       'complexes': selectedComplexIds.length === 0,
-      'settings': false, // Settings are optional
-      'administrators': false, // Administrators are managed separately
+      'settings': false, 
+      'administrators': false, 
     };
     return errors;
   };
@@ -817,12 +804,6 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
         ))}
       </div>
 
-      {isEdit && (
-        <div className="flex justify-end mt-6">
-          <SaveButton />
-        </div>
-      )}
-
       <Dialog open={isSettingDialogOpen} onOpenChange={setIsSettingDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -879,11 +860,16 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
     </div>
   );
 
+  const handleTabChange = (tab: EventTab) => {
+    onTabChange(tab);
+  };
+
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
       <Card className="bg-white shadow-sm border border-gray-200">
         <CardContent className="p-6">
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as EventTab)}>
+          <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as EventTab)}>
             <TabsList className="w-full grid grid-cols-6 gap-4 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
               {TAB_ORDER.map((tab) => (
                 <TabsTrigger
@@ -924,9 +910,33 @@ export const EventForm = ({ initialData, onSubmit, isEdit = false }: EventFormPr
               </TabsContent>
             </div>
           </Tabs>
+
+          <div className="mt-6 flex justify-end space-x-4">
+            {activeTab !== TAB_ORDER[0] && (
+              <Button
+                variant="outline"
+                onClick={() => navigateTab('prev')}
+                disabled={isSubmitting}
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
+            )}
+
+            <Button
+              onClick={form.handleSubmit(handleSubmitForm)}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : mode === 'edit' ? 'Save Changes' : 'Continue'}
+            </Button>
+          </div>
         </CardContent>
       </Card>
-
       <AdminModal
         open={isAdminModalOpen}
         onOpenChange={setIsAdminModalOpen}
