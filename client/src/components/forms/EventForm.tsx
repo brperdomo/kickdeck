@@ -146,6 +146,17 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     enabled: activeTab === 'complexes',
   });
 
+  const feesQuery = useQuery({
+    queryKey: [`/api/admin/events/${defaultValues?.id}/fees`],
+    queryFn: async () => {
+      if (!defaultValues?.id) return [];
+      const response = await fetch(`/api/admin/events/${defaultValues.id}/fees`);
+      if (!response.ok) throw new Error("Failed to fetch fees");
+      return response.json();
+    },
+    enabled: !!defaultValues?.id
+  });
+
   const handleSubmitForm = async (data: EventFormValues) => {
     setIsSaving(true);
     try {
@@ -202,6 +213,10 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       ...prev,
       [complexId]: size
     }));
+  };
+
+  const handleDeleteAgeGroup = (id: string) => {
+    setAgeGroups(ageGroups.filter(group => group.id !== id));
   };
 
   const SaveButton = () => (
@@ -424,6 +439,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             <TableHead>Field Size</TableHead>
             <TableHead>Projected Teams</TableHead>
             <TableHead>Amount Due</TableHead>
+            <TableHead>Fees</TableHead> {/* Added Fees column */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -447,6 +463,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                             projectedTeams: 0,
                             fieldSize: '11v11' as FieldSize,
                             amountDue: null,
+                            fees: [] // Initialize fees array
                           },
                         ]);
                       } else {
@@ -533,6 +550,38 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                     />
                   ) : (
                     "-"
+                  )}
+                </TableCell>
+                <TableCell>
+                  {existingGroup && feesQuery.data && feesQuery.data.length > 0 ? (
+                    <Select
+                      value={existingGroup.fees}
+                      onValueChange={(selectedFees) => {
+                        setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag =>
+                          ag.id === existingGroup.id ? { ...ag, fees: selectedFees } : ag
+                        ));
+                      }}
+                      multiple
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Fees" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {feesQuery.data.map(fee => (
+                          <SelectItem key={fee.id} value={fee.id}>
+                            {fee.name} - ${fee.amount}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : feesQuery.isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : feesQuery.isError ? (
+                    <span className="text-red-500">Error loading fees</span>
+                  ) : (
+                    <a href={`/admin/events/${defaultValues?.id}/fees`} className="text-blue-500 underline">
+                      Manage Fees
+                    </a>
                   )}
                 </TableCell>
               </TableRow>
