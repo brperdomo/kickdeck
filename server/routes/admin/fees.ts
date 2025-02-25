@@ -13,10 +13,13 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
     if (!eventId || isNaN(parseInt(eventId))) {
       return res.status(400).json({ message: "Invalid event ID" });
     }
+    const parsedEventId = parseInt(eventId);
+    console.log("Fetching fees for event:", parsedEventId);
     const fees = await db.query.eventFees.findMany({
-      where: eq(eventFees.eventId, parseInt(eventId)),
+      where: eq(eventFees.eventId, parsedEventId),
       orderBy: (eventFees) => [eventFees.createdAt],
     });
+    console.log("Found fees:", fees);
     res.json(fees);
   } catch (error) {
     console.error("Error fetching event fees:", error);
