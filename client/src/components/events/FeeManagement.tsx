@@ -59,9 +59,8 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  // Extract eventId from URL parameters
-  const params = useParams();
-  const eventId = params?.["*"]?.split("/")[2]; // This will get the ID from /admin/events/12/fees
+  // Get the ID directly from the route parameter
+  const { id: eventId } = useParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
