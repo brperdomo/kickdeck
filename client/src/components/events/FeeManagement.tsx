@@ -61,7 +61,7 @@ type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
   const [location] = useLocation();
-  const eventId = location.split('/')[3]; // URL pattern is /admin/events/:eventId/fees
+  const eventId = location?.split('/')[3]; // URL pattern is /admin/events/:eventId/fees
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -78,16 +78,19 @@ export function FeeManagement() {
   });
 
   const feesQuery = useQuery({
-    queryKey: [`/api/admin/events/${eventId}/fees`],
+    queryKey: ['fees', eventId],
     queryFn: async () => {
       if (!eventId) return [];
       const response = await fetch(`/api/admin/events/${eventId}/fees`);
       if (!response.ok) {
         throw new Error("Failed to fetch fees");
       }
-      return response.json();
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
     },
-    enabled: !!eventId
+    enabled: !!eventId,
+    retry: 1,
+    refetchOnWindowFocus: false
   });
 
   const createFeeMutation = useMutation({

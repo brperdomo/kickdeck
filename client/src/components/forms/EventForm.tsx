@@ -147,11 +147,13 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   });
 
   const feesQuery = useQuery({
-    queryKey: [`/api/admin/events/${defaultValues?.id}/fees`],
+    queryKey: ['eventFees', defaultValues?.id],
     queryFn: async () => {
       if (!defaultValues?.id) return [];
       const response = await fetch(`/api/admin/events/${defaultValues.id}/fees`);
-      if (!response.ok) throw new Error("Failed to fetch fees");
+      if (!response.ok) {
+        throw new Error("Failed to fetch fees");
+      }
       return response.json();
     },
     enabled: !!defaultValues?.id
@@ -436,10 +438,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             <TableHead>Birth Year</TableHead>
             <TableHead>Gender</TableHead>
             <TableHead>Division Code</TableHead>
-            <TableHead>Field Size</TableHead>
-            <TableHead>Projected Teams</TableHead>
-            <TableHead>Amount Due</TableHead>
-            <TableHead>Fees</TableHead> {/* Added Fees column */}
+            <TableHead>Field Size</TableHead><TableHead>Projected Teams</TableHead><TableHead>Amount Due</TableHead><TableHead>Fees</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -579,9 +578,9 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   ) : feesQuery.isError ? (
                     <span className="text-red-500">Error loading fees</span>
                   ) : (
-                    <a href={`/admin/events/${defaultValues?.id}/fees`} className="text-blue-500 underline">
+                    <Link to={`/admin/events/${defaultValues?.id}/fees`} className="text-blue-500 underline">
                       Manage Fees
-                    </a>
+                    </Link>
                   )}
                 </TableCell>
               </TableRow>
