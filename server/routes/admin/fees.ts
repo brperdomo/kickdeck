@@ -28,6 +28,7 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
     console.log("Fee details:", fees);
 
     res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Type', 'application/json');
     res.json(fees);
   } catch (error) {
     console.error("Error fetching event fees:", error);
