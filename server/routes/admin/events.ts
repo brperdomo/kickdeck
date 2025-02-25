@@ -1,3 +1,4 @@
+
 import { Router } from 'express';
 import { db } from '../../../db';
 import { events, eventAgeGroups, seasonalScopes, eventScoringRules, eventComplexes, eventFieldSizes } from '@db/schema';
@@ -9,19 +10,50 @@ const router = Router();
 router.get('/:id', async (req, res) => {
   try {
     const eventId = req.params.id;
-    const result = await db.query.events.findFirst({
-      where: eq(events.id, eventId),
-      with: {
-        ageGroups: true,
-        complexes: true,
-        fieldSizes: true,
-        scoringRules: true
-      }
-    });
+    
+    // Get main event details
+    const event = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
 
-    if (!result) {
+    if (!event || event.length === 0) {
       return res.status(404).json({ message: 'Event not found' });
     }
+
+    // Get age groups
+    const ageGroups = await db
+      .select()
+      .from(eventAgeGroups)
+      .where(eq(eventAgeGroups.eventId, eventId));
+
+    // Get complex assignments
+    const complexAssignments = await db
+      .select()
+      .from(eventComplexes)
+      .where(eq(eventComplexes.eventId, eventId));
+
+    // Get field sizes
+    const fieldSizes = await db
+      .select()
+      .from(eventFieldSizes)
+      .where(eq(eventFieldSizes.eventId, eventId));
+
+    // Get scoring rules
+    const scoringRules = await db
+      .select()
+      .from(eventScoringRules)
+      .where(eq(eventScoringRules.eventId, eventId));
+
+    // Combine all data
+    const result = {
+      ...event[0],
+      ageGroups,
+      complexes: complexAssignments,
+      fieldSizes,
+      scoringRules
+    };
 
     res.json(result);
   } catch (error) {
