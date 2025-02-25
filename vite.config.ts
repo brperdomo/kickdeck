@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [react(), runtimeErrorOverlay(), themePlugin()],
   server: {
     host: '0.0.0.0',
-    allowedHosts: 'all',
+    allowedHosts: ['7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev', 'all'],
   },
   resolve: {
     alias: {
