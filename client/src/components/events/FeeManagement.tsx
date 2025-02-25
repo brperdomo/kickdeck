@@ -81,13 +81,24 @@ export function FeeManagement() {
     queryFn: async () => {
       if (!eventId) return [];
       console.log("Fetching fees for event ID:", eventId);
-      const response = await fetch(`/api/admin/events/${eventId}/fees`);
-      const data = await response.json();
-      console.log("Fees response:", data);
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch fees');
+      try {
+        const response = await fetch(`/api/admin/events/${eventId}/fees`);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to fetch fees');
+        }
+        const data = await response.json();
+        console.log("Fees response:", data);
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error("Error fetching fees:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch fees. Please try again.",
+          variant: "destructive",
+        });
+        return [];
       }
-      return Array.isArray(data) ? data : [];
     },
     enabled: !!eventId,
     retry: 1,
@@ -107,11 +118,12 @@ export function FeeManagement() {
           endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
         }),
       });
-      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(data.message || "Failed to create fee");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create fee");
       }
-      return data;
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
@@ -122,7 +134,7 @@ export function FeeManagement() {
         description: "Fee created successfully",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       toast({
         title: "Error",
         description: error.message,

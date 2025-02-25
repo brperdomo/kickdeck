@@ -10,15 +10,19 @@ const router = Router();
 router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
-    if (!eventId || isNaN(parseInt(eventId))) {
+    if (!eventId) {
       return res.status(400).json({ message: "Invalid event ID" });
     }
-    const parsedEventId = parseInt(eventId);
+
+    // Handle both numeric and bigint IDs
+    const parsedEventId = isNaN(parseInt(eventId)) ? eventId : parseInt(eventId);
     console.log("Fetching fees for event:", parsedEventId);
+
     const fees = await db.query.eventFees.findMany({
       where: eq(eventFees.eventId, parsedEventId),
       orderBy: (eventFees) => [eventFees.createdAt],
     });
+
     console.log("Found fees:", fees);
     res.json(fees);
   } catch (error) {
@@ -33,11 +37,12 @@ router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
     const { eventId } = req.params;
     const validatedData = insertEventFeeSchema.parse({
       ...req.body,
-      eventId: parseInt(eventId),
+      eventId: isNaN(parseInt(eventId)) ? eventId : parseInt(eventId),
     });
 
     const newFee = await db.insert(eventFees).values({
       ...validatedData,
+      eventId: validatedData.eventId,
       beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
       endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
       createdAt: new Date(),
@@ -62,7 +67,7 @@ router.patch("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
     const { eventId, feeId } = req.params;
     const validatedData = insertEventFeeSchema.parse({
       ...req.body,
-      eventId: parseInt(eventId),
+      eventId: isNaN(parseInt(eventId)) ? eventId : parseInt(eventId),
     });
 
     const updatedFee = await db
