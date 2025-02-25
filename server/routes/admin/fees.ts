@@ -14,6 +14,10 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
       return res.status(400).json({ message: "Invalid event ID" });
     }
 
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     console.log("Fetching fees for event ID:", eventId, "Type:", typeof eventId);
 
     const fees = await db.query.eventFees.findMany({
