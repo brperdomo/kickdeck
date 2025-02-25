@@ -123,6 +123,17 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     }
   }, [defaultValues]);
 
+  const seasonalScopeQuery = useQuery({
+    queryKey: ['/api/admin/seasonal-scopes', defaultValues?.seasonalScopeId],
+    queryFn: async () => {
+      if (!defaultValues?.seasonalScopeId) return null;
+      const response = await fetch(`/api/admin/seasonal-scopes/${defaultValues.seasonalScopeId}`);
+      if (!response.ok) throw new Error('Failed to fetch seasonal scope');
+      return response.json();
+    },
+    enabled: !!defaultValues?.seasonalScopeId
+  });
+
   const complexesQuery = useQuery({
     queryKey: ['complexes'],
     queryFn: async () => {
@@ -395,9 +406,9 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Age Groups</h3>
-        {defaultValues?.seasonalScope && (
+        {seasonalScopeQuery.data && (
           <Badge variant="outline" className="text-sm">
-            {defaultValues.seasonalScope.name} ({defaultValues.seasonalScope.startYear}-{defaultValues.seasonalScope.endYear})
+            {seasonalScopeQuery.data.name} ({seasonalScopeQuery.data.startYear}-{seasonalScopeQuery.data.endYear})
           </Badge>
         )}
       </div>
