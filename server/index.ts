@@ -146,21 +146,36 @@ async function testDbConnection() {
     // Start the server
     const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
     
-    const startServer = (port: number) => {
-      server.listen(port, "0.0.0.0", () => {
-        log(`Server started successfully on port ${port}`);
-      }).on('error', (e: any) => {
-        if (e.code === 'EADDRINUSE') {
-          log(`Port ${port} is busy, trying ${port + 1}`);
-          startServer(port + 1);
-        } else {
-          log(`Error starting server: ${e.message}`);
-          process.exit(1);
-        }
+    const findAvailablePort = async (startPort: number): Promise<number> => {
+      return new Promise((resolve, reject) => {
+        const tryPort = (port: number) => {
+          const tempServer = require('http').createServer();
+          tempServer.listen(port, "0.0.0.0")
+            .on('listening', () => {
+              tempServer.close(() => resolve(port));
+            })
+            .on('error', (err: any) => {
+              if (err.code === 'EADDRINUSE') {
+                log(`Port ${port} is busy, trying ${port + 1}`);
+                tryPort(port + 1);
+              } else {
+                reject(err);
+              }
+            });
+        };
+        tryPort(startPort);
       });
     };
 
-    startServer(PORT);
+    try {
+      const availablePort = await findAvailablePort(PORT);
+      server.listen(availablePort, "0.0.0.0", () => {
+        log(`Server started successfully on port ${availablePort}`);
+      });
+    } catch (error) {
+      log(`Error starting server: ${(error as Error).message}`);
+      process.exit(1);
+    }
 
     // Handle shutdown gracefully
     process.on("SIGTERM", () => {
