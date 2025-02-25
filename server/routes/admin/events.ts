@@ -24,7 +24,15 @@ router.get('/:id', async (req, res) => {
     // Get age groups with seasonal scope info
     const ageGroupsWithScope = await db
       .select({
-        ageGroup: eventAgeGroups,
+        id: eventAgeGroups.id,
+        eventId: eventAgeGroups.eventId,
+        ageGroup: eventAgeGroups.ageGroup,
+        birthYear: eventAgeGroups.birthYear,
+        gender: eventAgeGroups.gender,
+        projectedTeams: eventAgeGroups.projectedTeams,
+        scoringRule: eventAgeGroups.scoringRule,
+        fieldSize: eventAgeGroups.fieldSize,
+        amountDue: eventAgeGroups.amountDue,
         seasonalScope: {
           id: seasonalScopes.id,
           name: seasonalScopes.name,
@@ -55,15 +63,15 @@ router.get('/:id', async (req, res) => {
       .from(eventFieldSizes)
       .where(eq(eventFieldSizes.eventId, eventId));
 
-    // Get seasonal scope from the first age group
-    const seasonalScope = ageGroupsWithScope.length > 0 ? ageGroupsWithScope[0].seasonalScope : null;
-
     // Format response
     const response = {
       ...event,
-      ageGroups: ageGroupsWithScope.map(ag => ag.ageGroup),
+      ageGroups: ageGroupsWithScope.map(ag => ({
+        ...ag,
+        seasonalScopeId: ag.seasonalScope.id
+      })),
       scoringRules,
-      seasonalScope,
+      seasonalScope: ageGroupsWithScope.length > 0 ? ageGroupsWithScope[0].seasonalScope : null,
       selectedComplexIds: complexAssignments.map(a => a.complexId),
       complexFieldSizes: Object.fromEntries(
         fieldSizes.map(f => [f.fieldId, f.fieldSize])

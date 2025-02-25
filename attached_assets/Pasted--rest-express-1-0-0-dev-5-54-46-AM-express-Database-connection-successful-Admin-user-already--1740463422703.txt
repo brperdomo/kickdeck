@@ -1,0 +1,64 @@
+
+> rest-express@1.0.0 dev
+5:54:46 AM [express] Database connection successful
+Admin user already exists
+5:54:46 AM [express] Admin user setup completed
+5:54:46 AM [express] Authentication routes registered successfully
+5:54:46 AM [express] Vite middleware setup complete
+5:54:46 AM [express] Server started successfully on port 5000
+5:54:49 AM [express] GET /api/user 401 in 4ms
+5:54:51 AM [express] GET /api/user 401 in 1ms
+5:55:01 AM [express] GET /api/user 401 in 1ms
+6:03:17 AM [express] POST /api/login 200 in 870ms :: {"message":"Login successful","user":{"id":24,"…
+6:03:17 AM [express] GET /api/user 304 in 62ms :: {"id":24,"email":"bperdomo@zoho.com","username":"b…
+6:03:18 AM [express] GET /api/admin/organization-settings 304 in 124ms :: {"id":1,"name":"MatchPro",…
+6:03:18 AM [express] GET /api/admin/events 200 in 143ms :: [{"id":2,"name":"Test with Teams","startD…
+6:03:18 AM [express] GET /api/admin/updates 200 in 64ms
+6:03:24 AM [express] GET /api/admin/seasonal-scopes 304 in 186ms :: [{"id":14,"name":"2024-2025","st…
+Error fetching event details: error: column event_age_groups.seasonal_scope_id does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async <anonymous> (/home/runner/workspace/server/routes/admin/events.ts:25:32) {
+  length: 133,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '567',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3716',
+  routine: 'errorMissingColumn'
+}
+Error details: error: column event_age_groups.seasonal_scope_id does not exist
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:102:18)
+    at async <anonymous> (/home/runner/workspace/server/routes/admin/events.ts:25:32) {
+  length: 133,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '567',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3716',
+  routine: 'errorMissingColumn'
+}
+6:03:24 AM [express] GET /api/admin/events/1056155867 500 in 409ms :: {"message":"Failed to fetch ev…
