@@ -74,7 +74,9 @@ export function FeeManagement() {
 
       console.log("Fetching fees for event ID:", eventId);
       try {
-        const response = await fetch(`/api/admin/events/${eventId}/fees`);
+        const response = await fetch(`/api/admin/events/${eventId}/fees`, {
+  credentials: 'include'
+});
         if (!response.ok) {
           const errorData = await response.json();
           console.error("Error response:", errorData);
