@@ -16,9 +16,6 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
     const fees = await db.query.eventFees.findMany({
       where: eq(eventFees.eventId, parseInt(eventId)),
       orderBy: (eventFees) => [eventFees.createdAt],
-      with: {
-        ageGroups: true,
-      },
     });
     res.json(fees);
   } catch (error) {
@@ -40,21 +37,11 @@ router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
       ...validatedData,
       beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
       endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
-      applyToAll: validatedData.applyToAll || false,
-      ageGroupIds: validatedData.applyToAll ? [] : validatedData.ageGroupIds || [],
       createdAt: new Date(),
       updatedAt: new Date(),
     }).returning();
 
-    // Fetch the fee with associated age groups
-    const feeWithAgeGroups = await db.query.eventFees.findFirst({
-      where: eq(eventFees.id, newFee[0].id),
-      with: {
-        ageGroups: true,
-      },
-    });
-
-    res.status(201).json(feeWithAgeGroups);
+    res.status(201).json(newFee[0]);
   } catch (error) {
     console.error("Error creating event fee:", error);
     res.status(500).json({ message: "Failed to create event fee" });
@@ -76,8 +63,6 @@ router.patch("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
         ...validatedData,
         beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
         endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
-        applyToAll: validatedData.applyToAll || false,
-        ageGroupIds: validatedData.applyToAll ? [] : validatedData.ageGroupIds || [],
         updatedAt: new Date(),
       })
       .where(eq(eventFees.id, parseInt(feeId)))
@@ -87,15 +72,7 @@ router.patch("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
       return res.status(404).json({ message: "Fee not found" });
     }
 
-    // Fetch the updated fee with associated age groups
-    const feeWithAgeGroups = await db.query.eventFees.findFirst({
-      where: eq(eventFees.id, updatedFee[0].id),
-      with: {
-        ageGroups: true,
-      },
-    });
-
-    res.json(feeWithAgeGroups);
+    res.json(updatedFee[0]);
   } catch (error) {
     console.error("Error updating event fee:", error);
     res.status(500).json({ message: "Failed to update event fee" });
