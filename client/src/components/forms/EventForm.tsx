@@ -92,21 +92,35 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   const [primaryColor, setPrimaryColor] = useState(defaultValues?.branding?.primaryColor || '#007AFF');
   const [secondaryColor, setSecondaryColor] = useState(defaultValues?.branding?.secondaryColor || '#34C759');
   const [isExtracting, setIsExtracting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
 
-  const form = useForm<EventInformationValues>({
+  const form = useForm<EventFormValues>({
     resolver: zodResolver(eventInformationSchema),
-    defaultValues: defaultValues?.information || {
-      name: "",
-      startDate: "",
-      endDate: "",
-      timezone: "",
-      applicationDeadline: "",
-      details: "",
-      agreement: "",
-      refundPolicy: "",
-    },
+    defaultValues: defaultValues || {
+      name: '',
+      startDate: '',
+      endDate: '',
+      timezone: '',
+      applicationDeadline: '',
+      details: '',
+      agreement: '',
+      refundPolicy: '',
+      ageGroups: [],
+      selectedComplexIds: [],
+      complexFieldSizes: {},
+      scoringRules: [],
+      settings: [],
+      administrators: [],
+      branding: {} as EventBranding
+    }
   });
+
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset(defaultValues);
+    }
+  }, [defaultValues]);
 
   const complexesQuery = useQuery({
     queryKey: ['complexes'],
@@ -120,7 +134,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     enabled: activeTab === 'complexes',
   });
 
-  const handleSubmitForm = async (data: EventInformationValues) => {
+  const handleSubmitForm = async (data: EventFormValues) => {
     setIsSaving(true);
     try {
       if (!data.name || !data.startDate || !data.endDate || !data.timezone || !data.applicationDeadline) {
@@ -925,9 +939,9 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
             <Button
               onClick={form.handleSubmit(handleSubmitForm)}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isSaving}
             >
-              {isSubmitting ? (
+              {isSubmitting || isSaving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Saving...
