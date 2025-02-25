@@ -17,7 +17,7 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
     console.log("Fetching fees for event ID:", eventId, "Type:", typeof eventId);
 
     const fees = await db.query.eventFees.findMany({
-      where: eq(eventFees.eventId, eventId),
+      where: eq(eventFees.eventId, parseInt(eventId)),
     });
 
     console.log("Found fees:", fees.length, "fees for event", eventId);
@@ -34,14 +34,16 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
 router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
+    const parsedEventId = parseInt(eventId);
+
     const validatedData = insertEventFeeSchema.parse({
       ...req.body,
-      eventId,
+      eventId: parsedEventId,
     });
 
     const newFee = await db.insert(eventFees).values({
       ...validatedData,
-      eventId,
+      eventId: parsedEventId,
       beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
       endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
       createdAt: new Date(),
@@ -49,7 +51,7 @@ router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
     }).returning();
 
     res.status(201).json(newFee[0]);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating event fee:", error);
     if (error.errors) {
       // Zod validation error
@@ -64,16 +66,18 @@ router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
 router.patch("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
   try {
     const { eventId, feeId } = req.params;
+    const parsedEventId = parseInt(eventId);
+
     const validatedData = insertEventFeeSchema.parse({
       ...req.body,
-      eventId,
+      eventId: parsedEventId,
     });
 
     const updatedFee = await db
       .update(eventFees)
       .set({
         ...validatedData,
-        eventId,
+        eventId: parsedEventId,
         beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
         endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
         updatedAt: new Date(),
@@ -86,9 +90,9 @@ router.patch("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
     }
 
     res.json(updatedFee[0]);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating event fee:", error);
-    res.status(500).json({ message: "Failed to update event fee" });
+    res.status(500).json({ message: error.message || "Failed to update event fee" });
   }
 });
 
@@ -106,9 +110,9 @@ router.delete("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
     }
 
     res.json({ message: "Fee deleted successfully" });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting event fee:", error);
-    res.status(500).json({ message: "Failed to delete event fee" });
+    res.status(500).json({ message: error.message || "Failed to delete event fee" });
   }
 });
 
