@@ -13,10 +13,13 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
     if (!eventId || isNaN(parseInt(eventId))) {
       return res.status(400).json({ message: "Invalid event ID" });
     }
+    const parsedEventId = parseInt(eventId);
+    console.log("Fetching fees for event:", parsedEventId);
     const fees = await db.query.eventFees.findMany({
-      where: eq(eventFees.eventId, parseInt(eventId)),
+      where: eq(eventFees.eventId, parsedEventId),
       orderBy: (eventFees) => [eventFees.createdAt],
     });
+    console.log("Found fees:", fees);
     res.json(fees);
   } catch (error) {
     console.error("Error fetching event fees:", error);
@@ -44,7 +47,12 @@ router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
     res.status(201).json(newFee[0]);
   } catch (error) {
     console.error("Error creating event fee:", error);
-    res.status(500).json({ message: "Failed to create event fee" });
+    if (error.errors) {
+      // Zod validation error
+      res.status(400).json({ message: error.errors[0].message });
+    } else {
+      res.status(500).json({ message: error.message || "Failed to create event fee" });
+    }
   }
 });
 

@@ -60,8 +60,7 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  const [location] = useLocation();
-  const eventId = location?.split('/')[3]; // URL pattern is /admin/events/:eventId/fees
+  const { eventId } = useParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -82,10 +81,10 @@ export function FeeManagement() {
     queryFn: async () => {
       if (!eventId) return [];
       const response = await fetch(`/api/admin/events/${eventId}/fees`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch fees");
-      }
       const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch fees');
+      }
       return Array.isArray(data) ? data : [];
     },
     enabled: !!eventId,
@@ -95,20 +94,22 @@ export function FeeManagement() {
 
   const createFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues) => {
+      if (!eventId) throw new Error("Event ID is required");
       const response = await fetch(`/api/admin/events/${eventId}/fees`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
-          amount: Math.round(Number(values.amount) * 100), // Convert to cents
+          amount: Math.round(parseFloat(values.amount) * 100), // Convert to cents
           beginDate: values.beginDate ? new Date(values.beginDate).toISOString() : null,
           endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
         }),
       });
+      const data = await response.json();
       if (!response.ok) {
-        throw new Error("Failed to create fee");
+        throw new Error(data.message || "Failed to create fee");
       }
-      return response.json();
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/fees`] });
@@ -163,11 +164,19 @@ export function FeeManagement() {
     },
   });
 
-  const onSubmit = (values: FeeFormValues & { id?: number }) => {
-    if (values.id) {
-      updateFeeMutation.mutate(values);
-    } else {
-      createFeeMutation.mutate(values);
+  const onSubmit = async (values: FeeFormValues & { id?: number }) => {
+    try {
+      if (values.id) {
+        await updateFeeMutation.mutateAsync(values);
+      } else {
+        await createFeeMutation.mutateAsync(values);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save fee. Please check all fields are valid.",
+        variant: "destructive",
+      });
     }
   };
 
