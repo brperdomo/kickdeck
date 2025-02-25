@@ -155,8 +155,7 @@ export const eventAgeGroups = pgTable("event_age_groups", {
   scoringRule: text("scoring_rule"),
   fieldSize: text("field_size").notNull(),
   amountDue: integer("amount_due"),
-  seasonalScopeId: integer("seasonal_scope_id").references(() => seasonalScopes.id).notNull(),
-  createdAt: text("created_at").notNull(),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
 });
 
 export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {
