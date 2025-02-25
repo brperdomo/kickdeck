@@ -59,7 +59,9 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  const { eventId } = useParams();
+  // Extract eventId from URL parameters
+  const params = useParams();
+  const eventId = params?.["*"]?.split("/")[2]; // This will get the ID from /admin/events/12/fees
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -89,7 +91,7 @@ export function FeeManagement() {
           description: "Failed to fetch fees. Please try again.",
           variant: "destructive",
         });
-        throw error; // Re-throw the error for useQuery to handle
+        throw error;
       }
     },
     enabled: !!eventId,
