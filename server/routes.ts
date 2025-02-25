@@ -7,8 +7,9 @@ import seasonalScopesRouter from "./routes/seasonal-scopes";
 import uploadRouter from "./routes/upload";
 import accountingCodesRouter from "./routes/admin/accounting-codes";
 import feesRouter from "./routes/admin/fees";
+import eventsRouter from "./routes/admin/events";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
-import { sql, eq, and, or, inArray } from "drizzle-orm";
+import { sql, eq, and } from "drizzle-orm";
 import {
   users,
   organizationSettings,
@@ -16,10 +17,7 @@ import {
   fields,
   events,
   eventAgeGroups,
-  gameTimeSlots,
-  tournamentGroups,
-  teams,
-  games,
+  seasonalScopes,
   eventScoringRules,
   chatRooms,
   chatParticipants,
@@ -67,14 +65,11 @@ export function registerRoutes(app: Express): Server {
     setupAuth(app);
     log("Authentication routes registered successfully");
 
-    // Register accounting codes routes with admin middleware
+    // Register admin routes
     app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
-
-    // Register seasonal scopes routes with admin middleware
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
-
-    // Register fee management routes with admin middleware
-    app.use('/api/admin/events', isAdmin, feesRouter);
+    app.use('/api/admin/events', isAdmin, eventsRouter);
+    app.use('/api/admin/fees', isAdmin, feesRouter);
 
     // Register coupon routes
     app.post('/api/admin/coupons', isAdmin, createCoupon);
@@ -85,7 +80,7 @@ export function registerRoutes(app: Express): Server {
     // Public event endpoint
     app.get('/api/events/:id', async (req, res) => {
       try {
-        const eventId = req.params.id;
+        const eventId = parseInt(req.params.id);
         const [event] = await db
           .select({
             id: events.id,
@@ -109,77 +104,8 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    // Admin event details endpoint
-    app.get('/api/admin/events/:id', isAdmin, async (req, res) => {
-      try {
-        const eventId = parseInt(req.params.id);
-
-        // Get event details
-        const [event] = await db
-          .select()
-          .from(events)
-          .where(eq(events.id, eventId));
-
-        if (!event) {
-          return res.status(404).json({ message: "Event not found" });
-        }
-
-        // Get age groups with seasonal scope info
-        const ageGroupsWithScope = await db
-          .select({
-            ageGroup: eventAgeGroups,
-            seasonalScope: {
-              id: seasonalScopes.id,
-              name: seasonalScopes.name,
-              startYear: seasonalScopes.startYear,
-              endYear: seasonalScopes.endYear,
-              isActive: seasonalScopes.isActive
-            }
-          })
-          .from(eventAgeGroups)
-          .leftJoin(seasonalScopes, eq(eventAgeGroups.seasonalScopeId, seasonalScopes.id))
-          .where(eq(eventAgeGroups.eventId, eventId.toString()));
-
-        // Get scoring rules
-        const scoringRules = await db
-          .select()
-          .from(eventScoringRules)
-          .where(eq(eventScoringRules.eventId, eventId));
-
-        // Get complex assignments
-        const complexAssignments = await db
-          .select()
-          .from(eventComplexes)
-          .where(eq(eventComplexes.eventId, eventId));
-
-        // Get field sizes
-        const fieldSizes = await db
-          .select()
-          .from(eventFieldSizes)
-          .where(eq(eventFieldSizes.eventId, eventId));
-
-        // Get seasonal scope from the first age group
-        const seasonalScope = ageGroupsWithScope.length > 0 ? ageGroupsWithScope[0].seasonalScope : null;
-
-        // Format response
-        const response = {
-          ...event,
-          ageGroups: ageGroupsWithScope.map(ag => ag.ageGroup),
-          scoringRules,
-          seasonalScope,
-          selectedComplexIds: complexAssignments.map(a => a.complexId),
-          complexFieldSizes: Object.fromEntries(
-            fieldSizes.map(f => [f.fieldId, f.fieldSize])
-          )
-        };
-
-        res.json(response);
-      } catch (error) {
-        console.error('Error fetching event details:', error);
-        console.error("Error details:", error);
-        res.status(500).json({ message: "Failed to fetch event details" });
-      }
-    });
+    // Use events router for all admin event operations
+    app.use('/api/admin/events', isAdmin, eventsRouter);
 
     // Admin email check endpoint
     app.get('/api/admin/check-email', isAdmin, async (req, res) => {
