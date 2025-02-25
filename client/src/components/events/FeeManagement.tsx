@@ -43,6 +43,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "@/hooks/use-location";
 
 const feeFormSchema = z.object({
   id: z.number().optional(),
@@ -59,134 +60,10 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  // Get the ID directly from the route parameter
-  const { id: eventId } = useParams();
+  const { eventId } = useParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
-  console.log("FeeManagement mounted with eventId:", eventId);
-
-  const feesQuery = useQuery({
-    queryKey: ['fees', eventId],
-    queryFn: async () => {
-      if (!eventId) return [];
-
-      console.log("Fetching fees for event ID:", eventId);
-      try {
-        const response = await fetch(`/api/admin/events/${eventId}/fees`, {
-          credentials: 'include',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch fees');
-        }
-
-        const data = await response.json();
-        return Array.isArray(data) ? data : [];
-      } catch (error) {
-        console.error("Error fetching fees:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch fees. Please try again.",
-          variant: "destructive",
-        });
-        throw error;
-      }
-    },
-    enabled: !!eventId,
-    retry: 1,
-    refetchOnWindowFocus: false
-  });
-
-  const createFeeMutation = useMutation({
-    mutationFn: async (values: FeeFormValues) => {
-      if (!eventId) throw new Error("Event ID is required");
-
-      console.log("Creating fee for event:", eventId, "with values:", values);
-
-      const response = await fetch(`/api/admin/events/${eventId}/fees`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...values,
-          amount: Math.round(parseFloat(values.amount) * 100), // Convert to cents
-          beginDate: values.beginDate ? new Date(values.beginDate).toISOString() : null,
-          endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Create fee error:", errorData);
-        throw new Error(errorData.message || "Failed to create fee");
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
-      setIsDialogOpen(false);
-      form.reset();
-      toast({
-        title: "Success",
-        description: "Fee created successfully",
-      });
-    },
-    onError: (error: Error) => {
-      console.error("Create fee mutation error:", error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create fee",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const updateFeeMutation = useMutation({
-    mutationFn: async (values: FeeFormValues & { id?: number }) => {
-      if (!eventId) throw new Error("Event ID is required");
-
-      console.log("Updating fee:", values.id, "for event:", eventId);
-
-      const response = await fetch(`/api/admin/events/${eventId}/fees/${values.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...values,
-          amount: Math.round(Number(values.amount) * 100),
-          beginDate: values.beginDate ? new Date(values.beginDate).toISOString() : null,
-          endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Update fee error:", errorData);
-        throw new Error(errorData.message || "Failed to update fee");
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
-      setIsDialogOpen(false);
-      form.reset();
-      toast({
-        title: "Success",
-        description: "Fee updated successfully",
-      });
-    },
-    onError: (error: Error) => {
-      console.error("Update fee mutation error:", error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update fee",
-        variant: "destructive",
-      });
-    },
-  });
 
   const form = useForm<FeeFormValues>({
     resolver: zodResolver(feeFormSchema),
@@ -199,33 +76,110 @@ export function FeeManagement() {
     },
   });
 
-  const onSubmit = async (values: FeeFormValues & { id?: number }) => {
-    try {
-      if (values.id) {
-        await updateFeeMutation.mutateAsync(values);
-      } else {
-        await createFeeMutation.mutateAsync(values);
+  const feesQuery = useQuery({
+    queryKey: ['fees', eventId],
+    queryFn: async () => {
+      if (!eventId) return [];
+      const response = await fetch(`/api/admin/events/${eventId}/fees`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch fees");
       }
-    } catch (error) {
-      console.error("Form submission error:", error);
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    },
+    enabled: !!eventId,
+    retry: 1,
+    refetchOnWindowFocus: false
+  });
+
+  const createFeeMutation = useMutation({
+    mutationFn: async (values: FeeFormValues) => {
+      const response = await fetch(`/api/admin/events/${eventId}/fees`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...values,
+          amount: Math.round(Number(values.amount) * 100), // Convert to cents
+          beginDate: values.beginDate ? new Date(values.beginDate).toISOString() : null,
+          endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to create fee");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/fees`] });
+      setIsDialogOpen(false);
+      form.reset();
+      toast({
+        title: "Success",
+        description: "Fee created successfully",
+      });
+    },
+    onError: (error) => {
       toast({
         title: "Error",
-        description: "Failed to save fee. Please check all fields are valid.",
+        description: error.message,
         variant: "destructive",
       });
+    },
+  });
+
+  const updateFeeMutation = useMutation({
+    mutationFn: async (values: FeeFormValues & { id?: number }) => {
+      const response = await fetch(`/api/admin/events/${eventId}/fees/${values.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...values,
+          amount: Math.round(Number(values.amount) * 100),
+          beginDate: values.beginDate ? new Date(values.beginDate).toISOString() : null,
+          endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update fee");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/fees`] });
+      setIsDialogOpen(false);
+      form.reset();
+      toast({
+        title: "Success",
+        description: "Fee updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (values: FeeFormValues & { id?: number }) => {
+    if (values.id) {
+      updateFeeMutation.mutate(values);
+    } else {
+      createFeeMutation.mutate(values);
     }
   };
 
-  const feeToEdit = form.watch("id");
-  const isSubmitting = createFeeMutation.isPending || updateFeeMutation.isPending;
+  const feeToEdit = form.watch("id"); // Track if an id is set for editing
+
+  const isSubmitting = createFeeMutation.isLoading || updateFeeMutation.isLoading;
 
   if (feesQuery.isLoading) {
-    return <div>Loading fees...</div>;
+    return <div>Loading...</div>;
   }
 
   if (feesQuery.error) {
-    console.error("Fees query error:", feesQuery.error);
-    return <div>Error loading fees: {(feesQuery.error as Error).message}</div>;
+    return <div>Error loading fees</div>;
   }
 
   return (
@@ -386,13 +340,13 @@ export function FeeManagement() {
                         size="sm"
                         onClick={() => {
                           form.reset({
-                            id: fee.id,
                             name: fee.name,
                             amount: (fee.amount / 100).toString(),
                             beginDate: fee.beginDate ? new Date(fee.beginDate).toISOString().split('T')[0] : "",
                             endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
                             applyToAll: fee.applyToAll,
                           });
+                          form.setValue("id", fee.id);
                           setIsDialogOpen(true);
                         }}
                       >
