@@ -124,54 +124,47 @@ export function registerRoutes(app: Express): Server {
           return res.status(404).json({ message: "Event not found" });
         }
 
-        // Get age groups
-        const ageGroups = await db
-          .select()
+        // Get age groups with seasonal scope info
+        const ageGroupsWithScope = await db
+          .select({
+            ageGroup: eventAgeGroups,
+            seasonalScope: {
+              id: seasonalScopes.id,
+              name: seasonalScopes.name,
+              startYear: seasonalScopes.startYear,
+              endYear: seasonalScopes.endYear,
+              isActive: seasonalScopes.isActive
+            }
+          })
           .from(eventAgeGroups)
+          .leftJoin(seasonalScopes, eq(eventAgeGroups.seasonalScopeId, seasonalScopes.id))
           .where(eq(eventAgeGroups.eventId, eventId.toString()));
 
         // Get scoring rules
         const scoringRules = await db
           .select()
-          .from(scoringRules)
-          .where(eq(scoringRules.eventId, eventId));
+          .from(eventScoringRules)
+          .where(eq(eventScoringRules.eventId, eventId));
 
-        // Get complex assignments and field sizes
+        // Get complex assignments
         const complexAssignments = await db
           .select()
           .from(eventComplexes)
           .where(eq(eventComplexes.eventId, eventId));
 
+        // Get field sizes
         const fieldSizes = await db
           .select()
-          .from(complexFieldSizes)
-          .where(eq(complexFieldSizes.eventId, eventId));
+          .from(eventFieldSizes)
+          .where(eq(eventFieldSizes.eventId, eventId));
 
-        // Get seasonal scope
-        const ageGroup = await db
-          .select()
-          .from(eventAgeGroups)
-          .where(eq(eventAgeGroups.eventId, eventId.toString()))
-          .limit(1)
-          .then(rows => rows[0]);
-
-        const seasonalScope = ageGroup ? await db
-          .select({
-            id: seasonalScopes.id,
-            name: seasonalScopes.name,
-            startYear: seasonalScopes.startYear,
-            endYear: seasonalScopes.endYear,
-            isActive: seasonalScopes.isActive
-          })
-          .from(seasonalScopes)
-          .where(eq(seasonalScopes.id, ageGroup.seasonalScopeId))
-          .limit(1)
-          .then(rows => rows[0]) : null;
+        // Get seasonal scope from the first age group
+        const seasonalScope = ageGroupsWithScope.length > 0 ? ageGroupsWithScope[0].seasonalScope : null;
 
         // Format response
         const response = {
           ...event,
-          ageGroups,
+          ageGroups: ageGroupsWithScope.map(ag => ag.ageGroup),
           scoringRules,
           seasonalScope,
           selectedComplexIds: complexAssignments.map(a => a.complexId),
