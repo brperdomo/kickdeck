@@ -1,6 +1,6 @@
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus } from "lucide-react";
 
 export function AdministratorsView() {
   return (
@@ -13,7 +13,9 @@ export function AdministratorsView() {
         </Button>
       </div>
       <Card className="p-6">
-        <p className="text-center text-muted-foreground">No administrators available</p>
+        <p className="text-center text-muted-foreground">
+          Loading administrators...
+        </p>
       </Card>
     </div>
   );
