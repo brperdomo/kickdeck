@@ -60,8 +60,7 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  const [location] = useLocation();
-  const eventId = location?.split('/')[3]; // URL pattern is /admin/events/:eventId/fees
+  const { eventId } = useParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
