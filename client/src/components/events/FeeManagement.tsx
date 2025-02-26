@@ -264,17 +264,17 @@ export function FeeManagement() {
   });
 
   const handleSubmit = (values: FeeFormValues) => {
-    const feeData = {
+    const formattedValues = {
       ...values,
       ageGroups: values.ageGroups || [],
-      accountingCodeId: values.accountingCodeId || null,
+      accountingCodeId: values.accountingCodeId,
       amount: Math.round(Number(values.amount) * 100)
     };
 
     if (editingFee) {
-      updateFeeMutation.mutate({ ...feeData, id: editingFee.id });
+      updateFeeMutation.mutate({ ...formattedValues, id: editingFee.id });
     } else {
-      createFeeMutation.mutate(feeData);
+      createFeeMutation.mutate(formattedValues);
     }
   };
 
