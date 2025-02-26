@@ -540,12 +540,10 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       }}
                       onOpenChange={(open) => {
                         if (!open) {
-                          // Only allow closing if clicked outside
                           const activeElement = document.activeElement;
-                          if (!activeElement?.closest('[role="listbox"]')) {
-                            return true;
-                          }
-                          return false;
+                          const isClickOutside = !activeElement?.closest('[role="listbox"]');
+                          setIsDialogOpen(isClickOutside);
+                          return isClickOutside;
                         }
                         return true;
                       }}
