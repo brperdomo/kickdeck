@@ -1673,7 +1673,7 @@ export function registerRoutes(app: Express): Server {
 
         if (!name || !startDate || !endDate || !applicationDeadline) {
           return res.status(400).json({ 
-            error: "Name, start date, end date, and application deadline are required" 
+            error: "Name, start date, end date, and registration deadline are required" 
           });
         }
 

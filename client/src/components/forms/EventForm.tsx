@@ -315,7 +315,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           name="applicationDeadline"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Application Submission Deadline *</FormLabel>
+              <FormLabel>Registration Deadline *</FormLabel>
               <FormControl>
                 <Input type="date" {...field} />
               </FormControl>

@@ -118,7 +118,7 @@ export const eventInformationSchema = z.object({
   startDate: z.string().min(1, "Start date is required"),
   endDate: z.string().min(1, "End date is required"),
   timezone: z.string().min(1, "Timezone is required"),
-  applicationDeadline: z.string().min(1, "Application deadline is required"),
+  applicationDeadline: z.string().min(1, "Registration deadline is required"),
   details: z.string().optional().nullable(),
   agreement: z.string().optional().nullable(),
   refundPolicy: z.string().optional().nullable(),
