@@ -70,7 +70,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
     app.use('/api/admin/events', isAdmin, eventsRouter);
-    app.use('/api/admin/fees', isAdmin, feesRouter);
+    app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path
 
     // Register coupon routes
     app.post('/api/admin/coupons', isAdmin, createCoupon);
