@@ -339,7 +339,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                     height: 300,
                     plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
                     toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: '/tinymce',
+                    base_url: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3',
                     suffix: '.min'
                   }}
                 />
@@ -364,7 +364,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                     height: 300,
                     plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
                     toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: '/tinymce',
+                    base_url: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3',
                     suffix: '.min'
                   }}
                 />
@@ -389,7 +389,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                     height: 300,
                     plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
                     toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: '/tinymce',
+                    base_url: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3',
                     suffix: '.min'
                   }}
                 />
