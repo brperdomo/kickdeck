@@ -118,7 +118,30 @@ export function FeeManagement() {
         credentials: 'include',
       });
       if (!response.ok) throw new Error('Failed to fetch age groups');
-      return response.json();
+      const data = await response.json();
+      if (data.length === 0) {
+        // Return predefined age groups if none exist
+        return Array.from({ length: 15 }, (_, i) => {
+          const age = i + 4; // Start from U4
+          return {
+            id: i + 1,
+            ageGroup: `U${age}`,
+            gender: 'Boys',
+            isSelected: true
+          };
+        }).concat(
+          Array.from({ length: 15 }, (_, i) => {
+            const age = i + 4; // Start from U4
+            return {
+              id: i + 16,
+              ageGroup: `U${age}`,
+              gender: 'Girls',
+              isSelected: true
+            };
+          })
+        );
+      }
+      return data;
     },
   });
 
