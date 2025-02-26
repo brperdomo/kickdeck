@@ -1,15 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "wouter";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, ArrowUpDown } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { format } from "date-fns";
+
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -32,15 +32,21 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
 const feeFormSchema = z.object({
@@ -55,29 +61,25 @@ const feeFormSchema = z.object({
 });
 
 type FeeFormValues = z.infer<typeof feeFormSchema>;
+type SortField = 'name' | 'amount' | 'beginDate';
+type SortDirection = 'asc' | 'desc';
 
 export function FeeManagement() {
   const params = useParams();
   const eventId = params.id;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingFee, setEditingFee] = useState<any>(null);
+  const [sortField, setSortField] = useState<SortField>('name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // First check if we're authenticated
-  const userQuery = useQuery({
-    queryKey: ['user'],
+  // Event details query to show event name in header
+  const eventQuery = useQuery({
+    queryKey: ['event', eventId],
     queryFn: async () => {
-      const response = await fetch('/api/user', {
-        credentials: 'include',
-      });
-      if (!response.ok) {
-        if (response.status === 401) {
-          window.location.href = '/login';
-          throw new Error('Please login to continue');
-        }
-        throw new Error('Failed to fetch user');
-      }
+      const response = await fetch(`/api/admin/events/${eventId}`);
+      if (!response.ok) throw new Error('Failed to fetch event details');
       return response.json();
     },
   });
@@ -93,51 +95,28 @@ export function FeeManagement() {
     },
   });
 
-  // Only fetch fees if we're authenticated
+  // Fetch fees query
   const feesQuery = useQuery({
     queryKey: ['fees', eventId],
     queryFn: async () => {
-      try {
-        const response = await fetch(`/api/admin/events/${eventId}/fees`, {
-          credentials: 'include',
-        });
-
-        if (response.status === 401) {
-          window.location.href = '/login';
-          throw new Error('Please login to continue');
-        }
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch fees');
-        }
-
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error('Error fetching fees:', error);
-        throw error;
-      }
+      const response = await fetch(`/api/admin/events/${eventId}/fees`);
+      if (!response.ok) throw new Error('Failed to fetch fees');
+      return response.json();
     },
-    enabled: !!eventId && !!userQuery.data,
   });
 
+  // Create fee mutation
   const createFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues) => {
       const response = await fetch(`/api/admin/events/${eventId}/fees`, {
         method: "POST",
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
           amount: Math.round(Number(values.amount) * 100),
         }),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to create fee');
-      }
+      if (!response.ok) throw new Error('Failed to create fee');
       return response.json();
     },
     onSuccess: () => {
@@ -158,178 +137,190 @@ export function FeeManagement() {
     },
   });
 
+  // Update fee mutation
+  const updateFeeMutation = useMutation({
+    mutationFn: async (values: FeeFormValues & { id: number }) => {
+      const response = await fetch(`/api/admin/events/${eventId}/fees/${values.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...values,
+          amount: Math.round(Number(values.amount) * 100),
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to update fee');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
+      setIsDialogOpen(false);
+      setEditingFee(null);
+      form.reset();
+      toast({
+        title: "Success",
+        description: "Fee updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Delete fee mutation
+  const deleteFeeMutation = useMutation({
+    mutationFn: async (feeId: number) => {
+      const response = await fetch(`/api/admin/events/${eventId}/fees/${feeId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error('Failed to delete fee');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
+      toast({
+        title: "Success",
+        description: "Fee deleted successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSubmit = (values: FeeFormValues) => {
-    createFeeMutation.mutate(values);
+    if (editingFee) {
+      updateFeeMutation.mutate({ ...values, id: editingFee.id });
+    } else {
+      createFeeMutation.mutate(values);
+    }
   };
 
-  if (userQuery.isLoading || feesQuery.isLoading) {
-    return <div>Loading fees...</div>;
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortedFees = feesQuery.data ? [...feesQuery.data].sort((a, b) => {
+    const modifier = sortDirection === 'asc' ? 1 : -1;
+    if (sortField === 'amount') {
+      return (a.amount - b.amount) * modifier;
+    }
+    if (sortField === 'beginDate') {
+      return (new Date(a.beginDate || 0).getTime() - new Date(b.beginDate || 0).getTime()) * modifier;
+    }
+    return a[sortField].localeCompare(b[sortField]) * modifier;
+  }) : [];
+
+  if (feesQuery.isLoading || eventQuery.isLoading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
-  if (userQuery.error || feesQuery.error) {
-    return <div>Error loading fees: {(userQuery.error || feesQuery.error)?.message}</div>;
+  if (feesQuery.error || eventQuery.error) {
+    return <div className="text-red-500">Error loading data</div>;
   }
 
   return (
-    <div className="container mx-auto py-8 max-w-4xl">
+    <div className="container mx-auto py-8 max-w-6xl">
       <div className="flex justify-between items-center mb-8">
-        <Button variant="outline" onClick={() => window.history.back()}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Event
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={() => window.history.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+          <h1 className="text-2xl font-bold">
+            Manage Fees for {eventQuery.data?.name}
+          </h1>
+        </div>
+        <Button onClick={() => {
+          setEditingFee(null);
+          form.reset();
+          setIsDialogOpen(true);
+        }}>
+          Add New Fee
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Event Fees</CardTitle>
-          <CardDescription>
-            Manage fees for this event
-          </CardDescription>
+          <CardTitle>Fee List</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between items-center mb-6">
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>Add New Fee</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>
-                    {editingFee ? "Edit Fee" : "Create New Fee"}
-                  </DialogTitle>
-                  <DialogDescription>
-                    Add a new fee to the event
-                  </DialogDescription>
-                </DialogHeader>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="Enter fee name" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="amount"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Amount ($)</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="number" step="0.01" placeholder="0.00" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="beginDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Begin Date (Optional)</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="date" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="endDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>End Date (Optional)</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="date" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="applyToAll"
-                      render={({ field }) => (
-                        <FormItem>
-                          <div className="flex items-center space-x-2">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                            <FormLabel>Apply to all registrations</FormLabel>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <DialogFooter>
-                      <Button
-                        type="submit"
-                        disabled={createFeeMutation.isPending}
-                      >
-                        {createFeeMutation.isPending
-                          ? "Saving..."
-                          : "Create Fee"}
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-          </div>
-
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Begin Date</TableHead>
+                <TableHead className="cursor-pointer" onClick={() => handleSort('name')}>
+                  Fee Name <ArrowUpDown className="inline h-4 w-4" />
+                </TableHead>
+                <TableHead className="cursor-pointer" onClick={() => handleSort('amount')}>
+                  Amount <ArrowUpDown className="inline h-4 w-4" />
+                </TableHead>
+                <TableHead className="cursor-pointer" onClick={() => handleSort('beginDate')}>
+                  Begin Date <ArrowUpDown className="inline h-4 w-4" />
+                </TableHead>
                 <TableHead>End Date</TableHead>
-                <TableHead>Apply to All</TableHead>
+                <TableHead>Applies to All</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {feesQuery.data?.map((fee: any) => (
+              {sortedFees.map((fee: any) => (
                 <TableRow key={fee.id}>
                   <TableCell>{fee.name}</TableCell>
                   <TableCell>${(fee.amount / 100).toFixed(2)}</TableCell>
                   <TableCell>
-                    {fee.beginDate ? format(new Date(fee.beginDate), "PP") : "-"}
+                    {fee.beginDate ? format(new Date(fee.beginDate), "MMM d, yyyy") : "-"}
                   </TableCell>
                   <TableCell>
-                    {fee.endDate ? format(new Date(fee.endDate), "PP") : "-"}
+                    {fee.endDate ? format(new Date(fee.endDate), "MMM d, yyyy") : "-"}
                   </TableCell>
-                  <TableCell>{fee.applyToAll ? "Yes" : "No"}</TableCell>
                   <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        form.reset({
-                          name: fee.name,
-                          amount: (fee.amount / 100).toString(),
-                          beginDate: fee.beginDate ? new Date(fee.beginDate).toISOString().split('T')[0] : "",
-                          endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
-                          applyToAll: fee.applyToAll,
-                        });
-                        setEditingFee(fee);
-                        setIsDialogOpen(true);
-                      }}
-                    >
-                      Edit
-                    </Button>
+                    <Badge variant={fee.applyToAll ? "default" : "secondary"}>
+                      {fee.applyToAll ? "Yes" : "No"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setEditingFee(fee);
+                          form.reset({
+                            name: fee.name,
+                            amount: (fee.amount / 100).toString(),
+                            beginDate: fee.beginDate ? new Date(fee.beginDate).toISOString().split('T')[0] : "",
+                            endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
+                            applyToAll: fee.applyToAll,
+                          });
+                          setIsDialogOpen(true);
+                        }}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          if (confirm('Are you sure you want to delete this fee?')) {
+                            deleteFeeMutation.mutate(fee.id);
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -337,6 +328,109 @@ export function FeeManagement() {
           </Table>
         </CardContent>
       </Card>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingFee ? "Edit Fee" : "Add New Fee"}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Fee Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter fee name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amount ($)</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="number" step="0.01" placeholder="0.00" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="beginDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Begin Date</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="date" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="endDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End Date</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="date" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="applyToAll"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>Apply to All Registrants</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={createFeeMutation.isPending || updateFeeMutation.isPending}
+                >
+                  {createFeeMutation.isPending || updateFeeMutation.isPending
+                    ? "Saving..."
+                    : editingFee ? "Update Fee" : "Create Fee"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
