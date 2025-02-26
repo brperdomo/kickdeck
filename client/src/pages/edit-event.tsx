@@ -1,13 +1,14 @@
+
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { EventForm } from "@/components/forms/EventForm";
 import { type EventTab, TAB_ORDER } from "@/components/forms/event-form-types";
-import { ProgressIndicator } from "@/components/forms/ProgressIndicator";
+import { ProgressIndicator } from "@/components/ui/progress-indicator";
 
 export default function EditEvent() {
   const { id } = useParams();
@@ -17,11 +18,10 @@ export default function EditEvent() {
   const [activeTab, setActiveTab] = useState<EventTab>('information');
   const [completedTabs, setCompletedTabs] = useState<EventTab[]>([]);
 
-  // Query to fetch event details
   const eventQuery = useQuery({
     queryKey: ['event', id],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${id}`);
+      const response = await fetch(`/api/admin/events/${id}/edit`);
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         throw new Error(errorData?.message || 'Failed to fetch event');
@@ -30,53 +30,37 @@ export default function EditEvent() {
     }
   });
 
-  // Mutation to update event
   const updateEventMutation = useMutation({
     mutationFn: async (data: any) => {
       const response = await fetch(`/api/admin/events/${id}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       });
-
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to update event');
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || 'Failed to update event');
       }
-
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['event'] });
+      queryClient.invalidateQueries({ queryKey: ['event', id] });
       toast({
         title: "Success",
         description: "Event updated successfully",
       });
-      navigate("/admin");
     },
     onError: (error: Error) => {
-      console.error('Update error:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to update event",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const handleSubmit = async (data: any) => {
     await updateEventMutation.mutateAsync(data);
-  };
-
-  const navigateTab = (direction: 'next' | 'prev') => {
-    const currentIndex = TAB_ORDER.indexOf(activeTab);
-    if (direction === 'next' && currentIndex < TAB_ORDER.length - 1) {
-      setActiveTab(TAB_ORDER[currentIndex + 1]);
-    } else if (direction === 'prev' && currentIndex > 0) {
-      setActiveTab(TAB_ORDER[currentIndex - 1]);
-    }
   };
 
   if (eventQuery.isLoading) {
@@ -112,7 +96,6 @@ export default function EditEvent() {
     );
   }
 
-  // Transform event data for the form
   const eventData = {
     ...eventQuery.data,
     complexFieldSizes: eventQuery.data.complexFieldSizes || {},
@@ -126,12 +109,20 @@ export default function EditEvent() {
     }
   };
 
+  const navigateTab = (direction: 'prev' | 'next') => {
+    const currentIndex = TAB_ORDER.indexOf(activeTab);
+    const newIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
+    if (newIndex >= 0 && newIndex < TAB_ORDER.length) {
+      setActiveTab(TAB_ORDER[newIndex]);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <Card className="mb-8">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
-            <div className="flex items-center gap-4">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4 mb-6">
               <Button
                 variant="ghost"
                 size="icon"
@@ -140,22 +131,28 @@ export default function EditEvent() {
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-              <CardTitle className="text-2xl font-bold">Edit Event</CardTitle>
+              <h1 className="text-2xl font-bold">Edit Event</h1>
             </div>
-          </CardHeader>
-        </Card>
 
-        <EventForm
-          mode="edit"
-          defaultValues={eventData}
-          onSubmit={handleSubmit}
-          isSubmitting={updateEventMutation.isPending}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          completedTabs={completedTabs}
-          onCompletedTabsChange={setCompletedTabs}
-          navigateTab={navigateTab}
-        />
+            <ProgressIndicator
+              steps={TAB_ORDER}
+              currentStep={activeTab}
+              completedSteps={completedTabs}
+            />
+
+            <EventForm 
+              mode="edit"
+              defaultValues={eventData}
+              onSubmit={handleSubmit}
+              isSubmitting={updateEventMutation.isPending}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              completedTabs={completedTabs}
+              onCompletedTabsChange={setCompletedTabs}
+              navigateTab={navigateTab}
+            />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
