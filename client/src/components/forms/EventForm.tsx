@@ -507,11 +507,10 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 <TableCell>
                   {existingGroup.isSelected && feesQuery.data ? (
                     <Select
-                      value={existingGroup.fees?.map(f => f.toString()) || []}
+                      value={existingGroup.fees?.map(f => f.toString()).join(',') || ''}
                       onValueChange={(selectedFees) => {
-                        const feeIds = Array.isArray(selectedFees)
-                          ? selectedFees.map(Number)
-                          : [Number(selectedFees)];
+                        // Handle array of selected fees
+                        const feeIds = selectedFees.split(',').map(Number).filter(Boolean);
 
                         setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
                           if (ag.divisionCode === existingGroup.divisionCode) {
@@ -523,7 +522,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                           return ag;
                         }));
                       }}
-                      multiple
                     >
                       <SelectTrigger className="w-[200px]">
                         <SelectValue placeholder="Select fees">
@@ -534,14 +532,31 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       </SelectTrigger>
                       <SelectContent>
                         {feesQuery.data.map(fee => (
-                          <SelectItem key={fee.id} value={fee.id.toString()} className="flex items-center space-x-2">
+                          <SelectItem
+                            key={fee.id}
+                            value={fee.id.toString()}
+                            className="flex items-center space-x-2"
+                          >
                             <Checkbox
+                              id={`fee-${fee.id}-${existingGroup.divisionCode}`}
                               checked={existingGroup.fees?.includes(fee.id)}
-                              className="mr-2"
+                              onCheckedChange={(checked) => {
+                                const newFees = checked
+                                  ? [...(existingGroup.fees || []), fee.id]
+                                  : (existingGroup.fees || []).filter(f => f !== fee.id);
+
+                                setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
+                                  if (ag.divisionCode === existingGroup.divisionCode) {
+                                    return {
+                                      ...ag,
+                                      fees: newFees,
+                                    };
+                                  }
+                                  return ag;
+                                }));
+                              }}
                             />
-                            <span>
-                              {fee.name} - ${(fee.amount / 100).toFixed(2)}
-                            </span>
+                            <span>{fee.name} - ${(fee.amount / 100).toFixed(2)}</span>
                           </SelectItem>
                         ))}
                       </SelectContent>
