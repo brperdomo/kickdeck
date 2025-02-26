@@ -123,7 +123,7 @@ export function FeeManagement() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/fees`] });
+      queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
       setIsDialogOpen(false);
       form.reset();
       toast({
@@ -158,7 +158,7 @@ export function FeeManagement() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/fees`] });
+      queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
       setIsDialogOpen(false);
       form.reset();
       toast({
