@@ -370,7 +370,7 @@ export function FeeManagement() {
               {sortedFees.map((fee: any) => (
                 <TableRow key={fee.id}>
                   <TableCell>{fee.name}</TableCell>
-                  <TableCell>{formatCurrency(fee.amount)}</TableCell>
+                  <TableCell>{(fee.amount / 100).toFixed(2)}</TableCell>
                   <TableCell>{fee.applyToAll ? 'All' : (fee.ageGroups || []).map((ageGroupId: number) => ageGroupsQuery.data?.find((group: any) => group.id === ageGroupId)?.ageGroup || '-').join(', ')}</TableCell>
                   <TableCell>{accountingCodes.find(code => code.id === fee.accountingCodeId)?.name || '-'}</TableCell>
                   <TableCell>
