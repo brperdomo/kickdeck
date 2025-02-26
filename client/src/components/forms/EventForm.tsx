@@ -439,7 +439,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             <TableHead>Birth Year</TableHead>
             <TableHead>Gender</TableHead>
             <TableHead>Division Code</TableHead>
-            <TableHead>Field Size</TableHead><TableHead>Projected Teams</TableHead><TableHead>Amount Due</TableHead><TableHead>Fees</TableHead>
+            <TableHead>Field Size</TableHead><TableHead>Amount Due</TableHead><TableHead>Fees</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -505,27 +505,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                         ))}
                       </SelectContent>
                     </Select>
-                  ) : (
-                    "-"
-                  )}
-                </TableCell>
-                <TableCell>
-                  {existingGroup ? (
-                    <Input
-                      type="number"
-                      value={existingGroup.projectedTeams}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value) || 0;
-                        setAgeGroups(
-                          ageGroups.map((ag) =>
-                            ag.id === existingGroup.id
-                              ? { ...ag, projectedTeams: value }
-                              : ag
-                          )
-                        );
-                      }}
-                      className="w-[80px]"
-                    />
                   ) : (
                     "-"
                   )}
