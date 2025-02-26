@@ -532,20 +532,38 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 <TableCell>
                   {existingGroup && feesQuery.data && feesQuery.data.length > 0 ? (
                     <Select
-                      value={Array.isArray(existingGroup.fees) && existingGroup.fees.length > 0 ? existingGroup.fees.map(f => f.toString()) : []}
+                      value={Array.isArray(existingGroup.fees) && existingGroup.fees.length > 0 ? existingGroup.fees[0].toString() : ""}
                       onValueChange={(selectedFee) => {
                         setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
                           if (ag.divisionCode === existingGroup.divisionCode) {
-                            const fees = Array.isArray(ag.fees) ? ag.fees : [];
-                            const feeIdNum = parseInt(selectedFee);
-                            const newFees = fees.includes(feeIdNum) 
-                              ? fees.filter(f => f !== feeIdNum)
-                              : [...fees, feeIdNum];
-                            return { ...ag, fees: newFees };
+                            return { 
+                              ...ag, 
+                              fees: selectedFee ? [Number(selectedFee)] : [],
+                              isSelected: true
+                            };
                           }
                           return ag;
                         }));
                       }}
+                      open={existingGroup.selectOpen}
+                      onOpenChange={(open) => {
+                        if (!open) {
+                          const activeElement = document.activeElement;
+                          const isClickOutside = !activeElement?.closest('[role="listbox"]');
+                          if (isClickOutside) {
+                            setAgeGroups(prevGroups => prevGroups.map(g => 
+                              g.id === existingGroup.id ? { ...g, selectOpen: false } : g
+                            ));
+                          }
+                          return isClickOutside;
+                        } else {
+                          setAgeGroups(prevGroups => prevGroups.map(g => 
+                            g.id === existingGroup.id ? { ...g, selectOpen: true } : g
+                          ));
+                        }
+                        return true;
+                      }}
+                      multiple
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={
@@ -556,7 +574,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       </SelectTrigger>
                       <SelectContent>
                         {feesQuery.data.map(fee => (
-                          <SelectItem key={fee.id} value={fee.id.toString()} className="flex items-center gap-2">
+                          <SelectItem key={fee.id} value={fee.id} className="flex items-center gap-2">
                             <div className="flex items-center flex-1 gap-2">
                               <Checkbox 
                                 checked={Array.isArray(existingGroup.fees) && existingGroup.fees.includes(fee.id)}
@@ -950,7 +968,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   key={tab}
                   value={tab}
                   className={`w-fullpx-4 py-2 rounded-md text-sm font-medium transition-colors
-                    data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadowsm
+                    data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm
                     text-[#1C1C1E] hover:text-[#007AFF]`}
                 >
                   {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
