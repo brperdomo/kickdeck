@@ -167,8 +167,16 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         throw new Error('Required fields are missing');
       }
 
+      const adjustDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+      };
+
       const combinedData: EventFormValues = {
         ...data,
+        startDate: adjustDate(data.startDate),
+        endDate: adjustDate(data.endDate),
+        applicationDeadline: adjustDate(data.applicationDeadline),
         ageGroups,
         scoringRules,
         settings,

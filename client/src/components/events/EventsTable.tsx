@@ -221,7 +221,7 @@ export function EventsTable() {
                 <TableRow key={event.id}>
                   <TableCell className="font-medium">{event.name}</TableCell>
                   <TableCell>{formatDate(event.startDate)}</TableCell>
-                  <TableCell>{formatDate(event.eventEndDate)}</TableCell>
+                  <TableCell>{formatDate(event.endDate)}</TableCell>
                   <TableCell>
                     <Badge
                       variant={
