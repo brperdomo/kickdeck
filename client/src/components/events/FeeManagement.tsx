@@ -79,7 +79,8 @@ export function FeeManagement() {
   const feesQuery = useQuery({
     queryKey: ['fees', eventId],
     queryFn: async () => {
-      if (!eventId) return [];
+      if (!eventId) throw new Error("Event ID is required");
+      console.log('Fetching fees for event:', eventId);
       try {
         const response = await fetch(`/api/admin/events/${eventId}/fees`, {
           credentials: 'include',
