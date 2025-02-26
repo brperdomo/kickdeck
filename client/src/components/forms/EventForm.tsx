@@ -514,7 +514,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   {existingGroup ? (
                     <span className="text-sm font-medium">
                       ${feesQuery.data
-                        ?.filter(fee => existingGroup.fees?.includes(fee.id))
+                        ?.filter(fee => Array.isArray(existingGroup.fees) && existingGroup.fees.includes(fee.id))
                         .reduce((sum, fee) => sum + (fee.amount / 100), 0)
                         .toFixed(2) || "0.00"}
                     </span>
@@ -525,21 +525,47 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 <TableCell>
                   {existingGroup && feesQuery.data && feesQuery.data.length > 0 ? (
                     <Select
-                      value={existingGroup.fees || []}
-                      onValueChange={(selectedFees) => {
-                        setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag =>
-                          ag.id === existingGroup.id ? { ...ag, fees: selectedFees } : ag
-                        ));
+                      value={Array.isArray(existingGroup.fees) ? existingGroup.fees : []}
+                      onValueChange={(selectedFee) => {
+                        setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
+                          if (ag.id === existingGroup.id) {
+                            const currentFees = Array.isArray(ag.fees) ? ag.fees : [];
+                            const newFees = currentFees.includes(selectedFee) 
+                              ? currentFees.filter(f => f !== selectedFee)
+                              : [...currentFees, selectedFee];
+                            return { ...ag, fees: newFees };
+                          }
+                          return ag;
+                        }));
+                      }}
+                      onOpenChange={(open) => {
+                        if (!open) {
+                          const activeElement = document.activeElement;
+                          const isClickOutside = !activeElement?.closest('[role="listbox"]');
+                          setIsDialogOpen(isClickOutside);
+                          return isClickOutside;
+                        }
+                        return true;
                       }}
                       multiple
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Fees" />
+                        <SelectValue placeholder={
+                          Array.isArray(existingGroup.fees) && existingGroup.fees.length > 0
+                            ? `${existingGroup.fees.length} fee${existingGroup.fees.length > 1 ? 's' : ''} selected`
+                            : "Select Fees"
+                        } />
                       </SelectTrigger>
                       <SelectContent>
                         {feesQuery.data.map(fee => (
-                          <SelectItem key={fee.id} value={fee.id}>
-                            {fee.name} - ${fee.amount}
+                          <SelectItem key={fee.id} value={fee.id} className="flex items-center gap-2">
+                            <div className="flex items-center flex-1 gap-2">
+                              <Checkbox 
+                                checked={Array.isArray(existingGroup.fees) && existingGroup.fees.includes(fee.id)}
+                                className="mr-2"
+                              />
+                              {fee.name} - ${(fee.amount / 100).toFixed(2)}
+                            </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
