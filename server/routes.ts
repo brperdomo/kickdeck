@@ -108,6 +108,62 @@ export function registerRoutes(app: Express): Server {
     // Use events router for all admin event operations
     app.use('/api/admin/events', isAdmin, eventsRouter);
 
+    // Add admin event deletion endpoint
+    app.delete('/api/admin/events/:id', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.params.id);
+
+        // Start a transaction to delete all related records first
+        await db.transaction(async (tx) => {
+          // Delete event age groups
+          await tx
+            .delete(eventAgeGroups)
+            .where(sql`${eventAgeGroups.eventId} = ${eventId}`);
+
+          // Delete event complexes
+          await tx
+            .delete(eventComplexes)
+            .where(sql`${eventComplexes.eventId} = ${eventId}`);
+
+          // Delete event field sizes
+          await tx
+            .delete(eventFieldSizes)
+            .where(sql`${eventFieldSizes.eventId} = ${eventId}`);
+
+          // Delete event scoring rules
+          await tx
+            .delete(eventScoringRules)
+            .where(sql`${eventScoringRules.eventId} = ${eventId}`);
+
+          // Delete event form templates
+          await tx
+            .delete(eventFormTemplates)
+            .where(sql`${eventFormTemplates.eventId} = ${eventId}`);
+
+          // Delete teams associated with the event
+          await tx
+            .delete(teams)
+            .where(sql`${teams.eventId} = ${eventId}`);
+
+          // Finally delete the event itself
+          const [deletedEvent] = await tx
+            .delete(events)
+            .where(sql`${events.id} = ${eventId}`)
+            .returning();
+
+          if (!deletedEvent) {
+            throw new Error("Event not found");
+          }
+        });
+
+        res.json({ message: "Event deleted successfully" });
+      } catch (error) {
+        console.error('Error deleting event:', error);
+        console.error("Error details:", error);
+        res.status(500).send(error instanceof Error ? error.message : "Failed to delete event");
+      }
+    });
+
     // Admin email check endpoint
     app.get('/api/admin/check-email', isAdmin, async (req, res) => {
       try {
