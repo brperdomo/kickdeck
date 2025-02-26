@@ -61,7 +61,7 @@ type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
   const params = useParams();
-  const eventId = params.eventId;
+  const eventId = params.id; // Route parameter is named 'id'
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
