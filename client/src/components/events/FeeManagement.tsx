@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "wouter";
-import { ArrowLeft, Edit, Trash2, ArrowUpDown } from "lucide-react";
+import { ArrowLeft, Edit, Trash2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -39,8 +39,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import {
   Select,
@@ -58,8 +56,6 @@ const feeFormSchema = z.object({
   ),
   beginDate: z.string().optional(),
   endDate: z.string().optional(),
-  applyToAll: z.boolean().default(false),
-  ageGroups: z.array(z.number()).default([]),
   accountingCodeId: z.number().nullable().optional(),
 });
 
@@ -84,27 +80,17 @@ export function FeeManagement() {
       amount: "",
       beginDate: "",
       endDate: "",
-      applyToAll: false,
-      ageGroups: [],
       accountingCodeId: null,
     }
   });
 
   useEffect(() => {
     if (editingFee) {
-      console.log("Setting form values for editing fee:", editingFee);
-      // Ensure ageGroups is an array of numbers
-      const ageGroups = Array.isArray(editingFee.ageGroups) 
-        ? editingFee.ageGroups.map(Number) 
-        : [];
-
       form.reset({
         name: editingFee.name,
         amount: (editingFee.amount / 100).toString(),
         beginDate: editingFee.beginDate || "",
         endDate: editingFee.endDate || "",
-        applyToAll: editingFee.applyToAll || false,
-        ageGroups: ageGroups,
         accountingCodeId: editingFee.accountingCodeId || null,
       });
     }
@@ -113,36 +99,18 @@ export function FeeManagement() {
   const eventQuery = useQuery({
     queryKey: ['event', eventId],
     queryFn: async () => {
-      console.log("Fetching event details for:", eventId);
       const response = await fetch(`/api/admin/events/${eventId}`);
       if (!response.ok) throw new Error('Failed to fetch event details');
-      const data = await response.json();
-      console.log("Fetched event details:", data);
-      return data;
-    },
-  });
-
-  const ageGroupsQuery = useQuery({
-    queryKey: ['ageGroups', eventId],
-    queryFn: async () => {
-      console.log("Fetching age groups for event:", eventId);
-      const response = await fetch(`/api/admin/events/${eventId}/age-groups`);
-      if (!response.ok) throw new Error('Failed to fetch age groups');
-      const data = await response.json();
-      console.log("Fetched age groups:", data);
-      return data;
+      return response.json();
     },
   });
 
   const feesQuery = useQuery({
     queryKey: ['fees', eventId],
     queryFn: async () => {
-      console.log("Fetching fees for event:", eventId);
       const response = await fetch(`/api/admin/events/${eventId}/fees`);
       if (!response.ok) throw new Error('Failed to fetch fees');
-      const data = await response.json();
-      console.log("Fetched fees:", data);
-      return data;
+      return response.json();
     },
   });
 
@@ -163,7 +131,6 @@ export function FeeManagement() {
         body: JSON.stringify({
           ...values,
           amount: Math.round(Number(values.amount) * 100),
-          ageGroups: values.applyToAll ? [] : values.ageGroups,
         }),
       });
       if (!response.ok) throw new Error('Failed to create fee');
@@ -189,14 +156,12 @@ export function FeeManagement() {
 
   const updateFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues & { id: number }) => {
-      console.log("Updating fee with values:", values);
       const response = await fetch(`/api/admin/events/${eventId}/fees/${values.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
           amount: Math.round(Number(values.amount) * 100),
-          ageGroups: values.applyToAll ? [] : values.ageGroups,
         }),
       });
       if (!response.ok) throw new Error('Failed to update fee');
@@ -246,7 +211,6 @@ export function FeeManagement() {
   });
 
   const handleSubmit = (values: FeeFormValues) => {
-    console.log("Submitting form with values:", values);
     if (editingFee) {
       updateFeeMutation.mutate({ ...values, id: editingFee.id });
     } else {
@@ -274,20 +238,8 @@ export function FeeManagement() {
     return a[sortField].localeCompare(b[sortField]) * modifier;
   }) : [];
 
-  const renderAgeGroupList = (fee: any) => {
-    if (fee.applyToAll) return 'All';
 
-    const selectedGroups = (fee.ageGroups || [])
-      .map((agId: number) => {
-        const group = ageGroupsQuery.data?.find((g: any) => g.id === agId);
-        return group ? `${group.ageGroup} ${group.gender}` : null;
-      })
-      .filter(Boolean);
-
-    return selectedGroups.length ? selectedGroups.join(', ') : '-';
-  };
-
-  if (feesQuery.isLoading || ageGroupsQuery.isLoading || accountingCodesQuery.isLoading || eventQuery.isLoading) {
+  if (feesQuery.isLoading || accountingCodesQuery.isLoading || eventQuery.isLoading) {
     return (
       <div className="flex justify-center items-center h-[calc(100vh-4rem)]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
@@ -295,7 +247,7 @@ export function FeeManagement() {
     );
   }
 
-  if (feesQuery.error || ageGroupsQuery.error || accountingCodesQuery.error || eventQuery.error) {
+  if (feesQuery.error || accountingCodesQuery.error || eventQuery.error) {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] space-y-4">
         <div className="text-red-500 font-semibold">Failed to load fee management data</div>
@@ -344,7 +296,6 @@ export function FeeManagement() {
                 <TableHead className="cursor-pointer" onClick={() => handleSort('amount')}>
                   Amount <ArrowUpDown className="inline h-4 w-4" />
                 </TableHead>
-                <TableHead>Age Groups</TableHead>
                 <TableHead>Accounting Code</TableHead>
                 <TableHead className="cursor-pointer" onClick={() => handleSort('beginDate')}>
                   Begin Date <ArrowUpDown className="inline h-4 w-4" />
@@ -358,7 +309,6 @@ export function FeeManagement() {
                 <TableRow key={fee.id}>
                   <TableCell>{fee.name}</TableCell>
                   <TableCell>{formatCurrency(fee.amount)}</TableCell>
-                  <TableCell>{renderAgeGroupList(fee)}</TableCell>
                   <TableCell>{accountingCodesQuery.data?.find(code => code.id === fee.accountingCodeId)?.name || '-'}</TableCell>
                   <TableCell>
                     {fee.beginDate ? format(new Date(fee.beginDate), "MMM d, yyyy") : "-"}
@@ -372,7 +322,6 @@ export function FeeManagement() {
                         variant="ghost"
                         size="icon"
                         onClick={() => {
-                          console.log("Setting editing fee:", fee);
                           setEditingFee(fee);
                           setIsDialogOpen(true);
                         }}
@@ -465,55 +414,6 @@ export function FeeManagement() {
                   )}
                 />
               </div>
-
-              <FormField
-                control={form.control}
-                name="applyToAll"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center justify-between">
-                      <FormLabel>Apply to All Age Groups</FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {!form.watch("applyToAll") && ageGroupsQuery.data && ageGroupsQuery.data.length > 0 && (
-                <FormField
-                  control={form.control}
-                  name="ageGroups"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Assign to Age Groups</FormLabel>
-                      <div className="border rounded-md p-4 space-y-2 max-h-60 overflow-y-auto">
-                        {ageGroupsQuery.data.map((group: any) => (
-                          <div key={group.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={field.value.includes(group.id)}
-                              onCheckedChange={(checked) => {
-                                const newValue = checked
-                                  ? [...field.value, group.id]
-                                  : field.value.filter((id: number) => id !== group.id);
-                                console.log("Setting age groups to:", newValue);
-                                field.onChange(newValue);
-                              }}
-                            />
-                            <span>{group.ageGroup} - {group.gender}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
 
               <FormField
                 control={form.control}
