@@ -58,7 +58,7 @@ type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
   const params = useParams();
-  const eventId = params.id; // Using params.id as that's how the route parameter is defined
+  const eventId = params.id;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingFee, setEditingFee] = useState<any>(null);
   const { toast } = useToast();
@@ -78,10 +78,20 @@ export function FeeManagement() {
   const feesQuery = useQuery({
     queryKey: ['fees', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/fees`);
+      const response = await fetch(`/api/admin/events/${eventId}/fees`, {
+        credentials: 'include', 
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Failed to fetch fees:', response.status, errorText);
         throw new Error('Failed to fetch fees');
       }
+
       const data = await response.json();
       return data;
     },
@@ -92,12 +102,17 @@ export function FeeManagement() {
     mutationFn: async (values: FeeFormValues) => {
       const response = await fetch(`/api/admin/events/${eventId}/fees`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        credentials: 'include',
+        headers: { 
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+        },
         body: JSON.stringify({
           ...values,
-          amount: Math.round(Number(values.amount) * 100), // Convert to cents
+          amount: Math.round(Number(values.amount) * 100), 
         }),
       });
+
       if (!response.ok) {
         throw new Error('Failed to create fee');
       }
@@ -125,12 +140,17 @@ export function FeeManagement() {
     mutationFn: async (values: FeeFormValues & { id: number }) => {
       const response = await fetch(`/api/admin/events/${eventId}/fees/${values.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        credentials: 'include',
+        headers: { 
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+        },
         body: JSON.stringify({
           ...values,
-          amount: Math.round(Number(values.amount) * 100), // Convert to cents
+          amount: Math.round(Number(values.amount) * 100), 
         }),
       });
+
       if (!response.ok) {
         throw new Error('Failed to update fee');
       }
