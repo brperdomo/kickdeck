@@ -90,7 +90,6 @@ export function FeeManagement() {
     }
   });
 
-  // Reset form when editing fee changes
   useEffect(() => {
     if (editingFee) {
       console.log("Setting form values for editing fee:", editingFee);
@@ -110,6 +109,18 @@ export function FeeManagement() {
       });
     }
   }, [editingFee, form]);
+
+  const eventQuery = useQuery({
+    queryKey: ['event', eventId],
+    queryFn: async () => {
+      console.log("Fetching event details for:", eventId);
+      const response = await fetch(`/api/admin/events/${eventId}`);
+      if (!response.ok) throw new Error('Failed to fetch event details');
+      const data = await response.json();
+      console.log("Fetched event details:", data);
+      return data;
+    },
+  });
 
   const ageGroupsQuery = useQuery({
     queryKey: ['ageGroups', eventId],
@@ -474,7 +485,7 @@ export function FeeManagement() {
                 )}
               />
 
-              {!form.watch("applyToAll") && ageGroupsQuery.data && (
+              {!form.watch("applyToAll") && ageGroupsQuery.data && ageGroupsQuery.data.length > 0 && (
                 <FormField
                   control={form.control}
                   name="ageGroups"
