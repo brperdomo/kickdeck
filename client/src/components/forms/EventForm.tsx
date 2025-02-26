@@ -535,12 +535,22 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       multiple
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Fees" />
+                        <SelectValue placeholder={
+                          Array.isArray(existingGroup.fees) && existingGroup.fees.length > 0
+                            ? `${existingGroup.fees.length} fee${existingGroup.fees.length > 1 ? 's' : ''} selected`
+                            : "Select Fees"
+                        } />
                       </SelectTrigger>
                       <SelectContent>
                         {feesQuery.data.map(fee => (
-                          <SelectItem key={fee.id} value={fee.id}>
-                            {fee.name} - ${fee.amount}
+                          <SelectItem key={fee.id} value={fee.id} className="flex items-center gap-2">
+                            <div className="flex items-center flex-1 gap-2">
+                              <Checkbox 
+                                checked={Array.isArray(existingGroup.fees) && existingGroup.fees.includes(fee.id)}
+                                className="mr-2"
+                              />
+                              {fee.name} - ${(fee.amount / 100).toFixed(2)}
+                            </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
