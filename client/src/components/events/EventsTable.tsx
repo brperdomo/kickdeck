@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
@@ -69,6 +69,8 @@ export function EventsTable() {
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
+  const queryClient = useQueryClient();
+
   const eventsQuery = useQuery<Event[]>({
     queryKey: ["/api/admin/events"],
     queryFn: async () => {
@@ -78,6 +80,34 @@ export function EventsTable() {
       }
       const events = await response.json();
       return events;
+    },
+  });
+
+  // Add delete mutation
+  const deleteEventMutation = useMutation({
+    mutationFn: async (eventId: number) => {
+      const response = await fetch(`/api/admin/events/${eventId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to delete event');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/events"] });
+      toast({
+        title: "Success",
+        description: "Event deleted successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete event",
+        variant: "destructive",
+      });
     },
   });
 
@@ -140,6 +170,16 @@ export function EventsTable() {
         description: "Failed to copy registration link",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleDeleteEvent = async (eventId: number) => {
+    if (confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+      try {
+        await deleteEventMutation.mutateAsync(eventId);
+      } catch (error) {
+        // Error handling is done in mutation callbacks
+      }
     }
   };
 
@@ -267,7 +307,10 @@ export function EventsTable() {
                           <Ticket className="mr-2 h-4 w-4" />
                           Create Coupons
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onClick={() => handleDeleteEvent(event.id)}
+                        >
                           <Trash className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>
