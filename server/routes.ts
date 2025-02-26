@@ -19,6 +19,7 @@ import {
   eventAgeGroups,
   seasonalScopes,
   eventScoringRules,
+  tournamentGroups,
   chatRooms,
   chatParticipants,
   messages,
@@ -115,6 +116,11 @@ export function registerRoutes(app: Express): Server {
 
         // Start a transaction to delete all related records first
         await db.transaction(async (tx) => {
+          // Delete tournament groups first (as they reference age groups)
+          await tx
+            .delete(tournamentGroups)
+            .where(sql`${tournamentGroups.eventId} = ${eventId}`);
+
           // Delete event age groups
           await tx
             .delete(eventAgeGroups)
@@ -134,6 +140,29 @@ export function registerRoutes(app: Express): Server {
           await tx
             .delete(eventScoringRules)
             .where(sql`${eventScoringRules.eventId} = ${eventId}`);
+
+          // Delete form responses
+          await tx
+            .delete(formResponses)
+            .where(sql`${formResponses.eventId} = ${eventId}`);
+
+          // Delete form fields and options
+          const formTemplates = await tx
+            .select({ id: eventFormTemplates.id })
+            .from(eventFormTemplates)
+            .where(sql`${eventFormTemplates.eventId} = ${eventId}`);
+
+          for (const template of formTemplates) {
+            await tx
+              .delete(formFieldOptions)
+              .where(sql`${formFieldOptions.formFieldId} IN (
+                SELECT id FROM ${formFields} WHERE form_template_id = ${template.id}
+              )`);
+
+            await tx
+              .delete(formFields)
+              .where(sql`${formFields.formTemplateId} = ${template.id}`);
+          }
 
           // Delete event form templates
           await tx
