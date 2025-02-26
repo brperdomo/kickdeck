@@ -88,16 +88,24 @@ export function FeeManagement() {
             'Content-Type': 'application/json',
           }
         });
+
         if (!response.ok) {
-          const error = await response.text();
-          console.error('Fees fetch error:', error);
-          throw new Error(error || "Failed to fetch fees");
+          const errorText = await response.text();
+          console.error('Failed to fetch fees. Status:', response.status, 'Error:', errorText);
+          throw new Error(errorText || "Failed to fetch fees");
         }
+
         const data = await response.json();
-        console.log('Detailed Fees data:', JSON.stringify(data, null, 2));
-        return Array.isArray(data) ? data : [];
+        console.log('Received fees data:', JSON.stringify(data, null, 2));
+
+        // Transform BigInt eventId to string to avoid JSON serialization issues
+        return Array.isArray(data) ? data.map(fee => ({
+          ...fee,
+          eventId: fee.eventId.toString(),
+          amount: Number(fee.amount)
+        })) : [];
       } catch (error) {
-        console.error('Fees fetch error:', error);
+        console.error('Error in fees query:', error);
         throw error;
       }
     },
@@ -341,7 +349,7 @@ export function FeeManagement() {
                 {feesQuery.data?.map((fee: any) => (
                   <TableRow key={fee.id}>
                     <TableCell>{fee.name}</TableCell>
-                    <TableCell>${(fee.amount / 100).toFixed(2)}</TableCell>
+                    <TableCell>${fee.amount.toFixed(2)}</TableCell>
                     <TableCell>
                       {fee.beginDate ? format(new Date(fee.beginDate), "PP") : "-"}
                     </TableCell>
@@ -356,7 +364,7 @@ export function FeeManagement() {
                         onClick={() => {
                           form.reset({
                             name: fee.name,
-                            amount: (fee.amount / 100).toString(),
+                            amount: fee.amount.toString(),
                             beginDate: fee.beginDate ? new Date(fee.beginDate).toISOString().split('T')[0] : "",
                             endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
                             applyToAll: fee.applyToAll,
