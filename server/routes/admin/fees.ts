@@ -10,17 +10,23 @@ const router = Router();
 router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
+    console.log('Fetching fees for event:', eventId);
+
     if (!eventId) {
+      console.error('Invalid event ID:', eventId);
       return res.status(400).json({ message: "Invalid event ID" });
     }
+
     const fees = await db.query.eventFees.findMany({
       where: eq(eventFees.eventId, BigInt(eventId)),
       orderBy: (eventFees) => [eventFees.createdAt],
     });
+
+    console.log(`Found ${fees.length} fees for event ${eventId}:`, fees);
     res.json(fees);
   } catch (error) {
     console.error("Error fetching event fees:", error);
-    res.status(500).json({ message: "Failed to fetch event fees" });
+    res.status(500).json({ message: "Failed to fetch event fees", error: error.message });
   }
 });
 
@@ -28,6 +34,13 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
 router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
+    console.log('Creating fee for event:', eventId, 'with data:', req.body);
+
+    if (!eventId) {
+      console.error('Invalid event ID for fee creation:', eventId);
+      return res.status(400).json({ message: "Invalid event ID" });
+    }
+
     const validatedData = insertEventFeeSchema.parse({
       ...req.body,
       eventId: BigInt(eventId),
@@ -42,10 +55,11 @@ router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
       updatedAt: new Date(),
     }).returning();
 
+    console.log('Created new fee:', newFee[0]);
     res.status(201).json(newFee[0]);
   } catch (error) {
     console.error("Error creating event fee:", error);
-    res.status(500).json({ message: "Failed to create event fee" });
+    res.status(500).json({ message: "Failed to create event fee", error: error.message });
   }
 });
 

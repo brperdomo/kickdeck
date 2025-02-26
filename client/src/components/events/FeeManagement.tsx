@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "wouter";
 import { ArrowLeft } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -60,10 +60,15 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  const { eventId } = useParams();
+  const params = useParams();
+  const eventId = params.eventId;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    console.log('FeeManagement mounted with eventId:', eventId);
+  }, [eventId]);
 
   const form = useForm<FeeFormValues>({
     resolver: zodResolver(feeFormSchema),
@@ -79,8 +84,12 @@ export function FeeManagement() {
   const feesQuery = useQuery({
     queryKey: ['fees', eventId],
     queryFn: async () => {
-      if (!eventId) throw new Error("Event ID is required");
+      if (!eventId) {
+        console.error('No eventId provided to feesQuery');
+        throw new Error("Event ID is required");
+      }
       console.log('Fetching fees for event:', eventId);
+
       try {
         const response = await fetch(`/api/admin/events/${eventId}/fees`, {
           credentials: 'include',
@@ -102,7 +111,7 @@ export function FeeManagement() {
         return Array.isArray(data) ? data.map(fee => ({
           ...fee,
           eventId: fee.eventId.toString(),
-          amount: Number(fee.amount)
+          amount: Number(fee.amount) / 100 // Convert cents to dollars
         })) : [];
       } catch (error) {
         console.error('Error in fees query:', error);
