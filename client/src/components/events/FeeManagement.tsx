@@ -364,7 +364,7 @@ export function FeeManagement() {
                             beginDate: fee.beginDate ? new Date(fee.beginDate).toISOString().split('T')[0] : "",
                             endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
                             applyToAll: fee.applyToAll,
-                            ageGroups: fee.ageGroups || [],
+                            ageGroups: Array.isArray(fee.ageGroups) ? [...fee.ageGroups] : [],
                           };
                           setEditingFee(fee);
                           form.reset(feeData);
