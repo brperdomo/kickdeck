@@ -960,7 +960,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 <TabsTrigger
                   key={tab}
                   value={tab}
-                  className={`w-full px-4 py-2 rounded-md text-sm font-medium transition-colors
+                  className={`w-fullpx-4 py-2 rounded-md text-sm font-medium transition-colors
                     data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm
                     text-[#1C1C1E] hover:text-[#007AFF]`}
                 >

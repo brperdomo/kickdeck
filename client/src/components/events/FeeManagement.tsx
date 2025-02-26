@@ -59,6 +59,7 @@ const feeFormSchema = z.object({
   beginDate: z.string().optional(),
   endDate: z.string().optional(),
   applyToAll: z.boolean().default(false),
+  ageGroups: z.array(z.number()).default([]),
 });
 
 type FeeFormValues = z.infer<typeof feeFormSchema>;
@@ -107,6 +108,40 @@ export function FeeManagement() {
       });
       if (!response.ok) throw new Error('Failed to fetch fees');
       return response.json();
+    },
+  });
+
+  const ageGroupsQuery = useQuery({
+    queryKey: ['ageGroups', eventId],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/age-groups`, {
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to fetch age groups');
+      const data = await response.json();
+      if (data.length === 0) {
+        // Return predefined age groups if none exist
+        return Array.from({ length: 15 }, (_, i) => {
+          const age = i + 4; // Start from U4
+          return {
+            id: i + 1,
+            ageGroup: `U${age}`,
+            gender: 'Boys',
+            isSelected: true
+          };
+        }).concat(
+          Array.from({ length: 15 }, (_, i) => {
+            const age = i + 4; // Start from U4
+            return {
+              id: i + 16,
+              ageGroup: `U${age}`,
+              gender: 'Girls',
+              isSelected: true
+            };
+          })
+        );
+      }
+      return data;
     },
   });
 
@@ -425,6 +460,32 @@ export function FeeManagement() {
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="ageGroups"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Assign to Age Groups</FormLabel>
+                    <div className="border rounded-md p-4 space-y-2 max-h-40 overflow-y-auto">
+                      {ageGroupsQuery.data?.map((group: any) => (
+                        <div key={group.id} className="flex items-center space-x-2">
+                          <Checkbox
+                            checked={field.value.includes(group.id)}
+                            onCheckedChange={(checked) => {
+                              const newValue = checked
+                                ? [...field.value, group.id]
+                                : field.value.filter((id: number) => id !== group.id);
+                              field.onChange(newValue);
+                            }}
+                          />
+                          <span>{group.ageGroup} - {group.gender}</span>
+                        </div>
+                      ))}
                     </div>
                     <FormMessage />
                   </FormItem>
