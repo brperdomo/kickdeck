@@ -30,6 +30,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 
@@ -68,6 +76,9 @@ export function EventsTable() {
   const [statusFilter, setStatusFilter] = useState<"past" | "active" | "upcoming" | "all">("all");
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -101,6 +112,9 @@ export function EventsTable() {
         title: "Success",
         description: "Event deleted successfully",
       });
+      setEventToDelete(null);
+      setDeleteDialogOpen(false);
+      setDeleteConfirmText("");
     },
     onError: (error) => {
       toast({
@@ -173,14 +187,28 @@ export function EventsTable() {
     }
   };
 
-  const handleDeleteEvent = async (eventId: number) => {
-    if (confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
-      try {
-        await deleteEventMutation.mutateAsync(eventId);
-      } catch (error) {
-        // Error handling is done in mutation callbacks
-      }
+  const handleDeleteEvent = async () => {
+    if (!eventToDelete) return;
+
+    if (deleteConfirmText.toUpperCase() !== "REMOVE") {
+      toast({
+        title: "Error",
+        description: "Please type REMOVE to confirm deletion",
+        variant: "destructive",
+      });
+      return;
     }
+
+    try {
+      await deleteEventMutation.mutateAsync(eventToDelete.id);
+    } catch (error) {
+      // Error handling is done in mutation callbacks
+    }
+  };
+
+  const openDeleteDialog = (event: Event) => {
+    setEventToDelete(event);
+    setDeleteDialogOpen(true);
   };
 
   if (eventsQuery.isLoading) {
@@ -309,7 +337,7 @@ export function EventsTable() {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-red-600"
-                          onClick={() => handleDeleteEvent(event.id)}
+                          onClick={() => openDeleteDialog(event)}
                         >
                           <Trash className="mr-2 h-4 w-4" />
                           Delete
@@ -323,6 +351,43 @@ export function EventsTable() {
           </Table>
         </div>
       </div>
+
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Event</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. To confirm deletion, please type REMOVE in the field below.
+              This will permanently delete the event "{eventToDelete?.name}" and all associated data.
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            value={deleteConfirmText}
+            onChange={(e) => setDeleteConfirmText(e.target.value)}
+            placeholder="Type REMOVE to confirm"
+            className="mt-4"
+          />
+          <DialogFooter className="mt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setDeleteConfirmText("");
+                setEventToDelete(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteEvent}
+              disabled={deleteConfirmText.toUpperCase() !== "REMOVE"}
+            >
+              Delete Event
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
