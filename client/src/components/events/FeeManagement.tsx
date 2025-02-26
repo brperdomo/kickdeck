@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams } from "wouter";
-import { ArrowLeft, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, ArrowUpDown } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -38,7 +38,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import {
   Select,
@@ -82,27 +81,6 @@ export function FeeManagement() {
       endDate: "",
       accountingCodeId: null,
     }
-  });
-
-  useEffect(() => {
-    if (editingFee) {
-      form.reset({
-        name: editingFee.name,
-        amount: (editingFee.amount / 100).toString(),
-        beginDate: editingFee.beginDate || "",
-        endDate: editingFee.endDate || "",
-        accountingCodeId: editingFee.accountingCodeId || null,
-      });
-    }
-  }, [editingFee, form]);
-
-  const eventQuery = useQuery({
-    queryKey: ['event', eventId],
-    queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}`);
-      if (!response.ok) throw new Error('Failed to fetch event details');
-      return response.json();
-    },
   });
 
   const feesQuery = useQuery({
@@ -238,8 +216,7 @@ export function FeeManagement() {
     return a[sortField].localeCompare(b[sortField]) * modifier;
   }) : [];
 
-
-  if (feesQuery.isLoading || accountingCodesQuery.isLoading || eventQuery.isLoading) {
+  if (feesQuery.isLoading || accountingCodesQuery.isLoading) {
     return (
       <div className="flex justify-center items-center h-[calc(100vh-4rem)]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
@@ -247,7 +224,7 @@ export function FeeManagement() {
     );
   }
 
-  if (feesQuery.error || accountingCodesQuery.error || eventQuery.error) {
+  if (feesQuery.error || accountingCodesQuery.error) {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] space-y-4">
         <div className="text-red-500 font-semibold">Failed to load fee management data</div>
@@ -269,9 +246,7 @@ export function FeeManagement() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
-          <h1 className="text-2xl font-bold">
-            Manage Fees for {eventQuery.data?.name}
-          </h1>
+          <h1 className="text-2xl font-bold">Fee Management</h1>
         </div>
         <Button onClick={() => {
           setEditingFee(null);
@@ -322,6 +297,13 @@ export function FeeManagement() {
                         variant="ghost"
                         size="icon"
                         onClick={() => {
+                          form.reset({
+                            name: fee.name,
+                            amount: (fee.amount / 100).toString(),
+                            beginDate: fee.beginDate || "",
+                            endDate: fee.endDate || "",
+                            accountingCodeId: fee.accountingCodeId || null,
+                          });
                           setEditingFee(fee);
                           setIsDialogOpen(true);
                         }}
@@ -431,7 +413,7 @@ export function FeeManagement() {
                       <SelectContent>
                         {accountingCodesQuery.data?.map((code: any) => (
                           <SelectItem key={code.id} value={code.id.toString()}>
-                            {code.code} - {code.name}
+                            {code.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -448,6 +430,7 @@ export function FeeManagement() {
                   onClick={() => {
                     setIsDialogOpen(false);
                     setEditingFee(null);
+                    form.reset();
                   }}
                 >
                   Cancel
@@ -462,26 +445,4 @@ export function FeeManagement() {
       </Dialog>
     </div>
   );
-}
-
-async function createFee(eventId: string, data: any) {
-  const response = await fetch(`/api/admin/events/${eventId}/fees`, {
-    method: "POST",
-    credentials: 'include',
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) throw new Error('Failed to create fee');
-  return response.json();
-}
-
-async function updateFee(eventId: string, feeId: number, data: any) {
-  const response = await fetch(`/api/admin/events/${eventId}/fees/${feeId}`, {
-    method: "PATCH",
-    credentials: 'include',
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) throw new Error('Failed to update fee');
-  return response.json();
 }
