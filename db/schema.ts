@@ -152,6 +152,8 @@ export const eventAgeGroups = pgTable("event_age_groups", {
   birthYear: integer("birth_year").notNull(),
   gender: text("gender").notNull(),
   projectedTeams: integer("projected_teams").notNull(),
+  birthDateStart: text("birth_date_start").notNull().default('2000-01-01'),
+  birthDateEnd: text("birth_date_end").notNull().default('2000-12-31'),
   scoringRule: text("scoring_rule"),
   fieldSize: text("field_size").notNull(),
   amountDue: integer("amount_due"),
