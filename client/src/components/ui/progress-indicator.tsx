@@ -1,28 +1,47 @@
 
-import { useMemo } from 'react';
+import { cn } from "@/lib/utils";
 
 interface ProgressIndicatorProps {
-  tabs: string[];
-  completedTabs: string[];
+  steps: string[];
+  currentStep: string;
+  completedSteps: string[];
 }
 
-export function ProgressIndicator({ tabs, completedTabs }: ProgressIndicatorProps) {
-  const progress = useMemo(() => {
-    return (completedTabs.length / tabs.length) * 100;
-  }, [tabs.length, completedTabs.length]);
-
+export function ProgressIndicator({ steps = [], currentStep, completedSteps = [] }: ProgressIndicatorProps) {
   return (
-    <div className="w-full mb-6">
-      <div className="flex justify-between mb-2">
-        <span className="text-sm font-medium">Progress</span>
-        <span className="text-sm font-medium">{Math.round(progress)}%</span>
-      </div>
-      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+    <div className="flex justify-between mb-6">
+      {steps.map((step, index) => (
         <div
-          className="h-full bg-[#43A047] transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
+          key={step}
+          className={cn(
+            "flex items-center",
+            index < steps.length - 1 && "flex-1"
+          )}
+        >
+          <div
+            className={cn(
+              "w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-medium",
+              completedSteps.includes(step)
+                ? "bg-[#43A047] border-[#43A047] text-white"
+                : currentStep === step
+                ? "border-[#43A047] text-[#43A047]"
+                : "border-gray-300 text-gray-300"
+            )}
+          >
+            {index + 1}
+          </div>
+          {index < steps.length - 1 && (
+            <div
+              className={cn(
+                "h-[2px] w-full mx-2",
+                completedSteps.includes(step)
+                  ? "bg-[#43A047]"
+                  : "bg-gray-300"
+              )}
+            />
+          )}
+        </div>
+      ))}
     </div>
   );
 }
