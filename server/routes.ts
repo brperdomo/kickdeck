@@ -126,7 +126,7 @@ export function registerRoutes(app: Express): Server {
             .delete(eventAgeGroups)
             .where(sql`${eventAgeGroups.eventId} = ${eventId}`);
 
-          // Delete event complexes
+          // Delete event complexes  
           await tx
             .delete(eventComplexes)
             .where(sql`${eventComplexes.eventId} = ${eventId}`);
