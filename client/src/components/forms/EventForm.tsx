@@ -439,7 +439,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             <TableHead>Birth Year</TableHead>
             <TableHead>Gender</TableHead>
             <TableHead>Division Code</TableHead>
-            <TableHead>Field Size</TableHead><TableHead>Projected Teams</TableHead><TableHead>Amount Due</TableHead><TableHead>Fees</TableHead>
+            <TableHead>Field Size</TableHead><TableHead>Amount Due</TableHead><TableHead>Fees</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -511,43 +511,12 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 </TableCell>
                 <TableCell>
                   {existingGroup ? (
-                    <Input
-                      type="number"
-                      value={existingGroup.projectedTeams}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value) || 0;
-                        setAgeGroups(
-                          ageGroups.map((ag) =>
-                            ag.id === existingGroup.id
-                              ? { ...ag, projectedTeams: value }
-                              : ag
-                          )
-                        );
-                      }}
-                      className="w-[80px]"
-                    />
-                  ) : (
-                    "-"
-                  )}
-                </TableCell>
-                <TableCell>
-                  {existingGroup ? (
-                    <Input
-                      type="number"
-                      value={existingGroup.amountDue || ""}
-                      onChange={(e) => {
-                        const value = e.target.value ? parseInt(e.target.value) : null;
-                        setAgeGroups(
-                          ageGroups.map((ag) =>
-                            ag.id === existingGroup.id
-                              ? { ...ag, amountDue: value }
-                              : ag
-                          )
-                        );
-                      }}
-                      className="w-[100px]"
-                      placeholder="Optional"
-                    />
+                    <span className="text-sm font-medium">
+                      ${feesQuery.data
+                        ?.filter(fee => existingGroup.fees?.includes(fee.id))
+                        .reduce((sum, fee) => sum + (fee.amount / 100), 0)
+                        .toFixed(2) || "0.00"}
+                    </span>
                   ) : (
                     "-"
                   )}
