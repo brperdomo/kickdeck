@@ -109,7 +109,11 @@ export function FeeManagement() {
         credentials: 'include',
       });
       if (!response.ok) throw new Error('Failed to fetch fees');
-      return response.json();
+      const fees = await response.json();
+      return fees.map((fee: any) => ({
+        ...fee,
+        ageGroups: fee.ageGroups || [],
+      }));
     },
   });
 
@@ -360,7 +364,7 @@ export function FeeManagement() {
                             beginDate: fee.beginDate ? new Date(fee.beginDate).toISOString().split('T')[0] : "",
                             endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
                             applyToAll: fee.applyToAll,
-                            ageGroups: Array.isArray(fee.ageGroups) ? fee.ageGroups : [],
+                            ageGroups: fee.ageGroups || [],
                           };
                           setEditingFee(fee);
                           form.reset(feeData);
