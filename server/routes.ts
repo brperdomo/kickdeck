@@ -20,7 +20,7 @@ import {
   seasonalScopes,
   eventScoringRules,
   tournamentGroups,
-  chatRooms,
+  chatRooms,  
   chatParticipants,
   messages,
   households,
@@ -36,6 +36,9 @@ import {
   formFieldOptions,
   formResponses,
   teams,
+  games,
+  gameTimeSlots,
+  eventSettings,
 } from "@db/schema";
 import fs from "fs/promises";
 import path from "path";
@@ -116,10 +119,25 @@ export function registerRoutes(app: Express): Server {
 
         // Start a transaction to delete all related records first
         await db.transaction(async (tx) => {
+          // Delete games first (they reference time slots and teams)
+          await tx
+            .delete(games)
+            .where(sql`${games.eventId} = ${eventId}`);
+
+          // Delete game time slots
+          await tx
+            .delete(gameTimeSlots)
+            .where(sql`${gameTimeSlots.eventId} = ${eventId}`);
+
           // Delete tournament groups first (as they reference age groups)
           await tx
             .delete(tournamentGroups)
             .where(sql`${tournamentGroups.eventId} = ${eventId}`);
+
+          // Delete teams (they reference age groups)
+          await tx
+            .delete(teams)
+            .where(sql`${teams.eventId} = ${eventId}`);
 
           // Delete event age groups
           await tx
@@ -140,6 +158,11 @@ export function registerRoutes(app: Express): Server {
           await tx
             .delete(eventScoringRules)
             .where(sql`${eventScoringRules.eventId} = ${eventId}`);
+
+          // Delete event settings
+          await tx
+            .delete(eventSettings)
+            .where(sql`${eventSettings.eventId} = ${eventId}`);
 
           // Delete form responses
           await tx
@@ -168,11 +191,6 @@ export function registerRoutes(app: Express): Server {
           await tx
             .delete(eventFormTemplates)
             .where(sql`${eventFormTemplates.eventId} = ${eventId}`);
-
-          // Delete teams associated with the event
-          await tx
-            .delete(teams)
-            .where(sql`${teams.eventId} = ${eventId}`);
 
           // Finally delete the event itself
           const [deletedEvent] = await tx
