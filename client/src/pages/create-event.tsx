@@ -732,123 +732,25 @@ export default function CreateEvent() {
       <Card>
         <CardContent className="pt-6">
           <ComplexSelector
-            selectedComplexes={selectedComplexes.map(complex => complex.id)}
-            onComplexSelect={(ids) => {
-              const selectedComplexData = complexesQuery.data?.filter(complex =>
-                ids.includes(complex.id)
-              ).map(complex => ({
-                ...complex,
-                selected: true
-              })) || [];
-              setSelectedComplexes(selectedComplexData);
-              setSelectedComplexIds(ids);
+            selectedComplexIds={selectedComplexIds}
+            complexFieldSizes={eventFieldSizes}
+            onComplexSelect={(complexId) => {
+              setSelectedComplexIds(prev => {
+                const isSelected = prev.includes(complexId);
+                return isSelected
+                  ? prev.filter(id => id !== complexId)
+                  : [...prev, complexId];
+              });
+            }}
+            onFieldSizeChange={(complexId, size) => {
+              setEventFieldSizes(prev => ({
+                ...prev,
+                [complexId]: size
+              }));
             }}
           />
         </CardContent>
       </Card>
-
-      {selectedComplexes.length > 0 && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {selectedComplexes.map((complex) => (
-            <Card key={complex.id} className="p-4">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h4 className="font-semibold">{complex.name}</h4>
-                  <p className="text-sm text-gray-500">{complex.address}</p>
-                  <p className="text-sm text-gray-500">{complex.city}, {complex.state}</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleViewFields(complex.id)}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-sm text-gray-500">Status:</span>
-                <Badge variant={complex.isOpen ? "outline" : "destructive"}>
-                  {complex.isOpen ? "Open" : "Closed"}
-                </Badge>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      <Dialog open={!!viewingComplexId} onOpenChange={(open) => !open && setViewingComplexId(null)}>
-        <DialogContent className="max-w-3xl" aria-describedby="dialog-description">
-          <div id="dialog-description" className="sr-only">Field details and configuration options</div>
-          <DialogHeader>
-            <DialogTitle>
-              Fields in {complexesQuery.data?.find(c => c.id === viewingComplexId)?.name}
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="mt-4">
-            {fieldsQuery.isLoading ? (
-              <div>Loading fields...</div>
-            ) : !fieldsQuery.data?.length ? (
-              <div>No fields available in this complex</div>
-            ) : (
-              <div className="space-y-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Field Name</TableHead>
-                      <TableHead className="text-center">Features</TableHead>
-                      <TableHead>Special Instructions</TableHead>
-                      <TableHead className="text-center">Status</TableHead>
-                      <TableHead className="text-center">Event Field Size</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {fieldsQuery.data.map((field) => (
-                      <TableRow key={field.id}>
-                        <TableCell className="font-medium">{field.name}</TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex gap-2 justify-center">
-                            {field.hasLights && <Badge variant="secondary">Lights</Badge>}
-                            {field.hasParking && <Badge variant="secondary">Parking</Badge>}
-                          </div>
-                        </TableCell>
-                        <TableCell>{field.specialInstructions || 'N/A'}</TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant={field.isOpen ? "outline" : "destructive"}>
-                            {field.isOpen ? "Open" : "Closed"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Select
-                            value={eventFieldSizes[field.id] || ''}
-                            onValueChange={(value: FieldSize) => {
-                              setEventFieldSizes(prev => ({
-                                ...prev,
-                                [field.id]: value
-                              }));
-                            }}
-                          >
-                            <SelectTrigger className="w-[120px]">
-                              <SelectValue placeholder="Select size" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
-                                <SelectItem key={size} value={size}>
-                                  {size}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 
@@ -864,7 +766,10 @@ export default function CreateEvent() {
         name: formValues.name?.trim(),
         startDate: formValues.startDate,
         endDate: formValues.endDate,
-        applicationDeadline: formValues.applicationDeadline
+        applicationDeadline: formValues.applicationDeadline,
+        ageGroups: ageGroups,
+        selectedComplexIds: selectedComplexIds,
+        complexFieldSizes: eventFieldSizes,
       };
 
       console.log('Creating event with data:', JSON.stringify(eventData, null, 2));
