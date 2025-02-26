@@ -332,6 +332,7 @@ export function FeeManagement() {
                 <TableHead className="cursor-pointer" onClick={() => handleSort('amount')}>
                   Amount <ArrowUpDown className="inline h-4 w-4" />
                 </TableHead>
+                <TableHead>Accounting Code</TableHead>
                 <TableHead className="cursor-pointer" onClick={() => handleSort('beginDate')}>
                   Begin Date <ArrowUpDown className="inline h-4 w-4" />
                 </TableHead>
@@ -345,6 +346,7 @@ export function FeeManagement() {
                 <TableRow key={fee.id}>
                   <TableCell>{fee.name}</TableCell>
                   <TableCell>${(fee.amount / 100).toFixed(2)}</TableCell>
+                  <TableCell>-</TableCell> {/* Placeholder for Accounting Code */}
                   <TableCell>
                     {fee.beginDate ? format(new Date(fee.beginDate), "MMM d, yyyy") : "-"}
                   </TableCell>

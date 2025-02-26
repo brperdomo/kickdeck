@@ -625,6 +625,7 @@ export const eventFees = pgTable("event_fees", {
   beginDate: timestamp("begin_date"),
   endDate: timestamp("end_date"),
   applyToAll: boolean("apply_to_all").default(false).notNull(),
+  accountingCodeId: integer("accounting_code_id").references(() => accountingCodes.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
