@@ -525,15 +525,11 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 <TableCell>
                   {existingGroup && feesQuery.data && feesQuery.data.length > 0 ? (
                     <Select
-                      value={Array.isArray(existingGroup.fees) ? existingGroup.fees : []}
+                      value={Array.isArray(existingGroup.fees) && existingGroup.fees.length > 0 ? existingGroup.fees[0] : ""}
                       onValueChange={(selectedFee) => {
                         setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
                           if (ag.id === existingGroup.id) {
-                            const currentFees = Array.isArray(ag.fees) ? ag.fees : [];
-                            const newFees = currentFees.includes(selectedFee) 
-                              ? currentFees.filter(f => f !== selectedFee)
-                              : [...currentFees, selectedFee];
-                            return { ...ag, fees: newFees };
+                            return { ...ag, fees: [selectedFee] };
                           }
                           return ag;
                         }));
