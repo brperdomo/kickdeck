@@ -48,8 +48,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"; // Added back these imports
-
+} from "@/components/ui/select";
 
 const feeFormSchema = z.object({
   name: z.string().min(1, "Fee name is required"),
@@ -102,6 +101,20 @@ export function FeeManagement() {
       accountingCodeId: editingFee?.accountingCodeId || null,
     },
   });
+
+  useEffect(() => {
+    if (editingFee) {
+      form.reset({
+        name: editingFee.name,
+        amount: (editingFee.amount / 100).toString(),
+        beginDate: editingFee.beginDate || "",
+        endDate: editingFee.endDate || "",
+        applyToAll: editingFee.applyToAll || false,
+        ageGroups: Array.isArray(editingFee.ageGroups) ? editingFee.ageGroups : [],
+        accountingCodeId: editingFee.accountingCodeId || null,
+      });
+    }
+  }, [editingFee, form]);
 
   // Event details query
   const eventQuery = useQuery({
@@ -266,7 +279,7 @@ export function FeeManagement() {
   const handleSubmit = (values: FeeFormValues) => {
     const formattedValues = {
       ...values,
-      ageGroups: values.ageGroups || [],
+      ageGroups: values.applyToAll ? [] : values.ageGroups,
       accountingCodeId: values.accountingCodeId,
       amount: Math.round(Number(values.amount) * 100)
     };
@@ -372,7 +385,10 @@ export function FeeManagement() {
                 <TableRow key={fee.id}>
                   <TableCell>{fee.name}</TableCell>
                   <TableCell>{(fee.amount / 100).toFixed(2)}</TableCell>
-                  <TableCell>{fee.applyToAll ? 'All' : (fee.ageGroups || []).map((ageGroupId: number) => ageGroupsQuery.data?.find((group: any) => group.id === ageGroupId)?.ageGroup || '-').join(', ')}</TableCell>
+                  <TableCell>
+                    {fee.applyToAll ? 'All' : (fee.ageGroups || [])
+                      .map((ageGroupId: number) => ageGroupsQuery.data?.find((group: any) => group.id === ageGroupId)?.ageGroup || '-').join(', ')}
+                  </TableCell>
                   <TableCell>{accountingCodesQuery.data?.find(code => code.id === fee.accountingCodeId)?.name || '-'}</TableCell>
                   <TableCell>
                     {fee.beginDate ? format(new Date(fee.beginDate), "MMM d, yyyy") : "-"}
@@ -508,6 +524,36 @@ export function FeeManagement() {
                   </FormItem>
                 )}
               />
+
+              {!form.watch("applyToAll") && (
+                <FormField
+                  control={form.control}
+                  name="ageGroups"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Assign to Age Groups</FormLabel>
+                      <div className="border rounded-md p-4 space-y-2 max-h-40 overflow-y-auto">
+                        {ageGroupsQuery.data?.map((group: any) => (
+                          <div key={group.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              checked={field.value.includes(group.id)}
+                              onCheckedChange={(checked) => {
+                                const newValue = checked
+                                  ? [...field.value, group.id]
+                                  : field.value.filter((id: number) => id !== group.id);
+                                field.onChange(newValue);
+                              }}
+                            />
+                            <span>{group.ageGroup} - {group.gender}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
                 name="accountingCodeId"
@@ -515,7 +561,7 @@ export function FeeManagement() {
                   <FormItem>
                     <FormLabel>Accounting Code</FormLabel>
                     <Select
-                      value={field.value?.toString() || editingFee?.accountingCodeId?.toString() || ""}
+                      value={field.value?.toString()}
                       onValueChange={(value) => field.onChange(value ? parseInt(value) : null)}
                     >
                       <SelectTrigger>
@@ -533,32 +579,7 @@ export function FeeManagement() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="ageGroups"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Assign to Age Groups</FormLabel>
-                    <div className="border rounded-md p-4 space-y-2 max-h-40 overflow-y-auto">
-                      {ageGroupsQuery.data?.map((group: any) => (
-                        <div key={group.id} className="flex items-center space-x-2">
-                          <Checkbox
-                            checked={field.value.includes(group.id)}
-                            onCheckedChange={(checked) => {
-                              const newValue = checked
-                                ? [...field.value, group.id]
-                                : field.value.filter((id: number) => id !== group.id);
-                              field.onChange(newValue);
-                            }}
-                          />
-                          <span>{group.ageGroup} - {group.gender}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
               <DialogFooter>
                 <Button
                   type="button"

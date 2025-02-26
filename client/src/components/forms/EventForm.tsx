@@ -407,9 +407,9 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Age Groups</h3>
-        {event?.seasonalScopeName && (
+        {defaultValues?.seasonalScopeName && (
           <Badge variant="outline" className="text-sm">
-            {event.seasonalScopeName} ({event.seasonalStartYear}-{event.seasonalEndYear})
+            {defaultValues.seasonalScopeName} ({defaultValues.seasonalStartYear}-{defaultValues.seasonalEndYear})
           </Badge>
         )}
         {seasonalScopeQuery.data && (
@@ -427,7 +427,9 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             <TableHead>Birth Year</TableHead>
             <TableHead>Gender</TableHead>
             <TableHead>Division Code</TableHead>
-            <TableHead>Field Size</TableHead><TableHead>Amount Due</TableHead><TableHead>Fees</TableHead>
+            <TableHead>Field Size</TableHead>
+            <TableHead>Amount Due</TableHead>
+            <TableHead>Fees</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -437,9 +439,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             ) || { ...group, isSelected: true, fees: [] };
 
             const assignedFees = feesQuery.data?.filter(fee =>
-              (fee.ageGroups || []).some(agId =>
-                ageGroups.find(ag => ag.id === agId && ag.divisionCode === group.divisionCode)
-              )
+              fee.applyToAll || (fee.ageGroups || []).includes(existingGroup?.id)
             ) || [];
 
             return (
@@ -521,56 +521,43 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 <TableCell>
                   {existingGroup && feesQuery.data && feesQuery.data.length > 0 ? (
                     <Select
-                      value={Array.isArray(existingGroup.fees) && existingGroup.fees.length > 0 ? existingGroup.fees[0].toString() : ""}
-                      onValueChange={(selectedFee) => {
+                      value={existingGroup.fees ? existingGroup.fees.map(f => f.toString()) : []}
+                      onValueChange={(selectedFees) => {
+                        const feeIds = Array.isArray(selectedFees)
+                          ? selectedFees.map(Number)
+                          : [Number(selectedFees)];
+
                         setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
                           if (ag.divisionCode === existingGroup.divisionCode) {
                             return {
                               ...ag,
-                              fees: selectedFee ? [Number(selectedFee)] : [],
-                              isSelected: true
+                              fees: feeIds
                             };
                           }
                           return ag;
                         }));
-                      }}
-                      open={existingGroup.selectOpen}
-                      onOpenChange={(open) => {
-                        if (!open) {
-                          const activeElement = document.activeElement;
-                          const isClickOutside = !activeElement?.closest('[role="listbox"]');
-                          if (isClickOutside) {
-                            setAgeGroups(prevGroups => prevGroups.map(g =>
-                              g.id === existingGroup.id ? { ...g, selectOpen: false } : g
-                            ));
-                          }
-                          return isClickOutside;
-                        } else {
-                          setAgeGroups(prevGroups => prevGroups.map(g =>
-                            g.id === existingGroup.id ? { ...g, selectOpen: true } : g
-                          ));
-                        }
-                        return true;
+
+                        form.setValue('ageGroups', ageGroups);
                       }}
                       multiple
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-[200px]">
                         <SelectValue placeholder={
-                          Array.isArray(existingGroup.fees) && existingGroup.fees.length > 0
-                            ? `${existingGroup.fees.length} fee${existingGroup.fees.length > 1 ? 's' : ''} selected`
-                            : "Select Fees"
+                          existingGroup.fees?.length
+                            ? `${existingGroup.fees.length} fee${existingGroup.fees.length !== 1 ? 's' : ''} selected`
+                            : "Select fees"
                         } />
                       </SelectTrigger>
                       <SelectContent>
                         {feesQuery.data.map(fee => (
-                          <SelectItem key={fee.id} value={fee.id} className="flex items-center gap-2">
-                            <div className="flex items-center flex-1 gap-2">
-                              <Checkbox
-                                checked={Array.isArray(existingGroup.fees) && existingGroup.fees.includes(fee.id)}
-                                className="mr-2"
-                              />
+                          <SelectItem key={fee.id} value={fee.id.toString()} className="flex items-center space-x-2">
+                            <Checkbox
+                              checked={existingGroup.fees?.includes(fee.id)}
+                              className="mr-2"
+                            />
+                            <span>
                               {fee.name} - ${(fee.amount / 100).toFixed(2)}
-                            </div>
+                            </span>
                           </SelectItem>
                         ))}
                       </SelectContent>
