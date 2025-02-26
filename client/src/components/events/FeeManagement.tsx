@@ -79,14 +79,19 @@ export function FeeManagement() {
   const feesQuery = useQuery({
     queryKey: ['fees', eventId],
     queryFn: async () => {
-      if (!eventId) return [];
-      const response = await fetch(`/api/admin/events/${eventId}/fees`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch fees");
+      if (!eventId) throw new Error("Event ID is required");
+      try {
+        const response = await fetch(`/api/admin/events/${eventId}/fees`);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to fetch fees: ${errorText}`);
+        }
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error('Error fetching fees:', error);
+        throw error;
       }
-      const data = await response.json();
-      console.log('Fees data:', data);
-      return Array.isArray(data) ? data : [];
     },
     enabled: !!eventId,
     retry: 1,
@@ -95,20 +100,27 @@ export function FeeManagement() {
 
   const createFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues) => {
-      const response = await fetch(`/api/admin/events/${eventId}/fees`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...values,
-          amount: Math.round(Number(values.amount) * 100), // Convert to cents
-          beginDate: values.beginDate ? new Date(values.beginDate).toISOString() : null,
-          endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
-        }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to create fee");
+      if (!eventId) throw new Error("Event ID is required");
+      try {
+        const response = await fetch(`/api/admin/events/${eventId}/fees`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...values,
+            amount: Math.round(Number(values.amount) * 100), // Convert to cents
+            beginDate: values.beginDate ? new Date(values.beginDate).toISOString() : null,
+            endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
+          }),
+        });
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Failed to create fee: ${errorText}`);
+        }
+        return response.json();
+      } catch (error) {
+        console.error('Error creating fee:', error);
+        throw error;
       }
-      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/fees`] });
