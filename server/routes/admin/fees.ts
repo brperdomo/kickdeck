@@ -17,6 +17,7 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
       where: eq(eventFees.eventId, parseInt(eventId)),
       orderBy: (eventFees) => [eventFees.createdAt],
     });
+    res.setHeader('Content-Type', 'application/json');
     res.json(fees);
   } catch (error) {
     console.error("Error fetching event fees:", error);
