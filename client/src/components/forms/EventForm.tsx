@@ -949,7 +949,12 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               />
             </div>
             <div className="space-y-2">
-              <LabelThe seasonal scope information is now displayed in the Age Groups tab if `selectedSeasonalScope` is available.  The `selectedSeasonalScope` state is initialized with data from `defaultValues` and updated via the `seasonalScopeQuery`'s `onSuccess` callback.  The `handleSubmitForm` function now includes `seasonalScope` in the submitted data.
+              <Label>Seasonal Scope</Label>
+              {selectedSeasonalScope && (
+                <div className="text-sm text-muted-foreground">
+                  {selectedSeasonalScope.name} ({selectedSeasonalScope.startYear}-{selectedSeasonalScope.endYear})
+                </div>
+              )}
 
 
 <replit_final_file>
