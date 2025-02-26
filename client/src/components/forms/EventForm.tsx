@@ -446,7 +446,13 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           {PREDEFINED_AGE_GROUPS.map((group) => {
             const existingGroup = ageGroups.find(
               (ag) => ag.divisionCode === group.divisionCode
-            ) || { ...group, isSelected: true };
+            ) || { ...group, isSelected: true, fees: [] };
+
+            const assignedFees = feesQuery.data?.filter(fee => 
+              (fee.ageGroups || []).some(agId => 
+                ageGroups.find(ag => ag.id === agId && ag.divisionCode === group.divisionCode)
+              )
+            ) || [];
 
             return (
               <TableRow key={group.divisionCode}>
@@ -518,16 +524,11 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   )}
                 </TableCell>
                 <TableCell>
-                  {existingGroup ? (
-                    <span className="text-sm font-medium">
-                      ${feesQuery.data
-                        ?.filter(fee => Array.isArray(existingGroup.fees) && existingGroup.fees.includes(fee.id))
-                        .reduce((sum, fee) => sum + (fee.amount / 100), 0)
-                        .toFixed(2) || "0.00"}
-                    </span>
-                  ) : (
-                    "-"
-                  )}
+                  <span className="text-sm font-medium">
+                    ${assignedFees
+                      .reduce((sum, fee) => sum + (fee.amount / 100), 0)
+                      .toFixed(2) || "0.00"}
+                  </span>
                 </TableCell>
                 <TableCell>
                   {existingGroup && feesQuery.data && feesQuery.data.length > 0 ? (
