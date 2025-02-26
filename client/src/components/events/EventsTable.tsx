@@ -212,7 +212,7 @@ export function EventsTable() {
                     <SortIcon field="status" />
                   </div>
                 </TableHead>
-                <TableHead>Application Deadline</TableHead>
+                <TableHead>Registration Deadline</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
