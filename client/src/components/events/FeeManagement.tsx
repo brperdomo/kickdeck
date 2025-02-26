@@ -190,6 +190,7 @@ export function FeeManagement() {
         body: JSON.stringify({
           ...values,
           amount: Math.round(Number(values.amount) * 100),
+          ageGroups: values.ageGroups || [],
         }),
       });
       if (!response.ok) throw new Error('Failed to update fee');
@@ -353,15 +354,16 @@ export function FeeManagement() {
                         variant="ghost"
                         size="icon"
                         onClick={() => {
-                          setEditingFee(fee);
-                          form.reset({
+                          const feeData = {
                             name: fee.name,
                             amount: (fee.amount / 100).toString(),
                             beginDate: fee.beginDate ? new Date(fee.beginDate).toISOString().split('T')[0] : "",
                             endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
                             applyToAll: fee.applyToAll,
-                            ageGroups: fee.ageGroups || [],
-                          });
+                            ageGroups: Array.isArray(fee.ageGroups) ? fee.ageGroups : [],
+                          };
+                          setEditingFee(fee);
+                          form.reset(feeData);
                           setIsDialogOpen(true);
                         }}
                       >
