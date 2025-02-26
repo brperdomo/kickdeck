@@ -412,11 +412,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             {defaultValues.seasonalScopeName} ({defaultValues.seasonalStartYear}-{defaultValues.seasonalEndYear})
           </Badge>
         )}
-        {seasonalScopeQuery.data && (
-          <Badge variant="outline" className="text-sm">
-            {seasonalScopeQuery.data.name} ({seasonalScopeQuery.data.startYear}-{seasonalScopeQuery.data.endYear})
-          </Badge>
-        )}
       </div>
 
       <Table>
@@ -428,7 +423,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             <TableHead>Gender</TableHead>
             <TableHead>Division Code</TableHead>
             <TableHead>Field Size</TableHead>
-            <TableHead>Amount Due</TableHead>
             <TableHead>Fees</TableHead>
           </TableRow>
         </TableHeader>
@@ -436,7 +430,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           {PREDEFINED_AGE_GROUPS.map((group) => {
             const existingGroup = ageGroups.find(
               (ag) => ag.divisionCode === group.divisionCode
-            ) || { ...group, isSelected: true, fees: [] };
+            ) || { ...group, isSelected: false, fees: [] };
 
             const assignedFees = feesQuery.data?.filter(fee =>
               fee.applyToAll || (fee.ageGroups || []).includes(existingGroup?.id)
@@ -446,7 +440,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               <TableRow key={group.divisionCode}>
                 <TableCell>
                   <Checkbox
-                    checked={!!existingGroup}
+                    checked={!!existingGroup.isSelected}
                     onCheckedChange={(checked) => {
                       if (checked) {
                         setAgeGroups([
@@ -454,11 +448,9 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                           {
                             id: Date.now().toString(),
                             ...group,
-                            projectedTeams: 0,
-                            fieldSize: '11v11' as FieldSize,
-                            amountDue: null,
+                            isSelected: true,
                             fees: [],
-                            scoringRule: null,
+                            fieldSize: '11v11' as FieldSize,
                           },
                         ]);
                       } else {
@@ -476,28 +468,23 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 <TableCell>{group.gender}</TableCell>
                 <TableCell>{group.divisionCode}</TableCell>
                 <TableCell>
-                  {existingGroup ? (
+                  {existingGroup.isSelected && (
                     <Select
-                      value={existingGroup.fieldSize || ""}
-                      onValueChange={(value: FieldSize) => {
+                      value={existingGroup.fieldSize || "11v11"}
+                      onValueChange={(size: FieldSize) => {
                         setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
                           if (ag.divisionCode === existingGroup.divisionCode) {
                             return {
                               ...ag,
-                              fieldSize: value,
-                              isSelected: true
+                              fieldSize: size,
                             };
                           }
                           return ag;
                         }));
-                        form.setValue('ageGroups', ageGroups.map(ag => ({
-                          ...ag,
-                          fieldSize: ag.divisionCode === existingGroup.divisionCode ? value : ag.fieldSize
-                        })));
                       }}
                     >
                       <SelectTrigger className="w-[120px]">
-                        <SelectValue placeholder="Select size">{existingGroup.fieldSize}</SelectValue>
+                        <SelectValue>{existingGroup.fieldSize || "11v11"}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
@@ -507,21 +494,12 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                         ))}
                       </SelectContent>
                     </Select>
-                  ) : (
-                    "-"
                   )}
                 </TableCell>
                 <TableCell>
-                  <span className="text-sm font-medium">
-                    ${assignedFees
-                      .reduce((sum, fee) => sum + (fee.amount / 100), 0)
-                      .toFixed(2) || "0.00"}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  {existingGroup && feesQuery.data && feesQuery.data.length > 0 ? (
+                  {existingGroup.isSelected && feesQuery.data ? (
                     <Select
-                      value={existingGroup.fees ? existingGroup.fees.map(f => f.toString()) : []}
+                      value={existingGroup.fees?.map(f => f.toString()) || []}
                       onValueChange={(selectedFees) => {
                         const feeIds = Array.isArray(selectedFees)
                           ? selectedFees.map(Number)
@@ -536,17 +514,15 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                           }
                           return ag;
                         }));
-
-                        form.setValue('ageGroups', ageGroups);
                       }}
                       multiple
                     >
                       <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder={
-                          existingGroup.fees?.length
+                        <SelectValue placeholder="Select fees">
+                          {existingGroup.fees?.length
                             ? `${existingGroup.fees.length} fee${existingGroup.fees.length !== 1 ? 's' : ''} selected`
-                            : "Select fees"
-                        } />
+                            : "Select fees"}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {feesQuery.data.map(fee => (
@@ -564,10 +540,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                     </Select>
                   ) : feesQuery.isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : feesQuery.isError ? (
-                    <span className="text-red-500">Error loading fees</span>
                   ) : (
-                    <Link href={`/admin/events/${defaultValues?.id}/fees`} className="text-blue-500 hover:text-blue-700 underline">
+                    <Link to={`/admin/events/${defaultValues?.id}/fees`} className="text-blue-500 hover:text-blue-700 underline">
                       Manage Fees
                     </Link>
                   )}
