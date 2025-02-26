@@ -3,7 +3,8 @@ export const formatDate = (dateString: string | Date | null) => {
   try {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
     if (isNaN(date.getTime())) return '-';
-    return format(date, 'MMM d, yyyy');
+    const utcDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+    return format(utcDate, 'MMM d, yyyy');
   } catch {
     return '-';
   }
