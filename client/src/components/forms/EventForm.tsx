@@ -486,13 +486,12 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                     <Select
                       value={existingGroup.fieldSize}
                       onValueChange={(value: FieldSize) => {
-                        setAgeGroups(
-                          ageGroups.map((ag) =>
-                            ag.id === existingGroup.id
-                              ? { ...ag, fieldSize: value }
-                              : ag
-                          )
-                        );
+                        setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
+                          if (ag.divisionCode === existingGroup.divisionCode) {
+                            return { ...ag, fieldSize: value, isSelected: true };
+                          }
+                          return ag;
+                        }));
                       }}
                     >
                       <SelectTrigger className="w-[120px]">
