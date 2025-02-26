@@ -61,6 +61,7 @@ const feeFormSchema = z.object({
   endDate: z.string().optional(),
   applyToAll: z.boolean().default(false),
   ageGroups: z.array(z.number()).default([]),
+  accountingCodeId: z.number().nullable().optional(),
 });
 
 type FeeFormValues = z.infer<typeof feeFormSchema>;
@@ -76,6 +77,18 @@ export function FeeManagement() {
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Add query for accounting codes
+  const accountingCodesQuery = useQuery({
+    queryKey: ['accountingCodes'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/accounting-codes', {
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to fetch accounting codes');
+      return response.json();
+    },
+  });
 
   const form = useForm<FeeFormValues>({
     resolver: zodResolver(feeFormSchema),
@@ -476,6 +489,31 @@ export function FeeManagement() {
                         />
                       </FormControl>
                     </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="accountingCodeId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Accounting Code</FormLabel>
+                    <Select
+                      value={field.value?.toString()}
+                      onValueChange={(value) => field.onChange(value ? parseInt(value) : null)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select accounting code" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {accountingCodesQuery.data?.map((code: any) => (
+                          <SelectItem key={code.id} value={code.id.toString()}>
+                            {code.code} - {code.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
