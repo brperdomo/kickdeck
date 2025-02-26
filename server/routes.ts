@@ -2065,9 +2065,9 @@ export function registerRoutes(app: Express): Server {
         // Format response to match create event view structure exactly
         const response = {
           ...event,
-          startDate: event.startDate,
-          endDate: event.endDate,
-          applicationDeadline: event.applicationDeadline,
+          startDate: new Date(event.startDate).toISOString().split('T')[0],
+          endDate: new Date(event.endDate).toISOString().split('T')[0],
+          applicationDeadline: new Date(event.applicationDeadline).toISOString().split('T')[0],
           ageGroups: ageGroups.map(({ ageGroup, teamCount }) => ({
             ...ageGroup,
             teamCount,

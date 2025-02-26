@@ -3,7 +3,8 @@ export const formatDate = (dateString: string | Date | null) => {
     if (!dateString) return '-';
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return '-';
-    return format(date, 'MMM d, yyyy');
+    // Use UTC to avoid timezone shifts
+    return format(new Date(date.toISOString().split('T')[0]), 'MMM d, yyyy');
   } catch {
     return '-';
   }
