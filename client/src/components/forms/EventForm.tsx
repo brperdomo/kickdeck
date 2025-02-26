@@ -457,7 +457,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                             projectedTeams: 0,
                             fieldSize: '11v11' as FieldSize,
                             amountDue: null,
-                            fees: [], 
+                            fees: [],
                             scoringRule: null,
                           },
                         ]);
@@ -606,14 +606,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       return (
         <div className="text-center text-destructive">
           Failed to load complexes. Please try again.
-        </div>
-      );
-    }
-
-    if (!complexesQuery.data?.length) {
-      return (
-        <div className="text-center text-muted-foreground">
-          No complexes found.
         </div>
       );
     }
@@ -957,7 +949,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             </div>
           </Tabs>
 
-          <div className="mt-6 flexjustify-end space-x-4">
+          <div className="mt-6 flex justify-end space-x-4">
             {activeTab !== TAB_ORDER[0] && (
               <Button
                 variant="outline"

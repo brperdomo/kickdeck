@@ -1,4 +1,4 @@
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -22,6 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { type FieldSize } from "@/components/forms/event-form-types";
 
+
 interface Complex {
   id: number;
   name: string;
@@ -42,12 +43,12 @@ interface ComplexSelectorProps {
 }
 
 export function ComplexSelector({ 
-  selectedComplexIds, 
-  complexFieldSizes, 
+  selectedComplexIds = [], 
+  complexFieldSizes = {}, 
   onComplexSelect, 
   onFieldSizeChange 
 }: ComplexSelectorProps) {
-  const { data: complexes = [], isLoading } = useQuery({
+  const { data: complexes = [], isLoading, error } = useQuery({
     queryKey: ['/api/admin/complexes'],
     queryFn: async () => {
       const response = await fetch('/api/admin/complexes');
@@ -57,7 +58,19 @@ export function ComplexSelector({
   });
 
   if (isLoading) {
-    return <div>Loading complexes...</div>;
+    return (
+      <div className="flex justify-center items-center h-40">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-destructive">
+        Failed to load complexes. Please try again.
+      </div>
+    );
   }
 
   return (
@@ -68,7 +81,7 @@ export function ComplexSelector({
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <Checkbox
-                  checked={selectedComplexIds.includes(complex.id)}
+                  checked={Array.isArray(selectedComplexIds) && selectedComplexIds.includes(complex.id)}
                   onCheckedChange={() => onComplexSelect(complex.id)}
                 />
                 <div className="flex-1">
@@ -77,7 +90,7 @@ export function ComplexSelector({
                     {complex.fields.length} fields available
                   </p>
                 </div>
-                {selectedComplexIds.includes(complex.id) && (
+                {Array.isArray(selectedComplexIds) && selectedComplexIds.includes(complex.id) && (
                   <Select
                     value={complexFieldSizes[complex.id] || '11v11'}
                     onValueChange={(size) =>
@@ -86,7 +99,7 @@ export function ComplexSelector({
                   >
                     <SelectTrigger className="w-[120px]">
                       <SelectValue>
-                        {complexFieldSizes[complex.id] || "Select size"}
+                        {complexFieldSizes[complex.id] || "11v11"}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
