@@ -6,9 +6,9 @@ export const createEventSchema = z.object({
   endDate: z.string().min(1, "End date is required"),
   timezone: z.string().min(1, "Timezone is required"),
   applicationDeadline: z.string().min(1, "Application deadline is required"),
-  details: z.string().optional(),
-  agreement: z.string().optional(),
-  refundPolicy: z.string().optional(),
+  details: z.string().optional().nullable(),
+  agreement: z.string().optional().nullable(),
+  refundPolicy: z.string().optional().nullable(),
 });
 
 export const ageGroupSchema = z.object({
