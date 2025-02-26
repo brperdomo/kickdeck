@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ArrowLeft, Plus } from "lucide-react";
+import { Loader2, ArrowLeft, Plus, Edit, Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -18,6 +18,7 @@ import { useDropzone } from 'react-dropzone';
 import { AdminModal } from "@/components/admin/AdminModal";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Editor } from "@tinymce/tinymce-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -578,7 +579,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   ) : feesQuery.isError ? (
                     <span className="text-red-500">Error loading fees</span>
                   ) : (
-                    <Link to={`/admin/events/${defaultValues?.id}/fees`} className="text-blue-500 underline">
+                    <Link href={`/admin/events/${defaultValues?.id}/fees`} className="text-blue-500 hover:text-blue-700 underline">
                       Manage Fees
                     </Link>
                   )}
@@ -824,8 +825,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       'age-groups': ageGroups.length === 0,
       'scoring': scoringRules.length === 0,
       'complexes': selectedComplexIds.length === 0,
-      'settings': false, 
-      'administrators': false, 
+      'settings': false,
+      'administrators': false,
     };
     return errors;
   };
