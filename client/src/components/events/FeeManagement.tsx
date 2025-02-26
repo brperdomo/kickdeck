@@ -80,16 +80,28 @@ export function FeeManagement() {
     queryKey: ['fees', eventId],
     queryFn: async () => {
       if (!eventId) return [];
-      const response = await fetch(`/api/admin/events/${eventId}/fees`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch fees");
+      try {
+        const response = await fetch(`/api/admin/events/${eventId}/fees`, {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        if (!response.ok) {
+          const error = await response.text();
+          console.error('Fees fetch error:', error);
+          throw new Error(error || "Failed to fetch fees");
+        }
+        const data = await response.json();
+        console.log('Detailed Fees data:', JSON.stringify(data, null, 2));
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error('Fees fetch error:', error);
+        throw error;
       }
-      const data = await response.json();
-      console.log('Detailed Fees data:', JSON.stringify(data, null, 2));
-      return Array.isArray(data) ? data : [];
     },
     enabled: !!eventId,
-    retry: 1,
+    retry: 2,
     refetchOnWindowFocus: false
   });
 
