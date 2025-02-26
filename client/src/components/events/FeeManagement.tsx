@@ -62,7 +62,7 @@ type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
   const params = useParams();
-  const eventId = params?.eventId;
+  const eventId = params?.eventId ? Number(params.eventId) : null;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -77,20 +77,6 @@ export function FeeManagement() {
       applyToAll: false,
     },
   });
-
-  if (!eventId) {
-    return (
-      <div className="container mx-auto py-8">
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-center text-destructive">
-              <p>Event ID is required</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const feesQuery = useQuery({
     queryKey: ['fees', eventId],
