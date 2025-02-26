@@ -64,6 +64,8 @@ const feeFormSchema = z.object({
 });
 
 type FeeFormValues = z.infer<typeof feeFormSchema>;
+type SortField = 'name' | 'amount' | 'beginDate';
+type SortDirection = 'asc' | 'desc';
 
 export function FeeManagement() {
   const params = useParams();
@@ -91,6 +93,7 @@ export function FeeManagement() {
   // Reset form when editing fee changes
   useEffect(() => {
     if (editingFee) {
+      console.log("Setting form values for editing fee:", editingFee);
       form.reset({
         name: editingFee.name,
         amount: (editingFee.amount / 100).toString(),
@@ -100,26 +103,13 @@ export function FeeManagement() {
         ageGroups: editingFee.ageGroups || [],
         accountingCodeId: editingFee.accountingCodeId || null,
       });
-    } else {
-      form.reset({
-        name: "",
-        amount: "",
-        beginDate: "",
-        endDate: "",
-        applyToAll: false,
-        ageGroups: [],
-        accountingCodeId: null,
-      });
     }
   }, [editingFee, form]);
 
-  // Event details query
   const eventQuery = useQuery({
     queryKey: ['event', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}`, {
-        credentials: 'include',
-      });
+      const response = await fetch(`/api/admin/events/${eventId}`);
       if (!response.ok) throw new Error('Failed to fetch event details');
       return response.json();
     },
@@ -128,9 +118,7 @@ export function FeeManagement() {
   const ageGroupsQuery = useQuery({
     queryKey: ['ageGroups', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/age-groups`, {
-        credentials: 'include',
-      });
+      const response = await fetch(`/api/admin/events/${eventId}/age-groups`);
       if (!response.ok) throw new Error('Failed to fetch age groups');
       return response.json();
     },
@@ -139,9 +127,7 @@ export function FeeManagement() {
   const feesQuery = useQuery({
     queryKey: ['fees', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/fees`, {
-        credentials: 'include',
-      });
+      const response = await fetch(`/api/admin/events/${eventId}/fees`);
       if (!response.ok) throw new Error('Failed to fetch fees');
       return response.json();
     },
@@ -150,9 +136,7 @@ export function FeeManagement() {
   const accountingCodesQuery = useQuery({
     queryKey: ['accountingCodes'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/accounting-codes', {
-        credentials: 'include',
-      });
+      const response = await fetch('/api/admin/accounting-codes');
       if (!response.ok) throw new Error('Failed to fetch accounting codes');
       return response.json();
     },
@@ -162,7 +146,6 @@ export function FeeManagement() {
     mutationFn: async (values: FeeFormValues) => {
       const response = await fetch(`/api/admin/events/${eventId}/fees`, {
         method: "POST",
-        credentials: 'include',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
@@ -193,9 +176,9 @@ export function FeeManagement() {
 
   const updateFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues & { id: number }) => {
+      console.log("Updating fee with values:", values);
       const response = await fetch(`/api/admin/events/${eventId}/fees/${values.id}`, {
         method: "PATCH",
-        credentials: 'include',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
@@ -229,7 +212,6 @@ export function FeeManagement() {
     mutationFn: async (feeId: number) => {
       const response = await fetch(`/api/admin/events/${eventId}/fees/${feeId}`, {
         method: "DELETE",
-        credentials: 'include',
       });
       if (!response.ok) throw new Error('Failed to delete fee');
       return response.json();
@@ -251,6 +233,7 @@ export function FeeManagement() {
   });
 
   const handleSubmit = (values: FeeFormValues) => {
+    console.log("Submitting form with values:", values);
     if (editingFee) {
       updateFeeMutation.mutate({ ...values, id: editingFee.id });
     } else {
@@ -291,7 +274,6 @@ export function FeeManagement() {
     return selectedGroups.length ? selectedGroups.join(', ') : '-';
   };
 
-
   if (feesQuery.isLoading || ageGroupsQuery.isLoading || accountingCodesQuery.isLoading || eventQuery.isLoading) {
     return (
       <div className="flex justify-center items-center h-[calc(100vh-4rem)]">
@@ -312,7 +294,6 @@ export function FeeManagement() {
     );
   }
 
-  const accountingCodes = accountingCodesQuery.data || [];
   const formatCurrency = (amount: number) => `$${(amount / 100).toFixed(2)}`;
 
   return (
@@ -378,6 +359,7 @@ export function FeeManagement() {
                         variant="ghost"
                         size="icon"
                         onClick={() => {
+                          console.log("Setting editing fee:", fee);
                           setEditingFee(fee);
                           setIsDialogOpen(true);
                         }}
@@ -490,7 +472,7 @@ export function FeeManagement() {
                 )}
               />
 
-              {!form.watch("applyToAll") && (
+              {!form.watch("applyToAll") && ageGroupsQuery.data && (
                 <FormField
                   control={form.control}
                   name="ageGroups"
@@ -498,7 +480,7 @@ export function FeeManagement() {
                     <FormItem>
                       <FormLabel>Assign to Age Groups</FormLabel>
                       <div className="border rounded-md p-4 space-y-2 max-h-60 overflow-y-auto">
-                        {ageGroupsQuery.data?.map((group: any) => (
+                        {ageGroupsQuery.data.map((group: any) => (
                           <div key={group.id} className="flex items-center space-x-2">
                             <Checkbox
                               checked={field.value.includes(group.id)}
@@ -556,13 +538,8 @@ export function FeeManagement() {
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={createFeeMutation.isPending || updateFeeMutation.isPending}
-                >
-                  {createFeeMutation.isPending || updateFeeMutation.isPending
-                    ? "Saving..."
-                    : editingFee ? "Update Fee" : "Create Fee"}
+                <Button type="submit">
+                  {editingFee ? "Update Fee" : "Create Fee"}
                 </Button>
               </DialogFooter>
             </form>
