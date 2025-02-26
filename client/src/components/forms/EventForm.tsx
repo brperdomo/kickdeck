@@ -168,9 +168,17 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         throw new Error('Required fields are missing');
       }
 
+      // Prepare age groups data with required fields
+      const preparedAgeGroups = ageGroups.map(group => ({
+        ...group,
+        projectedTeams: group.projectedTeams || 0,
+        fees: group.fees || [],
+        fieldSize: group.fieldSize || '11v11',
+      }));
+
       const combinedData: EventFormValues = {
         ...data,
-        ageGroups,
+        ageGroups: preparedAgeGroups,
         scoringRules,
         settings,
         complexFieldSizes,
@@ -423,6 +431,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             <TableHead>Gender</TableHead>
             <TableHead>Division Code</TableHead>
             <TableHead>Field Size</TableHead>
+            <TableHead>Projected Teams</TableHead>
             <TableHead>Amount Due</TableHead>
             <TableHead>Fees</TableHead>
           </TableRow>
@@ -431,7 +440,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           {PREDEFINED_AGE_GROUPS.map((group) => {
             const existingGroup = ageGroups.find(
               (ag) => ag.divisionCode === group.divisionCode
-            ) || { ...group, isSelected: false, fees: [] };
+            ) || { ...group, isSelected: false, fees: [], projectedTeams: 0 };
 
             // Calculate total amount only from the fees selected for this group
             const totalAmount = feesQuery.data
@@ -455,6 +464,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                             ...group,
                             isSelected: true,
                             fees: [],
+                            projectedTeams: 0,
                             fieldSize: '11v11' as FieldSize,
                           },
                         ]);
@@ -500,6 +510,27 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       </SelectContent>
                     </Select>
                   )}
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    min="0"
+                    value={existingGroup.projectedTeams || 0}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 0;
+                      setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
+                        if (ag.divisionCode === existingGroup.divisionCode) {
+                          return {
+                            ...ag,
+                            projectedTeams: value
+                          };
+                        }
+                        return ag;
+                      }));
+                    }}
+                    className="w-20"
+                    disabled={!existingGroup.isSelected}
+                  />
                 </TableCell>
                 <TableCell>
                   ${(totalAmount / 100).toFixed(2)}
@@ -942,6 +973,11 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         open={isAdminModalOpen}
         onOpenChange={setIsAdminModalOpen}
         adminToEdit={editingAdmin}
+        eventId={defaultValues?.id}
+        onSave={() => {
+          setIsAdminModalOpen(false);
+          setEditingAdmin(null);
+        }}
       />
     </div>
   );
