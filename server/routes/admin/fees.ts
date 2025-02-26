@@ -17,10 +17,18 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
       return res.status(400).json({ message: "Invalid event ID" });
     }
 
-    const fees = await db.query.eventFees.findMany({
-      where: eq(eventFees.eventId, BigInt(eventId)),
-      orderBy: (eventFees) => [eventFees.createdAt],
-    });
+    const fees = await db.select({
+      id: eventFees.id,
+      name: eventFees.name,
+      amount: eventFees.amount,
+      beginDate: eventFees.beginDate,
+      endDate: eventFees.endDate,
+      applyToAll: eventFees.applyToAll,
+      createdAt: eventFees.createdAt,
+      updatedAt: eventFees.updatedAt,
+    }).from(eventFees)
+      .where(eq(eventFees.eventId, BigInt(eventId)))
+      .orderBy(eventFees.createdAt);
 
     console.log(`Found ${fees.length} fees for event ${eventId}`);
 
