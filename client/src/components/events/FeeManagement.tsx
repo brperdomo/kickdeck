@@ -65,6 +65,20 @@ export function FeeManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  if (!eventId) {
+    return (
+      <div className="container mx-auto py-8">
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center text-destructive">
+              <p>Event ID is required</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const form = useForm<FeeFormValues>({
     resolver: zodResolver(feeFormSchema),
     defaultValues: {
