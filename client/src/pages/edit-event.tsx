@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
@@ -8,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EventForm } from "@/components/forms/EventForm";
 import { type EventTab, TAB_ORDER } from "@/components/forms/event-form-types";
-import { ProgressIndicator } from "@/components/ui/progress-indicator";
+import { ProgressIndicator } from "@/components/forms/ProgressIndicator";
 
 export default function EditEvent() {
   const { id } = useParams();
@@ -18,6 +17,7 @@ export default function EditEvent() {
   const [activeTab, setActiveTab] = useState<EventTab>('information');
   const [completedTabs, setCompletedTabs] = useState<EventTab[]>([]);
 
+  // Query to fetch event details
   const eventQuery = useQuery({
     queryKey: ['event', id],
     queryFn: async () => {
@@ -30,6 +30,7 @@ export default function EditEvent() {
     }
   });
 
+  // Mutation to update event
   const updateEventMutation = useMutation({
     mutationFn: async (data: any) => {
       const response = await fetch(`/api/admin/events/${id}`, {
@@ -111,6 +112,7 @@ export default function EditEvent() {
     );
   }
 
+  // Transform event data for the form
   const eventData = {
     ...eventQuery.data,
     complexFieldSizes: eventQuery.data.complexFieldSizes || {},
@@ -127,7 +129,7 @@ export default function EditEvent() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <Card>
+        <Card className="mb-8">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
             <div className="flex items-center gap-4">
               <Button
@@ -140,26 +142,20 @@ export default function EditEvent() {
               </Button>
               <CardTitle className="text-2xl font-bold">Edit Event</CardTitle>
             </div>
-            <ProgressIndicator
-              steps={TAB_ORDER}
-              currentStep={activeTab}
-              completedSteps={completedTabs}
-            />
           </CardHeader>
-          <CardContent>
-            <EventForm
-              mode="edit"
-              defaultValues={eventData}
-              onSubmit={handleSubmit}
-              isSubmitting={updateEventMutation.isPending}
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-              completedTabs={completedTabs}
-              onCompletedTabsChange={setCompletedTabs}
-              navigateTab={navigateTab}
-            />
-          </CardContent>
         </Card>
+
+        <EventForm
+          mode="edit"
+          defaultValues={eventData}
+          onSubmit={handleSubmit}
+          isSubmitting={updateEventMutation.isPending}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          completedTabs={completedTabs}
+          onCompletedTabsChange={setCompletedTabs}
+          navigateTab={navigateTab}
+        />
       </div>
     </div>
   );

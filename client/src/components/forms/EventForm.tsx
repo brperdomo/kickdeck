@@ -95,7 +95,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   const [secondaryColor, setSecondaryColor] = useState(defaultValues?.branding?.secondaryColor || '#34C759');
   const [isExtracting, setIsExtracting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [selectedSeasonalScope, setSelectedSeasonalScope] = useState(defaultValues?.seasonalScope); // Added state for seasonal scope
 
 
   const form = useForm<EventFormValues>({
@@ -122,7 +121,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   useEffect(() => {
     if (defaultValues) {
       form.reset(defaultValues);
-      setSelectedSeasonalScope(defaultValues.seasonalScope); // Update seasonal scope state
     }
   }, [defaultValues]);
 
@@ -134,8 +132,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       if (!response.ok) throw new Error('Failed to fetch seasonal scope');
       return response.json();
     },
-    enabled: !!defaultValues?.seasonalScopeId,
-    onSuccess: (data) => setSelectedSeasonalScope(data) // Update state on success
+    enabled: !!defaultValues?.seasonalScopeId
   });
 
   const complexesQuery = useQuery({
@@ -184,7 +181,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           logo,
           logoUrl: previewUrl || undefined,
         },
-        seasonalScope: selectedSeasonalScope // Include seasonal scope in submitted data
       };
 
       await onSubmit(combinedData);
@@ -339,9 +335,18 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
                   init={{
                     height: 300,
-                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: '/tinymce',
+                    menubar: true,
+                    plugins: [
+                      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                      'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                    ],
+                    toolbar: 'undo redo | formatselect | ' +
+                      'bold italic backcolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent | ' +
+                      'removeformat | help',
+                    // Added base_url to fix TinyMCE in production
+                    base_url: '/tinymce', // Update with your actual TinyMCE path
                     suffix: '.min'
                   }}
                   value={field.value}
@@ -364,9 +369,18 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
                   init={{
                     height: 300,
-                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: '/tinymce',
+                    menubar: true,
+                    plugins: [
+                      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                      'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                    ],
+                    toolbar: 'undo redo | formatselect | ' +
+                      'bold italic backcolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent | ' +
+                      'removeformat | help',
+                    // Added base_url to fix TinyMCE in production
+                    base_url: '/tinymce', // Update with your actual TinyMCE path
                     suffix: '.min'
                   }}
                   value={field.value}
@@ -389,9 +403,18 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
                   init={{
                     height: 300,
-                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: '/tinymce',
+                    menubar: true,
+                    plugins: [
+                      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                      'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                      'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                    ],
+                    toolbar: 'undo redo | formatselect | ' +
+                      'bold italic backcolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent | ' +
+                      'removeformat | help',
+                    // Added base_url to fix TinyMCE in production
+                    base_url: '/tinymce', // Update with your actual TinyMCE path
                     suffix: '.min'
                   }}
                   value={field.value}
@@ -410,9 +433,14 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Age Groups</h3>
-        {selectedSeasonalScope && (
+        {event?.seasonalScopeName && (
           <Badge variant="outline" className="text-sm">
-            {selectedSeasonalScope.name} ({selectedSeasonalScope.startYear}-{selectedSeasonalScope.endYear})
+            {event.seasonalScopeName} ({event.seasonalStartYear}-{event.seasonalEndYear})
+          </Badge>
+        )}
+        {seasonalScopeQuery.data && (
+          <Badge variant="outline" className="text-sm">
+            {seasonalScopeQuery.data.name} ({seasonalScopeQuery.data.startYear}-{seasonalScopeQuery.data.endYear})
           </Badge>
         )}
       </div>
@@ -920,16 +948,18 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 defaultValue={editingSetting?.key}
                 required
               />
-            </div>            <div className="space-y-2">
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="value">Setting Value</Label>
               <Input
                 id="value"
                 name="value"
-                defaultValue={editingSetting?.value}                required
+                defaultValue={editingSetting?.value}
+                required
               />
             </div>
             <Button type="submit">
-              {editingSetting ? 'Update Setting' : 'Add SettingButton'}
+              {editingSetting ? 'Update Setting' : 'Add Setting'}
             </Button>
           </form>
         </DialogContent>
@@ -951,7 +981,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               {TAB_ORDER.map((tab) => (
                 <TabsTrigger
                   key={tab}
-                                    value={tab}
+                  value={tab}
                   className={`w-fullpx-4 py-2 rounded-md text-sm font-medium transition-colors
                     data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm
                     text-[#1C1C1E] hover:text-[#007AFF]`}
