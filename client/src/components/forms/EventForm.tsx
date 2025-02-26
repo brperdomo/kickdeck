@@ -529,7 +529,10 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       onValueChange={(selectedFee) => {
                         setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
                           if (ag.id === existingGroup.id) {
-                            return { ...ag, fees: [selectedFee] };
+                            return { 
+                              ...ag, 
+                              fees: selectedFee ? [Number(selectedFee)] : []
+                            };
                           }
                           return ag;
                         }));
