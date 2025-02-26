@@ -64,6 +64,24 @@ export function FeeManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // First check if we're authenticated
+  const userQuery = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const response = await fetch('/api/user', {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        if (response.status === 401) {
+          window.location.href = '/login';
+          throw new Error('Please login to continue');
+        }
+        throw new Error('Failed to fetch user');
+      }
+      return response.json();
+    },
+  });
+
   const form = useForm<FeeFormValues>({
     resolver: zodResolver(feeFormSchema),
     defaultValues: {
@@ -75,27 +93,32 @@ export function FeeManagement() {
     },
   });
 
+  // Only fetch fees if we're authenticated
   const feesQuery = useQuery({
     queryKey: ['fees', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/fees`, {
-        credentials: 'include', 
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+      try {
+        const response = await fetch(`/api/admin/events/${eventId}/fees`, {
+          credentials: 'include',
+        });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Failed to fetch fees:', response.status, errorText);
-        throw new Error('Failed to fetch fees');
+        if (response.status === 401) {
+          window.location.href = '/login';
+          throw new Error('Please login to continue');
+        }
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch fees');
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching fees:', error);
+        throw error;
       }
-
-      const data = await response.json();
-      return data;
     },
-    enabled: !!eventId,
+    enabled: !!eventId && !!userQuery.data,
   });
 
   const createFeeMutation = useMutation({
@@ -103,13 +126,12 @@ export function FeeManagement() {
       const response = await fetch(`/api/admin/events/${eventId}/fees`, {
         method: "POST",
         credentials: 'include',
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          'Accept': 'application/json',
         },
         body: JSON.stringify({
           ...values,
-          amount: Math.round(Number(values.amount) * 100), 
+          amount: Math.round(Number(values.amount) * 100),
         }),
       });
 
@@ -136,59 +158,16 @@ export function FeeManagement() {
     },
   });
 
-  const updateFeeMutation = useMutation({
-    mutationFn: async (values: FeeFormValues & { id: number }) => {
-      const response = await fetch(`/api/admin/events/${eventId}/fees/${values.id}`, {
-        method: "PATCH",
-        credentials: 'include',
-        headers: { 
-          "Content-Type": "application/json",
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          ...values,
-          amount: Math.round(Number(values.amount) * 100), 
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update fee');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
-      setIsDialogOpen(false);
-      setEditingFee(null);
-      form.reset();
-      toast({
-        title: "Success",
-        description: "Fee updated successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
   const handleSubmit = (values: FeeFormValues) => {
-    if (editingFee) {
-      updateFeeMutation.mutate({ ...values, id: editingFee.id });
-    } else {
-      createFeeMutation.mutate(values);
-    }
+    createFeeMutation.mutate(values);
   };
 
-  if (feesQuery.isLoading) {
+  if (userQuery.isLoading || feesQuery.isLoading) {
     return <div>Loading fees...</div>;
   }
 
-  if (feesQuery.error) {
-    return <div>Error loading fees: {(feesQuery.error as Error).message}</div>;
+  if (userQuery.error || feesQuery.error) {
+    return <div>Error loading fees: {(userQuery.error || feesQuery.error)?.message}</div>;
   }
 
   return (
@@ -209,13 +188,7 @@ export function FeeManagement() {
         </CardHeader>
         <CardContent>
           <div className="flex justify-between items-center mb-6">
-            <Dialog open={isDialogOpen} onOpenChange={(open) => {
-              if (!open) {
-                setEditingFee(null);
-                form.reset();
-              }
-              setIsDialogOpen(open);
-            }}>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button>Add New Fee</Button>
               </DialogTrigger>
@@ -225,9 +198,7 @@ export function FeeManagement() {
                     {editingFee ? "Edit Fee" : "Create New Fee"}
                   </DialogTitle>
                   <DialogDescription>
-                    {editingFee
-                      ? "Update the existing fee details"
-                      : "Add a new fee to the event"}
+                    Add a new fee to the event
                   </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -305,13 +276,11 @@ export function FeeManagement() {
                     <DialogFooter>
                       <Button
                         type="submit"
-                        disabled={createFeeMutation.isPending || updateFeeMutation.isPending}
+                        disabled={createFeeMutation.isPending}
                       >
-                        {createFeeMutation.isPending || updateFeeMutation.isPending
+                        {createFeeMutation.isPending
                           ? "Saving..."
-                          : editingFee
-                            ? "Update Fee"
-                            : "Create Fee"}
+                          : "Create Fee"}
                       </Button>
                     </DialogFooter>
                   </form>
@@ -348,7 +317,6 @@ export function FeeManagement() {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        setEditingFee(fee);
                         form.reset({
                           name: fee.name,
                           amount: (fee.amount / 100).toString(),
@@ -356,6 +324,7 @@ export function FeeManagement() {
                           endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
                           applyToAll: fee.applyToAll,
                         });
+                        setEditingFee(fee);
                         setIsDialogOpen(true);
                       }}
                     >
