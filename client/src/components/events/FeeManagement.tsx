@@ -24,7 +24,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -43,10 +42,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation } from "@/hooks/use-location";
 
 const feeFormSchema = z.object({
-  id: z.number().optional(),
   name: z.string().min(1, "Fee name is required"),
   amount: z.string().min(1, "Amount is required").refine(
     (val) => !isNaN(Number(val)) && Number(val) > 0,
@@ -60,24 +57,12 @@ const feeFormSchema = z.object({
 type FeeFormValues = z.infer<typeof feeFormSchema>;
 
 export function FeeManagement() {
-  const { eventId } = useParams();
+  const params = useParams();
+  const eventId = params.id; // Using params.id as that's how the route parameter is defined
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingFee, setEditingFee] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
-  if (!eventId) {
-    return (
-      <div className="container mx-auto py-8">
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-center text-destructive">
-              <p>Event ID is required</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const form = useForm<FeeFormValues>({
     resolver: zodResolver(feeFormSchema),
@@ -93,48 +78,30 @@ export function FeeManagement() {
   const feesQuery = useQuery({
     queryKey: ['fees', eventId],
     queryFn: async () => {
-      if (!eventId) throw new Error("Event ID is required");
-      try {
-        const response = await fetch(`/api/admin/events/${eventId}/fees`);
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to fetch fees: ${errorText}`);
-        }
-        const data = await response.json();
-        return Array.isArray(data) ? data : [];
-      } catch (error) {
-        console.error('Error fetching fees:', error);
-        throw error;
+      const response = await fetch(`/api/admin/events/${eventId}/fees`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch fees');
       }
+      const data = await response.json();
+      return data;
     },
     enabled: !!eventId,
-    retry: 1,
-    refetchOnWindowFocus: false
   });
 
   const createFeeMutation = useMutation({
     mutationFn: async (values: FeeFormValues) => {
-      if (!eventId) throw new Error("Event ID is required");
-      try {
-        const response = await fetch(`/api/admin/events/${eventId}/fees`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...values,
-            amount: Math.round(Number(values.amount) * 100), // Convert to cents
-            beginDate: values.beginDate ? new Date(values.beginDate).toISOString() : null,
-            endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
-          }),
-        });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Failed to create fee: ${errorText}`);
-        }
-        return response.json();
-      } catch (error) {
-        console.error('Error creating fee:', error);
-        throw error;
+      const response = await fetch(`/api/admin/events/${eventId}/fees`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...values,
+          amount: Math.round(Number(values.amount) * 100), // Convert to cents
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to create fee');
       }
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
@@ -155,25 +122,24 @@ export function FeeManagement() {
   });
 
   const updateFeeMutation = useMutation({
-    mutationFn: async (values: FeeFormValues & { id?: number }) => {
+    mutationFn: async (values: FeeFormValues & { id: number }) => {
       const response = await fetch(`/api/admin/events/${eventId}/fees/${values.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
-          amount: Math.round(Number(values.amount) * 100),
-          beginDate: values.beginDate ? new Date(values.beginDate).toISOString() : null,
-          endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
+          amount: Math.round(Number(values.amount) * 100), // Convert to cents
         }),
       });
       if (!response.ok) {
-        throw new Error("Failed to update fee");
+        throw new Error('Failed to update fee');
       }
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
       setIsDialogOpen(false);
+      setEditingFee(null);
       form.reset();
       toast({
         title: "Success",
@@ -189,24 +155,20 @@ export function FeeManagement() {
     },
   });
 
-  const onSubmit = (values: FeeFormValues & { id?: number }) => {
-    if (values.id) {
-      updateFeeMutation.mutate(values);
+  const handleSubmit = (values: FeeFormValues) => {
+    if (editingFee) {
+      updateFeeMutation.mutate({ ...values, id: editingFee.id });
     } else {
       createFeeMutation.mutate(values);
     }
   };
 
-  const feeToEdit = form.watch("id"); // Track if an id is set for editing
-
-  const isSubmitting = createFeeMutation.isLoading || updateFeeMutation.isLoading;
-
   if (feesQuery.isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading fees...</div>;
   }
 
   if (feesQuery.error) {
-    return <div>Error loading fees</div>;
+    return <div>Error loading fees: {(feesQuery.error as Error).message}</div>;
   }
 
   return (
@@ -214,43 +176,50 @@ export function FeeManagement() {
       <div className="flex justify-between items-center mb-8">
         <Button variant="outline" onClick={() => window.history.back()}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Dashboard
+          Back to Event
         </Button>
       </div>
-      <Card className="shadow-lg">
-        <CardContent className="p-6">
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Event Fees</CardTitle>
+          <CardDescription>
+            Manage fees for this event
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           <div className="flex justify-between items-center mb-6">
-            <div className="space-y-2">
-              <CardTitle>Event Fees</CardTitle>
-              <CardDescription>
-                Manage fees for this event. Fees can be applied to all registrants or specific age groups.
-              </CardDescription>
-            </div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Dialog open={isDialogOpen} onOpenChange={(open) => {
+              if (!open) {
+                setEditingFee(null);
+                form.reset();
+              }
+              setIsDialogOpen(open);
+            }}>
               <DialogTrigger asChild>
                 <Button>Add New Fee</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>
-                    {feeToEdit ? "Update Fee" : "Create New Fee"}
+                    {editingFee ? "Edit Fee" : "Create New Fee"}
                   </DialogTitle>
                   <DialogDescription>
-                    {feeToEdit
-                      ? "Update an existing fee for this event."
-                      : "Add a new fee for this event. You can specify dates and whether it applies to all registrants."}
+                    {editingFee
+                      ? "Update the existing fee details"
+                      : "Add a new fee to the event"}
                   </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                  <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                     <FormField
                       control={form.control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Fee Name</FormLabel>
+                          <FormLabel>Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter fee name" {...field} />
+                            <Input {...field} placeholder="Enter fee name" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -263,12 +232,7 @@ export function FeeManagement() {
                         <FormItem>
                           <FormLabel>Amount ($)</FormLabel>
                           <FormControl>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              placeholder="0.00"
-                              {...field}
-                            />
+                            <Input {...field} type="number" step="0.01" placeholder="0.00" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -281,7 +245,7 @@ export function FeeManagement() {
                         <FormItem>
                           <FormLabel>Begin Date (Optional)</FormLabel>
                           <FormControl>
-                            <Input type="date" {...field} />
+                            <Input {...field} type="date" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -294,7 +258,7 @@ export function FeeManagement() {
                         <FormItem>
                           <FormLabel>End Date (Optional)</FormLabel>
                           <FormControl>
-                            <Input type="date" {...field} />
+                            <Input {...field} type="date" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -304,29 +268,28 @@ export function FeeManagement() {
                       control={form.control}
                       name="applyToAll"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Apply to All Registrants</FormLabel>
-                            <FormDescription>
-                              If checked, this fee will be applied to all registrations
-                            </FormDescription>
+                        <FormItem>
+                          <div className="flex items-center space-x-2">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel>Apply to all registrations</FormLabel>
                           </div>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
                     <DialogFooter>
-                      <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting
-                          ? feeToEdit
-                            ? "Updating..."
-                            : "Creating..."
-                          : feeToEdit
+                      <Button
+                        type="submit"
+                        disabled={createFeeMutation.isPending || updateFeeMutation.isPending}
+                      >
+                        {createFeeMutation.isPending || updateFeeMutation.isPending
+                          ? "Saving..."
+                          : editingFee
                             ? "Update Fee"
                             : "Create Fee"}
                       </Button>
@@ -337,54 +300,52 @@ export function FeeManagement() {
             </Dialog>
           </div>
 
-          <div className="rounded-md border mt-6">
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-muted/50">
-                  <TableHead className="py-4">Name</TableHead>
-                  <TableHead className="py-4">Amount</TableHead>
-                  <TableHead>Begin Date</TableHead>
-                  <TableHead>End Date</TableHead>
-                  <TableHead>Apply to All</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Begin Date</TableHead>
+                <TableHead>End Date</TableHead>
+                <TableHead>Apply to All</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {feesQuery.data?.map((fee: any) => (
+                <TableRow key={fee.id}>
+                  <TableCell>{fee.name}</TableCell>
+                  <TableCell>${(fee.amount / 100).toFixed(2)}</TableCell>
+                  <TableCell>
+                    {fee.beginDate ? format(new Date(fee.beginDate), "PP") : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {fee.endDate ? format(new Date(fee.endDate), "PP") : "-"}
+                  </TableCell>
+                  <TableCell>{fee.applyToAll ? "Yes" : "No"}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setEditingFee(fee);
+                        form.reset({
+                          name: fee.name,
+                          amount: (fee.amount / 100).toString(),
+                          beginDate: fee.beginDate ? new Date(fee.beginDate).toISOString().split('T')[0] : "",
+                          endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
+                          applyToAll: fee.applyToAll,
+                        });
+                        setIsDialogOpen(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {feesQuery.data?.map((fee: any) => (
-                  <TableRow key={fee.id}>
-                    <TableCell>{fee.name}</TableCell>
-                    <TableCell>${(fee.amount / 100).toFixed(2)}</TableCell>
-                    <TableCell>
-                      {fee.beginDate ? format(new Date(fee.beginDate), "PP") : "-"}
-                    </TableCell>
-                    <TableCell>
-                      {fee.endDate ? format(new Date(fee.endDate), "PP") : "-"}
-                    </TableCell>
-                    <TableCell>{fee.applyToAll ? "Yes" : "No"}</TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          form.reset({
-                            name: fee.name,
-                            amount: (fee.amount / 100).toString(),
-                            beginDate: fee.beginDate ? new Date(fee.beginDate).toISOString().split('T')[0] : "",
-                            endDate: fee.endDate ? new Date(fee.endDate).toISOString().split('T')[0] : "",
-                            applyToAll: fee.applyToAll,
-                          });
-                          form.setValue("id", fee.id);
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

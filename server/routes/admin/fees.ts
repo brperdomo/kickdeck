@@ -6,96 +6,49 @@ import { authenticateAdmin } from "../../middleware/auth";
 
 const router = Router();
 
-// Get all fees for an event
 router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
-    if (!eventId || isNaN(parseInt(eventId))) {
-      return res.status(400).json({ message: "Invalid event ID" });
-    }
     const fees = await db.query.eventFees.findMany({
       where: eq(eventFees.eventId, parseInt(eventId)),
       orderBy: (eventFees) => [eventFees.createdAt],
     });
+    res.setHeader('Content-Type', 'application/json');
     res.json(fees);
   } catch (error) {
     console.error("Error fetching event fees:", error);
-    res.status(500).json({ message: "Failed to fetch event fees" });
+    res.status(500).json({ error: "Failed to fetch fees" });
   }
 });
 
-// Create a new fee
 router.post("/:eventId/fees", authenticateAdmin, async (req, res) => {
   try {
     const { eventId } = req.params;
-    const validatedData = insertEventFeeSchema.parse({
+    const feeData = insertEventFeeSchema.parse({
       ...req.body,
       eventId: parseInt(eventId),
     });
-
-    const newFee = await db.insert(eventFees).values({
-      ...validatedData,
-      beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
-      endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }).returning();
-
-    res.status(201).json(newFee[0]);
+    const fee = await db.insert(eventFees).values(feeData).returning();
+    res.json(fee[0]);
   } catch (error) {
-    console.error("Error creating event fee:", error);
-    res.status(500).json({ message: "Failed to create event fee" });
+    console.error("Error creating fee:", error);
+    res.status(500).json({ error: "Failed to create fee" });
   }
 });
 
-// Update a fee
 router.patch("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
   try {
-    const { eventId, feeId } = req.params;
-    const validatedData = insertEventFeeSchema.parse({
-      ...req.body,
-      eventId: parseInt(eventId),
-    });
-
-    const updatedFee = await db
+    const { feeId } = req.params;
+    const feeData = insertEventFeeSchema.parse(req.body);
+    const fee = await db
       .update(eventFees)
-      .set({
-        ...validatedData,
-        beginDate: validatedData.beginDate ? new Date(validatedData.beginDate) : null,
-        endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
-        updatedAt: new Date(),
-      })
+      .set(feeData)
       .where(eq(eventFees.id, parseInt(feeId)))
       .returning();
-
-    if (updatedFee.length === 0) {
-      return res.status(404).json({ message: "Fee not found" });
-    }
-
-    res.json(updatedFee[0]);
+    res.json(fee[0]);
   } catch (error) {
-    console.error("Error updating event fee:", error);
-    res.status(500).json({ message: "Failed to update event fee" });
-  }
-});
-
-// Delete a fee
-router.delete("/:eventId/fees/:feeId", authenticateAdmin, async (req, res) => {
-  try {
-    const { eventId, feeId } = req.params;
-    const deletedFee = await db
-      .delete(eventFees)
-      .where(eq(eventFees.id, parseInt(feeId)))
-      .returning();
-
-    if (deletedFee.length === 0) {
-      return res.status(404).json({ message: "Fee not found" });
-    }
-
-    res.json({ message: "Fee deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting event fee:", error);
-    res.status(500).json({ message: "Failed to delete event fee" });
+    console.error("Error updating fee:", error);
+    res.status(500).json({ error: "Failed to update fee" });
   }
 });
 
