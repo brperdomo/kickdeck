@@ -506,61 +506,40 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 </TableCell>
                 <TableCell>
                   {existingGroup.isSelected && feesQuery.data ? (
-                    <Select
-                      value={existingGroup.fees?.map(f => f.toString()).join(',') || ''}
-                      onValueChange={(selectedFees) => {
-                        // Handle array of selected fees
-                        const feeIds = selectedFees.split(',').map(Number).filter(Boolean);
-
-                        setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
-                          if (ag.divisionCode === existingGroup.divisionCode) {
-                            return {
-                              ...ag,
-                              fees: feeIds,
-                            };
-                          }
-                          return ag;
-                        }));
-                      }}
-                    >
-                      <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder="Select fees">
-                          {existingGroup.fees?.length
-                            ? `${existingGroup.fees.length} fee${existingGroup.fees.length !== 1 ? 's' : ''} selected`
-                            : "Select fees"}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {feesQuery.data.map(fee => (
-                          <SelectItem
-                            key={fee.id}
-                            value={fee.id.toString()}
-                            className="flex items-center space-x-2"
-                          >
-                            <Checkbox
-                              id={`fee-${fee.id}-${existingGroup.divisionCode}`}
-                              checked={existingGroup.fees?.includes(fee.id)}
-                              onCheckedChange={(checked) => {
-                                const newFees = checked
-                                  ? [...(existingGroup.fees || []), fee.id]
-                                  : (existingGroup.fees || []).filter(f => f !== fee.id);
-
-                                setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
-                                  if (ag.divisionCode === existingGroup.divisionCode) {
-                                    return {
-                                      ...ag,
-                                      fees: newFees,
-                                    };
-                                  }
-                                  return ag;
-                                }));
-                              }}
-                            />
-                            <span>{fee.name} - ${(fee.amount / 100).toFixed(2)}</span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex flex-col space-y-2">
+                      <div className="border rounded-md p-2">
+                        <div className="flex flex-wrap gap-2">
+                          {feesQuery.data.map(fee => (
+                            <div key={fee.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`fee-${fee.id}-${existingGroup.divisionCode}`}
+                                checked={existingGroup.fees?.includes(fee.id)}
+                                onCheckedChange={(checked) => {
+                                  setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
+                                    if (ag.divisionCode === existingGroup.divisionCode) {
+                                      const newFees = checked
+                                        ? [...(ag.fees || []), fee.id]
+                                        : (ag.fees || []).filter(f => f !== fee.id);
+                                      return {
+                                        ...ag,
+                                        fees: newFees,
+                                      };
+                                    }
+                                    return ag;
+                                  }));
+                                }}
+                              />
+                              <label
+                                htmlFor={`fee-${fee.id}-${existingGroup.divisionCode}`}
+                                className="text-sm"
+                              >
+                                {fee.name} - ${(fee.amount / 100).toFixed(2)}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   ) : feesQuery.isLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
