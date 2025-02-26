@@ -17,23 +17,36 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { type FieldSize } from "@/components/forms/event-form-types";
 
 interface Complex {
   id: number;
   name: string;
-  address: string;
-  city: string;
-  state: string;
+  fields: {
+    id: number;
+    name: string;
+    hasLights: boolean;
+    hasParking: boolean;
+    isOpen: boolean;
+  }[];
 }
 
 interface ComplexSelectorProps {
-  selectedComplexes: number[];
-  onComplexSelect: (complexIds: number[]) => void;
+  selectedComplexIds: number[];
+  complexFieldSizes: Record<number, FieldSize>;
+  onComplexSelect: (complexId: number) => void;
+  onFieldSizeChange: (complexId: number, size: FieldSize) => void;
 }
 
-export function ComplexSelector({ selectedComplexes, onComplexSelect }: ComplexSelectorProps) {
-  const [open, setOpen] = useState(false);
-
+export function ComplexSelector({ 
+  selectedComplexIds, 
+  complexFieldSizes, 
+  onComplexSelect, 
+  onFieldSizeChange 
+}: ComplexSelectorProps) {
   const { data: complexes = [], isLoading } = useQuery({
     queryKey: ['/api/admin/complexes'],
     queryFn: async () => {
@@ -43,80 +56,53 @@ export function ComplexSelector({ selectedComplexes, onComplexSelect }: ComplexS
     }
   });
 
-  const handleToggleComplex = (complexId: number) => {
-    const newSelection = selectedComplexes.includes(complexId)
-      ? selectedComplexes.filter(id => id !== complexId)
-      : [...selectedComplexes, complexId];
-    onComplexSelect(newSelection);
-  };
+  if (isLoading) {
+    return <div>Loading complexes...</div>;
+  }
 
   return (
-    <div className="flex flex-col gap-2">
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="justify-between"
-          >
-            {selectedComplexes.length === 0
-              ? "Select complexes..."
-              : `${selectedComplexes.length} complex${selectedComplexes.length === 1 ? '' : 'es'} selected`}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[400px] p-0">
-          <Command>
-            <CommandInput placeholder="Search complexes..." />
-            <CommandEmpty>No complexes found.</CommandEmpty>
-            <CommandGroup>
-              <ScrollArea className="h-[200px]">
-                {complexes.map((complex: Complex) => (
-                  <CommandItem
-                    key={complex.id}
-                    value={complex.name}
-                    onSelect={() => handleToggleComplex(complex.id)}
+    <div className="space-y-6">
+      <div className="grid gap-4">
+        {complexes.map((complex: Complex) => (
+          <Card key={complex.id}>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-4">
+                <Checkbox
+                  checked={selectedComplexIds.includes(complex.id)}
+                  onCheckedChange={() => onComplexSelect(complex.id)}
+                />
+                <div className="flex-1">
+                  <h4 className="font-semibold">{complex.name}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    {complex.fields.length} fields available
+                  </p>
+                </div>
+                {selectedComplexIds.includes(complex.id) && (
+                  <Select
+                    value={complexFieldSizes[complex.id] || '11v11'}
+                    onValueChange={(size) =>
+                      onFieldSizeChange(complex.id, size as FieldSize)
+                    }
                   >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        selectedComplexes.includes(complex.id)
-                          ? "opacity-100"
-                          : "opacity-0"
-                      )}
-                    />
-                    <div className="flex flex-col">
-                      <span>{complex.name}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {complex.address}, {complex.city}, {complex.state}
-                      </span>
-                    </div>
-                  </CommandItem>
-                ))}
-              </ScrollArea>
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
-      </Popover>
-      
-      {selectedComplexes.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {complexes
-            .filter((complex: Complex) => selectedComplexes.includes(complex.id))
-            .map((complex: Complex) => (
-              <Badge
-                key={complex.id}
-                variant="secondary"
-                className="cursor-pointer"
-                onClick={() => handleToggleComplex(complex.id)}
-              >
-                {complex.name}
-                <span className="ml-1 text-muted-foreground">×</span>
-              </Badge>
-            ))}
-        </div>
-      )}
+                    <SelectTrigger className="w-[120px]">
+                      <SelectValue>
+                        {complexFieldSizes[complex.id] || "Select size"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
+                        <SelectItem key={size} value={size}>
+                          {size}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

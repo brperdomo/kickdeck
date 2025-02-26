@@ -49,6 +49,7 @@ import {
   EventSettingValues,
   AdminModalProps,
 } from "./event-form-types";
+import { ComplexSelector } from "@/components/events/ComplexSelector";
 
 interface EventFormValues extends EventInformationValues {
   ageGroups: AgeGroup[];
@@ -435,8 +436,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               (ag) => ag.divisionCode === group.divisionCode
             ) || { ...group, isSelected: true, fees: [] };
 
-            const assignedFees = feesQuery.data?.filter(fee => 
-              (fee.ageGroups || []).some(agId => 
+            const assignedFees = feesQuery.data?.filter(fee =>
+              (fee.ageGroups || []).some(agId =>
                 ageGroups.find(ag => ag.id === agId && ag.divisionCode === group.divisionCode)
               )
             ) || [];
@@ -456,7 +457,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                             projectedTeams: 0,
                             fieldSize: '11v11' as FieldSize,
                             amountDue: null,
-                            fees: [], // Initialize fees array as empty array
+                            fees: [], 
                             scoringRule: null,
                           },
                         ]);
@@ -481,10 +482,10 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       onValueChange={(value: FieldSize) => {
                         setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
                           if (ag.divisionCode === existingGroup.divisionCode) {
-                            return { 
-                              ...ag, 
-                              fieldSize: value, 
-                              isSelected: true 
+                            return {
+                              ...ag,
+                              fieldSize: value,
+                              isSelected: true
                             };
                           }
                           return ag;
@@ -524,8 +525,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       onValueChange={(selectedFee) => {
                         setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
                           if (ag.divisionCode === existingGroup.divisionCode) {
-                            return { 
-                              ...ag, 
+                            return {
+                              ...ag,
                               fees: selectedFee ? [Number(selectedFee)] : [],
                               isSelected: true
                             };
@@ -539,13 +540,13 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                           const activeElement = document.activeElement;
                           const isClickOutside = !activeElement?.closest('[role="listbox"]');
                           if (isClickOutside) {
-                            setAgeGroups(prevGroups => prevGroups.map(g => 
+                            setAgeGroups(prevGroups => prevGroups.map(g =>
                               g.id === existingGroup.id ? { ...g, selectOpen: false } : g
                             ));
                           }
                           return isClickOutside;
                         } else {
-                          setAgeGroups(prevGroups => prevGroups.map(g => 
+                          setAgeGroups(prevGroups => prevGroups.map(g =>
                             g.id === existingGroup.id ? { ...g, selectOpen: true } : g
                           ));
                         }
@@ -564,7 +565,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                         {feesQuery.data.map(fee => (
                           <SelectItem key={fee.id} value={fee.id} className="flex items-center gap-2">
                             <div className="flex items-center flex-1 gap-2">
-                              <Checkbox 
+                              <Checkbox
                                 checked={Array.isArray(existingGroup.fees) && existingGroup.fees.includes(fee.id)}
                                 className="mr-2"
                               />
@@ -618,47 +619,12 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     }
 
     return (
-      <div className="space-y-6">
-        <div className="grid gap-4">
-          {complexesQuery.data.map((complex) => (
-            <Card key={complex.id}>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  <Checkbox
-                    checked={selectedComplexIds.includes(complex.id)}
-                    onCheckedChange={() => handleComplexSelection(complex.id)}
-                  />
-                  <div className="flex-1">
-                    <h4 className="font-semibold">{complex.name}</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {complex.fields.length} fields available
-                    </p>
-                  </div>
-                  {selectedComplexIds.includes(complex.id) && (
-                    <Select
-                      value={complexFieldSizes[complex.id] || '11v11'}
-                      onValueChange={(size) =>
-                        handleFieldSizeChange(complex.id, size as FieldSize)
-                      }
-                    >
-                      <SelectTrigger className="w-[120px]">
-                        <SelectValue>{complexFieldSizes[complex.id] || "Select size"}</SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
-                          <SelectItem key={size} value={size}>
-                            {size}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+      <ComplexSelector
+        selectedComplexIds={selectedComplexIds}
+        complexFieldSizes={complexFieldSizes}
+        onComplexSelect={handleComplexSelection}
+        onFieldSizeChange={handleFieldSizeChange}
+      />
     );
   };
 
@@ -991,7 +957,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             </div>
           </Tabs>
 
-          <div className="mt-6 flex justify-end space-x-4">
+          <div className="mt-6 flexjustify-end space-x-4">
             {activeTab !== TAB_ORDER[0] && (
               <Button
                 variant="outline"
