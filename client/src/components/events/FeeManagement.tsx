@@ -79,17 +79,30 @@ export function FeeManagement() {
   const feesQuery = useQuery({
     queryKey: ['fees', eventId],
     queryFn: async () => {
-      if (!eventId) return [];
-      const response = await fetch(`/api/admin/events/${eventId}/fees`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch fees");
+      if (!eventId) throw new Error("Event ID is required");
+      console.log('Fetching fees for event:', eventId);
+      try {
+        const response = await fetch(`/api/admin/events/${eventId}/fees`, {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        if (!response.ok) {
+          const error = await response.text();
+          console.error('Fees fetch error:', error);
+          throw new Error(error || "Failed to fetch fees");
+        }
+        const data = await response.json();
+        console.log('Detailed Fees data:', JSON.stringify(data, null, 2));
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error('Fees fetch error:', error);
+        throw error;
       }
-      const data = await response.json();
-      console.log('Detailed Fees data:', JSON.stringify(data, null, 2));
-      return Array.isArray(data) ? data : [];
     },
     enabled: !!eventId,
-    retry: 1,
+    retry: 2,
     refetchOnWindowFocus: false
   });
 
@@ -110,8 +123,9 @@ export function FeeManagement() {
       }
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/fees`] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
+      await queryClient.refetchQueries({ queryKey: ['fees', eventId] });
       setIsDialogOpen(false);
       form.reset();
       toast({
@@ -146,7 +160,7 @@ export function FeeManagement() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/fees`] });
+      queryClient.invalidateQueries({ queryKey: ['fees', eventId] });
       setIsDialogOpen(false);
       form.reset();
       toast({
