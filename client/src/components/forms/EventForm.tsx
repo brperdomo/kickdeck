@@ -538,6 +538,17 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                           return ag;
                         }));
                       }}
+                      onOpenChange={(open) => {
+                        if (!open) {
+                          // Only allow closing if clicked outside
+                          const activeElement = document.activeElement;
+                          if (!activeElement?.closest('[role="listbox"]')) {
+                            return true;
+                          }
+                          return false;
+                        }
+                        return true;
+                      }}
                       multiple
                     >
                       <SelectTrigger>
