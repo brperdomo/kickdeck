@@ -1,37 +1,38 @@
-import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, useCallback } from "react";
+import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ArrowLeft, Plus, Edit, Trash2 } from "lucide-react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Loader2, ArrowLeft, Plus, Edit, Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useQuery } from "@tanstack/react-query";
+import { useDropzone } from 'react-dropzone';
+import { AdminModal } from "@/components/admin/AdminModal";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Editor } from "@tinymce/tinymce-react";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import { FeeManagement } from "@/components/events/FeeManagement";
-import { AdminModal } from "@/components/admin/AdminModal";
-import { ComplexSelector } from "@/components/events/ComplexSelector";
-import { ProgressIndicator } from "@/components/ui/progress-indicator";
-import { Label } from "@/components/ui/label";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   PREDEFINED_AGE_GROUPS,
   EventBranding,
+  EventData,
   Complex,
+  Field,
   EventSetting,
   EventAdministrator,
   FieldSize,
@@ -41,8 +42,25 @@ import {
   TAB_ORDER,
   USA_TIMEZONES,
   eventInformationSchema,
-  EventFormValues
+  scoringRuleSchema,
+  eventSettingSchema,
+  EventInformationValues,
+  ScoringRuleValues,
+  EventSettingValues,
+  AdminModalProps,
 } from "./event-form-types";
+import { ComplexSelector } from "@/components/events/ComplexSelector";
+
+interface EventFormValues extends EventInformationValues {
+  ageGroups: AgeGroup[];
+  selectedComplexIds: number[];
+  complexFieldSizes: Record<number, FieldSize>;
+  scoringRules: ScoringRule[];
+  settings: EventSetting[];
+  administrators: EventAdministrator[];
+  branding: EventBranding;
+  seasonalScope?: { name: string; startYear: number; endYear: number };
+}
 
 interface EventFormProps {
   mode: 'create' | 'edit';
@@ -56,56 +74,29 @@ interface EventFormProps {
   navigateTab: (direction: 'next' | 'prev') => void;
 }
 
-export const EventForm = ({
-  mode,
-  defaultValues,
-  onSubmit,
-  isSubmitting = false,
-  activeTab,
-  onTabChange,
-  completedTabs,
-  onCompletedTabsChange,
-  navigateTab
-}: EventFormProps) => {
+
+export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false, activeTab, onTabChange, completedTabs, onCompletedTabsChange, navigateTab }: EventFormProps) => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+
   const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(defaultValues?.ageGroups || []);
   const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(defaultValues?.selectedComplexIds || []);
   const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(defaultValues?.complexFieldSizes || {});
   const [scoringRules, setScoringRules] = useState<ScoringRule[]>(defaultValues?.scoringRules || []);
   const [settings, setSettings] = useState<EventSetting[]>(defaultValues?.settings || []);
+  const [isScoringDialogOpen, setIsScoringDialogOpen] = useState(false);
+  const [editingScoringRule, setEditingScoringRule] = useState<ScoringRule | null>(null);
+  const [isSettingDialogOpen, setIsSettingDialogOpen] = useState(false);
+  const [editingSetting, setEditingSetting] = useState<EventSetting | null>(null);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
-  const [editingAdmin, setEditingAdmin] = useState<EventAdministrator | null>(null);
+  const [editingAdmin, setEditingAdmin] = useState<AdminModalProps['adminToEdit']>(null);
   const [logo, setLogo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(defaultValues?.branding?.logoUrl || null);
   const [primaryColor, setPrimaryColor] = useState(defaultValues?.branding?.primaryColor || '#007AFF');
   const [secondaryColor, setSecondaryColor] = useState(defaultValues?.branding?.secondaryColor || '#34C759');
   const [isExtracting, setIsExtracting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isScoringDialogOpen, setIsScoringDialogOpen] = useState(false);
-  const [editingScoringRule, setEditingScoringRule] = useState<ScoringRule | null>(null);
-  const [isSettingDialogOpen, setIsSettingDialogOpen] = useState(false);
-  const [editingSetting, setEditingSetting] = useState<EventSetting | null>(null);
 
-  const complexesQuery = useQuery({
-    queryKey: ['complexes'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/complexes');
-      if (!response.ok) throw new Error('Failed to fetch complexes');
-      return response.json() as Promise<Complex[]>;
-    },
-  });
-
-  const feesQuery = useQuery({
-    queryKey: ['fees', defaultValues?.id],
-    queryFn: async () => {
-      if (!defaultValues?.id) return [];
-      const response = await fetch(`/api/admin/events/${defaultValues.id}/fees`);
-      if (!response.ok) throw new Error('Failed to fetch fees');
-      return response.json();
-    },
-    enabled: !!defaultValues?.id,
-  });
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventInformationSchema),
@@ -134,49 +125,76 @@ export const EventForm = ({
     }
   }, [defaultValues]);
 
-  const handleSubmit = async (formData: EventFormValues) => {
+  const seasonalScopeQuery = useQuery({
+    queryKey: ['/api/admin/seasonal-scopes', defaultValues?.seasonalScopeId],
+    queryFn: async () => {
+      if (!defaultValues?.seasonalScopeId) return null;
+      const response = await fetch(`/api/admin/seasonal-scopes/${defaultValues.seasonalScopeId}`);
+      if (!response.ok) throw new Error('Failed to fetch seasonal scope');
+      return response.json();
+    },
+    enabled: !!defaultValues?.seasonalScopeId
+  });
+
+  const complexesQuery = useQuery({
+    queryKey: ['complexes'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/complexes');
+      if (!response.ok) {
+        throw new Error('Failed to fetch complexes');
+      }
+      return response.json() as Promise<Complex[]>;
+    },
+    enabled: activeTab === 'complexes',
+  });
+
+  const feesQuery = useQuery({
+    queryKey: ['eventFees', defaultValues?.id],
+    queryFn: async () => {
+      if (!defaultValues?.id) return [];
+      const response = await fetch(`/api/admin/events/${defaultValues.id}/fees`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch fees");
+      }
+      return response.json();
+    },
+    enabled: !!defaultValues?.id
+  });
+
+  const handleSubmitForm = async (data: EventFormValues) => {
     setIsSaving(true);
     try {
-      if (!formData.name || !formData.startDate || !formData.endDate || !formData.timezone || !formData.applicationDeadline) {
+      if (!data.name || !data.startDate || !data.endDate || !data.timezone || !data.applicationDeadline) {
         throw new Error('Required fields are missing');
       }
 
-      // Filter and prepare age groups data
+      // Prepare age groups data with only the essential fields
       const preparedAgeGroups = ageGroups
-        .filter(group => group.selected)
+        .filter(group => group.isSelected)
         .map(group => ({
-          ageGroup: group.ageGroup,
-          birthYear: group.birthYear,
-          gender: group.gender,
-          divisionCode: group.divisionCode,
+          ...group,
           projectedTeams: group.projectedTeams || 0,
-          fieldSize: group.fieldSize,
-          fees: group.fees || [],
           birthDateStart: `${group.birthYear}-01-01`,
           birthDateEnd: `${group.birthYear}-12-31`,
+          amountDue: group.amountDue || 0, // Added amountDue
+          scoringRule: group.scoringRule || null // Added scoringRule
         }));
 
-      // Only include essential data
+
       const combinedData = {
-        id: formData.id,
-        name: formData.name,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        timezone: formData.timezone,
-        applicationDeadline: formData.applicationDeadline,
-        details: formData.details,
-        agreement: formData.agreement,
-        refundPolicy: formData.refundPolicy,
+        ...data,
         ageGroups: preparedAgeGroups,
-        selectedComplexIds,
-        complexFieldSizes,
         scoringRules,
         settings,
+        complexFieldSizes,
+        selectedComplexIds,
+        administrators: defaultValues?.administrators || [],
         branding: {
           primaryColor,
           secondaryColor,
-          logoUrl: previewUrl
-        }
+          logo,
+          logoUrl: previewUrl || undefined,
+        },
       };
 
       await onSubmit(combinedData);
@@ -199,9 +217,44 @@ export const EventForm = ({
     }
   };
 
+  const handleComplexSelection = (complexId: number) => {
+    setSelectedComplexIds(prev =>
+      prev.includes(complexId)
+        ? prev.filter(id => id !== complexId)
+        : [...prev, complexId]
+    );
+  };
+
+  const handleFieldSizeChange = (complexId: number, size: FieldSize) => {
+    setComplexFieldSizes(prev => ({
+      ...prev,
+      [complexId]: size
+    }));
+  };
+
+  const handleDeleteAgeGroup = (id: string) => {
+    setAgeGroups(ageGroups.filter(group => group.id !== id));
+  };
+
+  const SaveButton = () => (
+    <Button
+      onClick={form.handleSubmit(handleSubmitForm)}
+      disabled={isSubmitting}
+    >
+      {isSubmitting ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Saving...
+        </>
+      ) : (
+        mode === 'edit' ? 'Save Changes' : 'Create Event'
+      )}
+    </Button>
+  );
+
   const renderInformationContent = () => (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -367,9 +420,9 @@ export const EventForm = ({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Age Groups</h3>
-        {defaultValues?.seasonalScopeId && (
+        {defaultValues?.seasonalScopeName && (
           <Badge variant="outline" className="text-sm">
-            Season: {defaultValues.seasonalScopeId}
+            {defaultValues.seasonalScopeName} ({defaultValues.seasonalStartYear}-{defaultValues.seasonalEndYear})
           </Badge>
         )}
       </div>
@@ -383,6 +436,7 @@ export const EventForm = ({
             <TableHead>Gender</TableHead>
             <TableHead>Division Code</TableHead>
             <TableHead>Field Size</TableHead>
+            <TableHead>Amount Due</TableHead>
             <TableHead>Fees</TableHead>
           </TableRow>
         </TableHeader>
@@ -390,41 +444,40 @@ export const EventForm = ({
           {PREDEFINED_AGE_GROUPS.map((group) => {
             const existingGroup = ageGroups.find(
               (ag) => ag.divisionCode === group.divisionCode
-            ) || { ...group, selected: false, fees: [] };
+            ) || { ...group, isSelected: false, fees: [] };
 
-            // Calculate total fees for this age group
-            const selectedFees = feesQuery.data?.filter(fee =>
-              existingGroup.fees?.includes(fee.id)
-            ) || [];
-
-            const totalAmount = selectedFees.reduce((sum, fee) =>
-              sum + (fee.amount || 0), 0
-            );
+            // Calculate total amount only from the fees selected for this group
+            const totalAmount = feesQuery.data
+              ? (existingGroup.fees || []).reduce((sum, feeId) => {
+                  const fee = feesQuery.data.find(f => f.id === feeId);
+                  return sum + (fee?.amount || 0);
+                }, 0)
+              : 0;
 
             return (
               <TableRow key={group.divisionCode}>
                 <TableCell>
                   <Checkbox
-                    checked={!!existingGroup.selected}
+                    checked={!!existingGroup.isSelected}
                     onCheckedChange={(checked) => {
-                      const updatedGroups = [...ageGroups];
                       if (checked) {
-                        updatedGroups.push({
-                          ...group,
-                          id: Date.now().toString(),
-                          selected: true,
-                          fees: [],
-                          fieldSize: '11v11',
-                        });
+                        setAgeGroups([
+                          ...ageGroups,
+                          {
+                            id: Date.now().toString(),
+                            ...group,
+                            isSelected: true,
+                            fees: [],
+                            fieldSize: '11v11' as FieldSize,
+                          },
+                        ]);
                       } else {
-                        const index = updatedGroups.findIndex(
-                          (ag) => ag.divisionCode === group.divisionCode
+                        setAgeGroups(
+                          ageGroups.filter(
+                            (ag) => ag.divisionCode !== group.divisionCode
+                          )
                         );
-                        if (index !== -1) {
-                          updatedGroups.splice(index, 1);
-                        }
                       }
-                      setAgeGroups(updatedGroups);
                     }}
                   />
                 </TableCell>
@@ -433,20 +486,23 @@ export const EventForm = ({
                 <TableCell>{group.gender}</TableCell>
                 <TableCell>{group.divisionCode}</TableCell>
                 <TableCell>
-                  {existingGroup.selected && (
+                  {existingGroup.isSelected && (
                     <Select
                       value={existingGroup.fieldSize || "11v11"}
                       onValueChange={(size: FieldSize) => {
-                        setAgeGroups(prevGroups => prevGroups.map(ag => {
+                        setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
                           if (ag.divisionCode === existingGroup.divisionCode) {
-                            return { ...ag, fieldSize: size };
+                            return {
+                              ...ag,
+                              fieldSize: size,
+                            };
                           }
                           return ag;
                         }));
                       }}
                     >
                       <SelectTrigger className="w-[120px]">
-                        <SelectValue placeholder="Select size" />
+                        <SelectValue>{existingGroup.fieldSize || "11v11"}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
@@ -459,35 +515,50 @@ export const EventForm = ({
                   )}
                 </TableCell>
                 <TableCell>
-                  {existingGroup.selected && (
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium">
-                        Total: ${(totalAmount / 100).toFixed(2)}
-                      </div>
-                      <Select
-                        value={existingGroup.fees?.join(",")}
-                        onValueChange={(value) => {
-                          const selectedFeeIds = value.split(",").filter(Boolean).map(Number);
-                          setAgeGroups(prevGroups => prevGroups.map(ag => {
-                            if (ag.divisionCode === existingGroup.divisionCode) {
-                              return { ...ag, fees: selectedFeeIds };
-                            }
-                            return ag;
-                          }));
-                        }}
-                      >
-                        <SelectTrigger className="w-[200px]">
-                          <SelectValue placeholder="Select fees" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {feesQuery.data?.map((fee) => (
-                            <SelectItem key={fee.id} value={fee.id.toString()}>
-                              {fee.name} (${(fee.amount / 100).toFixed(2)})
-                            </SelectItem>
+                  ${(totalAmount / 100).toFixed(2)}
+                </TableCell>
+                <TableCell>
+                  {existingGroup.isSelected && feesQuery.data ? (
+                    <div className="flex flex-col space-y-2">
+                      <div className="border rounded-md p-2">
+                        <div className="flex flex-wrap gap-2">
+                          {feesQuery.data.map(fee => (
+                            <div key={fee.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`fee-${fee.id}-${existingGroup.divisionCode}`}
+                                checked={existingGroup.fees?.includes(fee.id)}
+                                onCheckedChange={(checked) => {
+                                  setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
+                                    if (ag.divisionCode === existingGroup.divisionCode) {
+                                      const newFees = checked
+                                        ? [...(ag.fees || []), fee.id]
+                                        : (ag.fees || []).filter(f => f !== fee.id);
+                                      return {
+                                        ...ag,
+                                        fees: newFees,
+                                      };
+                                    }
+                                    return ag;
+                                  }));
+                                }}
+                              />
+                              <label
+                                htmlFor={`fee-${fee.id}-${existingGroup.divisionCode}`}
+                                className="text-sm"
+                              >
+                                {fee.name} - ${(fee.amount / 100).toFixed(2)}
+                              </label>
+                            </div>
                           ))}
-                        </SelectContent>
-                      </Select>
+                        </div>
+                      </div>
                     </div>
+                  ) : feesQuery.isLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Link to={`/admin/events/${defaultValues?.id}/fees`} className="text-blue-500 hover:text-blue-700 underline">
+                      Manage Fees
+                    </Link>
                   )}
                 </TableCell>
               </TableRow>
@@ -519,12 +590,8 @@ export const EventForm = ({
       <ComplexSelector
         selectedComplexIds={selectedComplexIds}
         complexFieldSizes={complexFieldSizes}
-        onComplexSelect={(id: number) => setSelectedComplexIds(prev =>
-          prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-        )}
-        onFieldSizeChange={(id: number, size: FieldSize) =>
-          setComplexFieldSizes(prev => ({ ...prev, [id]: size }))
-        }
+        onComplexSelect={handleComplexSelection}
+        onFieldSizeChange={handleFieldSizeChange}
       />
     );
   };
@@ -571,7 +638,7 @@ export const EventForm = ({
                       setScoringRules(scoringRules.filter(r => r.id !== rule.id));
                     }}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -690,7 +757,6 @@ export const EventForm = ({
     const errors: Record<EventTab, boolean> = {
       'information': !form.formState.isValid,
       'age-groups': ageGroups.length === 0,
-      'fees': false,
       'scoring': scoringRules.length === 0,
       'complexes': selectedComplexIds.length === 0,
       'settings': false,
@@ -743,7 +809,7 @@ export const EventForm = ({
                       setSettings(settings.filter(s => s.id !== setting.id));
                     }}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -813,59 +879,111 @@ export const EventForm = ({
   };
 
 
+  const handleSubmit = async (formData: any) => {
+    // Prepare full form data including ageGroups
+    const fullFormData = {
+      ...formData,
+      ageGroups: ageGroups.map(group => ({
+        ...group,
+        selected: group.isSelected,
+        // Ensure fees array is properly included
+        fees: group.fees || []
+      })),
+    };
+
+    console.log("Submitting form with age groups:", fullFormData.ageGroups);
+    onSubmit(fullFormData);
+  };
+
+  const handleFormSubmit = async (data: EventFormValues) => {
+    // Ensure all selected age groups have the selected flag
+    const finalAgeGroups = ageGroups.map(group => ({
+      ...group,
+      selected: true,
+      isSelected: true
+    }));
+
+    console.log("Submitting form with age groups:", finalAgeGroups);
+
+    // Format the data for submission
+    const formattedData = {
+      ...data,
+      ageGroups: finalAgeGroups,
+    };
+
+    console.log("Formatted data for submission:", formattedData);
+    setIsSaving(true);
+    try {
+      if (!data.name || !data.startDate || !data.endDate || !data.timezone || !data.applicationDeadline) {
+        throw new Error('Required fields are missing');
+      }
+
+
+      const response = await fetch('/api/admin/events' + (mode === 'edit' ? `/${data.id}` : ''), {
+        method: mode === 'edit' ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formattedData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to save event");
+      }
+
+      if(mode === 'edit'){
+          toast({
+              title: "Success",
+              description: "Event updated successfully",
+          });
+      } else {
+          toast({
+              title: "Success",
+              description: "Event created successfully",
+          });
+      }
+
+    } catch (error) {
+      console.error('Submit error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save event",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4 mb-6">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setLocation("/admin")}
-                className="rounded-full"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <h1 className="text-2xl font-bold">{mode === 'edit' ? 'Edit Event' : 'Create Event'}</h1>
-            </div>
+    <div className="w-full max-w-7xl mx-auto px-4 py-6">
+      <Card className="bg-white shadow-sm border border-gray-200">
+        <CardContent className="p-6">
+          <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as EventTab)}>
+            <TabsList className="w-full grid grid-cols-6 gap-4 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
+              {TAB_ORDER.map((tab) => (
+                <TabsTrigger
+                  key={tab}
+                  value={tab}
+                  className={`wfullpx-4 py-2 rounded-md text-sm font-medium transition-colors
+                    data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm
+                    text-[#1C1C1E] hover:text-[#007AFF]`}
+                >
+                  {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-            <ProgressIndicator
-              steps={TAB_ORDER}
-              currentStep={activeTab}
-              completedSteps={completedTabs}
-            />
-
-            <Tabs value={activeTab} onValueChange={handleTabChange as (value: string) => void} className="space-y-4">
-              <TabsList>
-                {TAB_ORDER.map((tab) => (
-                  <TabsTrigger
-                    key={tab}
-                    value={tab}
-                    disabled={isSubmitting}
-                    className="capitalize"
-                  >
-                    {tab.replace('-', ' ')}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-
+            <div className="mt-6">
               <TabsContent value="information">
                 {renderInformationContent()}
               </TabsContent>
 
               <TabsContent value="age-groups">
                 {renderAgeGroupsContent()}
-              </TabsContent>
-
-              <TabsContent value="fees">
-                {mode === 'edit' && defaultValues?.id ? (
-                  <FeeManagement />
-                ) : (
-                  <div className="text-center py-6">
-                    <p>Fee management will be available after creating the event.</p>
-                  </div>
-                )}
               </TabsContent>
 
               <TabsContent value="scoring">
@@ -883,46 +1001,35 @@ export const EventForm = ({
               <TabsContent value="administrators">
                 {renderAdministratorsContent()}
               </TabsContent>
-            </Tabs>
+            </div>
+          </Tabs>
 
-            <div className="flex justify-between mt-6">
+          <div className="mt-6 flex justify-end space-x-4">
+            {activeTab !== TAB_ORDER[0] && (
               <Button
-                type="button"
                 variant="outline"
                 onClick={() => navigateTab('prev')}
-                disabled={TAB_ORDER.indexOf(activeTab) === 0 || isSubmitting}
+                disabled={isSubmitting}
               >
-                Previous
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
               </Button>
+            )}
 
-              <div className="flex gap-2">
-                {TAB_ORDER.indexOf(activeTab) === TAB_ORDER.length - 1 ? (
-                  <Button
-                    onClick={form.handleSubmit(handleSubmit)}
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Saving...
-                      </>
-                    ) : mode === 'edit' ? 'Save Changes' : 'Create Event'}
-                  </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    onClick={() => navigateTab('next')}
-                    disabled={isSubmitting}
-                  >
-                    Next
-                  </Button>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
+            <Button
+              onClick={form.handleSubmit(handleSubmit)}
+              disabled={isSubmitting || isSaving}
+            >
+              {isSubmitting || isSaving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : mode === 'edit' ? 'Save Changes' : 'Continue'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
       <AdminModal
         open={isAdminModalOpen}
         onOpenChange={setIsAdminModalOpen}
