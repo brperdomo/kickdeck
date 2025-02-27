@@ -4,12 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, Plus, Edit, Trash2 } from "lucide-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Editor } from "@tinymce/tinymce-react";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +16,14 @@ import { FeeManagement } from "@/components/events/FeeManagement";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { ComplexSelector } from "@/components/events/ComplexSelector";
 import { ProgressIndicator } from "@/components/ui/progress-indicator";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   PREDEFINED_AGE_GROUPS,
   EventBranding,
@@ -47,16 +52,16 @@ interface EventFormProps {
   navigateTab: (direction: 'next' | 'prev') => void;
 }
 
-export const EventForm = ({ 
-  mode, 
-  defaultValues, 
-  onSubmit, 
-  isSubmitting = false, 
-  activeTab, 
-  onTabChange, 
-  completedTabs, 
-  onCompletedTabsChange, 
-  navigateTab 
+export const EventForm = ({
+  mode,
+  defaultValues,
+  onSubmit,
+  isSubmitting = false,
+  activeTab,
+  onTabChange,
+  completedTabs,
+  onCompletedTabsChange,
+  navigateTab
 }: EventFormProps) => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -568,7 +573,7 @@ export const EventForm = ({
                       setScoringRules(scoringRules.filter(r => r.id !== rule.id));
                     }}
                   >
-                    <Trash className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -687,7 +692,7 @@ export const EventForm = ({
     const errors: Record<EventTab, boolean> = {
       'information': !form.formState.isValid,
       'age-groups': ageGroups.length === 0,
-      'fees': false, 
+      'fees': false,
       'scoring': scoringRules.length === 0,
       'complexes': selectedComplexIds.length === 0,
       'settings': false,
@@ -740,7 +745,7 @@ export const EventForm = ({
                       setSettings(settings.filter(s => s.id !== setting.id));
                     }}
                   >
-                    <Trash className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
