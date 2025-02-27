@@ -1,8 +1,7 @@
-
 import { Router } from 'express';
 import { db } from '../../../db';
 import { events, eventAgeGroups, seasonalScopes, eventScoringRules, eventComplexes, eventFieldSizes } from '@db/schema';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router = Router();
@@ -10,12 +9,12 @@ const router = Router();
 router.get('/:id', async (req, res) => {
   try {
     const eventId = req.params.id;
-    
+
     // Get main event details
     const event = await db
       .select()
       .from(events)
-      .where(eq(events.id, eventId))
+      .where(eq(events.id, BigInt(eventId)))
       .limit(1);
 
     if (!event || event.length === 0) {
@@ -24,7 +23,17 @@ router.get('/:id', async (req, res) => {
 
     // Get age groups
     const ageGroups = await db
-      .select()
+      .select({
+        id: eventAgeGroups.id,
+        ageGroup: eventAgeGroups.ageGroup,
+        birthYear: eventAgeGroups.birthYear,
+        gender: eventAgeGroups.gender,
+        projectedTeams: eventAgeGroups.projectedTeams,
+        fieldSize: eventAgeGroups.fieldSize,
+        scoringRule: eventAgeGroups.scoringRule,
+        amountDue: eventAgeGroups.amountDue,
+        birth_date_start: eventAgeGroups.birth_date_start,
+      })
       .from(eventAgeGroups)
       .where(eq(eventAgeGroups.eventId, eventId));
 
@@ -58,7 +67,10 @@ router.get('/:id', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error fetching event details:', error);
-    res.status(500).json({ message: 'Failed to fetch event details', error: error.toString() });
+    res.status(500).json({ 
+      message: 'Failed to fetch event details', 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
   }
 });
 
