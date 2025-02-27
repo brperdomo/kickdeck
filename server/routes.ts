@@ -115,204 +115,138 @@ export function registerRoutes(app: Express): Server {
 
     // Add admin event deletion endpoint
     app.delete('/api/admin/events/:id', isAdmin, async (req, res) => {
+      const tx = db.transaction();
+      
       try {
         const eventId = req.params.id;
         console.log('Starting event deletion for ID:', eventId);
 
-        // Start a transaction to delete all related records first
-        await db.transaction(async (tx) => {
-          // Delete games first (they reference time slots and teams)
-          try {
+        // Delete in proper order based on dependencies
+        await tx.delete(games)
+          .where(eq(games.eventId, eventId))
+          .execute();
+        console.log('Deleted games');
+
+        await tx.delete(gameTimeSlots)
+          .where(eq(gameTimeSlots.eventId, eventId))
+          .execute();
+        console.log('Deleted game time slots');
+
+        await tx.delete(formResponses)
+          .where(
+            inArray(
+              formResponses.templateId,
+              tx.select({ id: eventFormTemplates.id })
+                .from(eventFormTemplates)
+                .where(eq(eventFormTemplates.eventId, eventId))
+            )
+          )
+          .execute();
+        console.log('Deleted form responses');
+
+        await tx.delete(chatRooms)
+          .where(eq(chatRooms.eventId, eventId))
+          .execute();
+        console.log('Deleted chat rooms');
+
+        await tx.delete(coupons)
+          .where(eq(coupons.eventId, eventId))
+          .execute();
+        console.log('Deleted coupons');
+
+        await tx.delete(eventFieldSizes)
+          .where(eq(eventFieldSizes.eventId, eventId))
+          .execute();
+        console.log('Deleted event field sizes');
+
+        await tx.delete(eventScoringRules)
+          .where(eq(eventScoringRules.eventId, eventId))
+          .execute();
+        console.log('Deleted event scoring rules');
+
+        await tx.delete(eventComplexes)
+          .where(eq(eventComplexes.eventId, eventId))
+          .execute();
+        console.log('Deleted event complexes');
+
+        await tx.delete(tournamentGroups)
+          .where(eq(tournamentGroups.eventId, eventId))
+          .execute();
+        console.log('Deleted tournament groups');
+
+        await tx.delete(teams)
+          .where(eq(teams.eventId, eventId))
+          .execute();
+        console.log('Deleted teams');
+
+        // Delete form field options and fields
+        const templateIds = await tx
+          .select({ id: eventFormTemplates.id })
+          .from(eventFormTemplates)
+          .where(eq(eventFormTemplates.eventId, eventId))
+          .execute();
+
+        if (templateIds.length > 0) {
+          const fieldIds = await tx
+            .select({ id: formFields.id })
+            .from(formFields)
+            .where(inArray(formFields.templateId, templateIds.map(t => t.id)))
+            .execute();
+
+          if (fieldIds.length > 0) {
             await tx
-              .delete(games)
-              .where(eq(games.eventId, String(eventId)));
-            console.log('Deleted games');
-          } catch (e) {
-            console.log('No games to delete or table does not exist');
+              .delete(formFieldOptions)
+              .where(inArray(formFieldOptions.fieldId, fieldIds.map(f => f.id)))
+              .execute();
+            console.log('Deleted form field options');
           }
 
-          // Delete game time slots
-          try {
-            await tx
-              .delete(gameTimeSlots)
-              .where(eq(gameTimeSlots.eventId, String(eventId)));
-            console.log('Deleted game time slots');
-          } catch (e) {
-            console.log('No game time slots to delete or table does not exist');
-          }
+          await tx
+            .delete(formFields)
+            .where(inArray(formFields.templateId, templateIds.map(t => t.id)))
+            .execute();
+          console.log('Deleted form fields');
+        }
 
-          // Delete form responses with template join
-          try {
-            const formsToDelete = await tx
-              .select({ id: formResponses.id })
-              .from(formResponses)
-              .innerJoin(eventFormTemplates, eq(formResponses.templateId, eventFormTemplates.id))
-              .where(eq(eventFormTemplates.eventId, String(eventId)));
-              
-            if (formsToDelete.length > 0) {
-              await tx
-                .delete(formResponses)
-                .where(inArray(formResponses.id, formsToDelete.map(f => f.id)));
-              console.log('Deleted form responses');
-            }
-          } catch (e) {
-            console.log('No form responses to delete or table does not exist');
-          }
+        await tx.delete(eventFormTemplates)
+          .where(eq(eventFormTemplates.eventId, eventId))
+          .execute();
+        console.log('Deleted event form templates');
 
-          // Skip chat rooms deletion if table doesn't exist
-          try {
-            await tx.execute(sql`SELECT 1 FROM chat_rooms LIMIT 1`);
-            // If the above didn't throw, table exists, proceed with deletion
-            await tx
-              .delete(chatRooms)
-              .where(eq(chatRooms.eventId, String(eventId)));
-            console.log('Deleted chat rooms');
-          } catch (e) {
-            console.log('Chat rooms table does not exist, skipping deletion');
-          }
+        await tx.delete(eventAgeGroups)
+          .where(eq(eventAgeGroups.eventId, eventId))
+          .execute();
+        console.log('Deleted event age groups');
 
-          // Delete coupons
-          try {
-            await tx
-              .delete(coupons)
-              .where(eq(coupons.eventId, String(eventId)));
-            console.log('Deleted coupons');
-          } catch (e) {
-            console.log('No coupons to delete or table does not exist');
-          }
+        await tx.delete(eventSettings)
+          .where(eq(eventSettings.eventId, eventId))
+          .execute();
+        console.log('Deleted event settings');
 
-          // Delete field sizes
-          try {
-            await tx
-              .delete(eventFieldSizes)
-              .where(eq(eventFieldSizes.eventId, String(eventId)));
-            console.log('Deleted event field sizes');
-          } catch (e) {
-            console.log('No field sizes to delete or table does not exist');
-          }
+        // Finally delete the event itself
+        const deletedEvent = await tx
+          .delete(events)
+          .where(eq(events.id, eventId))
+          .returning()
+          .execute()
+          .then(results => results[0]);
 
-          // Delete scoring rules
-          try {
-            await tx
-              .delete(eventScoringRules)
-              .where(eq(eventScoringRules.eventId, String(eventId)));
-            console.log('Deleted event scoring rules');
-          } catch (e) {
-            console.log('No scoring rules to delete or table does not exist');
-          }
+        if (!deletedEvent) {
+          throw new Error("Event not found");
+        }
 
-          // Delete complex assignments
-          try {
-            await tx
-              .delete(eventComplexes)
-              .where(eq(eventComplexes.eventId, String(eventId)));
-            console.log('Deleted event complexes');
-          } catch (e) {
-            console.log('No complex assignments to delete or table does not exist');
-          }
-
-          // Delete tournament groups first (they reference age groups)
-          try {
-            await tx
-              .delete(tournamentGroups)
-              .where(eq(tournamentGroups.eventId, String(eventId)));
-            console.log('Deleted tournament groups');
-          } catch (e) {
-            console.log('No tournament groups to delete or table does not exist');
-          }
-
-          // Delete teams (they reference age groups)
-          try {
-            await tx
-              .delete(teams)
-              .where(eq(teams.eventId, String(eventId)));
-            console.log('Deleted teams');
-          } catch (e) {
-            console.log('No teams to delete or table does not exist');
-          }
-
-          // Delete form field options and fields for this event's templates
-          try {
-            const templateIds = await tx
-              .select({ id: eventFormTemplates.id })
-              .from(eventFormTemplates)
-              .where(eq(eventFormTemplates.eventId, String(eventId)))
-              .then(results => results.map(r => r.id));
-
-            if (templateIds.length > 0) {
-              const fieldIds = await tx
-                .select({ id: formFields.id })
-                .from(formFields)
-                .where(inArray(formFields.templateId, templateIds))
-                .then(results => results.map(r => r.id));
-
-              if (fieldIds.length > 0) {
-                try {
-                  await tx
-                    .delete(formFieldOptions)
-                    .where(inArray(formFieldOptions.fieldId, fieldIds));
-                  console.log('Deleted form field options');
-                } catch (e) {
-                  console.log('No form field options to delete or table does not exist');
-                }
-              }
-
-              await tx
-                .delete(formFields)
-                .where(inArray(formFields.templateId, templateIds));
-              console.log('Deleted form fields');
-            }
-          } catch (e) {
-            console.log('No form fields to delete or table does not exist');
-          }
-
-          // Delete event form templates
-          try {
-            await tx
-              .delete(eventFormTemplates)
-              .where(eq(eventFormTemplates.eventId, String(eventId)));
-            console.log('Deleted event form templates');
-          } catch (e) {
-            console.log('No event form templates to delete or table does not exist');
-          }
-
-          // Delete event age groups
-          try {
-            await tx
-              .delete(eventAgeGroups)
-              .where(eq(eventAgeGroups.eventId, String(eventId)));
-            console.log('Deleted event age groups');
-          } catch (e) {
-            console.log('No event age groups to delete or table does not exist');
-          }
-
-          // Delete event settings
-          try {
-            await tx
-              .delete(eventSettings)
-              .where(eq(eventSettings.eventId, String(eventId)));
-            console.log('Deleted event settings');
-          } catch (e) {
-            console.log('No event settings to delete or table does not exist');
-          }
-
-          // Finally delete the event itself
-          const [deletedEvent] = await tx
-            .delete(events)
-            .where(eq(events.id, String(eventId)))
-            .returning();
-
-          if (!deletedEvent) {
-            console.log('Event not found with ID:', eventId);
-            throw new Error("Event not found");
-          }
-          console.log('Successfully deleted event:', eventId);
-        });
+        // If everything succeeded, commit the transaction
+        await tx.commit();
+        console.log('Successfully deleted event:', eventId);
 
         res.json({ message: "Event deleted successfully" });
       } catch (error) {
+        // If anything failed, rollback the transaction
+        await tx.rollback();
+        
         console.error('Error deleting event:', error);
         console.error("Error details:", error);
+        
         res.status(500).json({ 
           error: error instanceof Error ? error.message : "Failed to delete event",
           details: error instanceof Error ? error.stack : undefined
