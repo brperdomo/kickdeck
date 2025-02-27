@@ -2017,11 +2017,14 @@ export function registerRoutes(app: Express): Server {
           // Update complex assignments
           await tx.execute(sql`DELETE FROM event_complexes WHERE event_id = ${eventId}`);
 
-          for (const complexId of eventData.selectedComplexIds) {
-            await tx.execute(
-              sql`INSERT INTO event_complexes (event_id, complex_id, created_at) 
-                  VALUES (${eventId}, ${complexId}, ${new Date().toISOString()})`
-            );
+          // Only process selectedComplexIds if it's an array
+          if (Array.isArray(eventData.selectedComplexIds) && eventData.selectedComplexIds.length > 0) {
+            for (const complexId of eventData.selectedComplexIds) {
+              await tx.execute(
+                sql`INSERT INTO event_complexes (event_id, complex_id, created_at) 
+                    VALUES (${eventId}, ${complexId}, ${new Date().toISOString()})`
+              );
+            }
           }
 
           // Update field size assignments
@@ -2029,15 +2032,18 @@ export function registerRoutes(app: Express): Server {
             .delete(eventFieldSizes)
             .where(eq(eventFieldSizes.eventId, eventId));
 
-          for (const [fieldId, fieldSize] of Object.entries(eventData.complexFieldSizes)) {
-            await tx
-              .insert(eventFieldSizes)
-              .values({
-                eventId,
-                fieldId: parseInt(fieldId),
-                fieldSize,
-                createdAt: new Date().toISOString(),
-              });
+          // Only process complexFieldSizes if it's an object with entries
+          if (eventData.complexFieldSizes && typeof eventData.complexFieldSizes === 'object') {
+            for (const [fieldId, fieldSize] of Object.entries(eventData.complexFieldSizes)) {
+              await tx
+                .insert(eventFieldSizes)
+                .values({
+                  eventId,
+                  fieldId: parseInt(fieldId),
+                  fieldSize,
+                  createdAt: new Date().toISOString(),
+                });
+            }
           }
         });
 
