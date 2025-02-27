@@ -36,60 +36,74 @@ router.patch('/:id', async (req, res) => {
 
       console.log('Event basic info updated');
 
-      // Delete existing age groups first
+      // First, get all existing age group IDs to properly clean up fee assignments
+      const existingAgeGroups = await tx
+        .select({ id: eventAgeGroups.id })
+        .from(eventAgeGroups)
+        .where(eq(eventAgeGroups.eventId, eventId.toString()));
+
+      // Delete fee assignments for existing age groups
+      for (const group of existingAgeGroups) {
+        await tx
+          .delete(eventAgeGroupFees)
+          .where(eq(eventAgeGroupFees.ageGroupId, group.id));
+      }
+
+      // Delete existing age groups
       await tx
         .delete(eventAgeGroups)
         .where(eq(eventAgeGroups.eventId, eventId.toString()));
 
-      console.log('Existing age groups deleted');
+      console.log('Existing age groups and fee assignments deleted');
 
       // Insert new age groups and their fee assignments
       if (eventData.ageGroups && eventData.ageGroups.length > 0) {
         console.log('Processing age groups:', eventData.ageGroups);
 
         for (const group of eventData.ageGroups) {
-          // Only process if the age group is selected
-          if (group.selected) {
-            console.log('Inserting age group:', group);
+          console.log('Processing group:', group);
 
-            // Insert age group
-            const [insertedAgeGroup] = await tx
-              .insert(eventAgeGroups)
+          // Insert age group
+          const [insertedAgeGroup] = await tx
+            .insert(eventAgeGroups)
+            .values({
+              eventId: eventId.toString(),
+              ageGroup: group.ageGroup,
+              birthYear: group.birthYear,
+              gender: group.gender,
+              projectedTeams: group.projectedTeams || null,
+              fieldSize: group.fieldSize,
+              scoringRule: group.scoringRule || null,
+              amountDue: group.amountDue || null,
+              createdAt: new Date().toISOString(),
+              birth_date_start: group.birth_date_start || null,
+              divisionCode: group.divisionCode,
+            })
+            .returning();
+
+          console.log('Inserted age group:', insertedAgeGroup);
+
+          // If fee is assigned, create the fee assignment
+          if (group.feeId) {
+            console.log('Creating fee assignment for group:', {
+              ageGroupId: insertedAgeGroup.id,
+              feeId: group.feeId
+            });
+
+            await tx
+              .insert(eventAgeGroupFees)
               .values({
-                eventId: eventId.toString(),
-                ageGroup: group.ageGroup,
-                birthYear: group.birthYear,
-                gender: group.gender,
-                projectedTeams: group.projectedTeams || null,
-                fieldSize: group.fieldSize,
-                scoringRule: group.scoringRule || null,
-                amountDue: group.amountDue || null,
+                ageGroupId: insertedAgeGroup.id,
+                feeId: group.feeId,
                 createdAt: new Date().toISOString(),
-                birth_date_start: group.birth_date_start || null,
-                divisionCode: group.divisionCode,
-              })
-              .returning();
+              });
 
-            console.log('Age group inserted:', insertedAgeGroup);
-
-            // If fee is assigned, create the fee assignment
-            if (group.feeId) {
-              console.log('Creating fee assignment:', { ageGroupId: insertedAgeGroup.id, feeId: group.feeId });
-
-              await tx
-                .insert(eventAgeGroupFees)
-                .values({
-                  ageGroupId: insertedAgeGroup.id,
-                  feeId: group.feeId,
-                });
-
-              console.log('Fee assignment created');
-            }
+            console.log('Fee assignment created successfully');
           }
         }
       }
 
-      // Fetch the updated event with all its associations
+      // Fetch the final updated event with all its associations
       const [finalEvent] = await tx
         .select()
         .from(events)

@@ -9,6 +9,7 @@ const router = Router();
 router.get('/:id', async (req, res) => {
   try {
     const eventId = req.params.id;
+    console.log('Fetching event details for:', eventId);
 
     // Get main event details
     const event = await db
@@ -32,9 +33,9 @@ router.get('/:id', async (req, res) => {
         fieldSize: eventAgeGroups.fieldSize,
         scoringRule: eventAgeGroups.scoringRule,
         amountDue: eventAgeGroups.amountDue,
-        feeId: eventAgeGroupFees.feeId,
-        divisionCode: eventAgeGroups.divisionCode, // Add divisionCode
         birth_date_start: eventAgeGroups.birth_date_start,
+        divisionCode: eventAgeGroups.divisionCode,
+        feeId: eventAgeGroupFees.feeId,
       })
       .from(eventAgeGroups)
       .leftJoin(
@@ -42,6 +43,8 @@ router.get('/:id', async (req, res) => {
         eq(eventAgeGroups.id, eventAgeGroupFees.ageGroupId)
       )
       .where(eq(eventAgeGroups.eventId, eventId.toString()));
+
+    console.log('Fetched age groups:', ageGroups);
 
     // Get complex assignments
     const complexAssignments = await db
@@ -72,10 +75,9 @@ router.get('/:id', async (req, res) => {
       ...event[0],
       ageGroups: ageGroups.map(group => ({
         ...group,
-        // Ensure the ID is properly included
         id: group.id,
-        // Include selected status based on feeId presence
-        selected: true
+        selected: true, // Mark all fetched age groups as selected
+        feeId: group.feeId // Ensure feeId is included
       })),
       complexes: complexAssignments,
       fieldSizes,
@@ -83,7 +85,7 @@ router.get('/:id', async (req, res) => {
       fees
     };
 
-    console.log('Fetched event details:', JSON.stringify(result, null, 2));
+    console.log('Sending event details:', JSON.stringify(result, null, 2));
     res.json(result);
   } catch (error) {
     console.error('Error fetching event details:', error);

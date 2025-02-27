@@ -1,0 +1,42 @@
+Fetched event data: {id: 1021908506, name: 'April Fools Tournament', startDate: '2025-04-01', endDate: '2025-04-05', timezone: 'America/New_York', …}
+edit-event.tsx:149 Prepared event data for form: {id: 1021908506, name: 'April Fools Tournament', startDate: '2025-04-01', endDate: '2025-04-05', timezone: 'America/New_York', …}
+edit-event.tsx:149 Prepared event data for form: {id: 1021908506, name: 'April Fools Tournament', startDate: '2025-04-01', endDate: '2025-04-05', timezone: 'America/New_York', …}
+edit-event.tsx:149 Prepared event data for form: {id: 1021908506, name: 'April Fools Tournament', startDate: '2025-04-01', endDate: '2025-04-05', timezone: 'America/New_York', …}
+edit-event.tsx:149 Prepared event data for form: {id: 1021908506, name: 'April Fools Tournament', startDate: '2025-04-01', endDate: '2025-04-05', timezone: 'America/New_York', …}
+chunk-AZCBCMZO.js?v=143ddc79:124 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+getAnimationName @ chunk-AZCBCMZO.js?v=143ddc79:124
+(anonymous) @ chunk-AZCBCMZO.js?v=143ddc79:52
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=143ddc79:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=143ddc79:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=143ddc79:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=143ddc79:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=143ddc79:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=143ddc79:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=143ddc79:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=143ddc79:19416
+commitRoot @ chunk-RPCDYKBN.js?v=143ddc79:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=143ddc79:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=143ddc79:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=143ddc79:18627Understand this warningAI
+chunk-AZCBCMZO.js?v=143ddc79:124 OTS parsing error: invalid sfntVersion: 791289955
+getAnimationName @ chunk-AZCBCMZO.js?v=143ddc79:124
+(anonymous) @ chunk-AZCBCMZO.js?v=143ddc79:52
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=143ddc79:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=143ddc79:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=143ddc79:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=143ddc79:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=143ddc79:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=143ddc79:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=143ddc79:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=143ddc79:19416
+commitRoot @ chunk-RPCDYKBN.js?v=143ddc79:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=143ddc79:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=143ddc79:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=143ddc79:18627Understand this warningAI
+edit-event.tsx:88 Submitting form data: {name: 'April Fools Tournament', startDate: '2025-04-01', endDate: '2025-04-05', timezone: 'America/New_York', applicationDeadline: '2025-02-28', …}
+edit-event.tsx:36 Submitting event update with data: {name: 'April Fools Tournament', startDate: '2025-04-01', endDate: '2025-04-05', timezone: 'America/New_York', applicationDeadline: '2025-02-28', …}
+edit-event.tsx:149 Prepared event data for form: {id: 1021908506, name: 'April Fools Tournament', startDate: '2025-04-01', endDate: '2025-04-05', timezone: 'America/New_York', …}
+edit-event.tsx:149 Prepared event data for form: {id: 1021908506, name: 'April Fools Tournament', startDate: '2025-04-01', endDate: '2025-04-05', timezone: 'America/New_York', …}
+edit-event.tsx:51 Server response after update: {message: 'Event updated successfully'}
+edit-event.tsx:59 Update successful, invalidating queries
+edit-event.tsx:29 Fetched event data: {id: 1021908506, name: 'April Fools Tournament', startDate: '2025-04-01', endDate: '2025-04-05', timezone: 'America/New_York', …}
