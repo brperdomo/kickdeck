@@ -3,16 +3,8 @@
 
 async function processAgeGroups(ageGroups, seasonalScopeId) {
   const processedAgeGroups = await Promise.all(ageGroups.map(async (ageGroup) => {
-    const endYear = seasonalScopeId ?
-      await db.select().from(seasonalScopes)
-        .where(eq(seasonalScopes.id, seasonalScopeId))
-        .then(scopes => scopes[0]?.endYear || new Date().getFullYear())
-      : new Date().getFullYear();
-
-    return {
-      ...ageGroup,
-      birth_date_start: `${endYear}-01-01`
-    };
+    //Removed birth_date_start processing
+    return ageGroup;
   }));
   return processedAgeGroups;
 }
@@ -75,7 +67,7 @@ app.patch('/api/admin/events/:id', async (req, res) => {
               fieldSize: group.fieldSize,
               scoringRule: group.scoringRule,
               amountDue: group.amountDue || null,
-              birth_date_start: group.birth_date_start,
+              //birth_date_start: group.birth_date_start, //removed
             })
             .where(eq(eventAgeGroups.id, existingGroup.id))
             .returning();
@@ -91,7 +83,7 @@ app.patch('/api/admin/events/:id', async (req, res) => {
             projectedTeams: group.projectedTeams,
             scoringRule: group.scoringRule,
             amountDue: group.amountDue || null,
-            birth_date_start: group.birth_date_start,
+            //birth_date_start: group.birth_date_start, //removed
           });
         }
       }
