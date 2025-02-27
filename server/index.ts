@@ -1,8 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { db } from "../db";
-import { users } from "../db/schema";
+import { db } from "@db";
+import { users } from "@db/schema";
 import { createAdmin } from "./create-admin";
 import { WebSocketServer } from "ws";
 import path from "path";

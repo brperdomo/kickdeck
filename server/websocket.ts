@@ -1,7 +1,7 @@
 import { WebSocket, WebSocketServer } from 'ws';
 import type { Server } from 'http';
-import { db } from '../db';
-import { messages, files } from '../db/schema';
+import { db } from '@db';
+import { messages, files } from '@db/schema';
 import { eq } from 'drizzle-orm';
 
 interface ChatClient extends WebSocket {

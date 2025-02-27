@@ -1,5 +1,5 @@
-import { db } from "../db";
-import { users } from "../db/schema";
+import { db } from "@db";
+import { users } from "@db/schema";
 import { eq } from "drizzle-orm";
 import { crypto } from "./crypto";
 

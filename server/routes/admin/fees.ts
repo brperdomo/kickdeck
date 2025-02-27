@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { eq } from "drizzle-orm";
-import { db } from "../../../db";
+import { db } from "../../db";
 import { eventFees, eventAgeGroupFees } from "../../db/schema";
 import { authenticateAdmin } from "../../middleware/auth";
 

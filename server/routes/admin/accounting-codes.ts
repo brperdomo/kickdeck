@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { Router } from "express";
-import { db } from "../../../db";
-import { accountingCodes, insertAccountingCodeSchema } from "../../../db/schema";
+import { db } from "@db";
+import { accountingCodes, insertAccountingCodeSchema } from "@db/schema";
 import { authenticateAdmin } from "../../middleware/auth";
 
 const router = Router();
