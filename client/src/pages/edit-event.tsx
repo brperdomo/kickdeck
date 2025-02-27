@@ -25,30 +25,38 @@ export default function EditEvent() {
         const errorData = await response.json().catch(() => null);
         throw new Error(errorData?.message || 'Failed to fetch event');
       }
-      return response.json();
+      const data = await response.json();
+      console.log('Fetched event data:', data);
+      return data;
     }
   });
 
   const updateEventMutation = useMutation({
     mutationFn: async (data: EventFormData) => {
+      console.log('Submitting event update with data:', data);
       try {
         const response = await fetch(`/api/admin/events/${id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
         });
+
         if (!response.ok) {
           const errorData = await response.text();
           console.error('Server response:', errorData);
           throw new Error(`Failed to update event: ${errorData || response.statusText}`);
         }
-        return response.json();
+
+        const responseData = await response.json();
+        console.log('Server response after update:', responseData);
+        return responseData;
       } catch (error) {
         console.error('Error updating event:', error);
         throw error;
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Update successful, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['event', id] });
       toast({
         title: "Success",
@@ -72,16 +80,13 @@ export default function EditEvent() {
         ageGroups: formData.ageGroups?.map(group => ({
           ...group,
           projectedTeams: group.projectedTeams || 0,
-          amountDue: group.amountDue || null
+          amountDue: group.amountDue || null,
+          selected: true // Mark all included age groups as selected
         })) || []
       };
 
+      console.log('Submitting form data:', sanitizedFormData);
       await updateEventMutation.mutateAsync(sanitizedFormData);
-      toast({
-        title: "Event Updated",
-        description: "Event has been updated successfully",
-      });
-      navigate('/admin/events');
     } catch (error) {
       console.error("Submit error:", error);
       toast({
@@ -128,7 +133,10 @@ export default function EditEvent() {
   const eventData = {
     ...eventQuery.data,
     complexFieldSizes: eventQuery.data.complexFieldSizes || {},
-    ageGroups: eventQuery.data.ageGroups || [],
+    ageGroups: eventQuery.data.ageGroups?.map(group => ({
+      ...group,
+      selected: true // Mark all fetched age groups as selected
+    })) || [],
     scoringRules: eventQuery.data.scoringRules || [],
     selectedComplexIds: eventQuery.data.selectedComplexIds || [],
     branding: eventQuery.data.branding || {
@@ -137,6 +145,8 @@ export default function EditEvent() {
       secondaryColor: "#ffffff"
     }
   };
+
+  console.log('Prepared event data for form:', eventData);
 
   const navigateTab = (direction: 'prev' | 'next') => {
     const currentIndex = TAB_ORDER.indexOf(activeTab);

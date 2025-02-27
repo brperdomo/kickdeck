@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../db';
 import { events, eventAgeGroups, eventAgeGroupFees } from '@db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router = Router();
@@ -12,7 +12,8 @@ router.patch('/:id', async (req, res) => {
     const eventId = req.params.id;
     const eventData = req.body;
 
-    console.log('Updating event with data:', JSON.stringify(eventData, null, 2));
+    console.log('Updating event:', eventId);
+    console.log('Received update data:', JSON.stringify(eventData, null, 2));
 
     // Begin a transaction
     const result = await db.transaction(async (tx) => {
@@ -33,10 +34,14 @@ router.patch('/:id', async (req, res) => {
         .where(eq(events.id, BigInt(eventId)))
         .returning();
 
+      console.log('Event basic info updated');
+
       // Delete existing age groups first
       await tx
         .delete(eventAgeGroups)
         .where(eq(eventAgeGroups.eventId, eventId.toString()));
+
+      console.log('Existing age groups deleted');
 
       // Insert new age groups and their fee assignments
       if (eventData.ageGroups && eventData.ageGroups.length > 0) {
@@ -65,6 +70,8 @@ router.patch('/:id', async (req, res) => {
               })
               .returning();
 
+            console.log('Age group inserted:', insertedAgeGroup);
+
             // If fee is assigned, create the fee assignment
             if (group.feeId) {
               console.log('Creating fee assignment:', { ageGroupId: insertedAgeGroup.id, feeId: group.feeId });
@@ -75,12 +82,21 @@ router.patch('/:id', async (req, res) => {
                   ageGroupId: insertedAgeGroup.id,
                   feeId: group.feeId,
                 });
+
+              console.log('Fee assignment created');
             }
           }
         }
       }
 
-      return updatedEvent;
+      // Fetch the updated event with all its associations
+      const [finalEvent] = await tx
+        .select()
+        .from(events)
+        .where(eq(events.id, BigInt(eventId)))
+        .limit(1);
+
+      return finalEvent;
     });
 
     console.log('Event update completed:', result);
