@@ -3077,11 +3077,16 @@ export function registerRoutes(app: Express): Server {
 
         // Start a transaction to handle cascade deletion
         await db.transaction(async (tx) => {
-          // Delete related records first
-          await tx.delete(eventAgeGroups).where(inArray(eventAgeGroups.eventId, eventIds));
-          await tx.execute(sql`DELETE FROM event_complexes WHERE event_id = ANY(${eventIds})`);
+          // Delete related records first in order of dependencies
+          await tx.delete(formResponses).where(inArray(formResponses.eventId, eventIds));
+          await tx.delete(chatRooms).where(inArray(chatRooms.eventId, eventIds));
           await tx.delete(eventFieldSizes).where(inArray(eventFieldSizes.eventId, eventIds));
+          await tx.delete(eventScoringRules).where(inArray(eventScoringRules.eventId, eventIds));
+          await tx.delete(eventComplexes).where(inArray(eventComplexes.eventId, eventIds));
           await tx.delete(teams).where(inArray(teams.eventId, eventIds));
+          await tx.delete(tournamentGroups).where(inArray(tournamentGroups.eventId, eventIds));
+          await tx.delete(eventAgeGroups).where(inArray(eventAgeGroups.eventId, eventIds));
+          await tx.delete(eventFormTemplates).where(inArray(eventFormTemplates.eventId, eventIds));
 
           // Finally delete the events
           await tx.delete(events).where(inArray(events.id, eventIds));
@@ -3118,7 +3123,7 @@ export function registerRoutes(app: Express): Server {
           // Finally delete the event
           const [deletedEvent] = await tx
             .delete(events)
-            .where(eq(events.id, req.params.id))
+            .where(eq(events.id, eventId))
             .returning();
 
           if (!deletedEvent) {
