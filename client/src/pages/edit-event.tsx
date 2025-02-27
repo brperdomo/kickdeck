@@ -74,27 +74,19 @@ export default function EditEvent() {
 
   const handleSubmit = async (formData: EventFormData) => {
     try {
-      // Only include essential data in the payload to reduce size
+      // Ensure age groups are properly formatted
       const sanitizedFormData = {
         ...formData,
         ageGroups: formData.ageGroups?.map(group => ({
-          id: group.id,
-          ageGroup: group.ageGroup,
-          gender: group.gender,
-          birthDateStart: group.birthDateStart,
-          birthDateEnd: group.birthDateEnd,
-          minBirthYear: group.minBirthYear,
-          maxBirthYear: group.maxBirthYear,
-          divisionCode: group.divisionCode,
+          ...group,
           projectedTeams: group.projectedTeams || 0,
-          fieldSize: group.fieldSize || "11v11", // Ensure fieldSize is always set
           amountDue: group.amountDue || null,
           selected: true, // Mark all included age groups as selected
           feeId: group.feeId || null // Ensure feeId is included
         })) || []
       };
 
-      console.log('Submitting form data size:', JSON.stringify(sanitizedFormData).length, 'bytes');
+      console.log('Submitting form data:', sanitizedFormData);
       await updateEventMutation.mutateAsync(sanitizedFormData);
     } catch (error) {
       console.error("Submit error:", error);

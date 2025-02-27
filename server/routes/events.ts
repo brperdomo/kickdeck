@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { sql } from 'drizzle-orm/sql';
 
+
 const router = Router();
 
 // Update event endpoint
@@ -14,26 +15,7 @@ router.patch('/:id', async (req, res) => {
     const eventData = req.body;
 
     console.log('Updating event:', eventId);
-    console.log('Received update data size:', JSON.stringify(eventData).length, 'bytes');
-
-    // Strip unnecessary data from large objects to reduce payload size
-    if (eventData.ageGroups && Array.isArray(eventData.ageGroups)) {
-      // Keep only essential properties for each age group
-      eventData.ageGroups = eventData.ageGroups.map(group => ({
-        id: group.id,
-        ageGroup: group.ageGroup,
-        gender: group.gender, 
-        birthDateStart: group.birthDateStart,
-        birthDateEnd: group.birthDateEnd,
-        minBirthYear: group.minBirthYear,
-        maxBirthYear: group.maxBirthYear,
-        divisionCode: group.divisionCode,
-        projectedTeams: group.projectedTeams || 0,
-        amountDue: group.amountDue,
-        feeId: group.feeId,
-        selected: group.selected
-      }));
-    }
+    console.log('Received update data:', JSON.stringify(eventData, null, 2));
 
     // Begin a transaction
     const result = await db.transaction(async (tx) => {
@@ -64,8 +46,7 @@ router.patch('/:id', async (req, res) => {
 
       // Delete fee assignments for existing age groups
       for (const group of existingAgeGroups) {
-        await tx.delete(eventAgeGroupFees)
-          .where(eq(eventAgeGroupFees.ageGroupId, group.id));
+        await tx.execute(sql`DELETE FROM event_age_group_fees WHERE age_group_id = ${group.id}`);
       }
 
       // Delete existing age groups
@@ -80,7 +61,7 @@ router.patch('/:id', async (req, res) => {
         console.log('Processing age groups:', eventData.ageGroups);
 
         // Filter only selected age groups
-        const selectedGroups = eventData.ageGroups.filter((group: any) => group.isSelected);
+        const selectedGroups = eventData.ageGroups.filter(group => group.selected);
         console.log('Selected age groups:', selectedGroups);
 
         for (const group of selectedGroups) {
@@ -95,11 +76,11 @@ router.patch('/:id', async (req, res) => {
               birthYear: group.birthYear,
               gender: group.gender,
               projectedTeams: group.projectedTeams || null,
-              fieldSize: group.fieldSize || "11v11", // Ensure field_size is never null
+              fieldSize: group.fieldSize || null,
               scoringRule: group.scoringRule || null,
               amountDue: group.amountDue || null,
               createdAt: new Date().toISOString(),
-              birth_date_start: group.birthDateStart || null,
+              birth_date_start: group.birth_date_start || null,
               divisionCode: group.divisionCode || null,
             })
             .returning();
@@ -110,15 +91,26 @@ router.patch('/:id', async (req, res) => {
           if (group.fees && Array.isArray(group.fees) && group.fees.length > 0) {
             console.log('Processing fee assignments:', group.fees);
 
-            // Insert all fee assignments for this age group
-            const feeAssignments = group.fees.map((feeId: number) => ({
-              ageGroupId: insertedAgeGroup.id,
-              feeId: feeId,
-              createdAt: new Date().toISOString()
-            }));
+            for (const feeId of group.fees) {
+              if (!feeId) continue;
 
-            await tx.insert(eventAgeGroupFees).values(feeAssignments);
-            console.log(`Fee assignments created for age group ${insertedAgeGroup.id}`);
+              await tx.execute(sql`
+                INSERT INTO event_age_group_fees (age_group_id, fee_id, created_at) 
+                VALUES (${insertedAgeGroup.id}, ${feeId}, ${new Date().toISOString()})
+              `);
+
+              console.log(`Fee assignment created: ageGroupId=${insertedAgeGroup.id}, feeId=${feeId}`);
+            }
+          } else if (group.feeId) {
+            // Handle legacy format with single feeId
+            console.log('Processing single fee assignment:', group.feeId);
+
+            await tx.execute(sql`
+              INSERT INTO event_age_group_fees (age_group_id, fee_id, created_at) 
+              VALUES (${insertedAgeGroup.id}, ${group.feeId}, ${new Date().toISOString()})
+            `);
+
+            console.log('Fee assignment created successfully');
           }
         }
       }
@@ -139,46 +131,47 @@ router.patch('/:id', async (req, res) => {
 
 // Get event by ID for editing
 router.get("/admin/events/:id/edit", async (req, res) => {
-  try {
-    const { id } = req.params;
+    try {
+      const { id } = req.params;
 
-    // Get event
-    const event = await db.query.events.findFirst({
-      where: eq(events.id, BigInt(id)),
-    });
+      // Get event
+      const event = await db.query.events.findFirst({
+        where: eq(events.id, BigInt(id)),
+      });
 
-    if (!event) {
-      return res.status(404).json({ error: "Event not found" });
+      if (!event) {
+        return res.status(404).json({ error: "Event not found" });
+      }
+
+      // Get age groups
+      const ageGroups = await db.query.eventAgeGroups.findMany({
+        where: eq(eventAgeGroups.eventId, id.toString()),
+      });
+
+      // Get fee assignments for each age group
+      for (const ageGroup of ageGroups) {
+        // Find fee assignments for this age group
+        const feeAssignments = await db.execute(sql`
+          SELECT fee_id FROM event_age_group_fees 
+          WHERE age_group_id = ${ageGroup.id}
+        `);
+
+        // Add fees array to age group
+        ageGroup.fees = feeAssignments.rows.map(row => Number(row.fee_id));
+        // Mark as selected for the form
+        ageGroup.isSelected = true;
+      }
+
+      console.log('Sending event with age groups:', ageGroups.length);
+
+      return res.json({
+        ...event,
+        ageGroups,
+      });
+    } catch (error) {
+      console.error("Error getting event:", error);
+      return res.status(500).json({ error: "Failed to get event" });
     }
-
-    // Get age groups with their fee assignments
-    const ageGroups = await db.query.eventAgeGroups.findMany({
-      where: eq(eventAgeGroups.eventId, id.toString()),
-    });
-
-    // Get fee assignments for each age group
-    for (const ageGroup of ageGroups) {
-      const feeAssignments = await db
-        .select({ feeId: eventAgeGroupFees.feeId })
-        .from(eventAgeGroupFees)
-        .where(eq(eventAgeGroupFees.ageGroupId, ageGroup.id));
-
-      // Add fees array to age group
-      (ageGroup as any).fees = feeAssignments.map(row => row.feeId);
-      // Mark as selected for the form
-      (ageGroup as any).isSelected = true;
-    }
-
-    console.log('Sending event with age groups:', ageGroups.length);
-
-    return res.json({
-      ...event,
-      ageGroups,
-    });
-  } catch (error) {
-    console.error("Error getting event:", error);
-    return res.status(500).json({ error: "Failed to get event" });
-  }
-});
+  });
 
 export default router;
