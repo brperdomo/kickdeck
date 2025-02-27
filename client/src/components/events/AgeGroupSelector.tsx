@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -12,10 +12,7 @@ interface AgeGroupData {
   isSelected: boolean;
   projectedTeams: number;
   fieldSize: string;
-  birthDateStart?: string;
-  birthDateEnd?: string;
-  minBirthYear?: number;
-  maxBirthYear?: number;
+  amountDue?: number;
 }
 
 const DEFAULT_AGE_GROUPS: AgeGroupData[] = [
@@ -53,74 +50,28 @@ const DEFAULT_AGE_GROUPS: AgeGroupData[] = [
 
 interface AgeGroupSelectorProps {
   onAgeGroupsChange: (selectedGroups: AgeGroupData[]) => void;
-  initialAgeGroups?: any[]; // Accept initial values from the event
 }
 
-export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [] }: AgeGroupSelectorProps) {
-  const [ageGroups, setAgeGroups] = useState<AgeGroupData[]>(() => {
-    // Initialize with default groups
-    const defaultGroups = [...DEFAULT_AGE_GROUPS];
-
-    // If we have initial groups, mark them as selected and set their values
-    if (initialAgeGroups.length > 0) {
-      initialAgeGroups.forEach(initialGroup => {
-        const matchingGroup = defaultGroups.find(
-          g => g.gender === initialGroup.gender && g.ageGroup === initialGroup.ageGroup
-        );
-        if (matchingGroup) {
-          Object.assign(matchingGroup, {
-            isSelected: true,
-            projectedTeams: initialGroup.projectedTeams || 0,
-            birthDateStart: initialGroup.birthDateStart,
-            birthDateEnd: initialGroup.birthDateEnd,
-            minBirthYear: initialGroup.minBirthYear,
-            maxBirthYear: initialGroup.maxBirthYear
-          });
-        }
-      });
-    }
-
-    return defaultGroups;
-  });
-
-  useEffect(() => {
-    // Send initial selected groups
-    const selectedGroups = ageGroups
-      .filter(group => group.isSelected)
-      .map(group => ({
-        ...group,
-        birthDateStart: group.birthDateStart || new Date(group.birthYear, 0, 1).toISOString().split('T')[0],
-        birthDateEnd: group.birthDateEnd || new Date(group.birthYear, 11, 31).toISOString().split('T')[0],
-        minBirthYear: group.minBirthYear || group.birthYear,
-        maxBirthYear: group.maxBirthYear || group.birthYear
-      }));
-
-    onAgeGroupsChange(selectedGroups);
-  }, []);
+export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
+  const [ageGroups, setAgeGroups] = useState<AgeGroupData[]>(DEFAULT_AGE_GROUPS);
 
   const handleSelectionChange = (index: number, checked: boolean) => {
     const updatedGroups = [...ageGroups];
-    updatedGroups[index] = { 
-      ...updatedGroups[index], 
-      isSelected: checked,
-      birthDateStart: checked ? new Date(updatedGroups[index].birthYear, 0, 1).toISOString().split('T')[0] : undefined,
-      birthDateEnd: checked ? new Date(updatedGroups[index].birthYear, 11, 31).toISOString().split('T')[0] : undefined,
-      minBirthYear: checked ? updatedGroups[index].birthYear : undefined,
-      maxBirthYear: checked ? updatedGroups[index].birthYear : undefined
-    };
+    updatedGroups[index] = { ...updatedGroups[index], isSelected: checked };
     setAgeGroups(updatedGroups);
-
+    
+    // Ensure we send the complete data for selected groups
     const selectedGroups = updatedGroups
       .filter(group => group.isSelected)
       .map(group => ({
         ...group,
+        // Ensure these fields are always defined
         projectedTeams: group.projectedTeams || 0,
-        birthDateStart: group.birthDateStart,
-        birthDateEnd: group.birthDateEnd,
-        minBirthYear: group.minBirthYear,
-        maxBirthYear: group.maxBirthYear
+        fieldSize: group.fieldSize || '11v11',
+        scoringRule: group.scoringRule || null,
+        amountDue: group.amountDue || null
       }));
-
+      
     onAgeGroupsChange(selectedGroups);
   };
 
@@ -132,17 +83,8 @@ export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [] }: A
       projectedTeams: isNaN(parsedValue) ? 0 : parsedValue 
     };
     setAgeGroups(updatedGroups);
-
     if (updatedGroups[index].isSelected) {
-      const selectedGroups = updatedGroups
-        .filter(group => group.isSelected)
-        .map(group => ({
-          ...group,
-          birthDateStart: group.birthDateStart,
-          birthDateEnd: group.birthDateEnd,
-          minBirthYear: group.minBirthYear,
-          maxBirthYear: group.maxBirthYear
-        }));
+      const selectedGroups = updatedGroups.filter(group => group.isSelected);
       onAgeGroupsChange(selectedGroups);
     }
   };
