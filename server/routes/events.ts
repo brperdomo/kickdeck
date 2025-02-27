@@ -57,34 +57,39 @@ app.patch('/api/admin/events/:id', async (req, res) => {
 
         // Update existing group
         if (existingGroup) {
-          const updatedGroup = await tx
+          // Build the update object conditionally
+          const updateData = {
+            ageGroup: group.ageGroup,
+            birthYear: group.birthYear,
+            gender: group.gender,
+            projectedTeams: group.projectedTeams,
+            fieldSize: group.fieldSize,
+            scoringRule: group.scoringRule,
+            amountDue: group.amountDue || null,
+          };
+
+          await tx
             .update(eventAgeGroups)
-            .set({
-              projectedTeams: group.projectedTeams,
-              ageGroup: group.ageGroup,
-              birthYear: group.birthYear,
-              gender: group.gender,
-              fieldSize: group.fieldSize,
-              scoringRule: group.scoringRule,
-              amountDue: group.amountDue || null,
-              //birth_date_start: group.birth_date_start, //removed
-            })
+            .set(updateData)
             .where(eq(eventAgeGroups.id, existingGroup.id))
             .returning();
         }
         // Create if it doesn't exist
         else {
-          await tx.insert(eventAgeGroups).values({
+          // Build the insertion object with only the required fields
+          const insertData = {
             eventId: eventId,
-            ageGroup: group.ageGroup,
-            birthYear: group.birthYear,
             gender: group.gender,
-            fieldSize: group.fieldSize,
             projectedTeams: group.projectedTeams,
             scoringRule: group.scoringRule,
+            ageGroup: group.ageGroup,
+            birthYear: group.birthYear,
+            fieldSize: group.fieldSize,
             amountDue: group.amountDue || null,
-            //birth_date_start: group.birth_date_start, //removed
-          });
+            createdAt: new Date().toISOString(),
+          };
+
+          await tx.insert(eventAgeGroups).values(insertData);
         }
       }
       return updatedEvent;
