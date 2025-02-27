@@ -96,4 +96,58 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Delete event endpoint
+router.delete('/:id', async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    console.log('Starting event deletion for ID:', eventId);
+
+    // Use db.transaction() to create a new transaction
+    await db.transaction(async (tx) => {
+      // Delete all related records in order
+      await tx.delete(eventAgeGroupFees)
+        .where(eq(eventAgeGroupFees.eventId, eventId))
+        .execute();
+
+      await tx.delete(eventFees)
+        .where(eq(eventFees.eventId, BigInt(eventId)))
+        .execute();
+
+      await tx.delete(eventAgeGroups)
+        .where(eq(eventAgeGroups.eventId, eventId))
+        .execute();
+
+      await tx.delete(eventComplexes)
+        .where(eq(eventComplexes.eventId, eventId))
+        .execute();
+
+      await tx.delete(eventFieldSizes)
+        .where(eq(eventFieldSizes.eventId, eventId))
+        .execute();
+
+      await tx.delete(eventScoringRules)
+        .where(eq(eventScoringRules.eventId, eventId))
+        .execute();
+
+      // Finally delete the event itself
+      const [deletedEvent] = await tx.delete(events)
+        .where(eq(events.id, BigInt(eventId)))
+        .returning();
+
+      if (!deletedEvent) {
+        throw new Error('Event not found');
+      }
+    });
+
+    console.log('Successfully deleted event:', eventId);
+    res.json({ message: "Event deleted successfully" });
+  } catch (error) {
+    console.error('Error deleting event:', error);
+    res.status(500).json({ 
+      error: error instanceof Error ? error.message : "Failed to delete event",
+      details: error instanceof Error ? error.stack : undefined
+    });
+  }
+});
+
 export default router;
