@@ -1522,7 +1522,7 @@ export function registerRoutes(app: Express): Server {
                     .where(eq(files.id, fileId));
                 }
               } catch (error) {
-                console.error(`Error deleting file ${fileId}:`, error);
+                console.error("Error deleting file " + fileId + ":", error);
               }
             }
             break;
