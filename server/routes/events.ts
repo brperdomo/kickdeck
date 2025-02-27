@@ -46,9 +46,7 @@ router.patch('/:id', async (req, res) => {
 
       // Delete fee assignments for existing age groups
       for (const group of existingAgeGroups) {
-        await tx
-          .delete(eventAgeGroupFees)
-          .where(eq(eventAgeGroupFees.ageGroupId, group.id));
+        await tx.execute(sql`DELETE FROM event_age_group_fees WHERE age_group_id = ${group.id}`);
       }
 
       // Delete existing age groups
@@ -96,13 +94,10 @@ router.patch('/:id', async (req, res) => {
               feeId: group.feeId
             });
 
-            await tx
-              .insert(eventAgeGroupFees)
-              .values({
-                ageGroupId: insertedAgeGroup.id,
-                feeId: group.feeId,
-                createdAt: new Date().toISOString(),
-              });
+            await tx.execute(sql`
+              INSERT INTO event_age_group_fees (age_group_id, fee_id, created_at) 
+              VALUES (${insertedAgeGroup.id}, ${group.feeId}, ${new Date().toISOString()})
+            `);
 
             console.log('Fee assignment created successfully');
           }
