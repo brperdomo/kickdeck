@@ -124,101 +124,115 @@ export function registerRoutes(app: Express): Server {
           // Delete games first (they reference time slots and teams)
           await tx
             .delete(games)
-            .where(eq(games.eventId, eventId));
+            .where(eq(games.eventId, String(eventId)));
           console.log('Deleted games');
 
           // Delete game time slots
           await tx
             .delete(gameTimeSlots)
-            .where(eq(gameTimeSlots.eventId, eventId));
+            .where(eq(gameTimeSlots.eventId, String(eventId)));
           console.log('Deleted game time slots');
 
-          // Delete form responses
-          await tx
-            .delete(formResponses)
-            .where(eq(formResponses.eventId, eventId));
-          console.log('Deleted form responses');
+          // Delete form responses with template join
+          const formsToDelete = await tx
+            .select({ id: formResponses.id })
+            .from(formResponses)
+            .innerJoin(eventFormTemplates, eq(formResponses.templateId, eventFormTemplates.id))
+            .where(eq(eventFormTemplates.eventId, String(eventId)));
+            
+          if (formsToDelete.length > 0) {
+            await tx
+              .delete(formResponses)
+              .where(inArray(formResponses.id, formsToDelete.map(f => f.id)));
+            console.log('Deleted form responses');
+          }
 
           // Delete chat rooms
           await tx
             .delete(chatRooms)
-            .where(eq(chatRooms.eventId, eventId));
+            .where(eq(chatRooms.eventId, String(eventId)));
           console.log('Deleted chat rooms');
 
           // Delete coupons
           await tx
             .delete(coupons)
-            .where(eq(coupons.eventId, eventId));
+            .where(eq(coupons.eventId, String(eventId)));
           console.log('Deleted coupons');
 
           // Delete field sizes
           await tx
             .delete(eventFieldSizes)
-            .where(eq(eventFieldSizes.eventId, eventId));
+            .where(eq(eventFieldSizes.eventId, String(eventId)));
           console.log('Deleted event field sizes');
 
           // Delete scoring rules
           await tx
             .delete(eventScoringRules)
-            .where(eq(eventScoringRules.eventId, eventId));
+            .where(eq(eventScoringRules.eventId, String(eventId)));
           console.log('Deleted event scoring rules');
 
           // Delete complex assignments
           await tx
             .delete(eventComplexes)
-            .where(eq(eventComplexes.eventId, eventId));
+            .where(eq(eventComplexes.eventId, String(eventId)));
           console.log('Deleted event complexes');
 
           // Delete tournament groups first (they reference age groups)
           await tx
             .delete(tournamentGroups)
-            .where(eq(tournamentGroups.eventId, eventId));
+            .where(eq(tournamentGroups.eventId, String(eventId)));
           console.log('Deleted tournament groups');
 
           // Delete teams (they reference age groups)
           await tx
             .delete(teams)
-            .where(eq(teams.eventId, eventId));
+            .where(eq(teams.eventId, String(eventId)));
           console.log('Deleted teams');
 
           // Delete form field options and fields for this event's templates
-          await tx.execute(sql`
-            DELETE FROM form_field_options 
-            WHERE form_field_id IN (
-              SELECT ff.id 
-              FROM form_fields ff
-              JOIN event_form_templates eft ON ff.template_id = eft.id
-              WHERE eft.event_id = ${eventId}
-            )
-          `);
-          console.log('Deleted form field options');
+          const templateIds = await tx
+            .select({ id: eventFormTemplates.id })
+            .from(eventFormTemplates)
+            .where(eq(eventFormTemplates.eventId, String(eventId)))
+            .then(results => results.map(r => r.id));
 
-          await tx.execute(sql`
-            DELETE FROM form_fields 
-            WHERE template_id IN (
-              SELECT id FROM event_form_templates 
-              WHERE event_id = ${eventId}
-            )
-          `);
-          console.log('Deleted form fields');
+          if (templateIds.length > 0) {
+            const fieldIds = await tx
+              .select({ id: formFields.id })
+              .from(formFields)
+              .where(inArray(formFields.templateId, templateIds))
+              .then(results => results.map(r => r.id));
+
+            if (fieldIds.length > 0) {
+              await tx
+                .delete(formFieldOptions)
+                .where(inArray(formFieldOptions.fieldId, fieldIds));
+              console.log('Deleted form field options');
+            }
+
+            await tx
+              .delete(formFields)
+              .where(inArray(formFields.templateId, templateIds));
+            console.log('Deleted form fields');
+          }
 
           // Delete event form templates
           await tx
             .delete(eventFormTemplates)
-            .where(eq(eventFormTemplates.eventId, eventId));
+            .where(eq(eventFormTemplates.eventId, String(eventId)));
           console.log('Deleted event form templates');
 
           // Delete event age groups
           await tx
             .delete(eventAgeGroups)
-            .where(eq(eventAgeGroups.eventId, eventId));
+            .where(eq(eventAgeGroups.eventId, String(eventId)));
           console.log('Deleted event age groups');
 
           // Delete event settings
           try {
             await tx
               .delete(eventSettings)
-              .where(eq(eventSettings.eventId, eventId));
+              .where(eq(eventSettings.eventId, String(eventId)));
             console.log('Deleted event settings');
           } catch (e) {
             console.log('No event settings to delete');
@@ -227,7 +241,7 @@ export function registerRoutes(app: Express): Server {
           // Finally delete the event itself
           const [deletedEvent] = await tx
             .delete(events)
-            .where(eq(events.id, eventId))
+            .where(eq(events.id, String(eventId)))
             .returning();
 
           if (!deletedEvent) {
