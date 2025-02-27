@@ -12,10 +12,12 @@ router.patch('/:id', async (req, res) => {
     const eventId = req.params.id;
     const eventData = req.body;
 
+    console.log('Updating event with data:', JSON.stringify(eventData, null, 2));
+
     // Begin a transaction
     const result = await db.transaction(async (tx) => {
       // Update event
-      const updatedEvent = await tx
+      const [updatedEvent] = await tx
         .update(events)
         .set({
           name: eventData.name,
@@ -36,52 +38,53 @@ router.patch('/:id', async (req, res) => {
         .delete(eventAgeGroups)
         .where(eq(eventAgeGroups.eventId, eventId.toString()));
 
-      // Delete existing age group fee assignments
-      await tx
-        .delete(eventAgeGroupFees)
-        .where(
-          eq(eventAgeGroupFees.ageGroupId, 
-            eventAgeGroups.id
-          )
-        );
-
       // Insert new age groups and their fee assignments
       if (eventData.ageGroups && eventData.ageGroups.length > 0) {
-        for (const group of eventData.ageGroups) {
-          // Insert age group
-          const [insertedAgeGroup] = await tx
-            .insert(eventAgeGroups)
-            .values({
-              eventId: eventId.toString(),
-              ageGroup: group.ageGroup,
-              birthYear: group.birthYear,
-              gender: group.gender,
-              projectedTeams: group.projectedTeams || null,
-              fieldSize: group.fieldSize,
-              scoringRule: group.scoringRule || null,
-              amountDue: group.amountDue || null,
-              createdAt: new Date().toISOString(),
-              birth_date_start: group.birth_date_start || null,
-            })
-            .returning();
+        console.log('Processing age groups:', eventData.ageGroups);
 
-          // If fee is assigned, create the fee assignment
-          if (group.feeId) {
-            await tx
-              .insert(eventAgeGroupFees)
+        for (const group of eventData.ageGroups) {
+          // Only process if the age group is selected
+          if (group.selected) {
+            console.log('Inserting age group:', group);
+
+            // Insert age group
+            const [insertedAgeGroup] = await tx
+              .insert(eventAgeGroups)
               .values({
-                ageGroupId: insertedAgeGroup.id,
-                feeId: group.feeId,
+                eventId: eventId.toString(),
+                ageGroup: group.ageGroup,
+                birthYear: group.birthYear,
+                gender: group.gender,
+                projectedTeams: group.projectedTeams || null,
+                fieldSize: group.fieldSize,
+                scoringRule: group.scoringRule || null,
+                amountDue: group.amountDue || null,
                 createdAt: new Date().toISOString(),
-              });
+                birth_date_start: group.birth_date_start || null,
+                divisionCode: group.divisionCode,
+              })
+              .returning();
+
+            // If fee is assigned, create the fee assignment
+            if (group.feeId) {
+              console.log('Creating fee assignment:', { ageGroupId: insertedAgeGroup.id, feeId: group.feeId });
+
+              await tx
+                .insert(eventAgeGroupFees)
+                .values({
+                  ageGroupId: insertedAgeGroup.id,
+                  feeId: group.feeId,
+                });
+            }
           }
         }
       }
 
-      return updatedEvent[0];
+      return updatedEvent;
     });
 
-    res.json(result);
+    console.log('Event update completed:', result);
+    res.json({ message: "Event updated successfully", event: result });
   } catch (error) {
     console.error("Error updating event:", error);
     res.status(500).json({ 

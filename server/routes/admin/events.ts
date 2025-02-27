@@ -32,8 +32,9 @@ router.get('/:id', async (req, res) => {
         fieldSize: eventAgeGroups.fieldSize,
         scoringRule: eventAgeGroups.scoringRule,
         amountDue: eventAgeGroups.amountDue,
-        birth_date_start: eventAgeGroups.birth_date_start,
         feeId: eventAgeGroupFees.feeId,
+        divisionCode: eventAgeGroups.divisionCode, // Add divisionCode
+        birth_date_start: eventAgeGroups.birth_date_start,
       })
       .from(eventAgeGroups)
       .leftJoin(
@@ -69,13 +70,20 @@ router.get('/:id', async (req, res) => {
     // Combine all data
     const result = {
       ...event[0],
-      ageGroups,
+      ageGroups: ageGroups.map(group => ({
+        ...group,
+        // Ensure the ID is properly included
+        id: group.id,
+        // Include selected status based on feeId presence
+        selected: true
+      })),
       complexes: complexAssignments,
       fieldSizes,
       scoringRules,
       fees
     };
 
+    console.log('Fetched event details:', JSON.stringify(result, null, 2));
     res.json(result);
   } catch (error) {
     console.error('Error fetching event details:', error);
