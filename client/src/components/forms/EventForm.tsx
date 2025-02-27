@@ -895,7 +895,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     onSubmit(fullFormData);
   };
 
-  const onSubmit = async (data: EventFormValues) => {
+  const handleFormSubmit = async (data: EventFormValues) => {
     // Ensure all selected age groups have the selected flag
     const finalAgeGroups = ageGroups.map(group => ({
       ...group,
