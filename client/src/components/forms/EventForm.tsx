@@ -895,6 +895,68 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     onSubmit(fullFormData);
   };
 
+  const onSubmit = async (data: EventFormValues) => {
+    // Ensure all selected age groups have the selected flag
+    const finalAgeGroups = ageGroups.map(group => ({
+      ...group,
+      selected: true,
+      isSelected: true
+    }));
+
+    console.log("Submitting form with age groups:", finalAgeGroups);
+
+    // Format the data for submission
+    const formattedData = {
+      ...data,
+      ageGroups: finalAgeGroups,
+    };
+
+    console.log("Formatted data for submission:", formattedData);
+    setIsSaving(true);
+    try {
+      if (!data.name || !data.startDate || !data.endDate || !data.timezone || !data.applicationDeadline) {
+        throw new Error('Required fields are missing');
+      }
+
+
+      const response = await fetch('/api/admin/events' + (mode === 'edit' ? `/${data.id}` : ''), {
+        method: mode === 'edit' ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formattedData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to save event");
+      }
+
+      if(mode === 'edit'){
+          toast({
+              title: "Success",
+              description: "Event updated successfully",
+          });
+      } else {
+          toast({
+              title: "Success",
+              description: "Event created successfully",
+          });
+      }
+
+    } catch (error) {
+      console.error('Submit error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save event",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
@@ -965,9 +1027,10 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 </>
               ) : mode === 'edit' ? 'Save Changes' : 'Continue'}
             </Button>
-                    </div>
+          </div>
         </CardContent>
-      </Card>      <AdminModal
+      </Card>
+      <AdminModal
         open={isAdminModalOpen}
         onOpenChange={setIsAdminModalOpen}
         adminToEdit={editingAdmin}
@@ -976,7 +1039,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           setIsAdminModalOpen(false);
           setEditingAdmin(null);
         }}
-            />
+      />
     </div>
   );
 };
