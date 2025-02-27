@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../db';
-import { events, eventAgeGroups } from '@db/schema';
+import { events, eventAgeGroups, eventAgeGroupFees } from '@db/schema';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -36,22 +36,46 @@ router.patch('/:id', async (req, res) => {
         .delete(eventAgeGroups)
         .where(eq(eventAgeGroups.eventId, eventId.toString()));
 
-      // Insert new age groups
-      if (eventData.ageGroups && eventData.ageGroups.length > 0) {
-        const ageGroupsToInsert = eventData.ageGroups.map((group) => ({
-          eventId: eventId.toString(),
-          ageGroup: group.ageGroup,
-          birthYear: group.birthYear,
-          gender: group.gender,
-          projectedTeams: group.projectedTeams || null,
-          fieldSize: group.fieldSize,
-          scoringRule: group.scoringRule || null,
-          amountDue: group.amountDue || null,
-          createdAt: new Date().toISOString(),
-          birth_date_start: group.birth_date_start || null,
-        }));
+      // Delete existing age group fee assignments
+      await tx
+        .delete(eventAgeGroupFees)
+        .where(
+          eq(eventAgeGroupFees.ageGroupId, 
+            eventAgeGroups.id
+          )
+        );
 
-        await tx.insert(eventAgeGroups).values(ageGroupsToInsert);
+      // Insert new age groups and their fee assignments
+      if (eventData.ageGroups && eventData.ageGroups.length > 0) {
+        for (const group of eventData.ageGroups) {
+          // Insert age group
+          const [insertedAgeGroup] = await tx
+            .insert(eventAgeGroups)
+            .values({
+              eventId: eventId.toString(),
+              ageGroup: group.ageGroup,
+              birthYear: group.birthYear,
+              gender: group.gender,
+              projectedTeams: group.projectedTeams || null,
+              fieldSize: group.fieldSize,
+              scoringRule: group.scoringRule || null,
+              amountDue: group.amountDue || null,
+              createdAt: new Date().toISOString(),
+              birth_date_start: group.birth_date_start || null,
+            })
+            .returning();
+
+          // If fee is assigned, create the fee assignment
+          if (group.feeId) {
+            await tx
+              .insert(eventAgeGroupFees)
+              .values({
+                ageGroupId: insertedAgeGroup.id,
+                feeId: group.feeId,
+                createdAt: new Date().toISOString(),
+              });
+          }
+        }
       }
 
       return updatedEvent[0];

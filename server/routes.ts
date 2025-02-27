@@ -1937,7 +1937,7 @@ export function registerRoutes(app: Express): Server {
           );
 
           // Process each age group from the request
-          for (const group of eventData.ageGroups) {
+          for (const group of eventData.ageGroups || []) {
             const groupKey = `${group.gender}-${group.ageGroup}-${group.fieldSize}`;
             const existingGroup = existingAgeGroupsMap.get(groupKey);
 
@@ -1946,30 +1946,38 @@ export function registerRoutes(app: Express): Server {
               const updatedGroup = await tx
                 .update(eventAgeGroups)
                 .set({
-                  projectedTeams: group.projectedTeams,
+                  projectedTeams: group.projectedTeams || 0,
                   ageGroup: group.ageGroup,
                   birthYear: group.birthYear,
                   gender: group.gender,
                   fieldSize: group.fieldSize,
-                  scoringRule: group.scoringRule,
+                  scoringRule: group.scoringRule || null,
                   amountDue: group.amountDue || null,
                 })
                 .where(eq(eventAgeGroups.id, existingGroup.id))
                 .returning();
 
-              // Update fee assignments
+              // Update fee assignments if the table exists
               if (group.fees && Array.isArray(group.fees)) {
-                // Delete existing fee assignments
-                await tx
-                  .delete(eventAgeGroupFees)
-                  .where(eq(eventAgeGroupFees.ageGroupId, existingGroup.id));
-
-                // Create new fee assignments
-                for (const feeId of group.fees) {
-                  await tx.insert(eventAgeGroupFees).values({
-                    ageGroupId: existingGroup.id,
-                    feeId: feeId
-                  });
+                try {
+                  // Check if we have the fees table available - some installations may not have this
+                  if (tx.schema?.eventAgeGroupFees) {
+                    // Delete existing fee assignments
+                    await tx
+                      .delete(tx.schema.eventAgeGroupFees)
+                      .where(eq(tx.schema.eventAgeGroupFees.ageGroupId, existingGroup.id));
+    
+                    // Create new fee assignments
+                    for (const feeId of group.fees) {
+                      await tx.insert(tx.schema.eventAgeGroupFees).values({
+                        ageGroupId: existingGroup.id,
+                        feeId: feeId
+                      });
+                    }
+                  }
+                } catch (error) {
+                  console.warn('Fee assignments could not be updated', error);
+                  // Continue without fee assignments if there's an error
                 }
               }
 

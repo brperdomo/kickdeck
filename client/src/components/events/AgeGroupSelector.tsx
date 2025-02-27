@@ -59,18 +59,33 @@ export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
     const updatedGroups = [...ageGroups];
     updatedGroups[index] = { ...updatedGroups[index], isSelected: checked };
     setAgeGroups(updatedGroups);
-    onAgeGroupsChange(updatedGroups.filter(group => group.isSelected));
+    
+    // Ensure we send the complete data for selected groups
+    const selectedGroups = updatedGroups
+      .filter(group => group.isSelected)
+      .map(group => ({
+        ...group,
+        // Ensure these fields are always defined
+        projectedTeams: group.projectedTeams || 0,
+        fieldSize: group.fieldSize || '11v11',
+        scoringRule: group.scoringRule || null,
+        amountDue: group.amountDue || null
+      }));
+      
+    onAgeGroupsChange(selectedGroups);
   };
 
   const handleProjectedTeamsChange = (index: number, value: string) => {
+    const parsedValue = parseInt(value);
     const updatedGroups = [...ageGroups];
     updatedGroups[index] = { 
       ...updatedGroups[index], 
-      projectedTeams: parseInt(value) || 0 
+      projectedTeams: isNaN(parsedValue) ? 0 : parsedValue 
     };
     setAgeGroups(updatedGroups);
     if (updatedGroups[index].isSelected) {
-      onAgeGroupsChange(updatedGroups.filter(group => group.isSelected));
+      const selectedGroups = updatedGroups.filter(group => group.isSelected);
+      onAgeGroupsChange(selectedGroups);
     }
   };
 

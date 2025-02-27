@@ -171,26 +171,15 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       // Prepare age groups data with only the essential fields
       const preparedAgeGroups = ageGroups
         .filter(group => group.isSelected)
-        .map(group => {
-          // Calculate birth date range for the age group
-          const currentYear = new Date().getFullYear();
-          const birthDateStart = `${group.birthYear}-01-01`;
-          const birthDateEnd = `${group.birthYear}-12-31`;
+        .map(group => ({
+          ...group,
+          projectedTeams: group.projectedTeams || 0,
+          birthDateStart: `${group.birthYear}-01-01`,
+          birthDateEnd: `${group.birthYear}-12-31`,
+          amountDue: group.amountDue || 0, // Added amountDue
+          scoringRule: group.scoringRule || null // Added scoringRule
+        }));
 
-          return {
-            id: group.id,
-            divisionCode: group.divisionCode,
-            fieldSize: group.fieldSize || '11v11',
-            fees: group.fees || [],
-            gender: group.gender,
-            ageGroup: group.ageGroup,
-            birthYear: group.birthYear,
-            projectedTeams: 0, //This line was added.
-            birthDateStart,
-            birthDateEnd,
-            isSelected: true
-          };
-        });
 
       const combinedData = {
         ...data,
