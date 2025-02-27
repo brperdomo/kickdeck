@@ -1513,7 +1513,7 @@ export function registerRoutes(app: Express): Server {
                   const filePath = path.join(process.cwd(), 'uploads', path.basename(file.url));
                   await fs.unlink(filePath).catch(() => {
                     // Ignore error if file doesn't exist
-                    console.log(`Physical file not found: ${filePath}`);
+                    console.log("Physical file not found:", filePath);
                   });
 
                   // Delete from database
