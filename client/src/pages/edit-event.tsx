@@ -81,7 +81,8 @@ export default function EditEvent() {
           ...group,
           projectedTeams: group.projectedTeams || 0,
           amountDue: group.amountDue || null,
-          selected: true // Mark all included age groups as selected
+          selected: true, // Mark all included age groups as selected
+          feeId: group.feeId || null // Ensure feeId is included
         })) || []
       };
 
@@ -135,7 +136,8 @@ export default function EditEvent() {
     complexFieldSizes: eventQuery.data.complexFieldSizes || {},
     ageGroups: eventQuery.data.ageGroups?.map(group => ({
       ...group,
-      selected: true // Mark all fetched age groups as selected
+      selected: true, // Mark existing age groups as selected
+      feeId: group.feeId // Ensure feeId is included from the server response
     })) || [],
     scoringRules: eventQuery.data.scoringRules || [],
     selectedComplexIds: eventQuery.data.selectedComplexIds || [],

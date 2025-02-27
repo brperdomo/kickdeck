@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../db';
 import { events, eventAgeGroups, eventAgeGroupFees } from '@db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router = Router();
@@ -17,7 +17,7 @@ router.patch('/:id', async (req, res) => {
 
     // Begin a transaction
     const result = await db.transaction(async (tx) => {
-      // Update event
+      // Update event basic info
       const [updatedEvent] = await tx
         .update(events)
         .set({
@@ -60,8 +60,12 @@ router.patch('/:id', async (req, res) => {
       if (eventData.ageGroups && eventData.ageGroups.length > 0) {
         console.log('Processing age groups:', eventData.ageGroups);
 
-        for (const group of eventData.ageGroups) {
-          console.log('Processing group:', group);
+        // Filter only selected age groups
+        const selectedGroups = eventData.ageGroups.filter(group => group.selected);
+        console.log('Selected age groups:', selectedGroups);
+
+        for (const group of selectedGroups) {
+          console.log('Processing selected group:', group);
 
           // Insert age group
           const [insertedAgeGroup] = await tx
@@ -72,12 +76,12 @@ router.patch('/:id', async (req, res) => {
               birthYear: group.birthYear,
               gender: group.gender,
               projectedTeams: group.projectedTeams || null,
-              fieldSize: group.fieldSize,
+              fieldSize: group.fieldSize || null,
               scoringRule: group.scoringRule || null,
               amountDue: group.amountDue || null,
               createdAt: new Date().toISOString(),
               birth_date_start: group.birth_date_start || null,
-              divisionCode: group.divisionCode,
+              divisionCode: group.divisionCode || null,
             })
             .returning();
 
@@ -103,14 +107,7 @@ router.patch('/:id', async (req, res) => {
         }
       }
 
-      // Fetch the final updated event with all its associations
-      const [finalEvent] = await tx
-        .select()
-        .from(events)
-        .where(eq(events.id, BigInt(eventId)))
-        .limit(1);
-
-      return finalEvent;
+      return updatedEvent;
     });
 
     console.log('Event update completed:', result);
