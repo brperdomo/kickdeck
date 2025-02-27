@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -77,6 +78,26 @@ export const EventForm = ({
   const [isSettingDialogOpen, setIsSettingDialogOpen] = useState(false);
   const [editingSetting, setEditingSetting] = useState<EventSetting | null>(null);
 
+  const complexesQuery = useQuery({
+    queryKey: ['complexes'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/complexes');
+      if (!response.ok) throw new Error('Failed to fetch complexes');
+      return response.json() as Promise<Complex[]>;
+    },
+  });
+
+  const feesQuery = useQuery({
+    queryKey: ['fees', defaultValues?.id],
+    queryFn: async () => {
+      if (!defaultValues?.id) return [];
+      const response = await fetch(`/api/admin/events/${defaultValues.id}/fees`);
+      if (!response.ok) throw new Error('Failed to fetch fees');
+      return response.json();
+    },
+    enabled: !!defaultValues?.id,
+  });
+
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventInformationSchema),
     defaultValues: defaultValues || {
@@ -118,7 +139,8 @@ export const EventForm = ({
           projectedTeams: group.projectedTeams || 0,
           birthDateStart: `${group.birthYear}-01-01`,
           birthDateEnd: `${group.birthYear}-12-31`,
-          amountDue: group.amountDue || 0
+          amountDue: group.amountDue || 0,
+          fees: group.fees || []
         }));
 
       const combinedData = {
@@ -811,7 +833,7 @@ export const EventForm = ({
               completedSteps={completedTabs}
             />
 
-            <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
+            <Tabs value={activeTab} onValueChange={handleTabChange as (value: string) => void} className="space-y-4">
               <TabsList>
                 {TAB_ORDER.map((tab) => (
                   <TabsTrigger
