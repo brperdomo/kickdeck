@@ -42,9 +42,7 @@ router.get('/:id', async (req, res) => {
         eventAgeGroupFees,
         eq(eventAgeGroups.id, eventAgeGroupFees.ageGroupId)
       )
-      .where(eq(eventAgeGroups.eventId, eventId.toString()));
-
-    console.log('Fetched age groups:', ageGroups);
+      .where(eq(eventAgeGroups.eventId, eventId));
 
     // Get complex assignments
     const complexAssignments = await db
@@ -76,8 +74,8 @@ router.get('/:id', async (req, res) => {
       ageGroups: ageGroups.map(group => ({
         ...group,
         id: group.id,
-        selected: true, // Mark all fetched age groups as selected
-        feeId: group.feeId // Ensure feeId is included
+        selected: true,
+        feeId: group.feeId
       })),
       complexes: complexAssignments,
       fieldSizes,
@@ -85,7 +83,6 @@ router.get('/:id', async (req, res) => {
       fees
     };
 
-    console.log('Sending event details:', JSON.stringify(result, null, 2));
     res.json(result);
   } catch (error) {
     console.error('Error fetching event details:', error);
@@ -99,39 +96,43 @@ router.get('/:id', async (req, res) => {
 // Delete event endpoint
 router.delete('/:id', async (req, res) => {
   try {
-    const eventId = req.params.id;
+    const eventId = BigInt(req.params.id);
     console.log('Starting event deletion for ID:', eventId);
 
-    // Use db.transaction() to create a new transaction
     await db.transaction(async (tx) => {
-      // Delete all related records in order
+      // Delete age group fees first
       await tx.delete(eventAgeGroupFees)
-        .where(eq(eventAgeGroupFees.eventId, eventId))
+        .where(eq(eventAgeGroupFees.ageGroupId, sql`(SELECT id FROM event_age_groups WHERE event_id = ${eventId})`))
         .execute();
 
+      // Delete fees
       await tx.delete(eventFees)
-        .where(eq(eventFees.eventId, BigInt(eventId)))
+        .where(eq(eventFees.eventId, eventId))
         .execute();
 
+      // Delete age groups
       await tx.delete(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId))
+        .where(eq(eventAgeGroups.eventId, eventId.toString()))
         .execute();
 
+      // Delete complexes
       await tx.delete(eventComplexes)
-        .where(eq(eventComplexes.eventId, eventId))
+        .where(eq(eventComplexes.eventId, eventId.toString()))
         .execute();
 
+      // Delete field sizes
       await tx.delete(eventFieldSizes)
-        .where(eq(eventFieldSizes.eventId, eventId))
+        .where(eq(eventFieldSizes.eventId, eventId.toString()))
         .execute();
 
+      // Delete scoring rules
       await tx.delete(eventScoringRules)
-        .where(eq(eventScoringRules.eventId, eventId))
+        .where(eq(eventScoringRules.eventId, eventId.toString()))
         .execute();
 
       // Finally delete the event itself
       const [deletedEvent] = await tx.delete(events)
-        .where(eq(events.id, BigInt(eventId)))
+        .where(eq(events.id, eventId))
         .returning();
 
       if (!deletedEvent) {
