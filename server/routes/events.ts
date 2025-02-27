@@ -6,27 +6,11 @@ import { z } from 'zod';
 
 const router = Router();
 
-async function processAgeGroups(ageGroups: any[], seasonalScopeId: number) {
-  return ageGroups.map(ageGroup => ({
-    ...ageGroup,
-    eventId: ageGroup.eventId?.toString() // Ensure eventId is string
-  }));
-}
-
 // Update event endpoint
 router.patch('/:id', async (req, res) => {
   try {
     const eventId = req.params.id;
     const eventData = req.body;
-
-    // Process age groups to ensure birth_date_start is set
-    const processedAgeGroups = await processAgeGroups(
-      eventData.ageGroups || [],
-      eventData.seasonalScopeId
-    );
-
-    // Replace the age groups in the request with the processed ones
-    eventData.ageGroups = processedAgeGroups;
 
     // Begin a transaction
     const result = await db.transaction(async (tx) => {
@@ -50,12 +34,12 @@ router.patch('/:id', async (req, res) => {
       // Delete existing age groups first
       await tx
         .delete(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId));
+        .where(eq(eventAgeGroups.eventId, eventId.toString()));
 
       // Insert new age groups
       if (eventData.ageGroups && eventData.ageGroups.length > 0) {
-        const ageGroupsToInsert = eventData.ageGroups.map((group: any) => ({
-          eventId: eventId,
+        const ageGroupsToInsert = eventData.ageGroups.map((group) => ({
+          eventId: eventId.toString(),
           ageGroup: group.ageGroup,
           birthYear: group.birthYear,
           gender: group.gender,

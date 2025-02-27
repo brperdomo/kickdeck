@@ -52,6 +52,33 @@ export default function EventRegistration() {
     fetchEvent();
   }, [eventId]);
 
+  const renderAgeGroups = (ageGroups: AgeGroup[]) => {
+    const groupedByGender = ageGroups.reduce((acc, group) => {
+      if (!acc[group.gender]) {
+        acc[group.gender] = [];
+      }
+      acc[group.gender].push(group);
+      return acc;
+    }, {} as Record<string, AgeGroup[]>);
+
+    return (
+      <div className="space-y-4">
+        {Object.entries(groupedByGender).map(([gender, groups]) => (
+          <div key={gender} className="bg-blue-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-blue-800 mb-2">{gender}:</h4>
+            <div className="flex flex-wrap gap-2">
+              {groups.map((group) => (
+                <span key={group.id} className="bg-white px-3 py-1 rounded-full text-sm text-blue-600">
+                  {group.ageGroup}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -113,15 +140,7 @@ export default function EventRegistration() {
             {event.ageGroups && event.ageGroups.length > 0 && (
               <div className="space-y-2">
                 <h3 className="font-semibold text-[#1E88E5]">Eligible Age Groups</h3>
-                <div className="grid gap-2">
-                  {event.ageGroups.map((group, index) => (
-                    <div key={index} className="bg-blue-50 p-3 rounded-lg">
-                      <span className="font-medium">{group.ageGroup}</span>
-                      <span className="text-gray-600 ml-2">({group.gender})</span>
-                      <span className="text-sm text-gray-500 ml-2">Division: {group.divisionCode}</span>
-                    </div>
-                  ))}
-                </div>
+                {renderAgeGroups(event.ageGroups)}
               </div>
             )}
 
