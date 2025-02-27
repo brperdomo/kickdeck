@@ -14,7 +14,26 @@ router.patch('/:id', async (req, res) => {
     const eventData = req.body;
 
     console.log('Updating event:', eventId);
-    console.log('Received update data size:', JSON.stringify(eventData).length);
+    console.log('Received update data size:', JSON.stringify(eventData).length, 'bytes');
+    
+    // Strip unnecessary data from large objects to reduce payload size
+    if (eventData.ageGroups && Array.isArray(eventData.ageGroups)) {
+      // Keep only essential properties for each age group
+      eventData.ageGroups = eventData.ageGroups.map(group => ({
+        id: group.id,
+        ageGroup: group.ageGroup,
+        gender: group.gender, 
+        birthDateStart: group.birthDateStart,
+        birthDateEnd: group.birthDateEnd,
+        minBirthYear: group.minBirthYear,
+        maxBirthYear: group.maxBirthYear,
+        divisionCode: group.divisionCode,
+        projectedTeams: group.projectedTeams || 0,
+        amountDue: group.amountDue,
+        feeId: group.feeId,
+        selected: group.selected
+      }));
+    }
 
     // Begin a transaction
     const result = await db.transaction(async (tx) => {
