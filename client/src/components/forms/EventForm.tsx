@@ -879,6 +879,23 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   };
 
 
+  const handleSubmit = async (formData: any) => {
+    // Prepare full form data including ageGroups
+    const fullFormData = {
+      ...formData,
+      ageGroups: ageGroups.map(group => ({
+        ...group,
+        selected: group.isSelected,
+        // Ensure fees array is properly included
+        fees: group.fees || []
+      })),
+    };
+
+    console.log("Submitting form with age groups:", fullFormData.ageGroups);
+    onSubmit(fullFormData);
+  };
+
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
       <Card className="bg-white shadow-sm border border-gray-200">
@@ -938,7 +955,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             )}
 
             <Button
-              onClick={form.handleSubmit(handleSubmitForm)}
+              onClick={form.handleSubmit(handleSubmit)}
               disabled={isSubmitting || isSaving}
             >
               {isSubmitting || isSaving ? (

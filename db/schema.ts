@@ -157,6 +157,7 @@ export const eventAgeGroups = pgTable("event_age_groups", {
   amountDue: integer("amount_due"),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   birth_date_start: text("birth_date_start"),
+  divisionCode: text("division_code"),
 });
 
 export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {

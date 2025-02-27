@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import { db } from '../../db';
-import { events, eventAgeGroups, eventAgeGroupFees } from '@db/schema';
+import { events, eventAgeGroups, eventAgeGroupFees, teams } from '@db/schema';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
+import { sql } from 'drizzle-orm/sql';
+
 
 const router = Router();
 

@@ -1,0 +1,26 @@
+2:23:56 AM [express] GET /api/admin/events/1021908506/edit 200 in 527ms :: {"id":1021908506,"name":"…
+Fetching fees for event: 1021908506
+Found 1 fees for event 1021908506
+2:23:56 AM [express] GET /api/admin/events/1021908506/fees 304 in 118ms :: [{"id":6,"name":"April Fo…
+Error updating event: TypeError: eventData.selectedComplexIds is not iterable
+    at <anonymous> (/home/runner/workspace/server/routes.ts:2020:45)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonSession.transaction (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:203:19)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1855:9)
+Error details: TypeError: eventData.selectedComplexIds is not iterable
+    at <anonymous> (/home/runner/workspace/server/routes.ts:2020:45)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonSession.transaction (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:203:19)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1855:9)
+2:24:01 AM [express] PATCH /api/admin/events/1021908506 500 in 645ms
+Error updating event: TypeError: eventData.selectedComplexIds is not iterable
+    at <anonymous> (/home/runner/workspace/server/routes.ts:2020:45)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonSession.transaction (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:203:19)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1855:9)
+Error details: TypeError: eventData.selectedComplexIds is not iterable
+    at <anonymous> (/home/runner/workspace/server/routes.ts:2020:45)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonSession.transaction (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:203:19)
+    at async <anonymous> (/home/runner/workspace/server/routes.ts:1855:9)
+2:24:06 AM [express] PATCH /api/admin/events/1021908506 500 in 638ms
