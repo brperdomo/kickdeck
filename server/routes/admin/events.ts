@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { events, eventAgeGroups, seasonalScopes, eventScoringRules, eventComplexes, eventFieldSizes } from '@db/schema';
+import { events, eventAgeGroups, seasonalScopes, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, eventAgeGroupFees } from '@db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -21,7 +21,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Get age groups
+    // Get age groups with their associated fees
     const ageGroups = await db
       .select({
         id: eventAgeGroups.id,
@@ -33,9 +33,14 @@ router.get('/:id', async (req, res) => {
         scoringRule: eventAgeGroups.scoringRule,
         amountDue: eventAgeGroups.amountDue,
         birth_date_start: eventAgeGroups.birth_date_start,
+        feeId: eventAgeGroupFees.feeId,
       })
       .from(eventAgeGroups)
-      .where(eq(eventAgeGroups.eventId, eventId));
+      .leftJoin(
+        eventAgeGroupFees,
+        eq(eventAgeGroups.id, eventAgeGroupFees.ageGroupId)
+      )
+      .where(eq(eventAgeGroups.eventId, eventId.toString()));
 
     // Get complex assignments
     const complexAssignments = await db
@@ -55,13 +60,20 @@ router.get('/:id', async (req, res) => {
       .from(eventScoringRules)
       .where(eq(eventScoringRules.eventId, eventId));
 
+    // Get fees
+    const fees = await db
+      .select()
+      .from(eventFees)
+      .where(eq(eventFees.eventId, BigInt(eventId)));
+
     // Combine all data
     const result = {
       ...event[0],
       ageGroups,
       complexes: complexAssignments,
       fieldSizes,
-      scoringRules
+      scoringRules,
+      fees
     };
 
     res.json(result);
