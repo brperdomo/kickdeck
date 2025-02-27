@@ -151,11 +151,12 @@ export const eventAgeGroups = pgTable("event_age_groups", {
   ageGroup: text("age_group").notNull(),
   birthYear: integer("birth_year").notNull(),
   gender: text("gender").notNull(),
-  projectedTeams: integer("projected_teams").notNull(),
+  projectedTeams: integer("projected_teams"),
   scoringRule: text("scoring_rule"),
   fieldSize: text("field_size").notNull(),
   amountDue: integer("amount_due"),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  birth_date_start: text("birth_date_start").notNull().default(`${new Date().getFullYear()}-01-01`),
 });
 
 export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {
@@ -167,6 +168,7 @@ export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {
   fieldSize: z.string().min(1, "Field size is required"),
   amountDue: z.number().int().min(0, "Amount due must be 0 or greater").optional(),
   scoringRule: z.string().optional(),
+  birth_date_start: z.string().optional().default(() => `${new Date().getFullYear()}-01-01`),
 });
 
 export type InsertEventAgeGroup = typeof eventAgeGroups.$inferInsert;
