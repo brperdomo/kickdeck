@@ -163,7 +163,7 @@ export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {
   birthYear: z.number().int("Birth year must be a valid year"),
   gender: z.enum(["Boys", "Girls"], "Gender must be either Boys or Girls"),
   divisionCode: z.string().min(1, "Division code is required"),
-  projectedTeams: z.number().int().min(0, "Projected teams must be 0 or greater"),
+  projectedTeams: z.number().int().min(0, "Projected teams must be 0 or greater").optional(),
   fieldSize: z.string().min(1, "Field size is required"),
   amountDue: z.number().int().min(0, "Amount due must be 0 or greater").optional(),
   scoringRule: z.string().optional(),

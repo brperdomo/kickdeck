@@ -171,17 +171,26 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       // Prepare age groups data with only the essential fields
       const preparedAgeGroups = ageGroups
         .filter(group => group.isSelected)
-        .map(group => ({
-          id: group.id,
-          divisionCode: group.divisionCode,
-          fieldSize: group.fieldSize || '11v11',
-          fees: group.fees || [],
-          gender: group.gender,
-          ageGroup: group.ageGroup,
-          birthYear: group.birthYear,
-          projectedTeams: 0, // Required by database, default to 0
-          isSelected: true
-        }));
+        .map(group => {
+          // Calculate birth date range for the age group
+          const currentYear = new Date().getFullYear();
+          const birthDateStart = `${group.birthYear}-01-01`;
+          const birthDateEnd = `${group.birthYear}-12-31`;
+
+          return {
+            id: group.id,
+            divisionCode: group.divisionCode,
+            fieldSize: group.fieldSize || '11v11',
+            fees: group.fees || [],
+            gender: group.gender,
+            ageGroup: group.ageGroup,
+            birthYear: group.birthYear,
+            projectedTeams: 0,
+            birthDateStart,
+            birthDateEnd,
+            isSelected: true
+          };
+        });
 
       const combinedData = {
         ...data,
@@ -950,7 +959,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 </>
               ) : mode === 'edit' ? 'Save Changes' : 'Continue'}
             </Button>
-          </div>
+                    </div>
         </CardContent>
       </Card>
       <AdminModal

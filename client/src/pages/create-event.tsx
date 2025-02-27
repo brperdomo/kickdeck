@@ -123,7 +123,7 @@ const eventInformationSchema = z.object({
 
 const ageGroupSchema = z.object({
   gender: z.enum(['Male', 'Female', 'Coed']),
-  projectedTeams: z.number().min(0).max(200),
+  projectedTeams: z.number().min(0).max(200).optional(),
   birthDateStart: z.string().optional(),
   birthDateEnd: z.string().optional(),
   scoringRule: z.string().optional(),
