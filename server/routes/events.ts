@@ -14,7 +14,7 @@ router.patch('/:id', async (req, res) => {
     const eventData = req.body;
 
     console.log('Updating event:', eventId);
-    console.log('Received update data:', JSON.stringify(eventData, null, 2));
+    console.log('Received update data size:', JSON.stringify(eventData).length);
 
     // Begin a transaction
     const result = await db.transaction(async (tx) => {
