@@ -135,74 +135,62 @@ export function registerRoutes(app: Express): Server {
         // Start a transaction to delete all related records first
         await db.transaction(async (tx) => {
           // Delete teams first (they might have references)
-          await tx
-            .delete(teams)
-            .where(eq(teams.eventId, eventId));
+          await tx.delete(teams)
+            .where(eq(teams.eventId, eventId.toString()));
           console.log('Deleted teams');
 
           // Delete games
-          await tx
-            .delete(games)
-            .where(eq(games.eventId, eventId));
+          await tx.delete(games)
+            .where(eq(games.eventId, eventId.toString()));
           console.log('Deleted games');
 
           // Delete game time slots
-          await tx
-            .delete(gameTimeSlots)
-            .where(eq(gameTimeSlots.eventId, eventId));
+          await tx.delete(gameTimeSlots)
+            .where(eq(gameTimeSlots.eventId, eventId.toString()));
           console.log('Deleted game time slots');
 
           // Delete tournament groups
-          await tx
-            .delete(tournamentGroups)
-            .where(eq(tournamentGroups.eventId, eventId));
+          await tx.delete(tournamentGroups)
+            .where(eq(tournamentGroups.eventId, eventId.toString()));
           console.log('Deleted tournament groups');
 
           // Delete event age groups
-          await tx
-            .delete(eventAgeGroups)
-            .where(eq(eventAgeGroups.eventId, eventId));
+          await tx.delete(eventAgeGroups)
+            .where(eq(eventAgeGroups.eventId, eventId.toString()));
           console.log('Deleted event age groups');
 
-          // Delete event complexes  
-          await tx
-            .delete(eventComplexes)
-            .where(eq(eventComplexes.eventId, eventId));
+          // Delete event complexes
+          await tx.delete(eventComplexes)
+            .where(eq(eventComplexes.eventId, eventId.toString()));
           console.log('Deleted event complexes');
 
           // Delete event field sizes
-          await tx
-            .delete(eventFieldSizes)
-            .where(eq(eventFieldSizes.eventId, eventId));
+          await tx.delete(eventFieldSizes)
+            .where(eq(eventFieldSizes.eventId, eventId.toString()));
           console.log('Deleted event field sizes');
 
           // Delete event scoring rules
-          await tx
-            .delete(eventScoringRules)
-            .where(eq(eventScoringRules.eventId, eventId));
+          await tx.delete(eventScoringRules)
+            .where(eq(eventScoringRules.eventId, eventId.toString()));
           console.log('Deleted event scoring rules');
 
           // Delete event settings
-          await tx
-            .delete(eventSettings)
-            .where(eq(eventSettings.eventId, eventId));
+          await tx.delete(eventSettings)
+            .where(eq(eventSettings.eventId, eventId.toString()));
           console.log('Deleted event settings');
 
           // Delete form responses
-          await tx
-            .delete(formResponses)
-            .where(eq(formResponses.eventId, eventId));
+          await tx.delete(formResponses)
+            .where(eq(formResponses.eventId, eventId.toString()));
           console.log('Deleted form responses');
 
-          // Delete event form templates (this will cascade to fields and options)
-          await tx
-            .delete(eventFormTemplates)
-            .where(eq(eventFormTemplates.eventId, eventId));
+          // Delete event form templates
+          await tx.delete(eventFormTemplates)
+            .where(eq(eventFormTemplates.eventId, BigInt(eventId)));
           console.log('Deleted event form templates');
 
           // Finally delete the event itself
-          const [deletedEvent] = await tx
-            .delete(events)
+          const [deletedEvent] = await tx.delete(events)
             .where(eq(events.id, BigInt(eventId)))
             .returning();
 
