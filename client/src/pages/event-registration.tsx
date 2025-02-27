@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 
 interface Event {
-  id: string; // Updated ID type to string
+  id: string;
   name: string;
   startDate: string;
   endDate: string;
@@ -102,10 +102,15 @@ export default function EventRegistration() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="font-semibold text-[#1E88E5]">Event Details</h3>
-              <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: event.details }} />
-            </div>
+            {event.details && (
+              <div className="space-y-2">
+                <h3 className="font-semibold text-[#1E88E5]">Event Details</h3>
+                <div 
+                  className="prose max-w-none prose-blue prose-headings:text-[#1E88E5] prose-p:text-gray-700" 
+                  dangerouslySetInnerHTML={{ __html: event.details }} 
+                />
+              </div>
+            )}
 
             <div className="flex justify-center pt-4">
               <Button 
