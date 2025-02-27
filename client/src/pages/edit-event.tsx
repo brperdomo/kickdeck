@@ -87,6 +87,7 @@ export default function EditEvent() {
           maxBirthYear: group.maxBirthYear,
           divisionCode: group.divisionCode,
           projectedTeams: group.projectedTeams || 0,
+          fieldSize: group.fieldSize || "11v11", // Ensure fieldSize is always set
           amountDue: group.amountDue || null,
           selected: true, // Mark all included age groups as selected
           feeId: group.feeId || null // Ensure feeId is included

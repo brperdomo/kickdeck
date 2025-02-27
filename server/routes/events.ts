@@ -15,7 +15,7 @@ router.patch('/:id', async (req, res) => {
 
     console.log('Updating event:', eventId);
     console.log('Received update data size:', JSON.stringify(eventData).length, 'bytes');
-    
+
     // Strip unnecessary data from large objects to reduce payload size
     if (eventData.ageGroups && Array.isArray(eventData.ageGroups)) {
       // Keep only essential properties for each age group
@@ -95,7 +95,7 @@ router.patch('/:id', async (req, res) => {
               birthYear: group.birthYear,
               gender: group.gender,
               projectedTeams: group.projectedTeams || null,
-              fieldSize: group.fieldSize || null,
+              fieldSize: group.fieldSize || "11v11", // Ensure field_size is never null
               scoringRule: group.scoringRule || null,
               amountDue: group.amountDue || null,
               createdAt: new Date().toISOString(),
