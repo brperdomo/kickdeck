@@ -3,6 +3,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
 
 interface AgeGroupData {
   ageGroup: string;
@@ -16,6 +24,7 @@ interface AgeGroupData {
   birthDateEnd?: string;
   minBirthYear?: number;
   maxBirthYear?: number;
+  fees?: number[];
 }
 
 const DEFAULT_AGE_GROUPS: AgeGroupData[] = [
@@ -53,15 +62,14 @@ const DEFAULT_AGE_GROUPS: AgeGroupData[] = [
 
 interface AgeGroupSelectorProps {
   onAgeGroupsChange: (selectedGroups: AgeGroupData[]) => void;
-  initialAgeGroups?: any[]; // Accept initial values from the event
+  initialAgeGroups?: any[]; 
+  eventId: string;
 }
 
-export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [] }: AgeGroupSelectorProps) {
+export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [], eventId }: AgeGroupSelectorProps) {
   const [ageGroups, setAgeGroups] = useState<AgeGroupData[]>(() => {
-    // Initialize with default groups
     const defaultGroups = [...DEFAULT_AGE_GROUPS];
 
-    // If we have initial groups, mark them as selected and set their values
     if (initialAgeGroups.length > 0) {
       initialAgeGroups.forEach(initialGroup => {
         const matchingGroup = defaultGroups.find(
@@ -74,7 +82,8 @@ export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [] }: A
             birthDateStart: initialGroup.birthDateStart,
             birthDateEnd: initialGroup.birthDateEnd,
             minBirthYear: initialGroup.minBirthYear,
-            maxBirthYear: initialGroup.maxBirthYear
+            maxBirthYear: initialGroup.maxBirthYear,
+            fees: initialGroup.fees || []
           });
         }
       });
@@ -83,8 +92,18 @@ export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [] }: A
     return defaultGroups;
   });
 
+  // Fetch available fees for the event
+  const { data: fees } = useQuery({
+    queryKey: ['fees', eventId],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/fees`);
+      if (!response.ok) throw new Error('Failed to fetch fees');
+      return response.json();
+    },
+    enabled: !!eventId,
+  });
+
   useEffect(() => {
-    // Send initial selected groups
     const selectedGroups = ageGroups
       .filter(group => group.isSelected)
       .map(group => ({
@@ -92,7 +111,8 @@ export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [] }: A
         birthDateStart: group.birthDateStart || new Date(group.birthYear, 0, 1).toISOString().split('T')[0],
         birthDateEnd: group.birthDateEnd || new Date(group.birthYear, 11, 31).toISOString().split('T')[0],
         minBirthYear: group.minBirthYear || group.birthYear,
-        maxBirthYear: group.maxBirthYear || group.birthYear
+        maxBirthYear: group.maxBirthYear || group.birthYear,
+        fees: group.fees || []
       }));
 
     onAgeGroupsChange(selectedGroups);
@@ -106,7 +126,8 @@ export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [] }: A
       birthDateStart: checked ? new Date(updatedGroups[index].birthYear, 0, 1).toISOString().split('T')[0] : undefined,
       birthDateEnd: checked ? new Date(updatedGroups[index].birthYear, 11, 31).toISOString().split('T')[0] : undefined,
       minBirthYear: checked ? updatedGroups[index].birthYear : undefined,
-      maxBirthYear: checked ? updatedGroups[index].birthYear : undefined
+      maxBirthYear: checked ? updatedGroups[index].birthYear : undefined,
+      fees: checked ? updatedGroups[index].fees || [] : []
     };
     setAgeGroups(updatedGroups);
 
@@ -118,7 +139,8 @@ export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [] }: A
         birthDateStart: group.birthDateStart,
         birthDateEnd: group.birthDateEnd,
         minBirthYear: group.minBirthYear,
-        maxBirthYear: group.maxBirthYear
+        maxBirthYear: group.maxBirthYear,
+        fees: group.fees || []
       }));
 
     onAgeGroupsChange(selectedGroups);
@@ -141,7 +163,27 @@ export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [] }: A
           birthDateStart: group.birthDateStart,
           birthDateEnd: group.birthDateEnd,
           minBirthYear: group.minBirthYear,
-          maxBirthYear: group.maxBirthYear
+          maxBirthYear: group.maxBirthYear,
+          fees: group.fees || []
+        }));
+      onAgeGroupsChange(selectedGroups);
+    }
+  };
+
+  const handleFeeChange = (index: number, selectedFees: string[]) => {
+    const updatedGroups = [...ageGroups];
+    updatedGroups[index] = {
+      ...updatedGroups[index],
+      fees: selectedFees.map(Number)
+    };
+    setAgeGroups(updatedGroups);
+
+    if (updatedGroups[index].isSelected) {
+      const selectedGroups = updatedGroups
+        .filter(group => group.isSelected)
+        .map(group => ({
+          ...group,
+          fees: group.fees || []
         }));
       onAgeGroupsChange(selectedGroups);
     }
@@ -159,6 +201,7 @@ export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [] }: A
             <TableHead>Division Code</TableHead>
             <TableHead>Projected Teams</TableHead>
             <TableHead>Field Size</TableHead>
+            <TableHead>Fees</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -185,6 +228,24 @@ export function AgeGroupSelector({ onAgeGroupsChange, initialAgeGroups = [] }: A
                 />
               </TableCell>
               <TableCell>{group.fieldSize}</TableCell>
+              <TableCell>
+                <Select
+                  value={group.fees?.join(",")}
+                  onValueChange={(value) => handleFeeChange(index, value.split(",").filter(Boolean))}
+                  disabled={!group.isSelected}
+                >
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Select fees" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fees?.map((fee: any) => (
+                      <SelectItem key={fee.id} value={fee.id.toString()}>
+                        {fee.name} (${(fee.amount / 100).toFixed(2)})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
