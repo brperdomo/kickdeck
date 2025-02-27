@@ -118,9 +118,29 @@ export function registerRoutes(app: Express): Server {
         const eventId = req.params.id;
         console.log('Starting event deletion for ID:', eventId);
 
+        // Verify the event exists before attempting deletion
+        const [existingEvent] = await db
+          .select()
+          .from(events)
+          .where(eq(events.id, BigInt(eventId)))
+          .limit(1);
+
+        if (!existingEvent) {
+          return res.status(404).json({ 
+            error: "Event not found",
+            details: `No event found with ID ${eventId}`
+          });
+        }
+
         // Start a transaction to delete all related records first
         await db.transaction(async (tx) => {
-          // Delete games first (they reference time slots and teams)
+          // Delete teams first (they might have references)
+          await tx
+            .delete(teams)
+            .where(eq(teams.eventId, eventId));
+          console.log('Deleted teams');
+
+          // Delete games
           await tx
             .delete(games)
             .where(eq(games.eventId, eventId));
@@ -132,17 +152,11 @@ export function registerRoutes(app: Express): Server {
             .where(eq(gameTimeSlots.eventId, eventId));
           console.log('Deleted game time slots');
 
-          // Delete tournament groups first (as they reference age groups)
+          // Delete tournament groups
           await tx
             .delete(tournamentGroups)
             .where(eq(tournamentGroups.eventId, eventId));
           console.log('Deleted tournament groups');
-
-          // Delete teams (they reference age groups)
-          await tx
-            .delete(teams)
-            .where(eq(teams.eventId, eventId));
-          console.log('Deleted teams');
 
           // Delete event age groups
           await tx
@@ -180,28 +194,7 @@ export function registerRoutes(app: Express): Server {
             .where(eq(formResponses.eventId, eventId));
           console.log('Deleted form responses');
 
-          // Delete form field options and fields for this event's templates
-          await tx.execute(sql`
-            DELETE FROM form_field_options 
-            WHERE form_field_id IN (
-              SELECT ff.id 
-              FROM form_fields ff
-              JOIN event_form_templates eft ON ff.template_id = eft.id
-              WHERE eft.event_id = ${eventId}
-            )
-          `);
-          console.log('Deleted form field options');
-
-          await tx.execute(sql`
-            DELETE FROM form_fields 
-            WHERE template_id IN (
-              SELECT id FROM event_form_templates 
-              WHERE event_id = ${eventId}
-            )
-          `);
-          console.log('Deleted form fields');
-
-          // Delete event form templates
+          // Delete event form templates (this will cascade to fields and options)
           await tx
             .delete(eventFormTemplates)
             .where(eq(eventFormTemplates.eventId, eventId));
@@ -214,7 +207,7 @@ export function registerRoutes(app: Express): Server {
             .returning();
 
           if (!deletedEvent) {
-            throw new Error("Event not found");
+            throw new Error(`Event ${eventId} not found during final deletion`);
           }
           console.log('Successfully deleted event:', eventId);
         });
@@ -222,7 +215,7 @@ export function registerRoutes(app: Express): Server {
         res.json({ message: "Event deleted successfully" });
       } catch (error) {
         console.error('Error deleting event:', error);
-        console.error("Error details:", error);
+        console.error("Error details:", error instanceof Error ? error.stack : error);
         res.status(500).json({ 
           error: error instanceof Error ? error.message : "Failed to delete event",
           details: error instanceof Error ? error.stack : undefined

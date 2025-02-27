@@ -42,7 +42,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 
 interface Event {
-  id: number;
+  id: bigint | number;  
   name: string;
   startDate: string;
   endDate: string;
@@ -50,21 +50,6 @@ interface Event {
   teamsAccepted: number;
   applicationDeadline: string;
 }
-
-const calculateEventStatus = (startDate: string, endDate: string) => {
-  const now = new Date();
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  end.setHours(23, 59, 59, 999);
-
-  if (now > end) {
-    return "past";
-  } else if (now >= start && now <= end) {
-    return "active";
-  } else {
-    return "upcoming";
-  }
-};
 
 type SortField = "name" | "date" | "applications" | "status";
 type SortDirection = "asc" | "desc";
@@ -94,15 +79,14 @@ export function EventsTable() {
     },
   });
 
-  // Add delete mutation
   const deleteEventMutation = useMutation({
-    mutationFn: async (eventId: number) => {
-      const response = await fetch(`/api/admin/events/${eventId}`, {
+    mutationFn: async (eventId: number | bigint) => {
+      const response = await fetch(`/api/admin/events/${eventId.toString()}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to delete event');
+        throw new Error(error.message || error.error || 'Failed to delete event');
       }
       return response.json();
     },
@@ -124,6 +108,21 @@ export function EventsTable() {
       });
     },
   });
+
+  const calculateEventStatus = (startDate: string, endDate: string) => {
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+
+    if (now > end) {
+      return "past";
+    } else if (now >= start && now <= end) {
+      return "active";
+    } else {
+      return "upcoming";
+    }
+  };
 
   const filterEvents = (events: Event[]) => {
     return events.filter((event) => {
@@ -170,9 +169,9 @@ export function EventsTable() {
     }
   };
 
-  const handleGenerateRegistrationLink = async (eventId: number) => {
+  const handleGenerateRegistrationLink = async (eventId: number | bigint) => {
     try {
-      const registrationUrl = `${window.location.origin}/register/event/${eventId}`;
+      const registrationUrl = `${window.location.origin}/register/event/${eventId.toString()}`;
       await navigator.clipboard.writeText(registrationUrl);
       toast({
         title: "Success",
@@ -202,7 +201,7 @@ export function EventsTable() {
     try {
       await deleteEventMutation.mutateAsync(eventToDelete.id);
     } catch (error) {
-      // Error handling is done in mutation callbacks
+      console.error('Delete event error:', error);
     }
   };
 
