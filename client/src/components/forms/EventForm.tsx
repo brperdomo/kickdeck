@@ -172,17 +172,18 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       const preparedAgeGroups = ageGroups
         .filter(group => group.isSelected)
         .map(group => ({
+          id: group.id,
           divisionCode: group.divisionCode,
           fieldSize: group.fieldSize || '11v11',
           fees: group.fees || [],
           gender: group.gender,
           ageGroup: group.ageGroup,
           birthYear: group.birthYear,
-          // Temporary: Include projected_teams with a default value until database migration
-          projected_teams: 0
+          projectedTeams: 0, // Required by database, default to 0
+          isSelected: true
         }));
 
-      const combinedData: EventFormValues = {
+      const combinedData = {
         ...data,
         ageGroups: preparedAgeGroups,
         scoringRules,
