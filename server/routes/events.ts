@@ -81,6 +81,8 @@ app.patch('/api/admin/events/:id', async (req, res) => {
             eventId: eventId,
             gender: group.gender,
             projectedTeams: group.projectedTeams,
+            birth_date_start: group.birth_date_start || null,
+            birth_date_end: group.birth_date_end || null,
             scoringRule: group.scoringRule,
             ageGroup: group.ageGroup,
             birthYear: group.birthYear,
