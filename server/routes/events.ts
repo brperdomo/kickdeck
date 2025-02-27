@@ -1,19 +1,20 @@
 import { Router } from 'express';
-import { db } from '../../../db';
+import { db } from '../../db';
 import { events, eventAgeGroups } from '@db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
-// Assuming necessary imports like 'app', 'db', 'events', 'eventAgeGroups', 'seasonalScopes', 'eq' are present.
+const router = Router();
 
 async function processAgeGroups(ageGroups: any[], seasonalScopeId: number) {
-  const processedAgeGroups = await Promise.all(ageGroups.map(async (ageGroup) => {
-    return ageGroup;
+  return ageGroups.map(ageGroup => ({
+    ...ageGroup,
+    eventId: ageGroup.eventId?.toString() // Ensure eventId is string
   }));
-  return processedAgeGroups;
 }
 
-app.patch('/api/admin/events/:id', async (req, res) => {
+// Update event endpoint
+router.patch('/:id', async (req, res) => {
   try {
     const eventId = req.params.id;
     const eventData = req.body;
@@ -43,14 +44,8 @@ app.patch('/api/admin/events/:id', async (req, res) => {
           refundPolicy: eventData.refundPolicy,
           updatedAt: new Date().toISOString(),
         })
-        .where(eq(events.id, eventId))
+        .where(eq(events.id, BigInt(eventId)))
         .returning();
-
-      // Get existing age groups for comparison
-      const existingAgeGroups = await tx
-        .select()
-        .from(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId));
 
       // Delete existing age groups first
       await tx
@@ -64,9 +59,9 @@ app.patch('/api/admin/events/:id', async (req, res) => {
           ageGroup: group.ageGroup,
           birthYear: group.birthYear,
           gender: group.gender,
-          projectedTeams: group.projectedTeams,
+          projectedTeams: group.projectedTeams || null,
           fieldSize: group.fieldSize,
-          scoringRule: group.scoringRule,
+          scoringRule: group.scoringRule || null,
           amountDue: group.amountDue || null,
           createdAt: new Date().toISOString(),
           birth_date_start: group.birth_date_start || null,
@@ -75,12 +70,17 @@ app.patch('/api/admin/events/:id', async (req, res) => {
         await tx.insert(eventAgeGroups).values(ageGroupsToInsert);
       }
 
-      return updatedEvent;
+      return updatedEvent[0];
     });
 
     res.json(result);
   } catch (error) {
     console.error("Error updating event:", error);
-    res.status(500).json({ error: "Failed to update event", details: error instanceof Error ? error.message : 'Unknown error' });
+    res.status(500).json({ 
+      error: "Failed to update event", 
+      details: error instanceof Error ? error.message : 'Unknown error' 
+    });
   }
 });
+
+export default router;
