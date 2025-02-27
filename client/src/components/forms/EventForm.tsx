@@ -168,12 +168,17 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         throw new Error('Required fields are missing');
       }
 
-      // Prepare age groups data with only the required fields
-      const preparedAgeGroups = ageGroups.map(group => ({
-        ...group,
-        fees: group.fees || [],
-        fieldSize: group.fieldSize || '11v11',
-      }));
+      // Prepare age groups data with only the essential fields
+      const preparedAgeGroups = ageGroups
+        .filter(group => group.isSelected)
+        .map(group => ({
+          divisionCode: group.divisionCode,
+          fieldSize: group.fieldSize || '11v11',
+          fees: group.fees || [],
+          gender: group.gender,
+          ageGroup: group.ageGroup,
+          birthYear: group.birthYear,
+        }));
 
       const combinedData: EventFormValues = {
         ...data,
