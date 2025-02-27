@@ -116,6 +116,7 @@ export function registerRoutes(app: Express): Server {
     app.delete('/api/admin/events/:id', isAdmin, async (req, res) => {
       try {
         const eventId = req.params.id;
+        console.log('Starting event deletion for ID:', eventId);
 
         // Start a transaction to delete all related records first
         await db.transaction(async (tx) => {
@@ -123,60 +124,61 @@ export function registerRoutes(app: Express): Server {
           await tx
             .delete(games)
             .where(eq(games.eventId, eventId));
+          console.log('Deleted games');
 
           // Delete game time slots
           await tx
             .delete(gameTimeSlots)
             .where(eq(gameTimeSlots.eventId, eventId));
+          console.log('Deleted game time slots');
 
           // Delete tournament groups first (as they reference age groups)
           await tx
             .delete(tournamentGroups)
             .where(eq(tournamentGroups.eventId, eventId));
+          console.log('Deleted tournament groups');
 
           // Delete teams (they reference age groups)
           await tx
             .delete(teams)
             .where(eq(teams.eventId, eventId));
-
-          // Delete age group fees first
-          await tx.execute(sql`
-            DELETE FROM event_age_group_fees 
-            WHERE age_group_id IN (
-              SELECT id FROM event_age_groups 
-              WHERE event_id = ${eventId}
-            )
-          `);
+          console.log('Deleted teams');
 
           // Delete event age groups
           await tx
             .delete(eventAgeGroups)
             .where(eq(eventAgeGroups.eventId, eventId));
+          console.log('Deleted event age groups');
 
           // Delete event complexes  
           await tx
             .delete(eventComplexes)
             .where(eq(eventComplexes.eventId, eventId));
+          console.log('Deleted event complexes');
 
           // Delete event field sizes
           await tx
             .delete(eventFieldSizes)
             .where(eq(eventFieldSizes.eventId, eventId));
+          console.log('Deleted event field sizes');
 
           // Delete event scoring rules
           await tx
             .delete(eventScoringRules)
             .where(eq(eventScoringRules.eventId, eventId));
+          console.log('Deleted event scoring rules');
 
           // Delete event settings
           await tx
             .delete(eventSettings)
             .where(eq(eventSettings.eventId, eventId));
+          console.log('Deleted event settings');
 
           // Delete form responses
           await tx
             .delete(formResponses)
             .where(eq(formResponses.eventId, eventId));
+          console.log('Deleted form responses');
 
           // Delete form field options and fields for this event's templates
           await tx.execute(sql`
@@ -188,6 +190,7 @@ export function registerRoutes(app: Express): Server {
               WHERE eft.event_id = ${eventId}
             )
           `);
+          console.log('Deleted form field options');
 
           await tx.execute(sql`
             DELETE FROM form_fields 
@@ -196,11 +199,13 @@ export function registerRoutes(app: Express): Server {
               WHERE event_id = ${eventId}
             )
           `);
+          console.log('Deleted form fields');
 
           // Delete event form templates
           await tx
             .delete(eventFormTemplates)
             .where(eq(eventFormTemplates.eventId, eventId));
+          console.log('Deleted event form templates');
 
           // Finally delete the event itself
           const [deletedEvent] = await tx
@@ -211,13 +216,17 @@ export function registerRoutes(app: Express): Server {
           if (!deletedEvent) {
             throw new Error("Event not found");
           }
+          console.log('Successfully deleted event:', eventId);
         });
 
         res.json({ message: "Event deleted successfully" });
       } catch (error) {
         console.error('Error deleting event:', error);
         console.error("Error details:", error);
-        res.status(500).send(error instanceof Error ? error.message : "Failed to delete event");
+        res.status(500).json({ 
+          error: error instanceof Error ? error.message : "Failed to delete event",
+          details: error instanceof Error ? error.stack : undefined
+        });
       }
     });
 
