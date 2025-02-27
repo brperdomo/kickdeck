@@ -74,7 +74,7 @@ export interface EventSetting {
 }
 
 export type FieldSize = '3v3' | '4v4' | '5v5' | '6v6' | '7v7' | '8v8' | '9v9' | '10v10' | '11v11' | 'N/A';
-export type EventTab = 'information' | 'age-groups' | 'scoring' | 'complexes' | 'settings' | 'administrators';
+export type EventTab = 'information' | 'age-groups' | 'fees' | 'scoring' | 'complexes' | 'settings' | 'administrators';
 
 export interface EventData {
   name: string;
@@ -92,6 +92,8 @@ export interface EventData {
   settings: EventSetting[];
   administrators: EventAdministrator[];
   branding?: EventBranding;
+  fees?: Fee[];
+  feeAssignments?: FeeAssignment[];
 }
 
 export interface ScoringRule {
@@ -100,7 +102,7 @@ export interface ScoringRule {
   points: number;
 }
 
-export const TAB_ORDER: EventTab[] = ['information', 'age-groups', 'scoring', 'complexes', 'settings', 'administrators'];
+export const TAB_ORDER: EventTab[] = ['information', 'age-groups', 'fees', 'scoring', 'complexes', 'settings', 'administrators'];
 
 export const USA_TIMEZONES = [
   { value: 'America/New_York', label: 'Eastern Time (ET)' },
@@ -168,4 +170,18 @@ export interface AdminModalProps {
     lastName: string;
     roles: string[];
   } | null;
+}
+
+export interface Fee {
+  id: number;
+  name: string;
+  amount: number;
+  description?: string;
+  dueDate?: string;
+  isRequired: boolean;
+}
+
+export interface FeeAssignment {
+  ageGroupId: number;
+  feeId: number;
 }

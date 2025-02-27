@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { format } from "date-fns";
 
+// Import UI components
 import {
   Card,
   CardContent,
@@ -47,6 +48,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+interface AccountingCode {
+  id: number;
+  name: string;
+  code: string;
+}
+
+interface Fee {
+  id: number;
+  name: string;
+  amount: number;
+  beginDate?: string | null;
+  endDate?: string | null;
+  accountingCodeId?: number | null;
+}
+
 const feeFormSchema = z.object({
   name: z.string().min(1, "Fee name is required"),
   amount: z.string().min(1, "Amount is required").refine(
@@ -66,7 +82,7 @@ export function FeeManagement() {
   const params = useParams();
   const eventId = params.id;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingFee, setEditingFee] = useState<any>(null);
+  const [editingFee, setEditingFee] = useState<Fee | null>(null);
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const { toast } = useToast();
@@ -216,6 +232,25 @@ export function FeeManagement() {
     return a[sortField].localeCompare(b[sortField]) * modifier;
   }) : [];
 
+  const handleEditFee = (fee: Fee) => {
+    form.reset({
+      name: fee.name,
+      amount: (fee.amount / 100).toString(),
+      beginDate: fee.beginDate || "",
+      endDate: fee.endDate || "",
+      accountingCodeId: fee.accountingCodeId || null,
+    });
+    setEditingFee(fee);
+    setIsDialogOpen(true);
+  };
+
+  const handleDeleteFee = (feeId: number) => {
+    if (confirm('Are you sure you want to delete this fee?')) {
+      deleteFeeMutation.mutate(feeId);
+    }
+  };
+
+
   if (feesQuery.isLoading || accountingCodesQuery.isLoading) {
     return (
       <div className="flex justify-center items-center h-[calc(100vh-4rem)]">
@@ -239,7 +274,7 @@ export function FeeManagement() {
   const formatCurrency = (amount: number) => `$${(amount / 100).toFixed(2)}`;
 
   return (
-    <div className="container mx-auto py-8 max-w-6xl">
+    <div className="container mx-auto py-8 max-w-6xl space-y-6">
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-4">
           <Button variant="outline" onClick={() => window.history.back()}>
@@ -280,11 +315,13 @@ export function FeeManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedFees.map((fee: any) => (
+              {sortedFees.map((fee: Fee) => (
                 <TableRow key={fee.id}>
                   <TableCell>{fee.name}</TableCell>
                   <TableCell>{formatCurrency(fee.amount)}</TableCell>
-                  <TableCell>{accountingCodesQuery.data?.find(code => code.id === fee.accountingCodeId)?.name || '-'}</TableCell>
+                  <TableCell>
+                    {accountingCodesQuery.data?.find((code: AccountingCode) => code.id === fee.accountingCodeId)?.name || '-'}
+                  </TableCell>
                   <TableCell>
                     {fee.beginDate ? format(new Date(fee.beginDate), "MMM d, yyyy") : "-"}
                   </TableCell>
@@ -296,28 +333,14 @@ export function FeeManagement() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => {
-                          form.reset({
-                            name: fee.name,
-                            amount: (fee.amount / 100).toString(),
-                            beginDate: fee.beginDate || "",
-                            endDate: fee.endDate || "",
-                            accountingCodeId: fee.accountingCodeId || null,
-                          });
-                          setEditingFee(fee);
-                          setIsDialogOpen(true);
-                        }}
+                        onClick={() => handleEditFee(fee)}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => {
-                          if (confirm('Are you sure you want to delete this fee?')) {
-                            deleteFeeMutation.mutate(fee.id);
-                          }
-                        }}
+                        onClick={() => handleDeleteFee(fee.id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -411,7 +434,7 @@ export function FeeManagement() {
                         <SelectValue placeholder="Select accounting code" />
                       </SelectTrigger>
                       <SelectContent>
-                        {accountingCodesQuery.data?.map((code: any) => (
+                        {accountingCodesQuery.data?.map((code: AccountingCode) => (
                           <SelectItem key={code.id} value={code.id.toString()}>
                             {code.name}
                           </SelectItem>
