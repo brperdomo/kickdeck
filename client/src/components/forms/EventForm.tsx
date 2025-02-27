@@ -448,10 +448,10 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
             // Calculate total amount only from the fees selected for this group
             const totalAmount = feesQuery.data
-              ? existingGroup.fees?.reduce((sum, feeId) => {
+              ? (existingGroup.fees || []).reduce((sum, feeId) => {
                   const fee = feesQuery.data.find(f => f.id === feeId);
                   return sum + (fee?.amount || 0);
-                }, 0) || 0
+                }, 0)
               : 0;
 
             return (
@@ -967,8 +967,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             </Button>
                     </div>
         </CardContent>
-      </Card>
-      <AdminModal
+      </Card>      <AdminModal
         open={isAdminModalOpen}
         onOpenChange={setIsAdminModalOpen}
         adminToEdit={editingAdmin}
