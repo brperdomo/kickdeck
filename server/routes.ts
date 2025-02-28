@@ -9,7 +9,6 @@ import accountingCodesRouter from "./routes/admin/accounting-codes";
 import feesRouter from "./routes/admin/fees";
 import eventsRouter from "./routes/admin/events";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
-import { createEmailTemplate, getEmailTemplates, updateEmailTemplate, deleteEmailTemplate, sendTestEmail } from "./routes/admin/email-templates";
 import { sql, eq, and, or, inArray } from "drizzle-orm";
 import {
   users,
@@ -113,13 +112,6 @@ export function registerRoutes(app: Express): Server {
 
     // Use events router for all admin event operations
     app.use('/api/admin/events', isAdmin, eventsRouter);
-
-    // Register email template routes
-    app.get('/api/admin/email-templates', isAdmin, getEmailTemplates);
-    app.post('/api/admin/email-templates', isAdmin, createEmailTemplate);
-    app.patch('/api/admin/email-templates/:id', isAdmin, updateEmailTemplate);
-    app.delete('/api/admin/email-templates/:id', isAdmin, deleteEmailTemplate);
-    app.post('/api/admin/email-templates/:id/test', isAdmin, sendTestEmail);
 
     // Add admin event deletion endpoint
     app.delete('/api/admin/events/:id', isAdmin, async (req, res) => {

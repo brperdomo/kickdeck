@@ -163,7 +163,7 @@ export const eventAgeGroups = pgTable("event_age_groups", {
 export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {
   ageGroup: z.string().min(1, "Age group is required"),
   birthYear: z.number().int("Birth year must be a valid year"),
-  gender: z.enum(["Boys", "Girls"]),
+  gender: z.enum(["Boys", "Girls"], "Gender must be either Boys or Girls"),
   divisionCode: z.string().min(1, "Division code is required"),
   projectedTeams: z.number().int().min(0, "Projected teams must be 0 or greater").optional(),
   fieldSize: z.string().min(1, "Field size is required"),
@@ -717,7 +717,7 @@ export const coupons = pgTable("coupons", {
 
 export const insertCouponSchema = createInsertSchema(coupons, {
   code: z.string().min(1, "Coupon code is required"),
-  discountType: z.enum(["fixed", "percentage"]),
+  discountType: z.enum(['fixed', 'percentage'], "Invalid discount type"),
   amount: z.number().positive("Amount must be positive"),
   expirationDate: z.string().min(1, "Expiration date is required"),
   description: z.string().optional(),
@@ -851,80 +851,3 @@ export const formResponsesRelations = relations(formResponses, ({ one }) => ({
     references: [teams.id],
   }),
 }));
-
-// New tables and schemas for email templates
-export const emailTemplates = pgTable("email_templates", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  description: text("description"),
-  subject: text("subject").notNull(),
-  type: text("type").notNull(), // registration, payment, schedule_update, etc.
-  isActive: boolean("is_active").default(true).notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
-
-export const emailTemplateVersions = pgTable("email_template_versions", {
-  id: serial("id").primaryKey(),
-  templateId: integer("template_id").notNull().references(() => emailTemplates.id, { onDelete: 'cascade' }),
-  content: text("content").notNull(),
-  version: integer("version").notNull(),
-  createdBy: integer("created_by").references(() => users.id),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  isActive: boolean("is_active").default(false).notNull(),
-});
-
-export const emailTemplateVariables = pgTable("email_template_variables", {
-  id: serial("id").primaryKey(),
-  templateId: integer("template_id").notNull().references(() => emailTemplates.id, { onDelete: 'cascade' }),
-  name: text("name").notNull(),
-  description: text("description").notNull(),
-  defaultValue: text("default_value"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
-
-// Add relations
-export const emailTemplatesRelations = relations(emailTemplates, ({ many }) => ({
-  versions: many(emailTemplateVersions),
-  variables: many(emailTemplateVariables),
-}));
-
-export const emailTemplateVersionsRelations = relations(emailTemplateVersions, ({ one }) => ({
-  template: one(emailTemplates, {
-    fields: [emailTemplateVersions.templateId],
-    references: [emailTemplates.id],
-  }),
-  createdByUser: one(users, {
-    fields: [emailTemplateVersions.createdBy],
-    references: [users.id],
-  }),
-}));
-
-// Add validation schemas
-export const insertEmailTemplateSchema = createInsertSchema(emailTemplates, {
-  name: z.string().min(1, "Template name is required"),
-  description: z.string().optional(),
-  subject: z.string().min(1, "Email subject is required"),
-  type: z.enum(['registration', 'payment', 'schedule_update', 'game_schedule', 'custom']),
-  isActive: z.boolean().default(true),
-});
-
-export const insertEmailTemplateVersionSchema = createInsertSchema(emailTemplateVersions, {
-  content: z.string().min(1, "Template content is required"),
-  version: z.number().int().positive("Version must be positive"),
-  isActive: z.boolean().default(false),
-});
-
-export const insertEmailTemplateVariableSchema = createInsertSchema(emailTemplateVariables, {
-  name: z.string().min(1, "Variable name is required"),
-  description: z.string().min(1, "Variable description is required"),
-  defaultValue: z.string().optional(),
-});
-
-// Add types
-export type InsertEmailTemplate = typeof emailTemplates.$inferInsert;
-export type SelectEmailTemplate = typeof emailTemplates.$inferSelect;
-export type InsertEmailTemplateVersion = typeof emailTemplateVersions.$inferInsert;
-export type SelectEmailTemplateVersion = typeof emailTemplateVersions.$inferSelect;
-export type InsertEmailTemplateVariable = typeof emailTemplateVariables.$inferInsert;
-export type SelectEmailTemplateVariable = typeof emailTemplateVariables.$inferSelect;

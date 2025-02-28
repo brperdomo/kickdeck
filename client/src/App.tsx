@@ -1,3 +1,4 @@
+
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -20,8 +21,6 @@ import EventApplicationForm from "@/pages/event-application-form";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import { FeeManagement } from "@/components/events/FeeManagement";
-import EmailTemplatesPage from "@/pages/email-templates"; // Updated import name
-
 
 function Router() {
   const { user, isLoading } = useUser();
@@ -72,9 +71,6 @@ function Router() {
       </Route>
       <Route path="/admin/events">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}
-      </Route>
-      <Route path="/admin/email-templates">
-        {user.isAdmin ? <EmailTemplatesPage /> : <NotFound />}
       </Route>
       <Route path="/admin">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}

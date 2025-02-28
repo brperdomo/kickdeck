@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -21,8 +22,6 @@ interface FormTemplate {
   fields: any[];
   createdAt: string;
   updatedAt: string;
-  eventId?: number;
-  eventName?: string;
 }
 
 export function FormTemplatesView() {
@@ -38,8 +37,8 @@ export function FormTemplatesView() {
       const templates = await response.json();
       // Only return templates that don't have an eventId (copies)
       return templates
-        .filter((template: FormTemplate) => !template.eventId)
-        .map((template: FormTemplate) => ({
+        .filter((template: any) => !template.eventId)
+        .map((template: any) => ({
           ...template,
           eventName: 'Template'
         }));
@@ -48,9 +47,9 @@ export function FormTemplatesView() {
 
   const deleteTemplateMutation = useMutation({
     mutationFn: async (id: number) => {
-      const template = templatesQuery.data?.find((t: FormTemplate) => t.id === id);
+      const template = templatesQuery.data?.find(t => t.id === id);
       if (!template) throw new Error('Template not found');
-
+      
       const response = await fetch(`/api/admin/events/${template.eventId}/form-template/${id}`, {
         method: 'DELETE',
       });
@@ -58,7 +57,7 @@ export function FormTemplatesView() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['form-templates'] });
+      queryClient.invalidateQueries(['form-templates']);
       toast({
         title: "Success",
         description: "Template deleted successfully",

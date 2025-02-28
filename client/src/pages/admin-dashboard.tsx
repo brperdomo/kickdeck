@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation } from "wouter";
-import { Link2, X, Ticket, Plus, FormInput, FileText } from "lucide-react";
+import { Link2, X, Ticket, Plus } from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +24,7 @@ import {
   UserPlus,
   Home,
   LogOut,
+  FileText,
   User,
   Palette,
   ChevronRight,
@@ -49,6 +50,7 @@ import {
   Flag,
   CalendarDays,
   ImageIcon,
+  FormInput,
 } from "lucide-react";
 import {
   Table,
@@ -87,11 +89,8 @@ import { FieldEditor } from "@/components/FieldEditor";
 import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
 import { useDropzone } from 'react-dropzone';
 import { FileManager } from "@/components/admin/FileManager";
-import { FormTemplatesView } from "@/components/admin/FormTemplatesView";
+import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
-import { EmailTemplatesView } from "@/components/admin/EmailTemplatesView"; // Added import
-import { CouponModal } from "@/components/admin/CouponModal";
-
 
 function AdminBanner() {
   const { settings } = useOrganizationSettings();
@@ -118,7 +117,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates' | 'emailTemplates'; // Updated View type
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -572,7 +571,7 @@ function ReportsView() {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <h3 className="text-lg font-semibold">Financial Management</h3>
-                <select
+                <select 
                   className="border rounded px-2 py-1"
                   value={selectedFinancialReport}
                   onChange={(e) => setSelectedFinancialReport(e.target.value)}
@@ -615,56 +614,56 @@ function ReportsView() {
                   <CardTitle>Accounting Codes</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {accountingCodesQuery.isLoading ? (
-                    <div className="flex justify-center p-4">
-                      <Loader2 className="h-6 w-6 animate-spin" />
-                    </div>
-                  ) : accountingCodesQuery.isError ? (
-                    <div className="text-center text-red-500">
-                      Error loading accounting codes
-                    </div>
-                  ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Code</TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Description</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                {accountingCodesQuery.isLoading ? (
+                  <div className="flex justify-center p-4">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                ) : accountingCodesQuery.isError ? (
+                  <div className="text-center text-red-500">
+                    Error loading accounting codes
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Code</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {accountingCodesQuery.data?.map((code: any) => (
+                        <TableRow key={code.id}>
+                          <TableCell className="font-medium">{code.code}</TableCell>
+                          <TableCell>{code.name}</TableCell>
+                          <TableCell>{code.description || '-'}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditCode(code)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteCode(code.id)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
                         </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {accountingCodesQuery.data?.map((code: any) => (
-                          <TableRow key={code.id}>
-                            <TableCell className="font-medium">{code.code}</TableCell>
-                            <TableCell>{code.name}</TableCell>
-                            <TableCell>{code.description || '-'}</TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex justify-end gap-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleEditCode(code)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleDeleteCode(code.id)}
-                                  className="text-red-500 hover:text-red-700"
-                                >
-                                  <Trash className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  )}
-                </CardContent>
-              </Card>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
             )}
             {selectedFinancialReport === 'fees-by-event' && (
               <Card>
@@ -956,7 +955,6 @@ function OrganizationSettingsForm() {
   const { toast } = useToast();
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    ```javascript
     const file = acceptedFiles[0];
     if (!file) return;
 
@@ -1073,7 +1071,9 @@ function OrganizationSettingsForm() {
 
             <div
               {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${isDragActive ? 'border-primary bg-primary/5' : 'border-border'}`}
+              className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${
+                isDragActive ? 'border-primary bg-primary/5' : 'border-border'
+              }`}
             >
               <input {...getInputProps()} />
               <div className="flex flex-col items-center justify-center gap-2">
@@ -1318,7 +1318,7 @@ function ComplexesView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update field",
+        description: error instanceof Error ? error.message: "Failed to update field",
         variant: "destructive",
       });
     }
@@ -1609,7 +1609,7 @@ function TeamsView() {
 function AdminDashboard() {
   const { user, logout } = useUser();
   const [, setLocation] = useLocation();
-  const [view, setView] = useState<View>('events'); // Changed state variable name
+  const [activeView, setActiveView] = useState<View>('events');
   const [showWelcome, setShowWelcome] = useState(true);
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -1618,9 +1618,9 @@ function AdminDashboard() {
   // Add Form Templates to the navigation
   const formTemplatesButton = (
     <Button
-      variant={view === 'formTemplates' ? 'secondary' : 'ghost'}
+      variant={activeView === 'formTemplates' ? 'secondary' : 'ghost'}
       className="w-full justify-start"
-      onClick={() => setView('formTemplates')}
+      onClick={() => setActiveView('formTemplates')}
     >
       <FormInput className="mr-2 h-4 w-4" />
       Form Templates
@@ -1654,7 +1654,7 @@ function AdminDashboard() {
   };
 
   const renderView = () => {
-    switch (view) {
+    switch (activeView) {
       case 'administrators':
         return <AdministratorsView />;
       case 'events':
@@ -1699,210 +1699,231 @@ function AdminDashboard() {
         return <CouponManagement />;
       case 'formTemplates':
         return <FormTemplatesView />;
-      case 'emailTemplates': // Added case for email templates
-        return <EmailTemplatesView />;
       default:
         return <div>Feature coming soon</div>;
     }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <AdminBanner />
-      <div className="container mx-auto p-6 space-y-8">
-        <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4">
-          <Card className="w-full md:w-64 lg:w-72">
-            <CardContent className="p-6">
-              <nav className="space-y-2">
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Sidebar */}
+      <div className="w-64 bg-card border-r flex flex-col h-full">
+        <div className="p-4 flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-6">
+            <Calendar className="h-6 w-6 text-primary" />
+            <h1 className="font-semibold text-xl">MatchPro Dashboard</h1>
+          </div>
+
+          {/* Navigation */}
+          <div className="space-y-2">
+            <Button
+              variant={activeView === 'administrators' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('administrators')}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Administrators
+            </Button>
+
+            {formTemplatesButton}
+
+            <Button
+              variant={activeView === 'events' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('events')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Events
+            </Button>
+
+            <Button
+              variant={activeView === 'teams' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('teams')}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Teams
+            </Button>
+
+            <Button
+              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('complexes')}
+            >
+              <Building2 className="mr-2 h-4 w-4" />
+              Field Complexes
+            </Button>
+
+            <Button
+              variant={activeView === 'households' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('households')}
+            >
+              <Home className="mr-2 h-4 w-4" />
+              MatchPro Client
+            </Button>
+
+            <Button
+              variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('scheduling')}
+            >
+              <CalendarDays className="mr-2 h-4 w-4" />
+              Scheduling
+            </Button>
+
+            <Button
+              variant={activeView === 'reports' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('reports')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Reports and Financials
+            </Button>
+
+            <Button
+              variant={activeView === 'chat' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('chat')}
+            >
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Chat
+            </Button>
+            <Button
+              variant={activeView === 'files' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('files')}
+            >
+              <ImageIcon className="mr-2 h-4 w-4" />
+              File Manager
+            </Button>
+
+            {/* Settings */}
+            <Collapsible
+              open={isSettingsOpen}
+              onOpenChange={setIsSettingsOpen}
+              className="space-y-2"
+            >
+              <CollapsibleTrigger asChild>
                 <Button
-                  variant={view === 'administrators' ? 'secondary' : 'ghost'}
+                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+                  className="w-full justify-between"
+                >
+                  <span className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </span>
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isSettingsOpen ? 'rotate-90' : ''
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 pl-4">
+                <Button
+                  variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
-                  onClick={() => setView('administrators')}
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('branding');
+                  }}
                 >
-                  <Shield className="mr-2 h-4 w-4" />
-                  Administrators
+                  <Palette className="mr-2 h-4 w-4" />
+                  Branding
                 </Button>
-
-                {formTemplatesButton}
-
                 <Button
-                  variant={view === 'events' ? 'secondary' : 'ghost'}
+                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
-                  onClick={() => setView('events')}
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('payments');
+                  }}
                 >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  Events
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Payments
                 </Button>
-
                 <Button
-                  variant={view === 'teams' ? 'secondary' : 'ghost'}
+                  variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
-                  onClick={() => setView('teams')}
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('general');
+                  }}
                 >
-                  <Users className="mr-2 h-4 w-4" />
-                  Teams
+                  <Settings className="mr-2 h-4 w-4" />
+                  General
                 </Button>
-
                 <Button
-                  variant={view === 'complexes' ? 'secondary' : 'ghost'}
+                  variant={activeSettingsView === 'styling' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
-                  onClick={() => setView('complexes')}
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('styling');
+                  }}
                 >
-                  <Building2 className="mr-2 h-4 w-4" />
-                  Field Complexes
+                  <Palette className="mr-2 h-4 w-4" />
+                  Theme
                 </Button>
+              </CollapsibleContent>
+            </Collapsible>
 
-                <Button
-                  variant={view === 'households' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => setView('households')}
-                >
-                  <Home className="mr-2 h-4 w-4" />
-                  MatchPro Client
-                </Button>
+            {/* Account */}
+            <Button
+              variant={activeView === 'account' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('account')}
+            >
+              <User className="mr-2 h-4 w-4" />
+              My Account
+            </Button>
 
-                <Button
-                  variant={view === 'scheduling' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => setView('scheduling')}
-                >
-                  <CalendarDays className="mr-2 h-4 w-4" />
-                  Scheduling
-                </Button>
-
-                <Button
-                  variant={view === 'reports' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => setView('reports')}
-                >
-                  <FileText className="mr-2 h-4 w-4" />
-                  Reports and Financials
-                </Button>
-
-                <Button
-                  variant={view === 'chat' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => setView('chat')}
-                >
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  Chat
-                </Button>
-                <Button
-                  variant={view === 'files' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => setView('files')}
-                >
-                  <ImageIcon className="mr-2 h-4 w-4" />
-                  File Manager
-                </Button>
-
-                {/* Settings */}
-                <Collapsible
-                  open={isSettingsOpen}
-                  onOpenChange={setIsSettingsOpen}
-                  className="space-y-2"
-                >
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant={view === 'settings' ? 'secondary' : 'ghost'}
-                      className="w-full justify-between"
-                    >
-                      <span className="flex items-center">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Settings
-                      </span>
-                      <ChevronRight
-                        className={`h-4 w-4 transition-transform duration-200 ${
-                          isSettingsOpen ? 'rotate-90' : ''
-                        }`}
-                      />
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="space-y-2 pl-4">
-                    <Button
-                      variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
-                      onClick={() => {
-                        setView('settings');
-                        setActiveSettingsView('branding');
-                      }}
-                    >
-                      <Palette className="mr-2 h-4 w-4" />
-                      Branding
-                    </Button>
-                    <Button
-                      variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
-                      onClick={() => {
-                        setView('settings');
-                        setActiveSettingsView('payments');
-                      }}
-                    >
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Payments
-                    </Button>
-                    <Button
-                      variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
-                      onClick={() => {
-                        setView('settings');
-                        setActiveSettingsView('general');
-                      }}
-                    >
-                      <Settings className="mr-2 h-4 w-4" />
-                      General
-                    </Button>
-                    <Button
-                      variant={activeSettingsView === 'styling' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
-                      onClick={() => {
-                        setView('settings');
-                        setActiveSettingsView('styling');
-                      }}
-                    >
-                      <Palette className="mr-2 h-4 w-4" />
-                      Theme
-                    </Button>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                {/* Added Email Templates Navigation */}
-                <Button
-                  variant={view === 'emailTemplates' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => setView('emailTemplates')}
-                >
-                  <FileText className="mr-2 h-4 w-4" />
-                  Email Templates
-                </Button>
-
-
-                {/* Account */}
-                <Button
-                  variant={view === 'account' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => setView('account')}
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  My Account
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </Button>
-              </nav>
-            </CardContent>
-          </Card>
-          <div className="flex-1">
-            {renderView()}
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
           </div>
         </div>
       </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        <AdminBanner />
+        <div className="p-8">
+          {/* Welcome Card */}
+          {showWelcome && (
+            <Card className="mb-6 relative">
+              <button 
+                onClick={() => setShowWelcome(false)}
+                className="absolute top-2 right-2 p-2 hover:bg-muted rounded-full"
+              >
+                <X className="h-4 w-4" />
+              </button>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <UserCircle className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold">Welcome back, {user?.firstName}!</h2>
+                    <p className="text-muted-foreground">
+                      Manage your organization's activities and settings from this dashboard.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {renderView()}
+        </div>
+      </div>
+
       <UpdatesLogModal
         open={showUpdatesLog}
         onOpenChange={setShowUpdatesLog}
@@ -2181,8 +2202,8 @@ function CouponManagement() {
                   </TableCell>
                   <TableCell>{coupon.amount}</TableCell>
                   <TableCell>
-                    {coupon.expirationDate ?
-                      new Date(coupon.expirationDate).toLocaleDateString() :
+                    {coupon.expirationDate ? 
+                      new Date(coupon.expirationDate).toLocaleDateString() : 
                       'No expiration'
                     }
                   </TableCell>
@@ -2208,7 +2229,7 @@ function CouponManagement() {
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem
+                        <DropdownMenuItem 
                           onClick={() => handleDeleteCoupon(coupon.id)}
                           className="text-red-600"
                         >
@@ -2249,3 +2270,5 @@ const navigationItems = [
   { icon: FormInput, label: "Form Templates", value: "formTemplates" as const },
   { icon: User, label: "My Account", value: "account" as const },
 ];
+
+export default AdminDashboard;
