@@ -11,29 +11,44 @@ export function FeeManagement() {
   const [isCreating, setIsCreating] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: fees, isLoading } = useQuery({
+  const { data: fees, isLoading, error } = useQuery({
     queryKey: ["fees"],
     queryFn: async () => {
+      console.log("Fetching fees...");
       const response = await fetch("/api/admin/fees");
       if (!response.ok) {
-        throw new Error("Failed to fetch fees");
+        const errorData = await response.json();
+        console.error("Failed to fetch fees:", errorData);
+        throw new Error(errorData.error || "Failed to fetch fees");
       }
-      return response.json();
+      const data = await response.json();
+      console.log("Fetched fees:", data);
+      return data;
     },
   });
 
-  const { data: accountingCodes } = useQuery({
+  const { data: accountingCodes, isLoading: isLoadingCodes } = useQuery({
     queryKey: ["accountingCodes"],
     queryFn: async () => {
+      console.log("Fetching accounting codes...");
       const response = await fetch("/api/admin/accounting-codes");
       if (!response.ok) {
-        throw new Error("Failed to fetch accounting codes");
+        const errorData = await response.json();
+        console.error("Failed to fetch accounting codes:", errorData);
+        throw new Error(errorData.error || "Failed to fetch accounting codes");
       }
-      return response.json();
+      const data = await response.json();
+      console.log("Fetched accounting codes:", data);
+      return data;
     },
   });
 
-  if (isLoading) {
+  if (error) {
+    console.error("Fee management error:", error);
+    return <div>Error: {error.message}</div>;
+  }
+
+  if (isLoading || isLoadingCodes) {
     return <div>Loading...</div>;
   }
 
@@ -62,15 +77,15 @@ export function FeeManagement() {
                 description: "Fee created successfully",
               });
             }}
-            accountingCodes={accountingCodes}
+            accountingCodes={accountingCodes || []}
           />
         </Card>
       )}
 
       <Card className="p-6">
         <FeeTable 
-          fees={fees} 
-          accountingCodes={accountingCodes}
+          fees={fees || []} 
+          accountingCodes={accountingCodes || []}
           onUpdate={() => {
             queryClient.invalidateQueries({ queryKey: ["fees"] });
           }}
