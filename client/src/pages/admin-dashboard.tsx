@@ -90,7 +90,7 @@ import { FileManager } from "@/components/admin/FileManager";
 import { FormTemplatesView } from "@/components/admin/FormTemplatesView";
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
 import { EmailTemplatesView } from "@/components/admin/EmailTemplatesView"; // Added import
-import { CouponModal } from "@/components/admin/CouponModal";
+import { CouponModal } from "@/components/CouponModal";
 
 
 function AdminBanner() {
