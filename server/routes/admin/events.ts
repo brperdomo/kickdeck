@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons } from '@db/schema';
-import { eq } from 'drizzle-orm';
+import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons, eventAgeGroupFees } from '@db/schema';
+import { eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router = Router();
@@ -9,21 +9,20 @@ const router = Router();
 // Get event details endpoint
 router.get('/:id', async (req, res) => {
   try {
-    const eventId = BigInt(req.params.id);
-    console.log('Fetching event details for ID:', eventId);
+    const eventId = req.params.id;
 
     // Get main event details
     const event = await db
       .select()
       .from(events)
-      .where(eq(events.id, eventId))
+      .where(eq(events.id, BigInt(eventId)))
       .limit(1);
 
     if (!event || event.length === 0) {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Get age groups with fee assignments
+    // Get age groups with their fee assignments
     const ageGroups = await db
       .select({
         id: eventAgeGroups.id,
@@ -36,9 +35,13 @@ router.get('/:id', async (req, res) => {
         amountDue: eventAgeGroups.amountDue,
         birth_date_start: eventAgeGroups.birth_date_start,
         divisionCode: eventAgeGroups.divisionCode,
-        feeId: eventAgeGroups.feeId,
+        feeId: eventAgeGroupFees.feeId,
       })
       .from(eventAgeGroups)
+      .leftJoin(
+        eventAgeGroupFees,
+        eq(eventAgeGroups.id, eventAgeGroupFees.ageGroupId)
+      )
       .where(eq(eventAgeGroups.eventId, eventId));
 
     // Get complex assignments
@@ -63,7 +66,7 @@ router.get('/:id', async (req, res) => {
     const fees = await db
       .select()
       .from(eventFees)
-      .where(eq(eventFees.eventId, eventId));
+      .where(eq(eventFees.eventId, BigInt(eventId)));
 
     // Combine all data
     const result = {
@@ -101,35 +104,45 @@ router.delete('/:id', async (req, res) => {
         .execute();
       console.log('Deleted coupons');
 
-      // Delete age groups
-      await tx.delete(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId))
+      // Delete fee assignments
+      await tx.delete(eventAgeGroupFees)
+        .where(
+          eq(eventAgeGroupFees.ageGroupId,
+            sql`(SELECT id FROM event_age_groups WHERE event_id = ${eventId.toString()})`
+          )
+        )
         .execute();
-      console.log('Deleted age groups');
-
-      // Delete complexes
-      await tx.delete(eventComplexes)
-        .where(eq(eventComplexes.eventId, eventId))
-        .execute();
-      console.log('Deleted event complexes');
-
-      // Delete field sizes
-      await tx.delete(eventFieldSizes)
-        .where(eq(eventFieldSizes.eventId, eventId))
-        .execute();
-      console.log('Deleted event field sizes');
-
-      // Delete scoring rules
-      await tx.delete(eventScoringRules)
-        .where(eq(eventScoringRules.eventId, eventId))
-        .execute();
-      console.log('Deleted event scoring rules');
+      console.log('Deleted fee assignments');
 
       // Delete fees
       await tx.delete(eventFees)
         .where(eq(eventFees.eventId, eventId))
         .execute();
       console.log('Deleted event fees');
+
+      // Delete age groups
+      await tx.delete(eventAgeGroups)
+        .where(eq(eventAgeGroups.eventId, eventId.toString()))
+        .execute();
+      console.log('Deleted event age groups');
+
+      // Delete complexes
+      await tx.delete(eventComplexes)
+        .where(eq(eventComplexes.eventId, eventId.toString()))
+        .execute();
+      console.log('Deleted event complexes');
+
+      // Delete field sizes
+      await tx.delete(eventFieldSizes)
+        .where(eq(eventFieldSizes.eventId, eventId.toString()))
+        .execute();
+      console.log('Deleted event field sizes');
+
+      // Delete scoring rules
+      await tx.delete(eventScoringRules)
+        .where(eq(eventScoringRules.eventId, eventId.toString()))
+        .execute();
+      console.log('Deleted event scoring rules');
 
       // Finally delete the event itself
       const [deletedEvent] = await tx.delete(events)
