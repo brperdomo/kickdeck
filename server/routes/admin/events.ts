@@ -9,7 +9,8 @@ const router = Router();
 // Get event details endpoint
 router.get('/:id', async (req, res) => {
   try {
-    const eventId = req.params.id;
+    const eventId = BigInt(req.params.id);
+    console.log('Fetching event details for ID:', eventId);
 
     // Get main event details
     const event = await db
@@ -22,7 +23,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Get age groups with their fee assignments
+    // Get age groups with fee assignments
     const ageGroups = await db
       .select({
         id: eventAgeGroups.id,
@@ -90,7 +91,7 @@ router.get('/:id', async (req, res) => {
 // Delete event endpoint
 router.delete('/:id', async (req, res) => {
   try {
-    const eventId = req.params.id;
+    const eventId = BigInt(req.params.id);
     console.log('Starting event deletion for ID:', eventId);
 
     await db.transaction(async (tx) => {
@@ -100,7 +101,7 @@ router.delete('/:id', async (req, res) => {
         .execute();
       console.log('Deleted coupons');
 
-      // Delete age groups (fee assignments are handled by foreign key cascade)
+      // Delete age groups
       await tx.delete(eventAgeGroups)
         .where(eq(eventAgeGroups.eventId, eventId))
         .execute();

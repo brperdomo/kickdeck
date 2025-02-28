@@ -9,11 +9,10 @@ const router = Router();
 // Update event endpoint
 router.patch('/:id', async (req, res) => {
   try {
-    const eventId = req.params.id;
+    const eventId = BigInt(req.params.id);
     const eventData = req.body;
 
     console.log('Updating event:', eventId);
-    console.log('Received update data:', JSON.stringify(eventData, null, 2));
 
     // Begin a transaction
     const result = await db.transaction(async (tx) => {

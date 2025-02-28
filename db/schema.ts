@@ -145,9 +145,10 @@ export const events = pgTable("events", {
   updatedAt: text("updated_at").notNull(),
 });
 
+// Update the eventAgeGroups table definition
 export const eventAgeGroups = pgTable("event_age_groups", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   ageGroup: text("age_group").notNull(),
   birthYear: integer("birth_year").notNull(),
   gender: text("gender").notNull(),
@@ -158,7 +159,7 @@ export const eventAgeGroups = pgTable("event_age_groups", {
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   birth_date_start: text("birth_date_start"),
   divisionCode: text("division_code"),
-  feeId: integer("fee_id").references(() => eventFees.id), // Add direct fee reference
+  feeId: integer("fee_id").references(() => eventFees.id), // Keep fee reference
 });
 
 export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {
@@ -192,7 +193,7 @@ export type SelectEvent = typeof events.$inferSelect;
 
 export const gameTimeSlots = pgTable("game_time_slots", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   fieldId: integer("field_id").notNull().references(() => fields.id),
   startTime: text("start_time").notNull(),
   endTime: text("end_time").notNull(),
@@ -204,7 +205,7 @@ export const gameTimeSlots = pgTable("game_time_slots", {
 
 export const tournamentGroups = pgTable("tournament_groups", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   name: text("name").notNull(),
   type: text("type").notNull(),
@@ -214,7 +215,7 @@ export const tournamentGroups = pgTable("tournament_groups", {
 
 export const teams = pgTable("teams", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   groupId: integer("group_id").references(() => tournamentGroups.id),
   name: text("name").notNull(),
@@ -228,7 +229,7 @@ export const teams = pgTable("teams", {
 
 export const games = pgTable("games", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   groupId: integer("group_id").references(() => tournamentGroups.id),
   fieldId: integer("field_id").references(() => fields.id),
@@ -271,14 +272,14 @@ export type SelectGame = typeof games.$inferSelect;
 
 export const eventComplexes = pgTable("event_complexes", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   complexId: integer("complex_id").notNull().references(() => complexes.id),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
 });
 
 export const eventFieldSizes = pgTable("event_field_sizes", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   fieldId: integer("field_id").notNull().references(() => fields.id),
   fieldSize: text("field_size").notNull(),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
@@ -286,7 +287,7 @@ export const eventFieldSizes = pgTable("event_field_sizes", {
 
 export const eventScoringRules = pgTable("event_scoring_rules", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   title: text("title").notNull(),
   win: integer("win").notNull(),
   loss: integer("loss").notNull(),
@@ -315,7 +316,7 @@ export type SelectEventScoringRule = typeof eventScoringRules.$inferSelect;
 
 export const eventAdministrators = pgTable("event_administrators", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   userId: integer("user_id").notNull().references(() => users.id),
   role: text("role").notNull(),
   adminType: text("admin_type").notNull().default('super_admin'),
@@ -325,7 +326,7 @@ export const eventAdministrators = pgTable("event_administrators", {
 
 export const eventSettings = pgTable("event_settings", {
   id: serial("id").primaryKey(),
-  eventId: text("event_id").notNull().references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id),
   settingKey: text("setting_key").notNull(),
   settingValue: text("setting_value").notNull(),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
@@ -355,7 +356,7 @@ export const chatRooms = pgTable("chat_rooms", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   type: text("type").notNull(),
-  eventId: text("event_id").references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).references(() => events.id),
   teamId: integer("team_id").references(() => teams.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -704,7 +705,6 @@ export const insertCouponSchema = createInsertSchema(coupons, {
   maxUses: z.number().int().positive("Maximum uses must be positive").optional(),
   isActive: z.boolean().default(true),
 });
-
 export const selectCouponSchema = createSelectSchema(coupons);
 
 export type InsertCoupon = typeof coupons.$inferInsert;
@@ -831,7 +831,12 @@ export const formResponsesRelations = relations(formResponses, ({ one }) => ({
   }),
 }));
 
+// Update the relations
 export const eventAgeGroupsRelations = relations(eventAgeGroups, ({ one }) => ({
+  event: one(events, {
+    fields: [eventAgeGroups.eventId],
+    references: [events.id],
+  }),
   fee: one(eventFees, {
     fields: [eventAgeGroups.feeId],
     references: [eventFees.id],
