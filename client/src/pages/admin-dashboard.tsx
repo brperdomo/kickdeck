@@ -2110,7 +2110,7 @@ function CouponManagement() {
 
   const deleteCouponMutation = useMutation({
     mutationFn: async (couponId: number) => {
-      const response = await fetch(`/api/admin/coupons/${couponId}`, {
+      const response = await fetch("/api/admin/coupons/" + couponId, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete coupon');
