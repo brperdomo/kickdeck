@@ -160,35 +160,23 @@ export function FeeManagement() {
     },
   });
 
-  const assignmentsQuery = useQuery<FeeAssignment[]>({
-    queryKey: ['feeAssignments', eventId],
+  const assignmentsQuery = useQuery<Record<number, string[]>>({
+    queryKey: ['fee-assignments', eventId],
     queryFn: async () => {
       try {
-        const response = await fetch(`/api/admin/events/${eventId}/fee-assignments`);
+        if (!eventId) throw new Error("Event ID is required");
+
+        const response = await fetch(`/api/admin/events/${eventId}/fees/assignments`);
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(`Failed to fetch fee assignments: ${response.status} ${response.statusText} ${errorData.error || ''}`);
+          throw new Error(`Failed to fetch fee assignments: ${response.status} ${response.statusText}`);
         }
-        const data = await response.json();
-
-        // Transform the data into the expected format
-        const assignmentMap: Record<number, string[]> = {};
-        if (Array.isArray(data)) {
-          data.forEach((assignment: FeeAssignment) => {
-            if (!assignmentMap[assignment.feeId]) {
-              assignmentMap[assignment.feeId] = [];
-            }
-            assignmentMap[assignment.feeId].push(assignment.ageGroupId);
-          });
-        }
-        setAssignments(assignmentMap);
-
-        return data || [];
+        return response.json();
       } catch (error) {
         console.error("Fee assignments fetch error:", error);
         throw error;
       }
     },
+    enabled: !!eventId,
   });
 
   const createFeeMutation = useMutation({
@@ -350,7 +338,7 @@ export function FeeManagement() {
     console.error("Accounting Codes Query Error:", accountingCodesQuery.error);
     console.error("Age Groups Query Error:", ageGroupsQuery.error);
     console.error("Assignments Query Error:", assignmentsQuery.error);
-    
+
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] space-y-4">
         <div className="text-red-500 font-semibold">Failed to load fee management data</div>
