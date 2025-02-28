@@ -92,7 +92,15 @@ export function FeeManagement() {
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventIdParam}/fees`);
       if (!response.ok) throw new Error('Failed to fetch fees');
-      return response.json();
+      const fees = await response.json();
+      
+      // Format dates properly
+      return fees.map(fee => ({
+        ...fee,
+        // Format dates if they exist, or provide null
+        beginDate: fee.beginDate ? new Date(fee.beginDate).toLocaleDateString() : null,
+        endDate: fee.endDate ? new Date(fee.endDate).toLocaleDateString() : null
+      }));
     },
     enabled: !!eventIdParam,
   });

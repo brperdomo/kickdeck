@@ -140,12 +140,14 @@ app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
       .where(eq(eventAgeGroups.eventId, eventId))
       .orderBy(eventAgeGroups.gender, eventAgeGroups.ageGroup);
 
-    // Create unique groups based on age group, gender, and field size
+    // Create unique groups based on age group and gender only
+    // This should drastically reduce the number of duplicates
     const uniqueMap = new Map();
     const uniqueGroups = [];
 
     for (const group of ageGroups) {
-      const key = `${group.gender}-${group.ageGroup}-${group.fieldSize}`;
+      // Use only gender and ageGroup as the key to match boys/girls U4-U18
+      const key = `${group.gender}-${group.ageGroup}`;
       if (!uniqueMap.has(key)) {
         uniqueMap.set(key, group);
         uniqueGroups.push(group);
