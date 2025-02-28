@@ -1181,7 +1181,7 @@ function ComplexesView() {
     enabled: !!viewingComplexId,
     queryFn: async () => {
       if (!viewingComplexId) return [];
-      const response = await fetch(`/api/admin/complexes/${viewingComplexId}/fields`);
+      const response = await fetch("/api/admin/complexes/" + viewingComplexId + "/fields");
       if (!response.ok) throw new Error('Failed to fetch fields');
       return response.json();
     }
