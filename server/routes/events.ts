@@ -1,10 +1,9 @@
 import { Router } from 'express';
 import { db } from '../../db';
-import { events, eventAgeGroups, eventAgeGroupFees, teams } from '@db/schema';
-import { eq } from 'drizzle-orm';
+import { events, eventAgeGroups, eventAgeGroupFees, eventFees } from '@db/schema';
+import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 import { sql } from 'drizzle-orm/sql';
-
 
 const router = Router();
 
@@ -38,20 +37,15 @@ router.patch('/:id', async (req, res) => {
 
       console.log('Event basic info updated');
 
-      // First, get all existing age group IDs to properly clean up fee assignments
-      const existingAgeGroups = await tx
-        .select({ id: eventAgeGroups.id })
-        .from(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId.toString()));
+      // First, delete all existing age groups and their fee assignments
+      await tx.delete(eventAgeGroupFees)
+        .where(
+          eq(eventAgeGroupFees.ageGroupId, 
+            sql`(SELECT id FROM event_age_groups WHERE event_id = ${eventId.toString()})`
+          )
+        );
 
-      // Delete fee assignments for existing age groups
-      for (const group of existingAgeGroups) {
-        await tx.execute(sql`DELETE FROM event_age_group_fees WHERE age_group_id = ${group.id}`);
-      }
-
-      // Delete existing age groups
-      await tx
-        .delete(eventAgeGroups)
+      await tx.delete(eventAgeGroups)
         .where(eq(eventAgeGroups.eventId, eventId.toString()));
 
       console.log('Existing age groups and fee assignments deleted');
@@ -94,10 +88,13 @@ router.patch('/:id', async (req, res) => {
               feeId: group.feeId
             });
 
-            await tx.execute(sql`
-              INSERT INTO event_age_group_fees (age_group_id, fee_id, created_at) 
-              VALUES (${insertedAgeGroup.id}, ${group.feeId}, ${new Date().toISOString()})
-            `);
+            await tx
+              .insert(eventAgeGroupFees)
+              .values({
+                ageGroupId: insertedAgeGroup.id,
+                feeId: group.feeId,
+                createdAt: new Date().toISOString(),
+              });
 
             console.log('Fee assignment created successfully');
           }
