@@ -2195,7 +2195,7 @@ function CouponManagement() {
                     }
                   </TableCell>
                   <TableCell>
-                    {coupon.usageCount} {coupon.maxUses ? `/ ${coupon.maxUses}` : ''}
+                    {coupon.usageCount} {coupon.maxUses ? ("/ " + coupon.maxUses) : ''}
                   </TableCell>
                   <TableCell>{coupon.description}</TableCell>
                   <TableCell>
