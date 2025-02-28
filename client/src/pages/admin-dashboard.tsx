@@ -91,6 +91,7 @@ import { FormTemplatesView } from "@/components/admin/FormTemplatesView";
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
 import { EmailTemplatesView } from "@/components/admin/EmailTemplatesView"; // Added import
 import { CouponModal } from "@/components/CouponModal";
+import { cn } from "@/lib/utils"; // Added import
 
 
 function AdminBanner() {
@@ -1998,8 +1999,7 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
       return <GeneralSettingsView />;
     case 'styling':
       return <ThemeEditor />;
-    case 'payments':
-      return (
+    case 'payments':      return (
         <div className="space-y-6">
           <h2 className="text-2xl font-bold">Payments Settings</h2>
           <Card>
