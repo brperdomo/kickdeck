@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons } from '@db/schema';
+import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons, eventAgeGroupFees } from '@db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router = Router();
 
-// Keep existing GET endpoint unchanged
+// Get event details endpoint
 router.get('/:id', async (req, res) => {
   try {
     const eventId = req.params.id;
@@ -22,7 +22,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Get age groups
+    // Get age groups with their fee assignments
     const ageGroups = await db
       .select({
         id: eventAgeGroups.id,
@@ -35,8 +35,13 @@ router.get('/:id', async (req, res) => {
         amountDue: eventAgeGroups.amountDue,
         birth_date_start: eventAgeGroups.birth_date_start,
         divisionCode: eventAgeGroups.divisionCode,
+        feeId: eventAgeGroupFees.feeId,
       })
       .from(eventAgeGroups)
+      .leftJoin(
+        eventAgeGroupFees,
+        eq(eventAgeGroups.id, eventAgeGroupFees.ageGroupId)
+      )
       .where(eq(eventAgeGroups.eventId, eventId));
 
     // Get complex assignments
@@ -68,8 +73,7 @@ router.get('/:id', async (req, res) => {
       ...event[0],
       ageGroups: ageGroups.map(group => ({
         ...group,
-        id: group.id,
-        selected: true
+        selected: true,
       })),
       complexes: complexAssignments,
       fieldSizes,
@@ -87,18 +91,28 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Updated Delete endpoint
+// Delete event endpoint
 router.delete('/:id', async (req, res) => {
   try {
     const eventId = BigInt(req.params.id);
     console.log('Starting event deletion for ID:', eventId);
 
     await db.transaction(async (tx) => {
-      // Delete coupons first to handle the foreign key constraint
+      // Delete coupons first
       await tx.delete(coupons)
         .where(eq(coupons.eventId, eventId))
         .execute();
       console.log('Deleted coupons');
+
+      // Delete fee assignments
+      await tx.delete(eventAgeGroupFees)
+        .where(
+          eq(eventAgeGroupFees.ageGroupId,
+            sql`(SELECT id FROM event_age_groups WHERE event_id = ${eventId.toString()})`
+          )
+        )
+        .execute();
+      console.log('Deleted fee assignments');
 
       // Delete fees
       await tx.delete(eventFees)
