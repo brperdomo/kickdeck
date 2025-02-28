@@ -90,8 +90,7 @@ import { FileManager } from "@/components/admin/FileManager";
 import { FormTemplatesView } from "@/components/admin/FormTemplatesView";
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
 import { EmailTemplatesView } from "@/components/admin/EmailTemplatesView"; // Added import
-import { CouponModal } from "@/components/CouponModal";
-import { cn } from "@/lib/utils"; // Added import
+import { CouponModal } from "@/components/admin/CouponModal";
 
 
 function AdminBanner() {
@@ -957,6 +956,7 @@ function OrganizationSettingsForm() {
   const { toast } = useToast();
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    ```javascript
     const file = acceptedFiles[0];
     if (!file) return;
 
@@ -1073,10 +1073,7 @@ function OrganizationSettingsForm() {
 
             <div
               {...getRootProps()}
-              className={cn(
-                "border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors",
-                isDragActive ? "border-primary bg-primary/5" : "border-border"
-              )}
+              className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${isDragActive ? 'border-primary bg-primary/5' : 'border-border'}`}
             >
               <input {...getInputProps()} />
               <div className="flex flex-col items-center justify-center gap-2">
@@ -1181,7 +1178,7 @@ function ComplexesView() {
     enabled: !!viewingComplexId,
     queryFn: async () => {
       if (!viewingComplexId) return [];
-      const response = await fetch("/api/admin/complexes/" + viewingComplexId + "/fields");
+      const response = await fetch(`/api/admin/complexes/${viewingComplexId}/fields`);
       if (!response.ok) throw new Error('Failed to fetch fields');
       return response.json();
     }
@@ -1216,7 +1213,7 @@ function ComplexesView() {
 
   const updateComplexMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: ComplexFormValues }) => {
-      const response = await fetch("/api/admin/complexes/" + id, {
+      const response = await fetch(`/api/admin/complexes/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -1261,7 +1258,7 @@ function ComplexesView() {
 
   const createFieldMutation = useMutation({
     mutationFn: async ({ complexId, data }: { complexId: number; data: FieldFormValues }) => {
-      const response = await fetch("/api/admin/complexes/" + complexId + "/fields", {
+      const response = await fetch(`/api/admin/complexes/${complexId}/fields`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1295,7 +1292,7 @@ function ComplexesView() {
 
   const updateFieldMutation = useMutation({
     mutationFn: async ({ complexId, fieldId, data }: { complexId: number; fieldId: number; data: FieldFormValues }) => {
-      const response = await fetch("/api/admin/complexes/" + complexId + "/fields/" + fieldId, {
+      const response = await fetch(`/api/admin/complexes/${complexId}/fields/${fieldId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -1609,7 +1606,7 @@ function TeamsView() {
   );
 }
 
-export default function AdminDashboard() {
+function AdminDashboard() {
   const { user, logout } = useUser();
   const [, setLocation] = useLocation();
   const [view, setView] = useState<View>('events'); // Changed state variable name
@@ -1815,10 +1812,9 @@ export default function AdminDashboard() {
                         Settings
                       </span>
                       <ChevronRight
-                        className={cn(
-                          "h-4 w-4 transition-transform duration-200",
-                          isSettingsOpen ? "rotate-90" : ""
-                        )}
+                        className={`h-4 w-4 transition-transform duration-200 ${
+                          isSettingsOpen ? 'rotate-90' : ''
+                        }`}
                       />
                     </Button>
                   </CollapsibleTrigger>
@@ -1949,16 +1945,12 @@ function ChatView() {
           <div className="space-y-4">
             <div className="flex flex-col space-y-4">
               {messagesQuery.data?.map((message: any) => (
-                <div key={message.id} className={cn(
-                  "flex",
-                  message.isAdmin ? "justify-end" : "justify-start"
-                )}>
-                  <div className={cn(
-                    "rounded-lg px-4 py-2 max-w-[70%]",
+                <div key={message.id} className={`flex ${message.isAdmin ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`rounded-lg px-4 py-2 max-w-[70%] ${
                     message.isAdmin
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted"
-                  )}>
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  }`}>
                     <p className="text-sm font-medium">{message.sender}</p>
                     <p>{message.content}</p>
                     <p className="text-xs opacity-70">{new Date(message.timestamp).toLocaleDateString()}</p>
@@ -1999,7 +1991,8 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
       return <GeneralSettingsView />;
     case 'styling':
       return <ThemeEditor />;
-    case 'payments':      return (
+    case 'payments':
+      return (
         <div className="space-y-6">
           <h2 className="text-2xl font-bold">Payments Settings</h2>
           <Card>
@@ -2101,7 +2094,7 @@ function CouponManagement() {
   const couponsQuery = useQuery({
     queryKey: ['/api/admin/coupons', eventId],
     queryFn: async () => {
-      const response = await fetch("/api/admin/coupons?eventId=" + eventId);
+      const response = await fetch(`/api/admin/coupons?eventId=${eventId}`);
       if (!response.ok) throw new Error('Failed to fetch coupons');
       return response.json();
     }
@@ -2109,7 +2102,7 @@ function CouponManagement() {
 
   const deleteCouponMutation = useMutation({
     mutationFn: async (couponId: number) => {
-      const response = await fetch("/api/admin/coupons/" + couponId, {
+      const response = await fetch(`/api/admin/coupons/${couponId}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete coupon');
@@ -2183,7 +2176,7 @@ function CouponManagement() {
                   <TableCell className="font-medium">{coupon.code}</TableCell>
                   <TableCell>
                     <Badge variant={coupon.discountType === 'percentage' ? 'secondary' : 'outline'}>
-                      {coupon.discountType === 'percentage' ? (coupon.amount + '%') : ('$' + coupon.amount)}
+                      {coupon.discountType === 'percentage' ? `${coupon.amount}%` : `$${coupon.amount}`}
                     </Badge>
                   </TableCell>
                   <TableCell>{coupon.amount}</TableCell>
@@ -2194,7 +2187,7 @@ function CouponManagement() {
                     }
                   </TableCell>
                   <TableCell>
-                    {coupon.usageCount} {coupon.maxUses ? ("/ " + coupon.maxUses) : ''}
+                    {coupon.usageCount} {coupon.maxUses ? `/ ${coupon.maxUses}` : ''}
                   </TableCell>
                   <TableCell>{coupon.description}</TableCell>
                   <TableCell>
