@@ -10,10 +10,10 @@ const router = Router();
 const feeSchema = z.object({
   name: z.string().min(1, "Fee name is required"),
   amount: z.number().min(0, "Amount must be positive"),
-  beginDate: z.string().optional(),
-  endDate: z.string().optional(),
+  beginDate: z.string().nullable().optional(),
+  endDate: z.string().nullable().optional(),
   applyToAll: z.boolean().default(false),
-  accountingCodeId: z.number().optional(),
+  accountingCodeId: z.number().nullable().optional(),
 });
 
 type FeeInput = z.infer<typeof feeSchema>;
@@ -22,7 +22,7 @@ type FeeInput = z.infer<typeof feeSchema>;
 router.get("/api/admin/fees", async (req, res) => {
   try {
     const fees = await db.query.eventFees.findMany({
-      orderBy: (fees) => fees.createdAt,
+      orderBy: (fees) => [fees.createdAt],
     });
     res.json(fees);
   } catch (error) {
@@ -36,9 +36,16 @@ router.post("/api/admin/fees", async (req, res) => {
   try {
     const feeData = feeSchema.parse(req.body);
 
-    const [fee] = await db.insert(eventFees)
-      .values(feeData)
-      .returning();
+    const [fee] = await db.insert(eventFees).values({
+      name: feeData.name,
+      amount: feeData.amount,
+      beginDate: feeData.beginDate ? new Date(feeData.beginDate) : null,
+      endDate: feeData.endDate ? new Date(feeData.endDate) : null,
+      applyToAll: feeData.applyToAll,
+      accountingCodeId: feeData.accountingCodeId,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }).returning();
 
     res.json(fee);
   } catch (error) {
@@ -71,7 +78,15 @@ router.put("/api/admin/fees/:id", async (req, res) => {
     const feeData = feeSchema.parse(req.body);
 
     const [fee] = await db.update(eventFees)
-      .set(feeData)
+      .set({
+        name: feeData.name,
+        amount: feeData.amount,
+        beginDate: feeData.beginDate ? new Date(feeData.beginDate) : null,
+        endDate: feeData.endDate ? new Date(feeData.endDate) : null,
+        applyToAll: feeData.applyToAll,
+        accountingCodeId: feeData.accountingCodeId,
+        updatedAt: new Date()
+      })
       .where(eq(eventFees.id, parseInt(req.params.id)))
       .returning();
 
