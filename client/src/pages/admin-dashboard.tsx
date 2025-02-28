@@ -1216,7 +1216,7 @@ function ComplexesView() {
 
   const updateComplexMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: ComplexFormValues }) => {
-      const response = await fetch(`/api/admin/complexes/${id}`, {
+      const response = await fetch("/api/admin/complexes/" + id, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
