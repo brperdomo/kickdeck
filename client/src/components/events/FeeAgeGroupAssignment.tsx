@@ -3,9 +3,10 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Check, X } from "lucide-react";
+import { X } from "lucide-react";
 
 interface AgeGroup {
+  id: string;
   divisionCode: string;
   ageGroup: string;
   gender: string;
@@ -31,20 +32,18 @@ export function FeeAgeGroupAssignment({
   assignments,
   onAssignmentsChange,
 }: FeeAgeGroupAssignmentProps) {
-  const [activeGroups, setActiveGroups] = useState<string[]>([]);
-
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
 
     const { source, destination, draggableId } = result;
     const feeId = parseInt(destination.droppableId.replace('fee-', ''));
-    const groupCode = draggableId;
+    const groupId = draggableId;
 
     if (source.droppableId === 'available-groups') {
       // Add to fee
       const newAssignments = {
         ...assignments,
-        [feeId]: [...(assignments[feeId] || []), groupCode],
+        [feeId]: [...(assignments[feeId] || []), groupId],
       };
       onAssignmentsChange(newAssignments);
     } else if (destination.droppableId === 'available-groups') {
@@ -52,18 +51,18 @@ export function FeeAgeGroupAssignment({
       const sourceFeeId = parseInt(source.droppableId.replace('fee-', ''));
       const newAssignments = {
         ...assignments,
-        [sourceFeeId]: assignments[sourceFeeId].filter(id => id !== groupCode),
+        [sourceFeeId]: assignments[sourceFeeId].filter(id => id !== groupId),
       };
       onAssignmentsChange(newAssignments);
     } else {
       // Move between fees
       const sourceFeeId = parseInt(source.droppableId.replace('fee-', ''));
       const destFeeId = parseInt(destination.droppableId.replace('fee-', ''));
-      
+
       const newAssignments = {
         ...assignments,
-        [sourceFeeId]: assignments[sourceFeeId].filter(id => id !== groupCode),
-        [destFeeId]: [...(assignments[destFeeId] || []), groupCode],
+        [sourceFeeId]: assignments[sourceFeeId].filter(id => id !== groupId),
+        [destFeeId]: [...(assignments[destFeeId] || []), groupId],
       };
       onAssignmentsChange(newAssignments);
     }
@@ -85,11 +84,11 @@ export function FeeAgeGroupAssignment({
                   className="space-y-2 p-2"
                 >
                   {ageGroups
-                    .filter(group => !Object.values(assignments).flat().includes(group.divisionCode))
+                    .filter(group => !Object.values(assignments).flat().includes(group.id))
                     .map((group, index) => (
                       <Draggable
-                        key={group.divisionCode}
-                        draggableId={group.divisionCode}
+                        key={group.id}
+                        draggableId={group.id}
                         index={index}
                       >
                         {(provided) => (
@@ -142,14 +141,14 @@ export function FeeAgeGroupAssignment({
                         ref={provided.innerRef}
                         className="space-y-2"
                       >
-                        {(assignments[fee.id] || []).map((groupCode, index) => {
-                          const group = ageGroups.find(g => g.divisionCode === groupCode);
+                        {(assignments[fee.id] || []).map((groupId, index) => {
+                          const group = ageGroups.find(g => g.id === groupId);
                           if (!group) return null;
-                          
+
                           return (
                             <Draggable
-                              key={group.divisionCode}
-                              draggableId={group.divisionCode}
+                              key={group.id}
+                              draggableId={group.id}
                               index={index}
                             >
                               {(provided) => (
@@ -173,7 +172,7 @@ export function FeeAgeGroupAssignment({
                                           const newAssignments = {
                                             ...assignments,
                                             [fee.id]: assignments[fee.id].filter(
-                                              id => id !== group.divisionCode
+                                              id => id !== group.id
                                             ),
                                           };
                                           onAssignmentsChange(newAssignments);

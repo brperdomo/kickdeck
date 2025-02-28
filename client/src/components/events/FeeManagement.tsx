@@ -49,6 +49,29 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FeeAgeGroupAssignment } from "./FeeAgeGroupAssignment";
 
+interface Fee {
+  id: number;
+  name: string;
+  amount: number;
+  beginDate?: string;
+  endDate?: string;
+  accountingCodeId?: number;
+}
+
+interface AgeGroup {
+  id: string;
+  eventId: string;
+  ageGroup: string;
+  birthYear: number;
+  gender: string;
+  divisionCode: string;
+}
+
+interface FeeAssignment {
+  ageGroupId: string;
+  feeId: number;
+}
+
 const feeFormSchema = z.object({
   name: z.string().min(1, "Fee name is required"),
   amount: z.string().min(1, "Amount is required").refine(
@@ -65,10 +88,9 @@ type SortField = 'name' | 'amount' | 'beginDate';
 type SortDirection = 'asc' | 'desc';
 
 export function FeeManagement() {
-  const params = useParams();
-  const eventId = params.id;
+  const { id: eventId } = useParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingFee, setEditingFee] = useState<any>(null);
+  const [editingFee, setEditingFee] = useState<Fee | null>(null);
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [activeTab, setActiveTab] = useState<"fees" | "assignments">("fees");
@@ -87,7 +109,7 @@ export function FeeManagement() {
     }
   });
 
-  const feesQuery = useQuery({
+  const feesQuery = useQuery<Fee[]>({
     queryKey: ['fees', eventId],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/fees`);
@@ -105,7 +127,7 @@ export function FeeManagement() {
     },
   });
 
-  const ageGroupsQuery = useQuery({
+  const ageGroupsQuery = useQuery<AgeGroup[]>({
     queryKey: ['ageGroups', eventId],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/age-groups`);
@@ -114,22 +136,24 @@ export function FeeManagement() {
     },
   });
 
-  const assignmentsQuery = useQuery({
+  const assignmentsQuery = useQuery<FeeAssignment[]>({
     queryKey: ['feeAssignments', eventId],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${eventId}/fee-assignments`);
       if (!response.ok) throw new Error('Failed to fetch fee assignments');
-      return response.json();
-    },
-    onSuccess: (data) => {
+      const data = await response.json();
+
+      // Transform the data into the expected format
       const assignmentMap: Record<number, string[]> = {};
-      data.forEach((assignment: any) => {
+      data.forEach((assignment: FeeAssignment) => {
         if (!assignmentMap[assignment.feeId]) {
           assignmentMap[assignment.feeId] = [];
         }
         assignmentMap[assignment.feeId].push(assignment.ageGroupId);
       });
       setAssignments(assignmentMap);
+
+      return data;
     },
   });
 
@@ -246,7 +270,6 @@ export function FeeManagement() {
     },
   });
 
-
   const handleSubmit = (values: FeeFormValues) => {
     if (editingFee) {
       updateFeeMutation.mutate({ ...values, id: editingFee.id });
@@ -351,7 +374,7 @@ export function FeeManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sortedFees.map((fee: any) => (
+                  {sortedFees.map((fee) => (
                     <TableRow key={fee.id}>
                       <TableCell>{fee.name}</TableCell>
                       <TableCell>{formatCurrency(fee.amount)}</TableCell>
