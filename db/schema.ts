@@ -158,6 +158,7 @@ export const eventAgeGroups = pgTable("event_age_groups", {
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   birth_date_start: text("birth_date_start"),
   divisionCode: text("division_code"),
+  feeId: integer("fee_id").references(() => eventFees.id), // Add direct fee reference
 });
 
 export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {
@@ -633,30 +634,11 @@ export const eventFees = pgTable("event_fees", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const eventAgeGroupFees = pgTable("event_age_group_fees", {
-  id: serial("id").primaryKey(),
-  ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id, { onDelete: 'cascade' }),
-  feeId: integer("fee_id").notNull().references(() => eventFees.id, { onDelete: 'cascade' }),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
-
 // Add relations
-export const eventFeesRelations = relations(eventFees, ({ one, many }) => ({
+export const eventFeesRelations = relations(eventFees, ({ one }) => ({
   event: one(events, {
     fields: [eventFees.eventId],
     references: [events.id],
-  }),
-  ageGroupFees: many(eventAgeGroupFees),
-}));
-
-export const eventAgeGroupFeesRelations = relations(eventAgeGroupFees, ({ one }) => ({
-  fee: one(eventFees, {
-    fields: [eventAgeGroupFees.feeId],
-    references: [eventFees.id],
-  }),
-  ageGroup: one(eventAgeGroups, {
-    fields: [eventAgeGroupFees.ageGroupId],
-    references: [eventAgeGroups.id],
   }),
 }));
 
@@ -669,16 +651,13 @@ export const insertEventFeeSchema = createInsertSchema(eventFees, {
   applyToAll: z.boolean().default(false),
 });
 
-export const insertEventAgeGroupFeeSchema = createInsertSchema(eventAgeGroupFees);
 
 export const selectEventFeeSchema = createSelectSchema(eventFees);
-export const selectEventAgeGroupFeeSchema = createSelectSchema(eventAgeGroupFees);
 
 // Add types
 export type InsertEventFee = typeof eventFees.$inferInsert;
 export type SelectEventFee = typeof eventFees.$inferSelect;
-export type InsertEventAgeGroupFee = typeof eventAgeGroupFees.$inferInsert;
-export type SelectEventAgeGroupFee = typeof eventAgeGroupFees.$inferSelect;
+
 
 export const accountingCodes = pgTable("accounting_codes", {
   id: serial("id").primaryKey(),
@@ -849,5 +828,12 @@ export const formResponsesRelations = relations(formResponses, ({ one }) => ({
   team: one(teams, {
     fields: [formResponses.teamId],
     references: [teams.id],
+  }),
+}));
+
+export const eventAgeGroupsRelations = relations(eventAgeGroups, ({ one }) => ({
+  fee: one(eventFees, {
+    fields: [eventAgeGroups.feeId],
+    references: [eventFees.id],
   }),
 }));

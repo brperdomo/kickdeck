@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons, eventAgeGroupFees } from '@db/schema';
-import { eq, sql } from 'drizzle-orm';
+import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons } from '@db/schema';
+import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router = Router();
@@ -15,7 +15,7 @@ router.get('/:id', async (req, res) => {
     const event = await db
       .select()
       .from(events)
-      .where(eq(events.id, BigInt(eventId)))
+      .where(eq(events.id, eventId))
       .limit(1);
 
     if (!event || event.length === 0) {
@@ -35,13 +35,9 @@ router.get('/:id', async (req, res) => {
         amountDue: eventAgeGroups.amountDue,
         birth_date_start: eventAgeGroups.birth_date_start,
         divisionCode: eventAgeGroups.divisionCode,
-        feeId: eventAgeGroupFees.feeId,
+        feeId: eventAgeGroups.feeId,
       })
       .from(eventAgeGroups)
-      .leftJoin(
-        eventAgeGroupFees,
-        eq(eventAgeGroups.id, eventAgeGroupFees.ageGroupId)
-      )
       .where(eq(eventAgeGroups.eventId, eventId));
 
     // Get complex assignments
@@ -66,7 +62,7 @@ router.get('/:id', async (req, res) => {
     const fees = await db
       .select()
       .from(eventFees)
-      .where(eq(eventFees.eventId, BigInt(eventId)));
+      .where(eq(eventFees.eventId, eventId));
 
     // Combine all data
     const result = {
@@ -94,7 +90,7 @@ router.get('/:id', async (req, res) => {
 // Delete event endpoint
 router.delete('/:id', async (req, res) => {
   try {
-    const eventId = BigInt(req.params.id);
+    const eventId = req.params.id;
     console.log('Starting event deletion for ID:', eventId);
 
     await db.transaction(async (tx) => {
@@ -104,45 +100,35 @@ router.delete('/:id', async (req, res) => {
         .execute();
       console.log('Deleted coupons');
 
-      // Delete fee assignments
-      await tx.delete(eventAgeGroupFees)
-        .where(
-          eq(eventAgeGroupFees.ageGroupId,
-            sql`(SELECT id FROM event_age_groups WHERE event_id = ${eventId.toString()})`
-          )
-        )
+      // Delete age groups (fee assignments are handled by foreign key cascade)
+      await tx.delete(eventAgeGroups)
+        .where(eq(eventAgeGroups.eventId, eventId))
         .execute();
-      console.log('Deleted fee assignments');
+      console.log('Deleted age groups');
+
+      // Delete complexes
+      await tx.delete(eventComplexes)
+        .where(eq(eventComplexes.eventId, eventId))
+        .execute();
+      console.log('Deleted event complexes');
+
+      // Delete field sizes
+      await tx.delete(eventFieldSizes)
+        .where(eq(eventFieldSizes.eventId, eventId))
+        .execute();
+      console.log('Deleted event field sizes');
+
+      // Delete scoring rules
+      await tx.delete(eventScoringRules)
+        .where(eq(eventScoringRules.eventId, eventId))
+        .execute();
+      console.log('Deleted event scoring rules');
 
       // Delete fees
       await tx.delete(eventFees)
         .where(eq(eventFees.eventId, eventId))
         .execute();
       console.log('Deleted event fees');
-
-      // Delete age groups
-      await tx.delete(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId.toString()))
-        .execute();
-      console.log('Deleted event age groups');
-
-      // Delete complexes
-      await tx.delete(eventComplexes)
-        .where(eq(eventComplexes.eventId, eventId.toString()))
-        .execute();
-      console.log('Deleted event complexes');
-
-      // Delete field sizes
-      await tx.delete(eventFieldSizes)
-        .where(eq(eventFieldSizes.eventId, eventId.toString()))
-        .execute();
-      console.log('Deleted event field sizes');
-
-      // Delete scoring rules
-      await tx.delete(eventScoringRules)
-        .where(eq(eventScoringRules.eventId, eventId.toString()))
-        .execute();
-      console.log('Deleted event scoring rules');
 
       // Finally delete the event itself
       const [deletedEvent] = await tx.delete(events)
