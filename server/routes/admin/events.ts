@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees } from '@db/schema';
+import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons } from '@db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -94,7 +94,13 @@ router.delete('/:id', async (req, res) => {
     console.log('Starting event deletion for ID:', eventId);
 
     await db.transaction(async (tx) => {
-      // Delete fees first
+      // Delete coupons first to handle the foreign key constraint
+      await tx.delete(coupons)
+        .where(eq(coupons.eventId, eventId))
+        .execute();
+      console.log('Deleted coupons');
+
+      // Delete fees
       await tx.delete(eventFees)
         .where(eq(eventFees.eventId, eventId))
         .execute();
