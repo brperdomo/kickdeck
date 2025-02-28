@@ -46,31 +46,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FeeAgeGroupAssignment } from "./FeeAgeGroupAssignment";
-
-interface Fee {
-  id: number;
-  name: string;
-  amount: number;
-  beginDate?: string;
-  endDate?: string;
-  accountingCodeId?: number;
-}
-
-interface AgeGroup {
-  id: string;
-  eventId: string;
-  ageGroup: string;
-  birthYear: number;
-  gender: string;
-  divisionCode: string;
-}
-
-interface FeeAssignment {
-  ageGroupId: string;
-  feeId: number;
-}
 
 const feeFormSchema = z.object({
   name: z.string().min(1, "Fee name is required"),
@@ -88,13 +63,12 @@ type SortField = 'name' | 'amount' | 'beginDate';
 type SortDirection = 'asc' | 'desc';
 
 export function FeeManagement() {
-  const { id: eventId } = useParams();
+  const params = useParams();
+  const eventId = params.id;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingFee, setEditingFee] = useState<Fee | null>(null);
+  const [editingFee, setEditingFee] = useState<any>(null);
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-  const [activeTab, setActiveTab] = useState<"fees" | "assignments">("fees");
-  const [assignments, setAssignments] = useState<Record<number, string[]>>({});
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -109,74 +83,22 @@ export function FeeManagement() {
     }
   });
 
-  const feesQuery = useQuery<Fee[]>({
+  const feesQuery = useQuery({
     queryKey: ['fees', eventId],
     queryFn: async () => {
-      try {
-        const response = await fetch(`/api/admin/events/${eventId}/fees`);
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(`Failed to fetch fees: ${response.status} ${response.statusText} ${errorData.error || ''}`);
-        }
-        return response.json();
-      } catch (error) {
-        console.error("Fees fetch error:", error);
-        throw error;
-      }
+      const response = await fetch(`/api/admin/events/${eventId}/fees`);
+      if (!response.ok) throw new Error('Failed to fetch fees');
+      return response.json();
     },
   });
 
   const accountingCodesQuery = useQuery({
     queryKey: ['accountingCodes'],
     queryFn: async () => {
-      try {
-        const response = await fetch('/api/admin/accounting-codes');
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(`Failed to fetch accounting codes: ${response.status} ${response.statusText} ${errorData.error || ''}`);
-        }
-        return response.json();
-      } catch (error) {
-        console.error("Accounting codes fetch error:", error);
-        throw error;
-      }
+      const response = await fetch('/api/admin/accounting-codes');
+      if (!response.ok) throw new Error('Failed to fetch accounting codes');
+      return response.json();
     },
-  });
-
-  const ageGroupsQuery = useQuery<AgeGroup[]>({
-    queryKey: ['ageGroups', eventId],
-    queryFn: async () => {
-      try {
-        const response = await fetch(`/api/admin/events/${eventId}/age-groups`);
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(`Failed to fetch age groups: ${response.status} ${response.statusText} ${errorData.error || ''}`);
-        }
-        return response.json();
-      } catch (error) {
-        console.error("Age groups fetch error:", error);
-        throw error;
-      }
-    },
-  });
-
-  const assignmentsQuery = useQuery<Record<number, string[]>>({
-    queryKey: ['fee-assignments', eventId],
-    queryFn: async () => {
-      try {
-        if (!eventId) throw new Error("Event ID is required");
-
-        const response = await fetch(`/api/admin/events/${eventId}/fees/assignments`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch fee assignments: ${response.status} ${response.statusText}`);
-        }
-        return response.json();
-      } catch (error) {
-        console.error("Fee assignments fetch error:", error);
-        throw error;
-      }
-    },
-    enabled: !!eventId,
   });
 
   const createFeeMutation = useMutation({
@@ -266,32 +188,6 @@ export function FeeManagement() {
     },
   });
 
-  const updateAssignmentsMutation = useMutation({
-    mutationFn: async (newAssignments: Record<number, string[]>) => {
-      const response = await fetch(`/api/admin/events/${eventId}/fee-assignments`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ assignments: newAssignments }),
-      });
-      if (!response.ok) throw new Error('Failed to update assignments');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feeAssignments', eventId] });
-      toast({
-        title: "Success",
-        description: "Fee assignments updated successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
   const handleSubmit = (values: FeeFormValues) => {
     if (editingFee) {
       updateFeeMutation.mutate({ ...values, id: editingFee.id });
@@ -320,12 +216,7 @@ export function FeeManagement() {
     return a[sortField].localeCompare(b[sortField]) * modifier;
   }) : [];
 
-  const handleAssignmentsChange = (newAssignments: Record<number, string[]>) => {
-    setAssignments(newAssignments);
-    updateAssignmentsMutation.mutate(newAssignments);
-  };
-
-  if (feesQuery.isLoading || accountingCodesQuery.isLoading || ageGroupsQuery.isLoading || assignmentsQuery.isLoading) {
+  if (feesQuery.isLoading || accountingCodesQuery.isLoading) {
     return (
       <div className="flex justify-center items-center h-[calc(100vh-4rem)]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
@@ -333,21 +224,10 @@ export function FeeManagement() {
     );
   }
 
-  if (feesQuery.error || accountingCodesQuery.error || ageGroupsQuery.error || assignmentsQuery.error) {
-    console.error("Fees Query Error:", feesQuery.error);
-    console.error("Accounting Codes Query Error:", accountingCodesQuery.error);
-    console.error("Age Groups Query Error:", ageGroupsQuery.error);
-    console.error("Assignments Query Error:", assignmentsQuery.error);
-
+  if (feesQuery.error || accountingCodesQuery.error) {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] space-y-4">
         <div className="text-red-500 font-semibold">Failed to load fee management data</div>
-        <div className="text-sm text-gray-500 max-w-md text-center">
-          {feesQuery.error ? `Fees error: ${feesQuery.error.message}` : ''}
-          {accountingCodesQuery.error ? `Accounting codes error: ${accountingCodesQuery.error.message}` : ''}
-          {ageGroupsQuery.error ? `Age groups error: ${ageGroupsQuery.error.message}` : ''}
-          {assignmentsQuery.error ? `Assignments error: ${assignmentsQuery.error.message}` : ''}
-        </div>
         <Button variant="outline" onClick={() => window.history.back()}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Return to Events
@@ -359,7 +239,7 @@ export function FeeManagement() {
   const formatCurrency = (amount: number) => `$${(amount / 100).toFixed(2)}`;
 
   return (
-    <div className="container mx-auto py-8 max-w-7xl">
+    <div className="container mx-auto py-8 max-w-6xl">
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-4">
           <Button variant="outline" onClick={() => window.history.back()}>
@@ -368,109 +248,87 @@ export function FeeManagement() {
           </Button>
           <h1 className="text-2xl font-bold">Fee Management</h1>
         </div>
+        <Button onClick={() => {
+          setEditingFee(null);
+          form.reset();
+          setIsDialogOpen(true);
+        }}>
+          Add New Fee
+        </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "fees" | "assignments")}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="fees">Fee List</TabsTrigger>
-          <TabsTrigger value="assignments">Age Group Assignments</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="fees">
-          <div className="flex justify-end mb-4">
-            <Button onClick={() => {
-              setEditingFee(null);
-              form.reset();
-              setIsDialogOpen(true);
-            }}>
-              Add New Fee
-            </Button>
-          </div>
-
-          <Card>
-            <CardContent className="p-6">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort('name')}>
-                      Fee Name <ArrowUpDown className="inline h-4 w-4" />
-                    </TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort('amount')}>
-                      Amount <ArrowUpDown className="inline h-4 w-4" />
-                    </TableHead>
-                    <TableHead>Accounting Code</TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort('beginDate')}>
-                      Begin Date <ArrowUpDown className="inline h-4 w-4" />
-                    </TableHead>
-                    <TableHead>End Date</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sortedFees.map((fee) => (
-                    <TableRow key={fee.id}>
-                      <TableCell>{fee.name}</TableCell>
-                      <TableCell>{formatCurrency(fee.amount)}</TableCell>
-                      <TableCell>{accountingCodesQuery.data?.find(code => code.id === fee.accountingCodeId)?.name || '-'}</TableCell>
-                      <TableCell>
-                        {fee.beginDate ? format(new Date(fee.beginDate), "MMM d, yyyy") : "-"}
-                      </TableCell>
-                      <TableCell>
-                        {fee.endDate ? format(new Date(fee.endDate), "MMM d, yyyy") : "-"}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              form.reset({
-                                name: fee.name,
-                                amount: (fee.amount / 100).toString(),
-                                beginDate: fee.beginDate || "",
-                                endDate: fee.endDate || "",
-                                accountingCodeId: fee.accountingCodeId || null,
-                              });
-                              setEditingFee(fee);
-                              setIsDialogOpen(true);
-                            }}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              if (confirm('Are you sure you want to delete this fee?')) {
-                                deleteFeeMutation.mutate(fee.id);
-                              }
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="assignments">
-          <Card>
-            <CardContent className="p-6">
-              <FeeAgeGroupAssignment
-                fees={feesQuery.data || []}
-                ageGroups={ageGroupsQuery.data || []}
-                assignments={assignments}
-                onAssignmentsChange={handleAssignmentsChange}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      <Card>
+        <CardHeader>
+          <CardTitle>Fee List</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="cursor-pointer" onClick={() => handleSort('name')}>
+                  Fee Name <ArrowUpDown className="inline h-4 w-4" />
+                </TableHead>
+                <TableHead className="cursor-pointer" onClick={() => handleSort('amount')}>
+                  Amount <ArrowUpDown className="inline h-4 w-4" />
+                </TableHead>
+                <TableHead>Accounting Code</TableHead>
+                <TableHead className="cursor-pointer" onClick={() => handleSort('beginDate')}>
+                  Begin Date <ArrowUpDown className="inline h-4 w-4" />
+                </TableHead>
+                <TableHead>End Date</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedFees.map((fee: any) => (
+                <TableRow key={fee.id}>
+                  <TableCell>{fee.name}</TableCell>
+                  <TableCell>{formatCurrency(fee.amount)}</TableCell>
+                  <TableCell>{accountingCodesQuery.data?.find(code => code.id === fee.accountingCodeId)?.name || '-'}</TableCell>
+                  <TableCell>
+                    {fee.beginDate ? format(new Date(fee.beginDate), "MMM d, yyyy") : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {fee.endDate ? format(new Date(fee.endDate), "MMM d, yyyy") : "-"}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          form.reset({
+                            name: fee.name,
+                            amount: (fee.amount / 100).toString(),
+                            beginDate: fee.beginDate || "",
+                            endDate: fee.endDate || "",
+                            accountingCodeId: fee.accountingCodeId || null,
+                          });
+                          setEditingFee(fee);
+                          setIsDialogOpen(true);
+                        }}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          if (confirm('Are you sure you want to delete this fee?')) {
+                            deleteFeeMutation.mutate(fee.id);
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
