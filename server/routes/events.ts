@@ -1,18 +1,20 @@
 import { Router } from 'express';
 import { db } from '../../db';
-import { events, eventAgeGroups, eventFees } from '@db/schema';
-import { eq } from 'drizzle-orm';
+import { events, eventAgeGroups, eventAgeGroupFees, eventFees } from '@db/schema';
+import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
+import { sql } from 'drizzle-orm/sql';
 
 const router = Router();
 
 // Update event endpoint
 router.patch('/:id', async (req, res) => {
   try {
-    const eventId = BigInt(req.params.id);
+    const eventId = req.params.id;
     const eventData = req.body;
 
     console.log('Updating event:', eventId);
+    console.log('Received update data:', JSON.stringify(eventData, null, 2));
 
     // Begin a transaction
     const result = await db.transaction(async (tx) => {
@@ -30,28 +32,40 @@ router.patch('/:id', async (req, res) => {
           refundPolicy: eventData.refundPolicy,
           updatedAt: new Date().toISOString(),
         })
-        .where(eq(events.id, eventId))
+        .where(eq(events.id, BigInt(eventId)))
         .returning();
 
       console.log('Event basic info updated');
 
-      // Delete existing age groups
+      // First, delete all existing age groups and their fee assignments
+      await tx.delete(eventAgeGroupFees)
+        .where(
+          eq(eventAgeGroupFees.ageGroupId, 
+            sql`(SELECT id FROM event_age_groups WHERE event_id = ${eventId.toString()})`
+          )
+        );
+
       await tx.delete(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId));
+        .where(eq(eventAgeGroups.eventId, eventId.toString()));
 
-      console.log('Existing age groups deleted');
+      console.log('Existing age groups and fee assignments deleted');
 
-      // Insert new age groups with their fee assignments
+      // Insert new age groups and their fee assignments
       if (eventData.ageGroups && eventData.ageGroups.length > 0) {
+        console.log('Processing age groups:', eventData.ageGroups);
+
+        // Filter only selected age groups
         const selectedGroups = eventData.ageGroups.filter(group => group.selected);
-        console.log('Processing selected age groups:', selectedGroups);
+        console.log('Selected age groups:', selectedGroups);
 
         for (const group of selectedGroups) {
-          // Insert age group with fee assignment
+          console.log('Processing selected group:', group);
+
+          // Insert age group
           const [insertedAgeGroup] = await tx
             .insert(eventAgeGroups)
             .values({
-              eventId: eventId,
+              eventId: eventId.toString(),
               ageGroup: group.ageGroup,
               birthYear: group.birthYear,
               gender: group.gender,
@@ -59,14 +73,31 @@ router.patch('/:id', async (req, res) => {
               fieldSize: group.fieldSize || null,
               scoringRule: group.scoringRule || null,
               amountDue: group.amountDue || null,
+              createdAt: new Date().toISOString(),
               birth_date_start: group.birth_date_start || null,
               divisionCode: group.divisionCode || null,
-              feeId: group.feeId || null, // Direct fee assignment
-              createdAt: new Date().toISOString(),
             })
             .returning();
 
-          console.log('Inserted age group with fee:', insertedAgeGroup);
+          console.log('Inserted age group:', insertedAgeGroup);
+
+          // If fee is assigned, create the fee assignment
+          if (group.feeId) {
+            console.log('Creating fee assignment for group:', {
+              ageGroupId: insertedAgeGroup.id,
+              feeId: group.feeId
+            });
+
+            await tx
+              .insert(eventAgeGroupFees)
+              .values({
+                ageGroupId: insertedAgeGroup.id,
+                feeId: group.feeId,
+                createdAt: new Date().toISOString(),
+              });
+
+            console.log('Fee assignment created successfully');
+          }
         }
       }
 
