@@ -1,4 +1,3 @@
-
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -21,6 +20,8 @@ import EventApplicationForm from "@/pages/event-application-form";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import { FeeManagement } from "@/components/events/FeeManagement";
+import EmailTemplatesView from "@/pages/email-templates"; // Import the missing component
+
 
 function Router() {
   const { user, isLoading } = useUser();
@@ -71,6 +72,9 @@ function Router() {
       </Route>
       <Route path="/admin/events">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}
+      </Route>
+      <Route path="/admin/email-templates">
+        {user.isAdmin ? <EmailTemplatesView /> : <NotFound />}
       </Route>
       <Route path="/admin">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}

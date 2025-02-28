@@ -86,7 +86,7 @@ async function testDbConnection() {
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
-      
+
       CREATE TABLE IF NOT EXISTS age_group_settings (
         id SERIAL PRIMARY KEY,
         seasonal_scope_id INTEGER NOT NULL REFERENCES seasonal_scopes(id) ON DELETE CASCADE,
@@ -97,7 +97,6 @@ async function testDbConnection() {
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
     `);
-
 
     // Register routes first to ensure all middleware is set up
     const server = registerRoutes(app);
@@ -143,35 +142,24 @@ async function testDbConnection() {
       res.status(status).json({ message });
     });
 
-    // Start the server
-    const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-    
-    const findAvailablePort = async (startPort: number): Promise<number> => {
-      return new Promise((resolve, reject) => {
-        const tryPort = async (port: number) => {
-          const { createServer } = await import('http');
-          const tempServer = createServer();
-          tempServer.listen(port, "0.0.0.0")
-            .on('listening', () => {
-              tempServer.close(() => resolve(port));
-            })
-            .on('error', (err: any) => {
-              if (err.code === 'EADDRINUSE') {
-                log(`Port ${port} is busy, trying ${port + 1}`);
-                tryPort(port + 1);
-              } else {
-                reject(err);
-              }
-            });
-        };
-        tryPort(startPort);
-      });
-    };
+    // Start the server on port 5000
+    const PORT = 5000;
 
     try {
-      const availablePort = await findAvailablePort(PORT);
-      server.listen(availablePort, "0.0.0.0", () => {
-        log(`Server started successfully on port ${availablePort}`);
+      // Try to start on port 5000 only, no fallback
+      server.listen(PORT, "0.0.0.0", () => {
+        log(`Server started successfully on port ${PORT}`);
+      });
+
+      // Handle startup errors
+      server.on('error', (error: any) => {
+        if (error.code === 'EADDRINUSE') {
+          log(`Port ${PORT} is already in use. Please free up port ${PORT} and try again.`);
+          process.exit(1);
+        } else {
+          log(`Error starting server: ${error.message}`);
+          process.exit(1);
+        }
       });
     } catch (error) {
       log(`Error starting server: ${(error as Error).message}`);
