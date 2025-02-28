@@ -1949,12 +1949,16 @@ function ChatView() {
           <div className="space-y-4">
             <div className="flex flex-col space-y-4">
               {messagesQuery.data?.map((message: any) => (
-                <div key={message.id} className={`flex ${message.isAdmin ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`rounded-lg px-4 py-2 max-w-[70%] ${
+                <div key={message.id} className={cn(
+                  "flex",
+                  message.isAdmin ? "justify-end" : "justify-start"
+                )}>
+                  <div className={cn(
+                    "rounded-lg px-4 py-2 max-w-[70%]",
                     message.isAdmin
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
-                  }`}>
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted"
+                  )}>
                     <p className="text-sm font-medium">{message.sender}</p>
                     <p>{message.content}</p>
                     <p className="text-xs opacity-70">{new Date(message.timestamp).toLocaleDateString()}</p>
