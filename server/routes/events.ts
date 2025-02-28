@@ -136,10 +136,21 @@ router.get('/:id/age-groups', async (req, res) => {
 router.get('/:id/fee-assignments', async (req, res) => {
   try {
     const eventId = req.params.id;
-    const assignments = await db.select()
+    console.log('Fetching fee assignments for event:', eventId);
+
+    const assignments = await db
+      .select({
+        ageGroupId: eventAgeGroupFees.ageGroupId,
+        feeId: eventAgeGroupFees.feeId,
+      })
       .from(eventAgeGroupFees)
-      .innerJoin(eventAgeGroups, eq(eventAgeGroupFees.ageGroupId, eventAgeGroups.id))
+      .innerJoin(
+        eventAgeGroups,
+        eq(eventAgeGroupFees.ageGroupId, eventAgeGroups.id)
+      )
       .where(eq(eventAgeGroups.eventId, eventId.toString()));
+
+    console.log('Found assignments:', assignments);
     res.json(assignments);
   } catch (error) {
     console.error("Error fetching fee assignments:", error);
@@ -157,13 +168,9 @@ router.put('/:id/fee-assignments', async (req, res) => {
     const { assignments } = req.body;
 
     await db.transaction(async (tx) => {
-      // First, get all age groups for this event
-      const ageGroups = await tx.query.eventAgeGroups.findMany({
-        where: eq(eventAgeGroups.eventId, eventId.toString()),
-      });
-
-      // Delete existing assignments for these age groups
-      await tx.delete(eventAgeGroupFees)
+      // Delete existing assignments for this event's age groups
+      await tx
+        .delete(eventAgeGroupFees)
         .where(
           eq(eventAgeGroupFees.ageGroupId,
             sql`(SELECT id FROM event_age_groups WHERE event_id = ${eventId.toString()})`
@@ -171,13 +178,19 @@ router.put('/:id/fee-assignments', async (req, res) => {
         );
 
       // Create new assignments
-      for (const [feeId, groupIds] of Object.entries(assignments)) {
-        for (const groupId of groupIds as string[]) {
-          await tx.insert(eventAgeGroupFees).values({
-            ageGroupId: groupId,
-            feeId: parseInt(feeId),
-            createdAt: new Date().toISOString(),
-          });
+      if (assignments && Object.keys(assignments).length > 0) {
+        for (const [feeId, groupIds] of Object.entries(assignments)) {
+          if (Array.isArray(groupIds)) {
+            for (const groupId of groupIds) {
+              await tx
+                .insert(eventAgeGroupFees)
+                .values({
+                  age_group_id: groupId,
+                  fee_id: parseInt(feeId),
+                  created_at: new Date().toISOString(),
+                });
+            }
+          }
         }
       }
     });
