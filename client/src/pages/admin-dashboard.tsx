@@ -1815,9 +1815,10 @@ function AdminDashboard() {
                         Settings
                       </span>
                       <ChevronRight
-                        className={`h-4 w-4 transition-transform duration-200 ${
-                          isSettingsOpen ? 'rotate-90' : ''
-                        }`}
+                        className={cn(
+                          "h-4 w-4 transition-transform duration-200",
+                          isSettingsOpen ? "rotate-90" : ""
+                        )}
                       />
                     </Button>
                   </CollapsibleTrigger>
