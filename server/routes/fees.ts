@@ -14,6 +14,7 @@ const feeSchema = z.object({
   endDate: z.string().nullable().optional(),
   applyToAll: z.boolean().default(false),
   accountingCodeId: z.number().nullable().optional(),
+  eventId: z.string().optional(),  // Make eventId optional since we might not always have an event context
 });
 
 type FeeInput = z.infer<typeof feeSchema>;
@@ -21,9 +22,7 @@ type FeeInput = z.infer<typeof feeSchema>;
 // Get all fees
 router.get("/api/admin/fees", async (req, res) => {
   try {
-    const fees = await db.query.eventFees.findMany({
-      orderBy: (fees) => [fees.createdAt],
-    });
+    const fees = await db.select().from(eventFees).orderBy(eventFees.createdAt);
     res.json(fees);
   } catch (error) {
     console.error("Error fetching fees:", error);
@@ -43,6 +42,7 @@ router.post("/api/admin/fees", async (req, res) => {
       endDate: feeData.endDate ? new Date(feeData.endDate) : null,
       applyToAll: feeData.applyToAll,
       accountingCodeId: feeData.accountingCodeId,
+      eventId: feeData.eventId || null,
       createdAt: new Date(),
       updatedAt: new Date()
     }).returning();
@@ -57,9 +57,7 @@ router.post("/api/admin/fees", async (req, res) => {
 // Get fee by ID
 router.get("/api/admin/fees/:id", async (req, res) => {
   try {
-    const fee = await db.query.eventFees.findFirst({
-      where: eq(eventFees.id, parseInt(req.params.id)),
-    });
+    const [fee] = await db.select().from(eventFees).where(eq(eventFees.id, parseInt(req.params.id)));
 
     if (!fee) {
       return res.status(404).json({ error: "Fee not found" });
@@ -85,6 +83,7 @@ router.put("/api/admin/fees/:id", async (req, res) => {
         endDate: feeData.endDate ? new Date(feeData.endDate) : null,
         applyToAll: feeData.applyToAll,
         accountingCodeId: feeData.accountingCodeId,
+        eventId: feeData.eventId || null,
         updatedAt: new Date()
       })
       .where(eq(eventFees.id, parseInt(req.params.id)))
