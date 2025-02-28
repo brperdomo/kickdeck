@@ -40,7 +40,7 @@ router.patch('/:id', async (req, res) => {
       // First, delete all existing age groups and their fee assignments
       await tx.delete(eventAgeGroupFees)
         .where(
-          eq(eventAgeGroupFees.ageGroupId, 
+          eq(eventAgeGroupFees.ageGroupId,
             sql`(SELECT id FROM event_age_groups WHERE event_id = ${eventId.toString()})`
           )
         );
@@ -108,9 +108,86 @@ router.patch('/:id', async (req, res) => {
     res.json({ message: "Event updated successfully", event: result });
   } catch (error) {
     console.error("Error updating event:", error);
-    res.status(500).json({ 
-      error: "Failed to update event", 
-      details: error instanceof Error ? error.message : 'Unknown error' 
+    res.status(500).json({
+      error: "Failed to update event",
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Get event age groups
+router.get('/:id/age-groups', async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    const ageGroups = await db.query.eventAgeGroups.findMany({
+      where: eq(eventAgeGroups.eventId, eventId.toString()),
+    });
+    res.json(ageGroups);
+  } catch (error) {
+    console.error("Error fetching age groups:", error);
+    res.status(500).json({
+      error: "Failed to fetch age groups",
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Get fee assignments
+router.get('/:id/fee-assignments', async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    const assignments = await db.select()
+      .from(eventAgeGroupFees)
+      .innerJoin(eventAgeGroups, eq(eventAgeGroupFees.ageGroupId, eventAgeGroups.id))
+      .where(eq(eventAgeGroups.eventId, eventId.toString()));
+    res.json(assignments);
+  } catch (error) {
+    console.error("Error fetching fee assignments:", error);
+    res.status(500).json({
+      error: "Failed to fetch fee assignments",
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Update fee assignments
+router.put('/:id/fee-assignments', async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    const { assignments } = req.body;
+
+    await db.transaction(async (tx) => {
+      // First, get all age groups for this event
+      const ageGroups = await tx.query.eventAgeGroups.findMany({
+        where: eq(eventAgeGroups.eventId, eventId.toString()),
+      });
+
+      // Delete existing assignments for these age groups
+      await tx.delete(eventAgeGroupFees)
+        .where(
+          eq(eventAgeGroupFees.ageGroupId,
+            sql`(SELECT id FROM event_age_groups WHERE event_id = ${eventId.toString()})`
+          )
+        );
+
+      // Create new assignments
+      for (const [feeId, groupIds] of Object.entries(assignments)) {
+        for (const groupId of groupIds as string[]) {
+          await tx.insert(eventAgeGroupFees).values({
+            ageGroupId: groupId,
+            feeId: parseInt(feeId),
+            createdAt: new Date().toISOString(),
+          });
+        }
+      }
+    });
+
+    res.json({ message: "Fee assignments updated successfully" });
+  } catch (error) {
+    console.error("Error updating fee assignments:", error);
+    res.status(500).json({
+      error: "Failed to update fee assignments",
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
