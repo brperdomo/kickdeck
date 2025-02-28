@@ -2102,7 +2102,7 @@ function CouponManagement() {
   const couponsQuery = useQuery({
     queryKey: ['/api/admin/coupons', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/coupons?eventId=${eventId}`);
+      const response = await fetch("/api/admin/coupons?eventId=" + eventId);
       if (!response.ok) throw new Error('Failed to fetch coupons');
       return response.json();
     }
