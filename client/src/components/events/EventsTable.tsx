@@ -199,9 +199,32 @@ export function EventsTable() {
     }
 
     try {
-      await deleteEventMutation.mutateAsync(eventToDelete.id);
+      const response = await fetch(`/api/admin/events/${eventToDelete?.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Failed to delete event: ${errorData}`);
+      }
+
+      toast({
+        title: "Event deleted",
+        description: "The event was successfully deleted",
+        variant: "success",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/events"] });
+      setDeleteDialogOpen(false);
+      setDeleteConfirmText("");
+      setEventToDelete(null);
     } catch (error) {
-      console.error('Delete event error:', error);
+      console.error("Delete event error:", error);
+      toast({
+        title: "Delete failed",
+        description: error instanceof Error ? error.message : "There was an error deleting the event",
+        variant: "destructive",
+      });
     }
   };
 

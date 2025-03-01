@@ -3142,6 +3142,22 @@ export function registerRoutes(app: Express): Server {
         const eventId = req.params.id;
         console.log('Starting event deletion for ID:', eventId);
 
+        // Validate event ID
+        if (!eventId) {
+          return res.status(400).json({ error: "Event ID is required" });
+        }
+
+        // Check if event exists before attempting deletion
+        const [eventExists] = await db
+          .select({ id: events.id })
+          .from(events)
+          .where(eq(events.id, eventId))
+          .limit(1);
+
+        if (!eventExists) {
+          return res.status(404).json({ error: "Event not found" });
+        }
+
         // Try in sequence instead of in a single transaction to handle errors better
         try {
           // Delete games first (they reference time slots and teams)
@@ -3151,7 +3167,7 @@ export function registerRoutes(app: Express): Server {
               .where(eq(games.eventId, eventId));
             console.log('Deleted games');
           } catch (e) {
-            console.log('No games to delete or error:', e);
+            console.error('Error deleting games:', e);
           }
 
           // Delete game time slots
@@ -3161,7 +3177,7 @@ export function registerRoutes(app: Express): Server {
               .where(eq(gameTimeSlots.eventId, eventId));
             console.log('Deleted game time slots');
           } catch (e) {
-            console.log('No game time slots to delete or error:', e);
+            console.error('Error deleting game time slots:', e);
           }
 
           // Delete form responses  
@@ -3171,7 +3187,7 @@ export function registerRoutes(app: Express): Server {
               .where(eq(formResponses.eventId, eventId));
             console.log('Deleted form responses');
           } catch (e) {
-            console.log('No form responses to delete or error:', e);
+            console.error('Error deleting form responses:', e);
           }
 
           // Delete chat rooms
@@ -3183,7 +3199,17 @@ export function registerRoutes(app: Express): Server {
               .where(eq(chatRooms.eventId, eventId));
             console.log('Deleted chat rooms');
           } catch (e) {
-            console.log('Chat rooms table does not exist or error:', e);
+            console.error('Error deleting chat rooms:', e);
+          }
+
+          // Delete coupons
+          try {
+            await db
+              .delete(coupons)
+              .where(eq(coupons.eventId, eventId));
+            console.log('Deleted coupons');
+          } catch (e) {
+            console.error('Error deleting coupons:', e);
           }
 
           // Delete field sizes
@@ -3193,7 +3219,7 @@ export function registerRoutes(app: Express): Server {
               .where(eq(eventFieldSizes.eventId, eventId));
             console.log('Deleted event field sizes');
           } catch (e) {
-            console.log('No field sizes to delete or error:', e);
+            console.error('Error deleting field sizes:', e);
           }
 
           // Delete scoring rules
@@ -3203,7 +3229,7 @@ export function registerRoutes(app: Express): Server {
               .where(eq(eventScoringRules.eventId, eventId));
             console.log('Deleted event scoring rules');
           } catch (e) {
-            console.log('No scoring rules to delete or error:', e);
+            console.error('Error deleting scoring rules:', e);
           }
 
           // Delete complex assignments
@@ -3213,7 +3239,7 @@ export function registerRoutes(app: Express): Server {
               .where(eq(eventComplexes.eventId, eventId));
             console.log('Deleted event complexes');
           } catch (e) {
-            console.log('No complex assignments to delete or error:', e);
+            console.error('Error deleting complex assignments:', e);
           }
 
           // Delete tournament groups first (they reference age groups)
@@ -3223,7 +3249,7 @@ export function registerRoutes(app: Express): Server {
               .where(eq(tournamentGroups.eventId, eventId));
             console.log('Deleted tournament groups');
           } catch (e) {
-            console.log('No tournament groups to delete or error:', e);
+            console.error('Error deleting tournament groups:', e);
           }
 
           // Delete teams (they reference age groups)
@@ -3233,7 +3259,7 @@ export function registerRoutes(app: Express): Server {
               .where(eq(teams.eventId, eventId));
             console.log('Deleted teams');
           } catch (e) {
-            console.log('No teams to delete or error:', e);
+            console.error('Error deleting teams:', e);
           }
 
           // Delete form field options and fields
@@ -3264,7 +3290,7 @@ export function registerRoutes(app: Express): Server {
               console.log('Deleted form fields');
             }
           } catch (e) {
-            console.log('No form fields to delete or error:', e);
+            console.error('Error deleting form fields:', e);
           }
 
           // Delete event form templates
@@ -3274,7 +3300,7 @@ export function registerRoutes(app: Express): Server {
               .where(eq(eventFormTemplates.eventId, eventId));
             console.log('Deleted event form templates');
           } catch (e) {
-            console.log('No event form templates to delete or error:', e);
+            console.error('Error deleting form templates:', e);
           }
 
           // Delete event age groups
@@ -3284,7 +3310,7 @@ export function registerRoutes(app: Express): Server {
               .where(eq(eventAgeGroups.eventId, eventId));
             console.log('Deleted event age groups');
           } catch (e) {
-            console.log('No event age groups to delete or error:', e);
+            console.error('Error deleting age groups:', e);
           }
 
           // Finally delete the event itself
@@ -3295,7 +3321,7 @@ export function registerRoutes(app: Express): Server {
               .returning();
 
             if (!deletedEvent) {
-              return res.status(404).json({ error: "Event not found" });
+              return res.status(404).json({ error: "Event not found after deleting dependencies" });
             }
 
             console.log('Successfully deleted event:', eventId);
