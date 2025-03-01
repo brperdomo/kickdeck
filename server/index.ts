@@ -145,17 +145,32 @@ async function testDbConnection() {
 
     // Start the server
     const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-
-    server.listen(PORT, "0.0.0.0", () => {
-      log(`Server started successfully on port ${PORT}`);
-    }).on('error', (error: any) => {
-      if (error.code === 'EADDRINUSE') {
-        log(`Error: Port ${PORT} is already in use. Please ensure no other instance of the server is running.`);
-      } else {
-        log(`Error starting server: ${error.message}`);
-      }
-      process.exit(1);
-    });
+    const ALTERNATIVE_PORTS = [5001, 5002, 5003, 5432, 6000];
+    
+    const startServer = (port: number, attemptIndex = 0) => {
+      server.listen(port, "0.0.0.0", () => {
+        log(`Server started successfully on port ${port}`);
+      }).on('error', (error: any) => {
+        if (error.code === 'EADDRINUSE') {
+          log(`Port ${port} is already in use.`);
+          
+          // Try next alternative port
+          if (attemptIndex < ALTERNATIVE_PORTS.length) {
+            const nextPort = ALTERNATIVE_PORTS[attemptIndex];
+            log(`Attempting to use alternative port: ${nextPort}`);
+            startServer(nextPort, attemptIndex + 1);
+          } else {
+            log(`Error: All ports are in use. Please close other running servers or specify a different port.`);
+            process.exit(1);
+          }
+        } else {
+          log(`Error starting server: ${error.message}`);
+          process.exit(1);
+        }
+      });
+    };
+    
+    startServer(PORT);
 
     // Handle shutdown gracefully
     process.on("SIGTERM", () => {
