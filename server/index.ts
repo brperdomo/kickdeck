@@ -151,26 +151,43 @@ async function testDbConnection() {
     const ALTERNATIVE_PORTS = [5001, 5002, 5003, 5432, 6000];
     
     const startServer = (port: number, attemptIndex = 0) => {
-      server.listen(port, "0.0.0.0", () => {
-        log(`Server started successfully on port ${port}`);
-      }).on('error', (error: any) => {
-        if (error.code === 'EADDRINUSE') {
-          log(`Port ${port} is already in use.`);
-          
-          // Try next alternative port
-          if (attemptIndex < ALTERNATIVE_PORTS.length) {
-            const nextPort = ALTERNATIVE_PORTS[attemptIndex];
-            log(`Attempting to use alternative port: ${nextPort}`);
-            startServer(nextPort, attemptIndex + 1);
+      try {
+        const serverInstance = server.listen(port, "0.0.0.0", () => {
+          log(`Server started successfully on port ${port}`);
+        });
+        
+        serverInstance.on('error', (error: any) => {
+          if (error.code === 'EADDRINUSE') {
+            log(`Port ${port} is already in use.`);
+            
+            // Close the server to prevent the error from propagating up
+            serverInstance.close();
+            
+            // Try next alternative port
+            if (attemptIndex < ALTERNATIVE_PORTS.length) {
+              const nextPort = ALTERNATIVE_PORTS[attemptIndex];
+              log(`Attempting to use alternative port: ${nextPort}`);
+              startServer(nextPort, attemptIndex + 1);
+            } else {
+              log(`Error: All ports are in use. Please close other running servers or specify a different port.`);
+              process.exit(1);
+            }
           } else {
-            log(`Error: All ports are in use. Please close other running servers or specify a different port.`);
+            log(`Error starting server: ${error.message}`);
             process.exit(1);
           }
+        });
+      } catch (error) {
+        log(`Error in startServer: ${(error as Error).message}`);
+        if (attemptIndex < ALTERNATIVE_PORTS.length) {
+          const nextPort = ALTERNATIVE_PORTS[attemptIndex];
+          log(`Attempting to use alternative port: ${nextPort}`);
+          startServer(nextPort, attemptIndex + 1);
         } else {
-          log(`Error starting server: ${error.message}`);
+          log(`Error: All ports are in use. Please close other running servers or specify a different port.`);
           process.exit(1);
         }
-      });
+      }
     };
     
     startServer(PORT);
