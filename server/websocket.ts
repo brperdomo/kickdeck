@@ -19,6 +19,7 @@ interface ChatMessage {
 export function setupWebSocketServer(server: Server) {
   const wss = new WebSocketServer({ 
     server,
+    path: "/ws", // Define a specific path for WebSocket connections
     verifyClient: ({ req }, done) => {
       // Skip verification for Vite HMR
       if (req.headers['sec-websocket-protocol'] === 'vite-hmr') {
