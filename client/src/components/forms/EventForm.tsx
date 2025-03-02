@@ -50,6 +50,7 @@ import {
   AdminModalProps,
 } from "./event-form-types";
 import { ComplexSelector } from "@/components/events/ComplexSelector";
+import { InfoPopover } from "@/components/ui/InfoPopover"; // Import added here
 
 interface EventFormValues extends EventInformationValues {
   ageGroups: AgeGroup[];
