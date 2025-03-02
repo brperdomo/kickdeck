@@ -1,4 +1,3 @@
-
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -102,7 +101,6 @@ import { Route, Switch } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "./components/ui/toaster";
-import AdminDashboard from "./pages/admin/dashboard";
 import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
 import CreateEventPage from "./pages/create-event";
@@ -129,9 +127,10 @@ import { AuthProvider } from "./hooks/use-auth";
 import { useTheme } from "./hooks/use-theme";
 import AdminLayout from "./components/layouts/admin-layout";
 import EmailTemplatesPage from "./pages/admin/email-templates";
+import AdminDashboard from "./pages/admin/dashboard";
 
 // Create a client
-export const queryClient = new QueryClient({
+const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
