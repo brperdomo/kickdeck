@@ -1991,6 +1991,69 @@ res.status(500).send("Failed to update complex status");
         res.status(500).send("Failed to fetch events");
       }
     });
+    
+    // Add endpoint to get event details for editing
+    app.get('/api/admin/events/:id/edit', isAdmin, async (req, res) => {
+      try {
+        const eventId = req.params.id;
+        
+        // Fetch the base event data
+        const [event] = await db
+          .select()
+          .from(events)
+          .where(eq(events.id, eventId))
+          .limit(1);
+          
+        if (!event) {
+          return res.status(404).json({ error: "Event not found" });
+        }
+        
+        // Fetch age groups for this event
+        const ageGroups = await db
+          .select()
+          .from(eventAgeGroups)
+          .where(eq(eventAgeGroups.eventId, eventId));
+          
+        // Fetch selected complexes
+        const complexRelations = await db
+          .select({
+            complexId: eventComplexes.complexId
+          })
+          .from(eventComplexes)
+          .where(eq(eventComplexes.eventId, eventId));
+          
+        const selectedComplexIds = complexRelations.map(relation => relation.complexId);
+        
+        // Fetch field sizes
+        const fieldSizes = await db
+          .select()
+          .from(eventFieldSizes)
+          .where(eq(eventFieldSizes.eventId, eventId));
+          
+        // Create a map of field ID to field size
+        const complexFieldSizes = fieldSizes.reduce((acc, curr) => {
+          acc[curr.fieldId] = curr.fieldSize;
+          return acc;
+        }, {});
+        
+        // Combine all the data
+        const eventData = {
+          ...event,
+          ageGroups,
+          selectedComplexIds,
+          complexFieldSizes
+        };
+        
+        res.json(eventData);
+      } catch (error) {
+        console.error('Error fetching event details for editing:', error);
+        console.error("Error details:", error);
+        res.status(500).json({ 
+          error: error instanceof Error ? error.message : "Failed to fetch event details",
+          details: error instanceof Error ? error.stack : undefined
+        });
+      }
+    });
 
     // Bulk delete events endpoint    
     app.delete('/api/admin/events/bulk', isAdmin, async (req, res) => {
