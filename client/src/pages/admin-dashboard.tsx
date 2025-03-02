@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation } from "wouter";
-import { Link2, X, Ticket, Plus } from "lucide-react";
+import { Link2, X, Ticket, Plus, ChevronDown, LogOut } from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import { useToast } from "@/hooks/use-toast";
@@ -23,12 +23,9 @@ import {
   Shield,
   UserPlus,
   Home,
-  LogOut,
   FileText,
   User,
   Palette,
-  ChevronRight,
-  Loader2,
   CreditCard,
   Search,
   ClipboardList,
@@ -39,7 +36,6 @@ import {
   DollarSign,
   Settings,
   Users,
-  ChevronDown,
   Edit,
   Trash,
   Eye,
@@ -51,7 +47,7 @@ import {
   CalendarDays,
   ImageIcon,
   FormInput,
-  Mail, // Add Mail icon for email templates
+  Mail,
 } from "lucide-react";
 import {
   Table,
@@ -90,9 +86,9 @@ import { FieldEditor } from "@/components/FieldEditor";
 import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
 import { useDropzone } from 'react-dropzone';
 import { FileManager } from "@/components/admin/FileManager";
-import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
+import { FormTemplatesView } from "@/components/admin/FormTemplatesView";
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
-import { Link } from "wouter"; // Added import for Link
+import { Link } from "wouter";
 
 function AdminBanner() {
   const { settings } = useOrganizationSettings();
@@ -119,7 +115,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates' | 'email-templates'; // Added 'email-templates'
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates' | 'email-templates';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -977,7 +973,7 @@ function OrganizationSettingsForm() {
       // Import Vibrant using dynamic import
       const Vibrant = (await import('node-vibrant')).default;
 
-      // Create new Vibrant instance
+      //      // Create new Vibrant instance
       const v = new Vibrant(objectUrl);
 
       // Get the palette with error handling
@@ -1616,12 +1612,16 @@ function TeamsView() {
   );
 }
 
-function AdminDashboard() {
+export function AdminDashboard() {
   const { user, logout } = useUser();
   const [, setLocation] = useLocation();
   const [view, setView] = useState<View>('events');
   const [settingsView, setSettingsView] = useState<SettingsView>('general');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [showUpdatesLog, setShowUpdatesLog] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
 
   // Add email templates to the navigation items
   const navigationItems = [
@@ -1679,22 +1679,9 @@ function AdminDashboard() {
 
   useEffect(() => {
     if (!user) {
-      return; // Wait for user data to load
-    }
-    if (!isAdminUser(user)) {
       setLocation("/");
     }
   }, [user, setLocation]);
-
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
 
   const handleLogout = () => {
     setShowLogoutOverlay(true);
@@ -1750,36 +1737,57 @@ function AdminDashboard() {
       case 'formTemplates':
         return <FormTemplatesView />;
       case 'email-templates':
-        return <EmailTemplatesView/>; // Add EmailTemplatesView component here
+        return <EmailTemplatesView/>;
       default:
         return <div>Feature coming soon</div>;
     }
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-64 bg-card border-r flex flex-col h-full">
-        <div className="p-4 flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center gap-2 mb-6">
-            <Calendar className="h-6 w-6 text-primary" />
-            <h1 className="font-semibold text-xl">MatchPro Dashboard</h1>
+      <div className="w-64 bg-white shadow-lg">
+        <div className="flex flex-col h-full">
+          <div className="p-4 border-b">
+            <h2 className="text-xl font-bold text-green-600">MatchPro</h2>
           </div>
 
           {/* Navigation */}
-          <div className="space-y-2">
-            {navigationItems.map((item) => (
-              <Button
-                key={item.value}
-                variant={view === item.value ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setView(item.value)}
-              >
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.label}
-              </Button>
-            ))}
+          <nav className="flex-1 p-4">
+            <div className="space-y-2">
+              {navigationItems.map((item) => (
+                <Button
+                  key={item.value}
+                  variant={view === item.value ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => setView(item.value)}
+                >
+                  <item.icon className="mr-2 h-4 w-4" />
+                  {item.label}
+                </Button>
+              ))}
+            </div>
+          </nav>
+
+          {/* User Profile Section */}
+          <div className="p-4 border-t">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+              </div>
+              <ChevronDown className="h-4 w-4 text-gray-500" />
+            </div>
+            <Button
+              variant="outline"
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
           </div>
         </div>
       </div>
@@ -1787,7 +1795,7 @@ function AdminDashboard() {
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
         <AdminBanner />
-        <div className="p-8">
+        <div className="container mx-auto px-6 py-8">
           {/* Welcome Card */}
           {showWelcome && (
             <Card className="mb-6 relative">
@@ -1797,26 +1805,21 @@ function AdminDashboard() {
               >
                 <X className="h-4 w-4" />
               </button>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <UserCircle className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold">Welcome back, {user?.firstName}!</h2>
-                    <p className="text-muted-foreground">
-                      Manage your organization's activities and settings from this dashboard.
-                    </p>
-                  </div>
-                </div>
+              <CardHeader>
+                <CardTitle>Welcome to your MatchPro Admin Dashboard</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>Get started by exploring the different sections in the sidebar.</p>
               </CardContent>
             </Card>
           )}
 
+          {/* Main Content View */}
           {renderView()}
         </div>
       </div>
 
+      {/* Modals and Overlays */}
       <UpdatesLogModal
         open={showUpdatesLog}
         onOpenChange={setShowUpdatesLog}
@@ -2005,7 +2008,7 @@ function CouponManagement() {
   const eventId = params.split('/')[2];
 
   const couponsQuery = useQuery({
-    queryKey: ['/api/admin/coupons', eventId],
+    queryKey:['/api/admin/coupons', eventId],
     queryFn: async () => {
       const response = await fetch(`/api/admin/coupons?eventId=${eventId}`);
       if (!response.ok) throw new Error('Failed to fetch coupons');
