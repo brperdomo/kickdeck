@@ -57,7 +57,7 @@ export const users = pgTable("users", {
   lastName: text("lastName").notNull(),
   isAdmin: boolean("isAdmin").default(false).notNull(),
   isParent: boolean("isParent").default(false).notNull(),
-  householdId: integer("household_id").references(() => households.id),
+  householdId: integer("householdId").references(() => households.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
