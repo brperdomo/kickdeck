@@ -3,7 +3,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrganizationSettingsForm } from "./OrganizationSettingsForm";
 import { SeasonalScopeSettings } from "./SeasonalScopeSettings";
 import { StyleSettingsView } from "./StyleSettingsView";
-import { EmailTemplateManagement } from "./EmailTemplateManagement";
 
 export function GeneralSettingsView() {
   return (
@@ -15,7 +14,6 @@ export function GeneralSettingsView() {
           <TabsTrigger value="organization">Organization</TabsTrigger>
           <TabsTrigger value="seasonal">Seasonal Scope</TabsTrigger>
           <TabsTrigger value="styling">UI Styling</TabsTrigger>
-          <TabsTrigger value="email">Email Templates</TabsTrigger>
         </TabsList>
 
         <TabsContent value="organization">
@@ -35,14 +33,6 @@ export function GeneralSettingsView() {
 
         <TabsContent value="styling">
           <StyleSettingsView />
-        </TabsContent>
-
-        <TabsContent value="email">
-          <Card>
-            <CardContent>
-              <EmailTemplateManagement />
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>

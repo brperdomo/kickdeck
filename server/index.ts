@@ -74,11 +74,6 @@ async function testDbConnection() {
     // Create admin user if it doesn't exist
     await createAdmin();
     log("Admin user setup completed");
-    
-    // Initialize email service
-    const { initEmailService } = await import('./services/email-service');
-    await initEmailService();
-    log("Email service initialized");
 
     // Create seasonal scopes table if it doesn't exist
     await db.execute(`
@@ -107,40 +102,29 @@ async function testDbConnection() {
     // Register routes first to ensure all middleware is set up
     const server = registerRoutes(app);
 
-    // We'll create the WebSocket server after the HTTP server has started successfully
-    let wss: WebSocketServer;
-    
-    // Function to initialize WebSocket after server is listening
-    const initializeWebSocket = () => {
-      // Create WebSocket server
-      wss = new WebSocketServer({ 
-        server,
-        path: "/ws", // Use consistent path with setupWebSocketServer
-        verifyClient: (info) => {
-          const protocol = info.req.headers['sec-websocket-protocol'];
-          return !protocol || protocol !== 'vite-hmr';
-        }
+    // Create WebSocket server
+    const wss = new WebSocketServer({ 
+      server,
+      path: "/api/ws",
+      verifyClient: (info) => {
+        const protocol = info.req.headers['sec-websocket-protocol'];
+        return !protocol || protocol !== 'vite-hmr';
+      }
+    });
+
+    // WebSocket connection handling
+    wss.on('connection', (ws) => {
+      log("New WebSocket connection established");
+
+      ws.on('message', (message) => {
+        // Handle incoming messages
+        log("Received WebSocket message: " + message);
       });
 
-      // Log WebSocket server setup
-      log("WebSocket server created with path: /ws");
-
-      // WebSocket connection handling
-      wss.on('connection', (ws) => {
-        log("New WebSocket connection established");
-
-        ws.on('message', (message) => {
-          // Handle incoming messages
-          log("Received WebSocket message: " + message);
-        });
-
-        ws.on('close', () => {
-          log("WebSocket connection closed");
-        });
+      ws.on('close', () => {
+        log("WebSocket connection closed");
       });
-    };
-
-    // WebSocket initialization happens after server starts successfully
+    });
 
     if (app.get("env") === "development") {
       // Setup Vite middleware
@@ -161,37 +145,38 @@ async function testDbConnection() {
 
     // Start the server
     const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-    const ALTERNATIVE_PORTS = [5001, 5002, 5003, 5432, 6000];
     
-    const startServer = (port: number, attemptIndex = 0) => {
-      const serverInstance = server.listen(port, "0.0.0.0", () => {
-        log(`Server started successfully on port ${port}`);
-        
-        // Initialize WebSocket server after HTTP server starts successfully
-        initializeWebSocket();
-      });
-      
-      serverInstance.on('error', (error: any) => {
-        if (error.code === 'EADDRINUSE') {
-          log(`Port ${port} is already in use.`);
-          
-          // Try next alternative port
-          if (attemptIndex < ALTERNATIVE_PORTS.length) {
-            const nextPort = ALTERNATIVE_PORTS[attemptIndex];
-            log(`Attempting to use alternative port: ${nextPort}`);
-            startServer(nextPort, attemptIndex + 1);
-          } else {
-            log(`Error: All ports are in use. Please close other running servers or specify a different port.`);
-            process.exit(1);
-          }
-        } else {
-          log(`Error starting server: ${error.message}`);
-          process.exit(1);
-        }
+    const findAvailablePort = async (startPort: number): Promise<number> => {
+      return new Promise((resolve, reject) => {
+        const tryPort = async (port: number) => {
+          const { createServer } = await import('http');
+          const tempServer = createServer();
+          tempServer.listen(port, "0.0.0.0")
+            .on('listening', () => {
+              tempServer.close(() => resolve(port));
+            })
+            .on('error', (err: any) => {
+              if (err.code === 'EADDRINUSE') {
+                log(`Port ${port} is busy, trying ${port + 1}`);
+                tryPort(port + 1);
+              } else {
+                reject(err);
+              }
+            });
+        };
+        tryPort(startPort);
       });
     };
-    
-    startServer(PORT);
+
+    try {
+      const availablePort = await findAvailablePort(PORT);
+      server.listen(availablePort, "0.0.0.0", () => {
+        log(`Server started successfully on port ${availablePort}`);
+      });
+    } catch (error) {
+      log(`Error starting server: ${(error as Error).message}`);
+      process.exit(1);
+    }
 
     // Handle shutdown gracefully
     process.on("SIGTERM", () => {

@@ -37,19 +37,6 @@ async function createTables() {
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
 
-      CREATE TABLE IF NOT EXISTS email_templates (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL,
-        type TEXT NOT NULL,
-        subject TEXT NOT NULL,
-        content TEXT NOT NULL,
-        sender_name TEXT NOT NULL,
-        sender_email TEXT NOT NULL,
-        is_default BOOLEAN NOT NULL DEFAULT false,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-      );
-
       CREATE TABLE IF NOT EXISTS form_responses (
         id SERIAL PRIMARY KEY,
         template_id INTEGER NOT NULL REFERENCES event_form_templates(id),

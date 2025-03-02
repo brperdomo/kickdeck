@@ -1,6 +1,6 @@
 import { pgTable, text, serial, boolean, jsonb, time, integer, date, timestamp, bigint, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { z } from "zod";
 
 export const organizationSettings = pgTable("organization_settings", {
@@ -163,7 +163,7 @@ export const eventAgeGroups = pgTable("event_age_groups", {
 export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {
   ageGroup: z.string().min(1, "Age group is required"),
   birthYear: z.number().int("Birth year must be a valid year"),
-  gender: z.enum(["Boys", "Girls"]),
+  gender: z.enum(["Boys", "Girls"], "Gender must be either Boys or Girls"),
   divisionCode: z.string().min(1, "Division code is required"),
   projectedTeams: z.number().int().min(0, "Projected teams must be 0 or greater").optional(),
   fieldSize: z.string().min(1, "Field size is required"),
@@ -369,25 +369,15 @@ export const chatParticipants = pgTable("chat_participants", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const messages = pgTable('messages', {
-  id: serial('id').primaryKey(),
-  content: text('content').notNull(),
-  chatRoomId: integer('chat_room_id').references(() => chatRooms.id, { onDelete: 'cascade' }),
-  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at'),
-});
-
-export const activityLogs = pgTable('activity_logs', {
-  id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => users.id, { onDelete: 'set null' }),
-  action: text('action').notNull(),
-  entityType: text('entity_type'),
-  entityId: text('entity_id'),
-  details: jsonb('details'),
-  ipAddress: text('ip_address'),
-  userAgent: text('user_agent'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  chatRoomId: integer("chat_room_id").notNull().references(() => chatRooms.id),
+  userId: integer("user_id").notNull().references(() => users.id),
+  content: text("content").notNull(),
+  type: text("type").notNull().default('text'),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const insertChatRoomSchema = createInsertSchema(chatRooms, {
@@ -605,6 +595,15 @@ export type SelectRole = typeof roles.$inferSelect;
 export type InsertAdminRole = typeof adminRoles.$inferInsert;
 export type SelectAdminRole = typeof adminRoles.$inferSelect;
 
+export const adminFormSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  roles: z.array(z.string()).min(1, "At least one role is required"),
+});
+
+export type AdminFormValues = z.infer<typeof adminFormSchema>;
 
 export const updates = pgTable("updates", {
   id: serial("id").primaryKey(),
@@ -718,7 +717,7 @@ export const coupons = pgTable("coupons", {
 
 export const insertCouponSchema = createInsertSchema(coupons, {
   code: z.string().min(1, "Coupon code is required"),
-  discountType: z.enum(['fixed', 'percentage']),
+  discountType: z.enum(['fixed', 'percentage'], "Invalid discount type"),
   amount: z.number().positive("Amount must be positive"),
   expirationDate: z.string().min(1, "Expiration date is required"),
   description: z.string().optional(),
@@ -852,43 +851,3 @@ export const formResponsesRelations = relations(formResponses, ({ one }) => ({
     references: [teams.id],
   }),
 }));
-
-export const emailTemplates = pgTable("email_templates", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  type: text("type").notNull(), // registration, payment, password_reset, etc.
-  subject: text("subject").notNull(),
-  content: text("content").notNull(),
-  senderName: text("sender_name").notNull(),
-  senderEmail: text("sender_email").notNull(),
-  isDefault: boolean("is_default").default(false).notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
-
-export const insertEmailTemplateSchema = createInsertSchema(emailTemplates, {
-  name: z.string().min(1, "Template name is required"),
-  type: z.string().min(1, "Template type is required"),
-  subject: z.string().min(1, "Subject is required"),
-  content: z.string().min(1, "Content is required"),
-  senderName: z.string().min(1, "Sender name is required"),
-  senderEmail: z.string().email("Invalid sender email"),
-  isDefault: z.boolean().default(false),
-});
-
-export const selectEmailTemplateSchema = createSelectSchema(emailTemplates);
-
-export type InsertEmailTemplate = typeof emailTemplates.$inferInsert;
-export type SelectEmailTemplate = typeof emailTemplates.$inferSelect;
-
-export const adminFormSchema = z.object({
-  email: z.string().email("Please enter a valid email address").min(1, "Email is required"),
-  username: z.string().min(3, "Username must be at least 3 characters").max(50),
-  password: passwordSchema,
-  firstName: z.string().min(1, "First name is required").max(50),
-  lastName: z.string().min(1, "Last name is required").max(50),
-  phone: z.string().nullable().optional(),
-  isAdmin: z.boolean().default(true),
-});
-
-export type AdminFormData = z.infer<typeof adminFormSchema>;

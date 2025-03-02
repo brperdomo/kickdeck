@@ -13,13 +13,3 @@ export const db = drizzle({
   schema,
   ws: ws,
 });
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from './schema';
-
-// Create a PostgreSQL client
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/matchpro';
-const client = postgres(connectionString);
-
-// Create a drizzle client
-export const db = drizzle(client, { schema });

@@ -8,7 +8,6 @@ import uploadRouter from "./routes/upload";
 import accountingCodesRouter from "./routes/admin/accounting-codes";
 import feesRouter from "./routes/admin/fees";
 import eventsRouter from "./routes/admin/events";
-import emailTemplatesRouter from "./routes/admin/email-templates";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { sql, eq, and, or, inArray } from "drizzle-orm";
 import {
@@ -49,10 +48,6 @@ import session from "express-session";
 import passport from "passport";
 import { setupWebSocketServer } from "./websocket";
 import { randomBytes } from "crypto";
-import activityLogsRouter from "./routes/admin/activity-logs";
-import passwordResetRouter from "./routes/auth/password-reset";
-import verifyTokenRouter from "./routes/auth/verify-token"; // Added import
-import resetConfirmRouter from "./routes/auth/reset-confirm"; // Added import
 
 // Admin middleware (unchanged)
 const isAdmin = (req: Request, res: Response, next: Function) => {
@@ -81,8 +76,6 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
     app.use('/api/admin/events', isAdmin, eventsRouter);
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path
-    app.use('/api/admin/email-templates', isAdmin, emailTemplatesRouter);
-    app.use('/api/admin/activity-logs', isAdmin, activityLogsRouter);
 
     // Register coupon routes
     app.post('/api/admin/coupons', isAdmin, createCoupon);
@@ -983,7 +976,8 @@ export function registerRoutes(app: Express): Server {
             .update(fields)
             .set({
               isOpen,
-              updatedAt: new Date().toISOString()            })
+              updatedAt: new Date().toISOString(),
+            })
             .where(eq(fields.complexId, complexId));
 
           res.json(updatedComplex);
@@ -992,7 +986,7 @@ export function registerRoutes(app: Express): Server {
         console.error('Error updating complex status:', error);
         // Added basic error logging for white screen debugging.
         console.error("Error details:", error);
-res.status(500).send("Failed to update complex status");
+        res.status(500).send("Failed to update complex status");
       }
     });
 
@@ -1145,6 +1139,138 @@ res.status(500).send("Failed to update complex status");
         res.status(500).send("Internal server error");
       }
     });
+
+    // Coupon management endpoints
+    app.get('/api/admin/coupons', isAdmin, async (req, res) => {
+      try {
+        const eventId = req.query.eventId ? Number(req.query.eventId) : undefined;
+        const query = db.select().from(coupons);
+
+        if (eventId) {
+          query.where(eq(coupons.eventId, eventId));
+        }
+
+        const allCoupons = await query;
+        res.json(allCoupons);
+      } catch (error) {
+        console.error('Error fetching coupons:', error);
+        res.status(500).json({ message: "Failed to fetch coupons" });
+      }
+    });
+
+    app.post('/api/admin/coupons', isAdmin, async (req, res) => {
+      try {
+        const {
+          code,
+          discountType,
+          amount,
+          expirationDate,
+          description,
+          eventId,
+          maxUses,
+        } = req.body;
+
+        // Verify if coupon code already exists
+        const [existingCoupon] = await db
+          .select()
+          .from(coupons)
+          .where(eq(coupons.code, code))
+          .limit(1);
+
+        if (existingCoupon) {
+          return res.status(400).json({ message: "Coupon code already exists" });
+        }
+
+        // Convert eventId to number or null
+        const numericEventId = eventId ? Number(eventId) : null;
+
+        const [newCoupon] = await db
+          .insert(coupons)
+          .values({
+            code,
+            discountType,
+            amount: Number(amount),
+            expirationDate: expirationDate ? new Date(expirationDate) : null,
+            description: description || null,
+            eventId: numericEventId,
+            maxUses: maxUses ? Number(maxUses) : null,
+            usageCount: 0,
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .returning();
+
+        res.json(newCoupon);
+      } catch (error) {
+        console.error('Error creating coupon:', error);
+        res.status(500).json({ message: "Failed to create coupon" });
+      }
+    });
+
+    app.patch('/api/admin/coupons/:id', isAdmin, async (req, res) => {
+      try {
+        const couponId = parseInt(req.params.id);
+        const {
+          code,
+          discountType,
+          amount,
+          expirationDate,
+          description,
+          eventId,
+          maxUses,
+          isActive
+        } = req.body;
+
+        // Check if the coupon exists
+        const [existingCoupon] = await db
+          .select()
+          .from(coupons)
+          .where(eq(coupons.id, couponId))
+          .limit(1);
+
+        if (!existingCoupon) {
+          return res.status(404).json({ message: "Coupon not found" });
+        }
+
+        // Check if the new code already exists (if code is being changed)
+        if (code !== existingCoupon.code) {
+          const [duplicateCoupon] = await db
+            .select()
+            .from(coupons)
+            .where(eq(coupons.code, code))
+            .limit(1);
+
+          if (duplicateCoupon) {
+            return res.status(400).json({ message: "Coupon code already exists" });
+          }
+        }
+
+        // Convert eventId to number or null
+        const numericEventId = eventId ? Number(eventId) : null;
+
+        const [updatedCoupon] = await db
+          .update(coupons)
+          .set({
+            code,
+            discountType,
+            amount: Number(amount),
+            expirationDate: expirationDate ? new Date(expirationDate) : null,
+            description: description || null,
+            eventId: numericEventId,
+            maxUses: maxUses ? Number(maxUses) : null,
+            isActive,
+            updatedAt: new Date()
+          })
+          .where(eq(coupons.id, couponId))
+          .returning();
+
+        res.json(updatedCoupon);
+      } catch (error) {
+        console.error('Error updating coupon:', error);
+        res.status(500).json({ message: "Failed to update coupon" });
+      }
+    }); 
 
     // Coupon management endpoints
     app.get('/api/admin/coupons', isAdmin, async (req, res) => {
@@ -1985,7 +2111,996 @@ res.status(500).send("Failed to update complex status");
       }
     });
 
-    // Bulk delete events endpoint    
+    // Add this new endpoint to get event details for editing
+    app.get('/api/admin/events/:id/edit', async (req, res) => {
+      try {
+        const eventId = req.params.id;
+
+        // Get event details
+        const [event] = await db
+          .select()
+          .from(events)
+          .where(eq(events.id, eventId));
+
+        if (!event) {
+          return res.status(404).send("Event not found");
+        }
+
+        // Get age groups with their teams count
+        const ageGroups = await db
+          .select({
+            ageGroup: eventAgeGroups,
+            teamCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
+          })
+          .from(eventAgeGroups)
+          .leftJoin(teams, eq(teams.ageGroupId, eventAgeGroups.id))
+          .where(eq(eventAgeGroups.eventId, eventId))
+          .groupBy(eventAgeGroups.id);
+
+        // Get all complexes with their fields and full metadata
+        const complexData = await db
+          .select({
+            complex: complexes,
+            fields: sql<any>`json_agg(
+              CASE WHEN ${fields.id} IS NOT NULL THEN
+                json_build_object(
+                  'id', ${fields.id},
+                  'name', ${fields.name},
+                  'hasLights', ${fields.hasLights},
+                  'hasParking', ${fields.hasParking},
+                  'isOpen', ${fields.isOpen},
+                  'specialInstructions', ${fields.specialInstructions}
+                )
+              ELSE NULL
+              END
+            ) FILTER (WHERE ${fields.id} IS NOT NULL)`.mapWith((f) => f || []),
+            openFields: sql<number>`count(case when ${fields.isOpen} = true then 1 end)`.mapWith(Number),
+            closedFields: sql<number>`count(case when ${fields.isOpen} = false then 1 end)`.mapWith(Number),
+          })
+          .from(complexes)
+          .leftJoin(fields, eq(complexes.id, fields.complexId))
+          .groupBy(complexes.id)
+          .orderBy(complexes.name);
+
+        // Get scoring rules
+        const scoringRules = await db
+          .select()
+          .from(eventScoringRules)
+          .where(eq(eventScoringRules.eventId, eventId));
+
+        // Get complex assignments
+        const complexAssignments = await db
+          .select()
+          .from(eventComplexes)
+          .where(eq(eventComplexes.eventId, eventId));
+
+        // Get field size assignments
+        const fieldSizes = await db
+          .select()
+          .from(eventFieldSizes)
+          .where(eq(eventFieldSizes.eventId, eventId));
+
+        // Get all administrators
+        const administrators = await db
+          .select({
+            id: users.id,
+            username: users.username,
+            firstName: users.firstName,
+            lastName: users.lastName,
+            email: users.email
+          })
+          .from(users)
+          .where(eq(users.isAdmin, true));
+
+        // Get the seasonal scope ID and age group IDs from the event
+        const seasonalScope = await db
+          .select()
+          .from(seasonalScopes)
+          .where(eq(seasonalScopes.id, eventAgeGroups[0]?.seasonalScopeId ?? 0))
+          .limit(1)
+          .then(rows => rows[0]);
+
+        // Format response to match create event view structure exactly
+        const response = {
+          ...event,
+          ageGroups: ageGroups.map(({ ageGroup, teamCount }) => ({
+            ...ageGroup,
+            teamCount,
+            assignedFields: [], // Will be populated by frontend
+            assignedTeams: []   // Will be populated by frontend
+          })),
+          complexes: complexData.map(({ complex, fields, openFields, closedFields }) => ({
+            ...complex,
+            fields: fields || [],
+            openFields: openFields || 0,
+            closedFields: closedFields || 0
+          })),
+          selectedComplexIds: complexAssignments.map(a => a.complexId),
+          complexFieldSizes: Object.fromEntries(
+            fieldSizes.map(f => [f.fieldId, f.fieldSize])
+          ),
+          scoringRules,
+          administrators,
+          // Add selected scope and age group IDs
+          selectedScopeId: seasonalScope?.id || null,
+          selectedAgeGroupIds: ageGroups.map(({ ageGroup }) => ageGroup.id),
+          // Additional metadata needed by create view
+          availableAgeGroups: ageGroups.map(({ ageGroup }) => ageGroup.ageGroup),
+          availableFieldSizes: [...new Set(fieldSizes.map(f => f.fieldSize))].filter(Boolean),
+          timeZones: event.timezone ? [event.timezone] : [], // Include current timezone
+          validationErrors: {} // Empty object for frontend validation
+        };
+
+        res.json(response);
+      } catch (error) {
+        console.error('Error fetching event details:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to fetch event details");
+      }
+    });
+
+    // Add this new endpoint after the existing event endpoints
+    app.get('/api/admin/events/:id', isAdmin, async (req, res) => {
+      try {
+        const eventId = req.params.id;
+
+        // Get event details
+        const [event] = await db
+          .select()
+          .from(events)
+          .where(eq(events.id, eventId));
+
+        if (!event) {
+          return res.status(404).send("Event not found");
+        }
+
+        // Get age groups
+        const ageGroups = await db
+          .select()
+          .from(eventAgeGroups)
+          .where(eq(eventAgeGroups.eventId, eventId));
+
+        // Get scoring rules
+        const scoringRules = await db
+          .select()
+          .from(eventScoringRules)
+          .where(eq(eventScoringRules.eventId, eventId));
+
+        // Get complex assignments
+        const complexAssignments = await db
+          .select()
+          .from(eventComplexes)
+          .where(eq(eventComplexes.eventId, eventId));
+
+        // Get field size assignments
+        const fieldSizes = await db
+          .select()
+          .from(eventFieldSizes)
+          .where(eq(eventFieldSizes.eventId, eventId));
+
+        // Format response
+        const response = {
+          ...event,
+          ageGroups,
+          scoringRules,
+          selectedComplexIds: complexAssignments.map(a => a.complexId),
+          complexFieldSizes: Object.fromEntries(
+            fieldSizes.map(f => [f.fieldId, f.fieldSize])
+          )
+        };
+
+        res.json(response);
+      } catch (error) {
+        console.error('Error fetching event details:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to fetch event details");
+      }
+    });
+
+    // Add these new endpoints for scheduling functionality
+    app.get('/api/admin/events/:id/schedule', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.params.id);
+
+        // Fetch all games for this event with related data
+        const schedule = await db
+          .select({
+            game: games,
+            homeTeam: teams,
+            awayTeam: sql<{ id: number; name: string }>`json_build_object('id', ${sql.raw('away_teams')}.id, 'name', ${sql.raw('away_teams')}.name)`,
+            field: fields,
+            timeSlot: gameTimeSlots,
+            ageGroup: eventAgeGroups,
+          })
+          .from(games)
+          .leftJoin(teams, eq(games.homeTeamId, teams.id))
+          .leftJoin(sql.raw('teams as away_teams'), eq(games.awayTeamId, sql.raw('away_teams.id')))
+          .leftJoin(fields, eq(games.fieldId, fields.id))
+          .leftJoin(gameTimeSlots, eq(games.timeSlotId, gameTimeSlots.id))
+          .leftJoin(eventAgeGroups, eq(games.ageGroupId, eventAgeGroups.id))
+          .where(eq(games.eventId, eventId))
+          .orderBy(gameTimeSlots.startTime);
+
+        // Format the schedule for frontend display with null checks
+        const formattedSchedule = schedule
+          .filter(item => item.timeSlot && item.field && item.homeTeam && item.ageGroup)
+          .map(item => ({
+            id: item.game.id,
+            startTime: item.timeSlot!.startTime,
+            endTime: item.timeSlot!.endTime,
+            fieldName: item.field!.name,
+            ageGroup: item.ageGroup!.ageGroup,
+            homeTeam: item.homeTeam!.name,
+            awayTeam: (item.awayTeam as { name: string }).name,
+            status: item.game.status,
+          }));
+
+        res.json({ games: formattedSchedule });
+      } catch (error) {
+        console.error('Error fetching schedule:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to fetch schedule");
+      }
+    });
+
+    app.post('/api/admin/events/:id/generate-schedule', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.params.id);
+        const { gamesPerDay, minutesPerGame, breakBetweenGames } = req.body;
+
+        // Start a transaction for the entire schedule generation process
+        await db.transaction(async (tx) => {
+          // 1. Fetch event details
+          const [event] = await tx
+            .select()
+            .from(events)
+            .where(eq(events.id, eventId));
+
+          if (!event) {
+            throw new Error("Event not found");
+          }
+
+          // 2. Fetch all age groups for this event
+          const ageGroups = await tx
+            .select()
+            .from(eventAgeGroups)
+            .where(eq(eventAgeGroups.eventId, eventId));
+
+          // 3. Fetch all available fields
+          const eventFields = await tx
+            .select({
+              field: fields,
+              complex: complexes,
+            })
+            .from(eventComplexes)
+            .innerJoin(fields, eq(eventComplexes.complexId, fields.complexId))
+            .innerJoin(complexes, eq(eventComplexes.complexId, complexes.id))
+            .where(eq(eventComplexes.eventId, eventId));
+
+          // 4. Generate time slots for each day
+          const startDate = new Date(event.startDate);
+          const endDate = new Date(event.endDate);
+          const dayCount = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+          for (let dayIndex = 0; dayIndex < dayCount; dayIndex++) {
+            const currentDate = new Date(startDate);
+            currentDate.setDate(currentDate.getDate() + dayIndex);
+
+            for (const { field, complex } of eventFields) {
+              const complexOpenTime = new Date(`${currentDate.toISOString().split('T')[0]}T${complex.openTime}`);
+              const complexCloseTime = new Date(`${currentDate.toISOString().split('T')[0]}T${complex.closeTime}`);
+
+              let currentTime = complexOpenTime;
+              while (currentTime.getTime() + (minutesPerGame * 60 * 1000) <= complexCloseTime.getTime()) {
+                const endTime = new Date(currentTime.getTime() + (minutesPerGame * 60 * 1000));
+
+                await tx.insert(gameTimeSlots).values({
+                  eventId,
+                  fieldId: field.id,
+                  startTime: currentTime.toISOString(),
+                  endTime: endTime.toISOString(),
+                  dayIndex,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),                });
+
+                // Add break time before next game
+                currentTime = new Date(endTime.getTime() + (breakBetweenGames * 60 * 1000));
+              }
+            }
+          }
+
+          // 5. Create tournament groups for each age group
+          for (const ageGroup of ageGroups) {
+            await tx.insert(tournamentGroups).values({
+              eventId,
+              ageGroupId: ageGroup.id,
+              name: `Group A - ${ageGroup.ageGroup}`,
+              type: 'round_robin',
+              stage: 'group',
+              createdAt: new Date().toISOString(),
+            });
+          }
+
+          //          // 6. Schedule will be generated based on registered teams          // This will be implemented in a separate endpoint once teams are registered
+        });
+
+        res.json({ message: "Schedule framework generated successfully" });
+      } catch (error) {
+        console.error('Error generating schedule:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to generate schedule");
+      }
+    });
+
+    // Teams management endpoints
+    app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
+      try {
+        const eventId = req.params.eventId;
+
+        let ageGroups = await db.query.eventAgeGroups.findMany({
+          where: eq(eventAgeGroups.eventId, eventId),
+        });
+
+        // Log the count for debugging
+        console.log(`Fetched ${ageGroups.length} age groups for event ${eventId}`);
+
+        // More targeted deduplication that preserves all relevant groups
+        // Only deduplicate exact duplicates with the same ID
+        const uniqueGroups = [];
+        const seenIds = new Set();
+
+        for (const group of ageGroups) {
+          if (!seenIds.has(group.id)) {
+            seenIds.add(group.id);
+            uniqueGroups.push(group);
+          }
+        }
+
+        console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication`);
+        res.json(uniqueGroups);
+      } catch (error) {
+        console.error('Error fetching age groups:', error);
+        res.status(500).json({ error: 'Failed to fetch age groups' });
+      }
+    });
+
+    app.get('/api/admin/teams', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.query.eventId as string);
+        const ageGroupId = req.query.ageGroupId ? parseInt(req.query.ageGroupId as string) : null;
+
+        let query = db
+          .select({
+            team: teams,
+            ageGroup: eventAgeGroups,
+          })
+          .from(teams)
+          .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
+          .where(eq(teams.eventId, eventId));
+
+        // Add age group filter if specified
+        if (ageGroupId) {
+          query = query.where(eq(teams.ageGroupId, ageGroupId));
+        }
+
+        const results = await query.orderBy(teams.name);
+
+        // Format the response
+        const formattedTeams = results.map(({ team, ageGroup }) => ({
+          ...team,
+          ageGroup: ageGroup?.ageGroup || 'Unknown',
+        }));
+
+        res.json(formattedTeams);
+      } catch (error) {
+        console.error('Error fetching teams:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to fetch teams");
+      }
+    });
+
+    app.post('/api/admin/teams', isAdmin, async (req, res) => {
+      try {
+        const { name, eventId, ageGroup } = req.body;
+
+        if (!name || !eventId || !ageGroup) {
+          return res.status(400).send("Name, event ID, and age group are required");
+        }
+
+        // Get the age group ID first
+        const [ageGroupRecord] = await db
+          .select()
+          .from(eventAgeGroups)
+          .where(and(
+            eq(eventAgeGroups.eventId, eventId),
+            eq(eventAgeGroups.ageGroup, ageGroup)          ));
+
+        if (!ageGroupRecord) {
+          return res.status(404).send("Age group not found");
+        }
+
+        //        // Create the team
+        const [newTeam] = await db
+          .insert(teams)
+          .values({
+            name,
+            eventId,
+            ageGroupId: ageGroupRecord.id,
+            createdAt: new Date().toISOString(),
+          })
+          .returning();
+
+        res.json(newTeam);
+      } catch (error) {
+        console.error('Error creating team:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to create team");
+      }
+    });
+
+    // Add endpoint to get age groups for an event
+    app.get('/api/admin/events/:id/age-groups', isAdmin, async (req, res) => {
+      try {
+        const eventId = parseInt(req.params.id);
+
+        const ageGroups = await db
+          .select({
+            ageGroup: eventAgeGroups.ageGroup,
+            gender: eventAgeGroups.gender,
+            teamCount: sql<number>`count(${teams.id})`.mapWith(Number)
+          })
+          .from(eventAgeGroups)
+          .leftJoin(teams, eq(teams.ageGroupId, eventAgeGroups.id))
+          .where(eq(eventAgeGroups.eventId, eventId))
+          .groupBy(eventAgeGroups.id, eventAgeGroups.ageGroup, eventAgeGroups.gender)
+          .orderBy(eventAgeGroups.ageGroup);
+
+        res.json(ageGroups);
+      } catch (error) {
+        console.error('Error fetching age groups:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to fetch age groups");
+      }
+    });
+
+    // Add administrators endpoint
+    app.post('/api/admin/administrators', isAdmin, async (req, res) => {
+      try {
+        const { firstName, lastName, email, password, roles } = req.body;
+
+        // Check if user exists
+        const [existingUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
+
+        if (existingUser) {
+          return res.status(400).send("User with this email already exists");
+        }
+
+        // Hash the password
+        const hashedPassword = await crypto.hash(password);
+
+        // Start a transaction
+        await db.transaction(async (tx) => {
+          // Create the administrator
+          const [newAdmin] = await tx
+            .insert(users)
+            .values({
+              email,
+              username: email,
+              password: hashedPassword,
+              firstName,
+              lastName,
+              isAdmin: true,
+              isParent: false,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            })
+            .returning();
+
+          // Create roles if they don't exist and assign them
+          for (const roleName of roles) {
+            let [role] = await tx
+              .select()
+              .from(roles)
+              .where(eq(roles.name, roleName))
+              .limit(1);
+
+            if (!role) {
+              [role] = await tx
+                .insert(roles)
+                .values({
+                  name: roleName,
+                  description: `${roleName} role`
+                })
+                .returning();
+            }
+
+            await tx
+              .insert(adminRoles)
+              .values({
+                userId: newAdmin.id,
+                roleId: role.id
+              });
+          }
+
+          // Send response without password
+          const { password: _, ...adminWithoutPassword } = newAdmin;
+          res.status(201).json(adminWithoutPassword);
+        });
+      } catch (error) {
+        console.error('Error creating administrator:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to create administrator");
+      }
+    });
+
+    app.get('/api/admin/administrators', isAdmin, async (req, res) => {
+      try {
+        const administrators = await db
+          .select({
+            id: users.id,
+            email: users.email,
+            firstName: users.firstName,
+            lastName: users.lastName,
+            createdAt: users.createdAt,
+          })
+          .from(users)
+          .where(eq(users.isAdmin, true))
+          .orderBy(users.createdAt);
+
+        res.json(administrators);
+      } catch (error) {
+        console.error('Error fetching administrators:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to fetch administrators");
+      }
+    });
+
+    // Teams management endpoints
+    app.patch('/api/admin/teams/:id', isAdmin, async (req, res) => {
+      try {
+        const teamId = parseInt(req.params.id);
+        const { name, coach, managerName, managerPhone, managerEmail } = req.body;
+
+        const [updatedTeam] = await db
+          .update(teams)
+          .set({
+            name,
+            coach,
+            managerName,
+            managerPhone,
+            managerEmail,
+            updatedAt: new Date().toISOString(),
+          })
+          .where(eq(teams.id, teamId))
+          .returning();
+
+        if (!updatedTeam) {
+          return res.status(404).send("Team not found");
+        }
+
+        res.json(updatedTeam);
+      } catch (error) {
+        console.error('Error updating team:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to update team");
+      }
+    });
+
+    // Form Template endpoints
+    app.get('/api/admin/events/:id/registration-form', isAdmin, async (req, res) => {
+      try {
+        const eventId = req.params.id;
+        const [template] = await db
+          .select({
+            template: eventFormTemplates,
+            fields: sql<any[]>`json_agg(
+              CASE WHEN ${formFields.id} IS NOT NULL THEN
+                json_build_object(
+                  'id', ${formFields.id},
+                  'label', ${formFields.label},
+                  'type', ${formFields.type},
+                  'required', ${formFields.required},
+                  'order', ${formFields.order},
+                  'placeholder', ${formFields.placeholder},
+                  'helpText', ${formFields.helpText},
+                  'validation', ${formFields.validation},
+                  'options', (
+                    SELECT json_agg(
+                      json_build_object(
+                        'id', ${formFieldOptions.id},
+                        'label', ${formFieldOptions.label},
+                        'value', ${formFieldOptions.value},
+                        'order', ${formFieldOptions.order}
+                      ) ORDER BY ${formFieldOptions.order}
+                    )
+                    FROM ${formFieldOptions}
+                    WHERE ${formFieldOptions.fieldId} = ${formFields.id}
+                  )
+                )
+              ELSE NULL END
+            ) FILTER (WHERE ${formFields.id} IS NOT NULL)`.mapWith(f => f || [])
+          })
+          .from(eventFormTemplates)
+          .leftJoin(formFields, eq(formFields.templateId, eventFormTemplates.id))
+          .where(eq(eventFormTemplates.eventId, eventId))
+          .groupBy(eventFormTemplates.id);
+
+        if (!template) {
+          return res.json({
+            id: null,
+            eventId,
+            name: '',
+            description: '',
+            isPublished: false,
+            fields: []
+          });
+        }
+
+        res.json({
+          ...template.template,
+          fields: template.fields
+        });
+      } catch (error) {
+        console.error('Error fetching form template:', error);
+        res.status(500).json({ error: "Failed to fetch form template" });
+      }
+    });
+
+    app.get('/api/admin/form-templates', isAdmin, async (req, res) => {
+      try {
+        const templates = await db
+          .select({
+            id: eventFormTemplates.id,
+            name: eventFormTemplates.name,
+            description: eventFormTemplates.description,
+            isPublished: eventFormTemplates.isPublished,
+            createdAt: eventFormTemplates.createdAt,
+            updatedAt: eventFormTemplates.updatedAt,
+            fields: sql<any[]>`json_agg(
+              CASE WHEN ${formFields.id} IS NOT NULL THEN
+                json_build_object(
+                  'id', ${formFields.id},
+                  'label', ${formFields.label},
+                  'type', ${formFields.type}
+                )
+              ELSE NULL END
+            ) FILTER (WHERE ${formFields.id} IS NOT NULL)`.mapWith(f => f || [])
+          })
+          .from(eventFormTemplates)
+          .leftJoin(formFields, eq(formFields.templateId, eventFormTemplates.id))
+          .groupBy(eventFormTemplates.id);
+
+        res.json(templates);
+      } catch (error) {
+        console.error('Error fetching form templates:', error);
+        res.status(500).json({ error: "Failed to fetch form templates" });
+      }
+    });
+
+    app.post('/api/admin/form-templates', isAdmin, async (req, res) => {
+      try {
+        const { name, description, isPublished, fields, eventId } = req.body;
+
+        if (!eventId) {
+          return res.status(400).json({ error: "Event ID is required" });
+        }
+
+        await db.transaction(async (tx) => {
+          // Create form template
+          const [template] = await tx
+            .insert(eventFormTemplates)
+            .values({
+              eventId,
+              name,
+              description,
+              isPublished: isPublished || false,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            })
+            .returning();
+
+          // Create fields
+          if (fields?.length) {
+            for (const field of fields) {
+              const [newField] = await tx
+                .insert(formFields)
+                .values({
+                  templateId: template.id,
+                  label: field.label,
+                  type: field.type,
+                  required: field.required,
+                  order: field.order,
+                  placeholder: field.placeholder,
+                  helpText: field.helpText,
+                  validation: field.validation
+                })
+                .returning();
+
+              // Create options for dropdown fields
+              if (field.type === 'dropdown' && field.options?.length) {
+                await tx
+                  .insert(formFieldOptions)
+                  .values(
+                    field.options.map((option: any, index: number) => ({
+                      fieldId: newField.id,
+                      label: option.label,
+                      value: option.value,
+                      order: option.order || index
+                    }))
+                  );
+              }
+            }
+          }
+        });
+
+        res.status(201).json({ message: "Form template created successfully" });
+      } catch (error) {
+        console.error('Error creating form template:', error);
+        res.status(500).json({ error: "Failed to create form template" });
+      }
+    });
+
+    app.post('/api/admin/events/:id/form-template', isAdmin, async (req, res) => {
+      try {
+        const eventId = req.params.id;
+        const { name, description, isPublished, fields } = req.body;
+
+        // Start a transaction
+        await db.transaction(async (tx) => {
+          // Create form template
+          const [template] = await tx
+            .insert(eventFormTemplates)
+            .values({
+              eventId,
+              name,
+              description,
+              isPublished: isPublished || false,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            })
+            .returning();
+
+          // Create fields
+          for (const [index, field] of fields.entries()) {
+            const [newField] = await tx
+              .insert(formFields)
+              .values({
+                templateId: template.id,
+                label: field.label,
+                type: field.type,
+                required: field.required || false,
+                order: index,
+                placeholder: field.placeholder,
+                helpText: field.helpText,
+                validation: field.validation,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              })
+              .returning();
+
+            // Create options for dropdown fields
+            if (field.type === 'dropdown' && field.options?.length > 0) {
+              await tx
+                .insert(formFieldOptions)
+                .values(
+                  field.options.map((option: any, optionIndex: number) => ({
+                    fieldId: newField.id,
+                    label: option.label,
+                    value: option.value,
+                    order: optionIndex,
+                    createdAt: new Date()
+                  }))
+                );
+            }
+          }
+        });
+
+        res.status(201).json({ message: "Form template created successfully" });
+      } catch (error) {
+        console.error('Error creating form template:', error);
+        res.status(500).json({ error: "Failed to create form template" });
+      }
+    });
+
+    app.put('/api/admin/events/:eventId/form-template', isAdmin, async (req, res) => {
+      try {
+        const eventId = req.params.eventId;
+        const { id, name, description, isPublished, fields } = req.body;
+
+        await db.transaction(async (tx) => {
+          // Update template
+          await tx
+            .update(eventFormTemplates)
+            .set({
+              name,
+              description,
+              isPublished,
+              updatedAt: new Date()
+            })
+            .where(eq(eventFormTemplates.id, id));
+
+          // Delete existing fields and options
+          const existingFields = await tx
+            .select()
+            .from(formFields)
+            .where(eq(formFields.templateId, id));
+
+          for (const field of existingFields) {
+            await tx
+              .delete(formFieldOptions)
+              .where(eq(formFieldOptions.fieldId, field.id));
+          }
+
+          await tx
+            .delete(formFields)
+            .where(eq(formFields.templateId, id));
+
+          // Create new fields
+          for (const [index, field] of fields.entries()) {
+            const [newField] = await tx
+              .insert(formFields)
+              .values({
+                templateId: id,
+                label: field.label,
+                type: field.type,
+                required: field.required || false,
+                order: index,
+                placeholder: field.placeholder,
+                helpText: field.helpText,
+                validation: field.validation,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              })
+              .returning();
+
+            // Create options for dropdown fields
+            if (field.type === 'dropdown' && field.options?.length > 0) {
+              await tx
+                .insert(formFieldOptions)
+                .values(
+                  field.options.map((option: any, optionIndex: number) => ({
+                    fieldId: newField.id,
+                    label: option.label,
+                    value: option.value,
+                    order: optionIndex,
+                    createdAt: new Date()
+                  }))
+                );
+            }
+          }
+        });
+
+        res.json({ message: "Form template updated successfully" });
+      } catch (error) {
+        console.error('Error updating form template:', error);
+        res.status(500).json({ error: "Failed to update form template" });
+      }
+    });
+
+    app.delete('/api/admin/events/:eventId/form-template/:id', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+
+        await db.transaction(async (tx) => {
+          // Delete all field options
+          await tx
+            .delete(formFieldOptions)
+            .where(
+              inArray(
+                formFieldOptions.fieldId,
+                db.select({ id: formFields.id })
+                  .from(formFields)
+                  .where(eq(formFields.templateId, templateId))
+              )
+            );
+
+          // Delete all fields
+          await tx
+            .delete(formFields)
+            .where(eq(formFields.templateId, templateId));
+
+          // Delete template
+          const [deletedTemplate] = await tx
+            .delete(eventFormTemplates)
+            .where(eq(eventFormTemplates.id, templateId))
+            .returning();
+
+          if (!deletedTemplate) {
+            return res.status(404).json({ error: "Template not found" });
+          }
+        });
+
+        res.json({ message: "Form template deleted successfully" });
+      } catch (error) {
+        console.error('Error deleting form template:', error);
+        res.status(500).json({ error: "Failed to delete form template" });
+      }
+    });
+
+    app.delete('/api/admin/teams/:id', isAdmin, async (req, res) => {
+      try {
+        const teamId = parseInt(req.params.id);
+
+        // Check if team has any associated games
+        const [gameCount] = await db
+          .select({
+            count: sql<number>`count(*)`.mapWith(Number)
+          })
+          .from(games)
+          .where(
+            or(
+              eq(games.homeTeamId, teamId),
+              eq(games.awayTeamId, teamId)
+            )
+          );
+
+        if (gameCount.count > 0) {
+          return res.status(400).send("Cannot delete team with associated games");
+        }
+
+        const [deletedTeam] = await db
+          .delete(teams)
+          .where(eq(teams.id, teamId))
+          .returning();
+
+        if (!deletedTeam) {
+          return res.status(404).send("Team notfound");
+        }
+
+        res.json(deletedTeam);
+      } catch (error) {
+        console.error('Error deleting team:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to delete team");
+      }
+    });
+
+    // Add these new endpoints for event management
+    app.get('/api/admin/events', isAdmin, async (req, res) => {
+      try {
+        const eventsList = await db
+          .select({
+            event: events,
+            applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
+            teamCount: sql<number>`count(${teams.id})`.mapWith(Number),
+          })
+          .from(events)
+          .leftJoin(teams, eq(events.id, teams.eventId))
+          .groupBy(events.id)
+          .orderBy(events.startDate);
+
+        // Format the response
+        const formattedEvents = eventsList.map(({ event, applicationCount, teamCount }) => ({
+          ...event,
+          applicationCount,
+          teamCount
+        }));
+
+        res.json(formattedEvents);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to fetch events");
+      }
+    });
+
+    // Bulk delete events endpoint
     app.delete('/api/admin/events/bulk', isAdmin, async (req, res) => {
       try {
         const { eventIds } = req.body;
@@ -2413,13 +3528,6 @@ res.status(500).send("Failed to update complex status");
         res.status(500).send("Failed to add participants");
       }
     });
-
-    // Auth routes that don't require authentication
-    app.use('/api/auth/password-reset', passwordResetRouter);
-    app.use('/api/auth/verify-token', verifyTokenRouter); // Added route
-    app.use('/api/auth/reset-confirm', resetConfirmRouter); // Added route
-
-    app.use('/api/files', uploadRouter);
 
     return httpServer;
   } catch (error) {

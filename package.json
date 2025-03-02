@@ -9,8 +9,7 @@
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
     "db:push": "drizzle-kit push",
-    "migrate:events": "tsx server/migrate-event-ids.ts",
-    "create-tables": "tsx server/create-tables.ts"
+    "migrate:events": "tsx server/migrate-event-ids.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -62,7 +61,6 @@
     "memorystore": "^1.6.7",
     "multer": "^1.4.5-lts.1",
     "node-vibrant": "^4.0.3",
-    "nodemailer": "^6.10.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "react": "^18.3.1",

@@ -44,9 +44,6 @@ function Router() {
       </Switch>
     );
   }
-  
-  // Add a check for user.isAdmin to determine the proper dashboard to show
-  const DefaultComponent = user.isAdmin ? AdminDashboard : UserDashboard;
 
   // Handle authenticated routes
   return (
@@ -82,7 +79,7 @@ function Router() {
       <Route path="/chat" component={ChatPage} />
       <Route path="/register/event/:eventId" component={EventRegistration} />
       <Route path="/">
-        <DefaultComponent />
+        {user.isAdmin ? <AdminDashboard /> : <UserDashboard />}
       </Route>
       <Route component={NotFound} />
     </Switch>
