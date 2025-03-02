@@ -23,9 +23,12 @@ export async function initEmailService() {
         pass: testAccount.password,
       },
     });
+    console.log('\n==================================================');
     console.log('Email service initialized in development mode');
     console.log(`Ethereal Email: ${testAccount.user}`);
-    console.log(`Preview URL: https://ethereal.email/login`);
+    console.log(`Ethereal Password: ${testAccount.pass}`);
+    console.log(`Preview URL: https://ethereal.email/message/${testAccount.web}`);
+    console.log('==================================================\n');
   } else {
     // Production configuration - use your actual SMTP settings
     transporter = nodemailer.createTransport({

@@ -54,6 +54,11 @@ import passwordResetRouter from "./routes/auth/password-reset";
 import verifyTokenRouter from "./routes/auth/verify-token"; // Added import
 import resetConfirmRouter from "./routes/auth/reset-confirm"; // Added import
 
+// Test route
+router.get("/test", (req, res) => {
+  res.json({ message: "Server is working correctly!" });
+});
+
 // Admin middleware (unchanged)
 const isAdmin = (req: Request, res: Response, next: Function) => {
   if (!req.isAuthenticated()) {
