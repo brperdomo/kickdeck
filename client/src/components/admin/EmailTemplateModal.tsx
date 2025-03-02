@@ -155,7 +155,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" id="template-form">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -297,11 +297,21 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
             />
             <DialogFooter>
               <Button
-                type="button"
                 variant="outline"
+                type="button"
                 onClick={() => onOpenChange(false)}
               >
                 Cancel
+              </Button>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={() => {
+                  const formData = form.getValues();
+                  window.open(`/api/admin/email-templates/preview?template=${encodeURIComponent(JSON.stringify(formData))}`, '_blank');
+                }}
+              >
+                Preview
               </Button>
               <Button type="submit" disabled={mutation.isPending}>
                 {mutation.isPending && (

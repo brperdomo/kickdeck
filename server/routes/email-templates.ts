@@ -101,6 +101,63 @@ export async function updateEmailTemplate(req: Request, res: Response) {
   }
 }
 
+export async function previewEmailTemplate(req: Request, res: Response) {
+  try {
+    const templateData = JSON.parse(req.query.template as string);
+    
+    // Replace variables with sample values
+    let content = templateData.content || '';
+    const variables = templateData.variables || [];
+    
+    // Create sample data for each variable
+    variables.forEach((variable: string) => {
+      content = content.replace(new RegExp(`{{${variable}}}`, 'g'), `<span style="background-color:#FFFF00">[Sample ${variable}]</span>`);
+    });
+
+    // Create HTML for preview
+    const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Email Preview: ${templateData.subject || 'No Subject'}</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }
+        .preview-container { max-width: 650px; margin: 0 auto; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
+        .preview-header { background: #f5f5f5; padding: 15px; border-bottom: 1px solid #ddd; }
+        .preview-subject { margin: 0; font-size: 18px; }
+        .preview-from { margin: 5px 0 0; font-size: 14px; color: #666; }
+        .preview-content { padding: 20px; }
+        .preview-footer { background: #f5f5f5; padding: 15px; border-top: 1px solid #ddd; font-size: 12px; color: #666; }
+      </style>
+    </head>
+    <body>
+      <div class="preview-container">
+        <div class="preview-header">
+          <h1 class="preview-subject">${templateData.subject || 'No Subject'}</h1>
+          <p class="preview-from">From: ${templateData.senderName || 'Sender'} &lt;${templateData.senderEmail || 'email@example.com'}&gt;</p>
+        </div>
+        <div class="preview-content">
+          ${content}
+        </div>
+        <div class="preview-footer">
+          <p>This is a preview. Variables are highlighted in yellow.</p>
+          <p>Template Type: ${templateData.type || 'Not specified'}</p>
+          <p>Active: ${templateData.isActive ? 'Yes' : 'No'}</p>
+        </div>
+      </div>
+    </body>
+    </html>
+    `;
+    
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
+  } catch (error) {
+    console.error('Error previewing email template:', error);
+    res.status(500).json({ error: "Failed to preview email template" });
+  }
+}
+
 export async function deleteEmailTemplate(req: Request, res: Response) {
   try {
     const { id } = req.params;

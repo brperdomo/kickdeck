@@ -106,7 +106,9 @@ export function EmailTemplatesView() {
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handlePreview(template)}>
+                        <DropdownMenuItem onClick={() => {
+                          window.open(`/api/admin/email-templates/preview?template=${encodeURIComponent(JSON.stringify(template))}`, '_blank');
+                        }}>
                           <Eye className="mr-2 h-4 w-4" />
                           Preview
                         </DropdownMenuItem>

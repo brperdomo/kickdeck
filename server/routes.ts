@@ -3569,6 +3569,16 @@ export function registerRoutes(app: Express): Server {
         res.status(500).send("Failed to delete email template");
       }
     });
+    
+    app.get('/api/admin/email-templates/preview', isAdmin, async (req, res) => {
+      try {
+        const { previewEmailTemplate } = await import('./routes/email-templates');
+        await previewEmailTemplate(req, res);
+      } catch (error) {
+        console.error('Error previewing email template:', error);
+        res.status(500).send("Failed to preview email template");
+      }
+    });
 
     return httpServer;
   } catch (error) {
