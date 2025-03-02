@@ -6,7 +6,7 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import RegisterPage from "./pages/register";
 import CreateEventPage from "./pages/create-event";
 import SignUpPage from "./pages/register"; // Changed from "./pages/signup" to "./pages/register"
-import EventListPage from "./pages/events";
+import EventListPage from "./pages/event-list";
 import EventDetailsPage from "./pages/events/[id]";
 import EventApplicationPage from "./pages/events/[id]/apply";
 import EditEventPage from "./pages/admin/events/[id]/edit";
