@@ -75,34 +75,30 @@ export function FormTemplatesView() {
     return <div>Loading...</div>;
   }
 
-  const createNewTemplate = async () => {
+  const createNewTemplate = () => {
+    navigate('/admin/form-templates/create');
+  };
+
+  // Legacy create function (keeping as backup)
+  const createTemplateDirectly = async () => {
     try {
       const response = await fetch('/api/admin/form-templates', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: "New Template",
-          description: "Description for the new template",
-          isPublished: false,
+          name: 'New Template',
+          description: 'Description of your template',
           fields: []
-        }),
+        })
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Failed to create template: ${response.status} ${response.statusText} - ${JSON.stringify(errorData)}`);
+        throw new Error('Failed to create template');
       }
 
-      queryClient.invalidateQueries(['form-templates']);
-      toast({
-        title: "Success",
-        description: "Template created successfully. You can now edit it.",
-      });
-
-      // Redirect to templates list after creation
-      navigate("/admin/form-templates");
+      await response.json();
     } catch (error) {
       toast({
         title: "Error",
@@ -164,7 +160,7 @@ export function FormTemplatesView() {
                             <Trash className="mr-2 h-4 w-4" />
                             Delete
                           </DropdownMenuItem>
-                        
+
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
