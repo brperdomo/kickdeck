@@ -51,7 +51,6 @@ import {
   CalendarDays,
   ImageIcon,
   FormInput,
-  Mail, // Add Mail icon for email templates
 } from "lucide-react";
 import {
   Table,
@@ -92,7 +91,6 @@ import { useDropzone } from 'react-dropzone';
 import { FileManager } from "@/components/admin/FileManager";
 import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
-import { Link } from "wouter"; // Added import for Link
 
 function AdminBanner() {
   const { settings } = useOrganizationSettings();
@@ -119,7 +117,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates' | 'email-templates'; // Added 'email-templates'
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -385,18 +383,10 @@ function AdministratorsView() {
     <>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Administrators</h2>
-        <div className="flex gap-2">
-          <Link href="/admin/email-templates">
-            <Button variant="outline">
-              <Mail className="mr-2 h-4 w-4" />
-              Email Templates
-            </Button>
-          </Link>
-          <Button onClick={() => setIsAddModalOpen(true)}>
-            <UserPlus className="mr-2 h-4 w-4" />
-            Add Administrator
-          </Button>
-        </div>
+        <Button onClick={() => setIsAddModalOpen(true)}>
+          <UserPlus className="mr-2 h-4 w-4" />
+          Add Administrator
+        </Button>
       </div>
 
       <Tabs
@@ -581,7 +571,7 @@ function ReportsView() {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <h3 className="text-lg font-semibold">Financial Management</h3>
-                <select
+                <select 
                   className="border rounded px-2 py-1"
                   value={selectedFinancialReport}
                   onChange={(e) => setSelectedFinancialReport(e.target.value)}
@@ -624,56 +614,56 @@ function ReportsView() {
                   <CardTitle>Accounting Codes</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {accountingCodesQuery.isLoading ? (
-                    <div className="flex justify-center p-4">
-                      <Loader2 className="h-6 w-6 animate-spin" />
-                    </div>
-                  ) : accountingCodesQuery.isError ? (
-                    <div className="text-center text-red-500">
-                      Error loading accounting codes
-                    </div>
-                  ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Code</TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Description</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                {accountingCodesQuery.isLoading ? (
+                  <div className="flex justify-center p-4">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                ) : accountingCodesQuery.isError ? (
+                  <div className="text-center text-red-500">
+                    Error loading accounting codes
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Code</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {accountingCodesQuery.data?.map((code: any) => (
+                        <TableRow key={code.id}>
+                          <TableCell className="font-medium">{code.code}</TableCell>
+                          <TableCell>{code.name}</TableCell>
+                          <TableCell>{code.description || '-'}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditCode(code)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteCode(code.id)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
                         </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {accountingCodesQuery.data?.map((code: any) => (
-                          <TableRow key={code.id}>
-                            <TableCell className="font-medium">{code.code}</TableCell>
-                            <TableCell>{code.name}</TableCell>
-                            <TableCell>{code.description || '-'}</TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex justify-end gap-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleEditCode(code)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleDeleteCode(code.id)}
-                                  className="text-red-500 hover:text-red-700"
-                                >
-                                  <Trash className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  )}
-                </CardContent>
-              </Card>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
             )}
             {selectedFinancialReport === 'fees-by-event' && (
               <Card>
@@ -1328,7 +1318,7 @@ function ComplexesView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update field",
+        description: error instanceof Error ? error.message: "Failed to update field",
         variant: "destructive",
       });
     }
@@ -1619,63 +1609,23 @@ function TeamsView() {
 function AdminDashboard() {
   const { user, logout } = useUser();
   const [, setLocation] = useLocation();
-  const [view, setView] = useState<View>('events');
-  const [settingsView, setSettingsView] = useState<SettingsView>('general');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [activeView, setActiveView] = useState<View>('events');
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [showUpdatesLog, setShowUpdatesLog] = useState(false);
 
-  // Add email templates to the navigation items
-  const navigationItems = [
-    {
-      icon: Calendar,
-      label: "Events",
-      value: "events",
-    },
-    {
-      icon: Shield,
-      label: "Administrators",
-      value: "administrators",
-    },
-    {
-      icon: Building2,
-      label: "Complexes",
-      value: "complexes",
-    },
-    {
-      icon: Users,
-      label: "Teams",
-      value: "teams",
-    },
-    {
-      icon: Home,
-      label: "Households",
-      value: "households",
-    },
-    {
-      icon: FileText,
-      label: "Reports",
-      value: "reports",
-    },
-    {
-      icon: MessageSquare,
-      label: "Chat",
-      value: "chat",
-    },
-    {
-      icon: FormInput,
-      label: "Form Templates",
-      value: "formTemplates",
-    },
-    {
-      icon: Mail,
-      label: "Email Templates",
-      value: "email-templates",
-    },
-    {
-      icon: Settings,
-      label: "Settings",
-      value: "settings",
-    },
-  ];
+  // Add Form Templates to the navigation
+  const formTemplatesButton = (
+    <Button
+      variant={activeView === 'formTemplates' ? 'secondary' : 'ghost'}
+      className="w-full justify-start"
+      onClick={() => setActiveView('formTemplates')}
+    >
+      <FormInput className="mr-2 h-4 w-4" />
+      Form Templates
+    </Button>
+  );
 
   useEffect(() => {
     if (!user) {
@@ -1704,7 +1654,7 @@ function AdminDashboard() {
   };
 
   const renderView = () => {
-    switch (view) {
+    switch (activeView) {
       case 'administrators':
         return <AdministratorsView />;
       case 'events':
@@ -1718,10 +1668,10 @@ function AdminDashboard() {
       case 'scheduling':
         return <SchedulingView />;
       case 'settings':
-        if (settingsView === 'general') {
+        if (activeSettingsView === 'general') {
           return <GeneralSettingsView />;
         }
-        return <SettingsView activeSettingsView={settingsView} />;
+        return <SettingsView activeSettingsView={activeSettingsView} />;
       case 'reports':
         return <ReportsView />;
       case 'chat':
@@ -1749,8 +1699,6 @@ function AdminDashboard() {
         return <CouponManagement />;
       case 'formTemplates':
         return <FormTemplatesView />;
-      case 'email-templates':
-        return <EmailTemplatesView/>; // Add EmailTemplatesView component here
       default:
         return <div>Feature coming soon</div>;
     }
@@ -1769,17 +1717,176 @@ function AdminDashboard() {
 
           {/* Navigation */}
           <div className="space-y-2">
-            {navigationItems.map((item) => (
-              <Button
-                key={item.value}
-                variant={view === item.value ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setView(item.value)}
-              >
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.label}
-              </Button>
-            ))}
+            <Button
+              variant={activeView === 'administrators' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('administrators')}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Administrators
+            </Button>
+
+            {formTemplatesButton}
+
+            <Button
+              variant={activeView === 'events' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('events')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Events
+            </Button>
+
+            <Button
+              variant={activeView === 'teams' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('teams')}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Teams
+            </Button>
+
+            <Button
+              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('complexes')}
+            >
+              <Building2 className="mr-2 h-4 w-4" />
+              Field Complexes
+            </Button>
+
+            <Button
+              variant={activeView === 'households' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('households')}
+            >
+              <Home className="mr-2 h-4 w-4" />
+              MatchPro Client
+            </Button>
+
+            <Button
+              variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('scheduling')}
+            >
+              <CalendarDays className="mr-2 h-4 w-4" />
+              Scheduling
+            </Button>
+
+            <Button
+              variant={activeView === 'reports' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('reports')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Reports and Financials
+            </Button>
+
+            <Button
+              variant={activeView === 'chat' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('chat')}
+            >
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Chat
+            </Button>
+            <Button
+              variant={activeView === 'files' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('files')}
+            >
+              <ImageIcon className="mr-2 h-4 w-4" />
+              File Manager
+            </Button>
+
+            {/* Settings */}
+            <Collapsible
+              open={isSettingsOpen}
+              onOpenChange={setIsSettingsOpen}
+              className="space-y-2"
+            >
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+                  className="w-full justify-between"
+                >
+                  <span className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </span>
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isSettingsOpen ? 'rotate-90' : ''
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 pl-4">
+                <Button
+                  variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('branding');
+                  }}
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Branding
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('payments');
+                  }}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Payments
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('general');
+                  }}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  General
+                </Button>
+                <Button
+                  variant={activeSettingsView === 'styling' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setActiveView('settings');
+                    setActiveSettingsView('styling');
+                  }}
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Theme
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Account */}
+            <Button
+              variant={activeView === 'account' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('account')}
+            >
+              <User className="mr-2 h-4 w-4" />
+              My Account
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
           </div>
         </div>
       </div>
@@ -1791,7 +1898,7 @@ function AdminDashboard() {
           {/* Welcome Card */}
           {showWelcome && (
             <Card className="mb-6 relative">
-              <button
+              <button 
                 onClick={() => setShowWelcome(false)}
                 className="absolute top-2 right-2 p-2 hover:bg-muted rounded-full"
               >
@@ -1861,7 +1968,8 @@ function ChatView() {
               {messagesQuery.data?.map((message: any) => (
                 <div key={message.id} className={`flex ${message.isAdmin ? 'justify-end' : 'justify-start'}`}>
                   <div className={`rounded-lg px-4 py-2 max-w-[70%] ${
-                    message.isAdmin                      ? 'bg-primary text-primary-foreground'
+                    message.isAdmin
+                      ? 'bg-primary text-primary-foreground'
                       : 'bg-muted'
                   }`}>
                     <p className="text-sm font-medium">{message.sender}</p>
@@ -2011,7 +2119,9 @@ function CouponManagement() {
       if (!response.ok) throw new Error('Failed to fetch coupons');
       return response.json();
     }
-  });const deleteCouponMutation = useMutation({
+  });
+
+  const deleteCouponMutation = useMutation({
     mutationFn: async (couponId: number) => {
       const response = await fetch(`/api/admin/coupons/${couponId}`, {
         method: 'DELETE',
@@ -2092,8 +2202,8 @@ function CouponManagement() {
                   </TableCell>
                   <TableCell>{coupon.amount}</TableCell>
                   <TableCell>
-                    {coupon.expirationDate ?
-                      new Date(coupon.expirationDate).toLocaleDateString() :
+                    {coupon.expirationDate ? 
+                      new Date(coupon.expirationDate).toLocaleDateString() : 
                       'No expiration'
                     }
                   </TableCell>
@@ -2119,7 +2229,7 @@ function CouponManagement() {
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem
+                        <DropdownMenuItem 
                           onClick={() => handleDeleteCoupon(coupon.id)}
                           className="text-red-600"
                         >
