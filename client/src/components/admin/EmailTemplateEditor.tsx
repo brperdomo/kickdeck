@@ -18,12 +18,27 @@ export interface EmailTemplate {
   senderName: string;
 }
 
+export interface EmailTemplate {
+  id: string;
+  name: string;
+  type: string;
+  subject: string;
+  content: string;
+  senderName: string;
+  senderEmail: string;
+  isDefault?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 interface EmailTemplateEditorProps {
   template?: EmailTemplate;
   onSave: (template: Omit<EmailTemplate, 'id'>) => Promise<void>;
   onPreview?: (template: Partial<EmailTemplate>) => void;
   onCancel: () => void;
 }
+
+import { useToast } from "@/hooks/use-toast";
 
 const TEMPLATE_TYPES = [
   'registration',
@@ -40,6 +55,7 @@ export function EmailTemplateEditor({
   onPreview, 
   onCancel 
 }: EmailTemplateEditorProps) {
+  const { toast } = useToast();
   const [name, setName] = useState(template?.name || '');
   const [subject, setSubject] = useState(template?.subject || '');
   const [content, setContent] = useState(template?.content || '');
