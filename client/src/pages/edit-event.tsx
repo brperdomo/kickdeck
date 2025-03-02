@@ -30,38 +30,6 @@ export default function EditEvent() {
       return data;
     }
   });
-  
-  const updateEventMutation = useMutation({
-    mutationFn: async (data: EventFormData) => {
-      const response = await fetch(`/api/admin/events/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message || 'Failed to update event');
-      }
-      
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['event', id] });
-      queryClient.invalidateQueries({ queryKey: ['events'] });
-      toast({
-        title: "Event Updated",
-        description: "Event has been updated successfully.",
-      });
-      // Stay on the same page after successful update
-    },
-    onError: (error) => {
-      console.error("Update error:", error);
-      toast({
-        title: "Update Failed",
-        description: error instanceof Error ? error.message : "Failed to update event",
         variant: "destructive",
       });
     }
