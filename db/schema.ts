@@ -336,6 +336,29 @@ export const activityLogs = pgTable("activity_logs", {
 export type SelectActivityLog = typeof activityLogs.$inferSelect;
 export type InsertActivityLog = typeof activityLogs.$inferInsert;
 
+// Admin Roles join table
+export const adminRoles = pgTable("admin_roles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  roleId: integer("role_id").notNull().references(() => roles.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export type SelectAdminRole = typeof adminRoles.$inferSelect;
+export type InsertAdminRole = typeof adminRoles.$inferInsert;
+
+// Roles table
+export const roles = pgTable("roles", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export type SelectRole = typeof roles.$inferSelect;
+export type InsertRole = typeof roles.$inferInsert;
+
 // Email Configuration table
 export const emailConfig = pgTable("email_config", {
   id: serial("id").primaryKey(),
