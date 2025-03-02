@@ -2520,6 +2520,288 @@ res.status(500).send("Failed to update complex status");
     app.use('/api/admin/submissions', isAdmin, submissionsRouter);
     app.use('/api/admin/email-config', isAdmin, emailConfigRouter); // Register email config routes
     app.use('/api/health', healthCheckRouter); // Register health check endpoint
+    
+    // Form templates routes
+    app.get('/api/admin/form-templates', isAdmin, async (req, res) => {
+      try {
+        const templates = await db
+          .select({
+            id: eventFormTemplates.id,
+            name: eventFormTemplates.name,
+            description: eventFormTemplates.description,
+            isPublished: eventFormTemplates.isPublished,
+            eventId: eventFormTemplates.eventId,
+            createdAt: eventFormTemplates.createdAt,
+            updatedAt: eventFormTemplates.updatedAt,
+          })
+          .from(eventFormTemplates);
+          
+        // Get fields for each template
+        for (const template of templates) {
+          const fields = await db
+            .select()
+            .from(formFields)
+            .where(eq(formFields.templateId, template.id))
+            .orderBy(formFields.order);
+            
+          // For each field with options, get the options
+          for (const field of fields) {
+            if (field.type === 'dropdown') {
+              field.options = await db
+                .select()
+                .from(formFieldOptions)
+                .where(eq(formFieldOptions.fieldId, field.id))
+                .orderBy(formFieldOptions.order);
+            }
+          }
+          
+          template.fields = fields;
+        }
+        
+        res.json(templates);
+      } catch (error) {
+        console.error('Error fetching form templates:', error);
+        res.status(500).json({ error: 'Failed to fetch form templates' });
+      }
+    });
+    
+    app.post('/api/admin/form-templates', isAdmin, async (req, res) => {
+      try {
+        const { name, description, isPublished, fields, eventId } = req.body;
+        
+        const [template] = await db.transaction(async (tx) => {
+          // Create the template
+          const [newTemplate] = await tx
+            .insert(eventFormTemplates)
+            .values({
+              name,
+              description: description || null,
+              isPublished: isPublished || false,
+              eventId: eventId || null,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            })
+            .returning();
+            
+          // Add fields if provided
+          if (fields && Array.isArray(fields)) {
+            for (let i = 0; i < fields.length; i++) {
+              const field = fields[i];
+              const [newField] = await tx
+                .insert(formFields)
+                .values({
+                  templateId: newTemplate.id,
+                  label: field.label,
+                  type: field.type,
+                  required: field.required || false,
+                  order: i,
+                  placeholder: field.placeholder || null,
+                  helpText: field.helpText || null,
+                  validation: field.validation || null,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                })
+                .returning();
+                
+              // Add options for dropdown fields
+              if (field.type === 'dropdown' && field.options && Array.isArray(field.options)) {
+                for (let j = 0; j < field.options.length; j++) {
+                  const option = field.options[j];
+                  await tx
+                    .insert(formFieldOptions)
+                    .values({
+                      fieldId: newField.id,
+                      label: option.label,
+                      value: option.value,
+                      order: j,
+                      createdAt: new Date(),
+                    });
+                }
+              }
+            }
+          }
+          
+          return [newTemplate];
+        });
+        
+        res.status(201).json(template);
+      } catch (error) {
+        console.error('Error creating form template:', error);
+        res.status(500).json({ error: 'Failed to create form template' });
+      }
+    });
+    
+    app.get('/api/admin/form-templates/:id', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+        
+        const [template] = await db
+          .select()
+          .from(eventFormTemplates)
+          .where(eq(eventFormTemplates.id, templateId));
+          
+        if (!template) {
+          return res.status(404).json({ error: 'Template not found' });
+        }
+        
+        const fields = await db
+          .select()
+          .from(formFields)
+          .where(eq(formFields.templateId, templateId))
+          .orderBy(formFields.order);
+          
+        // For each field with options, get the options
+        for (const field of fields) {
+          if (field.type === 'dropdown') {
+            field.options = await db
+              .select()
+              .from(formFieldOptions)
+              .where(eq(formFieldOptions.fieldId, field.id))
+              .orderBy(formFieldOptions.order);
+          }
+        }
+        
+        template.fields = fields;
+        
+        res.json(template);
+      } catch (error) {
+        console.error('Error fetching form template:', error);
+        res.status(500).json({ error: 'Failed to fetch form template' });
+      }
+    });
+    
+    app.put('/api/admin/form-templates/:id', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+        const { name, description, isPublished, fields } = req.body;
+        
+        // Check if template exists
+        const [templateExists] = await db
+          .select({ id: eventFormTemplates.id })
+          .from(eventFormTemplates)
+          .where(eq(eventFormTemplates.id, templateId));
+          
+        if (!templateExists) {
+          return res.status(404).json({ error: 'Template not found' });
+        }
+        
+        await db.transaction(async (tx) => {
+          // Update template
+          await tx
+            .update(eventFormTemplates)
+            .set({
+              name,
+              description: description || null,
+              isPublished: isPublished || false,
+              updatedAt: new Date(),
+            })
+            .where(eq(eventFormTemplates.id, templateId));
+            
+          // Delete existing fields and options
+          const existingFields = await tx
+            .select({ id: formFields.id })
+            .from(formFields)
+            .where(eq(formFields.templateId, templateId));
+            
+          for (const field of existingFields) {
+            await tx
+              .delete(formFieldOptions)
+              .where(eq(formFieldOptions.fieldId, field.id));
+          }
+          
+          await tx
+            .delete(formFields)
+            .where(eq(formFields.templateId, templateId));
+            
+          // Add new fields
+          if (fields && Array.isArray(fields)) {
+            for (let i = 0; i < fields.length; i++) {
+              const field = fields[i];
+              const [newField] = await tx
+                .insert(formFields)
+                .values({
+                  templateId: templateId,
+                  label: field.label,
+                  type: field.type,
+                  required: field.required || false,
+                  order: i,
+                  placeholder: field.placeholder || null,
+                  helpText: field.helpText || null,
+                  validation: field.validation || null,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                })
+                .returning();
+                
+              // Add options for dropdown fields
+              if (field.type === 'dropdown' && field.options && Array.isArray(field.options)) {
+                for (let j = 0; j < field.options.length; j++) {
+                  const option = field.options[j];
+                  await tx
+                    .insert(formFieldOptions)
+                    .values({
+                      fieldId: newField.id,
+                      label: option.label,
+                      value: option.value,
+                      order: j,
+                      createdAt: new Date(),
+                    });
+                }
+              }
+            }
+          }
+        });
+        
+        res.json({ message: 'Template updated successfully' });
+      } catch (error) {
+        console.error('Error updating form template:', error);
+        res.status(500).json({ error: 'Failed to update form template' });
+      }
+    });
+    
+    app.delete('/api/admin/form-templates/:id', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+        
+        // Check if template exists
+        const [template] = await db
+          .select()
+          .from(eventFormTemplates)
+          .where(eq(eventFormTemplates.id, templateId));
+          
+        if (!template) {
+          return res.status(404).json({ error: 'Template not found' });
+        }
+        
+        await db.transaction(async (tx) => {
+          // Delete all fields and their options
+          const fields = await tx
+            .select({ id: formFields.id })
+            .from(formFields)
+            .where(eq(formFields.templateId, templateId));
+            
+          for (const field of fields) {
+            await tx
+              .delete(formFieldOptions)
+              .where(eq(formFieldOptions.fieldId, field.id));
+          }
+          
+          await tx
+            .delete(formFields)
+            .where(eq(formFields.templateId, templateId));
+            
+          // Delete the template
+          await tx
+            .delete(eventFormTemplates)
+            .where(eq(eventFormTemplates.id, templateId));
+        });
+        
+        res.json({ message: 'Template deleted successfully' });
+      } catch (error) {
+        console.error('Error deleting form template:', error);
+        res.status(500).json({ error: 'Failed to delete template' });
+      }
+    });
 
     // Log successful routes registration
     console.log('All routes registered successfully');
