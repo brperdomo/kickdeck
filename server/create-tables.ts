@@ -40,11 +40,11 @@ async function createTables() {
       CREATE TABLE IF NOT EXISTS email_templates (
         id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
-        type TEXT NOT NULL, 
+        trigger TEXT NOT NULL, 
         subject TEXT NOT NULL,
-        content TEXT NOT NULL,
-        sender_name TEXT NOT NULL,
-        sender_email TEXT NOT NULL,
+        html_content TEXT NOT NULL,
+        sender_name TEXT,
+        sender_email TEXT,
         is_default BOOLEAN NOT NULL DEFAULT false,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()

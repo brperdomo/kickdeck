@@ -20,26 +20,26 @@ router.get('/', async (req, res) => {
 // Create a new email template
 router.post('/', async (req, res) => {
   try {
-    const { name, type, subject, content, senderName, senderEmail, isDefault } = req.body;
+    const { name, trigger, subject, htmlContent, senderName, senderEmail, isDefault } = req.body;
     
     // If this is set as default, unset any other defaults of the same type
     if (isDefault) {
       await db.update(emailTemplates)
         .set({ isDefault: false })
-        .where(eq(emailTemplates.type, type));
+        .where(eq(emailTemplates.trigger, trigger));
     }
     
     const [newTemplate] = await db.insert(emailTemplates)
       .values({
         name,
-        type,
+        trigger,
         subject,
-        content,
-        senderName,
+        htmlContent,
         senderEmail,
+        senderName,
         isDefault: isDefault || false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       })
       .returning();
       
@@ -115,7 +115,7 @@ router.post('/preview', async (req, res) => {
     // For now, just return success
     res.json({ 
       success: true, 
-      preview: req.body.content 
+      preview: req.body.htmlContent 
     });
   } catch (error) {
     console.error('Error previewing email template:', error);
