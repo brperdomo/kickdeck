@@ -69,18 +69,7 @@ router.get("/test", (req, res) => {
   res.json({ message: "Server is working correctly!" });
 });
 
-// Admin middleware (unchanged)
-const isAdmin = (req: Request, res: Response, next: Function) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).send("Not authenticated");
-  }
-
-  if (!req.user?.isAdmin) {
-    return res.status(403).send("Not authorized");
-  }
-
-  next();
-};
+// Admin middleware is now imported from middleware/auth-middleware.ts
 
 export function registerRoutes(app: Express): Server {
   const httpServer = createServer(app);

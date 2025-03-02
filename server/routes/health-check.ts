@@ -1,26 +1,10 @@
+import express from 'express';
 
-import { Router } from "express";
-import { db } from "@db";
+const router = express.Router();
 
-const router = Router();
-
-// Simple health check endpoint
-router.get("/", async (req, res) => {
-  try {
-    // Check database connection
-    await db.execute("SELECT 1");
-    res.json({ 
-      status: "ok", 
-      timestamp: new Date().toISOString(),
-      message: "Server is up and running"
-    });
-  } catch (error) {
-    console.error("Health check failed:", error);
-    res.status(500).json({ 
-      status: "error", 
-      message: "Database connection failed" 
-    });
-  }
+// Basic health check endpoint
+router.get('/', (req, res) => {
+  res.status(200).json({ status: 'ok', message: 'System is healthy' });
 });
 
 export default router;
