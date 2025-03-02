@@ -3530,17 +3530,12 @@ export function registerRoutes(app: Express): Server {
     });
 
     // Email template routes
-    import { 
-      getEmailTemplates, 
-      createEmailTemplate, 
-      updateEmailTemplate, 
-      deleteEmailTemplate 
-    } from './routes/email-templates';
-
-    app.get('/api/admin/email-templates', isAdmin, getEmailTemplates);
-    app.post('/api/admin/email-templates', isAdmin, createEmailTemplate);
-    app.put('/api/admin/email-templates/:id', isAdmin, updateEmailTemplate);
-    app.delete('/api/admin/email-templates/:id', isAdmin, deleteEmailTemplate);
+    const emailTemplateRoutes = require('./routes/email-templates');
+    
+    app.get('/api/admin/email-templates', isAdmin, emailTemplateRoutes.getEmailTemplates);
+    app.post('/api/admin/email-templates', isAdmin, emailTemplateRoutes.createEmailTemplate);
+    app.put('/api/admin/email-templates/:id', isAdmin, emailTemplateRoutes.updateEmailTemplate);
+    app.delete('/api/admin/email-templates/:id', isAdmin, emailTemplateRoutes.deleteEmailTemplate);
 
     return httpServer;
   } catch (error) {
