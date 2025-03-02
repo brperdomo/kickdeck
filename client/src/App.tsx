@@ -127,7 +127,6 @@ import { AuthProvider } from "./hooks/use-auth";
 import { useTheme } from "./hooks/use-theme";
 import AdminLayout from "./components/layouts/admin-layout";
 import EmailTemplatesPage from "./pages/admin/email-templates";
-import AdminDashboard from "./pages/admin/dashboard";
 
 // Create a client
 const queryClient = new QueryClient({
