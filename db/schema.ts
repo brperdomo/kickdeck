@@ -1,6 +1,6 @@
 import { pgTable, text, serial, boolean, jsonb, time, integer, date, timestamp, bigint, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { z } from "zod";
 
 export const organizationSettings = pgTable("organization_settings", {
@@ -369,15 +369,25 @@ export const chatParticipants = pgTable("chat_participants", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const messages = pgTable("messages", {
-  id: serial("id").primaryKey(),
-  chatRoomId: integer("chat_room_id").notNull().references(() => chatRooms.id),
-  userId: integer("user_id").notNull().references(() => users.id),
-  content: text("content").notNull(),
-  type: text("type").notNull().default('text'),
-  metadata: jsonb("metadata"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+export const messages = pgTable('messages', {
+  id: serial('id').primaryKey(),
+  content: text('content').notNull(),
+  chatRoomId: integer('chat_room_id').references(() => chatRooms.id, { onDelete: 'cascade' }),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at'),
+});
+
+export const activityLogs = pgTable('activity_logs', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id, { onDelete: 'set null' }),
+  action: text('action').notNull(),
+  entityType: text('entity_type'),
+  entityId: text('entity_id'),
+  details: jsonb('details'),
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
 export const insertChatRoomSchema = createInsertSchema(chatRooms, {
@@ -695,7 +705,7 @@ export const coupons = pgTable("coupons", {
   id: serial("id").primaryKey(),
   code: text("code").notNull().unique(),
   discountType: text("discount_type").notNull(),  // 'fixed' or 'percentage'
-  amount: integer("amount").notNull(),
+  amount: integer("amount").notNull,
   expirationDate: timestamp("expiration_date"),
   description: text("description"),
   eventId: bigint("event_id", { mode: "number" }).references(() => events.id),
