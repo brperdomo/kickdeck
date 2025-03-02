@@ -705,7 +705,7 @@ export const coupons = pgTable("coupons", {
   id: serial("id").primaryKey(),
   code: text("code").notNull().unique(),
   discountType: text("discount_type").notNull(),  // 'fixed' or 'percentage'
-  amount: integer("amount").notNull,
+  amount: integer("amount").notNull(),
   expirationDate: timestamp("expiration_date"),
   description: text("description"),
   eventId: bigint("event_id", { mode: "number" }).references(() => events.id),
