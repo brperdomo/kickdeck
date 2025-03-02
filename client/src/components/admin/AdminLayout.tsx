@@ -9,7 +9,7 @@ function App() {
         {/* ... other routes */}
         <Route path="/admin/settings" element={<Navigate to="/admin/settings/general" replace />} />
         {/* Redirect old email templates path to general settings */}
-        <Route path="/admin/email-templates" element={<Navigate to="/admin/settings/general" replace />} />
+        <Route path="/admin/email-templates" element={<Navigate to="/admin/settings/general?tab=emailTemplates" replace />} />
         <Route path="/admin/settings/general" element={<GeneralSettings />} />
         {/* ... other routes */}
       </Routes>

@@ -120,7 +120,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
 }
 
 type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates' | 'emailTemplates';
-type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
+type SettingsView = 'branding' | 'general' | 'payments' | 'styling' | 'emailTemplates';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
 
@@ -2039,6 +2039,7 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
         </BrandingPreviewProvider>
       );
     case 'general':
+    case 'emailTemplates': // Add emailTemplates as a case that returns GeneralSettingsView
       return <GeneralSettingsView />;
     case 'styling':
       return <ThemeEditor />;
