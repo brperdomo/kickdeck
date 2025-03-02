@@ -8,6 +8,11 @@ import { db } from "@db";
 import { eq, or } from "drizzle-orm";
 import { crypto } from "./crypto";
 
+// Export the password hashing function so it can be used in other modules
+export const hashPassword = async (password: string) => {
+  return await crypto.hash(password);
+};
+
 declare global {
   namespace Express {
     interface User extends SelectUser {}
