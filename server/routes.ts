@@ -2790,12 +2790,12 @@ export function registerRoutes(app: Express): Server {
         res.status(500).json({ error: "Failed to fetch form templates" });
       }
     });
-    
+
     // Get a specific form template
     app.get('/api/admin/form-templates/:id', isAdmin, async (req, res) => {
       try {
         const templateId = parseInt(req.params.id);
-        
+
         const [template] = await db
           .select({
             template: eventFormTemplates,
@@ -2897,7 +2897,7 @@ export function registerRoutes(app: Express): Server {
           }
         });
 
-        res.status(201).json({ message: "Form template created successfully" });
+        res.json({ message: "Form template created successfully" });
       } catch (error) {
         console.error('Error creating form template:', error);
         res.status(500).json({ error: "Failed to create form template" });
@@ -3589,7 +3589,7 @@ export function registerRoutes(app: Express): Server {
         res.status(500).send("Failed to fetch email templates");
       }
     });
-    
+
     app.post('/api/admin/email-templates', isAdmin, async (req, res) => {
       try {
         const { createEmailTemplate } = await import('./routes/email-templates');
@@ -3599,7 +3599,7 @@ export function registerRoutes(app: Express): Server {
         res.status(500).send("Failed to create email template");
       }
     });
-    
+
     app.put('/api/admin/email-templates/:id', isAdmin, async (req, res) => {
       try {
         const { updateEmailTemplate } = await import('./routes/email-templates');
@@ -3609,7 +3609,7 @@ export function registerRoutes(app: Express): Server {
         res.status(500).send("Failed to update email template");
       }
     });
-    
+
     app.delete('/api/admin/email-templates/:id', isAdmin, async (req, res) => {
       try {
         const { deleteEmailTemplate } = await import('./routes/email-templates');
@@ -3619,7 +3619,7 @@ export function registerRoutes(app: Express): Server {
         res.status(500).send("Failed to delete email template");
       }
     });
-    
+
     app.get('/api/admin/email-templates/preview', isAdmin, async (req, res) => {
       try {
         const { previewEmailTemplate } = await import('./routes/email-templates');
@@ -3636,6 +3636,3 @@ export function registerRoutes(app: Express): Server {
     throw error;
   }
 }
-
-    // Get a specific form template
-    
