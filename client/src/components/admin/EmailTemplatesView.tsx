@@ -45,11 +45,7 @@ export function EmailTemplatesView({ isEmbedded = false }: EmailTemplatesViewPro
   };
 
   const handlePreview = (template: EmailTemplate) => {
-    // TODO: Implement preview functionality
-    toast({
-      title: "Coming Soon",
-      description: "Email preview functionality will be available soon.",
-    });
+    window.open(`/api/admin/email-templates/preview?template=${encodeURIComponent(JSON.stringify(template))}`, '_blank');
   };
 
   if (templatesQuery.isLoading) {
@@ -121,9 +117,7 @@ export function EmailTemplatesView({ isEmbedded = false }: EmailTemplatesViewPro
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => {
-                          window.open(`/api/admin/email-templates/preview?template=${encodeURIComponent(JSON.stringify(template))}`, '_blank');
-                        }}>
+                        <DropdownMenuItem onClick={() => handlePreview(template)}>
                           <Eye className="mr-2 h-4 w-4" />
                           Preview
                         </DropdownMenuItem>
