@@ -1,156 +1,157 @@
-import { db } from "@db";
-import nodemailer from "nodemailer";
+
+import nodemailer from 'nodemailer';
+import { eq } from 'drizzle-orm';
 import { emailConfig } from "@db/schema";
+import { db } from '@db';
 
-let emailTransporter: nodemailer.Transporter | null = null;
+class EmailService {
+  private transporter: nodemailer.Transporter | null = null;
+  private config: any = null;
 
-export async function initEmailService() {
-  try {
-    // Get email configuration from the database
-    const [config] = await db.select().from(emailConfig).limit(1);
+  async initialize() {
+    try {
+      // Get the email configuration from the database
+      const configs = await db.select().from(emailConfig).limit(1);
+      
+      if (configs.length === 0) {
+        console.warn('No email configuration found in the database');
+        return false;
+      }
+      
+      this.config = configs[0];
+      
+      // Create a transporter using the configuration
+      this.transporter = nodemailer.createTransport({
+        host: this.config.host,
+        port: this.config.port,
+        secure: this.config.secure,
+        auth: {
+          user: this.config.authUser,
+          pass: this.config.authPass,
+        },
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('Failed to initialize email service:', error);
+      return false;
+    }
+  }
 
-    if (config && config.host && config.port && config.auth?.user && config.auth?.pass) {
-      // Create email transporter
-      emailTransporter = nodemailer.createTransport({
+  async sendEmail(to: string, subject: string, html: string, options: any = {}) {
+    if (!this.transporter) {
+      const initialized = await this.initialize();
+      if (!initialized) {
+        throw new Error('Email service not initialized');
+      }
+    }
+
+    try {
+      const mailOptions = {
+        from: options.from || `"${this.config.senderName || 'No Reply'}" <${this.config.senderEmail}>`,
+        to,
+        subject,
+        html,
+        ...options,
+      };
+
+      const info = await this.transporter!.sendMail(mailOptions);
+      return { success: true, messageId: info.messageId };
+    } catch (error) {
+      console.error('Failed to send email:', error);
+      return { success: false, error };
+    }
+  }
+
+  async testConnection(config: any) {
+    try {
+      const testTransporter = nodemailer.createTransport({
         host: config.host,
         port: config.port,
         secure: config.secure,
         auth: {
-          user: config.auth.user,
-          pass: config.auth.pass
-        }
+          user: config.authUser || config.auth?.user,
+          pass: config.authPass || config.auth?.pass,
+        },
       });
 
-      // Verify connection
-      await emailTransporter.verify();
-      console.log("Email service initialized successfully");
-      return true;
-    } else {
-      console.log("Email configuration not found or incomplete");
-      return false;
+      await testTransporter.verify();
+      return { success: true };
+    } catch (error) {
+      console.error('Email connection test failed:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
-  } catch (error) {
-    console.error("Failed to initialize email service:", error);
-    return false;
   }
-}
 
-export async function sendEmail(options: {
-  to: string | string[];
-  subject: string;
-  text?: string;
-  html?: string;
-  from?: string;
-}) {
-  try {
-    if (!emailTransporter) {
-      await initEmailService();
-      if (!emailTransporter) {
-        throw new Error("Email service not initialized");
+  async saveConfiguration(config: any) {
+    try {
+      const existingConfigs = await db.select().from(emailConfig).limit(1);
+      
+      if (existingConfigs.length > 0) {
+        // Update existing configuration
+        await db.update(emailConfig)
+          .set({
+            host: config.host,
+            port: config.port,
+            secure: config.secure,
+            authUser: config.authUser || config.auth?.user,
+            authPass: config.authPass || config.auth?.pass,
+            senderEmail: config.senderEmail,
+            senderName: config.senderName,
+            updatedAt: new Date(),
+          })
+          .where(eq(emailConfig.id, existingConfigs[0].id));
+      } else {
+        // Insert new configuration
+        await db.insert(emailConfig).values({
+          host: config.host,
+          port: config.port,
+          secure: config.secure,
+          authUser: config.authUser || config.auth?.user,
+          authPass: config.authPass || config.auth?.pass,
+          senderEmail: config.senderEmail,
+          senderName: config.senderName,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
       }
+
+      // Re-initialize with the new configuration
+      await this.initialize();
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to save email configuration:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
+  }
 
-    // Get email configuration for sender info
-    const [config] = await db.select().from(emailConfig).limit(1);
-
-    if (!config || !config.senderEmail) {
-      throw new Error("Email configuration not found");
+  async getConfiguration() {
+    try {
+      const configs = await db.select().from(emailConfig).limit(1);
+      
+      if (configs.length === 0) {
+        return null;
+      }
+      
+      const config = configs[0];
+      
+      return {
+        host: config.host,
+        port: config.port,
+        secure: config.secure,
+        auth: {
+          user: config.authUser,
+          pass: config.authPass,
+        },
+        senderEmail: config.senderEmail,
+        senderName: config.senderName,
+      };
+    } catch (error) {
+      console.error('Failed to get email configuration:', error);
+      return null;
     }
-
-    // Send email
-    const result = await emailTransporter.sendMail({
-      from: options.from || (config.senderName ? `${config.senderName} <${config.senderEmail}>` : config.senderEmail),
-      to: options.to,
-      subject: options.subject,
-      text: options.text,
-      html: options.html
-    });
-
-    return result;
-  } catch (error) {
-    console.error("Failed to send email:", error);
-    throw error;
   }
 }
 
-// Get email template by type
-export async function getEmailTemplate(type: string) {
-  const templates = await db
-    .select()
-    .from(emailTemplates)
-    .where(eq(emailTemplates.type, type));
-
-  // Get the default template or the first one if no default
-  const defaultTemplate = templates.find(t => t.isDefault);
-  return defaultTemplate || templates[0];
-}
-
-// Replace template variables with actual values
-export function compileTemplate(template: string, data: Record<string, any>) {
-  return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
-    return data[key] || match;
-  });
-}
-
-// Send email using a template
-export async function sendTemplatedEmail(
-  templateType: string,
-  to: string,
-  data: Record<string, any>
-) {
-  try {
-    const template = await getEmailTemplate(templateType);
-
-    if (!template) {
-      throw new Error(`Email template not found for type: ${templateType}`);
-    }
-
-    const compiledSubject = compileTemplate(template.subject, data);
-    const compiledContent = compileTemplate(template.content, data);
-
-    return sendEmail({
-      to,
-      subject: compiledSubject,
-      html: compiledContent,
-      from: `"${template.senderName}" <${template.senderEmail}>`
-    });
-  } catch (error) {
-    console.error('Error sending email:', error);
-    throw error;
-  }
-}
-
-
-// Specific email sending functions
-export async function sendPasswordResetEmail(
-  to: string,
-  resetToken: string,
-  username: string
-) {
-  const resetUrl = `${process.env.APP_URL || ''}/reset-password?token=${resetToken}`;
-
-  return sendTemplatedEmail('password_reset', to, {
-    username,
-    resetUrl,
-    expiryTime: '1 hour',
-  });
-}
-
-export async function sendWelcomeEmail(to: string, firstName: string) {
-  return sendTemplatedEmail('welcome', to, {
-    firstName,
-    loginUrl: process.env.APP_URL || '',
-  });
-}
-
-export async function sendRegistrationConfirmation(
-  to: string,
-  firstName: string,
-  eventName: string
-) {
-  return sendTemplatedEmail('registration_confirmation', to, {
-    firstName,
-    eventName,
-    dashboardUrl: `${process.env.APP_URL || ''}/dashboard`,
-  });
-}
+export const emailService = new EmailService();

@@ -335,3 +335,30 @@ export const activityLogs = pgTable("activity_logs", {
 
 export type SelectActivityLog = typeof activityLogs.$inferSelect;
 export type InsertActivityLog = typeof activityLogs.$inferInsert;
+
+// Email Configuration table
+export const emailConfig = pgTable("email_config", {
+  id: serial("id").primaryKey(),
+  host: text("host").notNull(),
+  port: integer("port").notNull(),
+  secure: boolean("secure").default(true),
+  authUser: text("auth_user").notNull(),
+  authPass: text("auth_pass").notNull(),
+  senderEmail: text("sender_email").notNull(),
+  senderName: text("sender_name"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export type SelectEmailConfig = typeof emailConfig.$inferSelect;
+export type InsertEmailConfig = typeof emailConfig.$inferInsert;
+
+export const insertEmailConfigSchema = createInsertSchema(emailConfig, {
+  host: z.string().min(1, "SMTP host is required"),
+  port: z.number().int().positive("Port must be a positive number"),
+  secure: z.boolean().default(true),
+  authUser: z.string().min(1, "Username is required"),
+  authPass: z.string().min(1, "Password is required"),
+  senderEmail: z.string().email("Must be a valid email address"),
+  senderName: z.string().optional(),
+});
