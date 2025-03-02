@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
-import { db } from '../db';
-import { emailTemplates, emailConfig } from '@db/schema';
+import { db } from '../../db';
+import { emailTemplates, emailConfig } from '../../db/schema';
 import { eq } from 'drizzle-orm';
 import fs from 'fs';
 import path from 'path';
@@ -80,44 +80,51 @@ export function compileTemplate(template: string, data: Record<string, any>) {
   });
 }
 
-// Send email using a template
-export async function sendTemplatedEmail(
-  templateType: string,
-  to: string,
-  data: Record<string, any>
-) {
+// Send email function
+export async function sendEmail(options: {
+  to: string | string[];
+  subject: string;
+  text?: string;
+  html: string;
+  from?: string;
+  attachments?: any[];
+}) {
   try {
-    const template = await getEmailTemplate(templateType);
+    // Get sender email from database config
+    const [dbEmailConfig] = await db.select().from(emailConfig).limit(1);
 
-    if (!template) {
-      throw new Error(`Email template not found for type: ${templateType}`);
-    }
-
-    const compiledSubject = compileTemplate(template.subject, data);
-    const compiledContent = compileTemplate(template.content, data);
+    const fromEmail = options.from || 
+      (dbEmailConfig?.senderName 
+        ? `${dbEmailConfig.senderName} <${dbEmailConfig.senderEmail}>`
+        : dbEmailConfig?.senderEmail || process.env.EMAIL_FROM || 'no-reply@example.com');
 
     const mailOptions = {
-      from: `"${template.senderName}" <${template.senderEmail}>`,
-      to,
-      subject: compiledSubject,
-      html: compiledContent,
+      from: fromEmail,
+      to: Array.isArray(options.to) ? options.to.join(',') : options.to,
+      subject: options.subject,
+      text: options.text,
+      html: options.html,
+      attachments: options.attachments
     };
 
     const info = await transporter.sendMail(mailOptions);
 
-    // For development - log the preview URL
     if (process.env.NODE_ENV !== 'production') {
-      console.log('Email preview URL:', nodemailer.getTestMessageUrl(info));
+      console.log('Email sent in development mode:');
+      console.log(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
     }
 
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('Error sending email:', error);
-    throw error;
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
   }
 }
 
-// Specific email sending functions
+// Specific email sending functions using the new sendEmail function.
 export async function sendPasswordResetEmail(
   to: string, 
   resetToken: string,
@@ -125,17 +132,18 @@ export async function sendPasswordResetEmail(
 ) {
   const resetUrl = `${process.env.APP_URL || ''}/reset-password?token=${resetToken}`;
 
-  return sendTemplatedEmail('password_reset', to, {
-    username,
-    resetUrl,
-    expiryTime: '1 hour',
+  return sendEmail({
+    to,
+    subject: 'Password Reset', //Example subject
+    html: compileTemplate( (await getEmailTemplate('password_reset')).content, { username, resetUrl, expiryTime: '1 hour' }), //Assumes template exists
   });
 }
 
 export async function sendWelcomeEmail(to: string, firstName: string) {
-  return sendTemplatedEmail('welcome', to, {
-    firstName,
-    loginUrl: process.env.APP_URL || '',
+  return sendEmail({
+    to,
+    subject: 'Welcome!', //Example Subject
+    html: compileTemplate( (await getEmailTemplate('welcome')).content, { firstName, loginUrl: process.env.APP_URL || '' }), //Assumes template exists
   });
 }
 
@@ -144,9 +152,9 @@ export async function sendRegistrationConfirmation(
   firstName: string,
   eventName: string
 ) {
-  return sendTemplatedEmail('registration_confirmation', to, {
-    firstName,
-    eventName,
-    dashboardUrl: `${process.env.APP_URL || ''}/dashboard`,
+  return sendEmail({
+    to,
+    subject: 'Registration Confirmation', //Example Subject
+    html: compileTemplate( (await getEmailTemplate('registration_confirmation')).content, { firstName, eventName, dashboardUrl: `${process.env.APP_URL || ''}/dashboard` }), //Assumes template exists
   });
 }
