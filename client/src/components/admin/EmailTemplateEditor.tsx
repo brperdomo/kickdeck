@@ -1,251 +1,243 @@
-
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { Editor } from "@tinymce/tinymce-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, Send } from "lucide-react";
+import { z } from "zod";
 
 export interface EmailTemplate {
-  id: number;
+  id: string;
   name: string;
-  type: string;
   subject: string;
   content: string;
-  senderName: string;
+  type: string;
   senderEmail: string;
-  isDefault: boolean;
+  senderName: string;
+  isDefault?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
 
-const templateSchema = z.object({
-  id: z.number().optional(),
+interface EmailTemplateEditorProps {
+  template?: EmailTemplate;
+  onSave: (template: Omit<EmailTemplate, 'id'>) => Promise<void>;
+  onPreview?: (template: Partial<EmailTemplate>) => void;
+  onCancel: () => void;
+}
+
+const TEMPLATE_TYPES = [
+  'registration',
+  'payment_confirmation',
+  'password_reset',
+  'account_creation',
+  'event_reminder',
+  'team_update'
+];
+
+export function EmailTemplateEditor({ 
+  template, 
+  onSave, 
+  onPreview, 
+  onCancel 
+}: EmailTemplateEditorProps) {
+  const { toast } = useToast();
+  const [name, setName] = useState(template?.name || '');
+  const [subject, setSubject] = useState(template?.subject || '');
+  const [content, setContent] = useState(template?.content || '');
+  const [type, setType] = useState(template?.type || TEMPLATE_TYPES[0]);
+  const [senderEmail, setSenderEmail] = useState(template?.senderEmail || '');
+  const [senderName, setSenderName] = useState(template?.senderName || '');
+  const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const emailTemplateSchema = z.object({
   name: z.string().min(1, "Template name is required"),
   type: z.string().min(1, "Template type is required"),
   subject: z.string().min(1, "Subject is required"),
   content: z.string().min(1, "Content is required"),
   senderName: z.string().min(1, "Sender name is required"),
   senderEmail: z.string().email("Invalid sender email"),
-  isDefault: z.boolean().default(false),
 });
 
-type TemplateFormValues = z.infer<typeof templateSchema>;
-
-const templateTypes = [
-  { value: "registration", label: "Registration" },
-  { value: "payment", label: "Payment" },
-  { value: "confirmation", label: "Confirmation" },
-  { value: "password_reset", label: "Password Reset" },
-  { value: "notification", label: "Notification" },
-  { value: "welcome", label: "Welcome" },
-];
-
-interface EmailTemplateEditorProps {
-  template?: EmailTemplate;
-  onClose: () => void;
-  onSave: (template: Partial<EmailTemplate>) => Promise<void>;
-}
-
-export function EmailTemplateEditor({ 
-  template, 
-  onClose, 
-  onSave 
-}: EmailTemplateEditorProps) {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const form = useForm<TemplateFormValues>({
-    resolver: zodResolver(templateSchema),
-    defaultValues: template || {
-      name: "",
-      type: "",
-      subject: "",
-      content: "",
-      senderName: "",
-      senderEmail: "",
-      isDefault: false,
-    },
-  });
-
-  useEffect(() => {
-    if (template) {
-      form.reset(template);
-    }
-  }, [template, form]);
-
-  const handleSubmit = async (values: TemplateFormValues) => {
+const handleSave = async () => {
     try {
-      setIsSubmitting(true);
-      await onSave(values);
-      onClose();
+      setIsSaving(true);
+      setErrors({});
+
+      // Validate form data
+      const result = emailTemplateSchema.safeParse({
+        name,
+        type,
+        subject,
+        content,
+        senderName,
+        senderEmail
+      });
+
+      if (!result.success) {
+        const formattedErrors: Record<string, string> = {};
+        result.error.errors.forEach(err => {
+          formattedErrors[err.path[0].toString()] = err.message;
+        });
+        setErrors(formattedErrors);
+        toast({
+          title: "Validation Error",
+          description: "Please check the form for errors",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Save template
+      await onSave({
+        name,
+        type,
+        subject,
+        content,
+        senderName,
+        senderEmail,
+        isDefault: template?.isDefault || false
+      });
+
+      toast({
+        title: "Success",
+        description: "Email template saved successfully"
+      });
     } catch (error) {
+      console.error("Failed to save template:", error);
       toast({
         title: "Error",
-        description: "Failed to save template",
-        variant: "destructive",
+        description: "Failed to save email template",
+        variant: "destructive"
       });
     } finally {
-      setIsSubmitting(false);
+      setIsSaving(false);
     }
   };
 
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Template Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Template name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+  const handleSubmit = () => {
+    handleSave();
+  };
 
-        <FormField
-          control={form.control}
-          name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Template Type</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                value={field.value}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a template type" />
-                  </SelectTrigger>
-                </FormControl>
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Template Name</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Registration Confirmation"
+                className={errors.name ? "border-red-500" : ""}
+              />
+              {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="type">Template Type</Label>
+              <Select value={type} onValueChange={setType}>
+                <SelectTrigger className={errors.type ? "border-red-500" : ""}>
+                  <SelectValue placeholder="Select a type" />
+                </SelectTrigger>
                 <SelectContent>
-                  {templateTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
+                  {TEMPLATE_TYPES.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ')}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <FormMessage />
-            </FormItem>
-          )}
+              {errors.type && <p className="text-sm text-red-500">{errors.type}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="senderName">Sender Name</Label>
+              <Input
+                id="senderName"
+                value={senderName}
+                onChange={(e) => setSenderName(e.target.value)}
+                placeholder="Your Organization"
+                className={errors.senderName ? "border-red-500" : ""}
+              />
+              {errors.senderName && <p className="text-sm text-red-500">{errors.senderName}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="senderEmail">Sender Email</Label>
+              <Input
+                id="senderEmail"
+                value={senderEmail}
+                onChange={(e) => setSenderEmail(e.target.value)}
+                placeholder="noreply@example.com"
+                className={errors.senderEmail ? "border-red-500" : ""}
+              />
+              {errors.senderEmail && <p className="text-sm text-red-500">{errors.senderEmail}</p>}
+            </div>
+          </div>
+
+      <div className="space-y-2 mb-4">
+        <Label htmlFor="subject">Email Subject</Label>
+        <Input
+          id="subject"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder="Welcome to our platform!"
+          className={errors.subject ? "border-red-500" : ""}
         />
-
-        <FormField
-          control={form.control}
-          name="subject"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Subject Line</FormLabel>
-              <FormControl>
-                <Input placeholder="Subject" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="content"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email Content</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="Email content" 
-                  {...field} 
-                  className="min-h-[200px]"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="senderName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Sender Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Sender name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="senderEmail"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Sender Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="email@example.com" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+        {errors.subject && <p className="text-sm text-red-500">{errors.subject}</p>}
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="content">Email Content</Label>
+        <div className={errors.content ? "border border-red-500 rounded-md" : ""}>
+          <Editor
+            value={content}
+            onEditorChange={(content) => setContent(content)}
+            init={{
+              height: 350,
+              menubar: true,
+              // Use basic editor without requiring premium plugins
+              plugins: 'link lists',
+              toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link | removeformat',
+              // Use CDN for TinyMCE resources
+              base_url: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3',
+              suffix: '.min'
+            }}
           />
         </div>
+        {errors.content && <p className="text-sm text-red-500">{errors.content}</p>}
+      </div>
 
-        <FormField
-          control={form.control}
-          name="isDefault"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>Set as Default Template</FormLabel>
-                <p className="text-sm text-muted-foreground">
-                  This will be used as the default template for this type
-                </p>
-              </div>
-            </FormItem>
+      <div className="flex justify-end space-x-2 mt-4">
+        {onPreview && (
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => onPreview({ subject, content, senderName, senderEmail })}
+          >
+            <Send className="w-4 h-4 mr-2" />
+            Preview
+          </Button>
+        )}
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button 
+          type="button"
+          onClick={handleSubmit}
+          disabled={isSaving}
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            'Save'
           )}
-        />
-
-        <div className="flex justify-end gap-2 pt-4">
-          <Button variant="outline" type="button" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Saving..." : "Save Template"}
-          </Button>
-        </div>
-      </form>
-    </Form>
+        </Button>
+      </div>
+    </form>
   );
 }

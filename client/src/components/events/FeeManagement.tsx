@@ -33,33 +33,7 @@ import { DatePicker } from '../ui/date-picker';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-// Define interfaces
-interface Fee {
-  id: number;
-  name: string;
-  amount: number;
-  beginDate: string;
-  endDate: string;
-  accountingCodeId: number | null;
-}
-
-interface AgeGroup {
-  id: number;
-  name: string;
-  birthYear: number;
-}
-
-interface AccountingCode {
-  id: number;
-  code: string;
-  description: string;
-}
-
-interface FeeAssignment {
-  ageGroupId: number;
-  feeId: number;
-}
-
+// Define types
 type SortDirection = 'asc' | 'desc';
 type SortField = 'name' | 'amount' | 'beginDate' | 'endDate';
 
@@ -78,14 +52,21 @@ export function FeeManagement() {
   const eventId = params.id;
   const [location, setLocation] = useLocation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingFee, setEditingFee] = useState<Fee | null>(null);
+  const [editingFee, setEditingFee] = useState<any>(null);
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [isAddFeeOpen, setIsAddFeeOpen] = useState(false);
   const [isEditFeeOpen, setIsEditFeeOpen] = useState(false);
   const [isAssignFeeOpen, setIsAssignFeeOpen] = useState(false);
-  const [selectedFeeId, setSelectedFeeId] = useState<number | null>(null);
-  const [selectedAgeGroups, setSelectedAgeGroups] = useState<Record<number, Record<number, boolean>>>({});
+  const [selectedFeeId, setSelectedFeeId] = useState(null);
+  const [newFee, setNewFee] = useState({
+    name: '',
+    amount: '',
+    beginDate: null,
+    endDate: null,
+    applyToAll: false,
+  });
+  const [selectedAgeGroups, setSelectedAgeGroups] = useState({});
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -190,7 +171,7 @@ export function FeeManagement() {
 
   // Add fee mutation
   const addFeeMutation = useMutation({
-    mutationFn: async (feeData: Fee) => {
+    mutationFn: async (feeData) => {
       const response = await fetch(`/api/admin/events/${eventIdParam}/fees`, {
         method: 'POST',
         headers: {
@@ -231,7 +212,7 @@ export function FeeManagement() {
 
   // Update fee mutation
   const updateFeeMutation = useMutation({
-    mutationFn: async (feeData: Fee) => {
+    mutationFn: async (feeData) => {
       const response = await fetch(`/api/admin/events/${eventIdParam}/fees/${feeData.id}`, {
         method: 'PUT',
         headers: {
@@ -266,7 +247,7 @@ export function FeeManagement() {
 
   // Delete fee mutation
   const deleteFeeMutation = useMutation({
-    mutationFn: async (feeId: number) => {
+    mutationFn: async (feeId) => {
       const response = await fetch(`/api/admin/events/${eventIdParam}/fees/${feeId}`, {
         method: 'DELETE',
       });
@@ -295,7 +276,7 @@ export function FeeManagement() {
 
   // Update fee assignments mutation
   const updateAssignmentsMutation = useMutation({
-    mutationFn: async ({ feeId, ageGroupIds }: { feeId: number; ageGroupIds: number[] }) => {
+    mutationFn: async ({ feeId, ageGroupIds }) => {
       const response = await fetch(`/api/admin/events/${eventIdParam}/fee-assignments`, {
         method: 'POST',
         headers: {
@@ -331,38 +312,25 @@ export function FeeManagement() {
     },
   });
 
-  const [newFee, setNewFee] = useState<Partial<Fee>>({
-    name: '',
-    amount: '',
-    beginDate: null,
-    endDate: null,
-    applyToAll: false,
-  });
-
   const handleAddFee = () => {
-    const feeData: Fee = {
+    const feeData = {
       ...newFee,
-      amount: parseFloat(newFee.amount!) * 100, // Convert to cents
-      beginDate: newFee.beginDate || '',
-      endDate: newFee.endDate || '',
-      id: 0, // Placeholder ID, server will assign a real ID
-      accountingCodeId: newFee.accountingCodeId || null,
-      name: newFee.name!
+      amount: parseFloat(newFee.amount) * 100, // Convert to cents
     };
 
     addFeeMutation.mutate(feeData);
   };
 
   const handleUpdateFee = () => {
-    const feeData: Fee = {
-      ...editingFee!,
-      amount: parseFloat(editingFee!.amount.toString()) * 100, // Convert to cents
+    const feeData = {
+      ...editingFee,
+      amount: parseFloat(editingFee.amount) * 100, // Convert to cents
     };
 
     updateFeeMutation.mutate(feeData);
   };
 
-  const handleDeleteFee = (feeId: number) => {
+  const handleDeleteFee = (feeId) => {
     if (window.confirm('Are you sure you want to delete this fee?')) {
       deleteFeeMutation.mutate(feeId);
     }
@@ -380,12 +348,12 @@ export function FeeManagement() {
     });
 
     updateAssignmentsMutation.mutate({
-      feeId: selectedFeeId!,
+      feeId: selectedFeeId,
       ageGroupIds: selectedAgeGroupIds,
     });
   };
 
-  const openAssignFeeDialog = (feeId: number) => {
+  const openAssignFeeDialog = (feeId) => {
     setSelectedFeeId(feeId);
     setIsAssignFeeOpen(true);
   };
@@ -406,8 +374,6 @@ export function FeeManagement() {
       addFeeMutation.mutate({
         ...data,
         amount: amountInCents,
-        id: 0, // Placeholder ID
-        accountingCodeId: data.accountingCodeId || null
       });
     }
 
@@ -492,8 +458,8 @@ export function FeeManagement() {
                       <TableRow key={fee.id}>
                         <TableCell>{fee.name}</TableCell>
                         <TableCell>{formatCurrency(fee.amount)}</TableCell>
-                        <TableCell>{fee.beginDate ? format(new Date(fee.beginDate), 'MMM d, yyyy') : null}</TableCell>
-                        <TableCell>{fee.endDate ? format(new Date(fee.endDate), 'MMM d, yyyy') : null}</TableCell>
+                        <TableCell>{format(new Date(fee.beginDate), 'MMM d, yyyy')}</TableCell>
+                        <TableCell>{format(new Date(fee.endDate), 'MMM d, yyyy')}</TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
                             <Button 
@@ -757,7 +723,7 @@ export function FeeManagement() {
                 <Checkbox
                   id={`age-group-${ageGroup.id}`}
                   checked={
-                    selectedAgeGroups[ageGroup.id]?.[selectedFeeId!] || 
+                    selectedAgeGroups[ageGroup.id]?.[selectedFeeId] || 
                     feeAssignmentsQuery.data?.some(
                       a => a.ageGroupId === ageGroup.id && a.feeId === selectedFeeId
                     ) || 
@@ -768,7 +734,7 @@ export function FeeManagement() {
                       ...prev,
                       [ageGroup.id]: {
                         ...(prev[ageGroup.id] || {}),
-                        [selectedFeeId!]: !!checked
+                        [selectedFeeId]: !!checked
                       }
                     }));
                   }}

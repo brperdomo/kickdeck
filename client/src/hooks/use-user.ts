@@ -12,7 +12,6 @@ const mockAdminUser: SelectUser = {
   phone: null,
   isParent: false,
   isAdmin: true,
-  householdId: 1, // Added missing required property
   createdAt: new Date().toISOString(),
 };
 
