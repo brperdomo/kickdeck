@@ -56,6 +56,16 @@ export const emailTemplates = pgTable("email_templates", {
   isDefault: boolean("is_default").default(false),
 });
 
+// Accounting Codes table
+export const accountingCodes = pgTable("accounting_codes", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  name: text("name").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at"),
+});
+
 // Age Group Settings table
 export const ageGroupSettings = pgTable("age_group_settings", {
   id: serial("id").primaryKey(),
@@ -93,6 +103,12 @@ export const insertEmailTemplateSchema = createInsertSchema(emailTemplates, {
   senderEmail: z.string().email("Invalid sender email").optional(),
   senderName: z.string().optional(),
   isDefault: z.boolean().default(false),
+});
+
+export const insertAccountingCodeSchema = createInsertSchema(accountingCodes, {
+  code: z.string().min(1, "Code is required"),
+  name: z.string().min(1, "Name is required"),
+  description: z.string().optional(),
 });
 
 // Relations
@@ -147,3 +163,6 @@ export type InsertAgeGroupSetting = typeof ageGroupSettings.$inferInsert;
 
 export type SelectEvent = typeof events.$inferSelect;
 export type InsertEvent = typeof events.$inferInsert;
+
+export type SelectAccountingCode = typeof accountingCodes.$inferSelect;
+export type InsertAccountingCode = typeof accountingCodes.$inferInsert;
