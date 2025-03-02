@@ -78,7 +78,7 @@ function Router() {
       <Route path="/events/:id" component={EventDetailsPage} />
       <Route path="/events/:id/apply" component={EventApplicationPage} />
       <Route path="/admin" component={AdminDashboard} />
-      <Route path="/admin/create" component={CreateAdminPage} />
+      <Route path="/admin/create" component={CreateEventPage} /> {/* Changed import and route */}
       <Route path="/admin/create-event" component={CreateEventPage} />
       <Route path="/admin/events/:id/edit" component={EditEventPage} />
       <Route path="/admin/scores" component={ScoresPage} />
