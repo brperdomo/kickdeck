@@ -146,6 +146,20 @@ export const events = pgTable("events", {
   updatedAt: timestamp("updated_at"),
 });
 
+// Event Fees table
+export const eventFees = pgTable("event_fees", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull(),
+  name: text("name").notNull(),
+  amount: integer("amount").notNull(),
+  beginDate: timestamp("begin_date"),
+  endDate: timestamp("end_date"),
+  applyToAll: boolean("apply_to_all").default(false),
+  accountingCodeId: integer("accounting_code_id").references(() => accountingCodes.id),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at"),
+});
+
 export type SelectUser = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
@@ -161,8 +175,37 @@ export type InsertSeasonalScope = typeof seasonalScopes.$inferInsert;
 export type SelectAgeGroupSetting = typeof ageGroupSettings.$inferSelect;
 export type InsertAgeGroupSetting = typeof ageGroupSettings.$inferInsert;
 
+// Event Age Groups table
+export const eventAgeGroups = pgTable("event_age_groups", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull(),
+  name: text("name").notNull(),
+  gender: text("gender"),
+  minAge: integer("min_age"),
+  maxAge: integer("max_age"),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at"),
+});
+
+// Event Age Group Fees join table
+export const eventAgeGroupFees = pgTable("event_age_group_fees", {
+  id: serial("id").primaryKey(),
+  ageGroupId: integer("age_group_id").notNull(),
+  feeId: integer("fee_id").notNull(),
+  createdAt: timestamp("created_at").notNull(),
+});
+
 export type SelectEvent = typeof events.$inferSelect;
 export type InsertEvent = typeof events.$inferInsert;
 
 export type SelectAccountingCode = typeof accountingCodes.$inferSelect;
 export type InsertAccountingCode = typeof accountingCodes.$inferInsert;
+
+export type SelectEventFee = typeof eventFees.$inferSelect;
+export type InsertEventFee = typeof eventFees.$inferInsert;
+
+export type SelectEventAgeGroup = typeof eventAgeGroups.$inferSelect;
+export type InsertEventAgeGroup = typeof eventAgeGroups.$inferInsert;
+
+export type SelectEventAgeGroupFee = typeof eventAgeGroupFees.$inferSelect;
+export type InsertEventAgeGroupFee = typeof eventAgeGroupFees.$inferInsert;
