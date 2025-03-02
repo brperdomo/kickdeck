@@ -195,6 +195,36 @@ export const eventAgeGroupFees = pgTable("event_age_group_fees", {
   createdAt: timestamp("created_at").notNull(),
 });
 
+// Event Complexes join table
+export const eventComplexes = pgTable("event_complexes", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull(),
+  complexId: integer("complex_id").notNull(),
+  createdAt: timestamp("created_at").notNull(),
+});
+
+// Event Field Sizes table
+export const eventFieldSizes = pgTable("event_field_sizes", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull(),
+  fieldId: integer("field_id").notNull(),
+  fieldSize: text("field_size").notNull(),
+  createdAt: timestamp("created_at").notNull(),
+});
+
+// Event Scoring Rules table
+export const eventScoringRules = pgTable("event_scoring_rules", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull(),
+  winPoints: integer("win_points").notNull().default(3),
+  drawPoints: integer("draw_points").notNull().default(1),
+  lossPoints: integer("loss_points").notNull().default(0),
+  forfeitPoints: integer("forfeit_points").notNull().default(0),
+  maxGoalDifferential: integer("max_goal_differential"),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at"),
+});
+
 // Coupons table
 export const coupons = pgTable("coupons", {
   id: serial("id").primaryKey(),
@@ -225,6 +255,15 @@ export type InsertEventAgeGroup = typeof eventAgeGroups.$inferInsert;
 
 export type SelectEventAgeGroupFee = typeof eventAgeGroupFees.$inferSelect;
 export type InsertEventAgeGroupFee = typeof eventAgeGroupFees.$inferInsert;
+
+export type SelectEventComplex = typeof eventComplexes.$inferSelect;
+export type InsertEventComplex = typeof eventComplexes.$inferInsert;
+
+export type SelectEventFieldSize = typeof eventFieldSizes.$inferSelect;
+export type InsertEventFieldSize = typeof eventFieldSizes.$inferInsert;
+
+export type SelectEventScoringRule = typeof eventScoringRules.$inferSelect;
+export type InsertEventScoringRule = typeof eventScoringRules.$inferInsert;
 
 export type SelectCoupon = typeof coupons.$inferSelect;
 export type InsertCoupon = typeof coupons.$inferInsert;
