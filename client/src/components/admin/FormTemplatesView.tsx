@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -35,10 +34,8 @@ export function FormTemplatesView() {
       const response = await fetch('/api/admin/form-templates');
       if (!response.ok) throw new Error('Failed to fetch templates');
       const templates = await response.json();
-      // Only return templates that don't have an eventId (copies)
-      return templates
-        .filter((template: any) => !template.eventId)
-        .map((template: any) => ({
+      //Removed the filter to show all templates
+      return templates.map((template: any) => ({
           ...template,
           eventName: 'Template'
         }));
@@ -49,14 +46,13 @@ export function FormTemplatesView() {
     mutationFn: async (id: number) => {
       const template = templatesQuery.data?.find(t => t.id === id);
       if (!template) throw new Error('Template not found');
-      
-      // Use a default eventId for global templates if not specified
-      const eventId = template.eventId || "0";
-      
+
       const response = await fetch(`/api/admin/form-templates/${id}`, {
         method: 'DELETE',
       });
-      if (!response.ok) throw new Error('Failed to delete template');
+      if (!response.ok) {
+        throw new Error(`Failed to delete template: ${response.status} ${response.statusText}`);
+      }
       return response.json();
     },
     onSuccess: () => {
@@ -66,6 +62,13 @@ export function FormTemplatesView() {
         description: "Template deleted successfully",
       });
     },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete template",
+        variant: "destructive",
+      });
+    }
   });
 
   if (templatesQuery.isLoading) {
@@ -86,17 +89,18 @@ export function FormTemplatesView() {
           fields: []
         }),
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to create template');
+        const errorData = await response.json();
+        throw new Error(`Failed to create template: ${response.status} ${response.statusText} - ${JSON.stringify(errorData)}`);
       }
-      
+
       queryClient.invalidateQueries(['form-templates']);
       toast({
         title: "Success",
         description: "Template created successfully. You can now edit it.",
       });
-      
+
       // Redirect to templates list after creation
       navigate("/admin/form-templates");
     } catch (error) {
@@ -153,15 +157,14 @@ export function FormTemplatesView() {
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
-                        {!template.eventId && (
-                          <DropdownMenuItem 
+                        <DropdownMenuItem 
                             onClick={() => deleteTemplateMutation.mutate(template.id)}
                             className="text-red-600"
                           >
                             <Trash className="mr-2 h-4 w-4" />
                             Delete
                           </DropdownMenuItem>
-                        )}
+                        
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
