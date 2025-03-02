@@ -2768,6 +2768,7 @@ export function registerRoutes(app: Express): Server {
             name: eventFormTemplates.name,
             description: eventFormTemplates.description,
             isPublished: eventFormTemplates.isPublished,
+            eventId: eventFormTemplates.eventId,
             createdAt: eventFormTemplates.createdAt,
             updatedAt: eventFormTemplates.updatedAt,
             fields: sql<any[]>`json_agg(
@@ -2783,6 +2784,29 @@ export function registerRoutes(app: Express): Server {
           .from(eventFormTemplates)
           .leftJoin(formFields, eq(formFields.templateId, eventFormTemplates.id))
           .groupBy(eventFormTemplates.id);
+          
+    // Add DELETE endpoint for form templates
+    app.delete('/api/admin/form-templates/:id', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+        if (isNaN(templateId)) {
+          return res.status(400).json({ error: "Invalid template ID" });
+        }
+
+        // Delete the template and its related fields
+        await db.transaction(async (tx) => {
+          // Delete related fields first (cascade should handle this, but just to be safe)
+          await tx.delete(formFields).where(eq(formFields.templateId, templateId));
+          // Delete the template
+          await tx.delete(eventFormTemplates).where(eq(eventFormTemplates.id, templateId));
+        });
+
+        res.json({ message: "Form template deleted successfully" });
+      } catch (error) {
+        console.error('Error deleting form template:', error);
+        res.status(500).json({ error: "Failed to delete form template" });
+      }
+    });
 
         res.json(templates);
       } catch (error) {
@@ -2795,16 +2819,15 @@ export function registerRoutes(app: Express): Server {
       try {
         const { name, description, isPublished, fields, eventId } = req.body;
 
-        if (!eventId) {
-          return res.status(400).json({ error: "Event ID is required" });
-        }
+        // Allow a default eventId for global templates
+        const templateEventId = eventId || "0";
 
         await db.transaction(async (tx) => {
           // Create form template
           const [template] = await tx
             .insert(eventFormTemplates)
             .values({
-              eventId,
+              eventId: templateEventId,
               name,
               description,
               isPublished: isPublished || false,

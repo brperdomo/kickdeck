@@ -50,7 +50,10 @@ export function FormTemplatesView() {
       const template = templatesQuery.data?.find(t => t.id === id);
       if (!template) throw new Error('Template not found');
       
-      const response = await fetch(`/api/admin/events/${template.eventId}/form-template/${id}`, {
+      // Use a default eventId for global templates if not specified
+      const eventId = template.eventId || "0";
+      
+      const response = await fetch(`/api/admin/form-templates/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete template');
@@ -69,11 +72,47 @@ export function FormTemplatesView() {
     return <div>Loading...</div>;
   }
 
+  const createNewTemplate = async () => {
+    try {
+      const response = await fetch('/api/admin/form-templates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: "New Template",
+          description: "Description for the new template",
+          isPublished: false,
+          fields: []
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create template');
+      }
+      
+      queryClient.invalidateQueries(['form-templates']);
+      toast({
+        title: "Success",
+        description: "Template created successfully. You can now edit it.",
+      });
+      
+      // Redirect to templates list after creation
+      navigate("/admin/form-templates");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to create template",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Form Templates</h2>
-        <Button onClick={() => navigate("/admin/form-templates/create")}>
+        <Button onClick={createNewTemplate}>
           <Plus className="mr-2 h-4 w-4" />
           Create Template
         </Button>
