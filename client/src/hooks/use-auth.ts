@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useUser } from "./use-user";
 import { useToast } from "./use-toast";
@@ -100,7 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider
+    <AuthContext.Provider 
       value={{
         isAuthenticated,
         isLoading,

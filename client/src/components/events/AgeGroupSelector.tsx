@@ -12,8 +12,8 @@ interface AgeGroupData {
   isSelected: boolean;
   projectedTeams: number;
   fieldSize: string;
-  amountDue?: number;
-  // Fees removed - now managed in Fee Management
+  amountDue?: number | null;
+  scoringRule?: string | null;
 }
 
 const DEFAULT_AGE_GROUPS: AgeGroupData[] = [
@@ -60,27 +60,18 @@ export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
     const updatedGroups = [...ageGroups];
     updatedGroups[index] = { ...updatedGroups[index], isSelected: checked };
     setAgeGroups(updatedGroups);
-    
-    // Ensure we send the complete data for selected groups
-    let selectedGroups = updatedGroups
+
+    const selectedGroups = updatedGroups
       .filter(group => group.isSelected)
       .map(group => ({
         ...group,
-        // Ensure these fields are always defined
         projectedTeams: group.projectedTeams || 0,
         fieldSize: group.fieldSize || '11v11',
-        scoringRule: group.scoringRule || null,
-        amountDue: group.amountDue || null
+        scoringRule: null,
+        amountDue: null
       }));
-    
-    // Deduplicate by creating a unique key for each group
-    const uniqueGroups = Array.from(
-      new Map(selectedGroups.map(group => 
-        [`${group.gender}-${group.ageGroup}-${group.birthYear}`, group]
-      )).values()
-    );
-      
-    onAgeGroupsChange(uniqueGroups);
+
+    onAgeGroupsChange(selectedGroups);
   };
 
   const handleProjectedTeamsChange = (index: number, value: string) => {

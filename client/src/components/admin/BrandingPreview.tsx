@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useBrandingPreview } from "@/hooks/use-branding-preview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,14 +27,14 @@ export function BrandingPreview() {
             <div className="flex items-center gap-2">
               <div
                 className="w-8 h-8 rounded"
-                style={{ backgroundColor: preview.primaryColor }}
+                style={{ backgroundColor: preview.primaryColor || undefined }}
               />
               <span className="text-sm">Primary Color</span>
             </div>
             <div className="flex items-center gap-2">
               <div
                 className="w-8 h-8 rounded"
-                style={{ backgroundColor: preview.secondaryColor }}
+                style={{ backgroundColor: preview.secondaryColor || undefined }}
               />
               <span className="text-sm">Secondary Color</span>
             </div>
