@@ -9,7 +9,7 @@ import { sendPasswordResetEmail } from '../../services/email-service';
 const router = Router();
 
 // Store reset tokens temporarily (in production, consider using Redis or a database table)
-const passwordResetTokens: Record<string, { userId: number; expires: Date }> = {};
+export const passwordResetTokens: Record<string, { userId: number; expires: Date }> = {};
 
 // Request password reset
 router.post('/request-reset', async (req, res) => {

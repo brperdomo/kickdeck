@@ -4,6 +4,7 @@ import { users } from "../../../db/schema";
 import { Router } from "express";
 import { eq } from "drizzle-orm";
 import { hashPassword } from "../../crypto";
+import { passwordResetTokens } from "./password-reset";
 
 const router = Router();
 
