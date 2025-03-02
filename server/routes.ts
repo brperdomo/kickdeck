@@ -304,6 +304,31 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Administrator listing endpoint
+    app.get('/api/admin/administrators', isAdmin, async (req, res) => {
+      try {
+        const administrators = await db
+          .select({
+            id: users.id,
+            email: users.email,
+            firstName: users.firstName,
+            lastName: users.lastName,
+            roles: sql<string[]>`array_agg(${roles.name})`,
+          })
+          .from(users)
+          .leftJoin(adminRoles, eq(users.id, adminRoles.userId))
+          .leftJoin(roles, eq(adminRoles.roleId, roles.id))
+          .where(eq(users.isAdmin, true))
+          .groupBy(users.id);
+
+        res.json(administrators);
+      } catch (error) {
+        console.error('Error fetching administrators:', error);
+        console.error("Error details:", error);
+        res.status(500).json({ error: "Failed to fetch administrators" });
+      }
+    });
+
     // Administrator creation endpoint
     app.post('/api/admin/administrators', isAdmin, async (req, res) => {
       try {
