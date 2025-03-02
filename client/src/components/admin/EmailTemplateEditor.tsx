@@ -53,7 +53,19 @@ export function EmailTemplateEditor({
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSave = async () => {
+  // Add schema definition for validation
+import { z } from "zod";
+
+const emailTemplateSchema = z.object({
+  name: z.string().min(1, "Template name is required"),
+  type: z.string().min(1, "Template type is required"),
+  subject: z.string().min(1, "Subject is required"),
+  content: z.string().min(1, "Content is required"),
+  senderName: z.string().min(1, "Sender name is required"),
+  senderEmail: z.string().email("Invalid sender email"),
+});
+
+const handleSave = async () => {
     try {
       setIsSaving(true);
       setErrors({});
@@ -182,21 +194,20 @@ export function EmailTemplateEditor({
         <Label htmlFor="content">Email Content</Label>
         <div className={errors.content ? "border border-red-500 rounded-md" : ""}>
           <Editor
-            apiKey="your-tinymce-api-key"
+            // Remove API key to use the free version without plugins
             value={content}
             onEditorChange={(content) => setContent(content)}
             init={{
               height: 350,
               menubar: true,
+              // Use a simplified set of features that doesn't require plugins
               plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount'
+                'lists', 'link', 'autolink', 'autoresize'
               ],
               toolbar:
-                'undo redo | formatselect | bold italic backcolor | \
-                alignleft aligncenter alignright alignjustify | \
-                bullist numlist outdent indent | removeformat | help'
+                'undo redo | formatselect | bold italic | \
+                alignleft aligncenter alignright | \
+                bullist numlist | link | removeformat'
             }}
           />
         </div>
