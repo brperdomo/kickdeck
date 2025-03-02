@@ -1,28 +1,30 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Editor } from "@tinymce/tinymce-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -31,17 +33,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { useToast } from "@/hooks/use-toast";
-import { insertEmailTemplateSchema, type EmailTemplate } from "@db/schema/emailTemplates";
-import type { z } from "zod";
+import { Editor } from "@tinymce/tinymce-react";
+import type { EmailTemplate } from "@db/schema/emailTemplates";
+import { insertEmailTemplateSchema } from "@db/schema/emailTemplates";
 
+// Define template types
 const templateTypes = [
-  { id: "registration", label: "Registration" },
-  { id: "payment", label: "Payment" },
+  { id: "welcome", label: "Welcome" },
   { id: "password_reset", label: "Password Reset" },
-  { id: "account_creation", label: "Account Creation" },
-  { id: "reminder", label: "Reminder" },
+  { id: "event_registration", label: "Event Registration" },
+  { id: "payment_confirmation", label: "Payment Confirmation" },
+  { id: "notification", label: "Notification" },
 ] as const;
+
+// Form values type
+type FormValues = z.infer<typeof insertEmailTemplateSchema>;
 
 interface EmailTemplateModalProps {
   open: boolean;
@@ -49,22 +55,18 @@ interface EmailTemplateModalProps {
   template: EmailTemplate | null;
 }
 
-type FormValues = z.infer<typeof insertEmailTemplateSchema>;
-
-export function EmailTemplateModal({
-  open,
-  onOpenChange,
-  template,
-}: EmailTemplateModalProps) {
+export function EmailTemplateModal({ open, onOpenChange, template }: EmailTemplateModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [variables, setVariables] = useState<string[]>([]);
+  const [newVariable, setNewVariable] = useState<string>("");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(insertEmailTemplateSchema),
     defaultValues: {
       name: "",
       description: "",
-      type: "registration",
+      type: "welcome",
       subject: "",
       content: "",
       senderName: "",
@@ -76,10 +78,9 @@ export function EmailTemplateModal({
 
   useEffect(() => {
     if (template) {
-      // Convert null values to undefined for the form
-      const formData: FormValues = {
+      form.reset({
         name: template.name,
-        description: template.description ?? undefined,
+        description: template.description ?? "",
         type: template.type,
         subject: template.subject,
         content: template.content,
@@ -87,13 +88,16 @@ export function EmailTemplateModal({
         senderEmail: template.senderEmail,
         isActive: template.isActive ?? true,
         variables: template.variables ?? [],
-      };
-      form.reset(formData);
+      });
+
+      if (template.variables) {
+        setVariables(template.variables);
+      }
     } else {
       form.reset({
         name: "",
         description: "",
-        type: "registration",
+        type: "welcome",
         subject: "",
         content: "",
         senderName: "",
@@ -101,8 +105,9 @@ export function EmailTemplateModal({
         isActive: true,
         variables: [],
       });
+      setVariables([]);
     }
-  }, [template, form]);
+  }, [template, form, open]);
 
   const mutation = useMutation({
     mutationFn: async (data: FormValues) => {
@@ -149,10 +154,9 @@ export function EmailTemplateModal({
             Create or modify email templates for various system notifications.
           </DialogDescription>
         </DialogHeader>
-
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="name"
@@ -160,13 +164,12 @@ export function EmailTemplateModal({
                   <FormItem>
                     <FormLabel>Template Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="e.g., Welcome Email" />
+                      <Input placeholder="Welcome Email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="type"
@@ -179,15 +182,15 @@ export function EmailTemplateModal({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a type" />
+                          <SelectValue placeholder="Select a template type" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {templateTypes.map((type) => (
-                          <SelectItem key={type.id} value={type.id}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="welcome">Welcome</SelectItem>
+                        <SelectItem value="password_reset">Password Reset</SelectItem>
+                        <SelectItem value="event_registration">Event Registration</SelectItem>
+                        <SelectItem value="payment_confirmation">Payment Confirmation</SelectItem>
+                        <SelectItem value="notification">Notification</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -195,53 +198,23 @@ export function EmailTemplateModal({
                 )}
               />
             </div>
-
             <FormField
               control={form.control}
-              name="subject"
+              name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Subject</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter email subject" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email Content</FormLabel>
-                  <FormControl>
-                    <Editor
-                      apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
-                      value={field.value}
-                      onEditorChange={(content) => field.onChange(content)}
-                      init={{
-                        height: 400,
-                        menubar: true,
-                        plugins: [
-                          "advlist", "autolink", "lists", "link", "image", "charmap", "preview",
-                          "anchor", "searchreplace", "visualblocks", "code", "fullscreen",
-                          "insertdatetime", "media", "table", "code", "help", "wordcount"
-                        ],
-                        toolbar: "undo redo | blocks | " +
-                          "bold italic forecolor | alignleft aligncenter " +
-                          "alignright alignjustify | bullist numlist outdent indent | " +
-                          "removeformat | help",
-                      }}
+                    <Textarea
+                      placeholder="Brief description of this email template's purpose"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="senderName"
@@ -249,13 +222,12 @@ export function EmailTemplateModal({
                   <FormItem>
                     <FormLabel>Sender Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter sender name" />
+                      <Input placeholder="MatchPro" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="senderEmail"
@@ -263,23 +235,55 @@ export function EmailTemplateModal({
                   <FormItem>
                     <FormLabel>Sender Email</FormLabel>
                     <FormControl>
-                      <Input {...field} type="email" placeholder="Enter sender email" />
+                      <Input placeholder="notifications@matchpro.ai" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-
+            <FormField
+              control={form.control}
+              name="subject"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Subject</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Welcome to MatchPro" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Content</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Enter the email content here"
+                      className="min-h-[200px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Use variables by placing them inside curly braces, e.g. &#123;firstName&#125;
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="isActive"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel>Active Status</FormLabel>
+                    <FormLabel className="text-base">Active</FormLabel>
                     <FormDescription>
-                      Inactive templates won't be used by the system
+                      Enable or disable this email template
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -291,7 +295,6 @@ export function EmailTemplateModal({
                 </FormItem>
               )}
             />
-
             <DialogFooter>
               <Button
                 type="button"

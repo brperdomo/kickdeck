@@ -7,6 +7,8 @@ import { createAdmin } from "./create-admin";
 import { WebSocketServer } from "ws";
 import path from "path";
 import uploadRouter from "./routes/upload";
+import { createEmailTemplatesTable } from './migrations/create_email_templates'; // Added import
+
 
 const app = express();
 
@@ -86,7 +88,7 @@ async function testDbConnection() {
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
-      
+
       CREATE TABLE IF NOT EXISTS age_group_settings (
         id SERIAL PRIMARY KEY,
         seasonal_scope_id INTEGER NOT NULL REFERENCES seasonal_scopes(id) ON DELETE CASCADE,
@@ -97,6 +99,14 @@ async function testDbConnection() {
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    // Create email_templates table if it doesn't exist
+    try {
+      await createEmailTemplatesTable();
+      log("Email templates table created successfully");
+    } catch (error) {
+      log("Error creating email templates table: " + (error as Error).message);
+    }
 
 
     // Register routes first to ensure all middleware is set up
@@ -145,7 +155,7 @@ async function testDbConnection() {
 
     // Start the server
     const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-    
+
     const findAvailablePort = async (startPort: number): Promise<number> => {
       return new Promise((resolve, reject) => {
         const tryPort = async (port: number) => {

@@ -1,7 +1,8 @@
 import { db } from "@db";
 import { sql } from "drizzle-orm";
+import { createEmailTemplatesTable } from "./migrations/create_email_templates";
 
-async function createTables() {
+export async function createTables() {
   try {
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS event_form_templates (
@@ -82,7 +83,10 @@ async function createTables() {
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
     `);
-    console.log("Coupons table created successfully");
+    // Create email_templates table
+    await createEmailTemplatesTable();
+
+    console.log("Tables created successfully");
   } catch (error) {
     console.error("Error creating tables:", error);
   }

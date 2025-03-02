@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation } from "wouter";
-import { Link2, X, Ticket, Plus } from "lucide-react";
+import { Link2, X, Ticket, Plus, Mail } from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import { useToast } from "@/hooks/use-toast";
@@ -91,6 +91,8 @@ import { useDropzone } from 'react-dropzone';
 import { FileManager } from "@/components/admin/FileManager";
 import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
+import { EmailTemplatesView } from "@/components/admin/EmailTemplatesView"; // Import the EmailTemplatesView component
+
 
 function AdminBanner() {
   const { settings } = useOrganizationSettings();
@@ -117,7 +119,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'chat' | 'files' | 'coupons' | 'formTemplates' | 'emailTemplates';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -970,13 +972,13 @@ function OrganizationSettingsForm() {
       // Create new Vibrant instance
       const v = new Vibrant(objectUrl);
 
-      // Get the palette with error handling
+      //      // Get the palette with error handling
       const palette = await v.getPalette();
 
       // Set primary color from the Vibrant swatch
       if (palette.Vibrant) {
         setPrimaryColor(palette.Vibrant.hex);
-        console.log('Primary color extracted:', palette.Vibrant.hex);
+        console.log('Primarycolor extracted:', palette.Vibrant.hex);
       }
 
       // Set secondary color from the LightVibrant or Muted swatch
@@ -1627,6 +1629,17 @@ function AdminDashboard() {
     </Button>
   );
 
+  const emailTemplatesButton = (
+    <Button
+      variant={activeView === 'emailTemplates' ? 'secondary' : 'ghost'}
+      className="w-full justify-start"
+      onClick={() => setActiveView('emailTemplates')}
+    >
+      <Mail className="mr-2 h-4 w-4" />
+      Email Templates
+    </Button>
+  );
+
   useEffect(() => {
     if (!user) {
       return; // Wait for user data to load
@@ -1699,6 +1712,8 @@ function AdminDashboard() {
         return <CouponManagement />;
       case 'formTemplates':
         return <FormTemplatesView />;
+      case 'emailTemplates':
+        return <EmailTemplatesView />; // Added EmailTemplatesView
       default:
         return <div>Feature coming soon</div>;
     }
@@ -1726,7 +1741,22 @@ function AdminDashboard() {
               Administrators
             </Button>
 
-            {formTemplatesButton}
+            <Button
+              variant={activeView === 'formTemplates' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('formTemplates')}
+            >
+              <FormInput className="mr-2 h-4 w-4" />
+              Form Templates
+            </Button>
+            <Button
+              variant={activeView === 'emailTemplates' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setActiveView('emailTemplates')}
+            >
+              <Mail className="mr-2 h-4 w-4" />
+              Email Templates
+            </Button>
 
             <Button
               variant={activeView === 'events' ? 'secondary' : 'ghost'}
@@ -2268,6 +2298,7 @@ const navigationItems = [
   { icon: ImageIcon, label: "File Manager", value: "files" as const },
   { icon: Ticket, label: "Coupons", value: "coupons" as const },
   { icon: FormInput, label: "Form Templates", value: "formTemplates" as const },
+  { icon: Mail, label: "Email Templates", value: "emailTemplates" as const },
   { icon: User, label: "My Account", value: "account" as const },
 ];
 

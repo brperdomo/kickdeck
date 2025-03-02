@@ -3529,6 +3529,47 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Register email template routes
+    app.get('/api/admin/email-templates', isAdmin, async (req, res) => {
+      try {
+        const { getEmailTemplates } = await import('./routes/email-templates');
+        await getEmailTemplates(req, res);
+      } catch (error) {
+        console.error('Error fetching email templates:', error);
+        res.status(500).send("Failed to fetch email templates");
+      }
+    });
+    
+    app.post('/api/admin/email-templates', isAdmin, async (req, res) => {
+      try {
+        const { createEmailTemplate } = await import('./routes/email-templates');
+        await createEmailTemplate(req, res);
+      } catch (error) {
+        console.error('Error creating email template:', error);
+        res.status(500).send("Failed to create email template");
+      }
+    });
+    
+    app.put('/api/admin/email-templates/:id', isAdmin, async (req, res) => {
+      try {
+        const { updateEmailTemplate } = await import('./routes/email-templates');
+        await updateEmailTemplate(req, res);
+      } catch (error) {
+        console.error('Error updating email template:', error);
+        res.status(500).send("Failed to update email template");
+      }
+    });
+    
+    app.delete('/api/admin/email-templates/:id', isAdmin, async (req, res) => {
+      try {
+        const { deleteEmailTemplate } = await import('./routes/email-templates');
+        await deleteEmailTemplate(req, res);
+      } catch (error) {
+        console.error('Error deleting email template:', error);
+        res.status(500).send("Failed to delete email template");
+      }
+    });
+
     return httpServer;
   } catch (error) {
     console.error('Error registering routes:', error);
