@@ -993,7 +993,7 @@ export function registerRoutes(app: Express): Server {
     });
 
     // Add complex deletion endpoint
-    app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
+app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {
         const complexId = parseInt(req.params.id);
 
@@ -2924,7 +2924,7 @@ export function registerRoutes(app: Express): Server {
         const { name, description, isPublished, fields } = req.body;
 
         // Start a transaction
-        await db.transaction(async (tx) => {
+        awaitdb.transaction(async (tx) => {
           // Create form template
           const [template] = await tx
             .insert(eventFormTemplates)

@@ -166,6 +166,7 @@ app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
              parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
           projectedTeams: 0,
           createdAt: new Date().toISOString(),
+          selected: true, //Added this line
         });
       }
 
@@ -182,7 +183,8 @@ app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
         // Create a simplified version of the group with standard field size
         const simplifiedGroup = {
           ...group,
-          fieldSize: null // Set field size to null to prevent it from affecting deduplication
+          fieldSize: null, // Set field size to null to prevent it from affecting deduplication
+          selected: true, //Added this line
         };
         uniqueMap.set(key, simplifiedGroup);
         uniqueGroups.push(simplifiedGroup);

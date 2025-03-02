@@ -929,8 +929,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               disabled={isSubmitting || isSaving}
             >
               {isSubmitting || isSaving ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Saving...
                 </>
               ) : mode === 'edit' ? 'Save Changes' : 'Continue'}
@@ -955,7 +954,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 // With the new approach, we don't need to select age groups - all standard ones will be included
 // This function is kept for compatibility but doesn't do anything anymore
 const handleAgeGroupsChange = () => {
-  // No selection needed as all standard age groups will be included automatically
+  // No selection needed as all standard age groups will be automatically included
   console.log("Age groups will be automatically created for this event");
 };
 

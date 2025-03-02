@@ -54,32 +54,53 @@ interface AgeGroupSelectorProps {
 }
 
 export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
-  const [ageGroups, setAgeGroups] = useState<AgeGroupData[]>(DEFAULT_AGE_GROUPS);
+  // Initialize with all age groups pre-selected
+  const [ageGroups, setAgeGroups] = useState<AgeGroupData[]>(
+    DEFAULT_AGE_GROUPS.map(group => ({ ...group, isSelected: true }))
+  );
 
-  const handleSelectionChange = (index: number, checked: boolean) => {
-    const updatedGroups = [...ageGroups];
-    updatedGroups[index] = { ...updatedGroups[index], isSelected: checked };
-    setAgeGroups(updatedGroups);
-    
-    // Ensure we send the complete data for selected groups
-    let selectedGroups = updatedGroups
-      .filter(group => group.isSelected)
-      .map(group => ({
-        ...group,
-        // Ensure these fields are always defined
-        projectedTeams: group.projectedTeams || 0,
-        fieldSize: group.fieldSize || '11v11',
-        scoringRule: group.scoringRule || null,
-        amountDue: group.amountDue || null
-      }));
+  // Auto-select all groups on component mount
+  useEffect(() => {
+    // Select all age groups by default
+    const allGroups = ageGroups.map(group => ({
+      ...group,
+      isSelected: true,
+      projectedTeams: group.projectedTeams || 0,
+      fieldSize: group.fieldSize || '11v11',
+      scoringRule: group.scoringRule || null,
+      amountDue: group.amountDue || null
+    }));
     
     // Deduplicate by creating a unique key for each group
     const uniqueGroups = Array.from(
-      new Map(selectedGroups.map(group => 
+      new Map(allGroups.map(group => 
         [`${group.gender}-${group.ageGroup}-${group.birthYear}`, group]
       )).values()
     );
-      
+    
+    onAgeGroupsChange(uniqueGroups);
+  }, []);
+
+  const handleSelectionChange = (index: number, checked: boolean) => {
+    // Keep all groups selected regardless of user input
+    console.log("All age groups are automatically included - manual selection is disabled");
+    
+    // Pass all groups as selected to the parent component
+    const allGroups = ageGroups.map(group => ({
+      ...group,
+      isSelected: true,
+      projectedTeams: group.projectedTeams || 0,
+      fieldSize: group.fieldSize || '11v11',
+      scoringRule: group.scoringRule || null,
+      amountDue: group.amountDue || null
+    }));
+    
+    const uniqueGroups = Array.from(
+      new Map(allGroups.map(group => 
+        [`${group.gender}-${group.ageGroup}-${group.birthYear}`, group]
+      )).values()
+    );
+    
     onAgeGroupsChange(uniqueGroups);
   };
 
