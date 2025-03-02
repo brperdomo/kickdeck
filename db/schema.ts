@@ -278,3 +278,44 @@ export const insertCouponSchema = createInsertSchema(coupons, {
   maxUses: z.number().optional(),
   expirationDate: z.date().optional(),
 });
+
+// Chat rooms table
+export const chatRooms = pgTable("chat_rooms", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Messages table
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  chatRoomId: integer("chat_room_id").notNull(),
+  userId: integer("user_id").notNull(),
+  content: text("content").notNull(),
+  type: text("type").notNull().default("text"),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+
+// Files table
+export const files = pgTable("files", {
+  id: serial("id").primaryKey(),
+  filename: text("filename").notNull(),
+  originalName: text("original_name").notNull(),
+  mimeType: text("mime_type").notNull(),
+  size: integer("size").notNull(),
+  path: text("path").notNull(),
+  uploadedBy: integer("uploaded_by").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export type SelectChatRoom = typeof chatRooms.$inferSelect;
+export type InsertChatRoom = typeof chatRooms.$inferInsert;
+
+export type SelectMessage = typeof messages.$inferSelect;
+export type InsertMessage = typeof messages.$inferInsert;
+
+export type SelectFile = typeof files.$inferSelect;
+export type InsertFile = typeof files.$inferInsert;
