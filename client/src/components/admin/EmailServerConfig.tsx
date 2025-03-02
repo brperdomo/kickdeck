@@ -324,15 +324,18 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { AlertCircle, Send } from "lucide-react";
+import { AlertCircle, Send, Loader2 } from "lucide-react";
 
-// Using the existing emailConfigSchema from above
+const emailConfigSchema = z.object({
+  host: z.string().min(1, "SMTP host is required"),
+  port: z.coerce.number().int().positive("Port must be a positive number"),
+  secure: z.boolean().default(true),
   auth: z.object({
-    user: z.string(),
-    pass: z.string()
+    user: z.string().min(1, "Username is required"),
+    pass: z.string().min(1, "Password is required")
   }).optional(),
-  senderEmail: z.string().email(),
-  senderName: z.string()
+  senderEmail: z.string().email("Must be a valid email address"),
+  senderName: z.string().optional()
 });
 
 type EmailServerConfig = z.infer<typeof emailConfigSchema>;
