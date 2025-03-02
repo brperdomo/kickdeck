@@ -25,8 +25,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import { adminFormSchema } from "@db/schema";
-import type { AdminFormValues } from "@db/schema";
+import { adminFormSchema, type AdminFormValues } from "@db/schema";
 
 const availableRoles = [
   { id: "super_admin", name: "Super Admin", description: "Full system access and overrides all other roles" },
