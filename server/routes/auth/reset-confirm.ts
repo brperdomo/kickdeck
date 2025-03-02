@@ -3,7 +3,7 @@ import { db } from "../../../db/index";
 import { users } from "../../../db/schema";
 import { Router } from "express";
 import { eq } from "drizzle-orm";
-import { hashPassword } from "../../crypto";
+import { crypto } from "../../crypto";
 import { passwordResetTokens } from "./password-reset";
 
 const router = Router();
@@ -35,7 +35,7 @@ router.post("/", async (req, res) => {
     }
 
     // Hash the new password
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = await crypto.hash(password);
 
     // Update user with new password and remove token
     await db
