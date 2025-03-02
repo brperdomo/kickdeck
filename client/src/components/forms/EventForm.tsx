@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, ArrowLeft, Plus, Edit, Trash } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -79,7 +79,24 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(defaultValues?.ageGroups || []);
+  const [event, setEvent] = useState<EventFormValues>(defaultValues || {
+    name: '',
+    startDate: '',
+    endDate: '',
+    timezone: '',
+    applicationDeadline: '',
+    details: '',
+    agreement: '',
+    refundPolicy: '',
+    ageGroups: [],
+    selectedComplexIds: [],
+    complexFieldSizes: {},
+    scoringRules: [],
+    settings: [],
+    administrators: [],
+    branding: {} as EventBranding
+  });
+
   const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(defaultValues?.selectedComplexIds || []);
   const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(defaultValues?.complexFieldSizes || {});
   const [scoringRules, setScoringRules] = useState<ScoringRule[]>(defaultValues?.scoringRules || []);
@@ -100,23 +117,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventInformationSchema),
-    defaultValues: defaultValues || {
-      name: '',
-      startDate: '',
-      endDate: '',
-      timezone: '',
-      applicationDeadline: '',
-      details: '',
-      agreement: '',
-      refundPolicy: '',
-      ageGroups: [],
-      selectedComplexIds: [],
-      complexFieldSizes: {},
-      scoringRules: [],
-      settings: [],
-      administrators: [],
-      branding: {} as EventBranding
-    }
+    defaultValues: event
   });
 
   useEffect(() => {
@@ -169,8 +170,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       }
 
       // Prepare age groups data with only the essential fields
-      const preparedAgeGroups = ageGroups
-        .filter(group => group.isSelected)
+      const preparedAgeGroups = event.ageGroups
         .map(group => ({
           ...group,
           projectedTeams: group.projectedTeams || 0,
@@ -232,8 +232,40 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     }));
   };
 
+  // Update handler - now automatically includes all predefined age groups
+  const handleAgeGroupsChange = () => {
+    // Set all predefined age groups, marked as selected by default
+    const allStandardAgeGroups = PREDEFINED_AGE_GROUPS.map(group => ({
+      ...group,
+      isSelected: true,
+      projectedTeams: 0,
+      fieldSize: group.ageGroup.startsWith('U') ?
+        (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
+          parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
+            parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+      scoringRule: null,
+      amountDue: null
+    }));
+
+    setEvent(prev => ({
+      ...prev,
+      ageGroups: allStandardAgeGroups
+    }));
+  };
+
+  // Auto-set age groups when form loads if not already set
+  useEffect(() => {
+    if (!event.ageGroups || event.ageGroups.length === 0) {
+      handleAgeGroupsChange();
+    }
+  }, []);
+
+
   const handleDeleteAgeGroup = (id: string) => {
-    setAgeGroups(ageGroups.filter(group => group.id !== id));
+    setEvent(prevEvent => ({
+      ...prevEvent,
+      ageGroups: prevEvent.ageGroups.filter(group => group.id !== id)
+    }));
   };
 
   const SaveButton = () => (
@@ -427,114 +459,54 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         )}
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[50px]">Select</TableHead>
-            <TableHead>Age Group</TableHead>
-            <TableHead>Birth Year</TableHead>
-            <TableHead>Gender</TableHead>
-            <TableHead>Division Code</TableHead>
-            <TableHead>Field Size</TableHead>
-            <TableHead>Amount Due</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {PREDEFINED_AGE_GROUPS.map((group) => {
-            const existingGroup = ageGroups.find(
-              (ag) => ag.divisionCode === group.divisionCode
-            ) || { ...group, isSelected: false, fees: [] };
+      <Card>
+        <CardHeader>
+          <CardTitle>Age Groups</CardTitle>
+          <CardDescription>
+            All standard age groups (U4-U18 for both boys and girls) are automatically included in this event.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-green-800">Age groups automatically configured</h3>
+                <div className="mt-2 text-sm text-green-700">
+                  <p>All 30 standard age groups (15 for boys and 15 for girls) have been automatically added to this event.</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-            // Fee calculations moved to Fee Management component
-            const totalAmount = 0;
-
-            return (
-              <TableRow key={group.divisionCode}>
-                <TableCell>
-                  <Checkbox
-                    checked={!!existingGroup.isSelected}
-                    onCheckedChange={(checked) => {
-                      if (checked) {
-                        setAgeGroups([
-                          ...ageGroups,
-                          {
-                            id: Date.now().toString(),
-                            ...group,
-                            isSelected: true,
-                            fees: [],
-                            fieldSize: '11v11' as FieldSize,
-                          },
-                        ]);
-                      } else {
-                        setAgeGroups(
-                          ageGroups.filter(
-                            (ag) => ag.divisionCode !== group.divisionCode
-                          )
-                        );
-                      }
-                    }}
-                  />
-                </TableCell>
-                <TableCell>{group.ageGroup}</TableCell>
-                <TableCell>{group.birthYear}</TableCell>
-                <TableCell>{group.gender}</TableCell>
-                <TableCell>{group.divisionCode}</TableCell>
-                <TableCell>
-                  {existingGroup.isSelected && (
-                    <Select
-                      value={existingGroup.fieldSize || "11v11"}
-                      onValueChange={(size: FieldSize) => {
-                        setAgeGroups(prevAgeGroups => prevAgeGroups.map(ag => {
-                          if (ag.divisionCode === existingGroup.divisionCode) {
-                            return {
-                              ...ag,
-                              fieldSize: size,
-                            };
-                          }
-                          return ag;
-                        }));
-                      }}
-                    >
-                      <SelectTrigger className="w-[120px]">
-                        <SelectValue>{existingGroup.fieldSize || "11v11"}</SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {['3v3', '4v4', '5v5', '6v6', '7v7', '8v8', '9v9', '10v10', '11v11', 'N/A'].map((size) => (
-                          <SelectItem key={size} value={size}>
-                            {size}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                </TableCell>
-                <TableCell>
-                  ${(totalAmount / 100).toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  {existingGroup.isSelected && feesQuery.data ? (
-                    <div className="flex flex-col space-y-2">
-                      <div className="border rounded-md p-2">
-                        <div className="flex flex-wrap gap-2">
-                          {feesQuery.data.map(fee => (
-                            {/* Fee assignment moved to Fee Management component */}
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ) : feesQuery.isLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Link to={`/admin/events/${defaultValues?.id}/fees`} className="text-blue-500 hover:text-blue-700 underline">
-                      Manage Fees
-                    </Link>
-                  )}
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <h3 className="font-medium mb-2">Boys Divisions</h3>
+              <ul className="list-disc pl-5 space-y-1">
+                {PREDEFINED_AGE_GROUPS
+                  .filter(group => group.gender === 'Boys')
+                  .map(group => (
+                    <li key={group.divisionCode}>{group.ageGroup} Boys</li>
+                  ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-medium mb-2">Girls Divisions</h3>
+              <ul className="list-disc pl-5 space-y-1">
+                {PREDEFINED_AGE_GROUPS
+                  .filter(group => group.gender === 'Girls')
+                  .map(group => (
+                    <li key={group.divisionCode}>{group.ageGroup} Girls</li>
+                  ))}
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 
@@ -725,7 +697,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   const getTabValidationState = () => {
     const errors: Record<EventTab, boolean> = {
       'information': !form.formState.isValid,
-      'age-groups': ageGroups.length === 0,
+      'age-groups': false, // No longer requires validation
       'scoring': scoringRules.length === 0,
       'complexes': selectedComplexIds.length === 0,
       'settings': false,
@@ -852,7 +824,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     // Prepare full form data including ageGroups
     const fullFormData = {
       ...formData,
-      ageGroups: ageGroups.map(group => ({
+      ageGroups: event.ageGroups.map(group => ({
         ...group,
         selected: group.isSelected,
         // Ensure fees array is properly included
@@ -934,9 +906,10 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 </>
               ) : mode === 'edit' ? 'Save Changes' : 'Continue'}
             </Button>
-                    </div>
+          </div>
         </CardContent>
-      </Card>      <AdminModal
+      </Card>
+      <AdminModal
         open={isAdminModalOpen}
         onOpenChange={setIsAdminModalOpen}
         adminToEdit={editingAdmin}
@@ -945,7 +918,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           setIsAdminModalOpen(false);
           setEditingAdmin(null);
         }}
-            />
+      />
     </div>
   );
 };

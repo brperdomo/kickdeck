@@ -26,8 +26,23 @@ router.post('/cleanup/:eventId', async (req, res) => {
     
     // First pass - identify unique groups to keep (one per division code)
     for (const group of allAgeGroups) {
-      // Use division code if available, otherwise fall back to gender-ageGroup
-      const key = group.divisionCode || `${group.gender}-${group.ageGroup}`;
+      // Always use division code format for consistent keys
+      // If not present, generate it based on gender and birth year or age group
+      let key;
+      if (group.divisionCode) {
+        key = group.divisionCode;
+      } else if (group.birthYear) {
+        key = `${group.gender.charAt(0)}${group.birthYear}`;
+      } else if (group.ageGroup && group.ageGroup.startsWith('U') && group.ageGroup.length > 1) {
+        // Extract year from U10, U11, etc.
+        const year = parseInt(group.ageGroup.substring(1));
+        const currentYear = new Date().getFullYear();
+        const birthYear = currentYear - year;
+        key = `${group.gender.charAt(0)}${birthYear}`;
+      } else {
+        // Fallback
+        key = `${group.gender}-${group.ageGroup}`;
+      }
       
       if (!uniqueGroups.has(key)) {
         // Keep this group

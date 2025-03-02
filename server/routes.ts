@@ -1981,45 +1981,57 @@ export function registerRoutes(app: Express): Server {
             ])
           );
 
-          // Process each age group from the request
-          for (const group of eventData.ageGroups || []) {
-            const groupKey = `${group.gender}-${group.ageGroup}-${group.fieldSize}`;
+          // Import predefined age groups
+          const { PREDEFINED_AGE_GROUPS } = require('../client/src/components/forms/event-form-types');
+
+          // Always ensure all standard age groups exist for every event
+          for (const group of PREDEFINED_AGE_GROUPS) {
+            const groupKey = group.divisionCode;
             const existingGroup = existingAgeGroupsMap.get(groupKey);
 
+            // Calculate appropriate field size based on age group
+            const ageNum = group.ageGroup.startsWith('U') ? 
+              parseInt(group.ageGroup.substring(1)) : 18;
+
+            const fieldSize = ageNum <= 7 ? '4v4' : 
+                              ageNum <= 10 ? '7v7' : 
+                              ageNum <= 12 ? '9v9' : '11v11';
+
             if (existingGroup) {
-              // Update existing group
-              const updatedGroup = await tx
+              // Update existing group - just maintain the basic info
+              await tx
                 .update(eventAgeGroups)
                 .set({
-                  projectedTeams: group.projectedTeams || 0,
                   ageGroup: group.ageGroup,
-                  birthYear: group.birthYear,
                   gender: group.gender,
-                  fieldSize: group.fieldSize,
-                  scoringRule: group.scoringRule || null,
-                  amountDue: group.amountDue || null,
+                  divisionCode: group.divisionCode,
+                  birthDateStart: existingGroup.birthDateStart,
+                  birthDateEnd: existingGroup.birthDateEnd,
+                  fieldSize: fieldSize,
+                  // Keep existing values for these fields
+                  projectedTeams: existingGroup.projectedTeams,
+                  amountDue: existingGroup.amountDue,
+                  scoringRule: existingGroup.scoringRule,
                 })
-                .where(eq(eventAgeGroups.id, existingGroup.id))
-                .returning();
+                .where(eq(eventAgeGroups.id, existingGroup.id));
 
-              // Fee assignments are now managed through Fee Management component
-
-              // Remove from map to track which ones need to be deleted
+              // Remove from map since we've processed it
               existingAgeGroupsMap.delete(groupKey);
             } else {
-              // Create new group
+              // Create new standard group
               await tx
                 .insert(eventAgeGroups)
                 .values({
                   eventId,
                   gender: group.gender,
-                  projectedTeams: group.projectedTeams,
-                  birthDateStart: group.birthDateStart,
-                  birthDateEnd: group.birthDateEnd,
-                  scoringRule: group.scoringRule,
                   ageGroup: group.ageGroup,
-                  fieldSize: group.fieldSize,
-                  amountDue: group.amountDue || null,
+                  divisionCode: group.divisionCode,
+                  projectedTeams: 0,
+                  birthDateStart: null,
+                  birthDateEnd: null,
+                  scoringRule: null,
+                  fieldSize: fieldSize,
+                  amountDue: null,
                   createdAt: new Date().toISOString(),
                 });
             }

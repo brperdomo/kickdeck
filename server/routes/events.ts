@@ -140,16 +140,46 @@ app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
       .where(eq(eventAgeGroups.eventId, eventId))
       .orderBy(eventAgeGroups.gender, eventAgeGroups.ageGroup);
 
-    // Create unique groups based on division code
+    // Create unique groups based on division code or gender-ageGroup combination
     const uniqueMap = new Map();
     const uniqueGroups = [];
 
+    // If we have no age groups but this is an API call for an existing event,
+    // we should return standard age groups as a fallback
+    if (ageGroups.length === 0) {
+      // Import predefined age groups and return them all
+      const { PREDEFINED_AGE_GROUPS } = require('../../client/src/components/forms/event-form-types');
+      
+      for (const group of PREDEFINED_AGE_GROUPS) {
+        const key = group.divisionCode;
+        uniqueGroups.push({
+          id: null, // Will be assigned when saved
+          eventId,
+          ageGroup: group.ageGroup,
+          gender: group.gender,
+          divisionCode: group.divisionCode,
+          birthDateStart: null,
+          birthDateEnd: null,
+          fieldSize: group.ageGroup.startsWith('U') ? 
+            (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' : 
+             parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' : 
+             parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+          projectedTeams: 0,
+          createdAt: new Date().toISOString(),
+        });
+      }
+      
+      console.log(`No age groups found. Returning ${uniqueGroups.length} standard age groups as fallback`);
+      return res.json(uniqueGroups);
+    }
+
     for (const group of ageGroups) {
-      // Use division code as the unique key since it's already a combination of gender and age group
-      const key = group.divisionCode || `${group.gender}-${group.ageGroup}`;
+      // Ensure every group has a division code
+      const divisionCode = group.divisionCode || `${group.gender.charAt(0)}${group.birthYear || ''}`;
+      const key = divisionCode;
       
       if (!uniqueMap.has(key)) {
-        // Create a simplified version of the group without field size
+        // Create a simplified version of the group with standard field size
         const simplifiedGroup = {
           ...group,
           fieldSize: null // Set field size to null to prevent it from affecting deduplication
