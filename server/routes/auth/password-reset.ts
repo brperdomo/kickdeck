@@ -96,3 +96,132 @@ router.post("/", async (req, res) => {
 });
 
 export default router;
+import { Router } from "express";
+import { db } from "@db";
+import { users } from "@db/schema";
+import { z } from "zod";
+import { hashPassword } from "../../auth";
+import { eq } from "drizzle-orm";
+import crypto from "crypto";
+import { emailService } from "../../services/email-service";
+
+const router = Router();
+
+// Token storage - in a production app, this would be in a database
+// Maps token to {userId, expiresAt}
+const passwordResetTokens = new Map<string, { userId: number, expiresAt: Date }>();
+
+// Request password reset schema
+const requestResetSchema = z.object({
+  email: z.string().email(),
+});
+
+// Reset password schema
+const resetPasswordSchema = z.object({
+  token: z.string(),
+  password: z.string().min(6),
+});
+
+// Request password reset
+router.post("/request", async (req, res) => {
+  try {
+    const { email } = requestResetSchema.parse(req.body);
+    
+    // Find user
+    const user = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.email, email)
+    });
+
+    if (!user) {
+      // Don't reveal if the email exists or not for security
+      return res.json({ 
+        ok: true,
+        message: "If your email exists in our system, you will receive a password reset link." 
+      });
+    }
+
+    // Generate token
+    const token = crypto.randomBytes(32).toString("hex");
+    
+    // Store token with expiry (1 hour)
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1);
+    
+    passwordResetTokens.set(token, {
+      userId: user.id,
+      expiresAt
+    });
+
+    // Generate reset link
+    const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5000"}/reset-password?token=${token}`;
+    
+    // Send email with reset link
+    await emailService.sendPasswordResetEmail(user.email, {
+      firstName: user.firstName,
+      resetLink
+    });
+
+    res.json({ 
+      ok: true,
+      message: "If your email exists in our system, you will receive a password reset link." 
+    });
+  } catch (error) {
+    console.error("Password reset request error:", error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors });
+    }
+    res.status(500).json({ error: "Password reset request failed" });
+  }
+});
+
+// Reset password
+router.post("/reset", async (req, res) => {
+  try {
+    const { token, password } = resetPasswordSchema.parse(req.body);
+    
+    // Check if token exists and is valid
+    const tokenData = passwordResetTokens.get(token);
+    if (!tokenData) {
+      return res.status(400).json({ 
+        ok: false,
+        message: "Invalid or expired token" 
+      });
+    }
+
+    // Check if token is expired
+    if (new Date() > tokenData.expiresAt) {
+      passwordResetTokens.delete(token);
+      return res.status(400).json({ 
+        ok: false,
+        message: "Token has expired" 
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await hashPassword(password);
+
+    // Update user password
+    await db.update(users)
+      .set({ 
+        password: hashedPassword,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, tokenData.userId));
+
+    // Remove used token
+    passwordResetTokens.delete(token);
+
+    res.json({ 
+      ok: true,
+      message: "Password has been reset successfully" 
+    });
+  } catch (error) {
+    console.error("Password reset error:", error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors });
+    }
+    res.status(500).json({ error: "Password reset failed" });
+  }
+});
+
+export default router;

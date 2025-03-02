@@ -163,5 +163,30 @@ class EmailService {
   }
 }
 
+const sendPasswordResetEmail = async (email: string, data: { firstName: string; resetLink: string }) => {
+  try {
+    const template = await emailService.getEmailTemplate("password-reset");
+    if (!template) {
+      console.error("Password reset email template not found");
+      return { success: false, error: "Email template not found" };
+    }
+
+    // Replace placeholders in template
+    let html = template;
+    html = html.replace("{{firstName}}", data.firstName);
+    html = html.replace("{{resetLink}}", data.resetLink);
+
+    return await emailService.sendEmail({
+      to: email,
+      subject: "Password Reset Request",
+      html
+    });
+  } catch (error) {
+    console.error("Failed to send password reset email:", error);
+    return { success: false, error: "Failed to send email" };
+  }
+};
+
 export const emailService = new EmailService();
 export const getEmailTemplate = (templateName: string) => emailService.getEmailTemplate(templateName);
+export const sendEmail = (options:any) => emailService.sendEmail(options.to, options.subject, options.html, options);
