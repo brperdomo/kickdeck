@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
@@ -28,10 +29,6 @@ export default function EditEvent() {
       const data = await response.json();
       console.log('Fetched event data:', data);
       return data;
-    }
-  });
-        variant: "destructive",
-      });
     }
   });
 
