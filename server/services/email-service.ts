@@ -1,63 +1,75 @@
-import nodemailer from 'nodemailer';
-import { db } from '../../db';
-import { emailTemplates, emailConfig } from '../../db/schema';
-import { eq } from 'drizzle-orm';
-import fs from 'fs';
-import path from 'path';
+import { db } from "@db";
+import nodemailer from "nodemailer";
+import { emailConfig } from "@db/schema";
 
-let transporter: nodemailer.Transporter;
+let emailTransporter: nodemailer.Transporter | null = null;
 
 export async function initEmailService() {
-  // Check for configured email settings in the database
-  const [dbEmailConfig] = await db.select().from(emailConfig).limit(1);
+  try {
+    // Get email configuration from the database
+    const [config] = await db.select().from(emailConfig).limit(1);
 
-  if (dbEmailConfig && process.env.NODE_ENV === 'production') {
-    // Use database configuration for production
-    transporter = nodemailer.createTransport({
-      host: dbEmailConfig.host,
-      port: dbEmailConfig.port,
-      secure: dbEmailConfig.secure,
-      auth: dbEmailConfig.auth,
+    if (config && config.host && config.port && config.auth?.user && config.auth?.pass) {
+      // Create email transporter
+      emailTransporter = nodemailer.createTransport({
+        host: config.host,
+        port: config.port,
+        secure: config.secure,
+        auth: {
+          user: config.auth.user,
+          pass: config.auth.pass
+        }
+      });
+
+      // Verify connection
+      await emailTransporter.verify();
+      console.log("Email service initialized successfully");
+      return true;
+    } else {
+      console.log("Email configuration not found or incomplete");
+      return false;
+    }
+  } catch (error) {
+    console.error("Failed to initialize email service:", error);
+    return false;
+  }
+}
+
+export async function sendEmail(options: {
+  to: string | string[];
+  subject: string;
+  text?: string;
+  html?: string;
+  from?: string;
+}) {
+  try {
+    if (!emailTransporter) {
+      await initEmailService();
+      if (!emailTransporter) {
+        throw new Error("Email service not initialized");
+      }
+    }
+
+    // Get email configuration for sender info
+    const [config] = await db.select().from(emailConfig).limit(1);
+
+    if (!config || !config.senderEmail) {
+      throw new Error("Email configuration not found");
+    }
+
+    // Send email
+    const result = await emailTransporter.sendMail({
+      from: options.from || (config.senderName ? `${config.senderName} <${config.senderEmail}>` : config.senderEmail),
+      to: options.to,
+      subject: options.subject,
+      text: options.text,
+      html: options.html
     });
 
-    console.log('\n==================================================');
-    console.log('Email service initialized with production configuration');
-    console.log(`SMTP Host: ${dbEmailConfig.host}`);
-    console.log(`SMTP Port: ${dbEmailConfig.port}`);
-    console.log(`Secure: ${dbEmailConfig.secure ? 'Yes' : 'No'}`);
-    console.log(`Sender: ${dbEmailConfig.senderName ? `${dbEmailConfig.senderName} <${dbEmailConfig.senderEmail}>` : dbEmailConfig.senderEmail}`);
-    console.log('==================================================\n');
-  } else if (process.env.NODE_ENV !== 'production') {
-    // For development, use Ethereal Email
-    const testAccount = await nodemailer.createTestAccount();
-
-    transporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
-      },
-    });
-
-    console.log('\n==================================================');
-    console.log('Email service initialized in development mode');
-    console.log(`Ethereal Email: ${testAccount.user}`);
-    console.log(`Ethereal Password: ${testAccount.pass}`);
-    console.log(`Preview URL: https://ethereal.email/login`);
-    console.log('==================================================\n');
-  } else {
-    // Fallback to environment variables if no database config and in production
-    transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
+    return result;
+  } catch (error) {
+    console.error("Failed to send email:", error);
+    throw error;
   }
 }
 
@@ -80,70 +92,54 @@ export function compileTemplate(template: string, data: Record<string, any>) {
   });
 }
 
-// Send email function
-export async function sendEmail(options: {
-  to: string | string[];
-  subject: string;
-  text?: string;
-  html: string;
-  from?: string;
-  attachments?: any[];
-}) {
+// Send email using a template
+export async function sendTemplatedEmail(
+  templateType: string,
+  to: string,
+  data: Record<string, any>
+) {
   try {
-    // Get sender email from database config
-    const [dbEmailConfig] = await db.select().from(emailConfig).limit(1);
+    const template = await getEmailTemplate(templateType);
 
-    const fromEmail = options.from || 
-      (dbEmailConfig?.senderName 
-        ? `${dbEmailConfig.senderName} <${dbEmailConfig.senderEmail}>`
-        : dbEmailConfig?.senderEmail || process.env.EMAIL_FROM || 'no-reply@example.com');
-
-    const mailOptions = {
-      from: fromEmail,
-      to: Array.isArray(options.to) ? options.to.join(',') : options.to,
-      subject: options.subject,
-      text: options.text,
-      html: options.html,
-      attachments: options.attachments
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('Email sent in development mode:');
-      console.log(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
+    if (!template) {
+      throw new Error(`Email template not found for type: ${templateType}`);
     }
 
-    return { success: true, messageId: info.messageId };
+    const compiledSubject = compileTemplate(template.subject, data);
+    const compiledContent = compileTemplate(template.content, data);
+
+    return sendEmail({
+      to,
+      subject: compiledSubject,
+      html: compiledContent,
+      from: `"${template.senderName}" <${template.senderEmail}>`
+    });
   } catch (error) {
     console.error('Error sending email:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
-    };
+    throw error;
   }
 }
 
-// Specific email sending functions using the new sendEmail function.
+
+// Specific email sending functions
 export async function sendPasswordResetEmail(
-  to: string, 
+  to: string,
   resetToken: string,
   username: string
 ) {
   const resetUrl = `${process.env.APP_URL || ''}/reset-password?token=${resetToken}`;
 
-  return sendEmail({
-    to,
-    subject: 'Password Reset', //Example subject
-    html: compileTemplate( (await getEmailTemplate('password_reset')).content, { username, resetUrl, expiryTime: '1 hour' }), //Assumes template exists
+  return sendTemplatedEmail('password_reset', to, {
+    username,
+    resetUrl,
+    expiryTime: '1 hour',
   });
 }
 
 export async function sendWelcomeEmail(to: string, firstName: string) {
-  return sendEmail({
-    to,
-    subject: 'Welcome!', //Example Subject
-    html: compileTemplate( (await getEmailTemplate('welcome')).content, { firstName, loginUrl: process.env.APP_URL || '' }), //Assumes template exists
+  return sendTemplatedEmail('welcome', to, {
+    firstName,
+    loginUrl: process.env.APP_URL || '',
   });
 }
 
@@ -152,9 +148,9 @@ export async function sendRegistrationConfirmation(
   firstName: string,
   eventName: string
 ) {
-  return sendEmail({
-    to,
-    subject: 'Registration Confirmation', //Example Subject
-    html: compileTemplate( (await getEmailTemplate('registration_confirmation')).content, { firstName, eventName, dashboardUrl: `${process.env.APP_URL || ''}/dashboard` }), //Assumes template exists
+  return sendTemplatedEmail('registration_confirmation', to, {
+    firstName,
+    eventName,
+    dashboardUrl: `${process.env.APP_URL || ''}/dashboard`,
   });
 }

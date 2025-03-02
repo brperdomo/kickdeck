@@ -8,7 +8,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["npm", "run", "build"]
-run = ["sh", "-c", "npm run dev"]
+run = ["sh", "-c", "npm run start:prod"]
 
 [[ports]]
 localPort = 3000
@@ -27,7 +27,7 @@ localPort = 24678
 externalPort = 3000
 
 [workflows]
-runButton = "Run Development Server"
+runButton = "Start application"
 
 [[workflows.workflow]]
 name = "Project"

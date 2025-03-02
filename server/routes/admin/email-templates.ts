@@ -9,11 +9,7 @@ const router = Router();
 // Get all email templates
 router.get('/', async (req, res) => {
   try {
-    const templates = await db
-      .select()
-      .from(emailTemplates)
-      .orderBy(emailTemplates.name);
-      
+    const templates = await db.select().from(emailTemplates);
     res.json(templates);
   } catch (error) {
     console.error('Error fetching email templates:', error);
@@ -21,52 +17,29 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get a specific email template
-router.get('/:id', async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-    
-    const [template] = await db
-      .select()
-      .from(emailTemplates)
-      .where(eq(emailTemplates.id, id))
-      .limit(1);
-      
-    if (!template) {
-      return res.status(404).json({ error: "Template not found" });
-    }
-    
-    res.json(template);
-  } catch (error) {
-    console.error('Error fetching email template:', error);
-    res.status(500).json({ error: "Failed to fetch email template" });
-  }
-});
-
 // Create a new email template
 router.post('/', async (req, res) => {
   try {
-    const { name, trigger, subject, htmlContent, senderName, senderEmail, isDefault } = req.body;
+    const { name, type, subject, content, senderName, senderEmail, isDefault } = req.body;
     
     // If this is set as default, unset any other defaults of the same type
     if (isDefault) {
       await db.update(emailTemplates)
         .set({ isDefault: false })
-        .where(eq(emailTemplates.trigger, trigger));
+        .where(eq(emailTemplates.type, type));
     }
     
-    const [newTemplate] = await db
-      .insert(emailTemplates)
+    const [newTemplate] = await db.insert(emailTemplates)
       .values({
         name,
-        trigger,
+        type,
         subject,
-        htmlContent,
+        content,
         senderName,
         senderEmail,
         isDefault: isDefault || false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
       })
       .returning();
       
@@ -77,29 +50,29 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Update an email template
+// Update an existing email template
 router.put('/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const { name, trigger, subject, htmlContent, senderName, senderEmail, isDefault } = req.body;
+    const { name, type, subject, content, senderName, senderEmail, isDefault } = req.body;
     
     // If this is set as default, unset any other defaults of the same type
     if (isDefault) {
       await db.update(emailTemplates)
         .set({ isDefault: false })
-        .where(eq(emailTemplates.trigger, trigger));
+        .where(eq(emailTemplates.type, type));
     }
     
     const [updatedTemplate] = await db.update(emailTemplates)
       .set({
         name,
-        trigger,
+        type,
         subject,
-        htmlContent,
+        content,
         senderName,
         senderEmail,
         isDefault: isDefault || false,
-        updatedAt: new Date().toISOString(),
+        updatedAt: new Date(),
       })
       .where(eq(emailTemplates.id, id))
       .returning();
@@ -120,8 +93,7 @@ router.delete('/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     
-    const [deletedTemplate] = await db
-      .delete(emailTemplates)
+    const [deletedTemplate] = await db.delete(emailTemplates)
       .where(eq(emailTemplates.id, id))
       .returning();
       
@@ -139,10 +111,11 @@ router.delete('/:id', async (req, res) => {
 // Preview email template rendering
 router.post('/preview', async (req, res) => {
   try {
+    // In a real implementation, this would render the template with test data
     // For now, just return success
     res.json({ 
       success: true, 
-      preview: req.body.htmlContent 
+      preview: req.body.content 
     });
   } catch (error) {
     console.error('Error previewing email template:', error);

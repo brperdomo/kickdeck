@@ -28,7 +28,15 @@ const EMAIL_TRIGGER_LABELS: Record<string, string> = {
 };
 
 // Placeholder component for Email Server Configuration
-import { EmailServerConfig } from "./EmailServerConfig";
+function EmailServerConfig() {
+  return (
+    <div>
+      <h1>Email Server Configuration</h1>
+      {/* Add your form elements here for SMTP server settings */}
+      <p>This section will contain input fields for configuring the email server.</p>
+    </div>
+  );
+}
 
 export function EmailTemplateManagement() {
   const [isEditorOpen, setIsEditorOpen] = useState(false);

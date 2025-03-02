@@ -1,11 +1,19 @@
 
-import { Router } from 'express';
+import { Router } from "express";
+import { db } from "@db";
 
 const router = Router();
 
-// Basic routes for event categories
+// Get all event categories
 router.get('/', async (req, res) => {
-  res.json({ categories: [] });
+  try {
+    // This is a placeholder - implement actual event categories retrieval
+    // when you have the schema and table for event categories
+    res.json([]);
+  } catch (error) {
+    console.error('Error fetching event categories:', error);
+    res.status(500).send("Failed to fetch event categories");
+  }
 });
 
 export default router;

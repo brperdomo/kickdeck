@@ -61,6 +61,7 @@ import eventCategoriesRouter from "./routes/admin/event-categories";
 import submissionsRouter from "./routes/admin/submissions";
 import formsRouter from "./routes/admin/forms";
 import emailConfigRouter from "./routes/admin/email-config"; // Added import
+import healthCheckRouter from "./routes/health-check"; // Added health check import
 import { isAdmin } from "./middleware/auth-middleware"; // Added import
 
 // Test route
@@ -984,7 +985,7 @@ export function registerRoutes(app: Express): Server {
           // Update complex status
           const [updatedComplex] = await tx
             .update(complexes)
-                        .set({
+            .set({
               isOpen,
               updatedAt: new Date().toISOString(),
             })
@@ -2441,10 +2442,15 @@ res.status(500).send("Failed to update complex status");
     app.use('/api/admin/forms', isAdmin, formsRouter);
     app.use('/api/admin/submissions', isAdmin, submissionsRouter);
     app.use('/api/admin/email-config', isAdmin, emailConfigRouter); // Register email config routes
+    app.use('/api/health', healthCheckRouter); // Register health check endpoint
 
+    // Log successful routes registration
+    console.log('All routes registered successfully');
+    
     return httpServer;
   } catch (error) {
     console.error('Error registering routes:', error);
+    console.error('Error details:', error);
     throw error;
   }
 }

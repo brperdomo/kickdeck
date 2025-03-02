@@ -1,15 +1,18 @@
 
 import { Router } from "express";
+import { db } from "@db";
 
 const router = Router();
 
-// Basic route for form submissions
+// Get all submissions
 router.get('/', async (req, res) => {
   try {
-    res.json({ submissions: [] });
+    // This is a placeholder implementation
+    // Replace with actual submissions retrieval when you have the schema
+    res.json([]);
   } catch (error) {
     console.error('Error fetching submissions:', error);
-    res.status(500).json({ error: "Failed to fetch submissions" });
+    res.status(500).send("Failed to fetch submissions");
   }
 });
 
