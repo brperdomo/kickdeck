@@ -981,8 +981,7 @@ export function registerRoutes(app: Express): Server {
             .update(fields)
             .set({
               isOpen,
-              updatedAt: new Date().toISOString(),
-            })
+              updatedAt: new Date().toISOString            })
             .where(eq(fields.complexId, complexId));
 
           res.json(updatedComplex);
@@ -1870,7 +1869,7 @@ res.status(500).send("Failed to update complex status");
                   scoringRule: group.scoringRule || null,
                   amountDue: group.amountDue || null,
                 })
-                `.where(eq(eventAgeGroups.id, existingGroup.id))
+                .where(eq(eventAgeGroups.id, existingGroup.id))
                 .returning();
 
               // Fee assignments are now managed through Fee Management component
