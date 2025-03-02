@@ -1,10 +1,9 @@
-
 import { Router } from "express";
 import { db } from "@db";
 import { users } from "@db/schema";
 import { z } from "zod";
 import { comparePassword, hashPassword } from "../../auth";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm"; // Added explicit import for 'or'
 import jwt from "jsonwebtoken";
 
 const router = Router();
@@ -29,26 +28,26 @@ const registerSchema = z.object({
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
-    
+
     // Check if user exists by email or username
     const user = await db.query.users.findFirst({
-      where: (users, { or, eq }) => 
-        or(eq(users.email, email), eq(users.username, email))
+      where: (users, { or, eq }) =>
+        or(eq(users.email, email), eq(users.username, email)),
     });
 
     if (!user) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         ok: false,
-        message: "Invalid credentials" 
+        message: "Invalid credentials",
       });
     }
 
     // Check password
     const isPasswordValid = await comparePassword(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         ok: false,
-        message: "Invalid credentials" 
+        message: "Invalid credentials",
       });
     }
 
@@ -66,12 +65,12 @@ router.post("/login", async (req, res) => {
         id: user.id,
         email: user.email,
         username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        firstName: user.firstname, // Corrected field name
+        lastName: user.lastname,   // Corrected field name
         isAdmin: user.isAdmin,
         isParent: user.isParent,
       },
-      token
+      token,
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -86,17 +85,17 @@ router.post("/login", async (req, res) => {
 router.post("/register", async (req, res) => {
   try {
     const userData = registerSchema.parse(req.body);
-    
+
     // Check if email or username already exists
     const existingUser = await db.query.users.findFirst({
-      where: (users, { or, eq }) => 
-        or(eq(users.email, userData.email), eq(users.username, userData.username))
+      where: (users, { or, eq }) =>
+        or(eq(users.email, userData.email), eq(users.username, userData.username)),
     });
 
     if (existingUser) {
-      return res.status(409).json({ 
+      return res.status(409).json({
         ok: false,
-        message: "Email or username already exists" 
+        message: "Email or username already exists",
       });
     }
 
@@ -126,12 +125,12 @@ router.post("/register", async (req, res) => {
         id: newUser.id,
         email: newUser.email,
         username: newUser.username,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
+        firstName: newUser.firstname, // Corrected field name
+        lastName: newUser.lastname,   // Corrected field name
         isAdmin: newUser.isAdmin,
         isParent: newUser.isParent,
       },
-      token
+      token,
     });
   } catch (error) {
     console.error("Registration error:", error);

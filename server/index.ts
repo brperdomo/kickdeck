@@ -54,7 +54,7 @@ app.use((req, res, next) => {
 // Test database connection
 async function testDbConnection() {
   try {
-    await db.select().from(users).limit(1);
+    await db.select({ id: users.id }).from(users).limit(1);
     log("Database connection successful");
     return true;
   } catch (error) {
