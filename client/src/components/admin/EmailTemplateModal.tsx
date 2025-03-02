@@ -55,6 +55,9 @@ interface EmailTemplateModalProps {
   template: EmailTemplate | null;
 }
 
+// TinyMCE API key
+const TINYMCE_API_KEY = "wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"; // Using the same key as in EventForm
+
 export function EmailTemplateModal({ open, onOpenChange, template }: EmailTemplateModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
