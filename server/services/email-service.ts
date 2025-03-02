@@ -1,8 +1,7 @@
-
 import nodemailer from 'nodemailer';
-import { eq } from 'drizzle-orm';
-import { emailConfig } from "@db/schema";
-import { db } from '@db';
+import { emailConfig, emailTemplates } from "@db/schema";
+import { db } from "@db/index";
+import { eq } from "drizzle-orm";
 
 class EmailService {
   private transporter: nodemailer.Transporter | null = null;
@@ -12,14 +11,14 @@ class EmailService {
     try {
       // Get the email configuration from the database
       const configs = await db.select().from(emailConfig).limit(1);
-      
+
       if (configs.length === 0) {
         console.warn('No email configuration found in the database');
         return false;
       }
-      
+
       this.config = configs[0];
-      
+
       // Create a transporter using the configuration
       this.transporter = nodemailer.createTransport({
         host: this.config.host,
@@ -30,7 +29,7 @@ class EmailService {
           pass: this.config.authPass,
         },
       });
-      
+
       return true;
     } catch (error) {
       console.error('Failed to initialize email service:', error);
@@ -86,7 +85,7 @@ class EmailService {
   async saveConfiguration(config: any) {
     try {
       const existingConfigs = await db.select().from(emailConfig).limit(1);
-      
+
       if (existingConfigs.length > 0) {
         // Update existing configuration
         await db.update(emailConfig)
@@ -118,7 +117,7 @@ class EmailService {
 
       // Re-initialize with the new configuration
       await this.initialize();
-      
+
       return { success: true };
     } catch (error) {
       console.error('Failed to save email configuration:', error);
@@ -129,13 +128,13 @@ class EmailService {
   async getConfiguration() {
     try {
       const configs = await db.select().from(emailConfig).limit(1);
-      
+
       if (configs.length === 0) {
         return null;
       }
-      
+
       const config = configs[0];
-      
+
       return {
         host: config.host,
         port: config.port,
@@ -149,6 +148,16 @@ class EmailService {
       };
     } catch (error) {
       console.error('Failed to get email configuration:', error);
+      return null;
+    }
+  }
+
+  async getEmailTemplate(templateName: string) {
+    try {
+      const template = await db.select().from(emailTemplates).where(eq(emailTemplates.name, templateName)).limit(1);
+      return template.length > 0 ? template[0].html : null;
+    } catch (error) {
+      console.error('Failed to get email template:', error);
       return null;
     }
   }

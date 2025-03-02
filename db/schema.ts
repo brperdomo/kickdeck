@@ -320,6 +320,21 @@ export type InsertMessage = typeof messages.$inferInsert;
 export type SelectFile = typeof files.$inferSelect;
 export type InsertFile = typeof files.$inferInsert;
 
+// Email Templates table
+export const emailTemplates = pgTable("email_templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  subject: text("subject").notNull(),
+  htmlContent: text("html_content").notNull(),
+  textContent: text("text_content"),
+  description: text("description"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export type SelectEmailTemplate = typeof emailTemplates.$inferSelect;
+export type InsertEmailTemplate = typeof emailTemplates.$inferInsert;
+
 // Activity Logs table
 export const activityLogs = pgTable("activity_logs", {
   id: serial("id").primaryKey(),
