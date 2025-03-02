@@ -9,7 +9,8 @@
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
     "db:push": "drizzle-kit push",
-    "migrate:events": "tsx server/migrate-event-ids.ts"
+    "migrate:events": "tsx server/migrate-event-ids.ts",
+    "create-tables": "tsx server/create-tables.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
