@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { db } from "../../../db"; // Fix the import path
-import { emailSettings } from "../../../db/schema";
+import { db } from "../../../db"; 
+import { emailConfig } from "../../../db/schema";
 import { eq } from "drizzle-orm";
 
 const router = Router();
@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
   try {
     const [config] = await db
       .select()
-      .from(emailSettings)
+      .from(emailConfig)
       .limit(1);
 
     res.json(config || {});
@@ -36,17 +36,17 @@ router.post('/', async (req, res) => {
     if (existingConfig) {
       // Update existing config
       [updatedConfig] = await db
-        .update(emailSettings)
+        .update(emailConfig)
         .set({
           ...configData,
           updatedAt: new Date().toISOString(),
         })
-        .where(eq(emailSettings.id, existingConfig.id))
+        .where(eq(emailConfig.id, existingConfig.id))
         .returning();
     } else {
       // Create new config
       [updatedConfig] = await db
-        .insert(emailSettings)
+        .insert(emailConfig)
         .values({
           ...configData,
           createdAt: new Date().toISOString(),
