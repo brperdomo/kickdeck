@@ -1,4 +1,3 @@
-
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -18,6 +17,7 @@ import HouseholdPage from "@/pages/household";
 import ChatPage from "@/pages/chat";
 import EditEvent from "@/pages/edit-event";
 import EventApplicationForm from "@/pages/event-application-form";
+import EmailTemplatesPage from "@/pages/email-templates";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import { FeeManagement } from "@/components/events/FeeManagement";
@@ -58,7 +58,7 @@ function Router() {
         {user.isAdmin ? <EventApplicationForm /> : <NotFound />}
       </Route>
       <Route path="/admin/events/:eventId/fees">
-        {(params) => user.isAdmin ? <FeeManagement eventId={params.eventId} /> : <NotFound />}
+        {({ eventId }) => user.isAdmin ? <FeeManagement eventId={eventId} /> : <NotFound />}
       </Route>
       <Route path="/admin/events/:id">
         {user.isAdmin ? <EditEvent /> : <NotFound />}
@@ -68,6 +68,9 @@ function Router() {
       </Route>
       <Route path="/admin/accounting-codes">
         {user.isAdmin ? <AccountingCodeManagement /> : <NotFound />}
+      </Route>
+      <Route path="/admin/email-templates">
+        {user.isAdmin ? <EmailTemplatesPage /> : <NotFound />}
       </Route>
       <Route path="/admin/events">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}
