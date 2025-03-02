@@ -326,10 +326,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { useToast } from "@/hooks/use-toast";
 import { AlertCircle, Send } from "lucide-react";
 
-const emailConfigSchema = z.object({
-  host: z.string(),
-  port: z.number().optional(),
-  secure: z.boolean().optional(),
+// Using the existing emailConfigSchema from above
   auth: z.object({
     user: z.string(),
     pass: z.string()
