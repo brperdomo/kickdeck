@@ -140,13 +140,14 @@ app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
       .where(eq(eventAgeGroups.eventId, eventId))
       .orderBy(eventAgeGroups.gender, eventAgeGroups.ageGroup);
 
-    // Create unique groups based on age group and gender only
+    // Create unique groups based on division code
     const uniqueMap = new Map();
     const uniqueGroups = [];
 
     for (const group of ageGroups) {
-      // Use only gender and ageGroup as the key to match boys/girls U4-U18
-      const key = `${group.gender}-${group.ageGroup}`;
+      // Use division code as the unique key since it's already a combination of gender and age group
+      const key = group.divisionCode || `${group.gender}-${group.ageGroup}`;
+      
       if (!uniqueMap.has(key)) {
         // Create a simplified version of the group without field size
         const simplifiedGroup = {
@@ -161,7 +162,7 @@ app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
     // Limit to only standard age groups (U4-U18 for both boys and girls)
     // This should result in approximately 30 age groups
     console.log(`Fetched ${ageGroups.length} age groups for event ${eventId}`);
-    console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication`);
+    console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication by division code`);
 
     res.json(uniqueGroups);
   } catch (error) {

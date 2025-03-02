@@ -24,9 +24,10 @@ router.post('/cleanup/:eventId', async (req, res) => {
     const keptGroups = [];
     const deletedGroupIds = [];
     
-    // First pass - identify unique groups to keep (one per gender+ageGroup)
+    // First pass - identify unique groups to keep (one per division code)
     for (const group of allAgeGroups) {
-      const key = `${group.gender}-${group.ageGroup}`;
+      // Use division code if available, otherwise fall back to gender-ageGroup
+      const key = group.divisionCode || `${group.gender}-${group.ageGroup}`;
       
       if (!uniqueGroups.has(key)) {
         // Keep this group
@@ -43,11 +44,17 @@ router.post('/cleanup/:eventId', async (req, res) => {
       const deleted = await db.transaction(async (tx) => {
         // First, update any references from teams
         for (const keptGroup of keptGroups) {
-          const matchingDuplicates = allAgeGroups.filter(
-            g => g.gender === keptGroup.gender && 
-                 g.ageGroup === keptGroup.ageGroup && 
-                 g.id !== keptGroup.id
-          );
+          const matchingDuplicates = allAgeGroups.filter(g => {
+            if (keptGroup.divisionCode && g.divisionCode) {
+              // If both have division codes, use that for matching
+              return g.divisionCode === keptGroup.divisionCode && g.id !== keptGroup.id;
+            } else {
+              // Fall back to gender and age group matching
+              return g.gender === keptGroup.gender && 
+                     g.ageGroup === keptGroup.ageGroup && 
+                     g.id !== keptGroup.id;
+            }
+          });
           
           for (const duplicate of matchingDuplicates) {
             // Update teams to use the kept group ID instead
