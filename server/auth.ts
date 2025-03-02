@@ -8,15 +8,6 @@ import { db } from "@db";
 import { eq, or } from "drizzle-orm";
 import { crypto } from "./crypto";
 
-// Export the password hashing and comparison functions
-export const hashPassword = async (password: string) => {
-  return await crypto.hash(password);
-};
-
-export const comparePassword = async (suppliedPassword: string, storedPassword: string) => {
-  return await crypto.compare(suppliedPassword, storedPassword);
-};
-
 declare global {
   namespace Express {
     interface User extends SelectUser {}

@@ -8,7 +8,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["npm", "run", "build"]
-run = ["sh", "-c", "npm run start:prod"]
+run = ["npm", "run", "start"]
 
 [[ports]]
 localPort = 3000
@@ -52,11 +52,3 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5000
-
-[[workflows.workflow]]
-name = "Run Development Server"
-author = 38826922
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"

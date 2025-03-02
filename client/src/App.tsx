@@ -1,3 +1,4 @@
+
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -20,8 +21,6 @@ import EventApplicationForm from "@/pages/event-application-form";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import { FeeManagement } from "@/components/events/FeeManagement";
-import FormTemplateCreatePage from "./pages/form-template-create"; // Added import
-
 
 function Router() {
   const { user, isLoading } = useUser();
@@ -45,9 +44,6 @@ function Router() {
       </Switch>
     );
   }
-
-  // Add a check for user.isAdmin to determine the proper dashboard to show
-  const DefaultComponent = user.isAdmin ? AdminDashboard : UserDashboard;
 
   // Handle authenticated routes
   return (
@@ -82,9 +78,8 @@ function Router() {
       <Route path="/household" component={HouseholdPage} />
       <Route path="/chat" component={ChatPage} />
       <Route path="/register/event/:eventId" component={EventRegistration} />
-      <Route path="/admin/form-templates/create" component={FormTemplateCreatePage} /> {/* Added route */}
       <Route path="/">
-        <DefaultComponent />
+        {user.isAdmin ? <AdminDashboard /> : <UserDashboard />}
       </Route>
       <Route component={NotFound} />
     </Switch>
