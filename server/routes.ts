@@ -1,5 +1,6 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
+import express from "express";
 import { setupAuth } from "./auth";
 import { log } from "./vite";
 import { db } from "@db";
@@ -11,6 +12,9 @@ import eventsRouter from "./routes/admin/events";
 import emailTemplatesRouter from "./routes/admin/email-templates";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { sql, eq, and, or, inArray } from "drizzle-orm";
+
+// Create router
+const router = express.Router();
 import {
   users,
   organizationSettings,
@@ -80,6 +84,9 @@ export function registerRoutes(app: Express): Server {
     // Set up authentication first
     setupAuth(app);
     log("Authentication routes registered successfully");
+    
+    // Register main router
+    app.use('/api', router);
 
     // Register admin routes
     app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
