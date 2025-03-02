@@ -1983,7 +1983,8 @@ res.status(500).send("Failed to update complex status");
       }
     });
 
-    // Bulk delete events endpoint    app.delete('/api/admin/events/bulk', isAdmin, async (req, res) => {
+    // Bulk delete events endpoint    
+    app.delete('/api/admin/events/bulk', isAdmin, async (req, res) => {
       try {
         const { eventIds } = req.body;
 
