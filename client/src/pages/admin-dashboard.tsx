@@ -91,7 +91,9 @@ import { useDropzone } from 'react-dropzone';
 import { FileManager } from "@/components/admin/FileManager";
 import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
-// import { EmailTemplatesView } from "@/components/admin/EmailTemplatesView"; // Import the EmailTemplatesView component
+import FormTemplateEditPage from "@/pages/form-template-edit";
+import FormTemplateCreatePage from "@/pages/form-template-create";
+import FormTemplatesPage from "@/pages/form-templates";
 
 
 function AdminBanner() {
