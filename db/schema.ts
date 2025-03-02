@@ -2,6 +2,35 @@ import { pgTable, serial, text, timestamp, integer, boolean, pgEnum, decimal } f
 import { relations } from 'drizzle-orm';
 import { z } from 'zod';
 
+// Email configuration table
+export const emailConfig = pgTable("email_config", {
+  id: serial("id").primaryKey(),
+  host: text("host").notNull(),
+  port: integer("port").notNull(),
+  secure: boolean("secure").default(true).notNull(),
+  authUser: text("auth_user").notNull(),
+  authPass: text("auth_pass").notNull(),
+  senderEmail: text("sender_email").notNull(),
+  senderName: text("sender_name"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Email templates table
+export const emailTemplates = pgTable("email_templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  subject: text("subject").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export type EmailConfig = typeof emailConfig.$inferSelect;
+export type InsertEmailConfig = typeof emailConfig.$inferInsert;
+export type EmailTemplate = typeof emailTemplates.$inferSelect;
+export type InsertEmailTemplate = typeof emailTemplates.$inferInsert;
+
 // Households table
 export const households = pgTable("households", {
   id: serial("id").primaryKey(),
