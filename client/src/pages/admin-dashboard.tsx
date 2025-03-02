@@ -980,7 +980,7 @@ function OrganizationSettingsForm() {
       // Set primary color from the Vibrant swatch
       if (palette.Vibrant) {
         setPrimaryColor(palette.Vibrant.hex);
-        console.log('Primarycolor extracted:', palette.Vibrant.hex);
+console.log('Primarycolor extracted:', palette.Vibrant.hex);
       }
 
       // Set secondary color from theLightVibrant or Muted swatch
