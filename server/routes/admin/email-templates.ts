@@ -1,4 +1,3 @@
-
 import { Router } from "express";
 import { db } from "@db";
 import { emailTemplates } from "@db/schema";
@@ -21,14 +20,14 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const { name, type, subject, content, senderName, senderEmail, isDefault } = req.body;
-    
+
     // If this is set as default, unset any other defaults of the same type
     if (isDefault) {
       await db.update(emailTemplates)
         .set({ isDefault: false })
         .where(eq(emailTemplates.type, type));
     }
-    
+
     const [newTemplate] = await db.insert(emailTemplates)
       .values({
         name,
@@ -42,7 +41,7 @@ router.post('/', async (req, res) => {
         updatedAt: new Date(),
       })
       .returning();
-      
+
     res.status(201).json(newTemplate);
   } catch (error) {
     console.error('Error creating email template:', error);
@@ -55,14 +54,14 @@ router.put('/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const { name, type, subject, content, senderName, senderEmail, isDefault } = req.body;
-    
+
     // If this is set as default, unset any other defaults of the same type
     if (isDefault) {
       await db.update(emailTemplates)
         .set({ isDefault: false })
         .where(eq(emailTemplates.type, type));
     }
-    
+
     const [updatedTemplate] = await db.update(emailTemplates)
       .set({
         name,
@@ -76,11 +75,11 @@ router.put('/:id', async (req, res) => {
       })
       .where(eq(emailTemplates.id, id))
       .returning();
-      
+
     if (!updatedTemplate) {
       return res.status(404).json({ error: "Template not found" });
     }
-    
+
     res.json(updatedTemplate);
   } catch (error) {
     console.error('Error updating email template:', error);
@@ -92,15 +91,15 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    
+
     const [deletedTemplate] = await db.delete(emailTemplates)
       .where(eq(emailTemplates.id, id))
       .returning();
-      
+
     if (!deletedTemplate) {
       return res.status(404).json({ error: "Template not found" });
     }
-    
+
     res.json({ message: "Template deleted successfully" });
   } catch (error) {
     console.error('Error deleting email template:', error);
