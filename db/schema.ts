@@ -882,3 +882,31 @@ export const adminFormSchema = z.object({
 });
 
 export type AdminFormData = z.infer<typeof adminFormSchema>;
+
+export const emailTemplates = pgTable("email_templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // registration, payment, password_reset, etc.
+  subject: text("subject").notNull(),
+  content: text("content").notNull(),
+  senderName: text("sender_name").notNull(),
+  senderEmail: text("sender_email").notNull(),
+  isDefault: boolean("is_default").default(false).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertEmailTemplateSchema = createInsertSchema(emailTemplates, {
+  name: z.string().min(1, "Template name is required"),
+  type: z.string().min(1, "Template type is required"),
+  subject: z.string().min(1, "Subject is required"),
+  content: z.string().min(1, "Content is required"),
+  senderName: z.string().min(1, "Sender name is required"),
+  senderEmail: z.string().email("Invalid sender email"),
+  isDefault: z.boolean().default(false),
+});
+
+export const selectEmailTemplateSchema = createSelectSchema(emailTemplates);
+
+export type InsertEmailTemplate = typeof emailTemplates.$inferInsert;
+export type SelectEmailTemplate = typeof emailTemplates.$inferSelect;
