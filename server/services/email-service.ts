@@ -164,3 +164,4 @@ class EmailService {
 }
 
 export const emailService = new EmailService();
+export const getEmailTemplate = (templateName: string) => emailService.getEmailTemplate(templateName);
