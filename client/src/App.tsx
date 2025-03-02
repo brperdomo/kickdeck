@@ -3,10 +3,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
-import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
 import CreateEventPage from "./pages/create-event";
-import SignUpPage from "./pages/signup";
+import SignUpPage from "./pages/register"; // Changed from "./pages/signup" to "./pages/register"
 import EventListPage from "./pages/events";
 import EventDetailsPage from "./pages/events/[id]";
 import EventApplicationPage from "./pages/events/[id]/apply";
