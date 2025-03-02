@@ -40,9 +40,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import AdminBanner from "@/components/admin/AdminBanner";
+import { AdminBanner } from "@/components/admin/AdminBanner";
 import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
-import LogoutOverlay from "@/components/LogoutOverlay";
+import { LogoutOverlay } from "@/components/ui/logout-overlay";
 
 type View = 'administrators' | 'events' | 'teams' | 'complexes' | 'households' | 
   'scheduling' | 'reports' | 'chat' | 'files' | 'coupons' | 'formTemplates' | 'account' | 'settings';
