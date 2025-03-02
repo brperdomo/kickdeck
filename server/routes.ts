@@ -984,7 +984,7 @@ export function registerRoutes(app: Express): Server {
           // Update complex status
           const [updatedComplex] = await tx
             .update(complexes)
-            .set({
+                        .set({
               isOpen,
               updatedAt: new Date().toISOString(),
             })

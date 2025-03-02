@@ -17,6 +17,8 @@ router.get('/', async (req, res) => {
   }
 });
 
+export { router };
+
 // Create a new email template
 router.post('/', async (req, res) => {
   try {
@@ -47,6 +49,20 @@ router.post('/', async (req, res) => {
   } catch (error) {
     console.error('Error creating email template:', error);
     res.status(500).json({ error: "Failed to create email template" });
+  }
+});
+
+// Preview an email template
+router.post('/preview', async (req, res) => {
+  try {
+    // For now, just return success
+    res.json({ 
+      success: true, 
+      preview: req.body.htmlContent 
+    });
+  } catch (error) {
+    console.error('Error previewing email template:', error);
+    res.status(500).json({ error: "Failed to preview email template" });
   }
 });
 
