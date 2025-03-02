@@ -75,6 +75,11 @@ async function testDbConnection() {
     await createAdmin();
     log("Admin user setup completed");
 
+    // Initialize email service
+    const { initEmailService } = await import('./services/email-service');
+    await initEmailService();
+    log("Email service initialized");
+
     // Create seasonal scopes table if it doesn't exist
     await db.execute(`
       CREATE TABLE IF NOT EXISTS seasonal_scopes (
@@ -86,7 +91,7 @@ async function testDbConnection() {
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
-      
+
       CREATE TABLE IF NOT EXISTS age_group_settings (
         id SERIAL PRIMARY KEY,
         seasonal_scope_id INTEGER NOT NULL REFERENCES seasonal_scopes(id) ON DELETE CASCADE,
@@ -104,7 +109,7 @@ async function testDbConnection() {
 
     // We'll create the WebSocket server after the HTTP server has started successfully
     let wss: WebSocketServer;
-    
+
     // Function to initialize WebSocket after server is listening
     const initializeWebSocket = () => {
       // Create WebSocket server
@@ -157,19 +162,19 @@ async function testDbConnection() {
     // Start the server
     const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
     const ALTERNATIVE_PORTS = [5001, 5002, 5003, 5432, 6000];
-    
+
     const startServer = (port: number, attemptIndex = 0) => {
       const serverInstance = server.listen(port, "0.0.0.0", () => {
         log(`Server started successfully on port ${port}`);
-        
+
         // Initialize WebSocket server after HTTP server starts successfully
         initializeWebSocket();
       });
-      
+
       serverInstance.on('error', (error: any) => {
         if (error.code === 'EADDRINUSE') {
           log(`Port ${port} is already in use.`);
-          
+
           // Try next alternative port
           if (attemptIndex < ALTERNATIVE_PORTS.length) {
             const nextPort = ALTERNATIVE_PORTS[attemptIndex];
@@ -185,7 +190,7 @@ async function testDbConnection() {
         }
       });
     };
-    
+
     startServer(PORT);
 
     // Handle shutdown gracefully
