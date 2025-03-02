@@ -3532,8 +3532,8 @@ export function registerRoutes(app: Express): Server {
     // Register email template routes
     app.get('/api/admin/email-templates', isAdmin, async (req, res) => {
       try {
-        // Placeholder for getEmailTemplates functionality
-        res.json([]);
+        const { getEmailTemplates } = await import('./routes/email-templates');
+        await getEmailTemplates(req, res);
       } catch (error) {
         console.error('Error fetching email templates:', error);
         res.status(500).send("Failed to fetch email templates");
@@ -3542,8 +3542,8 @@ export function registerRoutes(app: Express): Server {
     
     app.post('/api/admin/email-templates', isAdmin, async (req, res) => {
       try {
-        // Placeholder for createEmailTemplate functionality
-        res.status(201).json({ id: 1, ...req.body });
+        const { createEmailTemplate } = await import('./routes/email-templates');
+        await createEmailTemplate(req, res);
       } catch (error) {
         console.error('Error creating email template:', error);
         res.status(500).send("Failed to create email template");
@@ -3552,8 +3552,8 @@ export function registerRoutes(app: Express): Server {
     
     app.put('/api/admin/email-templates/:id', isAdmin, async (req, res) => {
       try {
-        // Placeholder for updateEmailTemplate functionality
-        res.json({ id: req.params.id, ...req.body });
+        const { updateEmailTemplate } = await import('./routes/email-templates');
+        await updateEmailTemplate(req, res);
       } catch (error) {
         console.error('Error updating email template:', error);
         res.status(500).send("Failed to update email template");
@@ -3562,8 +3562,8 @@ export function registerRoutes(app: Express): Server {
     
     app.delete('/api/admin/email-templates/:id', isAdmin, async (req, res) => {
       try {
-        // Placeholder for deleteEmailTemplate functionality
-        res.json({ message: "Email template deleted successfully" });
+        const { deleteEmailTemplate } = await import('./routes/email-templates');
+        await deleteEmailTemplate(req, res);
       } catch (error) {
         console.error('Error deleting email template:', error);
         res.status(500).send("Failed to delete email template");
