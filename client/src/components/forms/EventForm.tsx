@@ -713,7 +713,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const getTabValidationState = () => {
     const errors: Record<EventTab, boolean> = {
-      'information': form ? !form.formState.isValid : false,
+      'information': false, // Don't rely on form validation state
       'age-groups': false, // No longer requires validation
       'scoring': scoringRules.length === 0,
       'complexes': selectedComplexIds.length === 0,
