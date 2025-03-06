@@ -287,8 +287,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const SaveButton = () => (
     <Button
-      onClick={form.handleSubmit(handleSubmitForm)}
-      disabled={isSubmitting}
+      onClick={form ? form.handleSubmit(handleSubmitForm) : () => {}}
+      disabled={isSubmitting || !form}
     >
       {isSubmitting ? (
         <>
@@ -301,9 +301,12 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     </Button>
   );
 
-  const renderInformationContent = () => (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-6">
+  const renderInformationContent = () => {
+    if (!form) return null;
+    
+    return (
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -463,7 +466,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         />
       </form>
     </Form>
-  );
+    );
+  };;
 
   const renderAgeGroupsContent = () => (
     <div className="space-y-6">
@@ -713,7 +717,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const getTabValidationState = () => {
     const errors: Record<EventTab, boolean> = {
-      'information': false, // Don't rely on form validation state
+      'information': form ? !form.formState.isValid : false,
       'age-groups': false, // No longer requires validation
       'scoring': scoringRules.length === 0,
       'complexes': selectedComplexIds.length === 0,
