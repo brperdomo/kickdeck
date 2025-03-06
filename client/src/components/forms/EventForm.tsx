@@ -923,7 +923,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                         const selectedScope = seasonalScopes.find(scope => scope.id === scopeId);
                         if (selectedScope) {
                           // Auto-select all age groups from the scope
-                          setFieldValue('ageGroups', selectedScope.ageGroups);
+                          // Using form.setValue instead of setFieldValue
+                          form.setValue('ageGroups', selectedScope.ageGroups);
                         }
                       }}
                       scopes={seasonalScopes}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -70,21 +70,21 @@ export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
       scoringRule: group.scoringRule || null,
       amountDue: group.amountDue || null
     }));
-    
+
     // Deduplicate by creating a unique key for each group
     const uniqueGroups = Array.from(
       new Map(allGroups.map(group => 
         [`${group.gender}-${group.ageGroup}-${group.birthYear}`, group]
       )).values()
     );
-    
+
     onAgeGroupsChange(uniqueGroups);
   }, []);
 
   const handleSelectionChange = (index: number, checked: boolean) => {
     // Keep all groups selected regardless of user input
     console.log("All age groups are automatically included - manual selection is disabled");
-    
+
     // Pass all groups as selected to the parent component
     const allGroups = ageGroups.map(group => ({
       ...group,
@@ -94,13 +94,13 @@ export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
       scoringRule: group.scoringRule || null,
       amountDue: group.amountDue || null
     }));
-    
+
     const uniqueGroups = Array.from(
       new Map(allGroups.map(group => 
         [`${group.gender}-${group.ageGroup}-${group.birthYear}`, group]
       )).values()
     );
-    
+
     onAgeGroupsChange(uniqueGroups);
   };
 
