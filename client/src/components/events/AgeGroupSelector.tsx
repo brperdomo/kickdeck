@@ -54,35 +54,21 @@ interface AgeGroupSelectorProps {
 }
 
 export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
-  // Initialize with all age groups pre-selected
-  const [ageGroups, setAgeGroups] = useState<AgeGroupData[]>(
-    DEFAULT_AGE_GROUPS.map(group => ({ ...group, isSelected: true }))
-  );
+  const [ageGroups, setAgeGroups] = useState<AgeGroupData[]>(DEFAULT_AGE_GROUPS);
 
-  // Auto-select all groups on component mount
+  // When the component mounts, if onAgeGroupsChange is provided, call it with current age groups
   useEffect(() => {
-    // Select all age groups by default
-    const allGroups = ageGroups.map(group => ({
-      ...group,
-      isSelected: true,
-      projectedTeams: group.projectedTeams || 0,
-      fieldSize: group.fieldSize || '11v11',
-      scoringRule: group.scoringRule || null,
-      amountDue: group.amountDue || null
-    }));
-
-    // Deduplicate by creating a unique key for each group
-    const uniqueGroups = Array.from(
-      new Map(allGroups.map(group => 
-        [`${group.gender}-${group.ageGroup}-${group.birthYear}`, group]
-      )).values()
-    );
-
-    // Only call onAgeGroupsChange if it's a function
-    if (typeof onAgeGroupsChange === 'function') {
-      onAgeGroupsChange(uniqueGroups);
+    if (onAgeGroupsChange) {
+      onAgeGroupsChange(ageGroups);
     }
-  }, []);
+  }, []);  // Only run once on mount
+
+  // When ageGroups change, update parent if callback exists
+  useEffect(() => {
+    if (onAgeGroupsChange) {
+      onAgeGroupsChange(ageGroups);
+    }
+  }, [ageGroups, onAgeGroupsChange]);
 
   const handleSelectionChange = (index: number, checked: boolean) => {
     // Keep all groups selected regardless of user input
