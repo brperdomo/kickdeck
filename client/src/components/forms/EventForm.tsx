@@ -837,7 +837,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   };
 
 
-  const handleSubmit = async (formData: any) => {
+  const submitFormData = async (formData: any) => {
     // Prepare full form data including ageGroups
     const fullFormData = {
       ...formData,
