@@ -287,8 +287,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const SaveButton = () => (
     <Button
-      onClick={form ? form.handleSubmit(handleSubmitForm) : () => {}}
-      disabled={isSubmitting || !form}
+      onClick={form.handleSubmit(handleSubmitForm)}
+      disabled={isSubmitting}
     >
       {isSubmitting ? (
         <>
@@ -301,9 +301,30 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     </Button>
   );
 
+  // Make sure form is initialized at the component level
+  const form = useForm<EventFormValues>({
+    defaultValues: {
+      name: event.name || '',
+      startDate: event.startDate || '',
+      endDate: event.endDate || '',
+      timezone: event.timezone || 'UTC',
+      description: event.description || '',
+      venueId: event.venueId || '',
+      ageGroups: event.ageGroups || [],
+      selectedComplexIds: selectedComplexIds,
+      complexFieldSizes: event.complexFieldSizes || {},
+      scoringRules: scoringRules,
+      settings: event.settings || [],
+      administrators: event.administrators || [],
+      branding: event.branding || {
+        logoUrl: '',
+        primaryColor: '#000000',
+        secondaryColor: '#ffffff'
+      }
+    }
+  });
+
   const renderInformationContent = () => {
-    if (!form) return null;
-    
     return (
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-6">
@@ -717,7 +738,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const getTabValidationState = () => {
     const errors: Record<EventTab, boolean> = {
-      'information': form ? !form.formState.isValid : false,
+      'information': false, // Don't rely on form validation state
       'age-groups': false, // No longer requires validation
       'scoring': scoringRules.length === 0,
       'complexes': selectedComplexIds.length === 0,
