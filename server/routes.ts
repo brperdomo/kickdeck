@@ -1981,8 +1981,33 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             ])
           );
 
-          // Import predefined age groups
-          const { PREDEFINED_AGE_GROUPS } = require('../client/src/components/forms/event-form-types');
+          // Define standard age groups directly rather than importing from client
+          const PREDEFINED_AGE_GROUPS = [
+            { ageGroup: 'U8', gender: 'Boys', divisionCode: 'Boys-U8-7v7' },
+            { ageGroup: 'U8', gender: 'Girls', divisionCode: 'Girls-U8-7v7' },
+            { ageGroup: 'U9', gender: 'Boys', divisionCode: 'Boys-U9-7v7' },
+            { ageGroup: 'U9', gender: 'Girls', divisionCode: 'Girls-U9-7v7' },
+            { ageGroup: 'U10', gender: 'Boys', divisionCode: 'Boys-U10-7v7' },
+            { ageGroup: 'U10', gender: 'Girls', divisionCode: 'Girls-U10-7v7' },
+            { ageGroup: 'U11', gender: 'Boys', divisionCode: 'Boys-U11-9v9' },
+            { ageGroup: 'U11', gender: 'Girls', divisionCode: 'Girls-U11-9v9' },
+            { ageGroup: 'U12', gender: 'Boys', divisionCode: 'Boys-U12-9v9' },
+            { ageGroup: 'U12', gender: 'Girls', divisionCode: 'Girls-U12-9v9' },
+            { ageGroup: 'U13', gender: 'Boys', divisionCode: 'Boys-U13-11v11' },
+            { ageGroup: 'U13', gender: 'Girls', divisionCode: 'Girls-U13-11v11' },
+            { ageGroup: 'U14', gender: 'Boys', divisionCode: 'Boys-U14-11v11' },
+            { ageGroup: 'U14', gender: 'Girls', divisionCode: 'Girls-U14-11v11' },
+            { ageGroup: 'U15', gender: 'Boys', divisionCode: 'Boys-U15-11v11' },
+            { ageGroup: 'U15', gender: 'Girls', divisionCode: 'Girls-U15-11v11' },
+            { ageGroup: 'U16', gender: 'Boys', divisionCode: 'Boys-U16-11v11' },
+            { ageGroup: 'U16', gender: 'Girls', divisionCode: 'Girls-U16-11v11' },
+            { ageGroup: 'U17', gender: 'Boys', divisionCode: 'Boys-U17-11v11' },
+            { ageGroup: 'U17', gender: 'Girls', divisionCode: 'Girls-U17-11v11' },
+            { ageGroup: 'U18', gender: 'Boys', divisionCode: 'Boys-U18-11v11' },
+            { ageGroup: 'U18', gender: 'Girls', divisionCode: 'Girls-U18-11v11' },
+            { ageGroup: 'U19', gender: 'Boys', divisionCode: 'Boys-U19-11v11' },
+            { ageGroup: 'U19', gender: 'Girls', divisionCode: 'Girls-U19-11v11' }
+          ];
 
           // Always ensure all standard age groups exist for every event
           for (const group of PREDEFINED_AGE_GROUPS) {

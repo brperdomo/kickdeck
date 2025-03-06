@@ -81,8 +81,6 @@ export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
     // Only call onAgeGroupsChange if it's a function
     if (typeof onAgeGroupsChange === 'function') {
       onAgeGroupsChange(uniqueGroups);
-    } else {
-      console.warn('onAgeGroupsChange is not a function');
     }
   }, []);
 
@@ -109,8 +107,6 @@ export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
     // Only call onAgeGroupsChange if it's a function
     if (typeof onAgeGroupsChange === 'function') {
       onAgeGroupsChange(uniqueGroups);
-    } else {
-      console.warn('onAgeGroupsChange is not a function');
     }
   };
 

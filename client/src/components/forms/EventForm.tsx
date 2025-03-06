@@ -125,6 +125,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     defaultValues?.seasonalScopeId || null
   );
   const [seasonalScopes, setSeasonalScopes] = useState<any[] | null>(null);
+const { setValue } = form;
 
   // Fetch seasonal scopes on component mount
   useEffect(() => {
