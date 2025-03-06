@@ -1003,9 +1003,10 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
 // With the new approach, we don't need to select age groups - all standard ones will be included
 // This function is kept for compatibility but doesn't do anything anymore
-const handleAgeGroupsChange = () => {
+const handleAgeGroupsChange = (ageGroups) => {
   // No selection needed as all standard age groups will be automatically included
-  console.log("Age groups will be automatically created for this event");
+  console.log("Age groups will be automatically created for this event", ageGroups);
+  form.setValue('ageGroups', ageGroups);
 };
 
 export default EventForm;

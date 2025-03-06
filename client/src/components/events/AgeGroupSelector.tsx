@@ -78,7 +78,12 @@ export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
       )).values()
     );
 
-    onAgeGroupsChange(uniqueGroups);
+    // Only call onAgeGroupsChange if it's a function
+    if (typeof onAgeGroupsChange === 'function') {
+      onAgeGroupsChange(uniqueGroups);
+    } else {
+      console.warn('onAgeGroupsChange is not a function');
+    }
   }, []);
 
   const handleSelectionChange = (index: number, checked: boolean) => {
@@ -101,7 +106,12 @@ export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
       )).values()
     );
 
-    onAgeGroupsChange(uniqueGroups);
+    // Only call onAgeGroupsChange if it's a function
+    if (typeof onAgeGroupsChange === 'function') {
+      onAgeGroupsChange(uniqueGroups);
+    } else {
+      console.warn('onAgeGroupsChange is not a function');
+    }
   };
 
   const handleProjectedTeamsChange = (index: number, value: string) => {
