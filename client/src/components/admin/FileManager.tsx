@@ -892,5 +892,3 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
     </div>
   );
 }
-
-export { FileManager };
