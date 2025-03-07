@@ -1,173 +1,41 @@
-
 import { Router } from 'express';
 import { db } from '@db';
 import { folders, files } from '@db/schema';
 import { eq, and, isNull, asc } from 'drizzle-orm';
 import { validateAuth } from '../middleware/auth';
+import crypto from 'crypto';
 
 const router = Router();
 
-// Get all folders with optional parentId filter
+// Get all folders, optionally filtered by parentId
 router.get('/', async (req, res) => {
   try {
     const { parentId } = req.query;
-    
+
     let foldersList;
-    if (parentId === 'root' || !parentId) {
-      // Get root folders (folders with no parent)
-      foldersList = await db.query.folders.findMany({
-        where: isNull(folders.parentId),
-        orderBy: asc(folders.name)
-      });
-    } else {
-      // Get folders with specific parentId
-      foldersList = await db.query.folders.findMany({
-        where: eq(folders.parentId, parentId as string),
-        orderBy: asc(folders.name)
-      });
-    }
-    
-    res.json(foldersList);
-  } catch (error) {
-    console.error('Error fetching folders:', error);
-    res.status(500).json({ error: 'Failed to fetch folders' });
-  }
-});
 
-// Create a new folder
-router.post('/', validateAuth, async (req, res) => {
-  try {
-    const { name, parentId } = req.body;
-    
-    if (!name) {
-      return res.status(400).json({ error: 'Folder name is required' });
-    }
-    
-    const id = crypto.randomUUID();
-    const newFolder = await db.insert(folders).values({
-      id,
-      name,
-      parentId: parentId || null,
-    }).returning();
-    
-    res.status(201).json(newFolder[0]);
-  } catch (error) {
-    console.error('Error creating folder:', error);
-    res.status(500).json({ error: 'Failed to create folder' });
-  }
-});
-
-// Get breadcrumb path for a folder
-router.get('/breadcrumbs/:folderId', async (req, res) => {
-  try {
-    const { folderId } = req.params;
-    
-    const breadcrumbs = [];
-    let currentFolderId = folderId;
-    
-    while (currentFolderId) {
-      const folder = await db.query.folders.findFirst({
-        where: eq(folders.id, currentFolderId)
-      });
-      
-      if (!folder) break;
-      
-      breadcrumbs.unshift(folder);
-      currentFolderId = folder.parentId;
-    }
-    
-    res.json(breadcrumbs);
-  } catch (error) {
-    console.error('Error getting folder breadcrumbs:', error);
-    res.status(500).json({ error: 'Failed to get folder breadcrumbs' });
-  }
-});
-
-// Update a folder
-router.put('/:id', validateAuth, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name } = req.body;
-    
-    if (!name) {
-      return res.status(400).json({ error: 'Folder name is required' });
-    }
-    
-    const updatedFolder = await db.update(folders)
-      .set({ name, updatedAt: new Date() })
-      .where(eq(folders.id, id))
-      .returning();
-    
-    if (!updatedFolder.length) {
-      return res.status(404).json({ error: 'Folder not found' });
-    }
-    
-    res.json(updatedFolder[0]);
-  } catch (error) {
-    console.error('Error updating folder:', error);
-    res.status(500).json({ error: 'Failed to update folder' });
-  }
-});
-
-// Delete a folder
-router.delete('/:id', validateAuth, async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    // Check if folder has any subfolders
-    const subfolders = await db.query.folders.findMany({
-      where: eq(folders.parentId, id)
-    });
-    
-    if (subfolders.length > 0) {
-      return res.status(400).json({ error: 'Cannot delete folder with subfolders' });
-    }
-    
-    // Check if folder has any files
-    const folderFiles = await db.query.files.findMany({
-      where: eq(files.folderId, id)
-    });
-    
-    if (folderFiles.length > 0) {
-      return res.status(400).json({ error: 'Cannot delete folder with files' });
-    }
-    
-    const deleted = await db.delete(folders)
-      .where(eq(folders.id, id))
-      .returning();
-    
-    if (!deleted.length) {
-      return res.status(404).json({ error: 'Folder not found' });
-    }
-    
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error deleting folder:', error);
-    res.status(500).json({ error: 'Failed to delete folder' });
-  }
-});
-
-export default router;
-
-const router = Router();
-
-// Get all folders (with optional parent filter)
-router.get('/', validateAuth, async (req, res) => {
-  try {
-    const parentId = req.query.parentId ? String(req.query.parentId) : null;
-    
-    let query = db.select()
-      .from(folders);
-    
     if (parentId === 'root') {
-      // Get root folders (parentId is null)
-      query = query.where(isNull(folders.parentId));
+      // Get root folders (where parentId is null)
+      foldersList = await db
+        .select()
+        .from(folders)
+        .where(isNull(folders.parentId))
+        .orderBy(asc(folders.name));
     } else if (parentId) {
       // Get folders with specific parentId
-      query = query.where(eq(folders.parentId, parentId));
+      foldersList = await db
+        .select()
+        .from(folders)
+        .where(eq(folders.parentId, parentId as string))
+        .orderBy(asc(folders.name));
+    } else {
+      // Get all folders
+      foldersList = await db
+        .select()
+        .from(folders)
+        .orderBy(asc(folders.name));
     }
-    
-    const foldersList = await query.orderBy(folders.name);
+
     res.json(foldersList);
   } catch (error) {
     console.error('Error fetching folders:', error);
@@ -175,18 +43,53 @@ router.get('/', validateAuth, async (req, res) => {
   }
 });
 
+// Get folder breadcrumb
+router.get('/:folderId/breadcrumb', async (req, res) => {
+  try {
+    const { folderId } = req.params;
+
+    // Array to store breadcrumb folders
+    const breadcrumb = [];
+    let currentFolderId = folderId;
+
+    // Loop to build the breadcrumb trail
+    while (currentFolderId) {
+      const [currentFolder] = await db
+        .select()
+        .from(folders)
+        .where(eq(folders.id, currentFolderId))
+        .limit(1);
+
+      if (!currentFolder) break;
+
+      // Add folder to breadcrumb (at beginning to maintain correct order)
+      breadcrumb.unshift(currentFolder);
+
+      // Move up to parent folder
+      currentFolderId = currentFolder.parentId;
+    }
+
+    res.json(breadcrumb);
+  } catch (error) {
+    console.error('Error fetching folder breadcrumb:', error);
+    res.status(500).json({ error: 'Failed to fetch folder breadcrumb' });
+  }
+});
+
 // Create a new folder
 router.post('/', validateAuth, async (req, res) => {
   try {
     const { name, parentId } = req.body;
-    
-    if (!name) {
+
+    if (!name || name.trim() === '') {
       return res.status(400).json({ error: 'Folder name is required' });
     }
-    
-    const folderId = crypto.randomUUID();
-    
-    const [newFolder] = await db
+
+    // Generate a random ID for the folder
+    const folderId = Math.random().toString(36).substring(2, 15);
+
+    // Create the folder in the database
+    const newFolder = await db
       .insert(folders)
       .values({
         id: folderId,
@@ -196,121 +99,153 @@ router.post('/', validateAuth, async (req, res) => {
         updatedAt: new Date(),
       })
       .returning();
-      
-    res.status(201).json(newFolder);
+
+    res.status(201).json(newFolder[0]);
   } catch (error) {
     console.error('Error creating folder:', error);
     res.status(500).json({ error: 'Failed to create folder' });
   }
 });
 
-// Update a folder
-router.patch('/:id', validateAuth, async (req, res) => {
+// Delete a folder
+router.delete('/:folderId', validateAuth, async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, parentId } = req.body;
-    
-    const [updatedFolder] = await db
-      .update(folders)
-      .set({
-        name,
-        parentId: parentId || null,
-        updatedAt: new Date(),
-      })
-      .where(eq(folders.id, id))
-      .returning();
-      
-    if (!updatedFolder) {
+    const { folderId } = req.params;
+
+    // Check if the folder exists
+    const [folder] = await db
+      .select()
+      .from(folders)
+      .where(eq(folders.id, folderId))
+      .limit(1);
+
+    if (!folder) {
       return res.status(404).json({ error: 'Folder not found' });
     }
-    
-    res.json(updatedFolder);
-  } catch (error) {
-    console.error('Error updating folder:', error);
-    res.status(500).json({ error: 'Failed to update folder' });
-  }
-});
 
-// Delete a folder
-router.delete('/:id', validateAuth, async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    // Check if folder has files
-    const filesInFolder = await db
+    // Check if the folder has any files
+    const folderFiles = await db
       .select()
       .from(files)
-      .where(eq(files.folderId, id))
-      .limit(1);
-      
-    if (filesInFolder.length > 0) {
-      return res.status(400).json({ error: 'Cannot delete folder with files' });
+      .where(eq(files.folderId, folderId));
+
+    if (folderFiles.length > 0) {
+      return res.status(400).json({ 
+        error: 'Cannot delete folder containing files. Please move or delete the files first.' 
+      });
     }
-    
-    // Check if folder has subfolders
+
+    // Check if the folder has any subfolders
     const subfolders = await db
       .select()
       .from(folders)
-      .where(eq(folders.parentId, id))
-      .limit(1);
-      
+      .where(eq(folders.parentId, folderId));
+
     if (subfolders.length > 0) {
-      return res.status(400).json({ error: 'Cannot delete folder with subfolders' });
+      return res.status(400).json({ 
+        error: 'Cannot delete folder containing subfolders. Please delete the subfolders first.' 
+      });
     }
-    
-    const [deletedFolder] = await db
+
+    // Delete the folder
+    await db
       .delete(folders)
-      .where(eq(folders.id, id))
-      .returning();
-      
-    if (!deletedFolder) {
-      return res.status(404).json({ error: 'Folder not found' });
-    }
-    
-    res.json({ message: 'Folder deleted successfully' });
+      .where(eq(folders.id, folderId));
+
+    res.status(200).json({ message: 'Folder deleted successfully' });
   } catch (error) {
     console.error('Error deleting folder:', error);
     res.status(500).json({ error: 'Failed to delete folder' });
   }
 });
 
-// Get folder contents (files and subfolders)
-router.get('/:id/contents', validateAuth, async (req, res) => {
+// Rename a folder
+router.patch('/:folderId/rename', validateAuth, async (req, res) => {
   try {
-    const { id } = req.params;
-    
-    // Get the folder
+    const { folderId } = req.params;
+    const { name } = req.body;
+
+    if (!name || name.trim() === '') {
+      return res.status(400).json({ error: 'Folder name is required' });
+    }
+
+    // Check if the folder exists
     const [folder] = await db
       .select()
       .from(folders)
-      .where(eq(folders.id, id));
-      
+      .where(eq(folders.id, folderId))
+      .limit(1);
+
     if (!folder) {
       return res.status(404).json({ error: 'Folder not found' });
     }
-    
-    // Get subfolders
-    const subfolders = await db
+
+    // Update the folder name
+    const updatedFolder = await db
+      .update(folders)
+      .set({
+        name,
+        updatedAt: new Date(),
+      })
+      .where(eq(folders.id, folderId))
+      .returning();
+
+    res.status(200).json(updatedFolder[0]);
+  } catch (error) {
+    console.error('Error renaming folder:', error);
+    res.status(500).json({ error: 'Failed to rename folder' });
+  }
+});
+
+// Move a folder to another folder
+router.patch('/:folderId/move', validateAuth, async (req, res) => {
+  try {
+    const { folderId } = req.params;
+    const { targetFolderId } = req.body;
+
+    // Check if the folder exists
+    const [folder] = await db
       .select()
       .from(folders)
-      .where(eq(folders.parentId, id))
-      .orderBy(folders.name);
-      
-    // Get files
-    const filesInFolder = await db
-      .select()
-      .from(files)
-      .where(eq(files.folderId, id))
-      .orderBy(files.name);
-      
-    res.json({
-      folder,
-      subfolders,
-      files: filesInFolder
-    });
+      .where(eq(folders.id, folderId))
+      .limit(1);
+
+    if (!folder) {
+      return res.status(404).json({ error: 'Folder not found' });
+    }
+
+    // If targetFolderId is provided, check if it exists
+    if (targetFolderId) {
+      const [targetFolder] = await db
+        .select()
+        .from(folders)
+        .where(eq(folders.id, targetFolderId))
+        .limit(1);
+
+      if (!targetFolder) {
+        return res.status(404).json({ error: 'Target folder not found' });
+      }
+
+      // Make sure we're not creating a cycle
+      if (folderId === targetFolderId) {
+        return res.status(400).json({ error: 'Cannot move a folder into itself' });
+      }
+    }
+
+    // Update the folder's parentId
+    const updatedFolder = await db
+      .update(folders)
+      .set({
+        parentId: targetFolderId || null,
+        updatedAt: new Date(),
+      })
+      .where(eq(folders.id, folderId))
+      .returning();
+
+    res.status(200).json(updatedFolder[0]);
   } catch (error) {
-    console.error('Error fetching folder contents:', error);
-    res.status(500).json({ error: 'Failed to fetch folder contents' });
+    console.error('Error moving folder:', error);
+    res.status(500).json({ error: 'Failed to move folder' });
   }
 });
 
