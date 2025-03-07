@@ -87,6 +87,8 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [breadcrumbs, setBreadcrumbs] = useState<Folder[]>([]);
+  const [isMoveFolderOpen, setIsMoveFolderOpen] = useState(false);
+  const [targetFolderId, setTargetFolderId] = useState<string | null>(null);
 
   const [state, setState] = useState<FileManagerState>({
     selectedFiles: new Set<string>(),
@@ -130,14 +132,14 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
     try {
       setIsLoading(true);
       const params = new URLSearchParams();
-      
+
       // Use the current folder as the folderId parameter
       if (state.currentFolder) {
         params.append('folderId', state.currentFolder);
       } else if (state.filter.folderId) {
         params.append('folderId', state.filter.folderId);
       }
-      
+
       if (state.filter.type?.length) {
         state.filter.type.forEach(type => params.append('type', type));
       }
@@ -332,18 +334,26 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
       return;
     }
 
+    if (action === 'move') {
+      setIsMoveFolderOpen(true);
+      return;
+    }
+
     if (action === 'delete') {
       if (!confirm(`Are you sure you want to delete ${selectedIds.length} file(s)?`)) {
         return;
       }
 
       try {
-        const response = await fetch('/api/files/bulk-delete', {
+        const response = await fetch('/api/files/bulk', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ fileIds: selectedIds }),
+          body: JSON.stringify({ 
+            action: 'delete',
+            fileIds: selectedIds 
+          }),
         });
 
         if (response.ok) {
@@ -361,6 +371,10 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
         console.error('Error performing bulk delete:', error);
         toast.error('An error occurred while deleting files');
       }
+    }
+
+    if (action === 'copy') {
+      toast.info('Copy functionality coming soon');
     }
   };
 
@@ -394,6 +408,46 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
         search: value,
       },
     }));
+  };
+
+  // Move files to folder
+  const handleMoveToFolder = async () => {
+    const selectedIds = Array.from(state.selectedFiles);
+    if (!targetFolderId) {
+      toast.error('Please select a target folder');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/files/bulk', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          action: 'move',
+          fileIds: selectedIds,
+          targetFolderId
+        }),
+      });
+
+      if (response.ok) {
+        toast.success(`${selectedIds.length} file(s) moved successfully`);
+        setIsMoveFolderOpen(false);
+        setTargetFolderId(null);
+        setState(prev => ({
+          ...prev,
+          selectedFiles: new Set(),
+        }));
+        fetchFiles();
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to move files');
+      }
+    } catch (error) {
+      console.error('Error moving files:', error);
+      toast.error('An error occurred while moving files');
+    }
   };
 
   return (
@@ -476,6 +530,14 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => handleBulkAction('move')}>
+                  <FolderInputIcon className="h-4 w-4 mr-2" />
+                  Move to Folder
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleBulkAction('copy')}>
+                  <CopyIcon className="h-4 w-4 mr-2" />
+                  Copy
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleBulkAction('delete')}>
                   <Trash2Icon className="h-4 w-4 mr-2" />
                   Delete Selected
@@ -792,8 +854,43 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
           </Form>
         </DialogContent>
       </Dialog>
+
+      {/* Move to Folder Dialog */}
+      <Dialog open={isMoveFolderOpen} onOpenChange={setIsMoveFolderOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Move Files to Folder</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p>Select a folder to move {state.selectedFiles.size} file(s) to:</p>
+
+            <Select onValueChange={(value) => setTargetFolderId(value)} value={targetFolderId || undefined}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a folder" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Root (No folder)</SelectItem>
+                {folders.map((folder) => (
+                  <SelectItem key={folder.id} value={folder.id}>
+                    {folder.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsMoveFolderOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="button" onClick={handleMoveToFolder}>
+                Move Files
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-// FileManager is already exported above, no need to export it again
+export { FileManager };
