@@ -11,3 +11,17 @@ export const authenticateAdmin = (req: Request, res: Response, next: NextFunctio
 
   next();
 };
+import { Request, Response, NextFunction } from "express";
+
+// Admin middleware
+export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).send("Not authenticated");
+  }
+
+  if (!req.user?.isAdmin) {
+    return res.status(403).send("Not authorized");
+  }
+
+  next();
+};
