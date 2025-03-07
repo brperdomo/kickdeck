@@ -98,6 +98,8 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
       return response.json();
     },
     onSuccess: () => {
+      setNewFolderName("");
+      setNewFolderDialogOpen(false);
       toast({
         title: "Success",
         description: "Folder created successfully",
@@ -128,23 +130,7 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
     },
   });
 
-  const createFolderMutation = useMutation({
-    mutationFn: async (name: string) => {
-      const response = await fetch('/api/folders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, parentId: state.currentFolder }),
-      });
-      if (!response.ok) throw new Error('Failed to create folder');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['folders'] });
-      setNewFolderDialogOpen(false);
-      setNewFolderName("");
-      toast({ title: "Success", description: "Folder created successfully" });
-    },
-  });
+  // This duplicate declaration has been removed and merged with the one above
 
   const bulkActionMutation = useMutation({
     mutationFn: async ({ action, fileIds, targetFolderId }: { action: string; fileIds: string[]; targetFolderId?: string }) => {
@@ -550,8 +536,6 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
                   name: newFolderName.trim(),
                   parentId: state.currentFolder
                 });
-                setNewFolderName("");
-                setNewFolderDialogOpen(false);
               }
             }}>
               Create
