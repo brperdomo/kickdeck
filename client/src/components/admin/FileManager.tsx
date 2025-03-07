@@ -79,6 +79,39 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
       return response.json() as Promise<Folder[]>;
     },
   });
+  
+  // Create folder mutation
+  const createFolderMutation = useMutation({
+    mutationFn: async (folderData: { name: string; parentId: string | null }) => {
+      const response = await fetch('/api/folders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(folderData),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create folder');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Folder created successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ['folders'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: `Failed to create folder: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
+    },
+  });
 
   // Query for files with filters
   const filesQuery = useQuery({
@@ -511,7 +544,16 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
             <Button variant="outline" onClick={() => setNewFolderDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={() => createFolderMutation.mutate(newFolderName)}>
+            <Button onClick={() => {
+              if (newFolderName.trim()) {
+                createFolderMutation.mutate({
+                  name: newFolderName.trim(),
+                  parentId: state.currentFolder
+                });
+                setNewFolderName("");
+                setNewFolderDialogOpen(false);
+              }
+            }}>
               Create
             </Button>
           </DialogFooter>

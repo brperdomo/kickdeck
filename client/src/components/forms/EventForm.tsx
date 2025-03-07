@@ -53,6 +53,7 @@ import { ComplexSelector } from "@/components/events/ComplexSelector";
 import { InfoPopover } from "@/components/ui/InfoPopover";
 import {SeasonalScopeSelector} from "@/components/events/SeasonalScopeSelector";
 import {AgeGroupSelector} from "@/components/events/AgeGroupSelector";
+import { Textarea } from "@/components/ui/textarea";
 
 
 interface EventFormValues extends EventInformationValues {
@@ -64,6 +65,7 @@ interface EventFormValues extends EventInformationValues {
   administrators: EventAdministrator[];
   branding: EventBranding;
   seasonalScope?: { name: string; startYear: number; endYear: number };
+  logo?: string; // Added logo field
 }
 
 interface EventFormProps {
@@ -82,7 +84,7 @@ interface EventFormProps {
 export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false, activeTab, onTabChange, completedTabs, onCompletedTabsChange, navigateTab }: EventFormProps) => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { control, handleSubmit, formState, setValue, getValues, setFieldValue } = useForm<EventFormValues>({
+  const { control, handleSubmit, formState, setValue, getValues, setFieldValue, watch } = useForm<EventFormValues>({
     resolver: zodResolver(eventInformationSchema),
     defaultValues: defaultValues
   });
@@ -102,7 +104,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     scoringRules: [],
     settings: [],
     administrators: [],
-    branding: {} as EventBranding
+    branding: {} as EventBranding,
+    logo: "" // Added logo field
   });
 
   const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(defaultValues?.selectedComplexIds || []);
@@ -328,7 +331,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         logoUrl: '',
         primaryColor: '#000000',
         secondaryColor: '#ffffff'
-      }
+      },
+      logo: "" // Added logo field
     }
   });
 
@@ -877,6 +881,100 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           </form>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+
+  const handleTabChange = (tab: EventTab) => {
+    onTabChange(tab);
+  };
+
+
+  const submitFormData = async (formData: any) => {
+    // Prepare full form data including ageGroups
+    const fullFormData = {
+      ...formData,
+      ageGroups: event.ageGroups.map(group => ({
+        ...group,
+        selected: group.isSelected,
+        // Ensure fees array is properly included
+        fees: group.fees || []
+      })),
+    };
+
+    console.log("Submitting form with age groups:", fullFormData.ageGroups);
+    onSubmit(fullFormData);
+  };
+
+
+  const SettingsTab = () => {
+    return (
+      <div className="grid gap-6">
+        <div className="grid gap-3">
+          <h3 className="text-lg font-semibold">Event Settings</h3>
+          <p className="text-sm text-muted-foreground">
+            Configure additional settings for this event.
+          </p>
+        </div>
+
+        <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="logo">
+              Event Logo
+              <span className="text-muted-foreground ml-1 text-xs">(optional)</span>
+            </Label>
+            <div className="flex items-center gap-4">
+              <Input
+                id="logo"
+                type="text"
+                placeholder="Enter logo URL or select from File Manager"
+                {...form.register("logo")}
+              />
+              <Button 
+                type="button" 
+                variant="outline"                onClick={() => {
+                  // This would typically open a file selector or file manager
+                  // You'll need to implement this based on your file manager component
+                  console.log("Open file manager for logo selection");
+                }}
+              >
+                Select Logo
+              </Button>
+            </div>
+            {watch("logo") && (
+              <div className="mt-2 p-2 border rounded-md flex justify-center">
+                <img 
+                  src={watch("logo")} 
+                  alt="Event Logo" 
+                  className="max-h-32 object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/uploads/MatchProAI_Linear_Black.png";
+                    (e.target as HTMLImageElement).alt = "Default Logo (Error loading custom logo)";
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="details">
+              Event Details
+              <span className="text-muted-foreground ml-1 text-xs">(optional)</span>
+            </Label>
+            <Textarea
+              id="details"
+              placeholder="Enter detailed information about the event"
+              className="min-h-[120px]"
+              {...form.register("details")}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderSettingsContent = () => (
+    <div>
+      <SettingsTab />
     </div>
   );
 
