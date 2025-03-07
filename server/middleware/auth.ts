@@ -25,3 +25,25 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
 
   next();
 };
+import { Request, Response, NextFunction } from 'express';
+
+// Middleware to validate authentication
+export const validateAuth = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  next();
+};
+
+// Middleware to validate admin privileges
+export const validateAdmin = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
+  
+  if (!req.user?.isAdmin) {
+    return res.status(403).json({ error: 'Not authorized' });
+  }
+  
+  next();
+};
