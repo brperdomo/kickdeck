@@ -130,9 +130,14 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
     try {
       setIsLoading(true);
       const params = new URLSearchParams();
-      if (state.filter.folderId) {
+      
+      // Use the current folder as the folderId parameter
+      if (state.currentFolder) {
+        params.append('folderId', state.currentFolder);
+      } else if (state.filter.folderId) {
         params.append('folderId', state.filter.folderId);
       }
+      
       if (state.filter.type?.length) {
         state.filter.type.forEach(type => params.append('type', type));
       }
