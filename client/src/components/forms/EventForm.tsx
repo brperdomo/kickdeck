@@ -921,7 +921,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                     text-[#1C1C1E] hover:text-[#007AFF]`}
                 >
                   {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
-                </TabsTrigger              ))}
+                </TabsTrigger>
+              ))}
             </TabsList>
 
             <div className="mt-6">
