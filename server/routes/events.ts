@@ -37,6 +37,10 @@ router.patch('/:id', async (req, res) => {
 
       console.log('Event basic info updated');
 
+      // Optimize age group handling to reduce payload size
+      const selectedAgeGroups = eventData.ageGroups?.filter(group => group.selected) || [];
+      console.log(`Processing ${selectedAgeGroups.length} selected age groups`);
+      
       // First, delete all existing age groups and their fee assignments
       await tx.delete(eventAgeGroupFees)
         .where(

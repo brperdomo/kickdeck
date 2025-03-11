@@ -74,19 +74,22 @@ export default function EditEvent() {
 
   const handleSubmit = async (formData: EventFormData) => {
     try {
+      // Only send selected age groups to reduce payload size
+      const selectedAgeGroups = formData.ageGroups?.filter(group => group.selected) || [];
+      
       // Ensure age groups are properly formatted
       const sanitizedFormData = {
         ...formData,
-        ageGroups: formData.ageGroups?.map(group => ({
+        ageGroups: selectedAgeGroups.map(group => ({
           ...group,
           projectedTeams: group.projectedTeams || 0,
           amountDue: group.amountDue || null,
-          selected: true, // Mark all included age groups as selected
+          selected: true,
           feeId: group.feeId || null // Ensure feeId is included
-        })) || []
+        }))
       };
 
-      console.log('Submitting form data:', sanitizedFormData);
+      console.log(`Submitting form data with ${sanitizedFormData.ageGroups.length} selected age groups`);
       await updateEventMutation.mutateAsync(sanitizedFormData);
     } catch (error) {
       console.error("Submit error:", error);
