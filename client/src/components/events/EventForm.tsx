@@ -6,6 +6,30 @@
       seasonalScopeId: scopeId
     }));
   };
+  // Initialize the form with default values or existing event data if editing
+  const form = useForm<EventFormValues>({
+    resolver: zodResolver(eventFormSchema),
+    defaultValues: initialData ? {
+      ...initialData,
+      seasonalScopeId: initialData.seasonalScopeId || null
+    } : {
+      isPublic: true,
+      ageGroups: [],
+      venue: { fields: [] },
+      scoring: {},
+      schedule: { days: [] },
+      customFields: [],
+      seasonalScopeId: null
+    }
+  });
+
+  // Initialize selectedSeasonalScopeId if initialData has a seasonalScopeId
+  React.useEffect(() => {
+    if (initialData?.seasonalScopeId) {
+      setSelectedSeasonalScopeId(initialData.seasonalScopeId);
+    }
+  }, [initialData]);
+
 {seasonalScopes && (
                     <SeasonalScopeSelector
                       selectedScopeId={selectedSeasonalScopeId}

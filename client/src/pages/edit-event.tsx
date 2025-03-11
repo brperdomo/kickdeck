@@ -16,6 +16,7 @@ export default function EditEvent() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<EventTab>('information');
   const [completedTabs, setCompletedTabs] = useState<EventTab[]>([]);
+  const [selectedSeasonalScopeId, setSelectedSeasonalScopeId] = useState<number | null>(null); // Added state for selectedSeasonalScopeId
 
   const eventQuery = useQuery({
     queryKey: ['event', id],
@@ -155,7 +156,43 @@ export default function EditEvent() {
     }
   };
 
-  console.log('Prepared event data for form:', eventData);
+  // Prepare form data
+  const prepareFormData = (eventData) => {
+    console.log('Prepared event data for form:', eventData);
+
+    // Initialize the selectedSeasonalScopeId from eventData
+    if (eventData.seasonalScopeId) {
+      setSelectedSeasonalScopeId(eventData.seasonalScopeId);
+    }
+
+    return {
+      id: eventData.id,
+      name: eventData.name,
+      startDate: eventData.startDate,
+      endDate: eventData.endDate,
+      timezone: eventData.timezone,
+      location: eventData.location,
+      address: eventData.address,
+      city: eventData.city,
+      state: eventData.state,
+      zipCode: eventData.zipCode,
+      country: eventData.country,
+      description: eventData.description,
+      isPublic: eventData.isPublic,
+      registrationOpen: eventData.registrationOpen,
+      registrationClose: eventData.registrationClose,
+      maxTeams: eventData.maxTeams,
+      logoUrl: eventData.logoUrl,
+      seasonalScopeId: eventData.seasonalScopeId,
+      ageGroups: eventData.ageGroups || [],
+      venue: eventData.venue || { fields: [] },
+      scoring: eventData.scoring || {},
+      schedule: eventData.schedule || { days: [] },
+      customFields: eventData.customFields || [],
+    };
+  };
+
+  console.log('Prepared event data for form:', prepareFormData(eventData));
 
   const navigateTab = (direction: 'prev' | 'next') => {
     const currentIndex = TAB_ORDER.indexOf(activeTab);
@@ -190,7 +227,7 @@ export default function EditEvent() {
 
             <EventForm 
               mode="edit"
-              defaultValues={eventData}
+              defaultValues={prepareFormData(eventData)} // Use prepared data
               onSubmit={handleSubmit}
               isSubmitting={updateEventMutation.isPending}
               activeTab={activeTab}
@@ -198,6 +235,7 @@ export default function EditEvent() {
               completedTabs={completedTabs}
               onCompletedTabsChange={setCompletedTabs}
               navigateTab={navigateTab}
+              selectedSeasonalScopeId={selectedSeasonalScopeId} // Pass the state to EventForm
             />
           </CardContent>
         </Card>

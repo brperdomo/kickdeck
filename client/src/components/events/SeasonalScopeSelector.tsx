@@ -56,9 +56,12 @@ export function SeasonalScopeSelector({ selectedScopeId, onScopeSelect, scopes }
           <Select
             value={normalizedSelectedId?.toString() || ""}
             onValueChange={(value) => onScopeSelect(parseInt(value))}
+            defaultValue={normalizedSelectedId?.toString()}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Choose a seasonal scope" />
+              <SelectValue 
+                placeholder="Choose a seasonal scope"
+              />
             </SelectTrigger>
             <SelectContent>
               {scopes.map((scope) => (
