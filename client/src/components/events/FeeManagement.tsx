@@ -324,18 +324,24 @@ export function FeeManagement() {
   });
 
   const handleAddFee = () => {
+    // Ensure proper date formatting
     const feeData = {
       ...newFee,
-      amount: parseFloat(newFee.amount) * 100, // Convert to cents
+      amount: parseFloat(newFee.amount) * 100, // Convert to cents,
+      beginDate: newFee.beginDate ? new Date(newFee.beginDate).toISOString().split('T')[0] : null,
+      endDate: newFee.endDate ? new Date(newFee.endDate).toISOString().split('T')[0] : null
     };
 
     addFeeMutation.mutate(feeData);
   };
 
   const handleUpdateFee = () => {
+    // Ensure proper date formatting
     const feeData = {
       ...editingFee,
       amount: parseFloat(editingFee.amount) * 100, // Convert to cents
+      beginDate: editingFee.beginDate ? new Date(editingFee.beginDate).toISOString().split('T')[0] : null,
+      endDate: editingFee.endDate ? new Date(editingFee.endDate).toISOString().split('T')[0] : null
     };
 
     updateFeeMutation.mutate(feeData);
