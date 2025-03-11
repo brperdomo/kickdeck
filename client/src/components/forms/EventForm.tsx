@@ -911,6 +911,30 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   
   // Log for debugging
   console.log('Event Form Mode:', mode, 'isEditMode:', isEditMode);
+  
+  // Ensure we fetch age groups when in edit mode
+  useEffect(() => {
+    if (isEditMode && id) {
+      // Fetch age groups for the event in edit mode
+      fetch(`/api/admin/events/${id}/age-groups`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch age groups');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Fetched age groups:', data);
+          // Update the form with the fetched age groups
+          if (data && data.length > 0) {
+            setFieldValue('ageGroups', data.filter(group => group.selected));
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching age groups:', error);
+        });
+    }
+  }, [isEditMode, id]);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
