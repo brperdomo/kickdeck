@@ -182,39 +182,52 @@ export function FeeManagement() {
   // Add fee mutation
   const addFeeMutation = useMutation({
     mutationFn: async (feeData) => {
-      const response = await fetch(`/api/admin/events/${eventIdParam}/fees`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(feeData),
-      });
+      // Format dates properly to avoid JSON parsing issues
+      const cleanedData = {
+        ...feeData,
+        amount: Number(feeData.amount),
+        beginDate: feeData.beginDate ? new Date(feeData.beginDate).toISOString().split('T')[0] : null,
+        endDate: feeData.endDate ? new Date(feeData.endDate).toISOString().split('T')[0] : null,
+        accountingCodeId: feeData.accountingCodeId || null
+      };
 
-      if (!response.ok) {
-        throw new Error('Failed to add fee');
+      console.log("Sending new fee data:", JSON.stringify(cleanedData));
+
+      try {
+        const response = await fetch(`/api/admin/events/${eventIdParam}/fees`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(cleanedData),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Server error response:", errorText);
+          throw new Error(`Failed to create fee: ${errorText}`);
+        }
+
+        return await response.json();
+      } catch (error) {
+        console.error("Fee creation error:", error);
+        throw error;
       }
-
-      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['fees', eventIdParam]);
-      setIsAddFeeOpen(false);
-      setNewFee({
-        name: '',
-        amount: '',
-        beginDate: null,
-        endDate: null,
-        applyToAll: false,
-      });
+      setIsDialogOpen(false);
+      form.reset();
       toast({
         title: 'Success',
-        description: 'Fee added successfully',
+        description: 'Fee created successfully',
       });
     },
     onError: (error) => {
+      console.error("Error in mutation:", error);
       toast({
         title: 'Error',
-        description: error.message || 'Failed to add fee',
+        description: `Failed to create fee: ${error.message}`,
         variant: 'destructive',
       });
     },
@@ -227,8 +240,8 @@ export function FeeManagement() {
       const cleanedData = {
         ...feeData,
         amount: Number(feeData.amount),
-        beginDate: feeData.beginDate || null,
-        endDate: feeData.endDate || null,
+        beginDate: feeData.beginDate ? new Date(feeData.beginDate).toISOString().split('T')[0] : null,
+        endDate: feeData.endDate ? new Date(feeData.endDate).toISOString().split('T')[0] : null,
         accountingCodeId: feeData.accountingCodeId || null
       };
 
@@ -368,21 +381,59 @@ export function FeeManagement() {
     }
   };
 
-  const handleSaveAssignments = () => {
-    const selectedAgeGroupIds = [];
+  // Handle saving fee assignments
+  const handleSaveAssignments = async () => {
+    // Prepare assignments data
+    const assignments = [];
+    ageGroupsQuery.data?.forEach(ageGroup => {
+      if (selectedAgeGroups[ageGroup.id] && selectedAgeGroups[ageGroup.id][selectedFeeId]) {
+        assignments.push({
+          ageGroupId: ageGroup.id,
+          feeId: selectedFeeId
+        });
+      }
+    });
 
-    Object.entries(selectedAgeGroups).forEach(([ageGroupId, feeMap]) => {
-      Object.entries(feeMap).forEach(([feeId, isSelected]) => {
-        if (parseInt(feeId) === selectedFeeId && isSelected) {
-          selectedAgeGroupIds.push(parseInt(ageGroupId));
-        }
+    console.log("Saving fee assignments:", JSON.stringify({
+      assignments,
+      feeId: selectedFeeId
+    }));
+
+    try {
+      // Call API to save assignments
+      const response = await fetch(`/api/admin/events/${eventIdParam}/fee-assignments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          assignments,
+          feeId: selectedFeeId
+        }),
       });
-    });
 
-    updateAssignmentsMutation.mutate({
-      feeId: selectedFeeId,
-      ageGroupIds: selectedAgeGroupIds,
-    });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Assignment error response:", errorText);
+        throw new Error(`Failed to save assignments: ${errorText}`);
+      }
+
+      await response.json();
+      setIsAssignFeeOpen(false);
+      toast({
+        title: 'Success',
+        description: 'Fee assignments updated',
+      });
+      // Refresh assignments data
+      feeAssignmentsQuery.refetch();
+    } catch (error) {
+      console.error("Fee assignment error:", error);
+      toast({
+        title: 'Error',
+        description: `Failed to save assignments: ${error.message}`,
+        variant: 'destructive',
+      });
+    }
   };
 
   const openAssignFeeDialog = (feeId) => {
@@ -602,30 +653,7 @@ export function FeeManagement() {
 
               <div className="flex justify-end mt-4">
                 <Button 
-                  onClick={() => {
-                    // Save all fee assignments
-                    const assignments = [];
-
-                    ageGroupsQuery.data?.forEach(ageGroup => {
-                      feesQuery.data?.forEach(fee => {
-                        if (selectedAgeGroups[ageGroup.id]?.[fee.id]) {
-                          assignments.push({
-                            ageGroupId: ageGroup.id,
-                            feeId: fee.id
-                          });
-                        }
-                      });
-                    });
-
-                    // Call API to save assignments
-                    if (assignments.length > 0) {
-                      // Implementation would depend on your API structure
-                      toast({
-                        title: 'Success',
-                        description: 'Fee assignments updated'
-                      });
-                    }
-                  }}
+                  onClick={handleSaveAssignments}
                 >
                   Save Assignments
                 </Button>

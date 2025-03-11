@@ -401,7 +401,7 @@ router.patch('/fees/:feeId', async (req, res) => {
     const feeId = req.params.feeId;
     const { name, amount, beginDate, endDate, accountingCodeId } = req.body;
 
-    console.log("Updating fee:", feeId, "with data:", req.body);
+    console.log("Updating fee:", feeId, "with data:", JSON.stringify(req.body));
 
     // Parse dates properly
     let parsedBeginDate = null;
