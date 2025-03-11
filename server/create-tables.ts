@@ -82,6 +82,15 @@ export async function createTables() {
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
+      
+      CREATE TABLE IF NOT EXISTS event_settings (
+        id SERIAL PRIMARY KEY,
+        event_id BIGINT NOT NULL,
+        setting_key TEXT NOT NULL,
+        setting_value TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+      );
     `);
     // Create email_templates table
     await createEmailTemplatesTable();
