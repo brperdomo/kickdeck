@@ -319,7 +319,7 @@ router.get('/:id/age-groups', async (req, res) => {
   const eventId = req.params.id;
   try {
     // Fetch age groups from the database
-    const results = await db.query.eventAgeGroups.findMany({
+    let results = await db.query.eventAgeGroups.findMany({
       where: eq(eventAgeGroups.eventId, eventId),
     });
 
@@ -343,27 +343,30 @@ router.get('/:id/age-groups', async (req, res) => {
           where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
         });
 
-        if (scopeAgeGroups.length > 0) {
-          console.log(`Found ${scopeAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
+        // If no age groups are already in the event, create them from the seasonal scope
+        if (scopeAgeGroups.length > 0 && results.length === 0) {
+          console.log(`Creating ${scopeAgeGroups.length} age groups from seasonal scope ${seasonalScopeId}`);
 
-          // Convert seasonal scope age groups to event age group format
-          const formattedAgeGroups = scopeAgeGroups.map(ag => ({
-            id: 0, // Temporary ID
-            eventId: eventId,
-            ageGroup: ag.ageGroup,
-            birthYear: ag.birthYear,
-            gender: ag.gender,
-            divisionCode: ag.divisionCode,
-            fieldSize: "Standard", // Default value
-            projectedTeams: 8, // Default value
-            createdAt: new Date().toISOString(),
-            birth_date_start: new Date(ag.minBirthYear, 0, 1).toISOString().split('T')[0],
-            selected: true
-          }));
+          // Insert the age groups into the database for this event
+          for (const group of scopeAgeGroups) {
+            await db.insert(eventAgeGroups).values({
+              eventId,
+              ageGroup: group.ageGroup,
+              birthYear: group.birthYear,
+              gender: group.gender,
+              fieldSize: "11v11", // Default value
+              projectedTeams: 8, // Default value
+              seasonalScopeId: group.seasonalScopeId,
+              divisionCode: group.divisionCode,
+              createdAt: new Date().toISOString(),
+            });
+          }
 
-          // Return these age groups even though they're not saved yet
-          res.json(formattedAgeGroups);
-          return;
+          // Fetch the newly created age groups
+          results = await db.query.eventAgeGroups.findMany({
+            where: eq(eventAgeGroups.eventId, eventId)
+          });
+          console.log(`Created and fetched ${results.length} age groups for event ${eventId}`);
         }
       }
     }
