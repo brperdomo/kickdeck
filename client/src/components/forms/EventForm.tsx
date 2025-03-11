@@ -929,18 +929,20 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           console.log('Fetched age groups:', data);
           // Update the form with the fetched age groups
           if (data && Array.isArray(data)) {
-            // Include all age groups with selected=true flag
-            const selectedGroups = data.filter(group => group.selected);
-            console.log('Selected age groups:', selectedGroups);
-            console.log('All available groups count:', data.length);
+            console.log('All available age groups count:', data.length);
             
-            // Make sure we set the age groups value even if none are selected
-            form.setValue('ageGroups', selectedGroups.length > 0 ? selectedGroups : []);
-            
-            // Store all available groups in state for the UI to use
+            // Make age groups data available to the form component
+            // Store all groups first so they can be displayed in the UI
             if (typeof setAllAgeGroups === 'function') {
               setAllAgeGroups(data);
             }
+            
+            // Find any selected groups (or use an empty array)
+            const selectedGroups = data.filter(group => group.selected);
+            console.log('Selected age groups:', selectedGroups);
+            
+            // Set the form value for age groups - even if it's an empty array
+            form.setValue('ageGroups', selectedGroups);
           } else {
             console.error('Age groups data is not an array or is empty:', data);
           }

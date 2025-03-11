@@ -204,8 +204,56 @@ app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
       }
     }
 
+    // If we still have no age groups after deduplication, return standard age groups
+    if (uniqueGroups.length === 0) {
+      // Define standard age groups directly
+      const PREDEFINED_AGE_GROUPS = [
+        { ageGroup: 'U4', birthYear: 2021, gender: 'Boys', divisionCode: 'B2021' },
+        { ageGroup: 'U4', birthYear: 2021, gender: 'Girls', divisionCode: 'G2021' },
+        { ageGroup: 'U5', birthYear: 2020, gender: 'Boys', divisionCode: 'B2020' },
+        { ageGroup: 'U5', birthYear: 2020, gender: 'Girls', divisionCode: 'G2020' },
+        { ageGroup: 'U6', birthYear: 2019, gender: 'Boys', divisionCode: 'B2019' },
+        { ageGroup: 'U6', birthYear: 2019, gender: 'Girls', divisionCode: 'G2019' },
+        { ageGroup: 'U7', birthYear: 2018, gender: 'Boys', divisionCode: 'B2018' },
+        { ageGroup: 'U7', birthYear: 2018, gender: 'Girls', divisionCode: 'G2018' },
+        { ageGroup: 'U8', birthYear: 2017, gender: 'Boys', divisionCode: 'B2017' },
+        { ageGroup: 'U8', birthYear: 2017, gender: 'Girls', divisionCode: 'G2017' },
+        { ageGroup: 'U9', birthYear: 2016, gender: 'Boys', divisionCode: 'B2016' },
+        { ageGroup: 'U9', birthYear: 2016, gender: 'Girls', divisionCode: 'G2016' },
+        { ageGroup: 'U10', birthYear: 2015, gender: 'Boys', divisionCode: 'B2015' },
+        { ageGroup: 'U10', birthYear: 2015, gender: 'Girls', divisionCode: 'G2015' },
+        { ageGroup: 'U11', birthYear: 2014, gender: 'Boys', divisionCode: 'B2014' },
+        { ageGroup: 'U11', birthYear: 2014, gender: 'Girls', divisionCode: 'G2014' },
+        { ageGroup: 'U12', birthYear: 2013, gender: 'Boys', divisionCode: 'B2013' },
+        { ageGroup: 'U12', birthYear: 2013, gender: 'Girls', divisionCode: 'G2013' }
+      ];
+
+      for (const group of PREDEFINED_AGE_GROUPS) {
+        const fieldSize = group.ageGroup.startsWith('U') ? 
+          (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' : 
+           parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' : 
+           parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11';
+
+        uniqueGroups.push({
+          id: null,
+          eventId,
+          ageGroup: group.ageGroup,
+          gender: group.gender,
+          divisionCode: group.divisionCode,
+          birthDateStart: null,
+          birthDateEnd: null,
+          fieldSize: fieldSize,
+          projectedTeams: 0,
+          createdAt: new Date().toISOString(),
+          selected: false, // Not initially selected
+        });
+      }
+
+      console.log(`No age groups found. Added ${uniqueGroups.length} standard age groups as fallback`);
+    }
+
     console.log(`Fetched ${ageGroups.length} age groups for event ${eventId}`);
-    console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication by division code and adding standard groups`);
+    console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication or adding standard groups`);
 
     res.json(uniqueGroups);
   } catch (error) {
