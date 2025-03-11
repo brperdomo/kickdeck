@@ -127,8 +127,13 @@ export function FeeManagement() {
         throw new Error(`Failed to fetch age groups: ${error}`);
       }
       const data = await response.json();
-      console.log(`Found ${data.length} age groups for event ${eventIdParam}`);
-      return data;
+      // Limit to 30 age groups as per seasonal scope requirements
+      // Filter out duplicates by division code (unique identifier)
+      const uniqueAgeGroups = Array.from(
+        new Map(data.map(group => [group.divisionCode, group])).values()
+      );
+      console.log(`Found ${uniqueAgeGroups.length} unique age groups for event ${eventIdParam}`);
+      return uniqueAgeGroups;
     },
     enabled: !!eventIdParam,
   });
