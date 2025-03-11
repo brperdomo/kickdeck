@@ -23,19 +23,15 @@ interface SeasonalScope {
 interface SeasonalScopeSelectorProps {
   selectedScopeId: number | null;
   onScopeSelect: (scopeId: number) => void;
+  scopes: SeasonalScope[];
 }
 
-export function SeasonalScopeSelector({ selectedScopeId, onScopeSelect }: SeasonalScopeSelectorProps) {
-  const { data: scopes, isLoading } = useQuery<SeasonalScope[]>({
-    queryKey: ['/api/admin/seasonal-scopes'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/seasonal-scopes');
-      if (!response.ok) throw new Error('Failed to fetch seasonal scopes');
-      return response.json();
-    },
-  });
-
-  // Assuming normalizedSelectedId is derived from selectedScopeId to handle potential type differences
+export function SeasonalScopeSelector({ selectedScopeId, onScopeSelect, scopes }: SeasonalScopeSelectorProps) {
+  // For debugging
+  console.log('SeasonalScopeSelector - selectedScopeId:', selectedScopeId);
+  console.log('SeasonalScopeSelector - available scopes:', scopes);
+  
+  // Convert selectedScopeId to string for the Select component
   const normalizedSelectedId = selectedScopeId;
 
   if (isLoading) {
@@ -76,7 +72,11 @@ export function SeasonalScopeSelector({ selectedScopeId, onScopeSelect }: Season
             onValueChange={(value) => onScopeSelect(parseInt(value))}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Choose a seasonal scope" />
+              <SelectValue placeholder="Choose a seasonal scope">
+                {normalizedSelectedId && scopes.find(s => s.id === normalizedSelectedId) 
+                  ? `${scopes.find(s => s.id === normalizedSelectedId)?.name} (${scopes.find(s => s.id === normalizedSelectedId)?.startYear}-${scopes.find(s => s.id === normalizedSelectedId)?.endYear})` 
+                  : "Choose a seasonal scope"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {scopes.map((scope) => (

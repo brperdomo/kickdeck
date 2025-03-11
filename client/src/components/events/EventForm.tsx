@@ -10,6 +10,7 @@
                     <SeasonalScopeSelector
                       selectedScopeId={selectedSeasonalScopeId}
                       onScopeSelect={(scopeId) => {
+                        console.log('Scope selected in EventForm:', scopeId);
                         setSelectedSeasonalScopeId(scopeId);
                         // Clear existing age group selections when scope changes
                         const selectedScope = seasonalScopes.find(scope => scope.id === scopeId);
