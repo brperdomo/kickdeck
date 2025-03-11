@@ -941,7 +941,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                     </InfoPopover>
                   </div>
 
-                  {seasonalScopes && (
+                  {!isEditMode && seasonalScopes && (
                     <SeasonalScopeSelector
                       selectedScopeId={selectedSeasonalScopeId}
                       onScopeSelect={(scopeId) => {
@@ -956,6 +956,14 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       }}
                       scopes={seasonalScopes}
                     />
+                  )}
+                  
+                  {isEditMode && selectedSeasonalScopeId && (
+                    <div className="mb-4">
+                      <p className="text-sm text-muted-foreground">
+                        Age groups are determined by the seasonal scope selected during event creation.
+                      </p>
+                    </div>
                   )}
 
                   {selectedSeasonalScopeId && (

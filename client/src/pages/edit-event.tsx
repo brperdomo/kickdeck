@@ -38,16 +38,12 @@ export default function EditEvent() {
 
       // Set the seasonal scope ID when event data is loaded
       if (data && data.seasonalScopeId) {
-        const scopeId = typeof data.seasonalScopeId === 'string' 
-          ? parseInt(data.seasonalScopeId, 10) 
-          : data.seasonalScopeId;
-
-        setSelectedSeasonalScopeId(scopeId);
-        console.log('Loaded seasonal scope ID from event:', scopeId);
+        setSelectedSeasonalScopeId(Number(data.seasonalScopeId));
+        console.log('Loaded seasonal scope ID from event:', data.seasonalScopeId);
 
         // If we have seasonal scopes data, load age groups automatically for this scope
         if (seasonalScopes && seasonalScopes.length > 0) {
-          const selectedScope = seasonalScopes.find(scope => scope.id === scopeId);
+          const selectedScope = seasonalScopes.find(scope => scope.id === data.seasonalScopeId);
           if (selectedScope && selectedScope.ageGroups) {
             setAvailableAgeGroups(selectedScope.ageGroups);
             console.log('Automatically loaded age groups for scope:', selectedScope.ageGroups);
