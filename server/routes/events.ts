@@ -10,119 +10,32 @@ const router = Router();
 // Update event endpoint
 router.patch('/:id', async (req, res) => {
   try {
-    const eventId = req.params.id;
+    const { id } = req.params;
+    const eventId = parseInt(id);
     const eventData = req.body;
 
-    console.log('Updating event:', eventId);
-    console.log('Received update data:', JSON.stringify(eventData, null, 2));
+    // Convert seasonalScopeId to number or null
+    const seasonalScopeId = eventData.seasonalScopeId ? 
+      Number(eventData.seasonalScopeId) : null;
 
-    // Begin a transaction
-    const result = await db.transaction(async (tx) => {
-      // Update event basic info
-      const [updatedEvent] = await tx
-        .update(events)
-        .set({
-          name: eventData.name,
-          startDate: eventData.startDate,
-          endDate: eventData.endDate,
-          timezone: eventData.timezone,
-          applicationDeadline: eventData.applicationDeadline,
-          details: eventData.details,
-          agreement: eventData.agreement,
-          refundPolicy: eventData.refundPolicy,
-          updatedAt: new Date().toISOString(),
-        })
-        .where(eq(events.id, BigInt(eventId)))
-        .returning();
+    console.log('Updating event with seasonalScopeId:', seasonalScopeId);
 
-      console.log('Event basic info updated');
+    // Update the event in the database
+    await db.update(events)
+      .set({
+        name: eventData.name,
+        startDate: eventData.startDate,
+        endDate: eventData.endDate,
+        registrationStartDate: eventData.registrationStartDate,
+        registrationEndDate: eventData.registrationEndDate,
+        description: eventData.description,
+        location: eventData.location,
+        seasonalScopeId: seasonalScopeId,
+        status: eventData.status,
+      })
+      .where(eq(events.id, eventId));
 
-      // Optimize age group handling to reduce payload size
-      const selectedAgeGroups = eventData.ageGroups?.filter(group => group.selected) || [];
-      console.log(`Processing ${selectedAgeGroups.length} selected age groups`);
-      
-      // First, delete all existing age groups and their fee assignments
-      await tx.delete(eventAgeGroupFees)
-        .where(
-          eq(eventAgeGroupFees.ageGroupId, 
-            sql`(SELECT id FROM event_age_groups WHERE event_id = ${eventId.toString()})`
-          )
-        );
-
-      await tx.delete(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId.toString()));
-
-      console.log('Existing age groups and fee assignments deleted');
-
-      // Insert new age groups and their fee assignments
-      if (eventData.ageGroups && eventData.ageGroups.length > 0) {
-        console.log('Processing age groups:', eventData.ageGroups);
-
-        // Filter only selected age groups
-        const selectedGroups = eventData.ageGroups.filter(group => group.selected);
-        console.log('Selected age groups:', selectedGroups);
-
-        // Use a Map to prevent duplicate age groups based on gender and age group
-        const processedGroups = new Map();
-
-        for (const group of selectedGroups) {
-          // Create a unique key for this group
-          const groupKey = `${group.gender}-${group.ageGroup}`;
-
-          // Skip if we've already processed this group
-          if (processedGroups.has(groupKey)) {
-            console.log(`Skipping duplicate group: ${groupKey}`);
-            continue;
-          }
-
-          processedGroups.set(groupKey, group);
-          console.log('Processing selected group:', group);
-
-          // Insert age group
-          const [insertedAgeGroup] = await tx
-            .insert(eventAgeGroups)
-            .values({
-              eventId: eventId.toString(),
-              ageGroup: group.ageGroup,
-              birthYear: group.birthYear,
-              gender: group.gender,
-              projectedTeams: group.projectedTeams || null,
-              fieldSize: group.fieldSize || null,
-              scoringRule: group.scoringRule || null,
-              amountDue: group.amountDue || null,
-              createdAt: new Date().toISOString(),
-              birth_date_start: group.birth_date_start || null,
-              divisionCode: group.divisionCode || null,
-            })
-            .returning();
-
-          console.log('Inserted age group:', insertedAgeGroup);
-
-          // If fee is assigned, create the fee assignment
-          if (group.feeId) {
-            console.log('Creating fee assignment for group:', {
-              ageGroupId: insertedAgeGroup.id,
-              feeId: group.feeId
-            });
-
-            await tx
-              .insert(eventAgeGroupFees)
-              .values({
-                ageGroupId: insertedAgeGroup.id,
-                feeId: group.feeId,
-                createdAt: new Date().toISOString(),
-              });
-
-            console.log('Fee assignment created successfully');
-          }
-        }
-      }
-
-      return updatedEvent;
-    });
-
-    console.log('Event update completed:', result);
-    res.json({ message: "Event updated successfully", event: result });
+    res.json({ message: "Event updated successfully" });
   } catch (error) {
     console.error("Error updating event:", error);
     res.status(500).json({ 
@@ -197,7 +110,7 @@ app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
 
     // When editing an event, we want to show ALL age groups including standard ones not initially selected
     const { PREDEFINED_AGE_GROUPS } = require('../../client/src/components/forms/event-form-types');
-    
+
     // Make sure all standard age groups are included in the response
     for (const stdGroup of PREDEFINED_AGE_GROUPS) {
       const key = stdGroup.divisionCode;
@@ -207,7 +120,7 @@ app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
           (parseInt(stdGroup.ageGroup.substring(1)) <= 7 ? '4v4' : 
            parseInt(stdGroup.ageGroup.substring(1)) <= 10 ? '7v7' : 
            parseInt(stdGroup.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11';
-        
+
         uniqueGroups.push({
           id: null,
           eventId,
@@ -223,7 +136,7 @@ app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
         });
       }
     }
-    
+
     console.log(`Fetched ${ageGroups.length} age groups for event ${eventId}`);
     console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication by division code and adding standard groups`);
 

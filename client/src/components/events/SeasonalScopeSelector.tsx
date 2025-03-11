@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -36,6 +35,9 @@ export function SeasonalScopeSelector({ selectedScopeId, onScopeSelect }: Season
     },
   });
 
+  // Assuming normalizedSelectedId is derived from selectedScopeId to handle potential type differences
+  const normalizedSelectedId = selectedScopeId;
+
   if (isLoading) {
     return (
       <Card>
@@ -70,7 +72,7 @@ export function SeasonalScopeSelector({ selectedScopeId, onScopeSelect }: Season
         <div className="space-y-2">
           <Label>Select Seasonal Scope</Label>
           <Select
-            value={selectedScopeId?.toString() || ""}
+            value={normalizedSelectedId?.toString() || ""}
             onValueChange={(value) => onScopeSelect(parseInt(value))}
           >
             <SelectTrigger className="w-full">

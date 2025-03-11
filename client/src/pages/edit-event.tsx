@@ -26,6 +26,10 @@ export default function EditEvent() {
         throw new Error(errorData?.message || 'Failed to fetch event');
       }
       const data = await response.json();
+      // Ensure seasonalScopeId is a number if present
+      if (data.seasonalScopeId) {
+        data.seasonalScopeId = Number(data.seasonalScopeId);
+      }
       console.log('Fetched event data:', data);
       return data;
     }
@@ -76,7 +80,7 @@ export default function EditEvent() {
     try {
       // Only send selected age groups to reduce payload size
       const selectedAgeGroups = formData.ageGroups?.filter(group => group.selected) || [];
-      
+
       // Ensure age groups are properly formatted
       const sanitizedFormData = {
         ...formData,
