@@ -441,4 +441,39 @@ router.patch('/fees/:feeId', async (req, res) => {
   }
 });
 
+// Handle fee assignments
+router.post('/fee-assignments', async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.eventId);
+    const { feeId, assignments } = req.body;
+
+    console.log("Received fee assignment request:", { eventId, feeId, assignments });
+
+    if (!feeId || !assignments || !Array.isArray(assignments)) {
+      return res.status(400).json({ error: 'Invalid request data' });
+    }
+
+    // Start a transaction
+    await db.transaction(async (tx) => {
+      // Delete existing assignments for this fee
+      await tx
+        .delete(eventAgeGroupFees)
+        .where(eq(eventAgeGroupFees.feeId, feeId));
+
+      // Create new assignments
+      for (const assignment of assignments) {
+        await tx.insert(eventAgeGroupFees).values({
+          ageGroupId: assignment.ageGroupId,
+          feeId: feeId
+        });
+      }
+    });
+
+    return res.status(200).json({ message: 'Fee assignments updated successfully' });
+  } catch (error) {
+    console.error('Error updating fee assignments:', error);
+    return res.status(500).json({ error: 'Failed to update fee assignments', details: error.message });
+  }
+});
+
 export default router;

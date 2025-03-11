@@ -412,13 +412,22 @@ export function FeeManagement() {
         }),
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Assignment error response:", errorText);
-        throw new Error(`Failed to save assignments: ${errorText}`);
+      // First check for errors by examining the response
+      let responseData;
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
+        responseData = await response.json();
+      } else {
+        const text = await response.text();
+        console.error("Server returned non-JSON response:", text);
+        throw new Error("Server returned an invalid response format");
       }
 
-      await response.json();
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Failed to save assignments');
+      }
+
       setIsAssignFeeOpen(false);
       toast({
         title: 'Success',
