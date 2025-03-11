@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../db';
-import { events, eventAgeGroups, eventAgeGroupFees, eventFees } from '@db/schema';
+import { events, eventAgeGroups, eventAgeGroupFees, eventFees, eventSettings } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 import { sql } from 'drizzle-orm/sql';
@@ -17,10 +17,47 @@ router.patch('/:id', async (req, res) => {
     // Convert seasonalScopeId to number or null
     const seasonalScopeId = eventData.seasonalScopeId ? 
       Number(eventData.seasonalScopeId) : null;
-
     console.log('Updating event with seasonalScopeId:', seasonalScopeId);
 
+    // If there's a seasonalScopeId, we need to fetch its age groups and copy them
+    if (seasonalScopeId) {
+      try {
+        // First, fetch the age groups from the seasonal scope
+        const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
+          where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
+        });
+
+        console.log(`Found ${scopeAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
+
+        // For each age group in the scope, create a corresponding event age group
+        if (scopeAgeGroups.length > 0) {
+          const eventAgeGroupsToInsert = scopeAgeGroups.map(ag => ({
+            eventId: eventId,
+            ageGroup: ag.ageGroup,
+            birthYear: ag.birthYear,
+            gender: ag.gender,
+            divisionCode: ag.divisionCode,
+            fieldSize: "Standard", // Default value, adjust as needed
+            projectedTeams: 8, // Default value, adjust as needed
+            createdAt: new Date().toISOString(),
+            birth_date_start: new Date(ag.minBirthYear, 0, 1).toISOString().split('T')[0]
+          }));
+
+          // Insert the age groups
+          await db.insert(eventAgeGroups).values(eventAgeGroupsToInsert);
+          console.log(`Successfully copied ${eventAgeGroupsToInsert.length} age groups from scope to event ${eventId}`);
+        }
+      } catch (error) {
+        console.error('Error copying age groups from seasonal scope:', error);
+      }
+    }
+
     // Update the event in the database
+    const event = await db.query.events.findFirst({where: eq(events.id, eventId)})
+    if (!event) {
+      res.status(404).json({error: "Event not found"})
+      return
+    }
     await db.update(events)
       .set({
         name: eventData.name,
@@ -30,10 +67,25 @@ router.patch('/:id', async (req, res) => {
         registrationEndDate: eventData.registrationEndDate,
         description: eventData.description,
         location: eventData.location,
-        seasonalScopeId: seasonalScopeId,
         status: eventData.status,
       })
       .where(eq(events.id, eventId));
+
+    // Store the seasonalScopeId in the event settings table since events table doesn't have this column
+    if (seasonalScopeId) {
+      try {
+        await db.insert(eventSettings).values({
+          eventId: eventId,
+          settingKey: 'seasonalScopeId',
+          settingValue: seasonalScopeId.toString(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+        console.log(`Successfully saved seasonalScopeId ${seasonalScopeId} in event settings for event ${eventId}`);
+      } catch (error) {
+        console.error('Error saving seasonalScopeId to event settings:', error);
+      }
+    }
 
     res.json({ message: "Event updated successfully" });
   } catch (error) {
@@ -263,81 +315,77 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => { //Assu
 });
 
 
-router.get('/:eventId/age-groups', async (req, res) => {
-  const eventId = req.params.eventId;
+router.get('/:id/age-groups', async (req, res) => {
+  const eventId = req.params.id;
   try {
     // Fetch age groups from the database
-    const ageGroups = await db.query.ageGroups.findMany({
-      where: eq(ageGroupsTable.eventId, eventId),
+    const results = await db.query.eventAgeGroups.findMany({
+      where: eq(eventAgeGroups.eventId, eventId),
     });
 
-    // Create a map of unique division codes to avoid duplicates
-    const uniqueDivisionCodes = new Map();
-    const uniqueGroups = [];
+    console.log(`Fetched ${results.length} age groups for event ${eventId}`);
 
-    for (const group of ageGroups) {
-      if (!uniqueDivisionCodes.has(group.divisionCode)) {
-        uniqueDivisionCodes.set(group.divisionCode, true);
-        uniqueGroups.push({
-          ...group,
-          selected: true, // Mark existing age groups as selected
+    if (results.length === 0) {
+      // If no age groups found, check if event has a seasonal scope ID in settings
+      const settingResult = await db.query.eventSettings.findFirst({
+        where: and(
+          eq(eventSettings.eventId, eventId),
+          eq(eventSettings.settingKey, 'seasonalScopeId')
+        )
+      });
+
+      if (settingResult) {
+        const seasonalScopeId = parseInt(settingResult.settingValue);
+        console.log(`No age groups found, using seasonal scope ${seasonalScopeId} as fallback`);
+
+        // Fetch age groups from the seasonal scope
+        const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
+          where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
         });
+
+        if (scopeAgeGroups.length > 0) {
+          console.log(`Found ${scopeAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
+
+          // Convert seasonal scope age groups to event age group format
+          const formattedAgeGroups = scopeAgeGroups.map(ag => ({
+            id: 0, // Temporary ID
+            eventId: eventId,
+            ageGroup: ag.ageGroup,
+            birthYear: ag.birthYear,
+            gender: ag.gender,
+            divisionCode: ag.divisionCode,
+            fieldSize: "Standard", // Default value
+            projectedTeams: 8, // Default value
+            createdAt: new Date().toISOString(),
+            birth_date_start: new Date(ag.minBirthYear, 0, 1).toISOString().split('T')[0],
+            selected: true
+          }));
+
+          // Return these age groups even though they're not saved yet
+          res.json(formattedAgeGroups);
+          return;
+        }
       }
     }
 
-    // If we have no age groups but this is an API call for an existing event,
-    // we should return standard age groups as a fallback
-    if (uniqueGroups.length === 0) {
-      // Define standard age groups directly
-      const PREDEFINED_AGE_GROUPS = [
-        { ageGroup: 'U4', birthYear: 2021, gender: 'Boys', divisionCode: 'B2021' },
-        { ageGroup: 'U4', birthYear: 2021, gender: 'Girls', divisionCode: 'G2021' },
-        { ageGroup: 'U5', birthYear: 2020, gender: 'Boys', divisionCode: 'B2020' },
-        { ageGroup: 'U5', birthYear: 2020, gender: 'Girls', divisionCode: 'G2020' },
-        { ageGroup: 'U6', birthYear: 2019, gender: 'Boys', divisionCode: 'B2019' },
-        { ageGroup: 'U6', birthYear: 2019, gender: 'Girls', divisionCode: 'G2019' },
-        { ageGroup: 'U7', birthYear: 2018, gender: 'Boys', divisionCode: 'B2018' },
-        { ageGroup: 'U7', birthYear: 2018, gender: 'Girls', divisionCode: 'G2018' },
-        { ageGroup: 'U8', birthYear: 2017, gender: 'Boys', divisionCode: 'B2017' },
-        { ageGroup: 'U8', birthYear: 2017, gender: 'Girls', divisionCode: 'G2017' },
-        { ageGroup: 'U9', birthYear: 2016, gender: 'Boys', divisionCode: 'B2016' },
-        { ageGroup: 'U9', birthYear: 2016, gender: 'Girls', divisionCode: 'G2016' },
-        { ageGroup: 'U10', birthYear: 2015, gender: 'Boys', divisionCode: 'B2015' },
-        { ageGroup: 'U10', birthYear: 2015, gender: 'Girls', divisionCode: 'G2015' },
-        { ageGroup: 'U11', birthYear: 2014, gender: 'Boys', divisionCode: 'B2014' },
-        { ageGroup: 'U11', birthYear: 2014, gender: 'Girls', divisionCode: 'G2014' },
-        { ageGroup: 'U12', birthYear: 2013, gender: 'Boys', divisionCode: 'B2013' },
-        { ageGroup: 'U12', birthYear: 2013, gender: 'Girls', divisionCode: 'G2013' }
-      ];
-
-      for (const group of PREDEFINED_AGE_GROUPS) {
-        const fieldSize = group.ageGroup.startsWith('U') ? 
-          (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' : 
-           parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' : 
-           parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11';
-
-        uniqueGroups.push({
-          id: `predefined-${group.divisionCode}`, // Use a predictable ID format for predefined groups
-          eventId,
-          ageGroup: group.ageGroup,
-          gender: group.gender,
-          divisionCode: group.divisionCode,
-          birthDateStart: null,
-          birthDateEnd: null,
-          fieldSize: fieldSize,
-          projectedTeams: 0,
-          createdAt: new Date().toISOString(),
-          selected: false, // Not initially selected
-        });
+    // Remove duplicate age groups with the same ageGroup and gender
+    const uniqueAgeGroups = results.reduce((acc, curr) => {
+      const key = `${curr.ageGroup}-${curr.gender}`;
+      if (!acc.some(item => `${item.ageGroup}-${item.gender}` === key)) {
+        acc.push(curr);
       }
+      return acc;
+    }, []);
 
-      console.log(`No age groups found. Added ${uniqueGroups.length} standard age groups as fallback`);
-    }
+    console.log(`Returning ${uniqueAgeGroups.length} unique age groups after deduplication`);
 
-    console.log(`Fetched ${ageGroups.length} age groups for event ${eventId}`);
-    console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication or adding standard groups`);
+    // Mark all age groups as selected for display in the form
+    const ageGroupsWithSelected = uniqueAgeGroups.map(group => ({
+      ...group,
+      selected: true
+    }));
 
-    res.json(uniqueGroups);
+    res.json(ageGroupsWithSelected);
   } catch (error) {
     console.error('Error fetching age groups:', error);
     res.status(500).json({ error: 'Failed to fetch age groups' });
