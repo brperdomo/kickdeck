@@ -1,5 +1,5 @@
+
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import {
   Select,
   SelectContent,
@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface SeasonalScope {
   id: number;
@@ -33,9 +32,6 @@ export function SeasonalScopeSelector({ selectedScopeId, onScopeSelect, scopes }
   
   // Convert selectedScopeId to string for the Select component
   const normalizedSelectedId = selectedScopeId;
-
-  // We no longer use isLoading since scopes are passed as props
-  if (!scopes || scopes.length === 0) {
 
   if (!scopes || scopes.length === 0) {
     return (
