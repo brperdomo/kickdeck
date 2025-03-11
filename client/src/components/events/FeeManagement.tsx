@@ -383,6 +383,17 @@ export function FeeManagement() {
 
   // Handle saving fee assignments
   const handleSaveAssignments = async () => {
+    // Prepare assignments data
+    const assignments = [];
+    ageGroupsQuery.data?.forEach(ageGroup => {
+      if (selectedAgeGroups[ageGroup.id] && selectedAgeGroups[ageGroup.id][selectedFeeId]) {
+        assignments.push({
+          ageGroupId: ageGroup.id,
+          feeId: selectedFeeId
+        });
+      }
+    });
+
     console.log("Saving fee assignments:", JSON.stringify({
       assignments,
       feeId: selectedFeeId
@@ -397,8 +408,9 @@ export function FeeManagement() {
         throw new Error("No fee selected");
       }
 
-      if (!assignments || !Array.isArray(assignments)) {
-        throw new Error("Invalid assignments data");
+      if (!assignments.length) {
+        console.warn("No age groups selected for this fee");
+        // Still continue as user might want to clear all assignments
       }
 
       // Call API to save assignments
