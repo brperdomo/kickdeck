@@ -751,7 +751,7 @@ export function FeeManagement() {
               Select the age groups this fee should be assigned to. The fee will be applied to all participants in the selected age groups.
             </p>
           </DialogHeader>
-          
+
           {/* Fee being assigned */}
           {selectedFeeId && feesQuery.data && (
             <div className="bg-blue-50 p-3 rounded-md mb-4">
@@ -762,7 +762,7 @@ export function FeeManagement() {
               </p>
             </div>
           )}
-          
+
           {/* Search input */}
           <div className="mb-4">
             <input
@@ -774,7 +774,7 @@ export function FeeManagement() {
               }}
             />
           </div>
-          
+
           <div className="space-y-2 border rounded-md p-3 bg-gray-50">
             {ageGroupsQuery.data?.map(ageGroup => (
               <div 
