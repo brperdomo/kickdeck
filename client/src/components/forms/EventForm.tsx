@@ -3,7 +3,7 @@ import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ArrowLeft, Plus, Edit, Trash, CheckCircle } from "lucide-react";
+import { Loader2, ArrowLeft, Plus, Edit, Trash, CheckCircle, ImageIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -50,9 +50,10 @@ import {
   AdminModalProps,
 } from "./event-form-types";
 import { ComplexSelector } from "@/components/events/ComplexSelector";
-import { InfoPopover } from "@/components/ui/InfoPopover"; // Import added here
-import {SeasonalScopeSelector} from "@/components/events/SeasonalScopeSelector"; // Import added here
-import {AgeGroupSelector} from "@/components/events/AgeGroupSelector"; //Import added here
+import { InfoPopover } from "@/components/ui/InfoPopover";
+import {SeasonalScopeSelector} from "@/components/events/SeasonalScopeSelector";
+import {AgeGroupSelector} from "@/components/events/AgeGroupSelector";
+import { Textarea } from "@/components/ui/textarea";
 
 
 interface EventFormValues extends EventInformationValues {
@@ -64,7 +65,7 @@ interface EventFormValues extends EventInformationValues {
   administrators: EventAdministrator[];
   branding: EventBranding;
   seasonalScope?: { name: string; startYear: number; endYear: number };
-  seasonalScopeId?: number;
+  logo?: string; // Added logo field
 }
 
 interface EventFormProps {
@@ -83,7 +84,7 @@ interface EventFormProps {
 export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false, activeTab, onTabChange, completedTabs, onCompletedTabsChange, navigateTab }: EventFormProps) => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { control, handleSubmit, formState, setValue, getValues, setFieldValue } = useForm<EventFormValues>({
+  const { control, handleSubmit, formState, setValue, getValues, setFieldValue, watch } = useForm<EventFormValues>({
     resolver: zodResolver(eventInformationSchema),
     defaultValues: defaultValues
   });
@@ -103,7 +104,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     scoringRules: [],
     settings: [],
     administrators: [],
-    branding: {} as EventBranding
+    branding: {} as EventBranding,
+    logo: "" // Added logo field
   });
 
   const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(defaultValues?.selectedComplexIds || []);
@@ -126,6 +128,15 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     defaultValues?.seasonalScopeId || null
   );
   const [seasonalScopes, setSeasonalScopes] = useState<any[] | null>(null);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: acceptedFiles => {
+      setLogo(acceptedFiles[0]);
+      const reader = new FileReader();
+      reader.onload = (e) => setPreviewUrl(e.target?.result as string);
+      reader.readAsDataURL(acceptedFiles[0]);
+    },
+  });
+
 
   // Fetch seasonal scopes on component mount
   useEffect(() => {
@@ -135,21 +146,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         if (response.ok) {
           const data = await response.json();
           setSeasonalScopes(data);
-
-          // If we have default values with age groups and a seasonal scope ID,
-          // initialize the form with those values
-          if (defaultValues?.ageGroups && defaultValues?.seasonalScopeId) {
-            const scope = data.find((s: any) => s.id === defaultValues.seasonalScopeId);
-            if (scope) {
-              // Ensure the selected scope is set
-              setSelectedSeasonalScopeId(defaultValues.seasonalScopeId);
-
-              // Initialize the form with the age groups from default values
-              form.setValue('ageGroups', defaultValues.ageGroups);
-            }
-          }
-        } else {
-          console.error('Failed to fetch seasonal scopes');
         }
       } catch (error) {
         console.error('Error fetching seasonal scopes:', error);
@@ -157,7 +153,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     };
 
     fetchSeasonalScopes();
-  }, [defaultValues, form]);
+  }, []);
 
   const seasonalScopeQuery = useQuery({
     queryKey: ['/api/admin/seasonal-scopes', defaultValues?.seasonalScopeId],
@@ -209,8 +205,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           projectedTeams: group.projectedTeams || 0,
           birthDateStart: `${group.birthYear}-01-01`,
           birthDateEnd: `${group.birthYear}-12-31`,
-          amountDue: group.amountDue || 0, // Added amountDue
-          scoringRule: group.scoringRule || null // Added scoringRule
+          amountDue: group.amountDue || 0,
+          scoringRule: group.scoringRule || null
         }));
 
 
@@ -225,7 +221,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         branding: {
           primaryColor,
           secondaryColor,
-          logo,
           logoUrl: previewUrl || undefined,
         },
       };
@@ -303,7 +298,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const SaveButton = () => (
     <Button
-      onClick={form.handleSubmit(handleSubmitForm)}
+      onClick={handleSubmitForm}
       disabled={isSubmitting}
     >
       {isSubmitting ? (
@@ -337,7 +332,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         primaryColor: '#000000',
         secondaryColor: '#ffffff'
       },
-      seasonalScopeId: selectedSeasonalScopeId
+      logo: "" // Added logo field
     }
   });
 
@@ -755,8 +750,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const getTabValidationState = () => {
     const errors: Record<EventTab, boolean> = {
-      'information': false, // Don't rely on form validation state
-      'age-groups': false, // No longer requires validation
+      'information': false,
+      'age-groups': false,
       'scoring': scoringRules.length === 0,
       'complexes': selectedComplexIds.length === 0,
       'settings': false,
@@ -816,6 +811,21 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Logo
+        </label>
+        <div {...getRootProps({ className: 'dropzone' })}>
+          <input {...getInputProps()} />
+          {
+            isDragActive ?
+              <p>Drop the files here ...</p> :
+              <p>Drag 'n' drop some files here, or click to select files</p>
+          }
+          {previewUrl && <img src={previewUrl} alt="Preview" width={100} />}
+        </div>
       </div>
 
       <Dialog open={isSettingDialogOpen} onOpenChange={setIsSettingDialogOpen}>
@@ -942,9 +952,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                           // Auto-select all age groups from the scope
                           // Using form.setValue instead of setFieldValue
                           form.setValue('ageGroups', selectedScope.ageGroups);
-
-                          // Store the selected scope ID in form data to ensure it persists
-                          form.setValue('seasonalScopeId', scopeId);
                         }
                       }}
                       scopes={seasonalScopes}

@@ -54,30 +54,44 @@ interface AgeGroupSelectorProps {
 }
 
 export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
-  const [ageGroups, setAgeGroups] = useState<AgeGroupData[]>(DEFAULT_AGE_GROUPS);
+  // Initialize with all age groups pre-selected
+  const [ageGroups, setAgeGroups] = useState<AgeGroupData[]>(
+    DEFAULT_AGE_GROUPS.map(group => ({ ...group, isSelected: true }))
+  );
 
-  // When the component mounts, if onAgeGroupsChange is provided, call it with current age groups
+  // Auto-select all groups on component mount
   useEffect(() => {
-    if (onAgeGroupsChange) {
-      onAgeGroupsChange(ageGroups);
-    }
-  }, []);  // Only run once on mount
+    // Select all age groups by default
+    const allGroups = ageGroups.map(group => ({
+      ...group,
+      isSelected: true,
+      projectedTeams: 0, // Always set projected teams to 0 since we're not tracking it
+      fieldSize: group.fieldSize || '11v11',
+      scoringRule: group.scoringRule || null,
+      amountDue: group.amountDue || null
+    }));
 
-  // When ageGroups change, update parent if callback exists
-  useEffect(() => {
-    if (onAgeGroupsChange) {
-      onAgeGroupsChange(ageGroups);
+    // Deduplicate by creating a unique key for each group
+    const uniqueGroups = Array.from(
+      new Map(allGroups.map(group => 
+        [`${group.gender}-${group.ageGroup}-${group.birthYear}`, group]
+      )).values()
+    );
+
+    // Only call onAgeGroupsChange if it's a function
+    if (typeof onAgeGroupsChange === 'function') {
+      onAgeGroupsChange(uniqueGroups);
     }
-  }, [ageGroups, onAgeGroupsChange]);
+  }, []);
 
   const handleSelectionChange = (index: number, checked: boolean) => {
     // Keep all groups selected regardless of user input
     console.log("All age groups are automatically included - manual selection is disabled");
 
-    // Pass all groups as selected to the parent component
+    // Pass all groups to the parent component with their selection state preserved
     const allGroups = ageGroups.map(group => ({
       ...group,
-      isSelected: true,
+      isSelected: group.selected === undefined ? true : group.selected, // Preserve selection state if available
       projectedTeams: group.projectedTeams || 0,
       fieldSize: group.fieldSize || '11v11',
       scoringRule: group.scoringRule || null,
@@ -96,19 +110,7 @@ export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
     }
   };
 
-  const handleProjectedTeamsChange = (index: number, value: string) => {
-    const parsedValue = parseInt(value);
-    const updatedGroups = [...ageGroups];
-    updatedGroups[index] = { 
-      ...updatedGroups[index], 
-      projectedTeams: isNaN(parsedValue) ? 0 : parsedValue 
-    };
-    setAgeGroups(updatedGroups);
-    if (updatedGroups[index].isSelected) {
-      const selectedGroups = updatedGroups.filter(group => group.isSelected);
-      onAgeGroupsChange(selectedGroups);
-    }
-  };
+  // Removed projected teams change handler as it's no longer needed
 
   return (
     <div className="space-y-4">
@@ -120,7 +122,6 @@ export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
             <TableHead>Birth Year</TableHead>
             <TableHead>Gender</TableHead>
             <TableHead>Division Code</TableHead>
-            <TableHead>Projected Teams</TableHead>
             <TableHead>Field Size</TableHead>
           </TableRow>
         </TableHeader>
@@ -137,16 +138,6 @@ export function AgeGroupSelector({ onAgeGroupsChange }: AgeGroupSelectorProps) {
               <TableCell>{group.birthYear}</TableCell>
               <TableCell>{group.gender}</TableCell>
               <TableCell>{group.divisionCode}</TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  min="0"
-                  value={group.projectedTeams}
-                  onChange={(e) => handleProjectedTeamsChange(index, e.target.value)}
-                  className="w-20"
-                  disabled={!group.isSelected}
-                />
-              </TableCell>
               <TableCell>{group.fieldSize}</TableCell>
             </TableRow>
           ))}

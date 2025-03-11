@@ -9,6 +9,7 @@ import accountingCodesRouter from "./routes/admin/accounting-codes";
 import feesRouter from "./routes/admin/fees";
 import eventsRouter from "./routes/admin/events";
 import ageGroupsRouter from "./routes/admin/age-groups";
+import foldersRouter from "./routes/folders";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { sql, eq, and, or, inArray } from "drizzle-orm";
 import {
@@ -1529,6 +1530,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
     // File management routes
     app.use('/api/admin/files', isAdmin, uploadRouter);
+    app.use('/api/folders', foldersRouter);
 
     // Add bulk action endpoint after the upload router registration
     app.post('/api/files/bulk', isAdmin, async (req, res) => {

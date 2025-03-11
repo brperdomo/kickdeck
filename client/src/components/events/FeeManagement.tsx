@@ -23,7 +23,7 @@ import {
   CardDescription,
 } from '../ui/card';
 import { Button } from '../ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Checkbox } from '../ui/checkbox';
@@ -40,8 +40,8 @@ type SortField = 'name' | 'amount' | 'beginDate' | 'endDate';
 const feeFormSchema = z.object({
   name: z.string().min(1, { message: "Fee name is required" }),
   amount: z.string().min(1, { message: "Amount is required" }),
-  beginDate: z.string().min(1, { message: "Begin date is required" }),
-  endDate: z.string().min(1, { message: "End date is required" }),
+  beginDate: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
   accountingCodeId: z.number().nullable(),
 });
 
@@ -93,7 +93,7 @@ export function FeeManagement() {
       const response = await fetch(`/api/admin/events/${eventIdParam}/fees`);
       if (!response.ok) throw new Error('Failed to fetch fees');
       const fees = await response.json();
-      
+
       // Format dates properly
       return fees.map(fee => ({
         ...fee,
@@ -127,8 +127,13 @@ export function FeeManagement() {
         throw new Error(`Failed to fetch age groups: ${error}`);
       }
       const data = await response.json();
-      console.log(`Found ${data.length} age groups for event ${eventIdParam}`);
-      return data;
+      // Limit to 30 age groups as per seasonal scope requirements
+      // Filter out duplicates by division code (unique identifier)
+      const uniqueAgeGroups = Array.from(
+        new Map(data.map(group => [group.divisionCode, group])).values()
+      );
+      console.log(`Found ${uniqueAgeGroups.length} unique age groups for event ${eventIdParam}`);
+      return uniqueAgeGroups;
     },
     enabled: !!eventIdParam,
   });
@@ -458,8 +463,8 @@ export function FeeManagement() {
                       <TableRow key={fee.id}>
                         <TableCell>{fee.name}</TableCell>
                         <TableCell>{formatCurrency(fee.amount)}</TableCell>
-                        <TableCell>{format(new Date(fee.beginDate), 'MMM d, yyyy')}</TableCell>
-                        <TableCell>{format(new Date(fee.endDate), 'MMM d, yyyy')}</TableCell>
+                        <TableCell>{fee.beginDate ? format(new Date(fee.beginDate), 'MMM d, yyyy') : null}</TableCell>
+                        <TableCell>{fee.endDate ? format(new Date(fee.endDate), 'MMM d, yyyy') : null}</TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
                             <Button 
@@ -516,16 +521,28 @@ export function FeeManagement() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Age Group</TableHead>
+                      <TableHead className="min-w-[200px]">Age Group / Division</TableHead>
                       {feesQuery.data?.map(fee => (
-                        <TableHead key={fee.id}>{fee.name} ({formatCurrency(fee.amount)})</TableHead>
+                        <TableHead key={fee.id} className="text-center">
+                          <div className="flex flex-col items-center">
+                            <span>{fee.name}</span>
+                            <span className="text-xs font-normal">{formatCurrency(fee.amount)}</span>
+                          </div>
+                        </TableHead>
                       ))}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {ageGroupsQuery.data?.map(ageGroup => (
                       <TableRow key={ageGroup.id}>
-                        <TableCell>{ageGroup.name}</TableCell>
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold">{ageGroup.name}</span>
+                            <span className="text-xs text-gray-500">
+                              {ageGroup.gender} • {ageGroup.divisionCode} • {ageGroup.birthYear}
+                            </span>
+                          </div>
+                        </TableCell>
                         {feesQuery.data?.map(fee => (
                           <TableCell key={fee.id}>
                             <Checkbox
@@ -593,9 +610,12 @@ export function FeeManagement() {
 
       {/* Add/Edit Fee Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{editingFee ? "Edit Fee" : "Add New Fee"}</DialogTitle>
+            <DialogTitle>{editingFee ? 'Edit Fee' : 'Add New Fee'}</DialogTitle>
+            <DialogDescription>
+              {editingFee ? 'Update the fee details below.' : 'Add a new fee for this event.'}
+            </DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
@@ -612,7 +632,6 @@ export function FeeManagement() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="amount"
@@ -622,8 +641,8 @@ export function FeeManagement() {
                     <FormControl>
                       <Input 
                         type="number" 
-                        step="0.01"
-                        placeholder="0.00" 
+                        step="0.01" 
+                        placeholder="0.00"
                         {...field} 
                       />
                     </FormControl>
@@ -631,36 +650,48 @@ export function FeeManagement() {
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="beginDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Begin Date</FormLabel>
-                    <DatePicker
-                      date={field.value ? new Date(field.value) : undefined}
-                      setDate={(date) => field.onChange(date?.toISOString().split('T')[0] || '')}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="endDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>End Date</FormLabel>
-                    <DatePicker
-                      date={field.value ? new Date(field.value) : undefined}
-                      setDate={(date) => field.onChange(date?.toISOString().split('T')[0] || '')}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="beginDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Begin Date (Optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="date" 
+                          value={field.value || ''}
+                          onChange={(e) => {
+                            const value = e.target.value || null;
+                            field.onChange(value);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="endDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End Date (Optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="date" 
+                          value={field.value || ''}
+                          onChange={(e) => {
+                            const value = e.target.value || null;
+                            field.onChange(value);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
@@ -713,15 +744,51 @@ export function FeeManagement() {
 
       {/* Assign Fee Dialog (simplified) */}
       <Dialog open={isAssignFeeOpen} onOpenChange={setIsAssignFeeOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Assign Fee to Age Groups</DialogTitle>
+            <p className="text-sm text-gray-500 mt-2">
+              Select the age groups this fee should be assigned to. The fee will be applied to all participants in the selected age groups.
+            </p>
           </DialogHeader>
-          <div className="space-y-4">
+
+          {/* Fee being assigned */}
+          {selectedFeeId && feesQuery.data && (
+            <div className="bg-blue-50 p-3 rounded-md mb-4">
+              <h4 className="text-sm font-medium text-blue-800 mb-1">Selected Fee</h4>
+              <p className="text-sm text-blue-900">
+                {feesQuery.data.find(f => f.id === selectedFeeId)?.name} - 
+                {formatCurrency(feesQuery.data.find(f => f.id === selectedFeeId)?.amount || 0)}
+              </p>
+            </div>
+          )}
+
+          {/* Search input */}
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Search age groups..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              onChange={(e) => {
+                // Implement search functionality if needed
+              }}
+            />
+          </div>
+
+          <div className="space-y-2 border rounded-md p-3 bg-gray-50">
             {ageGroupsQuery.data?.map(ageGroup => (
-              <div key={ageGroup.id} className="flex items-center space-x-2">
+              <div 
+                key={ageGroup.id} 
+                className={`flex items-center p-2 hover:bg-gray-100 rounded-md ${
+                  (selectedAgeGroups[ageGroup.id]?.[selectedFeeId] || 
+                  feeAssignmentsQuery.data?.some(
+                    a => a.ageGroupId === ageGroup.id && a.feeId === selectedFeeId
+                  )) ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+                }`}
+              >
                 <Checkbox
                   id={`age-group-${ageGroup.id}`}
+                  className="h-5 w-5 border-2 rounded-sm data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 data-[state=checked]:text-white"
                   checked={
                     selectedAgeGroups[ageGroup.id]?.[selectedFeeId] || 
                     feeAssignmentsQuery.data?.some(
@@ -739,15 +806,61 @@ export function FeeManagement() {
                     }));
                   }}
                 />
-                <Label htmlFor={`age-group-${ageGroup.id}`}>{ageGroup.name}</Label>
+                <div className="ml-2 flex-1">
+                  <Label htmlFor={`age-group-${ageGroup.id}`} className="font-medium">
+                    {ageGroup.name}
+                  </Label>
+                  <div className="text-xs text-gray-500">
+                    Gender: {ageGroup.gender} • Division: {ageGroup.divisionCode} • Birth Year: {ageGroup.birthYear}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAssignFeeOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSaveAssignments}>Save Assignments</Button>
+          <DialogFooter className="flex justify-between items-center">
+            <div className="space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  // Select all age groups
+                  const newSelections = {...selectedAgeGroups};
+                  ageGroupsQuery.data?.forEach(ageGroup => {
+                    if (!newSelections[ageGroup.id]) {
+                      newSelections[ageGroup.id] = {};
+                    }
+                    newSelections[ageGroup.id][selectedFeeId] = true;
+                  });
+                  setSelectedAgeGroups(newSelections);
+                }}
+              >
+                Select All
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  // Deselect all age groups
+                  const newSelections = {...selectedAgeGroups};
+                  ageGroupsQuery.data?.forEach(ageGroup => {
+                    if (newSelections[ageGroup.id]) {
+                      newSelections[ageGroup.id][selectedFeeId] = false;
+                    }
+                  });
+                  setSelectedAgeGroups(newSelections);
+                }}
+              >
+                Deselect All
+              </Button>
+            </div>
+            <div className="space-x-2">
+              <Button variant="outline" onClick={() => setIsAssignFeeOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveAssignments}>
+                Save Assignments
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
