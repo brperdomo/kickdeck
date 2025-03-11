@@ -395,11 +395,13 @@ router.get('/:id/age-groups', async (req, res) => {
   }
 });
 
-// Hypothetical fees endpoint demonstrating date parsing (needs to be added to schema and db)
+// Update fee endpoint
 router.patch('/fees/:feeId', async (req, res) => {
   try {
-    const { id } = req.params;
+    const feeId = req.params.feeId;
     const { name, amount, beginDate, endDate, accountingCodeId } = req.body;
+
+    console.log("Updating fee:", feeId, "with data:", req.body);
 
     // Parse dates properly
     let parsedBeginDate = null;
@@ -417,17 +419,18 @@ router.patch('/fees/:feeId', async (req, res) => {
       parsedEndDate = isNaN(parsedEndDate.getTime()) ? null : parsedEndDate;
     }
 
-    const updatedFee = await db.update(fees)
+    const updatedFee = await db.update(eventFees)
       .set({ 
         name, 
-        amount, 
+        amount: Number(amount), // Ensure amount is a number
         beginDate: parsedBeginDate, 
         endDate: parsedEndDate,
         accountingCodeId: accountingCodeId || null
       })
-      .where(eq(fees.id, parseInt(req.params.feeId)))
+      .where(eq(eventFees.id, parseInt(feeId)))
       .returning();
 
+    console.log("Fee updated successfully:", updatedFee[0]);
     res.json(updatedFee[0]);
   } catch (error) {
     console.error("Error updating fee:", error);

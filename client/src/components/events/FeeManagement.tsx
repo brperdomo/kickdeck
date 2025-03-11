@@ -223,30 +223,46 @@ export function FeeManagement() {
   // Update fee mutation
   const updateFeeMutation = useMutation({
     mutationFn: async (feeData) => {
-      const response = await fetch(`/api/admin/events/${eventIdParam}/fees/${feeData.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(feeData),
-      });
+      // Ensure we're sending valid JSON data
+      const cleanedData = {
+        ...feeData,
+        amount: Number(feeData.amount),
+        beginDate: feeData.beginDate || null,
+        endDate: feeData.endDate || null,
+        accountingCodeId: feeData.accountingCodeId || null
+      };
 
-      if (!response.ok) {
-        throw new Error('Failed to update fee');
+      try {
+        const response = await fetch(`/api/admin/events/${eventIdParam}/fees/${feeData.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(cleanedData),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          console.error("Server error response:", errorData);
+          throw new Error(`Failed to update fee: ${errorData}`);
+        }
+
+        return await response.json();
+      } catch (error) {
+        console.error("Fee update error:", error);
+        throw error;
       }
-
-      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['fees', eventIdParam]);
-      setIsEditFeeOpen(false);
-      setEditingFee(null);
+      setIsDialogOpen(false);
       toast({
         title: 'Success',
         description: 'Fee updated successfully',
       });
     },
     onError: (error) => {
+      console.error("Error in mutation:", error);
       toast({
         title: 'Error',
         description: error.message || 'Failed to update fee',
