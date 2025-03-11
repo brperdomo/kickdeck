@@ -593,9 +593,12 @@ export function FeeManagement() {
 
       {/* Add/Edit Fee Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{editingFee ? "Edit Fee" : "Add New Fee"}</DialogTitle>
+            <DialogTitle>{editingFee ? 'Edit Fee' : 'Add New Fee'}</DialogTitle>
+            <DialogDescription>
+              {editingFee ? 'Update the fee details below.' : 'Add a new fee for this event.'}
+            </DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
@@ -612,7 +615,6 @@ export function FeeManagement() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="amount"
@@ -622,8 +624,8 @@ export function FeeManagement() {
                     <FormControl>
                       <Input 
                         type="number" 
-                        step="0.01"
-                        placeholder="0.00" 
+                        step="0.01" 
+                        placeholder="0.00"
                         {...field} 
                       />
                     </FormControl>
@@ -631,36 +633,48 @@ export function FeeManagement() {
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="beginDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Begin Date</FormLabel>
-                    <DatePicker
-                      date={field.value ? new Date(field.value) : undefined}
-                      setDate={(date) => field.onChange(date?.toISOString().split('T')[0] || '')}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="endDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>End Date</FormLabel>
-                    <DatePicker
-                      date={field.value ? new Date(field.value) : undefined}
-                      setDate={(date) => field.onChange(date?.toISOString().split('T')[0] || '')}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="beginDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Begin Date (Optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="date" 
+                          value={field.value || ''}
+                          onChange={(e) => {
+                            const value = e.target.value || null;
+                            field.onChange(value);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="endDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End Date (Optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="date" 
+                          value={field.value || ''}
+                          onChange={(e) => {
+                            const value = e.target.value || null;
+                            field.onChange(value);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
