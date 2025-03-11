@@ -17,6 +17,17 @@ export default function EditEvent() {
   const [activeTab, setActiveTab] = useState<EventTab>('information');
   const [completedTabs, setCompletedTabs] = useState<EventTab[]>([]);
   const [selectedSeasonalScopeId, setSelectedSeasonalScopeId] = useState<number | null>(null); // Added state for selectedSeasonalScopeId
+  const [availableAgeGroups, setAvailableAgeGroups] = useState<any[]>([]); //Added state for available age groups.  Type needs to be defined properly.
+
+  const {data: seasonalScopes, isLoading: seasonalScopesLoading} = useQuery({ // Added query for seasonal scopes.
+    queryKey: ['seasonalScopes'],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/seasonal-scopes`); //Endpoint needs to be adjusted to match your backend.
+      if (!response.ok) throw new Error('Failed to fetch seasonal scopes');
+      return response.json();
+    },
+  });
+
 
   const eventQuery = useQuery({
     queryKey: ['event', id],
@@ -25,14 +36,18 @@ export default function EditEvent() {
       if (!response.ok) throw new Error('Failed to fetch event data');
       const data = await response.json();
 
-      // Set the seasonal scope ID and age groups when event data is loaded
+      // Set the seasonal scope ID when event data is loaded
       if (data && data.seasonalScopeId) {
         setSelectedSeasonalScopeId(data.seasonalScopeId);
         console.log('Loaded seasonal scope ID from event:', data.seasonalScopeId);
-        
-        // Ensure age groups are properly set from the event data
-        if (data.ageGroups && data.ageGroups.length > 0) {
-          console.log('Setting age groups from event data:', data.ageGroups);
+
+        // If we have seasonal scopes data, load age groups automatically for this scope
+        if (seasonalScopes && seasonalScopes.length > 0) {
+          const selectedScope = seasonalScopes.find(scope => scope.id === data.seasonalScopeId);
+          if (selectedScope && selectedScope.ageGroups) {
+            setAvailableAgeGroups(selectedScope.ageGroups);
+            console.log('Automatically loaded age groups for scope:', selectedScope.ageGroups);
+          }
         }
       }
 
@@ -103,7 +118,7 @@ export default function EditEvent() {
     }
   };
 
-  if (eventQuery.isLoading) {
+  if (eventQuery.isLoading || seasonalScopesLoading) { //Added seasonalScopesLoading to loading condition
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
@@ -233,6 +248,7 @@ export default function EditEvent() {
               onCompletedTabsChange={setCompletedTabs}
               navigateTab={navigateTab}
               selectedSeasonalScopeId={selectedSeasonalScopeId} // Pass the state to EventForm
+              availableAgeGroups={availableAgeGroups} // Pass availableAgeGroups to EventForm
             />
           </CardContent>
         </Card>

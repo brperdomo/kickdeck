@@ -38,13 +38,13 @@
                     <InfoPopover>
                       <p>
                         {isEditMode ? 
-                          "Age groups for this event are set based on the selected seasonal scope." : 
+                          "Age groups for this event are set based on the selected seasonal scope and cannot be modified." : 
                           "Select age groups for this event."}
                       </p>
                     </InfoPopover>
                   </div>
 
-                  {/* Only display the read-only view of the selected scope in the age-groups tab for both modes */}
+                  {/* Display the seasonal scope information */}
                   {seasonalScopes && selectedSeasonalScopeId && (
                     <div className="mb-4">
                       <Label>Seasonal Scope</Label>
@@ -53,8 +53,41 @@
                         `Scope ID: ${selectedSeasonalScopeId}`}
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">
-                        Seasonal scope determines available age groups
+                        {isEditMode 
+                          ? "Seasonal scope is fixed and cannot be changed after event creation" 
+                          : "Seasonal scope determines available age groups"}
                       </p>
+                    </div>
+                  )}
+                  
+                  {/* Only show selector in create mode */}
+                  {!isEditMode && !selectedSeasonalScopeId && seasonalScopes && (
+                    <div className="mb-4">
+                      <Label>Select Seasonal Scope</Label>
+                      <SeasonalScopeSelector
+                        selectedScopeId={selectedSeasonalScopeId}
+                        onScopeSelect={(scopeId) => {
+                          console.log('Scope selected in EventForm:', scopeId);
+                          setSelectedSeasonalScopeId(scopeId);
+                          
+                          try {
+                            // Find the selected scope
+                            const selectedScope = seasonalScopes.find(scope => scope.id === scopeId);
+                            if (selectedScope && selectedScope.ageGroups) {
+                              console.log('Setting age groups from selected scope:', selectedScope.ageGroups);
+                              // Set available age groups
+                              setAvailableAgeGroups(selectedScope.ageGroups);
+                              // Also update the form's seasonalScopeId field
+                              form.setValue('seasonalScopeId', scopeId);
+                            } else {
+                              console.warn('Selected scope or age groups not found:', scopeId);
+                            }
+                          } catch (error) {
+                            console.error('Error setting scope-related form values:', error);
+                          }
+                        }}
+                        scopes={seasonalScopes}
+                      />
                     </div>
                   )}
 
@@ -173,12 +206,44 @@ const handleSubmitForm = async (data: EventFormValues) => {
                               </div>
                             </div>
                           )}
-                          {isEditMode && availableAgeGroups.length === 0 && selectedSeasonalScopeId && (
-                            <div className="text-center p-4 text-muted-foreground">
-                              Loading age groups for this event...
+                          {isEditMode && selectedSeasonalScopeId && (
+                            <div className="space-y-4">
+                              {availableAgeGroups.length === 0 ? (
+                                <div className="text-center p-4 text-muted-foreground">
+                                  Loading age groups for this event...
+                                </div>
+                              ) : (
+                                <div className="border rounded-md overflow-hidden">
+                                  <Table>
+                                    <TableHeader>
+                                      <TableRow>
+                                        <TableHead>Age Group</TableHead>
+                                        <TableHead>Birth Year</TableHead>
+                                        <TableHead>Gender</TableHead>
+                                        <TableHead>Division Code</TableHead>
+                                        <TableHead>Field Size</TableHead>
+                                      </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                      {availableAgeGroups.map((group, index) => (
+                                        <TableRow key={`${group.gender}-${group.birthYear}-${index}`}>
+                                          <TableCell>{group.ageGroup}</TableCell>
+                                          <TableCell>{group.birthYear}</TableCell>
+                                          <TableCell>{group.gender}</TableCell>
+                                          <TableCell>{group.divisionCode}</TableCell>
+                                          <TableCell>{group.fieldSize}</TableCell>
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </Table>
+                                </div>
+                              )}
+                              <p className="text-sm text-muted-foreground italic">
+                                Age groups are automatically determined by the seasonal scope and cannot be modified in edit mode.
+                              </p>
                             </div>
                           )}
-                          {!isEditMode && availableAgeGroups.length === 0 && (
+                          {!isEditMode && availableAgeGroups.length === 0 && !selectedSeasonalScopeId && (
                             <div className="text-center p-4 text-muted-foreground">
                               Please select a seasonal scope first to see available age groups.
                             </div>
