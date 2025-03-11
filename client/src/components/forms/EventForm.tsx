@@ -906,7 +906,11 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   };
 
 
+  // Set isEditMode explicitly based on mode prop
   const isEditMode = mode === "edit";
+  
+  // Log for debugging
+  console.log('Event Form Mode:', mode, 'isEditMode:', isEditMode);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
