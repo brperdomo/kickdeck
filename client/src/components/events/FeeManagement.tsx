@@ -94,12 +94,11 @@ export function FeeManagement() {
       if (!response.ok) throw new Error('Failed to fetch fees');
       const fees = await response.json();
 
-      // Format dates properly
+      // Keep the original date format from the server
       return fees.map(fee => ({
         ...fee,
-        // Format dates if they exist, or provide null
-        beginDate: fee.beginDate ? new Date(fee.beginDate).toLocaleDateString() : null,
-        endDate: fee.endDate ? new Date(fee.endDate).toLocaleDateString() : null
+        beginDate: fee.beginDate || null,
+        endDate: fee.endDate || null
       }));
     },
     enabled: !!eventIdParam,
@@ -487,9 +486,9 @@ export function FeeManagement() {
                                 form.reset({
                                   name: fee.name,
                                   amount: (fee.amount / 100).toString(),
-                                  beginDate: fee.beginDate,
-                                  endDate: fee.endDate,
-                                  accountingCodeId: fee.accountingCodeId,
+                                  beginDate: fee.beginDate ? fee.beginDate : "", 
+                                  endDate: fee.endDate ? fee.endDate : "",
+                                  accountingCodeId: fee.accountingCodeId || null,
                                 });
                                 setEditingFee(fee);
                                 setIsDialogOpen(true);
