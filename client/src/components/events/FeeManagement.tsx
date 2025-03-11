@@ -40,8 +40,8 @@ type SortField = 'name' | 'amount' | 'beginDate' | 'endDate';
 const feeFormSchema = z.object({
   name: z.string().min(1, { message: "Fee name is required" }),
   amount: z.string().min(1, { message: "Amount is required" }),
-  beginDate: z.string().min(1, { message: "Begin date is required" }),
-  endDate: z.string().min(1, { message: "End date is required" }),
+  beginDate: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
   accountingCodeId: z.number().nullable(),
 });
 
@@ -93,7 +93,7 @@ export function FeeManagement() {
       const response = await fetch(`/api/admin/events/${eventIdParam}/fees`);
       if (!response.ok) throw new Error('Failed to fetch fees');
       const fees = await response.json();
-      
+
       // Format dates properly
       return fees.map(fee => ({
         ...fee,
@@ -458,8 +458,8 @@ export function FeeManagement() {
                       <TableRow key={fee.id}>
                         <TableCell>{fee.name}</TableCell>
                         <TableCell>{formatCurrency(fee.amount)}</TableCell>
-                        <TableCell>{format(new Date(fee.beginDate), 'MMM d, yyyy')}</TableCell>
-                        <TableCell>{format(new Date(fee.endDate), 'MMM d, yyyy')}</TableCell>
+                        <TableCell>{fee.beginDate ? format(new Date(fee.beginDate), 'MMM d, yyyy') : null}</TableCell>
+                        <TableCell>{fee.endDate ? format(new Date(fee.endDate), 'MMM d, yyyy') : null}</TableCell>
                         <TableCell>
                           <div className="flex space-x-2">
                             <Button 
