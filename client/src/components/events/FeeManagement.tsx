@@ -777,9 +777,18 @@ export function FeeManagement() {
           
           <div className="space-y-2 border rounded-md p-3 bg-gray-50">
             {ageGroupsQuery.data?.map(ageGroup => (
-              <div key={ageGroup.id} className="flex items-center p-2 hover:bg-gray-100 rounded-md">
+              <div 
+                key={ageGroup.id} 
+                className={`flex items-center p-2 hover:bg-gray-100 rounded-md ${
+                  (selectedAgeGroups[ageGroup.id]?.[selectedFeeId] || 
+                  feeAssignmentsQuery.data?.some(
+                    a => a.ageGroupId === ageGroup.id && a.feeId === selectedFeeId
+                  )) ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+                }`}
+              >
                 <Checkbox
                   id={`age-group-${ageGroup.id}`}
+                  className="h-5 w-5 border-2 rounded-sm data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 data-[state=checked]:text-white"
                   checked={
                     selectedAgeGroups[ageGroup.id]?.[selectedFeeId] || 
                     feeAssignmentsQuery.data?.some(
