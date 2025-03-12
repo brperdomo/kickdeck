@@ -112,7 +112,16 @@ export function StyleSettingsView() {
 
   const handleSaveStyles = useCallback(async () => {
     try {
-      await updateStyleConfig(previewStyles);
+      // Make sure we're sending all necessary color values
+      const styleData = {
+        ...previewStyles,
+        primary: previewStyles.primary || colors.branding.colors.primary,
+        secondary: previewStyles.secondary || colors.branding.colors.secondary,
+        accent: previewStyles.accent || colors.branding.colors.accent,
+        background: previewStyles.background || colors.interface.colors.background
+      };
+      
+      await updateStyleConfig(styleData);
       toast({
         title: "Success",
         description: "Style settings have been updated successfully"
