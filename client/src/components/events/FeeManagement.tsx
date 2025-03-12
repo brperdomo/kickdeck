@@ -410,54 +410,17 @@ export function FeeManagement() {
         // Still continue as user might want to clear all assignments
       }
 
-      // Call API to save assignments
-      const response = await fetch(`/api/admin/events/${eventIdParam}/fee-assignments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          feeId: selectedFeeId,
-          ageGroupIds
-        }),
+      // Use the React Query mutation instead of direct fetch
+      await updateAssignmentsMutation.mutateAsync({
+        feeId: selectedFeeId,
+        ageGroupIds
       });
 
-      // Check if response is OK
-      if (!response.ok) {
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || `Server error: ${response.status}`);
-        } else {
-          const text = await response.text();
-          console.error("Server returned non-JSON error response:", text);
-          throw new Error(`Server error: ${response.status}`);
-        }
-      }
-      
-      // For successful responses, try to parse JSON if available
-      const contentType = response.headers.get('content-type');
-      let responseData = null;
-      
-      try {
-        if (contentType && contentType.includes('application/json')) {
-          responseData = await response.json();
-        } else if (response.status !== 204) { // No content
-          // Log but don't throw error for successful non-JSON responses
-          const text = await response.text();
-          console.log("Server returned non-JSON success response, this is okay for some endpoints");
-        }
-      } catch (e) {
-        console.warn("Could not parse response as JSON, continuing anyway:", e);
-      }
+      // The mutation's onSuccess handler will take care of:
+      // - invalidating queries
+      // - closing the dialog
+      // - showing success toast
 
-      setIsAssignFeeOpen(false);
-      toast({
-        title: 'Success',
-        description: 'Fee assignments updated',
-      });
-      // Refresh assignments data
-      feeAssignmentsQuery.refetch();
     } catch (error) {
       console.error("Fee assignment error:", error);
       toast({
