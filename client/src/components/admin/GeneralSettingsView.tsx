@@ -1,9 +1,8 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrganizationSettingsForm } from "./OrganizationSettingsForm";
 import { SeasonalScopeSettings } from "./SeasonalScopeSettings";
-import { StyleSettingsView } from "./StyleSettingsView";
+import StyleSettingsView from "./StyleSettingsView";
 import { EmailTemplatesView } from "./EmailTemplatesView";
 import { OrganizationsManagement } from "./OrganizationsManagement";
 import { DashboardPreview } from "./DashboardPreview";
@@ -32,7 +31,7 @@ export function GeneralSettingsView() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="clients">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <OrganizationsManagement />
