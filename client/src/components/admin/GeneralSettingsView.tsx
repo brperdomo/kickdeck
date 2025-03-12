@@ -5,8 +5,6 @@ import { OrganizationSettingsForm } from "./OrganizationSettingsForm";
 import { SeasonalScopeSettings } from "./SeasonalScopeSettings";
 import { StyleSettingsView } from "./StyleSettingsView";
 import { EmailTemplatesView } from "./EmailTemplatesView";
-import { OrganizationsManagement } from "./OrganizationsManagement";
-import { DashboardPreview } from "./DashboardPreview";
 
 export function GeneralSettingsView() {
   return (
@@ -16,7 +14,6 @@ export function GeneralSettingsView() {
       <Tabs defaultValue="organization" className="space-y-4">
         <TabsList>
           <TabsTrigger value="organization">Organization</TabsTrigger>
-          <TabsTrigger value="clients">Client Organizations</TabsTrigger>
           <TabsTrigger value="seasonal">Seasonal Scope</TabsTrigger>
           <TabsTrigger value="styling">UI Styling</TabsTrigger>
           <TabsTrigger value="emailTemplates">Email Templates</TabsTrigger>
@@ -31,15 +28,6 @@ export function GeneralSettingsView() {
               <OrganizationSettingsForm />
             </CardContent>
           </Card>
-        </TabsContent>
-        
-        <TabsContent value="clients">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <OrganizationsManagement />
-            <div className="col-span-1">
-              <DashboardPreview />
-            </div>
-          </div>
         </TabsContent>
 
         <TabsContent value="seasonal">

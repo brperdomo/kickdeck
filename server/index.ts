@@ -8,7 +8,7 @@ import { WebSocketServer } from "ws";
 import path from "path";
 import uploadRouter from "./routes/upload";
 import { createEmailTemplatesTable } from './migrations/create_email_templates'; // Added import
-import { migrateAddDomainToOrganizationSettings } from "./migrations/add_domain_to_organization_settings";
+
 
 const app = express();
 
@@ -107,11 +107,11 @@ async function testDbConnection() {
     } catch (error) {
       log("Error creating email templates table: " + (error as Error).message);
     }
-
+    
     // Add domain field to organization_settings table
     try {
-      await migrateAddDomainToOrganizationSettings();
-      log("Organization settings table updated successfully");
+      const { addDomainToOrganizationSettings } = await import('./migrations/add_domain_to_organization_settings');
+      await addDomainToOrganizationSettings();
     } catch (error) {
       log("Error updating organization_settings table: " + (error as Error).message);
     }
