@@ -170,9 +170,14 @@ export function FeeManagement() {
       if (!response.ok) {
         throw new Error("Failed to fetch fee assignments");
       }
-      return response.json();
+      const data = await response.json();
+      console.log("Received fee assignments:", data);
+      // Return just the assignments array if the response has the new format
+      return data.assignments || data; 
     },
     enabled: !!eventIdParam,
+    staleTime: 30000, // Keep data fresh for 30 seconds
+    refetchOnWindowFocus: true, // Refresh when window regains focus
   });
 
   // Initialize selected age groups when fee assignments load
@@ -183,28 +188,35 @@ export function FeeManagement() {
     console.log("Age groups data:", ageGroupsQuery.data);
     console.log("Fee assignments data:", feeAssignmentsQuery.data);
 
-    if (ageGroupsQuery.data && feeAssignmentsQuery.data) {
+    if (ageGroupsQuery.data && feeAssignmentsQuery.data && feesQuery.data) {
       const assignmentMap = {};
+      
+      // First initialize all groups and fees with false (not assigned)
       ageGroupsQuery.data.forEach((group) => {
         // Handle both normal IDs and predefined IDs (which may be strings)
         const groupId = group.id || `predefined-${group.divisionCode}`;
         assignmentMap[groupId] = {};
         
-        feesQuery.data?.forEach((fee) => {
-          // Check if this age group is assigned to this fee
-          const isAssigned = feeAssignmentsQuery.data.some(
-            (assignment) =>
-              assignment.feeId === fee.id && 
-              (
-                // Check if the assignment matches either the ID or the division code
-                assignment.ageGroupId === group.id ||
-                (group.id?.toString().startsWith("predefined-") &&
-                 assignment.divisionCode === group.divisionCode)
-              )
-          );
-          
-          assignmentMap[groupId][fee.id] = isAssigned;
+        feesQuery.data.forEach((fee) => {
+          assignmentMap[groupId][fee.id] = false;
         });
+      });
+      
+      // Then mark assignments as true based on the fetched data
+      feeAssignmentsQuery.data.forEach((assignment) => {
+        // Find the group this assignment belongs to 
+        const matchingGroup = ageGroupsQuery.data.find(
+          group => group.id === assignment.ageGroupId || 
+                  (group.divisionCode === assignment.divisionCode)
+        );
+        
+        if (matchingGroup) {
+          const groupId = matchingGroup.id || `predefined-${matchingGroup.divisionCode}`;
+          if (!assignmentMap[groupId]) {
+            assignmentMap[groupId] = {};
+          }
+          assignmentMap[groupId][assignment.feeId] = true;
+        }
       });
       
       console.log("Setting selected age groups:", assignmentMap);
@@ -512,15 +524,20 @@ export function FeeManagement() {
         console.log("Fee assignment update result:", result);
         
         // Force refetch to ensure we have the latest data
-        await feeAssignmentsQuery.refetch();
+        await Promise.all([
+          feeAssignmentsQuery.refetch(),
+          queryClient.invalidateQueries(['feeAssignments', eventIdParam])
+        ]);
         
         toast({
           title: "Success",
           description: `Fee assignments updated successfully. ${ageGroupIds.length} age groups assigned.`,
         });
         
-        // Close the dialog
-        setIsAssignFeeOpen(false);
+        // Close the dialog only if this was an assign dialog operation
+        if (isAssignFeeOpen) {
+          setIsAssignFeeOpen(false);
+        }
       } catch (mutationError) {
         console.error("Mutation error:", mutationError);
         throw new Error(`Failed to save assignments: ${mutationError.message}`);
@@ -758,13 +775,7 @@ export function FeeManagement() {
                           <TableCell key={fee.id}>
                             <Checkbox
                               checked={
-                                selectedAgeGroups[ageGroup.id]?.[fee.id] ||
-                                feeAssignmentsQuery.data?.some(
-                                  (assignment) =>
-                                    assignment.ageGroupId === ageGroup.id &&
-                                    assignment.feeId === fee.id,
-                                ) ||
-                                false
+                                selectedAgeGroups[ageGroup.id]?.[fee.id] === true
                               }
                               onCheckedChange={(checked) => {
                                 setSelectedAgeGroups((prev) => ({

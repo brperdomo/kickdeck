@@ -2,7 +2,7 @@
 import { Request, Response } from 'express';
 import { db } from '../db';
 import { eventAgeGroupFees, eventFees, eventAgeGroups } from '../db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, inArray } from 'drizzle-orm';
 
 // Get fee assignments for an event
 export const getFeeAssignments = async (req: Request, res: Response) => {
@@ -23,14 +23,26 @@ export const getFeeAssignments = async (req: Request, res: Response) => {
     const allAgeGroupIds = ageGroups.map(group => group.id);
     const allFeeIds = fees.map(fee => fee.id);
     
-    const assignments = await db.query.eventAgeGroupFees.findMany({
-      where: and(
-        eventAgeGroupFees.ageGroupId in allAgeGroupIds,
-        eventAgeGroupFees.feeId in allFeeIds
-      ),
+    // Only attempt to query if we have age groups and fees
+    let assignments = [];
+    
+    if (allAgeGroupIds.length > 0 && allFeeIds.length > 0) {
+      assignments = await db.query.eventAgeGroupFees.findMany({
+        where: and(
+          inArray(eventAgeGroupFees.ageGroupId, allAgeGroupIds),
+          inArray(eventAgeGroupFees.feeId, allFeeIds)
+        ),
+      });
+    }
+    
+    // Include more detailed information in the response
+    console.log(`Found ${assignments.length} fee assignments for event ${eventId}`);
+    
+    return res.status(200).json({
+      assignments,
+      totalAssignments: assignments.length,
+      message: "Fee assignments retrieved successfully"
     });
-
-    return res.status(200).json(assignments);
   } catch (error) {
     console.error('Error fetching fee assignments:', error);
     return res.status(500).json({ error: 'Failed to fetch fee assignments' });
