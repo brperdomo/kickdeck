@@ -1,407 +1,348 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { ColorPicker } from "@/components/ui/color-picker";
+import { useToast } from "@/components/ui/use-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { DashboardPreview } from "./DashboardPreview";
 
-export function StyleSettingsView() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [previewStyles, setPreviewStyles] = useState({
-    primary: '#000000',
-    secondary: '#32CD32',
-    accent: '#FF8C00',
-    background: '#F5F5F6',
-    adminNavBackground: '#FFFFFF',
-    adminNavText: '#000000',
-    adminNavActive: '#000000',
-    adminNavHover: '#f3f4f6',
-    tableHeaderBg: "#f9fafb",
-    tableRowHoverBg: "#f3f4f6",
-    cardBg: "#FFFFFF",
-    cardHeaderBg: "#f9fafb",
-    inputBg: "#FFFFFF",
-    inputBorder: "#d1d5db",
-  });
+export function StyleSettingsView({ organizationId }: { organizationId: string }) {
   const { toast } = useToast();
-  const [settings, setSettings] = useState({
-    primaryColor: '#1E40AF',
-    secondaryColor: '#1C64F2',
-    accentColor: '#3B82F6',
-    logoUrl: '',
-    navBackgroundColor: '#ffffff',
-    navTextColor: '#1E293B',
-    buttonStyle: 'rounded',
-    fontFamily: 'Inter, sans-serif'
+  const queryClient = useQueryClient();
+  const [primaryColor, setPrimaryColor] = useState("#0066CC");
+  const [secondaryColor, setSecondaryColor] = useState("#FF9900");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [favicon, setFavicon] = useState("");
+  const [customCSS, setCustomCSS] = useState("");
+  const [selectedTab, setSelectedTab] = useState("branding");
+
+  // Fetch organization style settings
+  const { data: orgSettings, isLoading: isLoadingSettings } = useQuery({
+    queryKey: [`/api/admin/organizations/${organizationId}/style-settings`],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/organizations/${organizationId}/style-settings`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch organization style settings");
+      }
+      return response.json();
+    },
+    enabled: !!organizationId,
   });
 
-  // Apply CSS styles to document head
+  // Update settings when data is loaded
   useEffect(() => {
-    // Check if our custom style element already exists
-    let styleElement = document.getElementById('admin-dashboard-styles');
-
-    if (!styleElement) {
-      styleElement = document.createElement('style');
-      styleElement.id = 'admin-dashboard-styles';
-      document.head.appendChild(styleElement);
+    if (orgSettings) {
+      setPrimaryColor(orgSettings.primaryColor || "#0066CC");
+      setSecondaryColor(orgSettings.secondaryColor || "#FF9900");
+      setLogoUrl(orgSettings.logoUrl || "");
+      setFavicon(orgSettings.favicon || "");
+      setCustomCSS(orgSettings.customCSS || "");
     }
+  }, [orgSettings]);
 
-    // Apply the current styles
-    styleElement.textContent = `
-      :root {
-        --color-primary: ${previewStyles.primary};
-        --color-secondary: ${previewStyles.secondary};
-        --color-accent: ${previewStyles.accent};
-        --color-background: ${previewStyles.background};
-        --admin-nav-bg: ${previewStyles.adminNavBackground};
-        --admin-nav-text: ${previewStyles.adminNavText};
-        --admin-nav-active: ${previewStyles.adminNavActive};
-        --admin-nav-hover: ${previewStyles.adminNavHover};
-      }
-    `;
-
-    return () => {
-      // Clean up when component unmounts
-      if (styleElement) {
-        document.head.removeChild(styleElement);
-      }
-    };
-  }, [previewStyles]);
-
-  // Fetch current organization settings
-  useEffect(() => {
-    const fetchSettings = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch('/api/admin/organization/settings');
-        if (response.ok) {
-          const data = await response.json();
-          setSettings({
-            ...settings,
-            primaryColor: data.primaryColor || settings.primaryColor,
-            secondaryColor: data.secondaryColor || settings.secondaryColor,
-            accentColor: data.accentColor || settings.accentColor,
-            logoUrl: data.logoUrl || settings.logoUrl,
-            navBackgroundColor: data.navBackgroundColor || settings.navBackgroundColor,
-            navTextColor: data.navTextColor || settings.navTextColor,
-            buttonStyle: data.buttonStyle || settings.buttonStyle,
-            fontFamily: data.fontFamily || settings.fontFamily
-          });
-
-          // Also update preview styles
-          setPreviewStyles({
-            ...previewStyles,
-            primary: data.primaryColor || previewStyles.primary,
-            secondary: data.secondaryColor || previewStyles.secondary,
-            accent: data.accentColor || previewStyles.accent,
-            adminNavBackground: data.navBackgroundColor || previewStyles.adminNavBackground,
-            adminNavText: data.navTextColor || previewStyles.adminNavText,
-            adminNavActive: data.primaryColor || previewStyles.adminNavActive,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching organization settings:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSettings();
-  }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setSettings({
-      ...settings,
-      [name]: value
-    });
-
-    // Update preview in real-time
-    if (name === 'primaryColor') {
-      setPreviewStyles({...previewStyles, primary: value, adminNavActive: value});
-    } else if (name === 'secondaryColor') {
-      setPreviewStyles({...previewStyles, secondary: value});
-    } else if (name === 'accentColor') {
-      setPreviewStyles({...previewStyles, accent: value});
-    } else if (name === 'navBackgroundColor') {
-      setPreviewStyles({...previewStyles, adminNavBackground: value});
-    } else if (name === 'navTextColor') {
-      setPreviewStyles({...previewStyles, adminNavText: value});
-    }
-  };
-
-  const handleSaveStyles = async () => {
-    setIsSaving(true);
-    try {
-      const response = await fetch('/api/admin/organization/settings', {
-        method: 'PUT',
+  // Save style settings mutation
+  const saveSettingsMutation = useMutation({
+    mutationFn: async (styleData: any) => {
+      const response = await fetch(`/api/admin/organizations/${organizationId}/style-settings`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(settings),
+        body: JSON.stringify(styleData),
       });
 
-      if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Style settings saved successfully",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to save style settings",
-          variant: "destructive",
-        });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to save style settings");
       }
-    } catch (error) {
-      console.error('Error saving style settings:', error);
+
+      return response.json();
+    },
+    onSuccess: () => {
       toast({
-        title: "Error",
-        description: "An error occurred while saving",
+        title: "Settings saved",
+        description: "Your style settings have been updated successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: [`/api/admin/organizations/${organizationId}/style-settings`] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error saving settings",
+        description: error.message,
         variant: "destructive",
       });
-    } finally {
-      setIsSaving(false);
+    },
+  });
+
+  const handleSaveSettings = () => {
+    saveSettingsMutation.mutate({
+      primaryColor,
+      secondaryColor,
+      logoUrl,
+      favicon,
+      customCSS,
+    });
+  };
+
+  // Handle logo upload
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("/api/files/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload logo");
+      }
+
+      const data = await response.json();
+      setLogoUrl(data.url);
+
+      toast({
+        title: "Logo uploaded",
+        description: "Your logo has been uploaded successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error uploading logo",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleSaveStyles();
+  // Handle favicon upload
+  const handleFaviconUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("/api/files/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload favicon");
+      }
+
+      const data = await response.json();
+      setFavicon(data.url);
+
+      toast({
+        title: "Favicon uploaded",
+        description: "Your favicon has been uploaded successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error uploading favicon",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
+    }
   };
 
-  if (isLoading) {
+  if (isLoadingSettings) {
     return (
-      <div className="flex items-center justify-center py-10">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
-        <span className="ml-2 text-gray-500">Loading style settings</span>
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Style Settings</h2>
-        <Button onClick={handleSaveStyles} disabled={isSaving}>
-          {isSaving ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            "Save Changes"
-          )}
-        </Button>
+      <div className="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4">
+        <div className="w-full lg:w-1/2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Style Settings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="branding">Branding</TabsTrigger>
+                  <TabsTrigger value="advanced">Advanced</TabsTrigger>
+                </TabsList>
+                <TabsContent value="branding" className="space-y-4">
+                  <div className="space-y-4 pt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="primaryColor">Primary Color</Label>
+                        <div className="flex items-center space-x-2">
+                          <ColorPicker
+                            id="primaryColor"
+                            value={primaryColor}
+                            onChange={setPrimaryColor}
+                          />
+                          <Input
+                            value={primaryColor}
+                            onChange={(e) => setPrimaryColor(e.target.value)}
+                            className="w-28"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="secondaryColor">Secondary Color</Label>
+                        <div className="flex items-center space-x-2">
+                          <ColorPicker
+                            id="secondaryColor"
+                            value={secondaryColor}
+                            onChange={setSecondaryColor}
+                          />
+                          <Input
+                            value={secondaryColor}
+                            onChange={(e) => setSecondaryColor(e.target.value)}
+                            className="w-28"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="logo">Logo</Label>
+                      <div className="flex items-center space-x-2">
+                        <Input
+                          type="text"
+                          id="logo"
+                          value={logoUrl}
+                          onChange={(e) => setLogoUrl(e.target.value)}
+                          placeholder="Logo URL"
+                        />
+                        <div className="relative">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => document.getElementById("logo-upload")?.click()}
+                          >
+                            Upload
+                          </Button>
+                          <input
+                            id="logo-upload"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleLogoUpload}
+                          />
+                        </div>
+                      </div>
+                      {logoUrl && (
+                        <div className="mt-2 p-2 border rounded">
+                          <img
+                            src={logoUrl}
+                            alt="Organization Logo"
+                            className="h-12 object-contain"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="favicon">Favicon</Label>
+                      <div className="flex items-center space-x-2">
+                        <Input
+                          type="text"
+                          id="favicon"
+                          value={favicon}
+                          onChange={(e) => setFavicon(e.target.value)}
+                          placeholder="Favicon URL"
+                        />
+                        <div className="relative">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => document.getElementById("favicon-upload")?.click()}
+                          >
+                            Upload
+                          </Button>
+                          <input
+                            id="favicon-upload"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleFaviconUpload}
+                          />
+                        </div>
+                      </div>
+                      {favicon && (
+                        <div className="mt-2 p-2 border rounded">
+                          <img
+                            src={favicon}
+                            alt="Favicon"
+                            className="h-8 object-contain"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="advanced" className="space-y-4">
+                  <div className="space-y-2 pt-4">
+                    <Label htmlFor="customCSS">Custom CSS</Label>
+                    <textarea
+                      id="customCSS"
+                      value={customCSS}
+                      onChange={(e) => setCustomCSS(e.target.value)}
+                      className="w-full h-64 p-2 border rounded font-mono"
+                      placeholder=":root { /* Custom CSS variables */ }"
+                    />
+                  </div>
+                </TabsContent>
+              </Tabs>
+
+              <div className="flex justify-end mt-6">
+                <Button
+                  onClick={handleSaveSettings}
+                  disabled={saveSettingsMutation.isPending}
+                >
+                  {saveSettingsMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="w-full lg:w-1/2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Preview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DashboardPreview 
+                organization={{
+                  name: "Organization Name",
+                  primaryColor,
+                  secondaryColor,
+                  logoUrl,
+                  domain: "example.matchpro.ai"
+                }}
+              />
+            </CardContent>
+          </Card>
+        </div>
       </div>
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="space-y-1">
-                <h3 className="text-lg font-medium">Live Preview</h3>
-                <p className="text-sm text-gray-500">This is how your color scheme will look</p>
-              </div>
-            </div>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="primaryColor">Primary Color</Label>
-                  <div className="flex mt-1">
-                    <Input
-                      id="primaryColor"
-                      name="primaryColor"
-                      type="color"
-                      value={settings.primaryColor}
-                      onChange={handleInputChange}
-                      className="w-12 p-1 h-10"
-                    />
-                    <Input
-                      name="primaryColor"
-                      value={settings.primaryColor}
-                      onChange={handleInputChange}
-                      className="ml-2 flex-1"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="secondaryColor">Secondary Color</Label>
-                  <div className="flex mt-1">
-                    <Input
-                      id="secondaryColor"
-                      name="secondaryColor"
-                      type="color"
-                      value={settings.secondaryColor}
-                      onChange={handleInputChange}
-                      className="w-12 p-1 h-10"
-                    />
-                    <Input
-                      name="secondaryColor"
-                      value={settings.secondaryColor}
-                      onChange={handleInputChange}
-                      className="ml-2 flex-1"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="accentColor">Accent Color</Label>
-                  <div className="flex mt-1">
-                    <Input
-                      id="accentColor"
-                      name="accentColor"
-                      type="color"
-                      value={settings.accentColor}
-                      onChange={handleInputChange}
-                      className="w-12 p-1 h-10"
-                    />
-                    <Input
-                      name="accentColor"
-                      value={settings.accentColor}
-                      onChange={handleInputChange}
-                      className="ml-2 flex-1"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="navBackgroundColor">Navigation Background</Label>
-                  <div className="flex mt-1">
-                    <Input
-                      id="navBackgroundColor"
-                      name="navBackgroundColor"
-                      type="color"
-                      value={settings.navBackgroundColor}
-                      onChange={handleInputChange}
-                      className="w-12 p-1 h-10"
-                    />
-                    <Input
-                      name="navBackgroundColor"
-                      value={settings.navBackgroundColor}
-                      onChange={handleInputChange}
-                      className="ml-2 flex-1"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="navTextColor">Navigation Text</Label>
-                  <div className="flex mt-1">
-                    <Input
-                      id="navTextColor"
-                      name="navTextColor"
-                      type="color"
-                      value={settings.navTextColor}
-                      onChange={handleInputChange}
-                      className="w-12 p-1 h-10"
-                    />
-                    <Input
-                      name="navTextColor"
-                      value={settings.navTextColor}
-                      onChange={handleInputChange}
-                      className="ml-2 flex-1"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="logoUrl">Logo URL</Label>
-                  <Input
-                    id="logoUrl"
-                    name="logoUrl"
-                    value={settings.logoUrl}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                    placeholder="Enter logo URL"
-                  />
-                </div>
-              </div>
-
-              {/* Preview Panel */}
-              <div className="border rounded-md p-4 bg-slate-50">
-                <div className="mb-4">
-                  <div className="text-lg font-semibold mb-2">Color Preview</div>
-                  <div className="flex flex-wrap gap-2">
-                    <div 
-                      className="h-12 w-12 rounded-md border shadow-sm flex items-center justify-center"
-                      style={{ backgroundColor: settings.primaryColor }}
-                      title="Primary Color"
-                    >
-                      <span style={{ color: '#fff' }}>P</span>
-                    </div>
-                    <div 
-                      className="h-12 w-12 rounded-md border shadow-sm flex items-center justify-center"
-                      style={{ backgroundColor: settings.secondaryColor }}
-                      title="Secondary Color"
-                    >
-                      <span style={{ color: '#fff' }}>S</span>
-                    </div>
-                    <div 
-                      className="h-12 w-12 rounded-md border shadow-sm flex items-center justify-center"
-                      style={{ backgroundColor: settings.accentColor }}
-                      title="Accent Color"
-                    >
-                      <span style={{ color: '#fff' }}>A</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <div className="text-lg font-semibold mb-2">Navigation Preview</div>
-                  <div 
-                    className="h-16 rounded-md border shadow-sm p-2 flex items-center mb-2"
-                    style={{ backgroundColor: settings.navBackgroundColor }}
-                  >
-                    <div 
-                      className="h-10 w-10 rounded-full mr-2 flex items-center justify-center"
-                      style={{ backgroundColor: settings.primaryColor }}
-                    >
-                      <span style={{ color: '#fff' }}>Logo</span>
-                    </div>
-                    <div 
-                      className="flex space-x-4"
-                      style={{ color: settings.navTextColor }}
-                    >
-                      <span className="cursor-pointer">Dashboard</span>
-                      <span className="cursor-pointer font-semibold" style={{ color: settings.primaryColor }}>Events</span>
-                      <span className="cursor-pointer">Settings</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <div className="text-lg font-semibold mb-2">Button Preview</div>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      className="px-4 py-2 rounded-md text-white"
-                      style={{ backgroundColor: settings.primaryColor }}
-                    >
-                      Primary Button
-                    </button>
-                    <button
-                      className="px-4 py-2 rounded-md text-white"
-                      style={{ backgroundColor: settings.secondaryColor }}
-                    >
-                      Secondary Button
-                    </button>
-                    <button
-                      className="px-4 py-2 rounded-md text-white"
-                      style={{ backgroundColor: settings.accentColor }}
-                    >
-                      Accent Button
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
-
-export default StyleSettingsView;
