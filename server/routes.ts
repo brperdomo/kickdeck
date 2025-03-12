@@ -1446,7 +1446,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           primary: settings?.primaryColor || '#000000',
           secondary: settings?.secondaryColor || '#32CD32',
           accent: '#FF8C00',
-          background: '#F5F5F6',
+          background: settings?.backgroundColor || '#F5F5F6',
           foreground: '#000000',
           border: '#CCCCCCCC',
           muted: '#999999',
@@ -1455,6 +1455,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           success: '#32CD32',
           warning: '#FF8C00',
           destructive: '#E63946',
+          // Admin dashboard specific colors
+          adminNavBackground: settings?.adminNavBackground || '#FFFFFF',
+          adminNavText: settings?.adminNavText || '#000000',
+          adminNavActive: settings?.adminNavActive || settings?.primaryColor || '#000000',
+          adminNavHover: settings?.adminNavHover || '#f3f4f6',
+          // Admin role colors
           superAdmin: '#DB4D4D',
           tournamentAdmin: '#4CAF50',
           scoreAdmin: '#4169E1',
@@ -1486,7 +1492,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             .set({
               primaryColor: styleConfig.primary,
               secondaryColor: styleConfig.secondary,
+              backgroundColor: styleConfig.background,
               logoUrl: styleConfig.logoUrl,
+              adminNavBackground: styleConfig.adminNavBackground,
+              adminNavText: styleConfig.adminNavText,
+              adminNavActive: styleConfig.adminNavActive,
+              adminNavHover: styleConfig.adminNavHover,
               updatedAt: new Date().toISOString(),
             })
             .where(eq(organizationSettings.id, settings.id));
@@ -1496,7 +1507,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             .values({
               primaryColor: styleConfig.primary,
               secondaryColor: styleConfig.secondary,
+              backgroundColor: styleConfig.background, 
               logoUrl: styleConfig.logoUrl,
+              adminNavBackground: styleConfig.adminNavBackground,
+              adminNavText: styleConfig.adminNavText,
+              adminNavActive: styleConfig.adminNavActive,
+              adminNavHover: styleConfig.adminNavHover,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
             });

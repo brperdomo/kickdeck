@@ -1,426 +1,611 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useTheme } from "@/hooks/use-theme";
+import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, RotateCcw } from "lucide-react";
-
-interface ColorSection {
-  title: string;
-  colors: {
-    [key: string]: string;
-  };
-  description?: string;
-}
-
-interface LoginScreenSettings {
-  logoUrl: string;
-  youtubeVideoId: string;
-}
-
-const colors = {
-  branding: {
-    title: "Brand Colors",
-    description: "Main colors that define your brand identity",
-    colors: {
-      primary: "#000000",
-      secondary: "#32CD32",
-      accent: "#FF8C00"
-    }
-  },
-  loginScreen: {
-    title: "Login Screen",
-    description: "Customize the login and register page appearance",
-    colors: {},
-    settings: {
-      logoUrl: "/uploads/MatchProAI_Linear_Black.png",
-      youtubeVideoId: "8DFc6wHHWPY"
-    }
-  },
-  interface: {
-    title: "Interface Colors",
-    description: "Colors used for the application interface",
-    colors: {
-      background: "#568FCB",
-      foreground: "#000000",
-      border: "#CCCCCC",
-      muted: "#999999",
-      hover: "#FF8C00",
-      active: "#32CD32"
-    }
-  },
-  status: {
-    title: "Status Colors",
-    description: "Colors used to indicate different states",
-    colors: {
-      success: "#32CD32",
-      warning: "#FF8C00",
-      destructive: "#E63946"
-    }
-  },
-  adminRoles: {
-    title: "Admin Role Colors",
-    description: "Colors used to distinguish admin roles",
-    colors: {
-      superAdmin: "#DB4D4D",
-      tournamentAdmin: "#4CAF50",
-      scoreAdmin: "#4169E1",
-      financeAdmin: "#9C27B0"
-    }
-  }
-};
 
 export function StyleSettingsView() {
-  const { currentColor, setColor, styleConfig, updateStyleConfig, isLoading } = useTheme();
-  const [activeSection, setActiveSection] = useState("branding");
-  const [previewStyles, setPreviewStyles] = useState<{ [key: string]: string }>({});
-  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [previewStyles, setPreviewStyles] = useState({
+    primary: '#000000',
+    secondary: '#32CD32',
+    accent: '#FF8C00',
+    background: '#F5F5F6',
+    adminNavBackground: '#FFFFFF',
+    adminNavText: '#000000',
+    adminNavActive: '#000000',
+    adminNavHover: '#f3f4f6',
+    tableHeaderBg: "#f9fafb",
+    tableRowHoverBg: "#f3f4f6",
+    cardBg: "#FFFFFF",
+    cardHeaderBg: "#f9fafb",
+    inputBg: "#FFFFFF",
+    inputBorder: "#d1d5db",
+  });
   const { toast } = useToast();
 
+  // Apply CSS styles to document head
   useEffect(() => {
-    const loadStylingSettings = async () => {
+    // Check if our custom style element already exists
+    let styleElement = document.getElementById('admin-dashboard-styles');
+
+    // Create it if it doesn't exist
+    if (!styleElement) {
+      styleElement = document.createElement('style');
+      styleElement.id = 'admin-dashboard-styles';
+      document.head.appendChild(styleElement);
+    }
+
+    // Update the CSS variables
+    styleElement.textContent = `
+      :root {
+        --admin-nav-bg: ${previewStyles.adminNavBackground || '#FFFFFF'};
+        --admin-nav-text: ${previewStyles.adminNavText || '#000000'};
+        --admin-nav-active: ${previewStyles.adminNavActive || previewStyles.primary || '#000000'};
+        --admin-nav-hover: ${previewStyles.adminNavHover || '#f3f4f6'};
+        --table-header-bg: ${previewStyles.tableHeaderBg || "#f9fafb"};
+        --table-row-hover-bg: ${previewStyles.tableRowHoverBg || "#f3f4f6"};
+        --card-bg: ${previewStyles.cardBg || "#FFFFFF"};
+        --card-header-bg: ${previewStyles.cardHeaderBg || "#f9fafb"};
+        --input-bg: ${previewStyles.inputBg || "#FFFFFF"};
+        --input-border: ${previewStyles.inputBorder || "#d1d5db"};
+
+      }
+    `;
+  }, [previewStyles]);
+
+  useEffect(() => {
+    const fetchStylingSettings = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch('/api/admin/styling');
-        if (!response.ok) {
-          throw new Error('Failed to load styling settings');
+        if (response.ok) {
+          const data = await response.json();
+          setPreviewStyles(data);
+        } else {
+          console.error('Failed to fetch styling settings');
         }
-        const settings = await response.json();
-        setPreviewStyles(settings);
-
-        // Apply loaded settings to CSS variables
-        Object.entries(settings).forEach(([key, value]) => {
-          if (typeof value === 'string' && value.startsWith('#')) {
-            document.documentElement.style.setProperty(`--${key}`, value);
-          }
-        });
       } catch (error) {
-        console.error('Error loading styling settings:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load current styling settings",
-        });
+        console.error('Error fetching styling settings:', error);
       } finally {
-        setIsLoadingSettings(false);
+        setIsLoading(false);
       }
     };
 
-    loadStylingSettings();
+    fetchStylingSettings();
   }, []);
 
-  // The handleSave function is defined elsewhere in the file
-
-  const handleColorChange = (section: string, colorKey: string, value: string) => {
-    // Ensure the value is a valid hex color
-    const hexColor = value.startsWith('#') ? value : `#${value}`;
-
-    // Update local preview state
-    setPreviewStyles((prev) => ({
+  const handleStyleChange = (key, value) => {
+    setPreviewStyles(prev => ({
       ...prev,
-      [colorKey]: hexColor,
+      [key]: value
     }));
-
-    // Apply the color change to CSS variables for immediate visual feedback
-    document.documentElement.style.setProperty(`--${colorKey}`, hexColor);
   };
 
-  const handleReset = (section: string) => {
-    const defaultColors = colors[section as keyof typeof colors].colors;
-    Object.entries(defaultColors).forEach(([key, value]) => {
-      handleColorChange(section, key, value);
-    });
-
-    if (section === 'loginScreen') {
-      setPreviewStyles((prev) => ({
-        ...prev,
-        logoUrl: colors.loginScreen.settings.logoUrl,
-        youtubeVideoId: colors.loginScreen.settings.youtubeVideoId,
-      }));
-    }
-
-    toast({
-      title: "Reset Complete",
-      description: `${colors[section as keyof typeof colors].title} reset to defaults`,
-    });
-  };
-
-  // Combined handleSave function with all necessary functionality
-  const handleSave = async () => {
+  const handleSaveStyles = async () => {
+    setIsSaving(true);
     try {
-      // Create a consistent color object with all required properties
-      const stylingUpdate = {
+      // Make sure we include all style settings
+      const completeStyles = {
         ...previewStyles,
-        primary: previewStyles.primary || colors.branding.colors.primary,
-        secondary: previewStyles.secondary || colors.branding.colors.secondary,
-        accent: previewStyles.accent || colors.branding.colors.accent
+        // Ensure the admin dashboard specific colors are included
+        adminNavBackground: previewStyles.adminNavBackground || '#FFFFFF',
+        adminNavText: previewStyles.adminNavText || '#000000',
+        adminNavActive: previewStyles.adminNavActive || previewStyles.primary || '#000000',
+        adminNavHover: previewStyles.adminNavHover || '#f3f4f6',
+        tableHeaderBg: previewStyles.tableHeaderBg || "#f9fafb",
+        tableRowHoverBg: previewStyles.tableRowHoverBg || "#f3f4f6",
+        cardBg: previewStyles.cardBg || "#FFFFFF",
+        cardHeaderBg: previewStyles.cardHeaderBg || "#f9fafb",
+        inputBg: previewStyles.inputBg || "#FFFFFF",
+        inputBorder: previewStyles.inputBorder || "#d1d5db",
       };
-      
-      // Update theme color
-      await setColor(stylingUpdate.primary);
 
-      // Save styles to the server
-      await updateStyleConfig(stylingUpdate);
+      console.log('Saving complete style settings:', completeStyles);
 
-      // Apply the changes to CSS variables for branding colors
-      document.documentElement.style.setProperty('--primary', stylingUpdate.primary);
-      document.documentElement.style.setProperty('--secondary', stylingUpdate.secondary);
-      document.documentElement.style.setProperty('--accent', stylingUpdate.accent);
-
-      // Update local state to reflect the changes
-      setPreviewStyles(stylingUpdate);
-
-      toast({
-        title: "Success",
-        description: "Styling settings updated successfully",
+      const response = await fetch('/api/admin/styling', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(completeStyles),
       });
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Style settings saved successfully",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to save style settings",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
-      console.error('Failed to save styling settings:', error);
+      console.error('Error saving style settings:', error);
       toast({
-        variant: "destructive",
         title: "Error",
-        description: "Failed to save styling settings",
+        description: "An error occurred while saving",
+        variant: "destructive",
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  if (isLoadingSettings) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex items-center justify-center py-10">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+        <span className="ml-2 text-gray-500">Loading style settings</span>
       </div>
     );
   }
 
-  // Add an effect to apply CSS variables whenever previewStyles changes
-  useEffect(() => {
-    // Apply styling to CSS variables based on current previewStyles
-    if (previewStyles.primary) {
-      document.documentElement.style.setProperty('--primary', previewStyles.primary);
-    }
-    if (previewStyles.secondary) {
-      document.documentElement.style.setProperty('--secondary', previewStyles.secondary);
-    }
-    if (previewStyles.accent) {
-      document.documentElement.style.setProperty('--accent', previewStyles.accent);
-    }
-  }, [previewStyles]);
-
-  // This useEffect should always be here, not conditionally rendered
-  useEffect(() => {
-    // This empty effect ensures consistent hook ordering
-    return () => {
-      // Cleanup if needed
-    };
-  }, []);
-
   return (
     <div className="space-y-6">
+      <div 
+        className="p-4 rounded-md shadow mb-6" 
+        style={{ backgroundColor: previewStyles.adminSectionBg || "#FFFFFF" }}
+      >
+        <h3 className="text-lg font-medium mb-4">Color Settings</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label htmlFor="primaryColor">Primary Color</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="primaryColor"
+                  type="color"
+                  value={previewStyles.primary || "#000000"}
+                  onChange={(e) => handleStyleChange('primary', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.primary || "#000000"}
+                onChange={(e) => handleStyleChange('primary', e.target.value)}
+                className="font-mono"
+                placeholder="#000000"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Used for primary buttons and important UI elements</p>
+          </div>
+
+          <div>
+            <Label htmlFor="secondaryColor">Secondary Color</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="secondaryColor"
+                  type="color"
+                  value={previewStyles.secondary || "#000000"}
+                  onChange={(e) => handleStyleChange('secondary', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.secondary || "#000000"}
+                onChange={(e) => handleStyleChange('secondary', e.target.value)}
+                className="font-mono"
+                placeholder="#000000"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Used for secondary buttons and accents</p>
+          </div>
+
+          <div>
+            <Label htmlFor="accentColor">Accent Color</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="accentColor"
+                  type="color"
+                  value={previewStyles.accent || "#000000"}
+                  onChange={(e) => handleStyleChange('accent', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.accent || "#000000"}
+                onChange={(e) => handleStyleChange('accent', e.target.value)}
+                className="font-mono"
+                placeholder="#000000"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Used for highlighted items and hover states</p>
+          </div>
+
+          <div>
+            <Label htmlFor="backgroundColor">Background Color</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="backgroundColor"
+                  type="color"
+                  value={previewStyles.background || "#FFFFFF"}
+                  onChange={(e) => handleStyleChange('background', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.background || "#FFFFFF"}
+                onChange={(e) => handleStyleChange('background', e.target.value)}
+                className="font-mono"
+                placeholder="#FFFFFF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Used for page backgrounds</p>
+          </div>
+        </div>
+      </div>
+
+      <div 
+        className="p-4 rounded-md shadow mb-6" 
+        style={{ backgroundColor: previewStyles.adminSectionBg || "#FFFFFF" }}
+      >
+        <h3 className="text-lg font-medium mb-4">Admin Dashboard Colors</h3>
+        <p className="text-sm text-gray-500 mb-4">These colors control the appearance of the admin dashboard navigation.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label htmlFor="adminNavBgColor">Navigation Background</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="adminNavBgColor"
+                  type="color"
+                  value={previewStyles.adminNavBackground || "#FFFFFF"}
+                  onChange={(e) => handleStyleChange('adminNavBackground', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.adminNavBackground || "#FFFFFF"}
+                onChange={(e) => handleStyleChange('adminNavBackground', e.target.value)}
+                className="font-mono"
+                placeholder="#FFFFFF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color of the admin sidebar</p>
+          </div>
+
+          <div>
+            <Label htmlFor="adminSectionBg">Admin Section Background</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="adminSectionBg"
+                  type="color"
+                  value={previewStyles.adminSectionBg || "#FFFFFF"}
+                  onChange={(e) => handleStyleChange('adminSectionBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.adminSectionBg || "#FFFFFF"}
+                onChange={(e) => handleStyleChange('adminSectionBg', e.target.value)}
+                className="font-mono"
+                placeholder="#FFFFFF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color of admin sections and cards</p>
+          </div>
+
+          <div>
+            <Label htmlFor="adminNavTextColor">Navigation Text</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="adminNavTextColor"
+                  type="color"
+                  value={previewStyles.adminNavText || "#000000"}
+                  onChange={(e) => handleStyleChange('adminNavText', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.adminNavText || "#000000"}
+                onChange={(e) => handleStyleChange('adminNavText', e.target.value)}
+                className="font-mono"
+                placeholder="#000000"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Text color for sidebar navigation items</p>
+          </div>
+
+          <div>
+            <Label htmlFor="adminNavActiveColor">Navigation Active</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="adminNavActiveColor"
+                  type="color"
+                  value={previewStyles.adminNavActive || "#E6F7FF"}
+                  onChange={(e) => handleStyleChange('adminNavActive', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.adminNavActive || "#E6F7FF"}
+                onChange={(e) => handleStyleChange('adminNavActive', e.target.value)}
+                className="font-mono"
+                placeholder="#E6F7FF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color of the active/selected navigation item</p>
+          </div>
+
+          <div>
+            <Label htmlFor="adminNavHoverColor">Navigation Hover</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="adminNavHoverColor"
+                  type="color"
+                  value={previewStyles.adminNavHover || "#F5F5F5"}
+                  onChange={(e) => handleStyleChange('adminNavHover', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.adminNavHover || "#F5F5F5"}
+                onChange={(e) => handleStyleChange('adminNavHover', e.target.value)}
+                className="font-mono"
+                placeholder="#F5F5F5"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color when hovering over navigation items</p>
+          </div>
+        </div>
+      </div>
+
+      <div 
+        className="p-4 rounded-md shadow mb-6" 
+        style={{ backgroundColor: previewStyles.adminSectionBg || "#FFFFFF" }}
+      >
+        <h3 className="text-lg font-medium mb-4">Table & Card Styling</h3>
+        <p className="text-sm text-gray-500 mb-4">Customize the appearance of tables, cards and form elements.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label htmlFor="tableHeaderBg">Table Header Background</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="tableHeaderBg"
+                  type="color"
+                  value={previewStyles.tableHeaderBg || "#f9fafb"}
+                  onChange={(e) => handleStyleChange('tableHeaderBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.tableHeaderBg || "#f9fafb"}
+                onChange={(e) => handleStyleChange('tableHeaderBg', e.target.value)}
+                className="font-mono"
+                placeholder="#f9fafb"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color for table headers</p>
+          </div>
+
+          <div>
+            <Label htmlFor="tableRowHoverBg">Table Row Hover</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="tableRowHoverBg"
+                  type="color"
+                  value={previewStyles.tableRowHoverBg || "#f3f4f6"}
+                  onChange={(e) => handleStyleChange('tableRowHoverBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.tableRowHoverBg || "#f3f4f6"}
+                onChange={(e) => handleStyleChange('tableRowHoverBg', e.target.value)}
+                className="font-mono"
+                placeholder="#f3f4f6"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color when hovering over table rows</p>
+          </div>
+
+          <div>
+            <Label htmlFor="cardBg">Card Background</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="cardBg"
+                  type="color"
+                  value={previewStyles.cardBg || "#FFFFFF"}
+                  onChange={(e) => handleStyleChange('cardBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.cardBg || "#FFFFFF"}
+                onChange={(e) => handleStyleChange('cardBg', e.target.value)}
+                className="font-mono"
+                placeholder="#FFFFFF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color for cards</p>
+          </div>
+
+          <div>
+            <Label htmlFor="cardHeaderBg">Card Header Background</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="cardHeaderBg"
+                  type="color"
+                  value={previewStyles.cardHeaderBg || "#f9fafb"}
+                  onChange={(e) => handleStyleChange('cardHeaderBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.cardHeaderBg || "#f9fafb"}
+                onChange={(e) => handleStyleChange('cardHeaderBg', e.target.value)}
+                className="font-mono"
+                placeholder="#f9fafb"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color for card headers</p>
+          </div>
+
+          <div>
+            <Label htmlFor="inputBg">Input Background</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="inputBg"
+                  type="color"
+                  value={previewStyles.inputBg || "#FFFFFF"}
+                  onChange={(e) => handleStyleChange('inputBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.inputBg || "#FFFFFF"}
+                onChange={(e) => handleStyleChange('inputBg', e.target.value)}
+                className="font-mono"
+                placeholder="#FFFFFF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color for form inputs</p>
+          </div>
+
+          <div>
+            <Label htmlFor="inputBorder">Input Border</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="inputBorder"
+                  type="color"
+                  value={previewStyles.inputBorder || "#d1d5db"}
+                  onChange={(e) => handleStyleChange('inputBorder', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.inputBorder || "#d1d5db"}
+                onChange={(e) => handleStyleChange('inputBorder', e.target.value)}
+                className="font-mono"
+                placeholder="#d1d5db"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Border color for form inputs</p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Style Settings</h2>
-        <Button onClick={handleSave} disabled={isLoading}>
-          {isLoading ? (
+        <Button onClick={handleSaveStyles} disabled={isSaving}>
+          {isSaving ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving Changes
+              Saving...
             </>
           ) : (
-            'Save All Changes'
+            "Save Changes"
           )}
         </Button>
       </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex flex-col space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="space-y-1">
+                <h3 className="text-lg font-medium">Live Preview</h3>
+                <p className="text-sm text-gray-500">This is how your color scheme will look</p>
+              </div>
+            </div>
 
-      {/* Color Preview Panel */}
-      <Card className="mb-4">
-        <CardHeader className="pb-2">
-          <CardTitle>Color Preview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="flex flex-col items-center">
-              <div 
-                className="w-16 h-16 rounded-md mb-2" 
-                style={{ backgroundColor: previewStyles.primary || colors.branding.colors.primary }}
-              />
-              <span className="text-sm font-medium">Primary</span>
-              <code className="text-xs">{previewStyles.primary || colors.branding.colors.primary}</code>
+            <div
+              className="rounded-md p-6 mt-4 border"
+              style={{ backgroundColor: previewStyles.background }}
+            >
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold" style={{ color: previewStyles.primary }}>Preview Heading</h4>
+                <p>This is sample text that shows how your content will appear.</p>
+                <div className="flex space-x-2">
+                  <button
+                    className="px-4 py-2 rounded-md"
+                    style={{
+                      backgroundColor: previewStyles.primary,
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    Primary Button
+                  </button>
+                  <button
+                    className="px-4 py-2 rounded-md"
+                    style={{
+                      backgroundColor: previewStyles.secondary,
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    Secondary Button
+                  </button>
+                  <button
+                    className="px-4 py-2 rounded-md border"
+                    style={{
+                      borderColor: previewStyles.accent,
+                      color: previewStyles.accent,
+                    }}
+                  >
+                    Accent Button
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                  <div
+                    className="p-4 rounded-md border"
+                    style={{
+                      borderColor: previewStyles.primary + '40',
+                      backgroundColor: previewStyles.primary + '10',
+                    }}
+                  >
+                    <h5 style={{ color: previewStyles.primary }}>Card with Primary</h5>
+                    <p className="text-sm mt-1">Sample card with primary color.</p>
+                  </div>
+                  <div
+                    className="p-4 rounded-md border"
+                    style={{
+                      borderColor: previewStyles.secondary + '40',
+                      backgroundColor: previewStyles.secondary + '10',
+                    }}
+                  >
+                    <h5 style={{ color: previewStyles.secondary }}>Card with Secondary</h5>
+                    <p className="text-sm mt-1">Sample card with secondary color.</p>
+                  </div>
+                </div>
+
+                <div
+                  className="p-4 rounded-md border mt-4"
+                  style={{
+                    borderColor: previewStyles.accent + '40',
+                    backgroundColor: previewStyles.accent + '10',
+                  }}
+                >
+                  <h5 style={{ color: previewStyles.accent }}>Accent Section</h5>
+                  <p className="text-sm mt-1">This section uses the accent color for highlighting.</p>
+                </div>
+              </div>
             </div>
-            
-            <div className="flex flex-col items-center">
-              <div 
-                className="w-16 h-16 rounded-md mb-2" 
-                style={{ backgroundColor: previewStyles.secondary || colors.branding.colors.secondary }}
-              />
-              <span className="text-sm font-medium">Secondary</span>
-              <code className="text-xs">{previewStyles.secondary || colors.branding.colors.secondary}</code>
-            </div>
-            
-            <div className="flex flex-col items-center">
-              <div 
-                className="w-16 h-16 rounded-md mb-2" 
-                style={{ backgroundColor: previewStyles.accent || colors.branding.colors.accent }}
-              />
-              <span className="text-sm font-medium">Accent</span>
-              <code className="text-xs">{previewStyles.accent || colors.branding.colors.accent}</code>
-            </div>
-          </div>
-          
-          <div className="mt-4 flex gap-4">
-            <Button style={{ backgroundColor: 'var(--primary)' }}>Primary Button</Button>
-            <Button style={{ backgroundColor: 'var(--secondary)' }}>Secondary Button</Button>
-            <Button style={{ backgroundColor: 'var(--accent)' }}>Accent Button</Button>
           </div>
         </CardContent>
       </Card>
-
-      <div className="grid grid-cols-4 gap-6">
-        <div className="col-span-1">
-          <Card className="sticky top-4">
-            <CardHeader className="pb-3">
-              <CardTitle>Color Sections</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-2">
-                {Object.entries(colors).map(([key, section]) => (
-                  <Button
-                    key={key}
-                    variant={activeSection === key ? "secondary" : "ghost"}
-                    className="justify-start w-full text-left"
-                    onClick={() => setActiveSection(key)}
-                  >
-                    {section.title}
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Preview Panel */}
-          <Card className="mt-4 sticky top-64">
-            <CardHeader className="pb-2">
-              <CardTitle>Live Preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded" style={{ backgroundColor: previewStyles.primary || '#000000' }}></div>
-                  <span>Primary</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded" style={{ backgroundColor: previewStyles.secondary || '#32CD32' }}></div>
-                  <span>Secondary</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded" style={{ backgroundColor: previewStyles.accent || '#FF8C00' }}></div>
-                  <span>Accent</span>
-                </div>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Changes will apply immediately but must be saved to persist.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card className="col-span-3">
-          <CardHeader className="flex flex-row justify-between items-center">
-            <div>
-              <CardTitle>{colors[activeSection as keyof typeof colors].title}</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                {colors[activeSection as keyof typeof colors].description}
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleReset(activeSection)}
-            >
-              <RotateCcw className="mr-2 h-4 w-4" />
-              Reset Section
-            </Button>
-          </CardHeader>
-          <CardContent>
-            {activeSection === 'loginScreen' ? (
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label>Login Page Logo URL</Label>
-                  <div className="flex gap-4">
-                    <div className="flex-1">
-                      <Input
-                        placeholder="Enter logo URL (e.g., /uploads/logo.png)"
-                        value={previewStyles.logoUrl || ''}
-                        onChange={(e) => handleColorChange('loginScreen', 'logoUrl', e.target.value)}
-                      />
-                    </div>
-                    <img
-                      src={previewStyles.logoUrl || ''}
-                      alt="Login logo preview"
-                      className="h-16 w-16 object-contain bg-gray-50 rounded p-2"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Background YouTube Video ID</Label>
-                  <div className="flex gap-4">
-                    <div className="flex-1">
-                      <Input
-                        placeholder="Enter YouTube video ID (e.g., OdObDXBzNYk)"
-                        value={previewStyles.youtubeVideoId || ''}
-                        onChange={(e) => handleColorChange('loginScreen', 'youtubeVideoId', e.target.value)}
-                      />
-                    </div>
-                    <div className="h-16 w-28 overflow-hidden rounded bg-gray-50">
-                      <img
-                        src={`https://img.youtube.com/vi/${previewStyles.youtubeVideoId || ''}/default.jpg`}
-                        alt="YouTube thumbnail preview"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Enter the YouTube video ID from the video URL. For example, in 'https://youtube.com/watch?v=OdObDXBzNYk', the ID is 'OdObDXBzNYk'.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-6">
-                {Object.entries(colors[activeSection as keyof typeof colors].colors).map(
-                  ([key, value]) => (
-                    <div key={key} className="space-y-2">
-                      <Label htmlFor={key}>
-                        {key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
-                      </Label>
-                      <div className="flex gap-2">
-                        <Input
-                          type="color"
-                          id={key}
-                          value={previewStyles[key] || value}
-                          onChange={(e) => handleColorChange(activeSection, key, e.target.value)}
-                          className="w-12 h-12 p-1"
-                        />
-                        <Input
-                          value={previewStyles[key] || value}
-                          onChange={(e) => {
-                            const newValue = e.target.value;
-                            if (newValue.match(/^#[0-9A-Fa-f]{6}$/)) {
-                              handleColorChange(activeSection, key, newValue);
-                            }
-                          }}
-                          placeholder="#000000"
-                          className="font-mono uppercase"
-                          maxLength={7}
-                        />
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }
