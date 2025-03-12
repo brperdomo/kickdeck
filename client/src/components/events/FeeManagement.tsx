@@ -384,13 +384,10 @@ export function FeeManagement() {
   // Handle saving fee assignments
   const handleSaveAssignments = async () => {
     // Prepare assignments data
-    const assignments = [];
+    const ageGroupIds = [];
     ageGroupsQuery.data?.forEach(ageGroup => {
       if (selectedAgeGroups[ageGroup.id] && selectedAgeGroups[ageGroup.id][selectedFeeId]) {
-        assignments.push({
-          ageGroupId: ageGroup.id,
-          feeId: selectedFeeId
-        });
+        ageGroupIds.push(ageGroup.id);
       }
     });
 
@@ -421,7 +418,7 @@ export function FeeManagement() {
         },
         body: JSON.stringify({
           feeId: selectedFeeId,
-          assignments
+          ageGroupIds
         }),
       });
 
