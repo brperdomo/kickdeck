@@ -18,6 +18,12 @@ export function StyleSettingsView() {
     adminNavText: '#000000',
     adminNavActive: '#000000',
     adminNavHover: '#f3f4f6',
+    tableHeaderBg: "#f9fafb",
+    tableRowHoverBg: "#f3f4f6",
+    cardBg: "#FFFFFF",
+    cardHeaderBg: "#f9fafb",
+    inputBg: "#FFFFFF",
+    inputBorder: "#d1d5db",
   });
   const { toast } = useToast();
 
@@ -40,6 +46,13 @@ export function StyleSettingsView() {
         --admin-nav-text: ${previewStyles.adminNavText || '#000000'};
         --admin-nav-active: ${previewStyles.adminNavActive || previewStyles.primary || '#000000'};
         --admin-nav-hover: ${previewStyles.adminNavHover || '#f3f4f6'};
+        --table-header-bg: ${previewStyles.tableHeaderBg || "#f9fafb"};
+        --table-row-hover-bg: ${previewStyles.tableRowHoverBg || "#f3f4f6"};
+        --card-bg: ${previewStyles.cardBg || "#FFFFFF"};
+        --card-header-bg: ${previewStyles.cardHeaderBg || "#f9fafb"};
+        --input-bg: ${previewStyles.inputBg || "#FFFFFF"};
+        --input-border: ${previewStyles.inputBorder || "#d1d5db"};
+
       }
     `;
   }, [previewStyles]);
@@ -83,6 +96,12 @@ export function StyleSettingsView() {
         adminNavText: previewStyles.adminNavText || '#000000',
         adminNavActive: previewStyles.adminNavActive || previewStyles.primary || '#000000',
         adminNavHover: previewStyles.adminNavHover || '#f3f4f6',
+        tableHeaderBg: previewStyles.tableHeaderBg || "#f9fafb",
+        tableRowHoverBg: previewStyles.tableRowHoverBg || "#f3f4f6",
+        cardBg: previewStyles.cardBg || "#FFFFFF",
+        cardHeaderBg: previewStyles.cardHeaderBg || "#f9fafb",
+        inputBg: previewStyles.inputBg || "#FFFFFF",
+        inputBorder: previewStyles.inputBorder || "#d1d5db",
       };
 
       console.log('Saving complete style settings:', completeStyles);
@@ -256,7 +275,7 @@ export function StyleSettingsView() {
             </div>
             <p className="text-sm text-gray-500 mt-1">Background color of the admin sidebar</p>
           </div>
-          
+
           <div>
             <Label htmlFor="adminSectionBg">Admin Section Background</Label>
             <div className="flex items-center gap-2 mt-1.5">
@@ -343,6 +362,148 @@ export function StyleSettingsView() {
               />
             </div>
             <p className="text-sm text-gray-500 mt-1">Background color when hovering over navigation items</p>
+          </div>
+        </div>
+      </div>
+
+      <div 
+        className="p-4 rounded-md shadow mb-6" 
+        style={{ backgroundColor: previewStyles.adminSectionBg || "#FFFFFF" }}
+      >
+        <h3 className="text-lg font-medium mb-4">Table & Card Styling</h3>
+        <p className="text-sm text-gray-500 mb-4">Customize the appearance of tables, cards and form elements.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label htmlFor="tableHeaderBg">Table Header Background</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="tableHeaderBg"
+                  type="color"
+                  value={previewStyles.tableHeaderBg || "#f9fafb"}
+                  onChange={(e) => handleStyleChange('tableHeaderBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.tableHeaderBg || "#f9fafb"}
+                onChange={(e) => handleStyleChange('tableHeaderBg', e.target.value)}
+                className="font-mono"
+                placeholder="#f9fafb"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color for table headers</p>
+          </div>
+
+          <div>
+            <Label htmlFor="tableRowHoverBg">Table Row Hover</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="tableRowHoverBg"
+                  type="color"
+                  value={previewStyles.tableRowHoverBg || "#f3f4f6"}
+                  onChange={(e) => handleStyleChange('tableRowHoverBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.tableRowHoverBg || "#f3f4f6"}
+                onChange={(e) => handleStyleChange('tableRowHoverBg', e.target.value)}
+                className="font-mono"
+                placeholder="#f3f4f6"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color when hovering over table rows</p>
+          </div>
+
+          <div>
+            <Label htmlFor="cardBg">Card Background</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="cardBg"
+                  type="color"
+                  value={previewStyles.cardBg || "#FFFFFF"}
+                  onChange={(e) => handleStyleChange('cardBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.cardBg || "#FFFFFF"}
+                onChange={(e) => handleStyleChange('cardBg', e.target.value)}
+                className="font-mono"
+                placeholder="#FFFFFF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color for cards</p>
+          </div>
+
+          <div>
+            <Label htmlFor="cardHeaderBg">Card Header Background</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="cardHeaderBg"
+                  type="color"
+                  value={previewStyles.cardHeaderBg || "#f9fafb"}
+                  onChange={(e) => handleStyleChange('cardHeaderBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.cardHeaderBg || "#f9fafb"}
+                onChange={(e) => handleStyleChange('cardHeaderBg', e.target.value)}
+                className="font-mono"
+                placeholder="#f9fafb"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color for card headers</p>
+          </div>
+
+          <div>
+            <Label htmlFor="inputBg">Input Background</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="inputBg"
+                  type="color"
+                  value={previewStyles.inputBg || "#FFFFFF"}
+                  onChange={(e) => handleStyleChange('inputBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.inputBg || "#FFFFFF"}
+                onChange={(e) => handleStyleChange('inputBg', e.target.value)}
+                className="font-mono"
+                placeholder="#FFFFFF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color for form inputs</p>
+          </div>
+
+          <div>
+            <Label htmlFor="inputBorder">Input Border</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="inputBorder"
+                  type="color"
+                  value={previewStyles.inputBorder || "#d1d5db"}
+                  onChange={(e) => handleStyleChange('inputBorder', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.inputBorder || "#d1d5db"}
+                onChange={(e) => handleStyleChange('inputBorder', e.target.value)}
+                className="font-mono"
+                placeholder="#d1d5db"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Border color for form inputs</p>
           </div>
         </div>
       </div>
