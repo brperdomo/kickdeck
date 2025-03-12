@@ -149,16 +149,27 @@ export function StyleSettingsView() {
   // Combined handleSave function with all necessary functionality
   const handleSave = async () => {
     try {
+      // Create a consistent color object with all required properties
+      const stylingUpdate = {
+        ...previewStyles,
+        primary: previewStyles.primary || colors.branding.colors.primary,
+        secondary: previewStyles.secondary || colors.branding.colors.secondary,
+        accent: previewStyles.accent || colors.branding.colors.accent
+      };
+      
       // Update theme color
-      await setColor(previewStyles.primary || colors.branding.colors.primary);
+      await setColor(stylingUpdate.primary);
 
-      // Make API call to save all styling settings
-      await updateStyleConfig(previewStyles);
+      // Save styles to the server
+      await updateStyleConfig(stylingUpdate);
 
       // Apply the changes to CSS variables for branding colors
-      document.documentElement.style.setProperty('--primary', previewStyles.primary || colors.branding.colors.primary);
-      document.documentElement.style.setProperty('--secondary', previewStyles.secondary || colors.branding.colors.secondary);
-      document.documentElement.style.setProperty('--accent', previewStyles.accent || colors.branding.colors.accent);
+      document.documentElement.style.setProperty('--primary', stylingUpdate.primary);
+      document.documentElement.style.setProperty('--secondary', stylingUpdate.secondary);
+      document.documentElement.style.setProperty('--accent', stylingUpdate.accent);
+
+      // Update local state to reflect the changes
+      setPreviewStyles(stylingUpdate);
 
       toast({
         title: "Success",
@@ -182,6 +193,20 @@ export function StyleSettingsView() {
     );
   }
 
+  // Add an effect to apply CSS variables whenever previewStyles changes
+  useEffect(() => {
+    // Apply styling to CSS variables based on current previewStyles
+    if (previewStyles.primary) {
+      document.documentElement.style.setProperty('--primary', previewStyles.primary);
+    }
+    if (previewStyles.secondary) {
+      document.documentElement.style.setProperty('--secondary', previewStyles.secondary);
+    }
+    if (previewStyles.accent) {
+      document.documentElement.style.setProperty('--accent', previewStyles.accent);
+    }
+  }, [previewStyles]);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -197,6 +222,49 @@ export function StyleSettingsView() {
           )}
         </Button>
       </div>
+
+      {/* Color Preview Panel */}
+      <Card className="mb-4">
+        <CardHeader className="pb-2">
+          <CardTitle>Color Preview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="flex flex-col items-center">
+              <div 
+                className="w-16 h-16 rounded-md mb-2" 
+                style={{ backgroundColor: previewStyles.primary || colors.branding.colors.primary }}
+              />
+              <span className="text-sm font-medium">Primary</span>
+              <code className="text-xs">{previewStyles.primary || colors.branding.colors.primary}</code>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <div 
+                className="w-16 h-16 rounded-md mb-2" 
+                style={{ backgroundColor: previewStyles.secondary || colors.branding.colors.secondary }}
+              />
+              <span className="text-sm font-medium">Secondary</span>
+              <code className="text-xs">{previewStyles.secondary || colors.branding.colors.secondary}</code>
+            </div>
+            
+            <div className="flex flex-col items-center">
+              <div 
+                className="w-16 h-16 rounded-md mb-2" 
+                style={{ backgroundColor: previewStyles.accent || colors.branding.colors.accent }}
+              />
+              <span className="text-sm font-medium">Accent</span>
+              <code className="text-xs">{previewStyles.accent || colors.branding.colors.accent}</code>
+            </div>
+          </div>
+          
+          <div className="mt-4 flex gap-4">
+            <Button style={{ backgroundColor: 'var(--primary)' }}>Primary Button</Button>
+            <Button style={{ backgroundColor: 'var(--secondary)' }}>Secondary Button</Button>
+            <Button style={{ backgroundColor: 'var(--accent)' }}>Accent Button</Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-4 gap-6">
         <div className="col-span-1">
