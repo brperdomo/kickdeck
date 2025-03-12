@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { useTheme } from "@/hooks/use-theme";
 import { useToast } from "@/hooks/use-toast";
 import { Save } from "lucide-react";
@@ -74,6 +73,24 @@ export function StyleSettingsView() {
       };
       setPreviewStyles(initialStyles);
       setIsLoadingSettings(false);
+    } else {
+      // If styleConfig is empty, set default values
+      const defaultStyles = {
+        primary: colors.branding.colors.primary,
+        secondary: colors.branding.colors.secondary,
+        accent: colors.branding.colors.accent,
+        background: colors.interface.colors.background,
+        foreground: colors.interface.colors.foreground,
+        card: colors.interface.colors.card,
+        border: colors.interface.colors.border,
+        input: colors.interface.colors.input,
+        success: colors.feedback.colors.success,
+        warning: colors.feedback.colors.warning,
+        destructive: colors.feedback.colors.destructive,
+        info: colors.feedback.colors.info,
+      };
+      setPreviewStyles(defaultStyles);
+      setIsLoadingSettings(false);
     }
   }, [styleConfig]);
 
@@ -85,6 +102,13 @@ export function StyleSettingsView() {
       document.documentElement.style.setProperty('--accent', previewStyles.accent);
     }
   }, [previewStyles]);
+
+  // This effect ensures consistent hook ordering
+  useEffect(() => {
+    return () => {
+      // Cleanup if needed
+    };
+  }, []);
 
   const handleSaveStyles = useCallback(async () => {
     try {
@@ -134,62 +158,27 @@ export function StyleSettingsView() {
               <CardTitle>{colors.branding.title}</CardTitle>
               <CardDescription>{colors.branding.description}</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Primary Color */}
-              <div>
-                <Label htmlFor="primary">Primary Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="primary"
-                    type="color"
-                    value={previewStyles.primary || colors.branding.colors.primary}
-                    onChange={(e) => handleColorChange('primary', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.primary || colors.branding.colors.primary}
-                    onChange={(e) => handleColorChange('primary', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-              
-              {/* Secondary Color */}
-              <div>
-                <Label htmlFor="secondary">Secondary Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="secondary"
-                    type="color"
-                    value={previewStyles.secondary || colors.branding.colors.secondary}
-                    onChange={(e) => handleColorChange('secondary', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.secondary || colors.branding.colors.secondary}
-                    onChange={(e) => handleColorChange('secondary', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-              
-              {/* Accent Color */}
-              <div>
-                <Label htmlFor="accent">Accent Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="accent"
-                    type="color"
-                    value={previewStyles.accent || colors.branding.colors.accent}
-                    onChange={(e) => handleColorChange('accent', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.accent || colors.branding.colors.accent}
-                    onChange={(e) => handleColorChange('accent', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-3">
+                {Object.entries(colors.branding.colors).map(([key, defaultValue]) => (
+                  <div key={key} className="space-y-2">
+                    <Label htmlFor={key} className="capitalize">
+                      {key}
+                    </Label>
+                    <div className="flex gap-2">
+                      <div
+                        className="h-10 w-10 rounded-md border"
+                        style={{ backgroundColor: previewStyles[key] || defaultValue }}
+                      />
+                      <Input
+                        id={key}
+                        type="text"
+                        value={previewStyles[key] || defaultValue}
+                        onChange={(e) => handleColorChange(key, e.target.value)}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -201,100 +190,27 @@ export function StyleSettingsView() {
               <CardTitle>{colors.interface.title}</CardTitle>
               <CardDescription>{colors.interface.description}</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Background Color */}
-              <div>
-                <Label htmlFor="background">Background Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="background"
-                    type="color"
-                    value={previewStyles.background || colors.interface.colors.background}
-                    onChange={(e) => handleColorChange('background', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.background || colors.interface.colors.background}
-                    onChange={(e) => handleColorChange('background', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-              
-              {/* Foreground Color */}
-              <div>
-                <Label htmlFor="foreground">Foreground Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="foreground"
-                    type="color"
-                    value={previewStyles.foreground || colors.interface.colors.foreground}
-                    onChange={(e) => handleColorChange('foreground', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.foreground || colors.interface.colors.foreground}
-                    onChange={(e) => handleColorChange('foreground', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-              
-              {/* Card Color */}
-              <div>
-                <Label htmlFor="card">Card Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="card"
-                    type="color"
-                    value={previewStyles.card || colors.interface.colors.card}
-                    onChange={(e) => handleColorChange('card', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.card || colors.interface.colors.card}
-                    onChange={(e) => handleColorChange('card', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-              
-              {/* Border Color */}
-              <div>
-                <Label htmlFor="border">Border Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="border"
-                    type="color"
-                    value={previewStyles.border || colors.interface.colors.border}
-                    onChange={(e) => handleColorChange('border', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.border || colors.interface.colors.border}
-                    onChange={(e) => handleColorChange('border', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-              
-              {/* Input Color */}
-              <div>
-                <Label htmlFor="input">Input Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="input"
-                    type="color"
-                    value={previewStyles.input || colors.interface.colors.input}
-                    onChange={(e) => handleColorChange('input', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.input || colors.interface.colors.input}
-                    onChange={(e) => handleColorChange('input', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-3">
+                {Object.entries(colors.interface.colors).map(([key, defaultValue]) => (
+                  <div key={key} className="space-y-2">
+                    <Label htmlFor={key} className="capitalize">
+                      {key}
+                    </Label>
+                    <div className="flex gap-2">
+                      <div
+                        className="h-10 w-10 rounded-md border"
+                        style={{ backgroundColor: previewStyles[key] || defaultValue }}
+                      />
+                      <Input
+                        id={key}
+                        type="text"
+                        value={previewStyles[key] || defaultValue}
+                        onChange={(e) => handleColorChange(key, e.target.value)}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -306,81 +222,27 @@ export function StyleSettingsView() {
               <CardTitle>{colors.feedback.title}</CardTitle>
               <CardDescription>{colors.feedback.description}</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Success Color */}
-              <div>
-                <Label htmlFor="success">Success Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="success"
-                    type="color"
-                    value={previewStyles.success || colors.feedback.colors.success}
-                    onChange={(e) => handleColorChange('success', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.success || colors.feedback.colors.success}
-                    onChange={(e) => handleColorChange('success', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-              
-              {/* Warning Color */}
-              <div>
-                <Label htmlFor="warning">Warning Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="warning"
-                    type="color"
-                    value={previewStyles.warning || colors.feedback.colors.warning}
-                    onChange={(e) => handleColorChange('warning', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.warning || colors.feedback.colors.warning}
-                    onChange={(e) => handleColorChange('warning', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-              
-              {/* Destructive Color */}
-              <div>
-                <Label htmlFor="destructive">Destructive Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="destructive"
-                    type="color"
-                    value={previewStyles.destructive || colors.feedback.colors.destructive}
-                    onChange={(e) => handleColorChange('destructive', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.destructive || colors.feedback.colors.destructive}
-                    onChange={(e) => handleColorChange('destructive', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-              
-              {/* Info Color */}
-              <div>
-                <Label htmlFor="info">Info Color</Label>
-                <div className="flex gap-2 items-center">
-                  <Input
-                    id="info"
-                    type="color"
-                    value={previewStyles.info || colors.feedback.colors.info}
-                    onChange={(e) => handleColorChange('info', e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={previewStyles.info || colors.feedback.colors.info}
-                    onChange={(e) => handleColorChange('info', e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-3">
+                {Object.entries(colors.feedback.colors).map(([key, defaultValue]) => (
+                  <div key={key} className="space-y-2">
+                    <Label htmlFor={key} className="capitalize">
+                      {key}
+                    </Label>
+                    <div className="flex gap-2">
+                      <div
+                        className="h-10 w-10 rounded-md border"
+                        style={{ backgroundColor: previewStyles[key] || defaultValue }}
+                      />
+                      <Input
+                        id={key}
+                        type="text"
+                        value={previewStyles[key] || defaultValue}
+                        onChange={(e) => handleColorChange(key, e.target.value)}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
