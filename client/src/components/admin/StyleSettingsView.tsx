@@ -8,8 +8,13 @@ import { Save } from "lucide-react";
 
 export function StyleSettingsView() {
   const { styleConfig, updateStyleConfig, isLoading } = useTheme();
-  const [previewStyles, setPreviewStyles] = useState<{ [key: string]: string }>({});
-  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  const [previewStyles, setPreviewStyles] = useState<{ [key: string]: string }>({
+    primary: "#164e87",
+    secondary: "#859387",
+    accent: "#ffc107",
+    background: "#ffffff"
+  });
+  const [isLoadingSettings, setIsLoadingSettings] = useState(false);
   const { toast } = useToast();
 
   // Load current style config when component mounts
@@ -47,12 +52,20 @@ export function StyleSettingsView() {
     setPreviewStyles(prev => ({ ...prev, [key]: value }));
   }, []);
 
-  if (isLoadingSettings) {
+  if (isLoadingSettings && !styleConfig) {
     return <div className="p-4">Loading style settings...</div>;
   }
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Style Settings</h2>
+        <Button onClick={handleSaveStyles} disabled={isLoading}>
+          <Save className="mr-2 h-4 w-4" />
+          Save Changes
+        </Button>
+      </div>
+
       <div className="bg-white p-6 rounded-md shadow mb-6">
         <h3 className="text-xl font-medium mb-6">Color Settings</h3>
 
@@ -84,26 +97,8 @@ export function StyleSettingsView() {
               <div className="min-w-36 border rounded-md p-3">
                 <p className="mb-2 text-xs text-gray-500">Preview:</p>
                 <div className="flex flex-col gap-2">
-                  <div 
-                    className="h-8 rounded-md flex items-center justify-center text-white text-xs font-medium"
-                    style={{ backgroundColor: previewStyles.primary }}
-                  >
-                    Button
-                  </div>
-                  <div 
-                    className="h-1 rounded-full" 
-                    style={{ backgroundColor: previewStyles.primary }}
-                  ></div>
-                  <div className="flex gap-1">
-                    <div 
-                      className="h-4 w-4 rounded-full" 
-                      style={{ backgroundColor: previewStyles.primary }}
-                    ></div>
-                    <div 
-                      className="h-4 w-4 rounded-sm" 
-                      style={{ backgroundColor: previewStyles.primary }}
-                    ></div>
-                  </div>
+                  <div className="h-8 rounded" style={{ backgroundColor: previewStyles.primary }}></div>
+                  <Button className="w-full" style={{ backgroundColor: previewStyles.primary }}>Button</Button>
                 </div>
               </div>
             </div>
@@ -131,31 +126,13 @@ export function StyleSettingsView() {
                     placeholder="#859387"
                   />
                 </div>
-                <p className="text-sm text-gray-500">Used for secondary buttons, accents, and supporting elements</p>
+                <p className="text-sm text-gray-500">Used for secondary buttons, borders, and supporting elements</p>
               </div>
               <div className="min-w-36 border rounded-md p-3">
                 <p className="mb-2 text-xs text-gray-500">Preview:</p>
                 <div className="flex flex-col gap-2">
-                  <div 
-                    className="h-8 rounded-md border flex items-center justify-center text-xs font-medium"
-                    style={{ 
-                      backgroundColor: "white", 
-                      borderColor: previewStyles.secondary,
-                      color: previewStyles.secondary 
-                    }}
-                  >
-                    Outline Button
-                  </div>
-                  <div 
-                    className="h-1 rounded-full" 
-                    style={{ backgroundColor: previewStyles.secondary }}
-                  ></div>
-                  <div 
-                    className="h-6 text-xs px-2 rounded-full inline-flex items-center justify-center" 
-                    style={{ backgroundColor: previewStyles.secondary + "33", color: previewStyles.secondary }}
-                  >
-                    Tag
-                  </div>
+                  <div className="h-8 rounded" style={{ backgroundColor: previewStyles.secondary }}></div>
+                  <Button variant="outline" className="w-full border-2" style={{ borderColor: previewStyles.secondary, color: previewStyles.secondary }}>Button</Button>
                 </div>
               </div>
             </div>
@@ -188,23 +165,10 @@ export function StyleSettingsView() {
               <div className="min-w-36 border rounded-md p-3">
                 <p className="mb-2 text-xs text-gray-500">Preview:</p>
                 <div className="flex flex-col gap-2">
-                  <div 
-                    className="h-8 rounded-md flex items-center justify-center text-white text-xs font-medium"
-                    style={{ backgroundColor: previewStyles.accent }}
-                  >
-                    Highlight
+                  <div className="h-8 rounded" style={{ backgroundColor: previewStyles.accent }}></div>
+                  <div className="p-2 border rounded text-xs" style={{ borderColor: previewStyles.accent }}>
+                    <span className="font-medium" style={{ color: previewStyles.accent }}>Highlighted text</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div 
-                      className="h-3 w-3 rounded-full" 
-                      style={{ backgroundColor: previewStyles.accent }}
-                    ></div>
-                    <div className="text-xs">Notification</div>
-                  </div>
-                  <div 
-                    className="h-1 w-16 rounded-full" 
-                    style={{ backgroundColor: previewStyles.accent }}
-                  ></div>
                 </div>
               </div>
             </div>
@@ -220,30 +184,27 @@ export function StyleSettingsView() {
                     <Input
                       id="backgroundColor"
                       type="color"
-                      value={previewStyles.background || "#FFFFFF"}
+                      value={previewStyles.background || "#ffffff"}
                       onChange={(e) => handleColorChange('background', e.target.value)}
                       className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
                     />
                   </div>
                   <Input
-                    value={previewStyles.background || "#FFFFFF"}
+                    value={previewStyles.background || "#ffffff"}
                     onChange={(e) => handleColorChange('background', e.target.value)}
                     className="font-mono"
-                    placeholder="#FFFFFF"
+                    placeholder="#ffffff"
                   />
                 </div>
-                <p className="text-sm text-gray-500">Used for main app background and content areas</p>
+                <p className="text-sm text-gray-500">Used for page backgrounds and content areas</p>
               </div>
               <div className="min-w-36 border rounded-md p-3">
                 <p className="mb-2 text-xs text-gray-500">Preview:</p>
-                <div 
-                  className="h-24 rounded-md border p-2"
-                  style={{ backgroundColor: previewStyles.background }}
-                >
-                  <div className="bg-white bg-opacity-80 h-5 w-16 rounded mb-1"></div>
-                  <div className="bg-white bg-opacity-80 h-3 w-full rounded mb-1"></div>
-                  <div className="bg-white bg-opacity-80 h-3 w-full rounded mb-1"></div>
-                  <div className="bg-white bg-opacity-80 h-3 w-24 rounded"></div>
+                <div className="flex flex-col gap-2">
+                  <div className="h-8 rounded border" style={{ backgroundColor: previewStyles.background }}></div>
+                  <div className="p-2 rounded text-xs text-gray-800" style={{ backgroundColor: previewStyles.background }}>
+                    Sample background
+                  </div>
                 </div>
               </div>
             </div>
@@ -251,59 +212,18 @@ export function StyleSettingsView() {
         </div>
       </div>
 
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Style Settings</h2>
-        <Button onClick={handleSaveStyles} disabled={isLoading}>
-          <Save className="mr-2 h-4 w-4" />
-          Save Changes
-        </Button>
-      </div>
-
-      {/* Color Scheme Preview */}
       <div className="bg-white p-6 rounded-md shadow">
-        <h3 className="text-lg font-medium mb-4">Color Scheme Preview</h3>
-        <div 
-          className="border rounded-lg p-4"
-          style={{ backgroundColor: previewStyles.background }}
-        >
-          <div className="flex gap-4 flex-wrap">
-            <div 
-              className="h-10 px-4 rounded-md flex items-center justify-center text-white"
-              style={{ backgroundColor: previewStyles.primary }}
-            >
-              Primary Button
-            </div>
-            <div 
-              className="h-10 px-4 rounded-md border flex items-center justify-center"
-              style={{ 
-                borderColor: previewStyles.secondary,
-                color: previewStyles.secondary 
-              }}
-            >
-              Secondary Button
-            </div>
-            <div 
-              className="h-10 px-4 rounded-md flex items-center justify-center text-white"
-              style={{ backgroundColor: previewStyles.accent }}
-            >
-              Accent Button
-            </div>
+        <h3 className="text-xl font-medium mb-4">Preview</h3>
+        <div className="p-4 rounded-md" style={{ backgroundColor: previewStyles.background }}>
+          <div className="flex gap-3 mb-4">
+            <Button style={{ backgroundColor: previewStyles.primary }}>Primary Button</Button>
+            <Button variant="outline" style={{ borderColor: previewStyles.secondary, color: previewStyles.secondary }}>Secondary</Button>
+            <Button variant="ghost" style={{ color: previewStyles.accent }}>Ghost</Button>
           </div>
-          <div className="mt-6 p-4 rounded-md border">
-            <div className="h-4 w-36 rounded mb-3" style={{ backgroundColor: previewStyles.primary + '50' }}></div>
-            <div className="h-2 w-full rounded-sm mb-2" style={{ backgroundColor: previewStyles.secondary + '30' }}></div>
-            <div className="h-2 w-full rounded-sm mb-2" style={{ backgroundColor: previewStyles.secondary + '30' }}></div>
-            <div className="h-2 w-3/4 rounded-sm mb-2" style={{ backgroundColor: previewStyles.secondary + '30' }}></div>
-            <div className="mt-4 flex justify-end">
-              <div 
-                className="h-8 w-8 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: previewStyles.accent, color: 'white' }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </div>
-            </div>
+          <div className="p-4 border rounded-md mb-4" style={{ borderColor: previewStyles.secondary }}>
+            <h4 className="font-medium mb-2" style={{ color: previewStyles.primary }}>Content Area</h4>
+            <p className="text-sm">This is how content will appear on your site.</p>
+            <p className="text-sm mt-1">Important information could be <span style={{ color: previewStyles.accent }}>highlighted like this</span>.</p>
           </div>
         </div>
       </div>
