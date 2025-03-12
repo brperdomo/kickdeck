@@ -405,7 +405,7 @@ export function FeeManagement() {
         throw new Error("No fee selected");
       }
 
-      if (!assignments.length) {
+      if (!ageGroupIds.length) {
         console.warn("No age groups selected for this fee");
         // Still continue as user might want to clear all assignments
       }
