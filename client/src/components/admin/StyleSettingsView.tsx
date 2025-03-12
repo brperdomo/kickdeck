@@ -1,13 +1,19 @@
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { useTheme } from "@/hooks/use-theme";
 import { useToast } from "@/hooks/use-toast";
 import { Save } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const colors = {
   branding: {
@@ -43,7 +49,7 @@ const colors = {
 };
 
 export function StyleSettingsView() {
-  const { currentColor, setColor, styleConfig, updateStyleConfig, isLoading } = useTheme();
+  const { styleConfig, updateStyleConfig, isLoading } = useTheme();
   const [activeSection, setActiveSection] = useState("branding");
   const [previewStyles, setPreviewStyles] = useState<{ [key: string]: string }>({});
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
@@ -52,7 +58,7 @@ export function StyleSettingsView() {
   // Initialize preview styles when the component mounts
   useEffect(() => {
     if (styleConfig) {
-      setPreviewStyles({
+      const initialStyles = {
         primary: styleConfig.primary || colors.branding.colors.primary,
         secondary: styleConfig.secondary || colors.branding.colors.secondary,
         accent: styleConfig.accent || colors.branding.colors.accent,
@@ -65,14 +71,15 @@ export function StyleSettingsView() {
         warning: styleConfig.warning || colors.feedback.colors.warning,
         destructive: styleConfig.destructive || colors.feedback.colors.destructive,
         info: styleConfig.info || colors.feedback.colors.info,
-      });
+      };
+      setPreviewStyles(initialStyles);
       setIsLoadingSettings(false);
     }
   }, [styleConfig]);
 
   // Apply preview styles to document
   useEffect(() => {
-    if (previewStyles.primary) {
+    if (Object.keys(previewStyles).length > 0) {
       document.documentElement.style.setProperty('--primary', previewStyles.primary);
       document.documentElement.style.setProperty('--secondary', previewStyles.secondary);
       document.documentElement.style.setProperty('--accent', previewStyles.accent);
@@ -127,7 +134,7 @@ export function StyleSettingsView() {
               <CardTitle>{colors.branding.title}</CardTitle>
               <CardDescription>{colors.branding.description}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Primary Color */}
               <div>
                 <Label htmlFor="primary">Primary Color</Label>
@@ -146,7 +153,7 @@ export function StyleSettingsView() {
                   />
                 </div>
               </div>
-
+              
               {/* Secondary Color */}
               <div>
                 <Label htmlFor="secondary">Secondary Color</Label>
@@ -165,7 +172,7 @@ export function StyleSettingsView() {
                   />
                 </div>
               </div>
-
+              
               {/* Accent Color */}
               <div>
                 <Label htmlFor="accent">Accent Color</Label>
@@ -194,7 +201,7 @@ export function StyleSettingsView() {
               <CardTitle>{colors.interface.title}</CardTitle>
               <CardDescription>{colors.interface.description}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Background Color */}
               <div>
                 <Label htmlFor="background">Background Color</Label>
@@ -213,10 +220,10 @@ export function StyleSettingsView() {
                   />
                 </div>
               </div>
-
+              
               {/* Foreground Color */}
               <div>
-                <Label htmlFor="foreground">Text Color</Label>
+                <Label htmlFor="foreground">Foreground Color</Label>
                 <div className="flex gap-2 items-center">
                   <Input
                     id="foreground"
@@ -232,10 +239,10 @@ export function StyleSettingsView() {
                   />
                 </div>
               </div>
-
+              
               {/* Card Color */}
               <div>
-                <Label htmlFor="card">Card Background</Label>
+                <Label htmlFor="card">Card Color</Label>
                 <div className="flex gap-2 items-center">
                   <Input
                     id="card"
@@ -251,7 +258,7 @@ export function StyleSettingsView() {
                   />
                 </div>
               </div>
-
+              
               {/* Border Color */}
               <div>
                 <Label htmlFor="border">Border Color</Label>
@@ -270,6 +277,25 @@ export function StyleSettingsView() {
                   />
                 </div>
               </div>
+              
+              {/* Input Color */}
+              <div>
+                <Label htmlFor="input">Input Color</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="input"
+                    type="color"
+                    value={previewStyles.input || colors.interface.colors.input}
+                    onChange={(e) => handleColorChange('input', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.input || colors.interface.colors.input}
+                    onChange={(e) => handleColorChange('input', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -280,7 +306,7 @@ export function StyleSettingsView() {
               <CardTitle>{colors.feedback.title}</CardTitle>
               <CardDescription>{colors.feedback.description}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Success Color */}
               <div>
                 <Label htmlFor="success">Success Color</Label>
@@ -299,7 +325,7 @@ export function StyleSettingsView() {
                   />
                 </div>
               </div>
-
+              
               {/* Warning Color */}
               <div>
                 <Label htmlFor="warning">Warning Color</Label>
@@ -318,7 +344,7 @@ export function StyleSettingsView() {
                   />
                 </div>
               </div>
-
+              
               {/* Destructive Color */}
               <div>
                 <Label htmlFor="destructive">Destructive Color</Label>
@@ -337,7 +363,7 @@ export function StyleSettingsView() {
                   />
                 </div>
               </div>
-
+              
               {/* Info Color */}
               <div>
                 <Label htmlFor="info">Info Color</Label>
