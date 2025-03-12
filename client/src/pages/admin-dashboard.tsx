@@ -94,7 +94,6 @@ import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
 import FormTemplateEditPage from "@/pages/form-template-edit";
 import FormTemplateCreatePage from "@/pages/form-template-create";
 import FormTemplatesPage from "@/pages/form-templates";
-import { ClientManagementView } from "@/components/admin/ClientManagementView"; // Import ClientManagementView
 
 
 function AdminBanner() {
@@ -122,7 +121,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'coupons' | 'formTemplates' | 'clientManagement';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'coupons' | 'formTemplates';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -976,7 +975,7 @@ function OrganizationSettingsForm() {
       const v = new Vibrant(objectUrl);
 
       //      // Get the palette with error handling
-      const palette = awaitv.getPalette();
+      const palette = await v.getPalette();
 
       // Set primary color from the Vibrant swatch
       if (palette.Vibrant) {
@@ -1660,16 +1659,13 @@ function AdminDashboard() {
         return <HouseholdsView />;
       case 'scheduling':
         return <SchedulingView />;
+      case 'settings':
+        if (activeSettingsView === 'general') {
+          return <GeneralSettingsView />;
+        }
+        return <SettingsView activeSettingsView={activeSettingsView} />;
       case 'reports':
         return <ReportsView />;
-      case 'files':
-        return <FileManager />;
-      case 'coupons':
-        return <CouponManagement />;
-      case 'formTemplates':
-        return <FormTemplatesView />;
-      case 'clientManagement':
-        return <ClientManagementView />;
       case 'account':
         return (
           <Suspense fallback={
@@ -1680,6 +1676,19 @@ function AdminDashboard() {
             <MyAccount />
           </Suspense>
         );
+      case 'files':
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">File Manager</h2>
+            </div>
+            <FileManager />
+          </div>
+        );
+      case 'coupons':
+        return <CouponManagement />;
+      case 'formTemplates':
+        return <FormTemplatesView />;
       default:
         return <div>Feature coming soon</div>;
     }
