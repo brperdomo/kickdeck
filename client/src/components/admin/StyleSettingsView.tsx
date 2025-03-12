@@ -26,6 +26,12 @@ export function StyleSettingsView() {
         if (response.ok) {
           const data = await response.json();
           setPreviewStyles(data);
+          
+          // Apply admin dashboard colors immediately
+          document.documentElement.style.setProperty('--admin-nav-bg', data.adminNavBackground || '#FFFFFF');
+          document.documentElement.style.setProperty('--admin-nav-text', data.adminNavText || '#000000');
+          document.documentElement.style.setProperty('--admin-nav-active', data.adminNavActive || data.primary || '#000000');
+          document.documentElement.style.setProperty('--admin-nav-hover', data.adminNavHover || '#f3f4f6');
         } else {
           console.error('Failed to fetch styling settings');
         }
@@ -49,12 +55,24 @@ export function StyleSettingsView() {
   const handleSaveStyles = async () => {
     setIsSaving(true);
     try {
+      // Make sure we include all style settings
+      const completeStyles = {
+        ...previewStyles,
+        // Ensure the admin dashboard specific colors are included
+        adminNavBackground: previewStyles.adminNavBackground || '#FFFFFF',
+        adminNavText: previewStyles.adminNavText || '#000000',
+        adminNavActive: previewStyles.adminNavActive || previewStyles.primary || '#000000',
+        adminNavHover: previewStyles.adminNavHover || '#f3f4f6',
+      };
+
+      console.log('Saving complete style settings:', completeStyles);
+      
       const response = await fetch('/api/admin/styling', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(previewStyles),
+        body: JSON.stringify(completeStyles),
       });
 
       if (response.ok) {
@@ -62,6 +80,12 @@ export function StyleSettingsView() {
           title: "Success",
           description: "Style settings saved successfully",
         });
+        
+        // Apply admin dashboard colors immediately
+        document.documentElement.style.setProperty('--admin-nav-bg', completeStyles.adminNavBackground);
+        document.documentElement.style.setProperty('--admin-nav-text', completeStyles.adminNavText);
+        document.documentElement.style.setProperty('--admin-nav-active', completeStyles.adminNavActive);
+        document.documentElement.style.setProperty('--admin-nav-hover', completeStyles.adminNavHover);
       } else {
         toast({
           title: "Error",

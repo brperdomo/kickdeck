@@ -1455,6 +1455,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           success: '#32CD32',
           warning: '#FF8C00',
           destructive: '#E63946',
+          // Admin dashboard specific colors
+          adminNavBackground: settings?.adminNavBackground || '#FFFFFF',
+          adminNavText: settings?.adminNavText || '#000000',
+          adminNavActive: settings?.adminNavActive || settings?.primaryColor || '#000000',
+          adminNavHover: settings?.adminNavHover || '#f3f4f6',
+          // Admin role colors
           superAdmin: '#DB4D4D',
           tournamentAdmin: '#4CAF50',
           scoreAdmin: '#4169E1',
@@ -1488,6 +1494,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               secondaryColor: styleConfig.secondary,
               backgroundColor: styleConfig.background,
               logoUrl: styleConfig.logoUrl,
+              adminNavBackground: styleConfig.adminNavBackground,
+              adminNavText: styleConfig.adminNavText,
+              adminNavActive: styleConfig.adminNavActive,
+              adminNavHover: styleConfig.adminNavHover,
               updatedAt: new Date().toISOString(),
             })
             .where(eq(organizationSettings.id, settings.id));
@@ -1499,6 +1509,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               secondaryColor: styleConfig.secondary,
               backgroundColor: styleConfig.background, 
               logoUrl: styleConfig.logoUrl,
+              adminNavBackground: styleConfig.adminNavBackground,
+              adminNavText: styleConfig.adminNavText,
+              adminNavActive: styleConfig.adminNavActive,
+              adminNavHover: styleConfig.adminNavHover,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
             });
