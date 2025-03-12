@@ -1,6 +1,6 @@
 modules = ["nodejs-20", "web", "postgresql-16"]
 run = "npm run dev"
-hidden = [".config", "package-lock.json"]
+hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
@@ -11,11 +11,19 @@ build = ["npm", "run", "build"]
 run = ["npm", "run", "start"]
 
 [[ports]]
+localPort = 3000
+externalPort = 3001
+
+[[ports]]
 localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 3000
+localPort = 5001
+externalPort = 3002
+
+[[ports]]
+localPort = 24678
 externalPort = 3000
 
 [workflows]

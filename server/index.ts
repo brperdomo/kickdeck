@@ -188,7 +188,7 @@ async function testDbConnection() {
 
     try {
       const availablePort = await findAvailablePort(PORT);
-      server.listen(availablePort, "0.0.0.0", () => { // Modified to listen on 0.0.0.0
+      server.listen(availablePort, "0.0.0.0", () => {
         log(`Server started successfully on port ${availablePort}`);
       });
     } catch (error) {
