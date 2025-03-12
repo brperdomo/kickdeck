@@ -509,4 +509,4 @@ export function StyleSettingsView() {
   );
 }
 
-export default StyleSettingsView;
+export { StyleSettingsView };
