@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Loader2, Save } from "lucide-react";
+
+import React, { useState, useEffect, useCallback } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { useTheme } from "@/hooks/use-theme";
 import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Save } from "lucide-react";
 
 const colors = {
   branding: {
@@ -48,182 +49,317 @@ export function StyleSettingsView() {
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
   const { toast } = useToast();
 
-  // All hook declarations must be at the top level and unconditional
-  // This empty effect always exists to ensure consistent hook count
+  // Initialize preview styles when the component mounts
   useEffect(() => {
-    return () => {
-      // Cleanup if needed
-    };
-  }, []);
+    if (styleConfig) {
+      setPreviewStyles({
+        primary: styleConfig.primary || colors.branding.colors.primary,
+        secondary: styleConfig.secondary || colors.branding.colors.secondary,
+        accent: styleConfig.accent || colors.branding.colors.accent,
+        background: styleConfig.background || colors.interface.colors.background,
+        foreground: styleConfig.foreground || colors.interface.colors.foreground,
+        card: styleConfig.card || colors.interface.colors.card,
+        border: styleConfig.border || colors.interface.colors.border,
+        input: styleConfig.input || colors.interface.colors.input,
+        success: styleConfig.success || colors.feedback.colors.success,
+        warning: styleConfig.warning || colors.feedback.colors.warning,
+        destructive: styleConfig.destructive || colors.feedback.colors.destructive,
+        info: styleConfig.info || colors.feedback.colors.info,
+      });
+      setIsLoadingSettings(false);
+    }
+  }, [styleConfig]);
 
+  // Apply preview styles to document
   useEffect(() => {
-    const loadStylingSettings = async () => {
-      try {
-        const response = await fetch('/api/admin/styling');
-        if (!response.ok) {
-          throw new Error('Failed to load styling settings');
-        }
-        const settings = await response.json();
-        setPreviewStyles(settings);
-
-        // Apply loaded settings to CSS variables
-        Object.entries(settings).forEach(([key, value]) => {
-          if (typeof value === 'string' && value.startsWith('#')) {
-            document.documentElement.style.setProperty(`--${key}`, value);
-          }
-        });
-      } catch (error) {
-        console.error('Error loading styling settings:', error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load current styling settings",
-        });
-      } finally {
-        setIsLoadingSettings(false);
-      }
-    };
-
-    loadStylingSettings();
-  }, [toast]);
-
-  // Add an effect to apply CSS variables whenever previewStyles changes
-  useEffect(() => {
-    // Apply styling to CSS variables based on current previewStyles
     if (previewStyles.primary) {
       document.documentElement.style.setProperty('--primary', previewStyles.primary);
-    }
-    if (previewStyles.secondary) {
       document.documentElement.style.setProperty('--secondary', previewStyles.secondary);
-    }
-    if (previewStyles.accent) {
       document.documentElement.style.setProperty('--accent', previewStyles.accent);
     }
   }, [previewStyles]);
 
-  // Combined handleSave function with all necessary functionality
-  const handleSave = async () => {
+  const handleSaveStyles = useCallback(async () => {
     try {
-      // Create a consistent color object with all required properties
-      const stylingUpdate = {
-        ...previewStyles,
-        primary: previewStyles.primary || colors.branding.colors.primary,
-        secondary: previewStyles.secondary || colors.branding.colors.secondary,
-        accent: previewStyles.accent || colors.branding.colors.accent
-      };
-
-      // Update theme color
-      await setColor(stylingUpdate.primary);
-
-      // Save styles to the server
-      await updateStyleConfig(stylingUpdate);
-
-      // Apply the changes to CSS variables for branding colors
-      document.documentElement.style.setProperty('--primary', stylingUpdate.primary);
-      document.documentElement.style.setProperty('--secondary', stylingUpdate.secondary);
-      document.documentElement.style.setProperty('--accent', stylingUpdate.accent);
-
-      // Update local state to reflect the changes
-      setPreviewStyles(stylingUpdate);
-
+      await updateStyleConfig(previewStyles);
       toast({
         title: "Success",
-        description: "Styling settings updated successfully",
+        description: "Style settings have been updated successfully"
       });
     } catch (error) {
-      console.error('Failed to save styling settings:', error);
+      console.error("Failed to update style settings:", error);
       toast({
-        variant: "destructive",
         title: "Error",
-        description: "Failed to save styling settings",
+        description: "Failed to update style settings",
+        variant: "destructive"
       });
     }
-  };
+  }, [previewStyles, updateStyleConfig, toast]);
 
-  const handleColorChange = (section: string, key: string, value: string) => {
-    setPreviewStyles(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  };
+  const handleColorChange = useCallback((key: string, value: string) => {
+    setPreviewStyles(prev => ({ ...prev, [key]: value }));
+  }, []);
 
   if (isLoadingSettings) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <div className="p-4">Loading style settings...</div>;
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Style Settings</h2>
-        <Button onClick={handleSave} disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving Changes
-            </>
-          ) : (
-            'Save All Changes'
-          )}
+        <Button onClick={handleSaveStyles} disabled={isLoading}>
+          <Save className="mr-2 h-4 w-4" />
+          Save Changes
         </Button>
       </div>
 
-      <div className="grid gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <Tabs defaultValue="branding" onValueChange={setActiveSection}>
-              <TabsList className="mb-4">
-                <TabsTrigger value="branding">Brand Colors</TabsTrigger>
-                <TabsTrigger value="interface">Interface</TabsTrigger>
-                <TabsTrigger value="feedback">Feedback</TabsTrigger>
-              </TabsList>
+      <Tabs defaultValue={activeSection} onValueChange={setActiveSection}>
+        <TabsList className="mb-4">
+          <TabsTrigger value="branding">Brand Colors</TabsTrigger>
+          <TabsTrigger value="interface">Interface Colors</TabsTrigger>
+          <TabsTrigger value="feedback">Feedback Colors</TabsTrigger>
+        </TabsList>
 
-              {Object.entries(colors).map(([section, { title, description, colors: sectionColors }]) => (
-                <TabsContent key={section} value={section} className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-medium">{title}</h3>
-                    <p className="text-sm text-gray-500">{description}</p>
-                  </div>
+        <TabsContent value="branding">
+          <Card>
+            <CardHeader>
+              <CardTitle>{colors.branding.title}</CardTitle>
+              <CardDescription>{colors.branding.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Primary Color */}
+              <div>
+                <Label htmlFor="primary">Primary Color</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="primary"
+                    type="color"
+                    value={previewStyles.primary || colors.branding.colors.primary}
+                    onChange={(e) => handleColorChange('primary', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.primary || colors.branding.colors.primary}
+                    onChange={(e) => handleColorChange('primary', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {Object.entries(sectionColors).map(([key, value]) => (
-                      <div key={key} className="space-y-2">
-                        <Label htmlFor={key}>
-                          {key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
-                        </Label>
-                        <div className="flex gap-2">
-                          <Input
-                            type="color"
-                            id={key}
-                            value={previewStyles[key] || value}
-                            onChange={(e) => handleColorChange(section, key, e.target.value)}
-                            className="w-12 h-12 p-1"
-                          />
-                          <Input
-                            value={previewStyles[key] || value}
-                            onChange={(e) => {
-                              const newValue = e.target.value;
-                              if (newValue.match(/^#[0-9A-Fa-f]{6}$/)) {
-                                handleColorChange(section, key, newValue);
-                              }
-                            }}
-                            placeholder="#000000"
-                            className="font-mono uppercase"
-                            maxLength={7}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
+              {/* Secondary Color */}
+              <div>
+                <Label htmlFor="secondary">Secondary Color</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="secondary"
+                    type="color"
+                    value={previewStyles.secondary || colors.branding.colors.secondary}
+                    onChange={(e) => handleColorChange('secondary', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.secondary || colors.branding.colors.secondary}
+                    onChange={(e) => handleColorChange('secondary', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Accent Color */}
+              <div>
+                <Label htmlFor="accent">Accent Color</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="accent"
+                    type="color"
+                    value={previewStyles.accent || colors.branding.colors.accent}
+                    onChange={(e) => handleColorChange('accent', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.accent || colors.branding.colors.accent}
+                    onChange={(e) => handleColorChange('accent', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="interface">
+          <Card>
+            <CardHeader>
+              <CardTitle>{colors.interface.title}</CardTitle>
+              <CardDescription>{colors.interface.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Background Color */}
+              <div>
+                <Label htmlFor="background">Background Color</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="background"
+                    type="color"
+                    value={previewStyles.background || colors.interface.colors.background}
+                    onChange={(e) => handleColorChange('background', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.background || colors.interface.colors.background}
+                    onChange={(e) => handleColorChange('background', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Foreground Color */}
+              <div>
+                <Label htmlFor="foreground">Text Color</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="foreground"
+                    type="color"
+                    value={previewStyles.foreground || colors.interface.colors.foreground}
+                    onChange={(e) => handleColorChange('foreground', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.foreground || colors.interface.colors.foreground}
+                    onChange={(e) => handleColorChange('foreground', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Card Color */}
+              <div>
+                <Label htmlFor="card">Card Background</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="card"
+                    type="color"
+                    value={previewStyles.card || colors.interface.colors.card}
+                    onChange={(e) => handleColorChange('card', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.card || colors.interface.colors.card}
+                    onChange={(e) => handleColorChange('card', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Border Color */}
+              <div>
+                <Label htmlFor="border">Border Color</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="border"
+                    type="color"
+                    value={previewStyles.border || colors.interface.colors.border}
+                    onChange={(e) => handleColorChange('border', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.border || colors.interface.colors.border}
+                    onChange={(e) => handleColorChange('border', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="feedback">
+          <Card>
+            <CardHeader>
+              <CardTitle>{colors.feedback.title}</CardTitle>
+              <CardDescription>{colors.feedback.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Success Color */}
+              <div>
+                <Label htmlFor="success">Success Color</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="success"
+                    type="color"
+                    value={previewStyles.success || colors.feedback.colors.success}
+                    onChange={(e) => handleColorChange('success', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.success || colors.feedback.colors.success}
+                    onChange={(e) => handleColorChange('success', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Warning Color */}
+              <div>
+                <Label htmlFor="warning">Warning Color</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="warning"
+                    type="color"
+                    value={previewStyles.warning || colors.feedback.colors.warning}
+                    onChange={(e) => handleColorChange('warning', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.warning || colors.feedback.colors.warning}
+                    onChange={(e) => handleColorChange('warning', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Destructive Color */}
+              <div>
+                <Label htmlFor="destructive">Destructive Color</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="destructive"
+                    type="color"
+                    value={previewStyles.destructive || colors.feedback.colors.destructive}
+                    onChange={(e) => handleColorChange('destructive', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.destructive || colors.feedback.colors.destructive}
+                    onChange={(e) => handleColorChange('destructive', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Info Color */}
+              <div>
+                <Label htmlFor="info">Info Color</Label>
+                <div className="flex gap-2 items-center">
+                  <Input
+                    id="info"
+                    type="color"
+                    value={previewStyles.info || colors.feedback.colors.info}
+                    onChange={(e) => handleColorChange('info', e.target.value)}
+                    className="w-12 h-12 p-1"
+                  />
+                  <Input
+                    value={previewStyles.info || colors.feedback.colors.info}
+                    onChange={(e) => handleColorChange('info', e.target.value)}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
