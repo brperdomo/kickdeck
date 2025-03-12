@@ -207,6 +207,14 @@ export function StyleSettingsView() {
     }
   }, [previewStyles]);
 
+  // This useEffect should always be here, not conditionally rendered
+  useEffect(() => {
+    // This empty effect ensures consistent hook ordering
+    return () => {
+      // Cleanup if needed
+    };
+  }, []);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
