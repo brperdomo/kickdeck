@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,7 +25,7 @@ export function StyleSettingsView() {
         if (response.ok) {
           const data = await response.json();
           setPreviewStyles(data);
-          
+
           // Apply admin dashboard colors immediately
           document.documentElement.style.setProperty('--admin-nav-bg', data.adminNavBackground || '#FFFFFF');
           document.documentElement.style.setProperty('--admin-nav-text', data.adminNavText || '#000000');
@@ -66,7 +65,7 @@ export function StyleSettingsView() {
       };
 
       console.log('Saving complete style settings:', completeStyles);
-      
+
       const response = await fetch('/api/admin/styling', {
         method: 'POST',
         headers: {
@@ -80,7 +79,7 @@ export function StyleSettingsView() {
           title: "Success",
           description: "Style settings saved successfully",
         });
-        
+
         // Apply admin dashboard colors immediately
         document.documentElement.style.setProperty('--admin-nav-bg', completeStyles.adminNavBackground);
         document.documentElement.style.setProperty('--admin-nav-text', completeStyles.adminNavText);
@@ -118,7 +117,7 @@ export function StyleSettingsView() {
     <div className="space-y-6">
       <div className="bg-white p-4 rounded-md shadow mb-6">
         <h3 className="text-lg font-medium mb-4">Color Settings</h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <Label htmlFor="primaryColor">Primary Color</Label>
@@ -141,7 +140,7 @@ export function StyleSettingsView() {
             </div>
             <p className="text-sm text-gray-500 mt-1">Used for primary buttons and important UI elements</p>
           </div>
-          
+
           <div>
             <Label htmlFor="secondaryColor">Secondary Color</Label>
             <div className="flex items-center gap-2 mt-1.5">
@@ -163,7 +162,7 @@ export function StyleSettingsView() {
             </div>
             <p className="text-sm text-gray-500 mt-1">Used for secondary buttons and accents</p>
           </div>
-          
+
           <div>
             <Label htmlFor="accentColor">Accent Color</Label>
             <div className="flex items-center gap-2 mt-1.5">
@@ -185,7 +184,7 @@ export function StyleSettingsView() {
             </div>
             <p className="text-sm text-gray-500 mt-1">Used for highlighted items and hover states</p>
           </div>
-          
+
           <div>
             <Label htmlFor="backgroundColor">Background Color</Label>
             <div className="flex items-center gap-2 mt-1.5">
@@ -215,7 +214,7 @@ export function StyleSettingsView() {
         <p className="text-sm text-gray-500 mb-4">
           These colors control the appearance of the admin dashboard navigation and elements.
         </p>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <Label htmlFor="adminNavBgColor">Navigation Background</Label>
@@ -238,7 +237,7 @@ export function StyleSettingsView() {
             </div>
             <p className="text-sm text-gray-500 mt-1">Background color of the admin sidebar</p>
           </div>
-          
+
           <div>
             <Label htmlFor="adminNavTextColor">Navigation Text</Label>
             <div className="flex items-center gap-2 mt-1.5">
@@ -260,7 +259,7 @@ export function StyleSettingsView() {
             </div>
             <p className="text-sm text-gray-500 mt-1">Text color for sidebar navigation items</p>
           </div>
-          
+
           <div>
             <Label htmlFor="adminNavHoverColor">Navigation Hover</Label>
             <div className="flex items-center gap-2 mt-1.5">
@@ -282,7 +281,7 @@ export function StyleSettingsView() {
             </div>
             <p className="text-sm text-gray-500 mt-1">Background color when hovering over navigation items</p>
           </div>
-          
+
           <div>
             <Label htmlFor="adminNavActiveColor">Navigation Active</Label>
             <div className="flex items-center gap-2 mt-1.5">
@@ -332,7 +331,7 @@ export function StyleSettingsView() {
                 </p>
               </div>
             </div>
-            
+
             <div 
               className="rounded-md p-6 mt-4 border" 
               style={{ backgroundColor: previewStyles.background }}
@@ -371,7 +370,7 @@ export function StyleSettingsView() {
                     Accent Button
                   </button>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4 mt-6">
                   <div 
                     className="p-4 rounded-md border"
@@ -394,7 +393,7 @@ export function StyleSettingsView() {
                     <p className="text-sm mt-1">Sample card with secondary color.</p>
                   </div>
                 </div>
-                
+
                 <div 
                   className="p-4 rounded-md border mt-4"
                   style={{ 
