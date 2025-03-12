@@ -1521,8 +1521,6 @@ function ComplexesView() {
 
 // Using the simpler EventsView implementation from line 126
 
-import { ClientManagementView } from "@/components/admin/ClientManagementView";
-
 function HouseholdsView() {
   return <ClientManagementView />;
 }
