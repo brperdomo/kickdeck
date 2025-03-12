@@ -400,6 +400,19 @@ export function FeeManagement() {
     }));
 
     try {
+      if (!eventIdParam) {
+        throw new Error("Event ID is missing");
+      }
+
+      if (!selectedFeeId) {
+        throw new Error("No fee selected");
+      }
+
+      if (!assignments.length) {
+        console.warn("No age groups selected for this fee");
+        // Still continue as user might want to clear all assignments
+      }
+
       // Call API to save assignments
       const response = await fetch(`/api/admin/events/${eventIdParam}/fee-assignments`, {
         method: 'POST',
@@ -415,17 +428,25 @@ export function FeeManagement() {
       // First check for errors by examining the response
       let responseData;
       const contentType = response.headers.get('content-type');
-      
+
+      if (!response.ok) {
+        if (contentType && contentType.includes('application/json')) {
+          responseData = await response.json();
+          throw new Error(responseData.error || `Server error: ${response.status}`);
+        } else {
+          const text = await response.text();
+          console.error("Server returned non-JSON error response:", text);
+          throw new Error(`Server error: ${response.status}`);
+        }
+      }
+
+      // Handle successful response
       if (contentType && contentType.includes('application/json')) {
         responseData = await response.json();
       } else {
         const text = await response.text();
-        console.error("Server returned non-JSON response:", text);
-        throw new Error("Server returned an invalid response format");
-      }
-
-      if (!response.ok) {
-        throw new Error(responseData.error || 'Failed to save assignments');
+        console.error("Server returned non-JSON success response:", text);
+        // Still continue as it might be an empty response
       }
 
       setIsAssignFeeOpen(false);

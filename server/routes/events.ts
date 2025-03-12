@@ -442,12 +442,15 @@ router.patch('/fees/:feeId', async (req, res) => {
 });
 
 // Handle fee assignments
-router.post('/fee-assignments', async (req, res) => {
+router.post('/:eventId/fee-assignments', async (req, res) => {
   try {
+    console.log("Fee assignment request received with params:", req.params);
+    console.log("Fee assignment request body:", req.body);
+    
     const eventId = parseInt(req.params.eventId);
     const { feeId, assignments } = req.body;
 
-    console.log("Received fee assignment request:", { eventId, feeId, assignments });
+    console.log("Processed fee assignment data:", { eventId, feeId, assignments });
 
     if (!feeId || !assignments || !Array.isArray(assignments)) {
       return res.status(400).json({ error: 'Invalid request data' });
