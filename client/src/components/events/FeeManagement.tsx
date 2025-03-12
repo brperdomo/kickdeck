@@ -420,33 +420,38 @@ export function FeeManagement() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          assignments,
-          feeId: selectedFeeId
+          feeId: selectedFeeId,
+          assignments
         }),
       });
 
-      // First check for errors by examining the response
-      let responseData;
-      const contentType = response.headers.get('content-type');
-
+      // Check if response is OK
       if (!response.ok) {
+        const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
-          responseData = await response.json();
-          throw new Error(responseData.error || `Server error: ${response.status}`);
+          const errorData = await response.json();
+          throw new Error(errorData.error || `Server error: ${response.status}`);
         } else {
           const text = await response.text();
           console.error("Server returned non-JSON error response:", text);
           throw new Error(`Server error: ${response.status}`);
         }
       }
-
-      // Handle successful response
-      if (contentType && contentType.includes('application/json')) {
-        responseData = await response.json();
-      } else {
-        const text = await response.text();
-        console.error("Server returned non-JSON success response:", text);
-        // Still continue as it might be an empty response
+      
+      // For successful responses, try to parse JSON if available
+      const contentType = response.headers.get('content-type');
+      let responseData = null;
+      
+      try {
+        if (contentType && contentType.includes('application/json')) {
+          responseData = await response.json();
+        } else if (response.status !== 204) { // No content
+          // Log but don't throw error for successful non-JSON responses
+          const text = await response.text();
+          console.log("Server returned non-JSON success response, this is okay for some endpoints");
+        }
+      } catch (e) {
+        console.warn("Could not parse response as JSON, continuing anyway:", e);
       }
 
       setIsAssignFeeOpen(false);
