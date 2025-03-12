@@ -1604,6 +1604,7 @@ function AdminDashboard() {
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
+  const [showInternalOps, setShowInternalOps] = useState(false); // Added state for Internal Ops panel
 
   // Add Form Templates to the navigation
   const formTemplatesButton = (
@@ -1910,12 +1911,18 @@ function AdminDashboard() {
 
           {renderView()}
         </div>
-      </div>
 
-      <UpdatesLogModal
-        open={showUpdatesLog}
-        onOpenChange={setShowUpdatesLog}
-      />
+        {/* Internal Operations Panel */}
+        {showInternalOps && (
+          <InternalOperationsPanel
+            setActiveView={setActiveView}
+            openSettings={(section) => {
+              setIsSettingsOpen(true);
+              setActiveSettingsView(section as SettingsView);
+            }}
+          />
+        )}
+      </div>
       {showLogoutOverlay && (
         <LogoutOverlay onFinished={() => setShowLogoutOverlay(false)} />
       )}
@@ -1988,6 +1995,7 @@ function ThemeEditor() {
             value={theme.backgroundColor}
             onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
           />
+        ```javascript
         </div>
         <div>
           <Label htmlFor="textColor">Text Color</Label>

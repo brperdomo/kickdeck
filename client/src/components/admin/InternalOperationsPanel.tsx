@@ -16,6 +16,10 @@ import {
   Users,
 } from "lucide-react";
 
+import { Settings, PlusCircle, Upload, Download, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
 type InternalOperationsPanelProps = {
   setActiveView: (view: string) => void;
   openSettings: (section: string) => void;
@@ -40,7 +44,7 @@ export function InternalOperationsPanel({
             <CardHeader className="pb-2">
               <h3 className="text-sm font-medium">Client Management</h3>
             </CardHeader>
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 space-y-2">
               <Button
                 variant="outline"
                 className="w-full justify-start text-sm"
@@ -48,6 +52,22 @@ export function InternalOperationsPanel({
               >
                 <PlusCircle className="h-4 w-4 mr-2" />
                 New Client Setup
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-sm"
+                onClick={() => openSettings("style")}
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                UI Styling Settings
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start text-sm"
+                onClick={() => openSettings("general")}
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                General Settings
               </Button>
             </CardContent>
           </Card>
