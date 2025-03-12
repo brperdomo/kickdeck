@@ -14,8 +14,35 @@ export function StyleSettingsView() {
     secondary: '#32CD32',
     accent: '#FF8C00',
     background: '#F5F5F6',
+    adminNavBackground: '#FFFFFF',
+    adminNavText: '#000000',
+    adminNavActive: '#000000',
+    adminNavHover: '#f3f4f6',
   });
   const { toast } = useToast();
+
+  // Apply CSS styles to document head
+  useEffect(() => {
+    // Check if our custom style element already exists
+    let styleElement = document.getElementById('admin-dashboard-styles');
+
+    // Create it if it doesn't exist
+    if (!styleElement) {
+      styleElement = document.createElement('style');
+      styleElement.id = 'admin-dashboard-styles';
+      document.head.appendChild(styleElement);
+    }
+
+    // Update the CSS variables
+    styleElement.textContent = `
+      :root {
+        --admin-nav-bg: ${previewStyles.adminNavBackground || '#FFFFFF'};
+        --admin-nav-text: ${previewStyles.adminNavText || '#000000'};
+        --admin-nav-active: ${previewStyles.adminNavActive || previewStyles.primary || '#000000'};
+        --admin-nav-hover: ${previewStyles.adminNavHover || '#f3f4f6'};
+      }
+    `;
+  }, [previewStyles]);
 
   useEffect(() => {
     const fetchStylingSettings = async () => {
@@ -25,12 +52,6 @@ export function StyleSettingsView() {
         if (response.ok) {
           const data = await response.json();
           setPreviewStyles(data);
-
-          // Apply admin dashboard colors immediately
-          document.documentElement.style.setProperty('--admin-nav-bg', data.adminNavBackground || '#FFFFFF');
-          document.documentElement.style.setProperty('--admin-nav-text', data.adminNavText || '#000000');
-          document.documentElement.style.setProperty('--admin-nav-active', data.adminNavActive || data.primary || '#000000');
-          document.documentElement.style.setProperty('--admin-nav-hover', data.adminNavHover || '#f3f4f6');
         } else {
           console.error('Failed to fetch styling settings');
         }
@@ -79,12 +100,6 @@ export function StyleSettingsView() {
           title: "Success",
           description: "Style settings saved successfully",
         });
-
-        // Apply admin dashboard colors immediately
-        document.documentElement.style.setProperty('--admin-nav-bg', completeStyles.adminNavBackground);
-        document.documentElement.style.setProperty('--admin-nav-text', completeStyles.adminNavText);
-        document.documentElement.style.setProperty('--admin-nav-active', completeStyles.adminNavActive);
-        document.documentElement.style.setProperty('--admin-nav-hover', completeStyles.adminNavHover);
       } else {
         toast({
           title: "Error",
@@ -148,16 +163,16 @@ export function StyleSettingsView() {
                 <Input
                   id="secondaryColor"
                   type="color"
-                  value={previewStyles.secondary || "#32CD32"}
+                  value={previewStyles.secondary || "#000000"}
                   onChange={(e) => handleStyleChange('secondary', e.target.value)}
                   className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
                 />
               </div>
               <Input
-                value={previewStyles.secondary || "#32CD32"}
+                value={previewStyles.secondary || "#000000"}
                 onChange={(e) => handleStyleChange('secondary', e.target.value)}
                 className="font-mono"
-                placeholder="#32CD32"
+                placeholder="#000000"
               />
             </div>
             <p className="text-sm text-gray-500 mt-1">Used for secondary buttons and accents</p>
@@ -170,16 +185,16 @@ export function StyleSettingsView() {
                 <Input
                   id="accentColor"
                   type="color"
-                  value={previewStyles.accent || "#FF8C00"}
+                  value={previewStyles.accent || "#000000"}
                   onChange={(e) => handleStyleChange('accent', e.target.value)}
                   className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
                 />
               </div>
               <Input
-                value={previewStyles.accent || "#FF8C00"}
+                value={previewStyles.accent || "#000000"}
                 onChange={(e) => handleStyleChange('accent', e.target.value)}
                 className="font-mono"
-                placeholder="#FF8C00"
+                placeholder="#000000"
               />
             </div>
             <p className="text-sm text-gray-500 mt-1">Used for highlighted items and hover states</p>
@@ -192,16 +207,16 @@ export function StyleSettingsView() {
                 <Input
                   id="backgroundColor"
                   type="color"
-                  value={previewStyles.background || "#F5F5F6"}
+                  value={previewStyles.background || "#FFFFFF"}
                   onChange={(e) => handleStyleChange('background', e.target.value)}
                   className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
                 />
               </div>
               <Input
-                value={previewStyles.background || "#F5F5F6"}
+                value={previewStyles.background || "#FFFFFF"}
                 onChange={(e) => handleStyleChange('background', e.target.value)}
                 className="font-mono"
-                placeholder="#F5F5F6"
+                placeholder="#FFFFFF"
               />
             </div>
             <p className="text-sm text-gray-500 mt-1">Used for page backgrounds</p>
@@ -211,9 +226,7 @@ export function StyleSettingsView() {
 
       <div className="bg-white p-4 rounded-md shadow mb-6">
         <h3 className="text-lg font-medium mb-4">Admin Dashboard Colors</h3>
-        <p className="text-sm text-gray-500 mb-4">
-          These colors control the appearance of the admin dashboard navigation and elements.
-        </p>
+        <p className="text-sm text-gray-500 mb-4">These colors control the appearance of the admin dashboard navigation.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -261,28 +274,6 @@ export function StyleSettingsView() {
           </div>
 
           <div>
-            <Label htmlFor="adminNavHoverColor">Navigation Hover</Label>
-            <div className="flex items-center gap-2 mt-1.5">
-              <div className="w-12 h-12 rounded-md border overflow-hidden">
-                <Input
-                  id="adminNavHoverColor"
-                  type="color"
-                  value={previewStyles.adminNavHover || "#F5F5F5"}
-                  onChange={(e) => handleStyleChange('adminNavHover', e.target.value)}
-                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
-                />
-              </div>
-              <Input
-                value={previewStyles.adminNavHover || "#F5F5F5"}
-                onChange={(e) => handleStyleChange('adminNavHover', e.target.value)}
-                className="font-mono"
-                placeholder="#F5F5F5"
-              />
-            </div>
-            <p className="text-sm text-gray-500 mt-1">Background color when hovering over navigation items</p>
-          </div>
-
-          <div>
             <Label htmlFor="adminNavActiveColor">Navigation Active</Label>
             <div className="flex items-center gap-2 mt-1.5">
               <div className="w-12 h-12 rounded-md border overflow-hidden">
@@ -303,6 +294,28 @@ export function StyleSettingsView() {
             </div>
             <p className="text-sm text-gray-500 mt-1">Background color of the active/selected navigation item</p>
           </div>
+
+          <div>
+            <Label htmlFor="adminNavHoverColor">Navigation Hover</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="adminNavHoverColor"
+                  type="color"
+                  value={previewStyles.adminNavHover || "#F5F5F5"}
+                  onChange={(e) => handleStyleChange('adminNavHover', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.adminNavHover || "#F5F5F5"}
+                onChange={(e) => handleStyleChange('adminNavHover', e.target.value)}
+                className="font-mono"
+                placeholder="#F5F5F5"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color when hovering over navigation items</p>
+          </div>
         </div>
       </div>
 
@@ -319,52 +332,47 @@ export function StyleSettingsView() {
           )}
         </Button>
       </div>
-
       <Card>
         <CardContent className="p-6">
           <div className="flex flex-col space-y-4">
             <div className="flex justify-between items-center">
               <div className="space-y-1">
                 <h3 className="text-lg font-medium">Live Preview</h3>
-                <p className="text-sm text-gray-500">
-                  This is how your color scheme will look
-                </p>
+                <p className="text-sm text-gray-500">This is how your color scheme will look</p>
               </div>
             </div>
 
-            <div 
-              className="rounded-md p-6 mt-4 border" 
+            <div
+              className="rounded-md p-6 mt-4 border"
               style={{ backgroundColor: previewStyles.background }}
             >
               <div className="space-y-4">
-                <h4 className="text-lg font-semibold" style={{ color: previewStyles.primary }}>
-                  Preview Heading
-                </h4>
+                <h4 className="text-lg font-semibold" style={{ color: previewStyles.primary }}>Preview Heading</h4>
                 <p>This is sample text that shows how your content will appear.</p>
                 <div className="flex space-x-2">
-                  <button 
+                  <button
                     className="px-4 py-2 rounded-md"
-                    style={{ 
+                    style={{
                       backgroundColor: previewStyles.primary,
                       color: '#FFFFFF',
                     }}
                   >
                     Primary Button
                   </button>
-                  <button 
+                  <button
                     className="px-4 py-2 rounded-md"
-                    style={{ 
+                    style={{
                       backgroundColor: previewStyles.secondary,
-                      color: '#FFFFFF', 
+                      color: '#FFFFFF',
                     }}
                   >
                     Secondary Button
                   </button>
-                  <button 
+                  <button
                     className="px-4 py-2 rounded-md border"
-                    style={{ 
+                    style={{
                       borderColor: previewStyles.accent,
-                      color: previewStyles.accent, 
+                      color: previewStyles.accent,
                     }}
                   >
                     Accent Button
@@ -372,21 +380,21 @@ export function StyleSettingsView() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mt-6">
-                  <div 
+                  <div
                     className="p-4 rounded-md border"
-                    style={{ 
+                    style={{
                       borderColor: previewStyles.primary + '40',
-                      backgroundColor: previewStyles.primary + '10', 
+                      backgroundColor: previewStyles.primary + '10',
                     }}
                   >
                     <h5 style={{ color: previewStyles.primary }}>Card with Primary</h5>
                     <p className="text-sm mt-1">Sample card with primary color.</p>
                   </div>
-                  <div 
+                  <div
                     className="p-4 rounded-md border"
-                    style={{ 
+                    style={{
                       borderColor: previewStyles.secondary + '40',
-                      backgroundColor: previewStyles.secondary + '10',  
+                      backgroundColor: previewStyles.secondary + '10',
                     }}
                   >
                     <h5 style={{ color: previewStyles.secondary }}>Card with Secondary</h5>
@@ -394,11 +402,11 @@ export function StyleSettingsView() {
                   </div>
                 </div>
 
-                <div 
+                <div
                   className="p-4 rounded-md border mt-4"
-                  style={{ 
+                  style={{
                     borderColor: previewStyles.accent + '40',
-                    backgroundColor: previewStyles.accent + '10', 
+                    backgroundColor: previewStyles.accent + '10',
                   }}
                 >
                   <h5 style={{ color: previewStyles.accent }}>Accent Section</h5>
