@@ -130,7 +130,10 @@ export function StyleSettingsView() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-4 rounded-md shadow mb-6">
+      <div 
+        className="p-4 rounded-md shadow mb-6" 
+        style={{ backgroundColor: previewStyles.adminSectionBg || "#FFFFFF" }}
+      >
         <h3 className="text-lg font-medium mb-4">Color Settings</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -224,7 +227,10 @@ export function StyleSettingsView() {
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-md shadow mb-6">
+      <div 
+        className="p-4 rounded-md shadow mb-6" 
+        style={{ backgroundColor: previewStyles.adminSectionBg || "#FFFFFF" }}
+      >
         <h3 className="text-lg font-medium mb-4">Admin Dashboard Colors</h3>
         <p className="text-sm text-gray-500 mb-4">These colors control the appearance of the admin dashboard navigation.</p>
 
@@ -249,6 +255,28 @@ export function StyleSettingsView() {
               />
             </div>
             <p className="text-sm text-gray-500 mt-1">Background color of the admin sidebar</p>
+          </div>
+          
+          <div>
+            <Label htmlFor="adminSectionBg">Admin Section Background</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="adminSectionBg"
+                  type="color"
+                  value={previewStyles.adminSectionBg || "#FFFFFF"}
+                  onChange={(e) => handleStyleChange('adminSectionBg', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.adminSectionBg || "#FFFFFF"}
+                onChange={(e) => handleStyleChange('adminSectionBg', e.target.value)}
+                className="font-mono"
+                placeholder="#FFFFFF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Background color of admin sections and cards</p>
           </div>
 
           <div>
