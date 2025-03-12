@@ -88,6 +88,13 @@ export function StyleSettingsView() {
         }
         const settings = await response.json();
         setPreviewStyles(settings);
+        
+        // Apply loaded settings to CSS variables
+        Object.entries(settings).forEach(([key, value]) => {
+          if (typeof value === 'string' && value.startsWith('#')) {
+            document.documentElement.style.setProperty(`--${key}`, value);
+          }
+        });
       } catch (error) {
         console.error('Error loading styling settings:', error);
         toast({
@@ -102,14 +109,21 @@ export function StyleSettingsView() {
 
     loadStylingSettings();
   }, []);
+  
+  // The handleSave function is defined elsewhere in the file
 
   const handleColorChange = (section: string, colorKey: string, value: string) => {
     // Ensure the value is a valid hex color
     const hexColor = value.startsWith('#') ? value : `#${value}`;
+    
+    // Update local preview state
     setPreviewStyles((prev) => ({
       ...prev,
       [colorKey]: hexColor,
     }));
+    
+    // Apply the color change to CSS variables for immediate visual feedback
+    document.documentElement.style.setProperty(`--${colorKey}`, hexColor);
   };
 
   const handleReset = (section: string) => {
@@ -132,6 +146,7 @@ export function StyleSettingsView() {
     });
   };
 
+  // Combined handleSave function with all necessary functionality
   const handleSave = async () => {
     try {
       // Update theme color
@@ -206,6 +221,32 @@ export function StyleSettingsView() {
                     {section.title}
                   </Button>
                 ))}
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Preview Panel */}
+          <Card className="mt-4 sticky top-64">
+            <CardHeader className="pb-2">
+              <CardTitle>Live Preview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded" style={{ backgroundColor: previewStyles.primary || '#000000' }}></div>
+                  <span>Primary</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded" style={{ backgroundColor: previewStyles.secondary || '#32CD32' }}></div>
+                  <span>Secondary</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded" style={{ backgroundColor: previewStyles.accent || '#FF8C00' }}></div>
+                  <span>Accent</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Changes will apply immediately but must be saved to persist.
+                </p>
               </div>
             </CardContent>
           </Card>
