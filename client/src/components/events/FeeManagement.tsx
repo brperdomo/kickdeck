@@ -190,18 +190,18 @@ export function FeeManagement() {
 
     if (ageGroupsQuery.data && feeAssignmentsQuery.data && feesQuery.data) {
       const assignmentMap = {};
-      
+
       // First initialize all groups and fees with false (not assigned)
       ageGroupsQuery.data.forEach((group) => {
         // Handle both normal IDs and predefined IDs (which may be strings)
         const groupId = group.id || `predefined-${group.divisionCode}`;
         assignmentMap[groupId] = {};
-        
+
         feesQuery.data.forEach((fee) => {
           assignmentMap[groupId][fee.id] = false;
         });
       });
-      
+
       // Then mark assignments as true based on the fetched data
       feeAssignmentsQuery.data.forEach((assignment) => {
         // Find the group this assignment belongs to 
@@ -209,7 +209,7 @@ export function FeeManagement() {
           group => group.id === assignment.ageGroupId || 
                   (group.divisionCode === assignment.divisionCode)
         );
-        
+
         if (matchingGroup) {
           const groupId = matchingGroup.id || `predefined-${matchingGroup.divisionCode}`;
           if (!assignmentMap[groupId]) {
@@ -218,7 +218,7 @@ export function FeeManagement() {
           assignmentMap[groupId][assignment.feeId] = true;
         }
       });
-      
+
       console.log("Setting selected age groups:", assignmentMap);
       setSelectedAgeGroups(assignmentMap);
     }
@@ -376,7 +376,7 @@ export function FeeManagement() {
   const updateAssignmentsMutation = useMutation({
     mutationFn: async ({ feeId, ageGroupIds }) => {
       console.log(`Sending request to update fee assignments for fee ${feeId} with ${ageGroupIds.length} age groups`);
-      
+
       const response = await fetch(
         `/api/admin/events/${eventIdParam}/fee-assignments`,
         {
@@ -393,7 +393,7 @@ export function FeeManagement() {
 
       // Log the response status to help with debugging
       console.log(`Fee assignment update response status: ${response.status}`);
-      
+
       if (!response.ok) {
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
@@ -480,7 +480,7 @@ export function FeeManagement() {
   const handleSaveAssignments = async () => {
     // Prepare assignments data
     const ageGroupIds = [];
-    
+
     // Collect all selected age group IDs for the current fee
     ageGroupsQuery.data?.forEach((ageGroup) => {
       const groupId = ageGroup.id;
@@ -522,22 +522,19 @@ export function FeeManagement() {
         });
 
         console.log("Fee assignment update result:", result);
-        
+
         // Force refetch to ensure we have the latest data
         await Promise.all([
           feeAssignmentsQuery.refetch(),
           queryClient.invalidateQueries(['feeAssignments', eventIdParam])
         ]);
-        
+
         toast({
           title: "Success",
           description: `Fee assignments updated successfully. ${ageGroupIds.length} age groups assigned.`,
         });
-        
-        // Close the dialog only if this was an assign dialog operation
-        if (isAssignFeeOpen) {
-          setIsAssignFeeOpen(false);
-        }
+        setIsAssignFeeOpen(false); //Removed Duplicate Code
+
       } catch (mutationError) {
         console.error("Mutation error:", mutationError);
         throw new Error(`Failed to save assignments: ${mutationError.message}`);
