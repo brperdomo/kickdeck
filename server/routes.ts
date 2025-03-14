@@ -2782,8 +2782,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
                 userId: newAdmin.id,
                 roleId: role.id,
                 createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                enabled: true
+                updatedAt: new Date().toISOString()
               });
           }
 
