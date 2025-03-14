@@ -2771,17 +2771,16 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
                 .insert(roles)
                 .values({
                   name: roleName,
-                  description: `${roleName} role`
+                  description: `${roleName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} role`,
                 })
                 .returning();
             }
 
-            await tx
-              .insert(adminRoles)
-              .values({
-                userId: newAdmin.id,
-                roleId: role.id
-              });
+            // Add role to admin using proper SQL query
+            await tx.execute(
+              `INSERT INTO admin_roles ("userId", "roleId") VALUES ($1, $2)`,
+              [newAdmin.id, role.id]
+            );
           }
 
           // Send response without password
