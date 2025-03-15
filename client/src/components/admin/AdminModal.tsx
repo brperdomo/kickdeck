@@ -192,7 +192,7 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
         <DialogHeader>
           <DialogTitle>{admin ? "Edit Administrator" : "Add New Administrator"}</DialogTitle>
           <DialogDescription>
-            {admin ? "Update administrator information below." : "Create a new administrator by filling out the information below."}
+            {admin ? "Update administrator information." : "Add a new administrator to the system."}
           </DialogDescription>
         </DialogHeader>
 
