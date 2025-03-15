@@ -51,7 +51,6 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [emailToCheck, setEmailToCheck] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<AdminFormValues>({
     resolver: zodResolver(adminFormSchema),
@@ -102,33 +101,26 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
   const updateAdminMutation = useMutation({
     mutationFn: async (data: AdminFormValues) => {
       if (!adminToEdit) throw new Error("No administrator to update");
-      setIsSubmitting(true);
 
-      try {
-        const response = await fetch(`/api/admin/administrators/${adminToEdit.id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            roles: data.roles,
-            currentRoles: adminToEdit.roles, // Send current roles for validation
-          }),
-        });
+      const response = await fetch(`/api/admin/administrators/${adminToEdit.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          roles: data.roles,
+        }),
+      });
 
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(responseData.error || "Failed to update administrator");
-        }
-
-        return responseData;
-      } finally {
-        setIsSubmitting(false);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to update administrator");
       }
+
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/administrators"] });
@@ -140,45 +132,30 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     },
     onError: (error: Error) => {
       console.error('Update error:', error);
-
-      if (error.message.includes("LAST_SUPER_ADMIN")) {
-        toast({
-          title: "Cannot Update Role",
-          description: "You cannot remove the super_admin role from the last super administrator",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to update administrator",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update administrator",
+        variant: "destructive",
+      });
     },
   });
 
   const createAdminMutation = useMutation({
     mutationFn: async (data: AdminFormValues) => {
-      setIsSubmitting(true);
-      try {
-        const response = await fetch("/api/admin/administrators", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
+      const response = await fetch("/api/admin/administrators", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(responseData.error || "Failed to create administrator");
-        }
-
-        return responseData;
-      } finally {
-        setIsSubmitting(false);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to create administrator");
       }
+
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/administrators"] });
@@ -190,30 +167,27 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
       onOpenChange(false);
     },
     onError: (error: Error) => {
+      console.error('Create error:', error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to create administrator",
         variant: "destructive",
       });
     },
   });
 
   const onSubmit = async (data: AdminFormValues) => {
-    if (emailCheckQuery.data?.exists && data.email !== adminToEdit?.email) {
-      form.setError('email', {
-        type: 'manual',
-        message: 'This email is already registered'
-      });
-      return;
-    }
-
     try {
-      if (adminToEdit) {
-        // Send current roles along with the update
-        await updateAdminMutation.mutateAsync({
-          ...data,
-          roles: data.roles,
+      if (emailCheckQuery.data?.exists && data.email !== adminToEdit?.email) {
+        form.setError('email', {
+          type: 'manual',
+          message: 'This email is already registered'
         });
+        return;
+      }
+
+      if (adminToEdit) {
+        await updateAdminMutation.mutateAsync(data);
       } else {
         await createAdminMutation.mutateAsync(data);
       }
@@ -241,6 +215,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
     form.setValue("roles", newRoles, { shouldValidate: true });
   };
 
+  const isSubmitting = createAdminMutation.isPending || updateAdminMutation.isPending;
   const currentRoles = form.watch("roles");
   const isSuperAdmin = currentRoles.includes("super_admin");
 
@@ -304,7 +279,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
                             handleEmailChange(e.target.value);
                           }}
                         />
-                        {emailCheckQuery.isLoading && (
+                        {emailCheckQuery.isPending && (
                           <div className="absolute right-3 top-1/2 -translate-y-1/2">
                             <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                           </div>
@@ -320,6 +295,22 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
                   </FormItem>
                 )}
               />
+
+              {!adminToEdit && (
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Temporary Password</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="password" placeholder="Minimum 8 characters" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               <FormField
                 control={form.control}
@@ -370,22 +361,6 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
                   </FormItem>
                 )}
               />
-
-              {!adminToEdit && (
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Temporary Password</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="password" placeholder="Minimum 8 characters" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
             </div>
 
             <DialogFooter>
@@ -401,7 +376,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
                 type="submit" 
                 disabled={
                   isSubmitting ||
-                  emailCheckQuery.isLoading || 
+                  emailCheckQuery.isPending || 
                   (emailCheckQuery.data?.exists && form.getValues("email") !== adminToEdit?.email)
                 }
               >
