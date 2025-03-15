@@ -444,6 +444,8 @@ export function registerRoutes(app: Express): Server {
       try {
         const adminId = parseInt(req.params.id);
         const { email, firstName, lastName, roles: roleNames } = req.body;
+        
+        console.log('Updating admin:', { adminId, email, firstName, lastName, roleNames });
 
         // Input validation
         if (!email || !firstName || !lastName || !roleNames || !Array.isArray(roleNames) || roleNames.length === 0) {
@@ -456,7 +458,7 @@ export function registerRoutes(app: Express): Server {
         const existingAdmin = await db
           .select({
             admin: users,
-            roles: sql<string[]>`array_agg(${roles.name})`
+            roles: sql<string[]>`COALESCE(array_agg(${roles.name}), ARRAY[]::text[])`
           })
           .from(users)
           .leftJoin(adminRoles, eq(users.id, adminRoles.userId))
@@ -471,12 +473,13 @@ export function registerRoutes(app: Express): Server {
           });
         }
 
+        console.log('Found existing admin:', existingAdmin);
+
         // If removing super_admin role, check if this is the last super admin
         const isSuperAdmin = existingAdmin.roles.includes('super_admin');
         const willRemoveSuperAdmin = isSuperAdmin && !roleNames.includes('super_admin');
 
         if (willRemoveSuperAdmin) {
-          // Count other super admins
           const otherSuperAdmins = await db
             .select({ count: sql<number>`count(*)` })
             .from(users)
@@ -513,81 +516,97 @@ export function registerRoutes(app: Express): Server {
           }
         }
 
-        // Update admin and roles in a transaction
-        await db.transaction(async (tx) => {
-          // Update user details
-          await tx
-            .update(users)
-            .set({
-              email,
-              username: email,
-              firstName,
-              lastName,
-              updatedAt: new Date().toISOString()
-            })
-            .where(eq(users.id, adminId));
+        try {
+          // Update admin and roles in a transaction
+          await db.transaction(async (tx) => {
+            // Update user details
+            await tx
+              .update(users)
+              .set({
+                email,
+                username: email,
+                firstName,
+                lastName,
+                updatedAt: new Date().toISOString()
+              })
+              .where(eq(users.id, adminId));
 
-          // Remove all existing role assignments
-          await tx
-            .delete(adminRoles)
-            .where(eq(adminRoles.userId, adminId));
+            console.log('Updated user details');
 
-          // Add new role assignments
-          for (const roleName of roleNames) {
-            // Get or create role
-            let role = await tx
-              .select()
-              .from(roles)
-              .where(eq(roles.name, roleName))
-              .limit(1)
-              .then(rows => rows[0]);
+            // Remove existing role assignments
+            await tx
+              .delete(adminRoles)
+              .where(eq(adminRoles.userId, adminId));
 
-            if (!role) {
-              [role] = await tx
-                .insert(roles)
+            console.log('Removed existing roles');
+
+            // Add new role assignments
+            for (const roleName of roleNames) {
+              // Get or create role
+              let role = await tx
+                .select()
+                .from(roles)
+                .where(eq(roles.name, roleName))
+                .limit(1)
+                .then(rows => rows[0]);
+
+              if (!role) {
+                [role] = await tx
+                  .insert(roles)
+                  .values({
+                    name: roleName,
+                    description: `${roleName} role`,
+                    createdAt: new Date().toISOString()
+                  })
+                  .returning();
+              }
+
+              // Create role assignment
+              await tx
+                .insert(adminRoles)
                 .values({
-                  name: roleName,
-                  description: `${roleName} role`,
+                  userId: adminId,
+                  roleId: role.id,
                   createdAt: new Date().toISOString()
-                })
-                .returning();
+                });
+
+              console.log(`Added role: ${roleName}`);
             }
 
-            // Create role assignment
+            // Update isAdmin status based on roles
             await tx
-              .insert(adminRoles)
-              .values({
-                userId: adminId,
-                roleId: role.id,
-                createdAt: new Date().toISOString()
-              });
-          }
+              .update(users)
+              .set({
+                isAdmin: roleNames.length > 0
+              })
+              .where(eq(users.id, adminId));
 
-          // Update isAdmin status based on roles
-          await tx
-            .update(users)
-            .set({
-              isAdmin: roleNames.length > 0
-            })
-            .where(eq(users.id, adminId));
-        });
+            console.log('Updated isAdmin status');
+          });
 
-        // Send success response
-        res.json({
-          message: "Administrator updated successfully",
-          admin: {
-            id: adminId,
-            email,
-            firstName,
-            lastName,
-            roles: roleNames
-          }
-        });
+          console.log('Transaction completed successfully');
+
+          // Send success response
+          res.json({
+            message: "Administrator updated successfully",
+            admin: {
+              id: adminId,
+              email,
+              firstName,
+              lastName,
+              roles: roleNames
+            }
+          });
+        } catch (txError) {
+          console.error('Transaction error:', txError);
+          throw txError;
+        }
 
       } catch (error) {
         console.error('Error updating administrator:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).json({
-          error: "Failed to update administrator", 
+          error: "Failed to update administrator",
           details: error instanceof Error ? error.message : "Unknown error"
         });
       }

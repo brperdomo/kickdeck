@@ -140,22 +140,34 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
   // Create/Update admin mutation
   const adminMutation = useMutation({
     mutationFn: async (values: CreateFormValues | EditFormValues) => {
+      console.log('Submitting admin mutation:', {
+        id: admin?.id,
+        isUpdate: !!admin,
+        values
+      });
+
       const url = admin ? `/api/admin/administrators/${admin.id}` : "/api/admin/administrators";
       const method = admin ? "PATCH" : "POST";
 
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      try {
+        const response = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
+        console.log('Server response:', data);
 
-      if (!response.ok) {
-        throw new Error(data.error || data.details || "Failed to save administrator");
+        if (!response.ok) {
+          throw new Error(data.error || data.details || "Failed to save administrator");
+        }
+
+        return data;
+      } catch (error) {
+        console.error('Admin mutation error:', error);
+        throw error;
       }
-
-      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["administrators"] });
