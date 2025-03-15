@@ -51,6 +51,7 @@ import {
   CalendarDays,
   ImageIcon,
   FormInput,
+  Bell
 } from "lucide-react";
 import {
   Table,
@@ -94,6 +95,7 @@ import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
 import FormTemplateEditPage from "@/pages/form-template-edit";
 import FormTemplateCreatePage from "@/pages/form-template-create";
 import FormTemplatesPage from "@/pages/form-templates";
+import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
 
 
 function AdminBanner() {
@@ -975,11 +977,8 @@ function OrganizationSettingsForm() {
       const v = new Vibrant(objectUrl);
 
       //      // Get the palette with error handling
-      const palette = await v.getPalette();
-
-      // Set primary color from the Vibrant swatch
-      if (palette.Vibrant) {
-        setPrimaryColor(palette.Vibrant.hex);
+      const palette = await v.getPalette();      // Set primary color from the Vibrant swatch
+      if (palette.Vibrant) {        setPrimaryColor(palette.Vibrant.hex);
 console.log('Primarycolor extracted:', palette.Vibrant.hex);
       }
 
@@ -1520,23 +1519,10 @@ function ComplexesView() {
 
 // Using the simpler EventsView implementation from line 126
 
+import { ClientManagementView } from "@/components/admin/ClientManagementView";
+
 function HouseholdsView() {
-  return (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">MatchPro Client</h2>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Client
-        </Button>
-      </div>
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-muted-foreground">Client management coming soon</p>
-        </CardContent>
-      </Card>
-    </>
-  );
+  return <ClientManagementView />;
 }
 
 function SchedulingView() {
@@ -1618,6 +1604,7 @@ function AdminDashboard() {
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
+  const [showInternalOps, setShowInternalOps] = useState(false); // Added state for Internal Ops panel
 
   // Add Form Templates to the navigation
   const formTemplatesButton = (
@@ -1924,12 +1911,18 @@ function AdminDashboard() {
 
           {renderView()}
         </div>
-      </div>
 
-      <UpdatesLogModal
-        open={showUpdatesLog}
-        onOpenChange={setShowUpdatesLog}
-      />
+        {/* Internal Operations Panel */}
+        {showInternalOps && (
+          <InternalOperationsPanel
+            setActiveView={setActiveView}
+            openSettings={(section) => {
+              setIsSettingsOpen(true);
+              setActiveSettingsView(section as SettingsView);
+            }}
+          />
+        )}
+      </div>
       {showLogoutOverlay && (
         <LogoutOverlay onFinished={() => setShowLogoutOverlay(false)} />
       )}
@@ -2004,8 +1997,7 @@ function ThemeEditor() {
           />
         </div>
         <div>
-          <Label htmlFor="textColor">Text Color</Label>
-          <Input
+          <Label htmlFor="textColor">Text Color</Label><Input
             id="textColor"
             type="color"
             value={theme.textColor}

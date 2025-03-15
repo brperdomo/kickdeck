@@ -1,48 +1,30 @@
+
 import { db } from "@db";
+import { sql } from "drizzle-orm";
+import { log } from "../vite";
 
-export async function migrateAddDomainToOrganizationSettings() {
+export async function addDomainToOrganizationSettings() {
   try {
-    // Check if the domain column already exists in the organization_settings table
-    const result = await db.execute(`
-      SELECT EXISTS (
-        SELECT 1 
-        FROM information_schema.columns 
-        WHERE table_name = 'organization_settings' 
-        AND column_name = 'domain'
-      );
+    log("Adding domain column to organization_settings table...");
+    
+    // Check if the column already exists
+    const columnExists = await db.execute(sql`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'organization_settings' AND column_name = 'domain'
     `);
-
-    const columnExists = result.rows[0]?.exists === true;
-
-    if (!columnExists) {
-      console.log("Running migration: Add domain column to organization_settings table");
-
-      // Add the domain column to the organization_settings table
-      await db.execute(`
+    
+    if (columnExists.length === 0) {
+      await db.execute(sql`
         ALTER TABLE organization_settings 
-        ADD COLUMN IF NOT EXISTS domain TEXT UNIQUE;
+        ADD COLUMN domain TEXT UNIQUE
       `);
-
-      console.log("Migration successful: Added domain column to organization_settings table");
+      log("Domain column added successfully");
     } else {
-      console.log("Migration skipped: domain column already exists in organization_settings table");
+      log("Domain column already exists");
     }
-
-    return true;
   } catch (error) {
-    console.error("Migration failed:", error);
+    console.error("Error adding domain column:", error);
     throw error;
-  }
-}
-
-// For direct execution (not used in ESM)
-if (import.meta.url === import.meta.resolve('./add_domain_to_organization_settings.ts')) {
-  try {
-    await migrateAddDomainToOrganizationSettings();
-    console.log("Migration completed");
-    process.exit(0);
-  } catch (error) {
-    console.error("Migration failed:", error);
-    process.exit(1);
   }
 }

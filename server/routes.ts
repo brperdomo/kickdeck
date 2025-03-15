@@ -10,6 +10,7 @@ import feesRouter from "./routes/admin/fees";
 import eventsRouter from "./routes/admin/events";
 import ageGroupsRouter from "./routes/admin/age-groups";
 import foldersRouter from "./routes/folders";
+import organizationsRouter from "./routes/admin/organizations"; 
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { sql, eq, and, or, inArray } from "drizzle-orm";
 import {
@@ -119,6 +120,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, eventsRouter);
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
+    app.use('/api/admin/organizations', isAdmin, organizationsRouter); // Add organizations router
 
     // Register coupon routes
     app.post('/api/admin/coupons', isAdmin, createCoupon);
@@ -2724,15 +2726,19 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {
         const { firstName, lastName, email, password, roles } = req.body;
 
+        if (!firstName || !lastName || !email || !password || !roles || !Array.isArray(roles)) {
+          return res.status(400).json({ error: "Missing required fields" });
+        }
+
         // Check if user exists
-        const [existingUser] = await db
+        const existingUser = await db
           .select()
           .from(users)
           .where(eq(users.email, email))
           .limit(1);
 
-        if (existingUser) {
-          return res.status(400).send("User with this email already exists");
+        if (existingUser.length > 0) {
+          return res.status(400).json({ error: "User with this email already exists" });
         }
 
         // Hash the password
@@ -2756,41 +2762,54 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             })
             .returning();
 
-          // Create roles if they don't exist and assign them
+          // Process each role
           for (const roleName of roles) {
-            let [role] = await tx
+            // Get or create the role
+            const existingRole = await tx
               .select()
               .from(roles)
               .where(eq(roles.name, roleName))
               .limit(1);
 
-            if (!role) {
-              [role] = await tx
+            let roleId;
+            if (existingRole.length === 0) {
+              const [newRole] = await tx
                 .insert(roles)
                 .values({
                   name: roleName,
-                  description: `${roleName} role`
+                  description: `${roleName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} role`
                 })
                 .returning();
+              roleId = newRole.id;
+            } else {
+              roleId = existingRole[0].id;
             }
 
+            // Assign role to admin
             await tx
               .insert(adminRoles)
               .values({
                 userId: newAdmin.id,
-                roleId: role.id
+                roleId: roleId,
+                createdAt: new Date().toISOString()
               });
           }
 
-          // Send response without password
-          const { password: _, ...adminWithoutPassword } = newAdmin;
-          res.status(201).json(adminWithoutPassword);
+          // Return the created admin with roles
+          res.status(201).json({
+            id: newAdmin.id,
+            email: newAdmin.email,
+            firstName: newAdmin.firstName,
+            lastName: newAdmin.lastName,
+            roles
+          });
         });
       } catch (error) {
         console.error('Error creating administrator:', error);
-        // Added basic error logging for white screen debugging.
-        console.error("Error details:", error);
-        res.status(500).send("Failed to create administrator");
+        res.status(500).json({ 
+          error: "Failed to create administrator",
+          details: error instanceof Error ? error.message : "Unknown error"
+        });
       }
     });
 
