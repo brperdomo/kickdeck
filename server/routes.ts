@@ -160,141 +160,140 @@ export function registerRoutes(app: Express): Server {
 
     // Add admin event deletion endpoint
     app.delete('/api/admin/events/:id', isAdmin, async (req, res) => {
-      const tx = db.transaction();
-
       try {
-        const eventId = req.params.id;
+        const eventId = parseInt(req.params.id);
+        if (isNaN(eventId)) {
+          return res.status(400).json({ error: "Invalid event ID" });
+        }
         console.log('Starting event deletion for ID:', eventId);
 
-        // Delete in proper order based on dependencies
-        await tx.delete(games)
-          .where(eq(games.eventId, eventId))
-          .execute();
-        console.log('Deleted games');
+        // Delete everything in a transaction to ensure consistency
+        await db.transaction(async (tx) => {
+          // Delete form responses and fields first
+          const templates = await tx
+            .select()
+            .from(eventFormTemplates)
+            .where(eq(eventFormTemplates.eventId, String(eventId)));
 
-        await tx.delete(gameTimeSlots)
-          .where(eq(gameTimeSlots.eventId, eventId))
-          .execute();
-        console.log('Deleted game time slots');
-
-        await tx.delete(formResponses)
-          .where(
-            inArray(
-              formResponses.templateId,
-              tx.select({ id: eventFormTemplates.id })
-                .from(eventFormTemplates)
-                .where(eq(eventFormTemplates.eventId, eventId))
-            )
-          )
-          .execute();
-        console.log('Deleted form responses');
-
-        await tx.delete(chatRooms)
-          .where(eq(chatRooms.eventId, eventId))
-          .execute();
-        console.log('Deleted chat rooms');
-
-        await tx.delete(coupons)
-          .where(eq(coupons.eventId, eventId))
-          .execute();
-        console.log('Deleted coupons');
-
-        await tx.delete(eventFieldSizes)
-          .where(eq(eventFieldSizes.eventId, eventId))
-          .execute();
-        console.log('Deleted event field sizes');
-
-        await tx.delete(eventScoringRules)
-          .where(eq(eventScoringRules.eventId, eventId))
-          .execute();
-        console.log('Deleted event scoring rules');
-
-        await tx.delete(eventComplexes)
-          .where(eq(eventComplexes.eventId, eventId))
-          .execute();
-        console.log('Deleted event complexes');
-
-        await tx.delete(tournamentGroups)
-          .where(eq(tournamentGroups.eventId, eventId))
-          .execute();
-        console.log('Deleted tournament groups');
-
-        await tx.delete(teams)
-          .where(eq(teams.eventId, eventId))
-          .execute();
-        console.log('Deleted teams');
-
-        // Delete form field options and fields
-        const templateIds = await tx
-          .select({ id: eventFormTemplates.id })
-          .from(eventFormTemplates)
-          .where(eq(eventFormTemplates.eventId, eventId))
-          .execute();
-
-        if (templateIds.length > 0) {
-          const fieldIds = await tx
-            .select({ id: formFields.id })
-            .from(formFields)
-            .where(inArray(formFields.templateId, templateIds.map(t => t.id)))
-            .execute();
-
-          if (fieldIds.length > 0) {
+          // Delete form-related data
+          if (templates.length > 0) {
+            const templateIds = templates.map(t => t.id);
+            
+            // Delete form responses first
             await tx
-              .delete(formFieldOptions)
-              .where(inArray(formFieldOptions.fieldId, fieldIds.map(f => f.id)))
-              .execute();
-            console.log('Deleted form field options');
+              .delete(formResponses)
+              .where(inArray(formResponses.templateId, templateIds));
+            console.log('Deleted form responses');
+
+            // Get fields for deletion
+            const fields = await tx
+              .select()
+              .from(formFields)
+              .where(inArray(formFields.templateId, templateIds));
+
+            if (fields.length > 0) {
+              const fieldIds = fields.map(f => f.id);
+              
+              // Delete options first
+              await tx
+                .delete(formFieldOptions)
+                .where(inArray(formFieldOptions.fieldId, fieldIds));
+              console.log('Deleted form field options');
+
+              // Then delete fields
+              await tx
+                .delete(formFields)
+                .where(inArray(formFields.templateId, templateIds));
+              console.log('Deleted form fields');
+            }
+
+            // Finally delete templates
+            await tx
+              .delete(eventFormTemplates)
+              .where(eq(eventFormTemplates.eventId, String(eventId)));
+            console.log('Deleted form templates');
           }
 
+          // Delete event relationships in dependency order
           await tx
-            .delete(formFields)
-            .where(inArray(formFields.templateId, templateIds.map(t => t.id)))
-            .execute();
-          console.log('Deleted form fields');
-        }
+            .delete(games)
+            .where(eq(games.eventId, String(eventId)));
+          console.log('Deleted games');
 
-        await tx.delete(eventFormTemplates)
-          .where(eq(eventFormTemplates.eventId, eventId))
-          .execute();
-        console.log('Deleted event form templates');
+          await tx
+            .delete(gameTimeSlots)
+            .where(eq(gameTimeSlots.eventId, String(eventId)));
+          console.log('Deleted game time slots');
 
-        await tx.delete(eventAgeGroups)
-          .where(eq(eventAgeGroups.eventId, eventId))
-          .execute();
-        console.log('Deleted event age groups');
+          await tx
+            .delete(chatRooms)
+            .where(eq(chatRooms.eventId, String(eventId)));
+          console.log('Deleted chat rooms');
 
-        await tx.delete(eventSettings)
-          .where(eq(eventSettings.eventId, eventId))
-          .execute();
-        console.log('Deleted event settings');
+          await tx
+            .delete(coupons)
+            .where(eq(coupons.eventId, String(eventId)));
+          console.log('Deleted coupons');
 
-        // Finally delete the event itself
-        const deletedEvent = await tx
-          .delete(events)
-          .where(eq(events.id, eventId))
-          .returning()
-          .execute()
-          .then(results => results[0]);
+          await tx
+            .delete(eventFieldSizes)
+            .where(eq(eventFieldSizes.eventId, String(eventId)));
+          console.log('Deleted event field sizes');
 
-        if (!deletedEvent) {
-          throw new Error("Event not found");
-        }
+          await tx
+            .delete(eventScoringRules)
+            .where(eq(eventScoringRules.eventId, String(eventId)));
+          console.log('Deleted event scoring rules');
 
-        // If everything succeeded, commit the transaction
-        await tx.commit();
+          await tx
+            .delete(eventComplexes)
+            .where(eq(eventComplexes.eventId, String(eventId)));
+          console.log('Deleted event complexes');
+
+          await tx
+            .delete(tournamentGroups)
+            .where(eq(tournamentGroups.eventId, String(eventId)));
+          console.log('Deleted tournament groups');
+
+          await tx
+            .delete(teams)
+            .where(eq(teams.eventId, String(eventId)));
+          console.log('Deleted teams');
+
+          await tx
+            .delete(eventAgeGroups)
+            .where(eq(eventAgeGroups.eventId, String(eventId)));
+          console.log('Deleted event age groups');
+
+          await tx
+            .delete(eventSettings)
+            .where(eq(eventSettings.eventId, String(eventId)));
+          console.log('Deleted event settings');
+
+          // Finally delete the event itself
+          const [deletedEvent] = await tx
+            .delete(events)
+            .where(eq(events.id, eventId))
+            .returning({
+              id: events.id,
+              name: events.name
+            });
+
+          if (!deletedEvent) {
+            throw new Error("Event not found");
+          }
+        });
+
         console.log('Successfully deleted event:', eventId);
-
         res.json({ message: "Event deleted successfully" });
-      } catch (error) {
-        // If anything failed, rollback the transaction
-        await tx.rollback();
 
+      } catch (error) {
         console.error('Error deleting event:', error);
-        console.error("Error details:", error);
+        console.error("Error details:", error instanceof Error ? error.stack : String(error));
 
         res.status(500).json({ 
-          error: error instanceof Error ? error.message : "Failed to delete event",
-          details: error instanceof Error ? error.stack : undefined
+          error: "Failed to delete event",
+          details: error instanceof Error ? error.message : String(error)
         });
       }
     });
@@ -335,7 +334,7 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    // Update the administrator creation endpoint
+    // Administrator creation endpoint
     app.post('/api/admin/administrators', isAdmin, async (req, res) => {
       try {
         const { email, firstName, lastName, password, roles } = req.body;
@@ -347,7 +346,7 @@ export function registerRoutes(app: Express): Server {
           });
         }
 
-        // Check if email exists
+        // Check if email exists 
         const [existingUser] = await db
           .select()
           .from(users)
@@ -363,17 +362,17 @@ export function registerRoutes(app: Express): Server {
         // Hash password
         const hashedPassword = await crypto.hash(password);
 
-        // Create user in a transaction
-        const [newAdmin] = await db.transaction(async (tx) => {
-          // Create user
+        // Create user and assign roles in a transaction
+        const newAdmin = await db.transaction(async (tx) => {
+          // Create the user first
           const [user] = await tx
             .insert(users)
             .values({
-              email,
+              email: email,
               username: email,
-              firstName,
-              lastName,
               password: hashedPassword,
+              firstName: firstName,
+              lastName: lastName,
               isAdmin: true,
               isParent: false,
               createdAt: new Date().toISOString(),
@@ -381,26 +380,34 @@ export function registerRoutes(app: Express): Server {
             })
             .returning();
 
-          // Get or create roles and assign them
+          // Add roles one by one
           for (const roleName of roles) {
             // Get or create role
-            let [role] = await tx
+            const existingRole = await tx
               .select()
               .from(roles)
               .where(eq(roles.name, roleName))
-              .limit(1);
+              .limit(1)
+              .then(rows => rows[0]);
 
-            if (!role) {
-              [role] = await tx
+            let roleId: number;
+
+            if (!existingRole) {
+              // Create role if it doesn't exist
+              const [newRole] = await tx
                 .insert(roles)
                 .values({
                   name: roleName,
-                  description: `${roleName.split('_').map(word => 
-                    word.charAt(0).toUpperCase() + word.slice(1)
-                  ).join(' ')} role`,
+                  description: `${roleName.split('_')
+                    .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ')} role`,
                   createdAt: new Date().toISOString()
                 })
                 .returning();
+
+              roleId = newRole.id;
+            } else {
+              roleId = existingRole.id;
             }
 
             // Create role assignment
@@ -408,23 +415,23 @@ export function registerRoutes(app: Express): Server {
               .insert(adminRoles)
               .values({
                 userId: user.id,
-                roleId: role.id,
+                roleId: roleId,
                 createdAt: new Date().toISOString()
               });
           }
 
-          return [user];
+          return user;
         });
 
-        // Return success response
-        res.json({
+        // Send success response
+        res.json({ 
           message: "Administrator created successfully",
           admin: {
             id: newAdmin.id,
             email: newAdmin.email,
             firstName: newAdmin.firstName,
             lastName: newAdmin.lastName,
-            roles
+            roles: roles
           }
         });
 
