@@ -360,11 +360,11 @@ export function registerRoutes(app: Express): Server {
           });
         }
 
-        // Create user and assign roles
-        const newAdmin = await db.transaction(async (tx) => {
-          // Create the user first
+        // Create user and assign roles in a transaction
+        try {
           const hashedPassword = await crypto.hash(password);
-          const [user] = await tx
+          
+          const [newAdmin] = await db
             .insert(users)
             .values({
               email,
@@ -379,20 +379,23 @@ export function registerRoutes(app: Express): Server {
             })
             .returning();
 
-          console.log('Created new user:', user);
+          console.log('Created new user:', newAdmin);
 
-          // Assign roles
+          // Assign roles one by one
           for (const roleName of roles) {
-            // Get existing role or create new one
-            let [existingRole] = await tx
+            // First get or create the role
+            let roleId: number;
+            
+            const [existingRole] = await db
               .select()
               .from(roles)
               .where(eq(roles.name, roleName))
               .limit(1);
 
-            let roleId;
-            if (!existingRole) {
-              const [newRole] = await tx
+            if (existingRole) {
+              roleId = existingRole.id;
+            } else {
+              const [newRole] = await db
                 .insert(roles)
                 .values({
                   name: roleName,
@@ -403,36 +406,36 @@ export function registerRoutes(app: Express): Server {
                 })
                 .returning();
               roleId = newRole.id;
-            } else {
-              roleId = existingRole.id;
             }
 
-            // Create admin role assignment
-            await tx
+            // Then create the admin role assignment
+            await db
               .insert(adminRoles)
               .values({
-                userId: user.id,
+                userId: newAdmin.id,
                 roleId: roleId,
                 createdAt: new Date().toISOString()
               });
 
-            console.log(`Assigned role ${roleName} to user ${user.id}`);
+            console.log(`Assigned role ${roleName} to user ${newAdmin.id}`);
           }
 
-          return user;
-        });
+          // Send success response
+          res.json({ 
+            message: "Administrator created successfully",
+            admin: {
+              id: newAdmin.id,
+              email: newAdmin.email,
+              firstName: newAdmin.firstName,
+              lastName: newAdmin.lastName,
+              roles: roles
+            }
+          });
 
-        // Send success response
-        res.json({ 
-          message: "Administrator created successfully",
-          admin: {
-            id: newAdmin.id,
-            email: newAdmin.email,
-            firstName: newAdmin.firstName,
-            lastName: newAdmin.lastName,
-            roles: roles
-          }
-        });
+        } catch (error) {
+          console.error('Database operation failed:', error);
+          throw error;
+        }
 
       } catch (error) {
         console.error('Error creating administrator:', error);
