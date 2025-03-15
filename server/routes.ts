@@ -337,8 +337,6 @@ export function registerRoutes(app: Express): Server {
 
     // Administrator creation endpoint
     app.post('/api/admin/administrators', isAdmin, async (req, res) => {
-      const tx = db.transaction();
-
       try {
         const { email, firstName, lastName, password, roles } = req.body;
 
@@ -356,10 +354,10 @@ export function registerRoutes(app: Express): Server {
         }
 
         // Start a transaction
-        const result = await tx(async (tx) => {
+        const newAdmin = await db.transaction(async (tx) => {
           // Create the user
           const hashedPassword = await crypto.hash(password);
-          const [newAdmin] = await tx
+          const [user] = await tx
             .insert(users)
             .values({
               email,
@@ -396,7 +394,7 @@ export function registerRoutes(app: Express): Server {
                   description: `${roleName.split('_').map(word => 
                     word.charAt(0).toUpperCase() + word.slice(1)
                   ).join(' ')} role`,
-                  createdAt: new Date()
+                  createdAt: new Date().toISOString()
                 })
                 .returning();
             }
@@ -405,26 +403,23 @@ export function registerRoutes(app: Express): Server {
             await tx
               .insert(adminRoles)
               .values({
-                userId: newAdmin.id,
+                userId: user.id,
                 roleId: role.id,
-                createdAt: new Date()
+                createdAt: new Date().toISOString()
               });
           }
 
-          return newAdmin;
+          return user;
         });
 
-        await tx.commit();
-
+        // Return success response
         res.json({ 
           message: "Administrator created successfully",
-          admin: result
+          admin: newAdmin
         });
 
       } catch (error) {
-        await tx.rollback();
         console.error('Error creating administrator:', error);
-
         res.status(500).json({ 
           error: error instanceof Error ? error.message : "Failed to create administrator"
         });
