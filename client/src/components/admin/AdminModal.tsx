@@ -88,10 +88,10 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
     resolver: zodResolver(admin ? editSchema : createSchema),
     defaultValues: admin
       ? {
-          email: admin.email,
-          firstName: admin.firstName,
-          lastName: admin.lastName,
-          roles: admin.roles,
+          email: admin.email || "",
+          firstName: admin.firstName || "",
+          lastName: admin.lastName || "",
+          roles: admin.roles || [],
         }
       : {
           email: "",
@@ -152,7 +152,9 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
       try {
         const response = await fetch(url, {
           method,
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify(values),
         });
 
@@ -242,7 +244,7 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
                   <FormItem>
                     <FormLabel>First Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="John" />
+                      <Input placeholder="John" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -256,7 +258,7 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
                   <FormItem>
                     <FormLabel>Last Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Doe" />
+                      <Input placeholder="Doe" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -272,9 +274,9 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
-                      {...field}
                       type="email"
                       placeholder="john.doe@example.com"
+                      {...field}
                       onChange={(e) => {
                         field.onChange(e);
                         checkEmail(e.target.value);
@@ -295,9 +297,9 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
-                        {...field}
                         type="password"
                         placeholder="Minimum 8 characters"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />

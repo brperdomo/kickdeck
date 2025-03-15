@@ -455,7 +455,7 @@ export function registerRoutes(app: Express): Server {
         }
 
         // Verify admin exists and get current roles
-        const existingAdmin = await db
+        const adminWithRoles = await db
           .select({
             admin: users,
             roles: sql<string[]>`COALESCE(array_agg(${roles.name}), ARRAY[]::text[])`
@@ -467,16 +467,32 @@ export function registerRoutes(app: Express): Server {
           .groupBy(users.id)
           .then(rows => rows[0]);
 
-        if (!existingAdmin) {
+        if (!adminWithRoles) {
           return res.status(404).json({
             error: "Administrator not found"
           });
         }
 
-        console.log('Found existing admin:', existingAdmin);
+        console.log('Found existing admin:', adminWithRoles);
+
+        // If email is being changed, check if new email is available
+        if (email !== adminWithRoles.admin.email) {
+          const emailExists = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, email))
+            .limit(1)
+            .then(rows => rows.length > 0);
+
+          if (emailExists) {
+            return res.status(400).json({
+              error: "Email already registered"
+            });
+          }
+        }
 
         // If removing super_admin role, check if this is the last super admin
-        const isSuperAdmin = existingAdmin.roles.includes('super_admin');
+        const isSuperAdmin = adminWithRoles.roles.includes('super_admin');
         const willRemoveSuperAdmin = isSuperAdmin && !roleNames.includes('super_admin');
 
         if (willRemoveSuperAdmin) {
@@ -500,22 +516,6 @@ export function registerRoutes(app: Express): Server {
           }
         }
 
-        // If email is being changed, check if new email is available
-        if (email !== existingAdmin.admin.email) {
-          const emailExists = await db
-            .select()
-            .from(users)
-            .where(eq(users.email, email))
-            .limit(1)
-            .then(rows => rows.length > 0);
-
-          if (emailExists) {
-            return res.status(400).json({
-              error: "Email already registered"
-            });
-          }
-        }
-
         try {
           // Update admin and roles in a transaction
           await db.transaction(async (tx) => {
@@ -532,25 +532,24 @@ export function registerRoutes(app: Express): Server {
 
             console.log('Updated user details');
 
-            // Remove existing role assignments
+            // Remove existing roles
             await tx
               .delete(adminRoles)
               .where(eq(adminRoles.userId, adminId));
 
             console.log('Removed existing roles');
 
-            // Add new role assignments
+            // Add new roles
             for (const roleName of roleNames) {
               // Get or create role
-              let role = await tx
+              let [existingRole] = await tx
                 .select()
                 .from(roles)
                 .where(eq(roles.name, roleName))
-                .limit(1)
-                .then(rows => rows[0]);
+                .limit(1);
 
-              if (!role) {
-                [role] = await tx
+              if (!existingRole) {
+                [existingRole] = await tx
                   .insert(roles)
                   .values({
                     name: roleName,
@@ -564,7 +563,7 @@ export function registerRoutes(app: Express): Server {
                 .insert(adminRoles)
                 .values({
                   userId: adminId,
-                  roleId: role.id
+                  roleId: existingRole.id
                 });
 
               console.log(`Added role: ${roleName}`);
@@ -594,6 +593,7 @@ export function registerRoutes(app: Express): Server {
               roles: roleNames
             }
           });
+
         } catch (txError) {
           console.error('Transaction error:', txError);
           throw txError;
