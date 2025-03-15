@@ -72,16 +72,21 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      firstName: admin?.firstName || "",
-      lastName: admin?.lastName || "",
-      email: admin?.email || "",
+    defaultValues: admin ? {
+      firstName: admin.firstName,
+      lastName: admin.lastName,
+      email: admin.email,
       password: "",
-      roles: admin?.roles || [],
+      roles: admin.roles || [],
+    } : {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      roles: [],
     }
   });
 
-  // Reset form when admin prop changes
   useEffect(() => {
     if (admin) {
       form.reset({
@@ -89,9 +94,9 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
         lastName: admin.lastName,
         email: admin.email,
         roles: admin.roles || [],
-      });
+      }, { keepDefaultValues: true });
     }
-  }, [admin, form.reset]);
+  }, [admin]);
 
   // Check email existence
   const checkEmail = async (email: string) => {
