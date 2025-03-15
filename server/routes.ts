@@ -979,6 +979,120 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Administrator update endpoint
+    app.patch('/api/admin/administrators/:id', isAdmin, async (req, res) => {
+      try {
+        const adminId = parseInt(req.params.id);
+        const { email, firstName, lastName, roles: roleNames } = req.body;
+
+        // Input validation
+        if (!email || !firstName || !lastName || !roleNames || !Array.isArray(roleNames) || roleNames.length === 0) {
+          return res.status(400).json({
+            error: "All fields are required and roles must be a non-empty array"
+          });
+        }
+
+        // Check if admin exists
+        const [existingAdmin] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, adminId))
+          .limit(1);
+
+        if (!existingAdmin) {
+          return res.status(404).json({
+            error: "Administrator not found"
+          });
+        }
+
+        // If email is being changed, check if new email is available  
+        if (email !== existingAdmin.email) {
+          const [emailExists] = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, email))
+            .limit(1);
+
+          if (emailExists) {
+            return res.status(400).json({
+              error: "Email already registered"
+            });
+          }
+        }
+
+        const timestamp = new Date().toISOString();
+
+        // Update user and roles in a transaction
+        await db.transaction(async (tx) => {
+          // Update user details
+          await tx
+            .update(users)
+            .set({
+              email,
+              username: email,
+              firstName,
+              lastName,
+              updatedAt: timestamp
+            })
+            .where(eq(users.id, adminId));
+
+          // Remove existing role assignments
+          await tx
+            .delete(adminRoles)
+            .where(eq(adminRoles.userId, adminId));
+
+          // Add new role assignments
+          for (const roleName of roleNames) {
+            // Get or create role
+            let [existingRole] = await tx
+              .select()
+              .from(roles)
+              .where(eq(roles.name, roleName))
+              .limit(1);
+
+            if (!existingRole) {
+              [existingRole] = await tx
+                .insert(roles)
+                .values({
+                  name: roleName,
+                  description: `${roleName} role`,
+                  createdAt: timestamp
+                })
+                .returning();
+            }
+
+            // Create role assignment
+            await tx
+              .insert(adminRoles)
+              .values({
+                userId: adminId,
+                roleId: existingRole.id,
+                createdAt: timestamp
+              });
+          }
+        });
+
+        // Return success response
+        res.json({
+          message: "Administrator updated successfully",
+          admin: {
+            id: adminId,
+            email,
+            firstName,
+            lastName,
+            roles: roleNames
+          }
+        });
+
+      } catch (error) {
+        console.error('Error updating administrator:', error);
+        res.status(500).json({
+          error: "Failed to update administrator", 
+          details: error instanceof Error ? error.message : "Unknown error"
+        });
+      }
+    });
+
     // Add complex update endpoint after the create endpoint
     app.patch('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {

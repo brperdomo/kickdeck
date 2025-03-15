@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -25,21 +25,36 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
-// Form schema
-const formSchema = z.object({
+// Base schema without password
+const baseSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
   roles: z.array(z.string()).min(1, "At least one role is required"),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+// Create schema includes password
+const createSchema = z.object({
+  ...baseSchema,
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+// Edit schema excludes password
+const editSchema = baseSchema;
+
+type CreateFormValues = z.infer<typeof createSchema>;
+type EditFormValues = z.infer<typeof editSchema>;
 
 interface AdminModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  admin?: FormValues; // Added admin prop
+  admin?: {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    roles: string[];
+  };
 }
 
 const ROLES = [
@@ -70,37 +85,28 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
   const queryClient = useQueryClient();
   const [emailExists, setEmailExists] = useState(false);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: admin ? {
-      firstName: admin.firstName,
-      lastName: admin.lastName,
-      email: admin.email,
-      password: "",
-      roles: admin.roles || [],
-    } : {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      roles: [],
-    }
+  const form = useForm<CreateFormValues | EditFormValues>({
+    resolver: zodResolver(admin ? editSchema : createSchema),
+    defaultValues: admin
+      ? {
+          email: admin.email,
+          firstName: admin.firstName,
+          lastName: admin.lastName,
+          roles: admin.roles,
+        }
+      : {
+          email: "",
+          firstName: "",
+          lastName: "",
+          password: "",
+          roles: [],
+        },
   });
-
-  useEffect(() => {
-    if (admin) {
-      form.reset({
-        firstName: admin.firstName,
-        lastName: admin.lastName,
-        email: admin.email,
-        roles: admin.roles || [],
-      }, { keepDefaultValues: true });
-    }
-  }, [admin]);
 
   // Check email existence
   const checkEmail = async (email: string) => {
     try {
+      if (admin && email === admin.email) return; // Skip check if email unchanged
       const response = await fetch(`/api/admin/check-email?email=${encodeURIComponent(email)}`);
       const data = await response.json();
       setEmailExists(data.exists);
@@ -112,33 +118,25 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
     }
   };
 
-  // Create admin mutation
-  const createAdmin = useMutation({
-    mutationFn: async (values: FormValues) => {
-      try {
-        console.log('Creating/Updating administrator:', values); //Updated log message
-        const method = admin ? "PUT" : "POST";
-        const url = admin ? `/api/admin/administrators/${admin.email}` : "/api/admin/administrators";
-        const response = await fetch(url, {
-          method,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        });
+  // Create/Update admin mutation
+  const adminMutation = useMutation({
+    mutationFn: async (values: CreateFormValues | EditFormValues) => {
+      const url = admin ? `/api/admin/administrators/${admin.id}` : "/api/admin/administrators";
+      const method = admin ? "PATCH" : "POST";
 
-        const data = await response.json();
-        console.log('Server response:', data);
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
 
-        if (!response.ok) {
-          throw new Error(data.error || data.details || "Failed to create/update administrator");
-        }
+      const data = await response.json();
 
-        return data;
-      } catch (error) {
-        console.error('API Error:', error);
-        throw error;
+      if (!response.ok) {
+        throw new Error(data.error || data.details || "Failed to save administrator");
       }
+
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["administrators"] });
@@ -150,7 +148,7 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
       onOpenChange(false);
     },
     onError: (error: Error) => {
-      console.error('Create/Update admin error:', error);
+      console.error("Admin mutation error:", error);
       toast({
         title: admin ? "Error Updating Administrator" : "Error Creating Administrator",
         description: error.message,
@@ -159,15 +157,15 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
     },
   });
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: CreateFormValues | EditFormValues) => {
     try {
-      if (emailExists) {
+      if (emailExists && (!admin || data.email !== admin.email)) {
         form.setError("email", { message: "This email is already registered" });
         return;
       }
-      await createAdmin.mutateAsync(data);
+      await adminMutation.mutateAsync(data);
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error("Form submission error:", error);
     }
   };
 
@@ -197,7 +195,9 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
         <DialogHeader>
           <DialogTitle>{admin ? "Edit Administrator" : "Add New Administrator"}</DialogTitle>
           <DialogDescription>
-            {admin ? "Update administrator information." : "Add a new administrator to the system."}
+            {admin
+              ? "Update administrator information and roles."
+              : "Create a new administrator by filling out the information below."}
           </DialogDescription>
         </DialogHeader>
 
@@ -255,23 +255,25 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="password"
-                      placeholder="Minimum 8 characters"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!admin && (
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder="Minimum 8 characters"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
@@ -316,20 +318,11 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
             />
 
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={createAdmin.isPending || emailExists}
-              >
-                {createAdmin.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
+              <Button type="submit" disabled={adminMutation.isPending || emailExists}>
+                {adminMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {admin ? "Update Administrator" : "Create Administrator"}
               </Button>
             </DialogFooter>
