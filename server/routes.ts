@@ -526,8 +526,7 @@ export function registerRoutes(app: Express): Server {
                 email,
                 username: email,
                 firstName,
-                lastName,
-                updatedAt: new Date().toISOString()
+                lastName
               })
               .where(eq(users.id, adminId));
 
@@ -555,8 +554,7 @@ export function registerRoutes(app: Express): Server {
                   .insert(roles)
                   .values({
                     name: roleName,
-                    description: `${roleName} role`,
-                    createdAt: new Date().toISOString()
+                    description: `${roleName} role`
                   })
                   .returning();
               }
@@ -566,8 +564,7 @@ export function registerRoutes(app: Express): Server {
                 .insert(adminRoles)
                 .values({
                   userId: adminId,
-                  roleId: role.id,
-                  createdAt: new Date().toISOString()
+                  roleId: role.id
                 });
 
               console.log(`Added role: ${roleName}`);
