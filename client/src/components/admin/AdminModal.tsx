@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -34,8 +34,7 @@ const baseSchema = z.object({
 });
 
 // Create schema includes password
-const createSchema = z.object({
-  ...baseSchema,
+const createSchema = baseSchema.extend({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
@@ -102,6 +101,26 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
           roles: [],
         },
   });
+
+  // Reset form when admin prop changes
+  useEffect(() => {
+    if (admin) {
+      form.reset({
+        email: admin.email,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        roles: admin.roles,
+      });
+    } else {
+      form.reset({
+        email: "",
+        firstName: "",
+        lastName: "",
+        password: "",
+        roles: [],
+      });
+    }
+  }, [admin, form]);
 
   // Check email existence
   const checkEmail = async (email: string) => {

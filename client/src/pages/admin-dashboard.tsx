@@ -505,7 +505,7 @@ function AdministratorsView() {
       <AdminModal
         open={isAddModalOpen}
         onOpenChange={handleModalClose}
-        adminToEdit={selectedAdmin}
+        admin={selectedAdmin}
       />
     </>
   );
@@ -668,8 +668,8 @@ function ReportsView() {
                     </TableBody>
                   </Table>
                 )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
             )}
             {selectedFinancialReport === 'fees-by-event' && (
               <Card>
