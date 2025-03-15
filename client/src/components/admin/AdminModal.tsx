@@ -102,6 +102,25 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
         },
   });
 
+  // Reset form when admin prop changes
+  useEffect(() => {
+    if (admin) {
+      form.reset({
+        email: admin.email,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        roles: admin.roles,
+      });
+    } else {
+      form.reset({
+        email: "",
+        firstName: "",
+        lastName: "",
+        password: "",
+        roles: [],
+      });
+    }
+  }, [admin, form]);
 
   // Check email existence
   const checkEmail = async (email: string) => {
@@ -225,7 +244,7 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
                   <FormItem>
                     <FormLabel>First Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="John" />
+                      <Input placeholder="John" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -239,7 +258,7 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
                   <FormItem>
                     <FormLabel>Last Name</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Doe" />
+                      <Input placeholder="Doe" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
