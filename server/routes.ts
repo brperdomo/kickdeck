@@ -336,23 +336,23 @@ export function registerRoutes(app: Express): Server {
 
     // Administrator creation endpoint
     app.post('/api/admin/administrators', isAdmin, async (req, res) => {
-      console.log('Starting admin creation process');
-      
       try {
-        const { email, firstName, lastName, password, roles } = req.body;
-        console.log('Received request data:', { email, firstName, lastName, roles });
+        const { email, firstName, lastName, password, roles: roleNames } = req.body;
+        console.log('Creating admin with:', { email, firstName, lastName, roleNames });
 
         // Input validation
-        if (!email || !firstName || !lastName || !password || !roles || !Array.isArray(roles) || roles.length === 0) {
+        if (!email || !firstName || !lastName || !password || !roleNames || !Array.isArray(roleNames) || roleNames.length === 0) {
           return res.status(400).json({
             error: "All fields are required and roles must be a non-empty array"
           });
         }
 
         // Check for existing user
-        const existingUser = await db.query.users.findFirst({
-          where: eq(users.email, email)
-        });
+        const [existingUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
 
         if (existingUser) {
           return res.status(400).json({
@@ -360,11 +360,10 @@ export function registerRoutes(app: Express): Server {
           });
         }
 
-        // Hash password
+        // Create new user
         const hashedPassword = await crypto.hash(password);
+        const timestamp = new Date().toISOString();
 
-        // Create user
-        console.log('Creating new user...');
         const [newUser] = await db
           .insert(users)
           .values({
@@ -375,48 +374,45 @@ export function registerRoutes(app: Express): Server {
             lastName,
             isAdmin: true,
             isParent: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            createdAt: timestamp
           })
           .returning();
 
-        console.log('User created:', newUser);
+        console.log('Created user:', newUser.id);
 
-        // Create role assignments
-        for (const roleName of roles) {
-          console.log('Processing role:', roleName);
-          
-          // Get existing role or create new one
-          let role = await db
+        // Process roles one by one
+        for (const roleName of roleNames) {
+          // Get or create role
+          let [existingRole] = await db
             .select()
             .from(roles)
             .where(eq(roles.name, roleName))
-            .limit(1)
-            .then(rows => rows[0]);
+            .limit(1);
 
-          if (!role) {
-            console.log('Creating new role:', roleName);
-            const [newRole] = await db
+          if (!existingRole) {
+            [existingRole] = await db
               .insert(roles)
               .values({
                 name: roleName,
                 description: `${roleName} role`,
-                createdAt: new Date().toISOString()
+                createdAt: timestamp
               })
               .returning();
-            role = newRole;
           }
 
-          console.log('Creating role assignment');
+          // Create role assignment
           await db
             .insert(adminRoles)
             .values({
               userId: newUser.id,
-              roleId: role.id,
-              createdAt: new Date().toISOString()
+              roleId: existingRole.id,
+              createdAt: timestamp
             });
+
+          console.log(`Assigned role ${roleName} to user ${newUser.id}`);
         }
 
+        // Return success response
         res.json({
           message: "Administrator created successfully",
           admin: {
@@ -424,22 +420,21 @@ export function registerRoutes(app: Express): Server {
             email: newUser.email,
             firstName: newUser.firstName,
             lastName: newUser.lastName,
-            roles
+            roles: roleNames
           }
         });
 
       } catch (error) {
         console.error('Error creating administrator:', error);
-        console.error('Error stack:', error.stack);
         console.error('Error details:', {
-          name: error.name,
           message: error.message,
-          code: error.code
+          stack: error.stack,
+          name: error.name
         });
 
         res.status(500).json({
           error: "Failed to create administrator", 
-          details: error.message || "Unknown error"
+          details: error.message || "An unexpected error occurred"
         });
       }
     });

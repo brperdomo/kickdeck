@@ -36,6 +36,11 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+interface AdminModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
 const ROLES = [
   {
     id: "super_admin",
@@ -59,11 +64,6 @@ const ROLES = [
   },
 ];
 
-interface AdminModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
 export function AdminModal({ open, onOpenChange }: AdminModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -80,27 +80,45 @@ export function AdminModal({ open, onOpenChange }: AdminModalProps) {
     },
   });
 
+  // Check email existence
+  const checkEmail = async (email: string) => {
+    try {
+      const response = await fetch(`/api/admin/check-email?email=${encodeURIComponent(email)}`);
+      const data = await response.json();
+      setEmailExists(data.exists);
+      if (data.exists) {
+        form.setError("email", { message: "This email is already registered" });
+      }
+    } catch (error) {
+      console.error("Error checking email:", error);
+    }
+  };
+
   // Create admin mutation
   const createAdmin = useMutation({
-    mutationFn: async (data: FormValues) => {
-      console.log('Submitting admin creation with data:', data);
+    mutationFn: async (values: FormValues) => {
+      try {
+        console.log('Creating administrator:', values);
+        const response = await fetch("/api/admin/administrators", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
 
-      const response = await fetch("/api/admin/administrators", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data),
-      });
+        const data = await response.json();
+        console.log('Server response:', data);
 
-      const responseData = await response.json();
-      console.log('Server response:', responseData);
+        if (!response.ok) {
+          throw new Error(data.error || data.details || "Failed to create administrator");
+        }
 
-      if (!response.ok) {
-        throw new Error(responseData.error || responseData.details || "Failed to create administrator");
+        return data;
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
       }
-
-      return responseData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["administrators"] });
@@ -121,26 +139,16 @@ export function AdminModal({ open, onOpenChange }: AdminModalProps) {
     },
   });
 
-  // Check email existence
-  const checkEmail = async (email: string) => {
-    try {
-      const response = await fetch(`/api/admin/check-email?email=${encodeURIComponent(email)}`);
-      const data = await response.json();
-      setEmailExists(data.exists);
-      if (data.exists) {
-        form.setError("email", { message: "This email is already registered" });
-      }
-    } catch (error) {
-      console.error("Error checking email:", error);
-    }
-  };
-
   const onSubmit = async (data: FormValues) => {
-    if (emailExists) {
-      form.setError("email", { message: "This email is already registered" });
-      return;
+    try {
+      if (emailExists) {
+        form.setError("email", { message: "This email is already registered" });
+        return;
+      }
+      await createAdmin.mutateAsync(data);
+    } catch (error) {
+      console.error('Form submission error:', error);
     }
-    await createAdmin.mutateAsync(data);
   };
 
   const toggleRole = (roleId: string) => {
@@ -149,14 +157,11 @@ export function AdminModal({ open, onOpenChange }: AdminModalProps) {
 
     let newRoles: string[];
     if (isSuperAdmin) {
-      // If selecting super_admin, it becomes the only role
       newRoles = currentRoles.includes(roleId) ? [] : [roleId];
     } else {
       if (currentRoles.includes("super_admin")) {
-        // If super_admin was selected, remove it and add the new role
         newRoles = [roleId];
       } else {
-        // Toggle the selected role
         newRoles = currentRoles.includes(roleId)
           ? currentRoles.filter((r) => r !== roleId)
           : [...currentRoles, roleId];
