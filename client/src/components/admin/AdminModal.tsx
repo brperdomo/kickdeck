@@ -150,12 +150,13 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
         body: JSON.stringify(data),
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to create administrator");
+        throw new Error(responseData.error || responseData.details || "Failed to create administrator");
       }
 
-      return response.json();
+      return responseData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/administrators"] });
@@ -170,7 +171,7 @@ export function AdminModal({ open, onOpenChange, adminToEdit }: AdminModalProps)
       console.error('Create error:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to create administrator",
+        description: error.message,
         variant: "destructive",
       });
     },
