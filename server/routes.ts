@@ -439,39 +439,46 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    // Add administrator update endpoint
+    // Administrator update endpoint
     app.patch('/api/admin/administrators/:id', isAdmin, async (req, res) => {
       try {
         const adminId = parseInt(req.params.id);
-        const { email, firstName, lastName, roles } = req.body;
+        const { email, firstName, lastName, roles: roleNames } = req.body;
 
-        // Verify admin exists
-        const [existingAdmin] = await db
+        // Input validation
+        if (!email || !firstName || !lastName || !roleNames || !Array.isArray(roleNames) || roleNames.length === 0) {
+          return res.status(400).json({
+            error: "All fields are required and roles must be a non-empty array"
+          });
+        }
+
+        // Verify admin exists and get current roles
+        const existingAdmin = await db
           .select({
             admin: users,
-            roles: sql<string[]>`array_agg(${roles.name})`,
+            roles: sql<string[]>`array_agg(${roles.name})`
           })
           .from(users)
           .leftJoin(adminRoles, eq(users.id, adminRoles.userId))
           .leftJoin(roles, eq(adminRoles.roleId, roles.id))
           .where(eq(users.id, adminId))
           .groupBy(users.id)
-          .limit(1);
+          .then(rows => rows[0]);
 
         if (!existingAdmin) {
-          return res.status(404).send("Administrator not found");
+          return res.status(404).json({
+            error: "Administrator not found"
+          });
         }
 
         // If removing super_admin role, check if this is the last super admin
         const isSuperAdmin = existingAdmin.roles.includes('super_admin');
-        const willRemoveSuperAdmin = isSuperAdmin && !roles.includes('super_admin');
+        const willRemoveSuperAdmin = isSuperAdmin && !roleNames.includes('super_admin');
 
         if (willRemoveSuperAdmin) {
           // Count other super admins
-          const [{ count }] = await db
-            .select({
-              count: sql`COUNT(*)`,
-            })
+          const otherSuperAdmins = await db
+            .select({ count: sql<number>`count(*)` })
             .from(users)
             .innerJoin(adminRoles, eq(users.id, adminRoles.userId))
             .innerJoin(roles, eq(adminRoles.roleId, roles.id))
@@ -480,33 +487,33 @@ export function registerRoutes(app: Express): Server {
                 eq(roles.name, 'super_admin'),
                 sql`${users.id} != ${adminId}`
               )
-            );
+            )
+            .then(result => Number(result[0].count));
 
-          if (count === 0) {
+          if (otherSuperAdmins === 0) {
             return res.status(400).json({
-              error: "Cannot remove super_admin role from the last super administrator",
-              code: "LAST_SUPER_ADMIN"
+              error: "Cannot remove super_admin role from the last super administrator"
             });
           }
         }
 
         // If email is being changed, check if new email is available
         if (email !== existingAdmin.admin.email) {
-          const [emailExists] = await db
+          const emailExists = await db
             .select()
             .from(users)
             .where(eq(users.email, email))
-            .limit(1);
+            .limit(1)
+            .then(rows => rows.length > 0);
 
           if (emailExists) {
             return res.status(400).json({
-              error: "Email already registered",
-              code: "EMAIL_EXISTS"
+              error: "Email already registered"
             });
           }
         }
 
-        // Start a transaction to update user and roles
+        // Update admin and roles in a transaction
         await db.transaction(async (tx) => {
           // Update user details
           await tx
@@ -516,18 +523,18 @@ export function registerRoutes(app: Express): Server {
               username: email,
               firstName,
               lastName,
-              updatedAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
             })
             .where(eq(users.id, adminId));
 
-          // Remove existing roles
+          // Remove all existing role assignments
           await tx
             .delete(adminRoles)
             .where(eq(adminRoles.userId, adminId));
 
-          // Add new roles
-          for (const roleName of roles) {
-            // Get or create the role
+          // Add new role assignments
+          for (const roleName of roleNames) {
+            // Get or create role
             let role = await tx
               .select()
               .from(roles)
@@ -540,47 +547,48 @@ export function registerRoutes(app: Express): Server {
                 .insert(roles)
                 .values({
                   name: roleName,
-                  description: `${roleName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} role`,
+                  description: `${roleName} role`,
+                  createdAt: new Date().toISOString()
                 })
                 .returning();
             }
 
-            // Assign role to admin
+            // Create role assignment
             await tx
               .insert(adminRoles)
               .values({
                 userId: adminId,
                 roleId: role.id,
+                createdAt: new Date().toISOString()
               });
+          }
+
+          // Update isAdmin status based on roles
+          await tx
+            .update(users)
+            .set({
+              isAdmin: roleNames.length > 0
+            })
+            .where(eq(users.id, adminId));
+        });
+
+        // Send success response
+        res.json({
+          message: "Administrator updated successfully",
+          admin: {
+            id: adminId,
+            email,
+            firstName,
+            lastName,
+            roles: roleNames
           }
         });
 
-        // Fetch updated admin data
-        const [updatedAdmin] = await db
-          .select({
-            id: users.id,
-            email: users.email,
-            firstName: users.firstName,
-            lastName: users.lastName,
-            roles: sql<string[]>`array_agg(${roles.name})`,
-          })
-          .from(users)
-          .leftJoin(adminRoles, eq(users.id, adminRoles.userId))
-          .leftJoin(roles, eq(adminRoles.roleId, roles.id))
-          .where(eq(users.id, adminId))
-          .groupBy(users.id)
-          .limit(1);
-
-        res.json({
-          message: "Administrator updated successfully",
-          admin: updatedAdmin
-        });
       } catch (error) {
         console.error('Error updating administrator:', error);
-        console.error("Error details:", error);
         res.status(500).json({
-          error: error instanceof Error ? error.message : "Failed to update administrator",
-          code: "UPDATE_FAILED"
+          error: "Failed to update administrator", 
+          details: error instanceof Error ? error.message : "Unknown error"
         });
       }
     });
@@ -979,142 +987,7 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    // Administrator update endpoint
-    app.patch('/api/admin/administrators/:id', isAdmin, async (req, res) => {
-      try {
-        const adminId = parseInt(req.params.id);
-        const { email, firstName, lastName, roles: roleNames } = req.body;
-
-        // Input validation
-        if (!email || !firstName || !lastName || !roleNames || !Array.isArray(roleNames) || roleNames.length === 0) {
-          return res.status(400).json({
-            error: "All fields are required and roles must be a non-empty array"
-          });
-        }
-
-        // Verify admin exists
-        const [existingAdmin] = await db
-          .select()
-          .from(users)
-          .where(eq(users.id, adminId))
-          .limit(1);
-
-        if (!existingAdmin) {
-          return res.status(404).json({
-            error: "Administrator not found"
-          });
-        }
-
-        // If email is being changed, check if new email is available  
-        if (email !== existingAdmin.email) {
-          const [emailExists] = await db
-            .select()
-            .from(users)
-            .where(eq(users.email, email))
-            .limit(1);
-
-          if (emailExists) {
-            return res.status(400).json({
-              error: "Email already registered"
-            });
-          }
-        }
-
-        // Get existing admin roles
-        const adminRolesList = await db
-          .select({
-            role: roles
-          })
-          .from(adminRoles)
-          .innerJoin(roles, eq(adminRoles.roleId, roles.id))
-          .where(eq(adminRoles.userId, adminId));
-
-        const currentRoles = adminRolesList.map(r => r.role.name);
-        const rolesToAdd = roleNames.filter(role => !currentRoles.includes(role));
-        const rolesToRemove = currentRoles.filter(role => !roleNames.includes(role));
-
-        // Update user and roles in a transaction
-        await db.transaction(async (tx) => {
-          // Update user details
-          await tx
-            .update(users)
-            .set({
-              email,
-              username: email,
-              firstName,
-              lastName
-            })
-            .where(eq(users.id, adminId));
-
-          // Remove roles that are no longer assigned
-          if (rolesToRemove.length > 0) {
-            const roleIds = await tx
-              .select()
-              .from(roles)
-              .where(inArray(roles.name, rolesToRemove))
-              .then(roles => roles.map(r => r.id));
-
-            await tx
-              .delete(adminRoles)
-              .where(
-                and(
-                  eq(adminRoles.userId, adminId),
-                  inArray(adminRoles.roleId, roleIds)
-                )
-              );
-          }
-
-          // Add new role assignments
-          for (const roleName of rolesToAdd) {
-            // Get or create role
-            let [role] = await tx
-              .select()
-              .from(roles)
-              .where(eq(roles.name, roleName))
-              .limit(1);
-
-            if (!role) {
-              [role] = await tx
-                .insert(roles)
-                .values({
-                  name: roleName,
-                  description: `${roleName} role`,
-                  createdAt: new Date()
-                })
-                .returning();
-            }
-
-            // Create role assignment
-            await tx
-              .insert(adminRoles)
-              .values({
-                userId: adminId,
-                roleId: role.id,
-                createdAt: new Date()
-              });
-          }
-        });
-
-        // Return success response
-        res.json({
-          message: "Administrator updated successfully",
-          admin: {
-            id: adminId,
-            email,
-            firstName,
-            lastName,
-            roles: roleNames
-          }
-        });
-
-      } catch (error) {
-        console.error('Error updating administrator:', error);
-        res.status(500).json({
-          error: "Failed to update administrator", 
-          details: error instanceof Error ? error.message : "Unknown error"
-        });
-      }
-    });
+    // Add complex update endpoint after the create endpoint
 
     // Add complex update endpoint after the create endpoint
     app.patch('/api/admin/complexes/:id', isAdmin, async (req, res) => {
