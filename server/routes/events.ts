@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
     // Save the seasonal scope ID in event settings
     if (seasonalScopeId) {
       await db.insert(eventSettings).values({
-        eventId: event.id.toString(),
+        eventId: event.id,
         settingKey: 'seasonalScopeId',
         settingValue: seasonalScopeId.toString(),
         createdAt: new Date().toISOString(),
@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
       // Convert scope age groups to event age groups
       if (scopeAgeGroups.length > 0) {
         const ageGroupsToInsert = scopeAgeGroups.map(ag => ({
-          eventId: event.id.toString(),
+          eventId: event.id,
           ageGroup: ag.ageGroup,
           birthYear: ag.birthYear,
           gender: ag.gender,
@@ -136,11 +136,11 @@ router.patch('/:id', async (req, res) => {
 
       // Delete existing seasonalScopeId setting if it exists
       await db.delete(eventSettings)
-        .where(eq(eventSettings.eventId, eventId.toString()));
+        .where(eq(eventSettings.eventId, eventId));
 
       // Insert new setting
       await db.insert(eventSettings).values({
-        eventId: eventId.toString(),
+        eventId: eventId,
         settingKey: 'seasonalScopeId',
         settingValue: seasonalScopeId.toString(),
         createdAt: new Date().toISOString(),
@@ -149,7 +149,7 @@ router.patch('/:id', async (req, res) => {
 
       // Delete existing age groups for this event
       await db.delete(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId.toString()));
+        .where(eq(eventAgeGroups.eventId, eventId));
 
       // Fetch the age groups from the seasonal scope
       const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
@@ -161,7 +161,7 @@ router.patch('/:id', async (req, res) => {
       // For each age group in the scope, create a corresponding event age group
       if (scopeAgeGroups.length > 0) {
         const eventAgeGroupsToInsert = scopeAgeGroups.map(ag => ({
-          eventId: eventId.toString(),
+          eventId: eventId,
           ageGroup: ag.ageGroup,
           birthYear: ag.birthYear,
           gender: ag.gender,
@@ -224,7 +224,7 @@ router.get('/:id/age-groups', async (req, res) => {
         if (scopeAgeGroups.length > 0) {
           // Convert scope age groups to event age groups format
           const ageGroupsToInsert = scopeAgeGroups.map(ag => ({
-            eventId: eventId.toString(),
+            eventId: eventId,
             ageGroup: ag.ageGroup,
             birthYear: ag.birthYear,
             gender: ag.gender,
@@ -607,11 +607,11 @@ router.delete('/:id', async (req, res) => {
 
     // Delete event settings
     await db.delete(eventSettings)
-      .where(eq(eventSettings.settings.eventId, eventId.toString()));
+      .where(eq(eventSettings.eventId, eventId.toString()));
     console.log('Deleted event settings');
 
     // Finally delete the event itself
-    const [deletedEvent] = await db.delete(events)
+    const [deletedEvent] = awaitdb.delete(events)
       .where(eq(events.id, parseInt(eventId)))
       .returning();
 
