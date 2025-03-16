@@ -29,19 +29,17 @@ export default function EditEvent() {
     },
   });
 
-  // Query for seasonal scope age groups
-  const seasonalScopeAgeGroupsQuery = useQuery({
-    queryKey: ['seasonal-scope-age-groups', eventQuery.data?.seasonalScopeId],
+  // Query for event's seasonal scope age groups
+  const ageGroupsQuery = useQuery({
+    queryKey: ['event-age-groups', id],
     queryFn: async () => {
-      const seasonalScopeId = eventQuery.data?.seasonalScopeId;
-      if (!seasonalScopeId) return [];
-      const response = await fetch(`/api/admin/seasonal-scopes/${seasonalScopeId}/age-groups`);
-      if (!response.ok) throw new Error('Failed to fetch seasonal scope age groups');
+      const response = await fetch(`/api/admin/events/${id}/age-groups`);
+      if (!response.ok) throw new Error('Failed to fetch age groups');
       const data = await response.json();
-      console.log('Fetched seasonal scope age groups:', data);
+      console.log('Fetched age groups:', data);
       return data;
     },
-    enabled: !!eventQuery.data?.seasonalScopeId
+    enabled: !!id
   });
 
   // Mutation for updating event
@@ -93,7 +91,7 @@ export default function EditEvent() {
     }
   };
 
-  if (eventQuery.isLoading || seasonalScopeAgeGroupsQuery.isLoading) {
+  if (eventQuery.isLoading || ageGroupsQuery.isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
@@ -129,12 +127,11 @@ export default function EditEvent() {
   // Prepare the event data for the form
   const eventData = {
     ...eventQuery.data,
-    ageGroups: seasonalScopeAgeGroupsQuery.data || [],
+    ageGroups: ageGroupsQuery.data || [],
     selectedComplexIds: eventQuery.data.selectedComplexIds || [],
     complexFieldSizes: eventQuery.data.complexFieldSizes || {},
     scoringRules: eventQuery.data.scoringRules || [],
     settings: eventQuery.data.settings || [],
-    seasonalScopeId: eventQuery.data.seasonalScopeId,
     branding: eventQuery.data.branding || {
       logoUrl: "",
       primaryColor: "#000000",

@@ -126,14 +126,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   useEffect(() => {
     if (ageGroupsQuery.data) {
-      const newAgeGroups = ageGroupsQuery.data.map(group => ({
-        ...group,
-        selected: true,
-        projectedTeams: 0,
-        amountDue: 0
-      }));
-      setAgeGroups(newAgeGroups);
-      form.setValue('ageGroups', newAgeGroups);
+      setAgeGroups(ageGroupsQuery.data);
+      form.setValue('ageGroups', ageGroupsQuery.data);
     }
   }, [ageGroupsQuery.data, form.setValue]);
 
@@ -206,10 +200,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     }));
   };
 
-  const handleDeleteAgeGroup = (id: string) => {
-    setAgeGroups(prevAgeGroups => prevAgeGroups.filter(group => group.id !== id));
-  };
-
   const complexesQuery = useQuery({
     queryKey: ['complexes'],
     queryFn: async () => {
@@ -244,81 +234,81 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     },
   });
 
-  const renderAgeGroupsContent = () => (
+  const renderAgeGroupsContent = (mode: 'create' | 'edit', ageGroups: AgeGroup[], seasonalScopesQuery: any, selectedSeasonalScopeId: number | null, handleSeasonalScopeChange: (id: number) => void) => (
     <div className="space-y-6">
-      <div className="mb-6">
-        <Label htmlFor="seasonalScope">Seasonal Scope</Label>
-        <Select 
-          onValueChange={(value) => handleSeasonalScopeChange(Number(value))}
-          value={selectedSeasonalScopeId?.toString()}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a seasonal scope" />
-          </SelectTrigger>
-          <SelectContent>
-            {seasonalScopesQuery.data?.map((scope) => (
-              <SelectItem key={scope.id} value={scope.id.toString()}>
-                {scope.name} ({scope.startYear}-{scope.endYear})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {mode === 'create' && (
+        <div className="mb-6">
+          <Label htmlFor="seasonalScope">Seasonal Scope</Label>
+          <Select 
+            onValueChange={(value) => handleSeasonalScopeChange(Number(value))}
+            value={selectedSeasonalScopeId?.toString()}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a seasonal scope" />
+            </SelectTrigger>
+            <SelectContent>
+              {seasonalScopesQuery.data?.map((scope) => (
+                <SelectItem key={scope.id} value={scope.id.toString()}>
+                  {scope.name} ({scope.startYear}-{scope.endYear})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
-      {selectedSeasonalScopeId && (
+      {((mode === 'create' && selectedSeasonalScopeId) || mode === 'edit') && (
         <Card>
           <CardHeader>
             <CardTitle>Age Groups</CardTitle>
             <CardDescription>
-              All age groups from this seasonal scope will be automatically included in the event.
+              {mode === 'create' 
+                ? "All age groups from this seasonal scope will be automatically included in the event."
+                : "Age groups included in this event"
+              }
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {ageGroupsQuery.isLoading ? (
-              <div className="flex justify-center p-4">
-                <Loader2 className="h-6 w-6 animate-spin" />
-              </div>
-            ) : ageGroups.length > 0 ? (
-              <div className="space-y-4">
-                <div className="bg-green-50 border border-green-200 rounded-md p-4">
-                  <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
-                    <div className="ml-3">
-                      <h3 className="text-sm font-medium text-green-800">
-                        Age groups configured automatically
-                      </h3>
-                      <p className="mt-2 text-sm text-green-700">
-                        All {ageGroups.length} age groups from this seasonal scope will be included in your event.
-                      </p>
-                    </div>
-                  </div>
+            <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-4">
+              <div className="flex items-start">
+                <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-green-800">
+                    Age groups configured automatically
+                  </h3>
+                  <p className="mt-2 text-sm text-green-700">
+                    All {ageGroups.length} age groups {mode === 'create' ? 'will be' : 'are'} included in your event.
+                  </p>
                 </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Age Group</TableHead>
-                      <TableHead>Gender</TableHead>
-                      <TableHead>Birth Year</TableHead>
-                      <TableHead>Division Code</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {ageGroups.map((group) => (
-                      <TableRow key={`${group.gender}-${group.birthYear}`}>
-                        <TableCell>{group.ageGroup}</TableCell>
-                        <TableCell>{group.gender}</TableCell>
-                        <TableCell>{group.birthYear}</TableCell>
-                        <TableCell>{group.divisionCode}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
               </div>
-            ) : (
-              <p className="text-center text-muted-foreground">
-                No age groups found for this seasonal scope
-              </p>
-            )}
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Age Group</TableHead>
+                  <TableHead>Gender</TableHead>
+                  <TableHead>Birth Year</TableHead>
+                  <TableHead>Division Code</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {ageGroups.map((group) => (
+                  <TableRow key={`${group.gender}-${group.birthYear}-${group.ageGroup}`}>
+                    <TableCell>{group.ageGroup}</TableCell>
+                    <TableCell>{group.gender}</TableCell>
+                    <TableCell>{group.birthYear}</TableCell>
+                    <TableCell>{group.divisionCode}</TableCell>
+                  </TableRow>
+                ))}
+                {ageGroups.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center text-muted-foreground">
+                      No age groups found
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       )}
@@ -817,7 +807,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const isEditMode = mode === "edit";
 
-
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
       <Card className="bg-white shadow-sm border border-gray-200">
@@ -843,7 +832,13 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               </TabsContent>
 
               <TabsContent value="age-groups">
-                {renderAgeGroupsContent()}
+                {renderAgeGroupsContent(
+                  mode,
+                  ageGroups,
+                  seasonalScopesQuery,
+                  selectedSeasonalScopeId,
+                  handleSeasonalScopeChange
+                )}
               </TabsContent>
 
               <TabsContent value="scoring">
