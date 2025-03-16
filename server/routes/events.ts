@@ -35,20 +35,48 @@ router.post('/', async (req, res) => {
       Number(eventData.seasonalScopeId) : null;
     console.log('Using seasonalScopeId:', seasonalScopeId);
 
+    if (seasonalScopeId) {
+      // Save the seasonal scope ID in event settings
+      await db.insert(eventSettings).values({
+        eventId: event.id.toString(),
+        settingKey: 'seasonalScopeId',
+        settingValue: seasonalScopeId.toString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+
+      console.log(`Saved seasonalScopeId ${seasonalScopeId} for event ${event.id}`);
+    }
+
+    // Handle age groups from the request
+    if (eventData.ageGroups && Array.isArray(eventData.ageGroups)) {
+      const ageGroupsToInsert = eventData.ageGroups.map((ag: any) => ({
+        eventId: event.id.toString(),
+        ageGroup: ag.ageGroup,
+        birthYear: ag.birthYear,
+        gender: ag.gender,
+        divisionCode: ag.divisionCode,
+        fieldSize: ag.ageGroup.startsWith('U') ? 
+          (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' : 
+           parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' : 
+           parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+        projectedTeams: 8,
+        createdAt: new Date().toISOString(),
+        birthDateStart: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
+        birthDateEnd: new Date(ag.birthYear, 11, 31).toISOString().split('T')[0]
+      }));
+
+      // Insert the age groups
+      if (ageGroupsToInsert.length > 0) {
+        await db.insert(eventAgeGroups).values(ageGroupsToInsert);
+        console.log(`Successfully created ${ageGroupsToInsert.length} age groups for event ${event.id}`);
+      }
+    }
+
+
     // If there's a seasonalScopeId, we need to fetch its age groups and copy them
     if (seasonalScopeId) {
       try {
-        // First save the seasonal scope ID in event settings
-        await db.insert(eventSettings).values({
-          eventId: event.id.toString(),
-          settingKey: 'seasonalScopeId',
-          settingValue: seasonalScopeId.toString(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-
-        console.log(`Saved seasonalScopeId ${seasonalScopeId} for event ${event.id}`);
-
         // Fetch the age groups from the seasonal scope
         const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
           where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)

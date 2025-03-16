@@ -1,0 +1,499 @@
+Creating event with data: {
+  "name": "new post",
+  "startDate": "2025-04-14",
+  "endDate": "2025-04-26",
+  "applicationDeadline": "2025-04-02T13:28",
+  "ageGroups": [
+    {
+      "id": 481,
+      "seasonalScopeId": 17,
+      "ageGroup": "U4",
+      "birthYear": 2023,
+      "gender": "Boys",
+      "divisionCode": "B2023",
+      "minBirthYear": 2023,
+      "maxBirthYear": 2023,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 482,
+      "seasonalScopeId": 17,
+      "ageGroup": "U4",
+      "birthYear": 2023,
+      "gender": "Girls",
+      "divisionCode": "G2023",
+      "minBirthYear": 2023,
+      "maxBirthYear": 2023,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 483,
+      "seasonalScopeId": 17,
+      "ageGroup": "U5",
+      "birthYear": 2022,
+      "gender": "Boys",
+      "divisionCode": "B2022",
+      "minBirthYear": 2022,
+      "maxBirthYear": 2022,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 484,
+      "seasonalScopeId": 17,
+      "ageGroup": "U5",
+      "birthYear": 2022,
+      "gender": "Girls",
+      "divisionCode": "G2022",
+      "minBirthYear": 2022,
+      "maxBirthYear": 2022,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 485,
+      "seasonalScopeId": 17,
+      "ageGroup": "U6",
+      "birthYear": 2021,
+      "gender": "Boys",
+      "divisionCode": "B2021",
+      "minBirthYear": 2021,
+      "maxBirthYear": 2021,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 486,
+      "seasonalScopeId": 17,
+      "ageGroup": "U6",
+      "birthYear": 2021,
+      "gender": "Girls",
+      "divisionCode": "G2021",
+      "minBirthYear": 2021,
+      "maxBirthYear": 2021,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 487,
+      "seasonalScopeId": 17,
+      "ageGroup": "U7",
+      "birthYear": 2020,
+      "gender": "Boys",
+      "divisionCode": "B2020",
+      "minBirthYear": 2020,
+      "maxBirthYear": 2020,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 488,
+      "seasonalScopeId": 17,
+      "ageGroup": "U7",
+      "birthYear": 2020,
+      "gender": "Girls",
+      "divisionCode": "G2020",
+      "minBirthYear": 2020,
+      "maxBirthYear": 2020,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 489,
+      "seasonalScopeId": 17,
+      "ageGroup": "U8",
+      "birthYear": 2019,
+      "gender": "Boys",
+      "divisionCode": "B2019",
+      "minBirthYear": 2019,
+      "maxBirthYear": 2019,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 490,
+      "seasonalScopeId": 17,
+      "ageGroup": "U8",
+      "birthYear": 2019,
+      "gender": "Girls",
+      "divisionCode": "G2019",
+      "minBirthYear": 2019,
+      "maxBirthYear": 2019,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 491,
+      "seasonalScopeId": 17,
+      "ageGroup": "U9",
+      "birthYear": 2018,
+      "gender": "Boys",
+      "divisionCode": "B2018",
+      "minBirthYear": 2018,
+      "maxBirthYear": 2018,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 492,
+      "seasonalScopeId": 17,
+      "ageGroup": "U9",
+      "birthYear": 2018,
+      "gender": "Girls",
+      "divisionCode": "G2018",
+      "minBirthYear": 2018,
+      "maxBirthYear": 2018,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 493,
+      "seasonalScopeId": 17,
+      "ageGroup": "U10",
+      "birthYear": 2017,
+      "gender": "Boys",
+      "divisionCode": "B2017",
+      "minBirthYear": 2017,
+      "maxBirthYear": 2017,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 494,
+      "seasonalScopeId": 17,
+      "ageGroup": "U10",
+      "birthYear": 2017,
+      "gender": "Girls",
+      "divisionCode": "G2017",
+      "minBirthYear": 2017,
+      "maxBirthYear": 2017,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 495,
+      "seasonalScopeId": 17,
+      "ageGroup": "U11",
+      "birthYear": 2016,
+      "gender": "Boys",
+      "divisionCode": "B2016",
+      "minBirthYear": 2016,
+      "maxBirthYear": 2016,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 496,
+      "seasonalScopeId": 17,
+      "ageGroup": "U11",
+      "birthYear": 2016,
+      "gender": "Girls",
+      "divisionCode": "G2016",
+      "minBirthYear": 2016,
+      "maxBirthYear": 2016,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 497,
+      "seasonalScopeId": 17,
+      "ageGroup": "U12",
+      "birthYear": 2015,
+      "gender": "Boys",
+      "divisionCode": "B2015",
+      "minBirthYear": 2015,
+      "maxBirthYear": 2015,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 498,
+      "seasonalScopeId": 17,
+      "ageGroup": "U12",
+      "birthYear": 2015,
+      "gender": "Girls",
+      "divisionCode": "G2015",
+      "minBirthYear": 2015,
+      "maxBirthYear": 2015,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 499,
+      "seasonalScopeId": 17,
+      "ageGroup": "U13",
+      "birthYear": 2014,
+      "gender": "Boys",
+      "divisionCode": "B2014",
+      "minBirthYear": 2014,
+      "maxBirthYear": 2014,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 500,
+      "seasonalScopeId": 17,
+      "ageGroup": "U13",
+      "birthYear": 2014,
+      "gender": "Girls",
+      "divisionCode": "G2014",
+      "minBirthYear": 2014,
+      "maxBirthYear": 2014,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 501,
+      "seasonalScopeId": 17,
+      "ageGroup": "U14",
+      "birthYear": 2013,
+      "gender": "Boys",
+      "divisionCode": "B2013",
+      "minBirthYear": 2013,
+      "maxBirthYear": 2013,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 502,
+      "seasonalScopeId": 17,
+      "ageGroup": "U14",
+      "birthYear": 2013,
+      "gender": "Girls",
+      "divisionCode": "G2013",
+      "minBirthYear": 2013,
+      "maxBirthYear": 2013,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 503,
+      "seasonalScopeId": 17,
+      "ageGroup": "U15",
+      "birthYear": 2012,
+      "gender": "Boys",
+      "divisionCode": "B2012",
+      "minBirthYear": 2012,
+      "maxBirthYear": 2012,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 504,
+      "seasonalScopeId": 17,
+      "ageGroup": "U15",
+      "birthYear": 2012,
+      "gender": "Girls",
+      "divisionCode": "G2012",
+      "minBirthYear": 2012,
+      "maxBirthYear": 2012,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 505,
+      "seasonalScopeId": 17,
+      "ageGroup": "U16",
+      "birthYear": 2011,
+      "gender": "Boys",
+      "divisionCode": "B2011",
+      "minBirthYear": 2011,
+      "maxBirthYear": 2011,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 506,
+      "seasonalScopeId": 17,
+      "ageGroup": "U16",
+      "birthYear": 2011,
+      "gender": "Girls",
+      "divisionCode": "G2011",
+      "minBirthYear": 2011,
+      "maxBirthYear": 2011,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 507,
+      "seasonalScopeId": 17,
+      "ageGroup": "U17",
+      "birthYear": 2010,
+      "gender": "Boys",
+      "divisionCode": "B2010",
+      "minBirthYear": 2010,
+      "maxBirthYear": 2010,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 508,
+      "seasonalScopeId": 17,
+      "ageGroup": "U17",
+      "birthYear": 2010,
+      "gender": "Girls",
+      "divisionCode": "G2010",
+      "minBirthYear": 2010,
+      "maxBirthYear": 2010,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 509,
+      "seasonalScopeId": 17,
+      "ageGroup": "U18",
+      "birthYear": 2009,
+      "gender": "Boys",
+      "divisionCode": "B2009",
+      "minBirthYear": 2009,
+      "maxBirthYear": 2009,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    },
+    {
+      "id": 510,
+      "seasonalScopeId": 17,
+      "ageGroup": "U18",
+      "birthYear": 2009,
+      "gender": "Girls",
+      "divisionCode": "G2009",
+      "minBirthYear": 2009,
+      "maxBirthYear": 2009,
+      "createdAt": "2025-02-20T03:59:16.360Z",
+      "updatedAt": "2025-02-20T03:59:16.360Z"
+    }
+  ],
+  "selectedComplexIds": [
+    1
+  ],
+  "complexFieldSizes": {},
+  "details": "",
+  "timezone": "America/New_York",
+  "agreement": "",
+  "refundPolicy": "",
+  "seasonalScopeId": 17,
+  "branding": {
+    "logoUrl": null,
+    "primaryColor": "#000000",
+    "secondaryColor": "#ffffff"
+  }
+}
+edit-event.tsx:47 Fetched age groups: []
+edit-event.tsx:154 Prepared event data: {id: 1865116636, name: 'new post', startDate: '2025-04-14', endDate: '2025-04-26', timezone: 'America/New_York', …}
+edit-event.tsx:154 Prepared event data: {id: 1865116636, name: 'new post', startDate: '2025-04-14', endDate: '2025-04-26', timezone: 'America/New_York', …}
+edit-event.tsx:154 Prepared event data: {id: 1865116636, name: 'new post', startDate: '2025-04-14', endDate: '2025-04-26', timezone: 'America/New_York', …}
+edit-event.tsx:154 Prepared event data: {id: 1865116636, name: 'new post', startDate: '2025-04-14', endDate: '2025-04-26', timezone: 'America/New_York', …}
+chunk-RPCDYKBN.js?v=09613116:1861 The specified value "2025-04-02T13:28" does not conform to the required format, "yyyy-MM-dd".
+set @ chunk-RPCDYKBN.js?v=09613116:1861
+updateWrapper @ chunk-RPCDYKBN.js?v=09613116:1987
+updateProperties @ chunk-RPCDYKBN.js?v=09613116:7762
+commitUpdate @ chunk-RPCDYKBN.js?v=09613116:8419
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17763
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17896
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17896
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17896
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17896
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17737
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17896
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17896
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17896
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17699
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17896
+recursivelyTraverseMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17685
+commitMutationEffectsOnFiber @ chunk-RPCDYKBN.js?v=09613116:17794
+commitMutationEffects @ chunk-RPCDYKBN.js?v=09613116:17663
+commitRootImpl @ chunk-RPCDYKBN.js?v=09613116:19347
+commitRoot @ chunk-RPCDYKBN.js?v=09613116:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=09613116:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=09613116:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=09613116:18627Understand this warningAI
+edit-event.tsx:154 Prepared event data: {id: 1865116636, name: 'new post', startDate: '2025-04-14', endDate: '2025-04-26', timezone: 'America/New_York', …}
+edit-event.tsx:154 Prepared event data: {id: 1865116636, name: 'new post', startDate: '2025-04-14', endDate: '2025-04-26', timezone: 'America/New_York', …}
