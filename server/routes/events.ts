@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../db';
-import { events, eventAgeGroups, eventAgeGroupFees, eventFees, eventSettings, ageGroupSettings } from '@db/schema';
-import { eq, and } from 'drizzle-orm';
+import { events, eventAgeGroups, eventSettings } from '@db/schema';
+import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router = Router();
@@ -136,10 +136,7 @@ router.patch('/:id', async (req, res) => {
 
       // Delete existing seasonalScopeId setting if it exists
       await db.delete(eventSettings)
-        .where(and(
-          eq(eventSettings.eventId, eventId.toString()),
-          eq(eventSettings.settingKey, 'seasonalScopeId')
-        ));
+        .where(eq(eventSettings.eventId, eventId.toString()));
 
       // Insert new setting
       await db.insert(eventSettings).values({
@@ -212,10 +209,7 @@ router.get('/:id/age-groups', async (req, res) => {
     if (ageGroups.length === 0) {
       // Get the seasonal scope ID from event settings
       const scopeSetting = await db.query.eventSettings.findFirst({
-        where: and(
-          eq(eventSettings.eventId, eventId.toString()),
-          eq(eventSettings.settingKey, 'seasonalScopeId')
-        )
+        where: eq(eventSettings.eventId, eventId.toString())
       });
 
       if (scopeSetting) {
@@ -500,10 +494,7 @@ router.get('/:id/edit', async (req, res) => {
 
     // Get the seasonal scope ID from event settings
     const scopeSetting = await db.query.eventSettings.findFirst({
-      where: and(
-        eq(eventSettings.eventId, eventId.toString()),
-        eq(eventSettings.settingKey, 'seasonalScopeId')
-      )
+      where: eq(eventSettings.eventId, eventId.toString())
     });
 
     const seasonalScopeId = scopeSetting ? parseInt(scopeSetting.settingValue) : null;
@@ -609,21 +600,15 @@ router.delete('/:id', async (req, res) => {
   console.log(`Starting event deletion for ID: ${eventId}`);
 
   try {
-    // Delete in correct order to maintain referential integrity
-    // First delete event settings
-    await db.delete(eventSettings)
-      .where(eq(eventSettings.eventId, eventId));
-    console.log('Deleted event settings');
-
-    // Delete event age groups
+    // First delete event age groups
     await db.delete(eventAgeGroups)
-      .where(eq(eventAgeGroups.eventId, eventId));
+      .where(eq(eventAgeGroups.eventId, eventId.toString()));
     console.log('Deleted event age groups');
 
-    // Delete event fees
-    await db.delete(eventFees)
-      .where(eq(eventFees.eventId, eventId));
-    console.log('Deleted event fees');
+    // Delete event settings
+    await db.delete(eventSettings)
+      .where(eq(eventSettings.settings.eventId, eventId.toString()));
+    console.log('Deleted event settings');
 
     // Finally delete the event itself
     const [deletedEvent] = await db.delete(events)
