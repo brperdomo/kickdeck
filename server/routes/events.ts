@@ -63,40 +63,38 @@ router.patch('/:id', async (req, res) => {
         updatedAt: new Date().toISOString(),
       });
 
-      try {
-        // Delete existing age groups for this event
-        await db.delete(eventAgeGroups)
-          .where(eq(eventAgeGroups.eventId, eventId.toString()));
+      // Delete existing age groups for this event
+      await db.delete(eventAgeGroups)
+        .where(eq(eventAgeGroups.eventId, eventId.toString()));
 
-        // Fetch the age groups from the seasonal scope
-        const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
-          where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
-        });
+      // Fetch the age groups from the seasonal scope
+      const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
+        where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
+      });
 
-        console.log(`Found ${scopeAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
+      console.log(`Found ${scopeAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
 
-        // For each age group in the scope, create a corresponding event age group
-        if (scopeAgeGroups.length > 0) {
-          const eventAgeGroupsToInsert = scopeAgeGroups.map(ag => ({
-            eventId: eventId.toString(),
-            ageGroup: ag.ageGroup,
-            birthYear: ag.birthYear,
-            gender: ag.gender,
-            divisionCode: ag.divisionCode,
-            fieldSize: "Standard",
-            projectedTeams: 8,
-            createdAt: new Date().toISOString(),
-            birthDateStart: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
-            birthDateEnd: new Date(ag.birthYear, 11, 31).toISOString().split('T')[0]
-          }));
+      // For each age group in the scope, create a corresponding event age group
+      if (scopeAgeGroups.length > 0) {
+        const eventAgeGroupsToInsert = scopeAgeGroups.map(ag => ({
+          eventId: eventId.toString(),
+          ageGroup: ag.ageGroup,
+          birthYear: ag.birthYear,
+          gender: ag.gender,
+          divisionCode: ag.divisionCode,
+          fieldSize: ag.ageGroup.startsWith('U') ? 
+            (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' : 
+             parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' : 
+             parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+          projectedTeams: 8,
+          createdAt: new Date().toISOString(),
+          birthDateStart: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
+          birthDateEnd: new Date(ag.birthYear, 11, 31).toISOString().split('T')[0]
+        }));
 
-          // Insert the age groups
-          await db.insert(eventAgeGroups).values(eventAgeGroupsToInsert);
-          console.log(`Successfully copied ${eventAgeGroupsToInsert.length} age groups from scope to event ${eventId}`);
-        }
-      } catch (error) {
-        console.error('Error copying age groups from seasonal scope:', error);
-        throw error;
+        // Insert the age groups
+        await db.insert(eventAgeGroups).values(eventAgeGroupsToInsert);
+        console.log(`Successfully copied ${eventAgeGroupsToInsert.length} age groups from scope to event ${eventId}`);
       }
     }
 
