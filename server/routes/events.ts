@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
     }).returning();
 
     // Convert seasonalScopeId to number
-    const seasonalScopeId = eventData.seasonalScopeId ? 
+    const seasonalScopeId = eventData.seasonalScopeId ?
       Number(eventData.seasonalScopeId) : null;
     console.log('Using seasonalScopeId:', seasonalScopeId);
 
@@ -56,10 +56,10 @@ router.post('/', async (req, res) => {
         birthYear: ag.birthYear,
         gender: ag.gender,
         divisionCode: ag.divisionCode,
-        fieldSize: ag.ageGroup.startsWith('U') ? 
-          (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' : 
-           parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' : 
-           parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+        fieldSize: ag.ageGroup.startsWith('U') ?
+          (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' :
+            parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' :
+              parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
         projectedTeams: 8,
         createdAt: new Date().toISOString(),
         birthDateStart: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
@@ -92,10 +92,10 @@ router.post('/', async (req, res) => {
             birthYear: ag.birthYear,
             gender: ag.gender,
             divisionCode: ag.divisionCode,
-            fieldSize: ag.ageGroup.startsWith('U') ? 
-              (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' : 
-               parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' : 
-               parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+            fieldSize: ag.ageGroup.startsWith('U') ?
+              (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' :
+                parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' :
+                  parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
             projectedTeams: 8,
             createdAt: new Date().toISOString(),
             birthDateStart: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
@@ -121,9 +121,9 @@ router.post('/', async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating event:", error);
-    res.status(500).json({ 
-      error: "Failed to create event", 
-      details: error instanceof Error ? error.message : 'Unknown error' 
+    res.status(500).json({
+      error: "Failed to create event",
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -138,7 +138,7 @@ router.patch('/:id', async (req, res) => {
     console.log('Updating event with data:', eventData);
 
     // Convert seasonalScopeId to number or null
-    const seasonalScopeId = eventData.seasonalScopeId ? 
+    const seasonalScopeId = eventData.seasonalScopeId ?
       Number(eventData.seasonalScopeId) : null;
     console.log('Using seasonalScopeId:', seasonalScopeId);
 
@@ -148,7 +148,7 @@ router.patch('/:id', async (req, res) => {
     });
 
     if (!event) {
-      res.status(404).json({error: "Event not found"});
+      res.status(404).json({ error: "Event not found" });
       return;
     }
 
@@ -204,10 +204,10 @@ router.patch('/:id', async (req, res) => {
           birthYear: ag.birthYear,
           gender: ag.gender,
           divisionCode: ag.divisionCode,
-          fieldSize: ag.ageGroup.startsWith('U') ? 
-            (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' : 
-             parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' : 
-             parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+          fieldSize: ag.ageGroup.startsWith('U') ?
+            (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' :
+              parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' :
+                parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
           projectedTeams: 8,
           createdAt: new Date().toISOString(),
           birthDateStart: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
@@ -223,9 +223,9 @@ router.patch('/:id', async (req, res) => {
     res.json({ message: "Event updated successfully" });
   } catch (error) {
     console.error("Error updating event:", error);
-    res.status(500).json({ 
-      error: "Failed to update event", 
-      details: error instanceof Error ? error.message : 'Unknown error' 
+    res.status(500).json({
+      error: "Failed to update event",
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -236,52 +236,21 @@ router.get('/:id/age-groups', async (req, res) => {
   console.log(`Fetching age groups for event: ${eventId}`);
 
   try {
-    // Get the seasonal scope ID from event settings
-    const scopeSetting = await db.query.eventSettings.findFirst({
-      where: and(
-        eq(eventSettings.eventId, eventId.toString()),
-        eq(eventSettings.settingKey, 'seasonalScopeId')
-      )
+    // First try to get age groups directly associated with the event
+    const ageGroups = await db.query.eventAgeGroups.findMany({
+      where: eq(eventAgeGroups.eventId, eventId.toString())
     });
 
-    if (scopeSetting) {
-      const seasonalScopeId = parseInt(scopeSetting.settingValue);
-      console.log(`Found seasonal scope ID: ${seasonalScopeId} for event ${eventId}`);
+    console.log(`Found ${ageGroups.length} age groups directly associated with event`);
 
-      // Get age groups from the seasonal scope
-      const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
-        where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
-      });
+    // Map age groups to include selected flag
+    const ageGroupsWithSelected = ageGroups.map(group => ({
+      ...group,
+      selected: true
+    }));
 
-      console.log(`Found ${scopeAgeGroups.length} age groups from seasonal scope ${seasonalScopeId}`);
-
-      // Convert scope age groups to event age groups format
-      const ageGroups = scopeAgeGroups.map(ag => ({
-        id: null,
-        eventId: eventId.toString(),
-        ageGroup: ag.ageGroup,
-        birthYear: ag.birthYear,
-        gender: ag.gender,
-        divisionCode: ag.divisionCode,
-        fieldSize: ag.ageGroup.startsWith('U') ? 
-          (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' : 
-           parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' : 
-           parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
-        projectedTeams: 8,
-        createdAt: new Date().toISOString(),
-        birthDateStart: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
-        birthDateEnd: new Date(ag.birthYear, 11, 31).toISOString().split('T')[0],
-        selected: true
-      }));
-
-      console.log(`Returning ${ageGroups.length} age groups for event ${eventId}`);
-      return res.json(ageGroups);
-    }
-
-    // If no seasonal scope found, return empty array
-    console.log(`No seasonal scope found for event ${eventId}`);
-    return res.json([]);
-
+    console.log(`Returning ${ageGroupsWithSelected.length} age groups for event ${eventId}`);
+    res.json(ageGroupsWithSelected);
   } catch (error) {
     console.error('Error fetching age groups:', error);
     res.status(500).json({ error: 'Failed to fetch age groups' });
@@ -289,7 +258,7 @@ router.get('/:id/age-groups', async (req, res) => {
 });
 
 // Added route to fetch age groups with deduplication
-router.get('/api/admin/events/:eventId/age-groups', async (req, res) => { 
+router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
   try {
     const eventId = req.params.eventId;
 
@@ -346,20 +315,20 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
       for (const group of PREDEFINED_AGE_GROUPS) {
         const key = group.divisionCode;
         uniqueGroups.push({
-          id: null, 
+          id: null,
           eventId,
           ageGroup: group.ageGroup,
           gender: group.gender,
           divisionCode: group.divisionCode,
           birthDateStart: null,
           birthDateEnd: null,
-          fieldSize: group.ageGroup.startsWith('U') ? 
-            (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' : 
-             parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' : 
-             parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+          fieldSize: group.ageGroup.startsWith('U') ?
+            (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
+              parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
+                parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
           projectedTeams: 0,
           createdAt: new Date().toISOString(),
-          selected: true, 
+          selected: true,
         });
       }
 
@@ -376,8 +345,8 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
         // Create a simplified version of the group with standard field size
         const simplifiedGroup = {
           ...group,
-          fieldSize: group.fieldSize || null, 
-          selected: true, 
+          fieldSize: group.fieldSize || null,
+          selected: true,
         };
         uniqueMap.set(key, simplifiedGroup);
         uniqueGroups.push(simplifiedGroup);
@@ -426,10 +395,10 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
       const key = stdGroup.divisionCode;
       if (!uniqueMap.has(key)) {
         // Add standard age group if not already present
-        const fieldSize = stdGroup.ageGroup.startsWith('U') ? 
-          (parseInt(stdGroup.ageGroup.substring(1)) <= 7 ? '4v4' : 
-           parseInt(stdGroup.ageGroup.substring(1)) <= 10 ? '7v7' : 
-           parseInt(stdGroup.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11';
+        const fieldSize = stdGroup.ageGroup.startsWith('U') ?
+          (parseInt(stdGroup.ageGroup.substring(1)) <= 7 ? '4v4' :
+            parseInt(stdGroup.ageGroup.substring(1)) <= 10 ? '7v7' :
+              parseInt(stdGroup.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11';
 
         uniqueGroups.push({
           id: null,
@@ -442,7 +411,7 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
           fieldSize: fieldSize,
           projectedTeams: 0,
           createdAt: new Date().toISOString(),
-          selected: false, 
+          selected: false,
         });
       }
     }
@@ -472,10 +441,10 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
       ];
 
       for (const group of PREDEFINED_AGE_GROUPS) {
-        const fieldSize = group.ageGroup.startsWith('U') ? 
-          (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' : 
-           parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' : 
-           parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11';
+        const fieldSize = group.ageGroup.startsWith('U') ?
+          (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
+            parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
+              parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11';
 
         uniqueGroups.push({
           id: null,
@@ -488,7 +457,7 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
           fieldSize: fieldSize,
           projectedTeams: 0,
           createdAt: new Date().toISOString(),
-          selected: false, 
+          selected: false,
         });
       }
 
@@ -565,10 +534,10 @@ router.patch('/fees/:feeId', async (req, res) => {
     }
 
     const updatedFee = await db.update(eventFees)
-      .set({ 
-        name, 
-        amount: Number(amount), 
-        beginDate: parsedBeginDate, 
+      .set({
+        name,
+        amount: Number(amount),
+        beginDate: parsedBeginDate,
         endDate: parsedEndDate,
         accountingCodeId: accountingCodeId || null
       })
@@ -579,9 +548,9 @@ router.patch('/fees/:feeId', async (req, res) => {
     res.json(updatedFee[0]);
   } catch (error) {
     console.error("Error updating fee:", error);
-    res.status(500).json({ 
-      error: "Failed to update fee", 
-      details: error instanceof Error ? error.message : 'Unknown error' 
+    res.status(500).json({
+      error: "Failed to update fee",
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -591,7 +560,7 @@ router.post('/:eventId/fee-assignments', async (req, res) => {
   try {
     console.log("Fee assignment request received with params:", req.params);
     console.log("Fee assignment request body:", req.body);
-    
+
     const eventId = parseInt(req.params.eventId);
     const { feeId, assignments } = req.body;
 
