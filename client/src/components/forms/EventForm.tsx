@@ -20,7 +20,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Editor } from "@tinymce/tinymce-react";
+import { useDropzone } from 'react-dropzone';
+import { AdminModal } from "@/components/admin/AdminModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 import {
   PREDEFINED_AGE_GROUPS,
   EventBranding,
