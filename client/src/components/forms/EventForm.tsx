@@ -125,17 +125,17 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   });
 
   useEffect(() => {
+    if (defaultValues?.seasonalScopeId) {
+      setSelectedSeasonalScopeId(defaultValues.seasonalScopeId);
+    }
+  }, [defaultValues?.seasonalScopeId]);
+
+  useEffect(() => {
     if (ageGroupsQuery.data) {
       setAgeGroups(ageGroupsQuery.data);
       form.setValue('ageGroups', ageGroupsQuery.data);
     }
   }, [ageGroupsQuery.data, form.setValue]);
-
-  useEffect(() => {
-    if (mode === 'edit' && defaultValues?.seasonalScopeId) {
-      setSelectedSeasonalScopeId(defaultValues.seasonalScopeId);
-    }
-  }, [mode, defaultValues?.seasonalScopeId]);
 
   const handleSeasonalScopeChange = (scopeId: number) => {
     setSelectedSeasonalScopeId(scopeId);
