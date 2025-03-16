@@ -111,11 +111,15 @@ router.patch('/:id', async (req, res) => {
 // Get event age groups endpoint
 router.get('/:id/age-groups', async (req, res) => {
   const eventId = parseInt(req.params.id);
+  console.log(`Fetching age groups for event: ${eventId}`);
+
   try {
     // First try to get age groups directly associated with the event
     let ageGroups = await db.query.eventAgeGroups.findMany({
       where: eq(eventAgeGroups.eventId, eventId),
     });
+
+    console.log(`Found ${ageGroups.length} age groups directly associated with event`);
 
     // If no age groups found, try to get them from the seasonal scope
     if (ageGroups.length === 0) {
@@ -129,9 +133,13 @@ router.get('/:id/age-groups', async (req, res) => {
 
       if (scopeSetting) {
         const seasonalScopeId = parseInt(scopeSetting.settingValue);
+        console.log(`No age groups found in event, using seasonal scope: ${seasonalScopeId}`);
+
         const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
           where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
         });
+
+        console.log(`Found ${scopeAgeGroups.length} age groups from seasonal scope`);
 
         // Convert scope age groups to event age groups format
         ageGroups = scopeAgeGroups.map(ag => ({
@@ -151,7 +159,7 @@ router.get('/:id/age-groups', async (req, res) => {
       }
     }
 
-    // Mark all age groups as selected
+    // Ensure all age groups are marked as selected
     const ageGroupsWithSelected = ageGroups.map(group => ({
       ...group,
       selected: true
