@@ -1,24 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
-import { useLocation, Link } from "wouter";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ArrowLeft, Plus, Edit, Trash, CheckCircle, ImageIcon } from "lucide-react";
+import { Loader2, ArrowLeft, Plus, Edit, Trash, CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
-import { useDropzone } from 'react-dropzone';
-import { AdminModal } from "@/components/admin/AdminModal";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Editor } from "@tinymce/tinymce-react";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -27,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Editor } from "@tinymce/tinymce-react";
 import {
   PREDEFINED_AGE_GROUPS,
   EventBranding,
@@ -52,7 +46,6 @@ import {
 import { ComplexSelector } from "@/components/events/ComplexSelector";
 import { InfoPopover } from "@/components/ui/InfoPopover";
 import {SeasonalScopeSelector} from "@/components/events/SeasonalScopeSelector";
-import {AgeGroupSelector} from "@/components/events/AgeGroupSelector";
 import { Textarea } from "@/components/ui/textarea";
 
 
@@ -82,32 +75,15 @@ interface EventFormProps {
 export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false, activeTab, onTabChange, completedTabs, onCompletedTabsChange, navigateTab }: EventFormProps) => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { control, handleSubmit, formState, setValue, getValues, setFieldValue, watch, formState: {errors} } = useForm<EventFormValues>({
+  const form = useForm<EventFormValues>({
     resolver: zodResolver(eventInformationSchema),
-    defaultValues: defaultValues
+    defaultValues
   });
 
-  const [event, setEvent] = useState<EventFormValues>(defaultValues || {
-    name: '',
-    startDate: '',
-    endDate: '',
-    timezone: '',
-    applicationDeadline: '',
-    details: '',
-    agreement: '',
-    refundPolicy: '',
-    ageGroups: [],
-    selectedComplexIds: [],
-    complexFieldSizes: {},
-    scoringRules: [],
-    settings: [],
-    administrators: [],
-    branding: {} as EventBranding,
-    logo: "" 
-  });
-
-  const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(defaultValues?.selectedComplexIds || []);
-  const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(defaultValues?.complexFieldSizes || {});
+  const [selectedSeasonalScopeId, setSelectedSeasonalScopeId] = useState<number | null>(
+    defaultValues?.seasonalScopeId || null
+  );
+  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>([]);
   const [scoringRules, setScoringRules] = useState<ScoringRule[]>(defaultValues?.scoringRules || []);
   const [settings, setSettings] = useState<EventSetting[]>(defaultValues?.settings || []);
   const [isScoringDialogOpen, setIsScoringDialogOpen] = useState(false);
@@ -122,19 +98,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   const [secondaryColor, setSecondaryColor] = useState(defaultValues?.branding?.secondaryColor || '#34C759');
   const [isExtracting, setIsExtracting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [selectedSeasonalScopeId, setSelectedSeasonalScopeId] = useState<number | null>(
-    defaultValues?.seasonalScopeId || null
-  );
-  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>([]);
-  const [seasonalScopes, setSeasonalScopes] = useState<any[] | null>(null);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: acceptedFiles => {
-      setLogo(acceptedFiles[0]);
-      const reader = new FileReader();
-      reader.onload = (e) => setPreviewUrl(e.target?.result as string);
-      reader.readAsDataURL(acceptedFiles[0]);
-    },
-  });
+  const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(defaultValues?.selectedComplexIds || []);
+  const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(defaultValues?.complexFieldSizes || {});
 
 
   const seasonalScopesQuery = useQuery({
@@ -159,36 +124,88 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   useEffect(() => {
     if (ageGroupsQuery.data) {
-      setAgeGroups(ageGroupsQuery.data.map(group => ({
-        ...group,
-        selected: true,
-        projectedTeams: 0,
-        amountDue: 0
-      })));
-      // Update the form's ageGroups value
-      setValue('ageGroups', ageGroupsQuery.data.map(group => ({
-        ...group,
-        selected: true,
-        projectedTeams: 0,
-        amountDue: 0
-      })));
-    }
-  }, [ageGroupsQuery.data, setValue]);
-
-  const handleSeasonalScopeChange = (scopeId: number) => {
-    setSelectedSeasonalScopeId(scopeId);
-    setValue('seasonalScopeId', scopeId);
-
-    if (ageGroupsQuery.data) {
-      const allAgeGroups = ageGroupsQuery.data.map(group => ({
+      const newAgeGroups = ageGroupsQuery.data.map(group => ({
         ...group,
         selected: true,
         projectedTeams: 0,
         amountDue: 0
       }));
-      setAgeGroups(allAgeGroups);
-      setValue('ageGroups', allAgeGroups);
+      setAgeGroups(newAgeGroups);
+      form.setValue('ageGroups', newAgeGroups);
     }
+  }, [ageGroupsQuery.data, form.setValue]);
+
+  useEffect(() => {
+    if (mode === 'edit' && defaultValues?.seasonalScopeId) {
+      setSelectedSeasonalScopeId(defaultValues.seasonalScopeId);
+    }
+  }, [mode, defaultValues?.seasonalScopeId]);
+
+  const handleSeasonalScopeChange = (scopeId: number) => {
+    setSelectedSeasonalScopeId(scopeId);
+    form.setValue('seasonalScopeId', scopeId);
+  };
+
+  const handleSubmit = async (data: EventFormValues) => {
+    try {
+      if (!selectedSeasonalScopeId) {
+        toast({
+          title: "Error",
+          description: "Please select a seasonal scope",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const submitData = {
+        ...data,
+        seasonalScopeId: selectedSeasonalScopeId,
+        ageGroups: ageGroups,
+        scoringRules,
+        settings,
+        complexFieldSizes,
+        selectedComplexIds,
+        administrators: defaultValues?.administrators || [],
+        branding: {
+          primaryColor,
+          secondaryColor,
+          logoUrl: previewUrl || undefined,
+        },
+      };
+
+      await onSubmit(submitData);
+      toast({
+        title: "Success",
+        description: mode === 'edit' ? "Event updated successfully" : "Event created successfully",
+      });
+      setLocation("/admin");
+    } catch (error) {
+      console.error('Submit error:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save event",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleComplexSelection = (complexId: number) => {
+    setSelectedComplexIds(prev =>
+      prev.includes(complexId)
+        ? prev.filter(id => id !== complexId)
+        : [...prev, complexId]
+    );
+  };
+
+  const handleFieldSizeChange = (complexId: number, size: FieldSize) => {
+    setComplexFieldSizes(prev => ({
+      ...prev,
+      [complexId]: size
+    }));
+  };
+
+  const handleDeleteAgeGroup = (id: string) => {
+    setAgeGroups(prevAgeGroups => prevAgeGroups.filter(group => group.id !== id));
   };
 
   const complexesQuery = useQuery({
@@ -216,116 +233,100 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     enabled: !!defaultValues?.id
   });
 
-  const handleSubmitForm = async (data: EventFormValues) => {
-    setIsSaving(true);
-    try {
-      if (!data.name || !data.startDate || !data.endDate || !data.timezone || !data.applicationDeadline) {
-        throw new Error('Required fields are missing');
-      }
-
-
-      const combinedData = {
-        ...data,
-        ageGroups: ageGroups,
-        scoringRules,
-        settings,
-        complexFieldSizes,
-        selectedComplexIds,
-        administrators: defaultValues?.administrators || [],
-        branding: {
-          primaryColor,
-          secondaryColor,
-          logoUrl: previewUrl || undefined,
-        },
-        seasonalScopeId: selectedSeasonalScopeId, 
-      };
-
-      await onSubmit(combinedData);
-
-      toast({
-        title: "Success",
-        description: mode === 'edit' ? "Event updated successfully" : "Event created successfully",
-      });
-
-      setLocation("/admin");
-    } catch (error) {
-      console.error('Submit error:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save event",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleComplexSelection = (complexId: number) => {
-    setSelectedComplexIds(prev =>
-      prev.includes(complexId)
-        ? prev.filter(id => id !== complexId)
-        : [...prev, complexId]
-    );
-  };
-
-  const handleFieldSizeChange = (complexId: number, size: FieldSize) => {
-    setComplexFieldSizes(prev => ({
-      ...prev,
-      [complexId]: size
-    }));
-  };
-
-
-  const handleDeleteAgeGroup = (id: string) => {
-    setEvent(prevEvent => ({
-      ...prevEvent,
-      ageGroups: prevEvent.ageGroups.filter(group => group.id !== id)
-    }));
-  };
-
-  const SaveButton = () => (
-    <Button
-      onClick={handleSubmitForm}
-      disabled={isSubmitting}
-    >
-      {isSubmitting ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Saving...
-        </>
-      ) : (
-        mode === 'edit' ? 'Save Changes' : 'Create Event'
-      )}
-    </Button>
-  );
-
-  const form = useForm<EventFormValues>({
-    defaultValues: {
-      name: event.name || '',
-      startDate: event.startDate || '',
-      endDate: event.endDate || '',
-      timezone: event.timezone || 'UTC',
-      description: event.description || '',
-      venueId: event.venueId || '',
-      ageGroups: event.ageGroups || [],
-      selectedComplexIds: selectedComplexIds,
-      complexFieldSizes: event.complexFieldSizes || {},
-      scoringRules: scoringRules,
-      settings: event.settings || [],
-      administrators: event.administrators || [],
-      branding: event.branding || {
-        logoUrl: '',
-        primaryColor: '#000000',
-        secondaryColor: '#ffffff'
-      },
-      logo: "" 
-    }
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: acceptedFiles => {
+      setLogo(acceptedFiles[0]);
+      const reader = new FileReader();
+      reader.onload = (e) => setPreviewUrl(e.target?.result as string);
+      reader.readAsDataURL(acceptedFiles[0]);
+    },
   });
+
+  const renderAgeGroupsContent = () => (
+    <div className="space-y-6">
+      <div className="mb-6">
+        <Label htmlFor="seasonalScope">Seasonal Scope</Label>
+        <Select 
+          onValueChange={(value) => handleSeasonalScopeChange(Number(value))}
+          value={selectedSeasonalScopeId?.toString()}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a seasonal scope" />
+          </SelectTrigger>
+          <SelectContent>
+            {seasonalScopesQuery.data?.map((scope:any) => (
+              <SelectItem key={scope.id} value={scope.id.toString()}>
+                {scope.name} ({scope.startYear}-{scope.endYear})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {selectedSeasonalScopeId && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Age Groups</CardTitle>
+            <CardDescription>
+              All age groups from this seasonal scope will be automatically included in the event.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {ageGroupsQuery.isLoading ? (
+              <div className="flex justify-center p-4">
+                <Loader2 className="h-6 w-6 animate-spin" />
+              </div>
+            ) : ageGroups.length > 0 ? (
+              <div className="space-y-4">
+                <div className="bg-green-50 border border-green-200 rounded-md p-4">
+                  <div className="flex items-start">
+                    <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-green-800">
+                        Age groups configured automatically
+                      </h3>
+                      <p className="mt-2 text-sm text-green-700">
+                        All {ageGroups.length} age groups from this seasonal scope will be included in your event.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Age Group</TableHead>
+                      <TableHead>Gender</TableHead>
+                      <TableHead>Birth Year</TableHead>
+                      <TableHead>Division Code</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {ageGroups.map((group) => (
+                      <TableRow key={`${group.gender}-${group.birthYear}`}>
+                        <TableCell>{group.ageGroup}</TableCell>
+                        <TableCell>{group.gender}</TableCell>
+                        <TableCell>{group.birthYear}</TableCell>
+                        <TableCell>{group.divisionCode}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground">
+                No age groups found for this seasonal scope
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
 
   const renderInformationContent = () => {
     return (
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -487,87 +488,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       </Form>
     );
   };
-
-  const renderAgeGroupsContent = () => (
-    <div className="space-y-6">
-      <div className="mb-6">
-        <Label htmlFor="seasonalScope">Seasonal Scope</Label>
-        <Select 
-          onValueChange={(value) => handleSeasonalScopeChange(Number(value))}
-          value={selectedSeasonalScopeId?.toString()}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a seasonal scope" />
-          </SelectTrigger>
-          <SelectContent>
-            {seasonalScopesQuery.data?.map((scope:any) => (
-              <SelectItem key={scope.id} value={scope.id.toString()}>
-                {scope.name} ({scope.startYear}-{scope.endYear})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {selectedSeasonalScopeId && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Age Groups</CardTitle>
-            <CardDescription>
-              All age groups from this seasonal scope will be automatically included in the event.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {ageGroupsQuery.isLoading ? (
-              <div className="flex justify-center p-4">
-                <Loader2 className="h-6 w-6 animate-spin" />
-              </div>
-            ) : ageGroups.length > 0 ? (
-              <div className="space-y-4">
-                <div className="bg-green-50 border border-green-200 rounded-md p-4">
-                  <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
-                    <div className="ml-3">
-                      <h3 className="text-sm font-medium text-green-800">
-                        Age groups configured automatically
-                      </h3>
-                      <p className="mt-2 text-sm text-green-700">
-                        All {ageGroups.length} age groups from this seasonal scope will be included in your event.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Age Group</TableHead>
-                      <TableHead>Gender</TableHead>
-                      <TableHead>Birth Year</TableHead>
-                      <TableHead>Division Code</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {ageGroups.map((group) => (
-                      <TableRow key={group.id}>
-                        <TableCell>{group.ageGroup}</TableCell>
-                        <TableCell>{group.gender}</TableCell>
-                        <TableCell>{group.birthYear}</TableCell>
-                        <TableCell>{group.divisionCode}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <p className="text-center text-muted-foreground">
-                No age groups found for this seasonal scope
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
 
   const renderComplexesContent = () => {
     if (complexesQuery.isLoading) {
@@ -895,27 +815,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const isEditMode = mode === "edit";
 
-  useEffect(() => {
-    if (isEditMode && event?.id) {
-      fetch(`/api/admin/events/${event.id}/age-groups`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch age groups');
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data && Array.isArray(data)) {
-            setValue('ageGroups', data);
-          } else {
-            console.error('Age groups data is not an array or is empty:', data);
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching age groups:', error);
-        });
-    }
-  }, [isEditMode, event?.id, setValue]);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
@@ -976,7 +875,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             )}
 
             <Button
-              onClick={handleSubmit(handleSubmitForm)}
+              onClick={form.handleSubmit(handleSubmit)}
               disabled={isSubmitting || isSaving}
             >
               {isSubmitting || isSaving ? (

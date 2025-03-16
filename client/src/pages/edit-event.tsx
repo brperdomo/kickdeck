@@ -23,8 +23,24 @@ export default function EditEvent() {
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${id}/edit`);
       if (!response.ok) throw new Error('Failed to fetch event data');
-      return response.json();
+      const data = await response.json();
+      console.log('Fetched event data:', data); // Debug log
+      return data;
     },
+  });
+
+  // Query for age groups
+  const ageGroupsQuery = useQuery({
+    queryKey: ['event', id, 'age-groups'],
+    queryFn: async () => {
+      if (!id) return [];
+      const response = await fetch(`/api/admin/events/${id}/age-groups`);
+      if (!response.ok) throw new Error('Failed to fetch age groups');
+      const data = await response.json();
+      console.log('Fetched age groups:', data); // Debug log
+      return data;
+    },
+    enabled: !!id
   });
 
   // Mutation for updating event
@@ -76,7 +92,7 @@ export default function EditEvent() {
     }
   };
 
-  if (eventQuery.isLoading) {
+  if (eventQuery.isLoading || ageGroupsQuery.isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
@@ -112,7 +128,7 @@ export default function EditEvent() {
   // Prepare the event data for the form
   const eventData = {
     ...eventQuery.data,
-    ageGroups: eventQuery.data.ageGroups || [],
+    ageGroups: ageGroupsQuery.data || [],
     selectedComplexIds: eventQuery.data.selectedComplexIds || [],
     complexFieldSizes: eventQuery.data.complexFieldSizes || {},
     scoringRules: eventQuery.data.scoringRules || [],
@@ -124,6 +140,8 @@ export default function EditEvent() {
       secondaryColor: "#ffffff"
     }
   };
+
+  console.log('Prepared event data:', eventData); // Debug log
 
   return (
     <div className="min-h-screen bg-background">
