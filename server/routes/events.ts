@@ -23,20 +23,21 @@ router.patch('/:id', async (req, res) => {
     // If there's a seasonalScopeId, we need to fetch its age groups and copy them
     if (seasonalScopeId) {
       try {
-        // First, fetch the age groups from the seasonal scope
+        // Delete existing age groups for this event
+        await db.delete(eventAgeGroups)
+          .where(eq(eventAgeGroups.eventId, eventId.toString()));
+
+        // Fetch the age groups from the seasonal scope
         const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
           where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
         });
 
         console.log(`Found ${scopeAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
 
-        // Delete existing age groups for this event
-        await db.delete(eventAgeGroups).where(eq(eventAgeGroups.eventId, eventId));
-
         // For each age group in the scope, create a corresponding event age group
         if (scopeAgeGroups.length > 0) {
           const eventAgeGroupsToInsert = scopeAgeGroups.map(ag => ({
-            eventId: eventId,
+            eventId: eventId.toString(),
             ageGroup: ag.ageGroup,
             birthYear: ag.birthYear,
             gender: ag.gender,
@@ -59,7 +60,10 @@ router.patch('/:id', async (req, res) => {
     }
 
     // Update the event in the database
-    const event = await db.query.events.findFirst({where: eq(events.id, eventId)});
+    const event = await db.query.events.findFirst({
+      where: eq(events.id, eventId)
+    });
+
     if (!event) {
       res.status(404).json({error: "Event not found"});
       return;
@@ -83,13 +87,13 @@ router.patch('/:id', async (req, res) => {
       // Delete existing seasonalScopeId setting if it exists
       await db.delete(eventSettings)
         .where(and(
-          eq(eventSettings.eventId, eventId),
+          eq(eventSettings.eventId, eventId.toString()),
           eq(eventSettings.settingKey, 'seasonalScopeId')
         ));
 
       // Insert new setting
       await db.insert(eventSettings).values({
-        eventId: eventId,
+        eventId: eventId.toString(),
         settingKey: 'seasonalScopeId',
         settingValue: seasonalScopeId.toString(),
         createdAt: new Date().toISOString(),
@@ -116,7 +120,7 @@ router.get('/:id/age-groups', async (req, res) => {
   try {
     // First try to get age groups directly associated with the event
     let ageGroups = await db.query.eventAgeGroups.findMany({
-      where: eq(eventAgeGroups.eventId, eventId),
+      where: eq(eventAgeGroups.eventId, eventId.toString())
     });
 
     console.log(`Found ${ageGroups.length} age groups directly associated with event`);
@@ -126,7 +130,7 @@ router.get('/:id/age-groups', async (req, res) => {
       // Get the seasonal scope ID from event settings
       const scopeSetting = await db.query.eventSettings.findFirst({
         where: and(
-          eq(eventSettings.eventId, eventId),
+          eq(eventSettings.eventId, eventId.toString()),
           eq(eventSettings.settingKey, 'seasonalScopeId')
         )
       });
@@ -144,7 +148,7 @@ router.get('/:id/age-groups', async (req, res) => {
         // Convert scope age groups to event age groups format
         ageGroups = scopeAgeGroups.map(ag => ({
           id: null,
-          eventId: eventId,
+          eventId: eventId.toString(),
           ageGroup: ag.ageGroup,
           birthYear: ag.birthYear,
           gender: ag.gender,
@@ -389,7 +393,6 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch age groups' });
   }
 });
-
 
 // Update fee endpoint
 router.patch('/fees/:feeId', async (req, res) => {
