@@ -47,6 +47,7 @@ import { ComplexSelector } from "@/components/events/ComplexSelector";
 import { InfoPopover } from "@/components/ui/InfoPopover";
 import {SeasonalScopeSelector} from "@/components/events/SeasonalScopeSelector";
 import { Textarea } from "@/components/ui/textarea";
+import { useDropzone } from 'react-dropzone'; // Added import
 
 
 interface EventFormValues extends EventInformationValues {
