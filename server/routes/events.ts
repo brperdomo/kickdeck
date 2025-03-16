@@ -20,8 +20,49 @@ router.patch('/:id', async (req, res) => {
       Number(eventData.seasonalScopeId) : null;
     console.log('Using seasonalScopeId:', seasonalScopeId);
 
-    // If there's a seasonalScopeId, we need to fetch its age groups and copy them
+    // Update the event in the database first
+    const event = await db.query.events.findFirst({
+      where: eq(events.id, eventId)
+    });
+
+    if (!event) {
+      res.status(404).json({error: "Event not found"});
+      return;
+    }
+
+    await db.update(events)
+      .set({
+        name: eventData.name,
+        startDate: eventData.startDate,
+        endDate: eventData.endDate,
+        applicationDeadline: eventData.applicationDeadline,
+        timezone: eventData.timezone,
+        details: eventData.details,
+        agreement: eventData.agreement,
+        refundPolicy: eventData.refundPolicy
+      })
+      .where(eq(events.id, eventId));
+
+    // If there's a seasonalScopeId, handle the scope and age groups
     if (seasonalScopeId) {
+      console.log(`Setting seasonalScopeId ${seasonalScopeId} for event ${eventId}`);
+
+      // Delete existing seasonalScopeId setting if it exists
+      await db.delete(eventSettings)
+        .where(and(
+          eq(eventSettings.eventId, eventId.toString()),
+          eq(eventSettings.settingKey, 'seasonalScopeId')
+        ));
+
+      // Insert new setting
+      await db.insert(eventSettings).values({
+        eventId: eventId.toString(),
+        settingKey: 'seasonalScopeId',
+        settingValue: seasonalScopeId.toString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+
       try {
         // Delete existing age groups for this event
         await db.delete(eventAgeGroups)
@@ -57,49 +98,6 @@ router.patch('/:id', async (req, res) => {
         console.error('Error copying age groups from seasonal scope:', error);
         throw error;
       }
-    }
-
-    // Update the event in the database
-    const event = await db.query.events.findFirst({
-      where: eq(events.id, eventId)
-    });
-
-    if (!event) {
-      res.status(404).json({error: "Event not found"});
-      return;
-    }
-
-    await db.update(events)
-      .set({
-        name: eventData.name,
-        startDate: eventData.startDate,
-        endDate: eventData.endDate,
-        applicationDeadline: eventData.applicationDeadline,
-        timezone: eventData.timezone,
-        details: eventData.details,
-        agreement: eventData.agreement,
-        refundPolicy: eventData.refundPolicy
-      })
-      .where(eq(events.id, eventId));
-
-    // Store the seasonalScopeId in the event settings table
-    if (seasonalScopeId) {
-      // Delete existing seasonalScopeId setting if it exists
-      await db.delete(eventSettings)
-        .where(and(
-          eq(eventSettings.eventId, eventId.toString()),
-          eq(eventSettings.settingKey, 'seasonalScopeId')
-        ));
-
-      // Insert new setting
-      await db.insert(eventSettings).values({
-        eventId: eventId.toString(),
-        settingKey: 'seasonalScopeId',
-        settingValue: seasonalScopeId.toString(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
-      console.log(`Successfully saved seasonalScopeId ${seasonalScopeId} in event settings for event ${eventId}`);
     }
 
     res.json({ message: "Event updated successfully" });

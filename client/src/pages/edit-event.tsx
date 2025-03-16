@@ -6,7 +6,7 @@ import { Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EventForm } from "@/components/forms/EventForm";
-import { type EventTab, TAB_ORDER } from "@/components/forms/event-form-types";
+import { type EventTab } from "@/components/forms/event-form-types";
 import { ProgressIndicator } from "@/components/ui/progress-indicator";
 
 export default function EditEvent() {
@@ -17,19 +17,27 @@ export default function EditEvent() {
   const [activeTab, setActiveTab] = useState<EventTab>('information');
   const [completedTabs, setCompletedTabs] = useState<EventTab[]>([]);
 
-  // Query for event data
+  // Query for event data including settings
   const eventQuery = useQuery({
     queryKey: ['event', id],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events/${id}/edit`);
       if (!response.ok) throw new Error('Failed to fetch event data');
       const data = await response.json();
-      console.log('Fetched event data:', data);
-      return data;
+
+      // Get seasonal scope ID from settings
+      const seasonalScopeId = data.settings?.find(
+        (s: any) => s.settingKey === 'seasonalScopeId'
+      )?.settingValue;
+
+      return {
+        ...data,
+        seasonalScopeId: seasonalScopeId ? parseInt(seasonalScopeId) : null
+      };
     },
   });
 
-  // Query for event's seasonal scope age groups
+  // Query for event's age groups
   const ageGroupsQuery = useQuery({
     queryKey: ['event-age-groups', id],
     queryFn: async () => {
@@ -67,6 +75,7 @@ export default function EditEvent() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event', id] });
+      queryClient.invalidateQueries({ queryKey: ['event-age-groups', id] });
       toast({
         title: "Success",
         description: "Event updated successfully",
@@ -85,7 +94,10 @@ export default function EditEvent() {
   const handleSubmit = async (formData: any) => {
     try {
       const { mode, defaultValues, ...submitData } = formData;
-      await updateEventMutation.mutateAsync(submitData);
+      await updateEventMutation.mutateAsync({
+        ...submitData,
+        seasonalScopeId: eventQuery.data?.seasonalScopeId
+      });
     } catch (error) {
       console.error("Submit error:", error);
     }
@@ -159,7 +171,7 @@ export default function EditEvent() {
             </div>
 
             <ProgressIndicator
-              steps={TAB_ORDER}
+              steps={['information', 'age-groups', 'scoring', 'complexes', 'settings', 'administrators']}
               currentStep={activeTab}
               completedSteps={completedTabs}
             />
@@ -174,10 +186,11 @@ export default function EditEvent() {
               completedTabs={completedTabs}
               onCompletedTabsChange={setCompletedTabs}
               navigateTab={(direction) => {
-                const currentIndex = TAB_ORDER.indexOf(activeTab);
+                const steps = ['information', 'age-groups', 'scoring', 'complexes', 'settings', 'administrators'];
+                const currentIndex = steps.indexOf(activeTab);
                 const newIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
-                if (newIndex >= 0 && newIndex < TAB_ORDER.length) {
-                  setActiveTab(TAB_ORDER[newIndex]);
+                if (newIndex >= 0 && newIndex < steps.length) {
+                  setActiveTab(steps[newIndex] as EventTab);
                 }
               }}
             />
