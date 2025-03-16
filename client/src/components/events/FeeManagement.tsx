@@ -147,8 +147,10 @@ export function FeeManagement() {
         throw new Error(`Failed to fetch age groups: ${error}`);
       }
       const data = await response.json();
-      // Limit to 30 age groups as per seasonal scope requirements
-      // Filter out duplicates by division code (unique identifier)
+      if (!Array.isArray(data)) {
+        console.error("Unexpected response format:", data);
+        return [];
+      }
       const uniqueAgeGroups = Array.from(
         new Map(data.map((group) => [group.divisionCode, group])).values(),
       );
@@ -157,7 +159,7 @@ export function FeeManagement() {
       );
       return uniqueAgeGroups;
     },
-    enabled: !!eventIdParam,
+    enabled: !!eventIdParam && !isNaN(parseInt(eventIdParam)),
   });
 
   // Fetch fee assignments
