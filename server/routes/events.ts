@@ -601,19 +601,24 @@ router.delete('/:id', async (req, res) => {
 
   try {
     await db.transaction(async (tx) => {
-      // Delete all related records first
-      await tx.delete(eventAgeGroupFees)
-        .where(eq(eventAgeGroupFees.eventId, eventId))
-        .catch(() => console.log('No fee assignments to delete'));
+      // Delete all related records first, handling each one separately
+      try {
+        await tx.delete(eventAgeGroups)
+          .where(eq(eventAgeGroups.eventId, eventId));
+        console.log('Deleted event age groups');
+      } catch (error) {
+        console.log('No age groups to delete or error:', error);
+      }
 
-      await tx.delete(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId));
-      console.log('Deleted event age groups');
+      try {
+        await tx.delete(eventSettings)
+          .where(eq(eventSettings.eventId, eventId));
+        console.log('Deleted event settings');
+      } catch (error) {
+        console.log('No settings to delete or error:', error);
+      }
 
-      await tx.delete(eventSettings)
-        .where(eq(eventSettings.eventId, eventId));
-      console.log('Deleted event settings');
-
+      // Finally delete the event itself
       const [deletedEvent] = await tx.delete(events)
         .where(eq(events.id, parseInt(eventId)))
         .returning();
