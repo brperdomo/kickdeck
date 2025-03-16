@@ -45,28 +45,33 @@ router.post('/', async (req, res) => {
         updatedAt: new Date().toISOString(),
       });
       console.log(`Saved seasonalScopeId ${seasonalScopeId} for event ${event.id}`);
-    }
 
-    // Handle age groups from the request
-    if (eventData.ageGroups && Array.isArray(eventData.ageGroups)) {
-      const ageGroupsToInsert = eventData.ageGroups.map((ag: any) => ({
-        eventId: event.id.toString(),
-        ageGroup: ag.ageGroup,
-        birthYear: ag.birthYear,
-        gender: ag.gender,
-        divisionCode: ag.divisionCode,
-        fieldSize: ag.ageGroup.startsWith('U') ?
-          (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' :
-            parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' :
-              parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
-        projectedTeams: 8,
-        createdAt: new Date().toISOString(),
-        birthDateStart: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
-        birthDateEnd: new Date(ag.birthYear, 11, 31).toISOString().split('T')[0]
-      }));
+      // Fetch age groups from seasonal scope
+      const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
+        where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
+      });
 
-      // Insert the age groups
-      if (ageGroupsToInsert.length > 0) {
+      console.log(`Retrieved ${scopeAgeGroups.length} age groups from scope ${seasonalScopeId}`);
+
+      // Convert scope age groups to event age groups
+      if (scopeAgeGroups.length > 0) {
+        const ageGroupsToInsert = scopeAgeGroups.map(ag => ({
+          eventId: event.id.toString(),
+          ageGroup: ag.ageGroup,
+          birthYear: ag.birthYear,
+          gender: ag.gender,
+          divisionCode: ag.divisionCode,
+          fieldSize: ag.ageGroup.startsWith('U') ?
+            (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' :
+              parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' :
+                parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+          projectedTeams: 8,
+          createdAt: new Date().toISOString(),
+          birthDateStart: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
+          birthDateEnd: new Date(ag.birthYear, 11, 31).toISOString().split('T')[0]
+        }));
+
+        // Insert the age groups
         await db.insert(eventAgeGroups).values(ageGroupsToInsert);
         console.log(`Successfully created ${ageGroupsToInsert.length} age groups for event ${event.id}`);
       }
@@ -196,14 +201,59 @@ router.get('/:id/age-groups', async (req, res) => {
   console.log(`Fetching age groups for event: ${eventId}`);
 
   try {
-    // First try to get age groups directly associated with the event
-    const ageGroups = await db.query.eventAgeGroups.findMany({
+    // Get age groups directly associated with the event
+    let ageGroups = await db.query.eventAgeGroups.findMany({
       where: eq(eventAgeGroups.eventId, eventId.toString())
     });
 
     console.log(`Found ${ageGroups.length} age groups directly associated with event`);
 
-    // Map age groups to include selected flag
+    // If no age groups found, check the seasonal scope
+    if (ageGroups.length === 0) {
+      // Get the seasonal scope ID from event settings
+      const scopeSetting = await db.query.eventSettings.findFirst({
+        where: and(
+          eq(eventSettings.eventId, eventId.toString()),
+          eq(eventSettings.settingKey, 'seasonalScopeId')
+        )
+      });
+
+      if (scopeSetting) {
+        const seasonalScopeId = parseInt(scopeSetting.settingValue);
+        console.log(`No age groups found in event, checking seasonal scope: ${seasonalScopeId}`);
+
+        // Get age groups from the seasonal scope
+        const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
+          where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
+        });
+
+        if (scopeAgeGroups.length > 0) {
+          // Convert scope age groups to event age groups format
+          const ageGroupsToInsert = scopeAgeGroups.map(ag => ({
+            eventId: eventId.toString(),
+            ageGroup: ag.ageGroup,
+            birthYear: ag.birthYear,
+            gender: ag.gender,
+            divisionCode: ag.divisionCode,
+            fieldSize: ag.ageGroup.startsWith('U') ?
+              (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' :
+                parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' :
+                  parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+            projectedTeams: 8,
+            createdAt: new Date().toISOString(),
+            birthDateStart: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
+            birthDateEnd: new Date(ag.birthYear, 11, 31).toISOString().split('T')[0]
+          }));
+
+          // Insert the age groups and update our ageGroups array
+          await db.insert(eventAgeGroups).values(ageGroupsToInsert);
+          ageGroups = ageGroupsToInsert;
+          console.log(`Created ${ageGroups.length} age groups from seasonal scope`);
+        }
+      }
+    }
+
+    // Ensure all age groups are marked as selected
     const ageGroupsWithSelected = ageGroups.map(group => ({
       ...group,
       selected: true
