@@ -600,24 +600,13 @@ router.delete('/:id', async (req, res) => {
   console.log(`Starting event deletion for ID: ${eventId}`);
 
   try {
-    // First delete event age groups
-    await db.delete(eventAgeGroups)
-      .where(eq(eventAgeGroups.eventId, eventId.toString()));
-    console.log('Deleted event age groups');
-
-    // Delete event settings
-    await db.delete(eventSettings)
-      .where(eq(eventSettings.eventId, eventId.toString()));
-    console.log('Deleted event settings');
-
-    // Finally delete the event itself
-    const [deletedEvent] = awaitdb.delete(events)
-      .where(eq(events.id, parseInt(eventId)))
-      .returning();
-
-    if (!deletedEvent) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
+    await db.transaction(async (tx) => {
+      // Delete related records first
+      await tx.delete(eventAgeGroups).where(eq(eventAgeGroups.eventId, eventId));
+      await tx.delete(eventSettings).where(eq(eventSettings.eventId, eventId));
+      // Finally delete the event
+      await tx.delete(events).where(eq(events.id, parseInt(eventId)));
+    });
 
     console.log(`Successfully deleted event ${eventId}`);
     res.json({ message: 'Event deleted successfully' });
