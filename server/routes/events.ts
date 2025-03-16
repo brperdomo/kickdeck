@@ -6,6 +6,93 @@ import { z } from 'zod';
 
 const router = Router();
 
+// Add POST route to create events
+router.post('/', async (req, res) => {
+  try {
+    const eventData = req.body;
+    console.log('Creating event with data:', eventData);
+
+    // Convert seasonalScopeId to number
+    const seasonalScopeId = eventData.seasonalScopeId ? Number(eventData.seasonalScopeId) : null;
+    console.log('Using seasonalScopeId:', seasonalScopeId);
+
+    // Create the event first
+    const [event] = await db.insert(events).values({
+      name: eventData.name,
+      startDate: eventData.startDate,
+      endDate: eventData.endDate,
+      applicationDeadline: eventData.applicationDeadline,
+      timezone: eventData.timezone,
+      details: eventData.details,
+      agreement: eventData.agreement,
+      refundPolicy: eventData.refundPolicy,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: 'draft',
+      applicationsReceived: 0,
+      teamsAccepted: 0,
+      isArchived: false
+    }).returning();
+
+    // If there's a seasonalScopeId, save it in event settings
+    if (seasonalScopeId) {
+      console.log(`Setting seasonalScopeId ${seasonalScopeId} for event ${event.id}`);
+
+      await db.insert(eventSettings).values({
+        eventId: event.id.toString(),
+        settingKey: 'seasonalScopeId',
+        settingValue: seasonalScopeId.toString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+
+      // Fetch the age groups from the seasonal scope
+      const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
+        where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
+      });
+
+      console.log(`Found ${scopeAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
+
+      // For each age group in the scope, create a corresponding event age group
+      if (scopeAgeGroups.length > 0) {
+        const eventAgeGroupsToInsert = scopeAgeGroups.map(ag => ({
+          eventId: event.id.toString(),
+          ageGroup: ag.ageGroup,
+          birthYear: ag.birthYear,
+          gender: ag.gender,
+          divisionCode: ag.divisionCode,
+          fieldSize: ag.ageGroup.startsWith('U') ? 
+            (parseInt(ag.ageGroup.substring(1)) <= 7 ? '4v4' : 
+             parseInt(ag.ageGroup.substring(1)) <= 10 ? '7v7' : 
+             parseInt(ag.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+          projectedTeams: 8,
+          createdAt: new Date().toISOString(),
+          birthDateStart: new Date(ag.birthYear, 0, 1).toISOString().split('T')[0],
+          birthDateEnd: new Date(ag.birthYear, 11, 31).toISOString().split('T')[0]
+        }));
+
+        // Insert the age groups
+        await db.insert(eventAgeGroups).values(eventAgeGroupsToInsert);
+        console.log(`Successfully copied ${eventAgeGroupsToInsert.length} age groups from scope to event ${event.id}`);
+      }
+    }
+
+    res.status(201).json({
+      message: "Event created successfully",
+      event: {
+        ...event,
+        seasonalScopeId
+      }
+    });
+  } catch (error) {
+    console.error("Error creating event:", error);
+    res.status(500).json({ 
+      error: "Failed to create event", 
+      details: error instanceof Error ? error.message : 'Unknown error' 
+    });
+  }
+});
+
 // Update event endpoint
 router.patch('/:id', async (req, res) => {
   try {
@@ -380,6 +467,41 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
   } catch (error) {
     console.error('Error fetching age groups:', error);
     res.status(500).json({ error: 'Failed to fetch age groups' });
+  }
+});
+
+// Update GET /:id/edit endpoint to include seasonal scope ID
+router.get('/:id/edit', async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.id);
+    console.log(`Fetching event data for edit: ${eventId}`);
+
+    const event = await db.query.events.findFirst({
+      where: eq(events.id, eventId)
+    });
+
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Get the seasonal scope ID from event settings
+    const scopeSetting = await db.query.eventSettings.findFirst({
+      where: and(
+        eq(eventSettings.eventId, eventId.toString()),
+        eq(eventSettings.settingKey, 'seasonalScopeId')
+      )
+    });
+
+    const seasonalScopeId = scopeSetting ? parseInt(scopeSetting.settingValue) : null;
+    console.log(`Found seasonal scope ID for event: ${seasonalScopeId}`);
+
+    res.json({
+      ...event,
+      seasonalScopeId
+    });
+  } catch (error) {
+    console.error('Error fetching event for edit:', error);
+    res.status(500).json({ error: 'Failed to fetch event data' });
   }
 });
 
