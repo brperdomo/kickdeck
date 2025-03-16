@@ -1,0 +1,31 @@
+EventForm.tsx:236 Uncaught ReferenceError: useDropzone is not defined
+    at EventForm (EventForm.tsx:236:57)
+
+edit-event.tsx:144 Prepared event data: 
+{id: 1037807095, name: 'tynytjyytyu', startDate: '2025-04-01', endDate: '2025-04-04', timezone: 'America/New_York', …}
+edit-event.tsx:144 Prepared event data: 
+{id: 1037807095, name: 'tynytjyytyu', startDate: '2025-04-01', endDate: '2025-04-04', timezone: 'America/New_York', …}
+EventForm.tsx:236 Uncaught ReferenceError: useDropzone is not defined
+    at EventForm (EventForm.tsx:236:57)
+chunk-RPCDYKBN.js?v=235679fe:14032 The above error occurred in the <EventForm> component:
+
+    at EventForm (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/forms/EventForm.tsx:47:29)
+    at div
+    at _c9 (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at EditEvent (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/edit-event.tsx:30:18)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=235679fe:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=235679fe:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:43:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-LSQNWB54.js?v=235679fe:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=235679fe:63:5)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=235679fe:2829:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-RPCDYKBN.js?v=235679fe:9129 Uncaught ReferenceError: useDropzone is not defined
+    at EventForm (EventForm.tsx:236:57)
