@@ -203,7 +203,7 @@ router.get('/:id/age-groups', async (req, res) => {
   try {
     // Get age groups directly associated with the event
     let ageGroups = await db.query.eventAgeGroups.findMany({
-      where: eq(eventAgeGroups.eventId, eventId)
+      where: eq(eventAgeGroups.eventId, eventId.toString())
     });
 
     console.log(`Found ${ageGroups.length} age groups directly associated with event`);

@@ -1,0 +1,1 @@
+applicationDeadline: event.applicationDeadline?.split('T')[0],
