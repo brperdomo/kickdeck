@@ -11,9 +11,7 @@ import {
   Upload,
   Download,
   Users,
-  FileText,
-  Palette, // Added for UI customization
-  Building2, // Added for Organization Info
+  FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -114,7 +112,7 @@ export function InternalOperationsPanel({
                   className="w-full justify-start text-sm mb-2"
                   onClick={() => openSettings("styling")}
                 >
-                  <Palette className="h-4 w-4 mr-2" />
+                  <Paintbrush className="h-4 w-4 mr-2" />
                   UI Customization
                 </Button>
                 <Button
@@ -122,7 +120,7 @@ export function InternalOperationsPanel({
                   className="w-full justify-start text-sm"
                   onClick={() => openSettings("general")}
                 >
-                  <Building2 className="h-4 w-4 mr-2" />
+                  <Building className="h-4 w-4 mr-2" />
                   Organization Info
                 </Button>
               </CardContent>
