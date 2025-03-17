@@ -134,10 +134,16 @@ function EventsView() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Events</h2>
-        <Button onClick={() => navigate("/admin/events/create")}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Event
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => navigate("/admin/events/preview")}>
+            <Eye className="mr-2 h-4 w-4" />
+            Preview Registration
+          </Button>
+          <Button onClick={() => navigate("/admin/events/create")}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create Event
+          </Button>
+        </div>
       </div>
       <EventsTable />
     </div>
