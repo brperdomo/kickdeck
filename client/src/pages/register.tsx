@@ -21,7 +21,6 @@ import { Trophy, ArrowLeft, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Link } from "wouter";
 import { useEffect, useState } from "react";
-import { useLocation, useSearch } from "wouter";
 
 const registerSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -45,8 +44,6 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function Register() {
-  const search = useSearch();
-  const isPreviewMode = search.includes('mode=preview');
   const { toast } = useToast();
   const { register } = useUser();
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
@@ -113,25 +110,13 @@ export default function Register() {
     return () => clearTimeout(timeoutId);
   }, [form.watch("email")]);
 
-  // Add preview mode banner if in preview mode
-  const PreviewModeBanner = () => {
-    if (!isPreviewMode) return null;
-
-    return (
-      <div className="fixed top-0 left-0 right-0 bg-yellow-500 text-black py-2 z-50">
-        <div className="container mx-auto px-4 text-center font-semibold">
-          Preview Mode - No actual registrations will be processed
-        </div>
-      </div>
-    );
-  };
-
   async function onSubmit(data: RegisterFormData) {
-    if (isPreviewMode) {
+    // Double check email availability before submitting
+    if (!emailAvailability?.available) {
       toast({
-        title: "Preview Mode",
-        description: "In live mode, this would create a new registration. Preview mode successful!",
-        variant: "default",
+        variant: "destructive",
+        title: "Error",
+        description: "Please use a different email address",
       });
       return;
     }
@@ -175,7 +160,6 @@ export default function Register() {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
-      <PreviewModeBanner />
       <SoccerFieldBackground className="opacity-50" />
       <div className="w-full max-w-[min(400px,100%-2rem)] mx-auto relative z-10">
         <Card className="w-full bg-white/95 backdrop-blur-sm shadow-xl border-0">
