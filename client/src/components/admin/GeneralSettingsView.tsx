@@ -1,10 +1,10 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OrganizationSettingsForm } from "./OrganizationSettingsForm";
 import { SeasonalScopeSettings } from "./SeasonalScopeSettings";
 import { StyleSettingsView } from "./StyleSettingsView";
 import { EmailTemplatesView } from "./EmailTemplatesView";
+import { EmailProviderSettings } from "./EmailProviderSettings";
 
 export function GeneralSettingsView() {
   return (
@@ -17,6 +17,7 @@ export function GeneralSettingsView() {
           <TabsTrigger value="seasonal">Seasonal Scope</TabsTrigger>
           <TabsTrigger value="styling">UI Styling</TabsTrigger>
           <TabsTrigger value="emailTemplates">Email Templates</TabsTrigger>
+          <TabsTrigger value="emailProvider">Email Provider</TabsTrigger>
         </TabsList>
 
         <TabsContent value="organization">
@@ -47,6 +48,10 @@ export function GeneralSettingsView() {
               <EmailTemplatesView isEmbedded={false} />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="emailProvider">
+          <EmailProviderSettings />
         </TabsContent>
       </Tabs>
     </div>
