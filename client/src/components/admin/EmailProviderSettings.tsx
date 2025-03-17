@@ -46,12 +46,12 @@ export function EmailProviderSettings() {
   const queryClient = useQueryClient();
 
   const { data: providers, isLoading } = useQuery({
-    queryKey: ['email-providers'],
+    queryKey: ["email-providers"],
     queryFn: async () => {
-      const response = await fetch('/api/admin/email-providers');
-      if (!response.ok) throw new Error('Failed to fetch providers');
+      const response = await fetch("/api/admin/email-providers");
+      if (!response.ok) throw new Error("Failed to fetch providers");
       return response.json();
-    }
+    },
   });
 
   const form = useForm<ProviderFormValues>({
@@ -67,16 +67,15 @@ export function EmailProviderSettings() {
 
   const createMutation = useMutation({
     mutationFn: async (values: ProviderFormValues) => {
-      const response = await fetch('/api/admin/email-providers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/admin/email-providers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-      
-      const contentType = response.headers.get("content-type");
+
       const contentType = response.headers.get("content-type");
       let data;
-      
+
       try {
         data = await response.json();
       } catch (e) {
@@ -87,11 +86,11 @@ export function EmailProviderSettings() {
       if (!response.ok) {
         throw new Error(data?.error || `Server error: ${response.status}`);
       }
-      
+
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['email-providers'] });
+      queryClient.invalidateQueries({ queryKey: ["email-providers"] });
       toast({
         title: "Success",
         description: "Email provider settings saved successfully",
@@ -214,7 +213,11 @@ export function EmailProviderSettings() {
                     <FormItem>
                       <FormLabel>SMTP Password</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="••••••••" {...field} />
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -298,7 +301,9 @@ export function EmailProviderSettings() {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">Default Provider</FormLabel>
+                    <FormLabel className="text-base">
+                      Default Provider
+                    </FormLabel>
                     <FormDescription>
                       Set as the default email provider
                     </FormDescription>
