@@ -21,7 +21,6 @@ import EmailTemplatesPage from "@/pages/email-templates";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import { FeeManagement } from "@/components/events/FeeManagement";
-import PreviewRegistration from "@/pages/preview-registration"; // Added import
 
 function Router() {
   const { user, isLoading } = useUser();
@@ -82,9 +81,6 @@ function Router() {
       <Route path="/household" component={HouseholdPage} />
       <Route path="/chat" component={ChatPage} />
       <Route path="/register/event/:eventId" component={EventRegistration} />
-      <Route path="/admin/preview/registration"> {/* Added route */}
-        {user.isAdmin ? <PreviewRegistration /> : <NotFound />}
-      </Route> {/* Added route */}
       <Route path="/">
         {user.isAdmin ? <AdminDashboard /> : <UserDashboard />}
       </Route>
