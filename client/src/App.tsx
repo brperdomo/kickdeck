@@ -22,6 +22,10 @@ import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import { FeeManagement } from "@/components/events/FeeManagement";
 
+// Placeholder components
+const EventPreviewSelector = () => <div>Event Preview Selector</div>;
+const RegistrationPreview = () => <div>Registration Preview</div>;
+
 function Router() {
   const { user, isLoading } = useUser();
 
@@ -81,6 +85,12 @@ function Router() {
       <Route path="/household" component={HouseholdPage} />
       <Route path="/chat" component={ChatPage} />
       <Route path="/register/event/:eventId" component={EventRegistration} />
+      <Route path="/admin/events/preview">
+        {user.isAdmin ? <EventPreviewSelector /> : <NotFound />}
+      </Route>
+      <Route path="/admin/events/:id/preview-registration">
+        {user.isAdmin ? <RegistrationPreview /> : <NotFound />}
+      </Route>
       <Route path="/">
         {user.isAdmin ? <AdminDashboard /> : <UserDashboard />}
       </Route>
