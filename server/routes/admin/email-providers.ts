@@ -55,18 +55,28 @@ router.post("/test-connection", asyncHandler(async (req, res) => {
 
 // Get all email providers
 router.get("/", asyncHandler(async (req, res) => {
-  const providers = await db
-    .select()
-    .from(emailProviderSettings)
-    .orderBy(emailProviderSettings.providerName);
+  console.log('Fetching email providers...');
 
-  res.json(providers);
+  try {
+    const providers = await db
+      .select()
+      .from(emailProviderSettings)
+      .orderBy(emailProviderSettings.providerName);
+
+    console.log('Found providers:', providers.length);
+    res.json(providers);
+  } catch (error) {
+    console.error('Error fetching email providers:', error);
+    throw error; // Let asyncHandler handle the error response
+  }
 }));
 
 // Create email provider
 router.post("/", asyncHandler(async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   const { providerType, providerName, settings, isActive, isDefault } = req.body;
+
+  console.log('Creating email provider:', { providerType, providerName, isActive, isDefault });
 
   if (!providerType || !providerName || !settings) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -76,28 +86,34 @@ router.post("/", asyncHandler(async (req, res) => {
     return res.status(400).json({ error: "SMTP settings are incomplete" });
   }
 
-  // If this provider is set as default, unset any existing default
-  if (isDefault) {
-    await db
-      .update(emailProviderSettings)
-      .set({ isDefault: false })
-      .where(eq(emailProviderSettings.isDefault, true));
+  try {
+    // If this provider is set as default, unset any existing default
+    if (isDefault) {
+      await db
+        .update(emailProviderSettings)
+        .set({ isDefault: false })
+        .where(eq(emailProviderSettings.isDefault, true));
+    }
+
+    const [provider] = await db
+      .insert(emailProviderSettings)
+      .values({
+        providerType,
+        providerName,
+        settings,
+        isActive: isActive ?? true,
+        isDefault: isDefault ?? false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+      .returning();
+
+    console.log('Created provider:', provider.id);
+    res.status(201).json(provider);
+  } catch (error) {
+    console.error('Error creating email provider:', error);
+    throw error; // Let asyncHandler handle the error response
   }
-
-  const [provider] = await db
-    .insert(emailProviderSettings)
-    .values({
-      providerType,
-      providerName,
-      settings,
-      isActive: isActive ?? true,
-      isDefault: isDefault ?? false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    })
-    .returning();
-
-  res.status(201).json(provider);
 }));
 
 // Update email provider
@@ -114,55 +130,70 @@ router.patch("/:id", asyncHandler(async (req, res) => {
     return res.status(400).json({ error: "Provider type and name are required" });
   }
 
-  // Check if provider exists
-  const [existingProvider] = await db
-    .select()
-    .from(emailProviderSettings)
-    .where(eq(emailProviderSettings.id, id))
-    .limit(1);
+  try {
+    // Check if provider exists
+    const [existingProvider] = await db
+      .select()
+      .from(emailProviderSettings)
+      .where(eq(emailProviderSettings.id, id))
+      .limit(1);
 
-  if (!existingProvider) {
-    return res.status(404).json({ error: "Provider not found" });
-  }
+    if (!existingProvider) {
+      return res.status(404).json({ error: "Provider not found" });
+    }
 
-  // If this provider is being set as default, unset any existing default
-  if (isDefault && !existingProvider.isDefault) {
-    await db
+    // If this provider is being set as default, unset any existing default
+    if (isDefault && !existingProvider.isDefault) {
+      await db
+        .update(emailProviderSettings)
+        .set({ isDefault: false })
+        .where(eq(emailProviderSettings.isDefault, true));
+    }
+
+    const [updatedProvider] = await db
       .update(emailProviderSettings)
-      .set({ isDefault: false })
-      .where(eq(emailProviderSettings.isDefault, true));
+      .set({
+        providerType,
+        providerName,
+        settings,
+        isActive,
+        isDefault,
+        updatedAt: new Date().toISOString(),
+      })
+      .where(eq(emailProviderSettings.id, id))
+      .returning();
+
+    console.log('Updated provider:', updatedProvider.id);
+    res.json(updatedProvider);
+  } catch (error) {
+    console.error('Error updating email provider:', error);
+    throw error; // Let asyncHandler handle the error response
   }
-
-  const [updatedProvider] = await db
-    .update(emailProviderSettings)
-    .set({
-      providerType,
-      providerName,
-      settings,
-      isActive,
-      isDefault,
-      updatedAt: new Date().toISOString(),
-    })
-    .where(eq(emailProviderSettings.id, id))
-    .returning();
-
-  res.json(updatedProvider);
 }));
 
 // Delete email provider
 router.delete("/:id", asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id);
-
-  const [provider] = await db
-    .delete(emailProviderSettings)
-    .where(eq(emailProviderSettings.id, id))
-    .returning();
-
-  if (!provider) {
-    return res.status(404).json({ error: "Provider not found" });
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid provider ID" });
   }
 
-  res.json({ message: "Provider deleted successfully" });
+  try {
+    const [provider] = await db
+      .delete(emailProviderSettings)
+      .where(eq(emailProviderSettings.id, id))
+      .returning();
+
+    if (!provider) {
+      return res.status(404).json({ error: "Provider not found" });
+    }
+
+    console.log('Deleted provider:', id);
+    res.json({ message: "Provider deleted successfully" });
+  } catch (error) {
+    console.error('Error deleting email provider:', error);
+    throw error; // Let asyncHandler handle the error response
+  }
 }));
 
 export default router;
