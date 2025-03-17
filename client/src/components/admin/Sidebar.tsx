@@ -1,17 +1,27 @@
-{/* This file likely contains additional code for sidebar navigation and other components.  Only the change specified in the provided snippet is included. */}
+import { Button } from "@/components/ui/button";
+import { Mail } from "lucide-react";
 
-const emailTemplatesButton = (
-    <Button
-      variant={activeSettingsView === 'emailTemplates' ? 'secondary' : 'ghost'}
-      className="w-full justify-start"
-      onClick={() => {
-        setActiveView('settings');
-        setActiveSettingsView('emailTemplates');
-      }}
-    >
-      <Mail className="mr-2 h-4 w-4" />
-      Email Templates
-    </Button>
+interface SidebarProps {
+  activeSettingsView: string;
+  setActiveView: (view: string) => void;
+  setActiveSettingsView: (view: string) => void;
+}
+
+export function Sidebar({ activeSettingsView, setActiveView, setActiveSettingsView }: SidebarProps) {
+  return (
+    <div>
+      <Button
+        variant={activeSettingsView === 'emailTemplates' ? 'secondary' : 'ghost'}
+        className="w-full justify-start"
+        onClick={() => {
+          setActiveView('settings');
+          setActiveSettingsView('emailTemplates');
+        }}
+      >
+        <Mail className="mr-2 h-4 w-4" />
+        Email Templates
+      </Button>
+      {/* Rest of the Sidebar content */}
+    </div>
   );
-
-{/* Email Templates moved to Settings > General */}
+}
