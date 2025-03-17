@@ -11,6 +11,7 @@ import eventsRouter from "./routes/admin/events";
 import ageGroupsRouter from "./routes/admin/age-groups";
 import foldersRouter from "./routes/folders";
 import organizationsRouter from "./routes/admin/organizations"; 
+import emailProvidersRouter from "./routes/admin/email-providers";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { sql, eq, and, or, inArray } from "drizzle-orm";
 import {
@@ -121,6 +122,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
     app.use('/api/admin/organizations', isAdmin, organizationsRouter); // Add organizations router
+    app.use('/api/admin/email-providers', isAdmin, emailProvidersRouter); // Add email providers router
 
     // Register coupon routes
     app.post('/api/admin/coupons', isAdmin, createCoupon);
