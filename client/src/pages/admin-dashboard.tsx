@@ -1,58 +1,31 @@
-import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
-import { Link2, X, Ticket, Plus, Mail } from "lucide-react";
-import { EventsTable } from "@/components/events/EventsTable";
-import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
-import { useToast } from "@/hooks/use-toast";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
+// Hooks
 import { useUser } from "@/hooks/use-user";
+import { useToast } from "@/hooks/use-toast";
+import { useOrganizationSettings } from "@/hooks/use-organization-settings";
+import { useBrandingPreview } from "@/hooks/use-branding-preview";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTheme } from "@/hooks/use-theme";
-import { SelectUser } from "@db/schema";
-import { LogoutOverlay } from "@/components/ui/logout-overlay";
+
+// Icons 
 import {
-  Calendar,
-  Shield,
-  UserPlus,
-  Home,
-  LogOut,
-  FileText,
-  User,
-  Palette,
-  ChevronRight,
-  Loader2,
-  CreditCard,
-  Search,
-  ClipboardList,
-  MoreHorizontal,
-  Building2,
-  MessageSquare,
-  Trophy,
-  DollarSign,
-  Settings,
-  Users,
-  ChevronDown,
-  Edit,
-  Trash,
-  Eye,
-  Download,
-  UserCircle,
-  Percent,
-  Printer,
-  Flag,
-  CalendarDays,
-  ImageIcon,
-  FormInput,
-  Bell
+  Eye, Calendar, Shield, UserPlus, Home, LogOut, FileText,
+  User, Palette, ChevronRight, Loader2, CreditCard, Search,
+  ClipboardList, MoreHorizontal, Building2, MessageSquare, Trophy,
+  DollarSign, Settings, Users, ChevronDown, Edit, Trash, Download,
+  UserCircle, X, Plus, FormInput, CalendarDays, ImageIcon, 
+  Ticket
 } from "lucide-react";
+
+// Components
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { EventsTable } from "@/components/events/EventsTable"; 
+import { AdminModal } from "@/components/admin/AdminModal";
+import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
+import { FileManager } from "@/components/admin/FileManager";
+import { FormTemplatesView } from "@/components/admin/FormTemplatesView";
 import {
   Table,
   TableBody,
@@ -62,71 +35,47 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useOrganizationSettings } from "@/hooks/use-organization-settings";
-import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
-import { useExportProcess } from "@/hooks/use-export-process";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { AdminModal } from "@/components/admin/AdminModal";
-import { ComplexEditor } from "@/components/ComplexEditor";
-import { FieldEditor } from "@/components/FieldEditor";
-import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
-import { useDropzone } from 'react-dropzone';
-import { FileManager } from "@/components/admin/FileManager.tsx";
-import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
-import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
-import FormTemplateEditPage from "@/pages/form-template-edit";
-import FormTemplateCreatePage from "@/pages/form-template-create";
-import FormTemplatesPage from "@/pages/form-templates";
-import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
 
+// Types
+import type { SelectUser } from "@db/schema";
 
-function AdminBanner() {
-  const { settings } = useOrganizationSettings();
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'coupons' | 'formTemplates';
+
+function PreviewButton() {
+  const [, navigate] = useLocation();
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="w-full bg-white shadow-sm border-b sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-2">
-        <div className="flex justify-center items-center">
-          <img
-            src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"}
-            alt="Organization Logo"
-            className="w-auto h-48 md:h-60 max-w-[840px] md:max-w-[960px] object-contain"
-          />
-        </div>
-      </div>
+    <div className="fixed right-6 top-1/2 transform -translate-y-1/2 z-50">
+      <Button
+        size="lg"
+        className={`relative group transition-all duration-300 ${
+          isHovered ? 'w-auto' : 'w-12'
+        } h-12 bg-primary hover:bg-primary/90`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={() => navigate("/admin/preview/registration")}
+      >
+        <Eye className="h-5 w-5" />
+        <span
+          className={`ml-2 transition-opacity duration-300 ${
+            isHovered ? 'opacity-100' : 'opacity-0'
+          } whitespace-nowrap`}
+        >
+          Preview Registration
+        </span>
+      </Button>
     </div>
   );
 }
-
-const MyAccount = lazy(() => import("./my-account"));
-
-// Type guard function to check if user is admin
-function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
-  return user !== null && user.isAdmin === true;
-}
-
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'coupons' | 'formTemplates';
-type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
-type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
-type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
 
 function EventsView() {
   const navigate = useLocation()[1];
@@ -152,66 +101,19 @@ interface RoleGroup {
   finance_admin: any[];
 }
 
-interface Complex {
-  id: number;
-  name: string;
-  address: string;
-  city: string;
-  state: string;
-  country: string;
-  openTime: string;
-  closeTime: string;
-  rules?: string;
-  directions?: string;
-  isOpen: boolean;
-  createdAt: string;
-  updatedAt: string;
-  openFields: number;
-  closedFields: number;
-}
-
-interface ComplexFormValues {
-  name: string;
-  address: string;
-  city: string;
-  state: string;
-  country: string;
-  openTime: string;
-  closeTime: string;
-  rules?: string;
-  directions?: string;
-  isOpen: boolean;
-}
-
-interface Field {
-  id: number;
-  name: string;
-  hasLights: boolean;
-  hasParking: boolean;
-  isOpen: boolean;
-  specialInstructions?: string;
-  complexId: number;
-}
-
-interface FieldFormValues {
-  name: string;
-  hasLights: boolean;
-  hasParking: boolean;
-  isOpen: boolean;
-  specialInstructions?: string;
-}
-
 function AdministratorsView() {
   const { toast } = useToast();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("super_admin");
-  const [selectedAdmin, setSelectedAdmin] = useState<{
+  type AdminState = {
     id: number;
     email: string;
     firstName: string;
     lastName: string;
     roles: string[];
-  } | null>(null);
+  };
+
+  const [selectedAdmin, setSelectedAdmin] = useState<AdminState | undefined>();
   const queryClient = useQueryClient();
 
   const administratorsQuery = useQuery({
@@ -233,7 +135,6 @@ function AdministratorsView() {
       };
     }
 
-    // Initialize with empty arrays for each role type
     const groupedAdmins: RoleGroup = {
       super_admin: [],
       tournament_admin: [],
@@ -241,9 +142,7 @@ function AdministratorsView() {
       finance_admin: []
     };
 
-    // Group administrators by their roles
     administratorsQuery.data.forEach((admin: any) => {
-      // If admin has no roles or roles is null/undefined, add to super_admin
       if (!admin.roles || !Array.isArray(admin.roles) || admin.roles.length === 0 || admin.roles[0] === null) {
         if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
           groupedAdmins.super_admin.push({ ...admin, roles: ['super_admin'] });
@@ -251,18 +150,14 @@ function AdministratorsView() {
         return;
       }
 
-      // Add admin to each role group they belong to
       admin.roles.forEach((role: string) => {
-        if (role === null) return; // Skip null roles
+        if (role === null) return;
 
-        // Only add if it's a valid role group
         if (role in groupedAdmins) {
-          // Avoid duplicate entries
           if (!groupedAdmins[role].some((a: any) => a.id === admin.id)) {
             groupedAdmins[role].push(admin);
           }
         } else {
-          // If role is not recognized, add to super_admin
           if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
             groupedAdmins.super_admin.push(admin);
           }
@@ -286,7 +181,7 @@ function AdministratorsView() {
 
   const handleModalClose = () => {
     setIsAddModalOpen(false);
-    setSelectedAdmin(null);
+    setSelectedAdmin(undefined);
   };
 
   const getBadgeColor = (type: string) => {
@@ -318,64 +213,6 @@ function AdministratorsView() {
         return 'Unknown Type';
     }
   };
-
-  const updateAdminMutation = useMutation({
-    mutationFn: async (data: {
-      id: number;
-      email: string;
-      firstName: string;
-      lastName: string;
-      roles: string[];
-    }) => {
-      const response = await fetch(`/api/admin/administrators/${data.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update administrator');
-      }
-
-      return response.json();
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(['/api/admin/administrators']);
-      toast({
-        title: "Success",
-        description: "Administrator updated successfully",
-        variant: "default"
-      });
-      setIsAddModalOpen(false);
-      setSelectedAdmin(null);
-    },
-    onError: (error: Error) => {
-      const errorMessage = error.message;
-
-      // Provide specific error messages based on error codes
-      if (errorMessage.includes("LAST_SUPER_ADMIN")) {
-        toast({
-          title: "Cannot Update Role",
-          description: "You cannot remove the super_admin role from the last super administrator",
-          variant: "destructive"
-        });
-      } else if (errorMessage.includes("EMAIL_EXISTS")) {
-        toast({
-          title: "Email Already Exists",
-          description: "The email address is already registered",
-          variant: "destructive"
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: errorMessage || "Failed to update administrator",
-          variant: "destructive"
-        });
-      }
-    }
-  });
-
 
   if (administratorsQuery.isLoading) {
     return (
@@ -434,15 +271,13 @@ function AdministratorsView() {
         {Object.entries(administrators).map(([type, admins]) => (
           <TabsContent key={type} value={type} className="space-y-4">
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  {getTypeLabel(type)}
+              <CardContent className="pt-6">
+                <div className="flex items-center mb-4">
+                  <h3 className="text-lg font-semibold">{getTypeLabel(type)}</h3>
                   <Badge className={`ml-2 ${getBadgeColor(type)}`}>
                     {admins?.length || 0} Members
                   </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </div>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -511,1122 +346,12 @@ function AdministratorsView() {
   );
 }
 
-function ReportsView() {
-  const [selectedReport, setSelectedReport] = useState<ReportType>('financial');
-  const [selectedFinancialReport, setSelectedFinancialReport] = useState<string>('accounting-codes');
-  const { isExporting, startExport } = useExportProcess();
-  const [isAccountingCodeModalOpen, setIsAccountingCodeModalOpen] = useState(false);
-  const [selectedAccountingCode, setSelectedAccountingCode] = useState<{
-    id: number;
-    code: string;
-    name: string;
-    description?: string;
-  } | null>(null);
-  const queryClient = useQueryClient();
-
-  const accountingCodesQuery = useQuery({
-    queryKey: ['/api/admin/accounting-codes'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/accounting-codes');
-      if (!response.ok) throw new Error('Failed to fetch accounting codes');
-      return response.json();
-    }
-  });
-
-  const deleteAccountingCodeMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await fetch(`/api/admin/accounting-codes/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('Failed to delete accounting code');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['/api/admin/accounting-codes']);
-      toast({
-        title: "Success",
-        description: "Accounting code deleted successfully",
-        variant: "success"
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete accounting code",
-        variant: "destructive"
-      });
-    }
-  });
-
-  const handleEditCode = (code: typeof selectedAccountingCode) => {
-    setSelectedAccountingCode(code);
-    setIsAccountingCodeModalOpen(true);
-  };
-
-  const handleDeleteCode = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this accounting code?')) {
-      await deleteAccountingCodeMutation.mutateAsync(id);
-    }
-  };
-
-  const renderReportContent = () => {
-    switch (selectedReport) {
-      case 'financial':
-        return (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4">
-                <h3 className="text-lg font-semibold">Financial Management</h3>
-                <select 
-                  className="border rounded px-2 py-1"
-                  value={selectedFinancialReport}
-                  onChange={(e) => setSelectedFinancialReport(e.target.value)}
-                >
-                  <option value="accounting-codes">Accounting Codes</option>
-                  <option value="fees-by-event">Fees by Event</option>
-                  <option value="fees-by-age-group">Fees by Age Group</option>
-                </select>
-              </div>
-              <div className="flex gap-2">
-                {selectedFinancialReport === 'accounting-codes' && (
-                  <Button onClick={() => setIsAccountingCodeModalOpen(true)}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Accounting Code
-                  </Button>
-                )}
-                <Button
-                  onClick={() => startExport('financial')}
-                  disabled={isExporting}
-                >
-                  {isExporting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Exporting...
-                    </>
-                  ) : (
-                    <>
-                      <Download className="mr-2 h-4 w-4" />
-                      Export
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-
-            {/* Accounting Codes Table */}
-            {selectedFinancialReport === 'accounting-codes' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Accounting Codes</CardTitle>
-                </CardHeader>
-                <CardContent>
-                {accountingCodesQuery.isLoading ? (
-                  <div className="flex justify-center p-4">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  </div>
-                ) : accountingCodesQuery.isError ? (
-                  <div className="text-center text-red-500">
-                    Error loading accounting codes
-                  </div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Code</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {accountingCodesQuery.data?.map((code: any) => (
-                        <TableRow key={code.id}>
-                          <TableCell className="font-medium">{code.code}</TableCell>
-                          <TableCell>{code.name}</TableCell>
-                          <TableCell>{code.description || '-'}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleEditCode(code)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleDeleteCode(code.id)}
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <Trash className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-                </CardContent>
-              </Card>
-            )}
-            {selectedFinancialReport === 'fees-by-event' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Fees by Event</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center text-muted-foreground">
-                    Event fees report coming soon
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            {selectedFinancialReport === 'fees-by-age-group' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Fees by Age Group</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center text-muted-foreground">
-                    Age group fees report coming soon
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        );
-      case 'manager':
-        return (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Manager Reports</h3>
-              <Button
-                onClick={() => startExport('manager')}
-                disabled={isExporting !== 'manager'}
-              >
-                {isExporting === 'manager' ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Exporting...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="mr-2 h-4 w-4" />
-                    Export Report
-                  </>
-                )}
-              </Button>
-            </div>
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-muted-foreground">Manager report content will be implemented here</p>
-              </CardContent>
-            </Card>
-          </div>
-        );
-      case 'player':
-        return (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Player Reports</h3>
-              <Button
-                onClick={() => startExport('player')}
-                disabled={isExporting !== 'player'}
-              >
-                {isExporting === 'player' ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Exporting...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="mr-2 h-4 w-4" />
-                    Export Report
-                  </>
-                )}
-              </Button>
-            </div>
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-muted-foreground">Player report content will be implemented here</p>
-              </CardContent>
-            </Card>
-          </div>
-        );
-      case 'schedule':
-        return (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Schedule Reports</h3>
-              <Button
-                onClick={() => startExport('schedule')}
-                disabled={isExporting !== 'schedule'}
-              >
-                {isExporting === 'schedule' ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Exporting...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="mr-2 h-4 w-4" />
-                    Export Report
-                  </>
-                )}
-              </Button>
-            </div>
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-muted-foreground">Schedule report content will be implemented here</p>
-              </CardContent>
-            </Card>
-          </div>
-        );
-      case 'guest-player':
-        return (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Guest Player Reports</h3>
-              <Button
-                onClick={() => startExport('guest-player')}
-                disabled={isExporting !== 'guest-player'}
-              >
-                {isExporting === 'guest-player' ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Exporting...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="mr-2 h-4 w-4" />
-                    Export Report
-                  </>
-                )}
-              </Button>
-            </div>
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-muted-foreground">Guest player report content will be implemented here</p>
-              </CardContent>
-            </Card>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Reports and Financials</h2>
-      </div>
-
-      <div className="grid grid-cols-4 gap-6">
-        {/* Report Navigation */}
-        <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Report Types</CardTitle>
-          </CardHeader>
-          <CardContent className="p-3">
-            <div className="space-y-2">
-              <Button
-                variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setSelectedReport('financial')}
-                disabled={isExporting !== null}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Financial Reports
-              </Button>
-              <Button
-                variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setSelectedReport('manager')}
-                disabled={isExporting !== null}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Manager Reports
-              </Button>
-              <Button
-                variant={selectedReport === 'player' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setSelectedReport('player')}
-                disabled={isExporting !== null}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Player Reports
-              </Button>
-              <Button
-                variant={selectedReport === 'schedule' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setSelectedReport('schedule')}
-                disabled={isExporting !== null}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Schedule Reports
-              </Button>
-              <Button
-                variant={selectedReport === 'guest-player' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
-                onClick={() => setSelectedReport('guest-player')}
-                disabled={isExporting !== null}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Guest Player Reports
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Report Content */}
-        <div className="col-span-3">
-          {renderReportContent()}
-        </div>
-      </div>
-
-      <AccountingCodeModal
-        open={isAccountingCodeModalOpen}
-        onOpenChange={setIsAccountingCodeModalOpen}
-        codeToEdit={selectedAccountingCode}
-      />
-    </>
-  );
-}
-
-function BrandingPreview() {
-  const { preview } = useBrandingPreview();
-
-  return (
-    <Card className="col-span-1">
-      <CardHeader>
-        <CardTitle>Live Preview</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-4">
-          {/* Logo Preview */}
-          {preview.logoUrl && (
-            <div className="flex justify-center p-4 bg-background rounded-lg">
-              <img
-                src={preview.logoUrl}
-                alt="Organization logo"
-                className="h-20 w-20 object-contain"
-              />
-            </div>
-          )}
-          {/* Color Preview */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-8 h-8 rounded"
-                style={{ backgroundColor: preview.primaryColor }}
-              />
-              <span className="text-sm">Primary Color</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div
-                className="w-8 h-8 rounded"
-                style={{ backgroundColor: preview.secondaryColor }}
-              />
-              <span className="text-sm">Secondary Color</span>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-// Add type for organization settings
-interface OrganizationSettings {
-  id: number;
-  name: string;
-  createdAt: string;
-  primaryColor: string;
-  secondaryColor: string | null;
-  logoUrl: string | null;
-  updatedAt: string;
-}
-
-function OrganizationSettingsForm() {
-  const { settings, isLoading, updateSettings, isUpdating } = useOrganizationSettings<OrganizationSettings>();
-  const { updatePreview } = useBrandingPreview();
-  const [name, setName] = useState(settings?.name || '');
-  const [primaryColor, setPrimaryColor] = useState(settings?.primaryColor || '#000000');
-  const [secondaryColor, setSecondaryColor] = useState(settings?.secondaryColor || '#ffffff');
-  const [logo, setLogo] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState(settings?.logoUrl);
-  const { toast } = useToast();
-
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    if (!file) return;
-
-    // Preview the uploaded image
-    const objectUrl = URL.createObjectURL(file);
-    setPreviewUrl(objectUrl);
-    setLogo(file);
-
-    try {
-      // Import Vibrant using dynamic import
-      const Vibrant = (await import('node-vibrant')).default;
-
-      // Create new Vibrant instance
-      const v = new Vibrant(objectUrl);
-
-      //      // Get the palette with error handling
-      const palette = await v.getPalette();      // Set primary color from the Vibrant swatch
-      if (palette.Vibrant) {        setPrimaryColor(palette.Vibrant.hex);
-console.log('Primarycolor extracted:', palette.Vibrant.hex);
-      }
-
-      // Set secondary color from theLightVibrant or Muted swatch
-      if (palette.LightVibrant) {
-        setSecondaryColor(palette.LightVibrant.hex);
-        console.log('Secondary color (Light Vibrant) extracted:', palette.LightVibrant.hex);
-      } else if (palette.Muted) {
-        setSecondaryColor(palette.Muted.hex);
-        console.log('Secondary color (Muted) extracted:', palette.Muted.hex);
-      }
-
-      // Update the preview
-      updatePreview({
-        logoUrl: objectUrl,
-        primaryColor: palette.Vibrant?.hex || primaryColor,
-        secondaryColor: palette.LightVibrant?.hex || palette.Muted?.hex || secondaryColor,
-      });
-
-      toast({
-        title: "Colors extracted",
-        description: "Brand colors have been updated based on your logo.",
-      });
-    } catch (error) {
-      console.error('Color extraction error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to extract colors from the logo. Please try a different image.",
-        variant: "destructive",
-      });
-    }
-  }, [primaryColor, secondaryColor, updatePreview, toast]);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.svg']
-    },
-    maxFiles: 1,
-    multiple: false
-  });
-
-  const handleSave = async () => {
-    try {
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('primaryColor', primaryColor);
-      formData.append('secondaryColor', secondaryColor);
-      if (logo) {
-        formData.append('logo', logo);
-      }
-
-      await updateSettings.mutateAsync(formData);
-
-      toast({
-        title: "Success",
-        description: "Organization settings updated successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update settings",
-        variant: "destructive",
-      });
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-2 gap-6">
-      <Card className="col-span-1">
-        <CardHeader>
-          <CardTitle>Organization Branding</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-6">
-            <div>
-              <Label htmlFor="name">Organization Name</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter organization name"
-              />
-            </div>
-
-            <div
-              {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${
-                isDragActive ? 'border-primary bg-primary/5' : 'border-border'
-              }`}
-            >
-              <input {...getInputProps()} />
-              <div className="flex flex-col items-center justify-center gap-2">
-                {previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt="Organization logo"
-                    className="h-20 w-20 object-contain"
-                  />
-                ) : (
-                  <ImageIcon className="h-10 w-10 text-muted-foreground" />
-                )}
-                <p className="text-sm text-muted-foreground text-center">
-                  {isDragActive
-                    ? "Drop the logo here"
-                    : "Drag & drop your logo here, or click to select"}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="primaryColor">Primary Color</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="primaryColor"
-                    type="color"
-                    value={primaryColor}
-                    onChange={(e) => setPrimaryColor(e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={primaryColor}
-                    onChange={(e) => setPrimaryColor(e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="secondaryColor">Secondary Color</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="secondaryColor"
-                    type="color"
-                    value={secondaryColor}
-                    onChange={(e) => setSecondaryColor(e.target.value)}
-                    className="w-12 h-12 p-1"
-                  />
-                  <Input
-                    value={secondaryColor}
-                    onChange={(e) => setSecondaryColor(e.target.value)}
-                    className="font-mono"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <Button
-              onClick={handleSave}
-              disabled={isUpdating}
-              className="w-full"
-            >
-              {isUpdating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving Changes
-                </>
-              ) : (
-                'Save Changes'
-              )}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      <BrandingPreview />
-    </div>
-  );
-}
-
-function ComplexesView() {
-  const { toast } = useToast();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedComplex, setSelectedComplex] = useState<Complex | null>(null);
-  const [viewingComplexId, setViewingComplexId] = useState<number | null>(null);
-  const [isFieldModalOpen, setIsFieldModalOpen] = useState(false);
-  const [selectedField, setSelectedField] = useState<Field | null>(null);
-  const queryClient = useQueryClient();
-
-  const complexesQuery = useQuery({
-    queryKey: ['/api/admin/complexes'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/complexes');
-      if (!response.ok) throw new Error('Failed to fetch complexes');
-      return response.json();
-    }
-  });
-
-  const fieldsQuery = useQuery({
-    queryKey: ['/api/admin/fields', viewingComplexId],
-    enabled: !!viewingComplexId,
-    queryFn: async () => {
-      if (!viewingComplexId) return [];
-      const response = await fetch(`/api/admin/complexes/${viewingComplexId}/fields`);
-      if (!response.ok) throw new Error('Failed to fetch fields');
-      return response.json();
-    }
-  });
-
-  const createComplexMutation = useMutation({
-    mutationFn: async (data: ComplexFormValues) => {
-      const response = await fetch('/api/admin/complexes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error('Failed to create complex');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['/api/admin/complexes']);
-      toast({
-        title: "Success",
-        description: "Complex created successfully",
-      });
-      setIsAddModalOpen(false);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create complex",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const updateComplexMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: ComplexFormValues }) => {
-      const response = await fetch(`/api/admin/complexes/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: data.name,
-          address: data.address,
-          city: data.city,
-          state: data.state,
-          country: data.country,
-          openTime: data.openTime,
-          closeTime: data.closeTime,
-          rules: data.rules || null,
-          directions: data.directions || null,
-          isOpen: data.isOpen
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to update complex');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/complexes'] });
-      toast({
-        title: "Success",
-        description: "Complex updated successfully",
-      });
-      setIsAddModalOpen(false);
-      setSelectedComplex(null);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update complex",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const createFieldMutation = useMutation({
-    mutationFn: async ({ complexId, data }: { complexId: number; data: FieldFormValues }) => {
-      const response = await fetch(`/api/admin/complexes/${complexId}/fields`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to create field');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/fields', viewingComplexId] });
-      toast({
-        title: "Success",
-        description: "Field created successfully",
-      });
-      setIsFieldModalOpen(false);
-      setSelectedField(null);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create field",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const updateFieldMutation = useMutation({
-    mutationFn: async ({ complexId, fieldId, data }: { complexId: number; fieldId: number; data: FieldFormValues }) => {
-      const response = await fetch(`/api/admin/complexes/${complexId}/fields/${fieldId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'Failed to update field');
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/fields', viewingComplexId] });
-      toast({
-        title: "Success",
-        description: "Field updated successfully",
-      });
-      setIsFieldModalOpen(false);
-      setSelectedField(null);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message: "Failed to update field",
-        variant: "destructive",
-      });
-    }
-  });
-
-  const handleSubmit = async (data: ComplexFormValues) => {
-    try {
-      if (selectedComplex) {
-        await updateComplexMutation.mutateAsync({ id: selectedComplex.id, data });
-      } else {
-        await createComplexMutation.mutateAsync(data);
-      }
-    } catch (error) {
-      console.error('Error submitting complex:', error);
-    }
-  };
-
-  const handleFieldSubmit = async (data: FieldFormValues) => {
-    if (!viewingComplexId) return;
-
-    try {
-      if (selectedField) {
-        await updateFieldMutation.mutateAsync({
-          complexId: viewingComplexId,
-          fieldId: selectedField.id,
-          data
-        });
-      } else {
-        await createFieldMutation.mutateAsync({
-          complexId: viewingComplexId,
-          data
-        });
-      }
-    } catch (error) {
-      console.error('Error submitting field:', error);
-    }
-  };
-
-  const handleViewFields = (complexId: number) => {
-    setViewingComplexId(complexId);
-  };
-
-  const handleEditComplex = (complex: Complex) => {
-    setSelectedComplex(complex);
-    setIsAddModalOpen(true);
-  };
-
-  const handleAddField = () => {
-    setSelectedField(null);
-    setIsFieldModalOpen(true);
-  };
-
-  const handleEditField = (field: Field) => {
-    setSelectedField(field);
-    setIsFieldModalOpen(true);
-  };
-
-  if (complexesQuery.isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Field Complexes</h2>
-        <Button onClick={() => setIsAddModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Complex
-        </Button>
-      </div>
-
-      <div className="grid gap-6">
-        {complexesQuery.data?.map((complex: Complex) => (
-          <Card key={complex.id}>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle>{complex.name}</CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {complex.address}, {complex.city}, {complex.state}
-                  </p>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => handleEditComplex(complex)}>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleViewFields(complex.id)}>
-                      <Eye className="mr-2 h-4 w-4" />
-                      View Fields
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Operating Hours</Label>
-                  <p className="text-sm">
-                    {complex.openTime} - {complex.closeTime}
-                  </p>
-                </div>
-                <div>
-                  <Label>Status</Label>
-                  <Badge variant={complex.isOpen ? "success" : "destructive"}>
-                    {complex.isOpen ? "Open" : "Closed"}
-                  </Badge>
-                </div>
-              </div>
-
-              {viewingComplexId === complex.id && (
-                <div className="mt-4 border-t pt-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold">Fields</h3>
-                    <Button onClick={handleAddField} size="sm">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Field
-                    </Button>
-                  </div>
-                  {fieldsQuery.isLoading ? (
-                    <div className="flex items-center justify-center p-4">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    </div>
-                  ) : fieldsQuery.data?.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No fields available</p>
-                  ) : (
-                    <div className="grid gap-2">
-                      {fieldsQuery.data?.map((field: Field) => (
-                        <div key={field.id} className="flex justify-between items-center p-2 bg-muted rounded-lg">
-                          <div>
-                            <p className="font-medium">{field.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {field.hasLights ? "Has lights" : "No lights"} •
-                              {field.hasParking ? "Parking available" : "No parking"}
-                            </p>
-                            {field.specialInstructions && (
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Note: {field.specialInstructions}
-                              </p>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant={field.isOpen ? "success" : "destructive"}>
-                              {field.isOpen ? "Open" : "Closed"}
-                            </Badge>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditField(field)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <ComplexEditor
-        open={isAddModalOpen}
-        onOpenChange={setIsAddModalOpen}
-        onSubmit={handleSubmit}
-        complex={selectedComplex}
-      />
-
-      {viewingComplexId && (
-        <FieldEditor
-          open={isFieldModalOpen}
-          onOpenChange={setIsFieldModalOpen}
-          onSubmit={handleFieldSubmit}
-          field={selectedField}
-          complexId={viewingComplexId}
-        />
-      )}
-    </>
-  );
-}
-
-// Using the simpler EventsView implementation from line 126
-
-import { ClientManagementView } from "@/components/admin/ClientManagementView";
-
-function HouseholdsView() {
-  return <ClientManagementView />;
-}
-
-function SchedulingView() {
-  return (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Scheduling</h2>
-      </div>
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-muted-foreground">Game scheduling interface coming soon</p>
-        </CardContent>
-      </Card>
-    </>
-  );
-}
-
-
-function TeamsView() {
-  return (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Teams</h2>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Team
-        </Button>
-      </div>
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <Input
-                  placeholder="Search teams..."
-                  className="w-[300px]"
-                />
-                <Select defaultValue="all">
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Division" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Divisions</SelectItem>
-                    <SelectItem value="u10">Under 10</SelectItem>
-                    <SelectItem value="u12">Under 12</SelectItem>
-                    <SelectItem value="u14">Under 14</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Team Name</TableHead>
-                  <TableHead>Division</TableHead>
-                  <TableHead>Coach</TableHead>
-                  <TableHead>Players</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {/* Team rows will be populated from the database */}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-    </>
-  );
-}
-
 function AdminDashboard() {
   const { user, logout } = useUser();
   const [, setLocation] = useLocation();
   const [activeView, setActiveView] = useState<View>('events');
   const [showWelcome, setShowWelcome] = useState(true);
-  const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [showUpdatesLog, setShowUpdatesLog] = useState(false);
-  const [showInternalOps, setShowInternalOps] = useState(false); // Added state for Internal Ops panel
-
-  // Add Form Templates to the navigation
-  const formTemplatesButton = (
-    <Button
-      variant={activeView === 'formTemplates' ? 'secondary' : 'ghost'}
-      className="w-full justify-start"
-      onClick={() => setActiveView('formTemplates')}
-    >
-      <FormInput className="mr-2 h-4 w-4" />
-      Form Templates
-    </Button>
-  );
-
-
-  useEffect(() => {
-    if (!user) {
-      return; // Wait for user data to load
-    }
-    if (!isAdminUser(user)) {
-      setLocation("/");
-    }
-  }, [user, setLocation]);
+  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
 
   if (!user) {
     return (
@@ -1635,8 +360,6 @@ function AdminDashboard() {
       </div>
     );
   }
-
-  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
 
   const handleLogout = () => {
     setShowLogoutOverlay(true);
@@ -1647,35 +370,12 @@ function AdminDashboard() {
 
   const renderView = () => {
     switch (activeView) {
-      case 'administrators':
-        return <AdministratorsView />;
       case 'events':
         return <EventsView />;
-      case 'teams':
-        return <TeamsView />;
-      case 'complexes':
-        return <ComplexesView />;
-      case 'households':
-        return <HouseholdsView />;
-      case 'scheduling':
-        return <SchedulingView />;
+      case 'administrators':
+        return <AdministratorsView />;
       case 'settings':
-        if (activeSettingsView === 'general') {
-          return <GeneralSettingsView />;
-        }
-        return <SettingsView activeSettingsView={activeSettingsView} />;
-      case 'reports':
-        return <ReportsView />;
-      case 'account':
-        return (
-          <Suspense fallback={
-            <div className="flex items-center justify-center min-h-[200px]">
-              <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-          }>
-            <MyAccount />
-          </Suspense>
-        );
+        return <GeneralSettingsView />;
       case 'files':
         return (
           <div className="space-y-4">
@@ -1685,8 +385,6 @@ function AdminDashboard() {
             <FileManager />
           </div>
         );
-      case 'coupons':
-        return <CouponManagement />;
       case 'formTemplates':
         return <FormTemplatesView />;
       default:
@@ -1717,15 +415,6 @@ function AdminDashboard() {
             </Button>
 
             <Button
-              variant={activeView === 'formTemplates' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('formTemplates')}
-            >
-              <FormInput className="mr-2 h-4 w-4" />
-              Form Templates
-            </Button>
-
-            <Button
               variant={activeView === 'events' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
               onClick={() => setActiveView('events')}
@@ -1735,137 +424,21 @@ function AdminDashboard() {
             </Button>
 
             <Button
-              variant={activeView === 'teams' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('teams')}
-            >
-              <Users className="mr-2 h-4 w-4" />
-              Teams
-            </Button>
-
-            <Button
-              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('complexes')}
-            >
-              <Building2 className="mr-2 h-4 w-4" />
-              Field Complexes
-            </Button>
-
-            <Button
-              variant={activeView === 'households' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('households')}
-            >
-              <Home className="mr-2 h-4 w-4" />
-              MatchPro Client
-            </Button>
-
-            <Button
-              variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('scheduling')}
-            >
-              <CalendarDays className="mr-2 h-4 w-4" />
-              Scheduling
-            </Button>
-
-            <Button
-              variant={activeView === 'reports' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
-              onClick={() => setActiveView('reports')}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Reports and Financials
-            </Button>
-
-            <Button
               variant={activeView === 'files' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
               onClick={() => setActiveView('files')}
             >
-              <ImageIcon className="mr-2 h-4 w-4" />
+              <FileText className="mr-2 h-4 w-4" />
               File Manager
             </Button>
 
-            {/* Settings */}
-            <Collapsible
-              open={isSettingsOpen}
-              onOpenChange={setIsSettingsOpen}
-              className="space-y-2"
-            >
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
-                  className="w-full justify-between"
-                >
-                  <span className="flex items-center">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </span>
-                  <ChevronRight
-                    className={`h-4 w-4 transition-transform duration-200 ${
-                      isSettingsOpen ? 'rotate-90' : ''
-                    }`}
-                  />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-2 pl-4">
-                <Button
-                  variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('branding');
-                  }}
-                >
-                  <Palette className="mr-2 h-4 w-4" />
-                  Branding
-                </Button>
-                <Button
-                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('payments');
-                  }}
-                >
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Payments
-                </Button>
-                <Button
-                  variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('general');
-                  }}
-                >
-                  <Settings className="mr-2 h-4 w-4" />
-                  General
-                </Button>
-                <Button
-                  variant={activeSettingsView === 'styling' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('styling');
-                  }}
-                >
-                  <Palette className="mr-2 h-4 w-4" />
-                  Theme
-                </Button>
-              </CollapsibleContent>
-            </Collapsible>
-
-            {/* Account */}
             <Button
-              variant={activeView === 'account' ? 'secondary' : 'ghost'}
+              variant={activeView === 'formTemplates' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('account')}
+              onClick={() => setActiveView('formTemplates')}
             >
-              <User className="mr-2 h-4 w-4" />
-              My Account
+              <FormInput className="mr-2 h-4 w-4" />
+              Form Templates
             </Button>
 
             <Button
@@ -1882,12 +455,11 @@ function AdminDashboard() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
-        <AdminBanner />
         <div className="p-8">
           {/* Welcome Card */}
           {showWelcome && (
             <Card className="mb-6 relative">
-              <button 
+              <button
                 onClick={() => setShowWelcome(false)}
                 className="absolute top-2 right-2 p-2 hover:bg-muted rounded-full"
               >
@@ -1912,295 +484,11 @@ function AdminDashboard() {
           {renderView()}
         </div>
 
-        {/* Internal Operations Panel */}
-        {showInternalOps && (
-          <InternalOperationsPanel
-            setActiveView={setActiveView}
-            openSettings={(section) => {
-              setIsSettingsOpen(true);
-              setActiveSettingsView(section as SettingsView);
-            }}
-          />
-        )}
+        {/* Preview Button */}
+        <PreviewButton />
       </div>
-      {showLogoutOverlay && (
-        <LogoutOverlay onFinished={() => setShowLogoutOverlay(false)} />
-      )}
     </div>
   );
 }
-
-function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView }) {
-  switch (activeSettingsView) {
-    case 'branding':
-      return (
-        <BrandingPreviewProvider>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="col-span-1">
-              <OrganizationSettingsForm />
-            </div>
-            <BrandingPreview />
-          </div>
-        </BrandingPreviewProvider>
-      );
-    case 'general':
-    case 'styling':
-      return <GeneralSettingsView />;
-    case 'payments':
-      return (
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold">Payments Settings</h2>
-          <Card>
-            <CardContent className="p-6">
-              <p>Payments settings content will be implemented here</p>
-            </CardContent>
-          </Card>
-        </div>
-      );
-    default:
-      return (
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold">Settings</h2>
-          <Card>
-            <CardContent className="p-6">
-              <p>Settings content will be implemented here</p>
-            </CardContent>
-          </Card>
-        </div>
-      );
-  }
-}
-
-function ThemeEditor() {
-  const [theme, setTheme] = useState({
-    backgroundColor: '#ffffff',
-    textColor: '#000000',
-    buttonColor: '#4CAF50',
-    // Add more colors as needed
-  });
-
-  const handleColorChange = (color: string, value: string) => {
-    setTheme({ ...theme, [color]: value });
-  };
-
-  return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Theme Editor</h2>
-      <div className="space-y-2">
-        <div>
-          <Label htmlFor="backgroundColor">Background Color</Label>
-          <Input
-            id="backgroundColor"
-            type="color"
-            value={theme.backgroundColor}
-            onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
-          />
-        </div>
-        <div>
-          <Label htmlFor="textColor">Text Color</Label><Input
-            id="textColor"
-            type="color"
-            value={theme.textColor}
-            onChange={(e) => handleColorChange('textColor', e.target.value)}
-          />
-        </div>
-        <div>
-          <Label htmlFor="buttonColor">Button Color</Label>
-          <Input
-            id="buttonColor"
-            type="color"
-            value={theme.buttonColor}
-            onChange={(e) => handleColorChange('buttonColor', e.target.value)}
-          />
-        </div>
-        {/* Add more color pickers as needed */}
-      </div>
-      <Button onClick={() => {
-        // Apply theme changes here
-        console.log("Theme updated:", theme);
-      }}>
-        Apply Theme
-      </Button>
-    </div>
-  );
-}
-
-interface SelectCoupon {
-  id: number;
-  code: string;
-  discountType: 'percentage' | 'amount';
-  amount: number;
-  expirationDate: string;
-  usageCount: number;
-  maxUses: number | null;
-  isActive: boolean;
-  description: string;
-}
-
-function CouponManagement() {
-  const { toast } = useToast();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedCoupon, setSelectedCoupon] = useState<SelectCoupon | null>(null);
-  const queryClient = useQueryClient();
-  const [, params] = useLocation();
-  const eventId = params.split('/')[2];
-
-  const couponsQuery = useQuery({
-    queryKey: ['/api/admin/coupons', eventId],
-    queryFn: async () => {
-      const response = await fetch(`/api/admin/coupons?eventId=${eventId}`);
-      if (!response.ok) throw new Error('Failed to fetch coupons');
-      return response.json();
-    }
-  });
-
-  const deleteCouponMutation = useMutation({
-    mutationFn: async (couponId: number) => {
-      const response = await fetch(`/api/admin/coupons/${couponId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('Failed to delete coupon');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['/api/admin/coupons', eventId]);
-      toast({
-        title: "Success",
-        description: "Coupon deleted successfully",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  if (couponsQuery.isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  const handleEditCoupon = (coupon: SelectCoupon) => {
-    setSelectedCoupon(coupon);
-    setIsAddModalOpen(true);
-  };
-
-  const handleDeleteCoupon = async (couponId: number) => {
-    try {
-      await deleteCouponMutation.mutateAsync(couponId);
-    } catch (error) {
-      console.error('Error deleting coupon:', error);
-    }
-  };
-
-  return (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Coupon Management</h2>
-        <Button onClick={() => setIsAddModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Coupon
-        </Button>
-      </div>
-
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Expires</TableHead>
-                <TableHead>Uses</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {couponsQuery.data?.map((coupon: SelectCoupon) => (
-                <TableRow key={coupon.id}>
-                  <TableCell className="font-medium">{coupon.code}</TableCell>
-                  <TableCell>
-                    <Badge variant={coupon.discountType === 'percentage' ? 'secondary' : 'outline'}>
-                      {coupon.discountType === 'percentage' ? `${coupon.amount}%` : `$${coupon.amount}`}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{coupon.amount}</TableCell>
-                  <TableCell>
-                    {coupon.expirationDate ? 
-                      new Date(coupon.expirationDate).toLocaleDateString() : 
-                      'No expiration'
-                    }
-                  </TableCell>
-                  <TableCell>
-                    {coupon.usageCount} {coupon.maxUses ? `/ ${coupon.maxUses}` : ''}
-                  </TableCell>
-                  <TableCell>{coupon.description}</TableCell>
-                  <TableCell>
-                    <Badge variant={coupon.isActive ? 'success' : 'secondary'}>
-                      {coupon.isActive ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEditCoupon(coupon)}>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                          onClick={() => handleDeleteCoupon(coupon.id)}
-                          className="text-red-600"
-                        >
-                          <Trash className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <CouponModal
-        open={isAddModalOpen}
-        onOpenChange={setIsAddModalOpen}
-        eventId={eventId}
-        couponToEdit={selectedCoupon}
-      />
-    </>
-  );
-}
-
-const navigationItems = [
-  { icon: Shield, label: "Administrators", value: "administrators" as const },
-  { icon: Calendar, label: "Events", value: "events" as const },
-  { icon: Users, label: "Teams", value: "teams" as const },
-  { icon: Building2, label: "Field Complexes", value: "complexes" as const },
-  { icon: Home, label: "MatchPro Client", value: "households" as const },
-  { icon: CalendarDays, label: "Scheduling", value: "scheduling" as const },
-  { icon: FileText, label: "Reports and Financials", value: "reports" as const },
-  { icon: ImageIcon, label: "File Manager", value: "files" as const },
-  { icon: Ticket, label: "Coupons", value: "coupons" as const },
-  { icon: FormInput, label: "Form Templates", value: "formTemplates" as const },
-  { icon: User, label: "My Account", value: "account" as const },
-];
 
 export default AdminDashboard;
