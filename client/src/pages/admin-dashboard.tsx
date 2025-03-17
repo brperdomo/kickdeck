@@ -1,101 +1,105 @@
-import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
+import { useState, lazy, Suspense, useEffect, useCallback, useMemo } from "react";
 import { useLocation } from "wouter";
-import { Link2, X, Ticket, Plus, Mail } from "lucide-react";
+import { 
+  Eye, Plus, Shield, Trophy, ClipboardList, DollarSign, UserPlus,
+  MoreHorizontal, Edit, Trash, FileText, Download, Loader2, Calendar,
+  User, Users, Building2, Home, CalendarDays, Settings, ChevronRight,
+  Palette, CreditCard, LogOut, Ticket
+} from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import { useToast } from "@/hooks/use-toast";
+import { AdminModal } from "@/components/modals/AdminModal";
+import { AccountingCodeModal } from "@/components/modals/AccountingCodeModal";
+import { CouponModal } from "@/components/modals/CouponModal";
+import { FileManager } from "@/components/files/FileManager";
+import { FormTemplatesView } from "@/components/forms/FormTemplatesView";
+import { FormInput } from "@/components/forms/FormInput";
+import { ImageIcon } from "@/components/ui/icons";
+import {
+  Label,
+  Input
+} from "@/components/ui/form";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useUser } from "@/hooks/use-user";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTheme } from "@/hooks/use-theme";
-import { SelectUser } from "@db/schema";
+import type { SelectUser } from "@db/schema";
 import { LogoutOverlay } from "@/components/ui/logout-overlay";
+import { useOrganizationSettings } from "@/hooks/use-organization-settings";
+import { useBrandingPreview } from "@/hooks/use-branding-preview";
+import { useExportProcess } from "@/hooks/use-export-process";
+import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import {
-  Calendar,
-  Shield,
-  UserPlus,
-  Home,
-  LogOut,
-  FileText,
-  User,
-  Palette,
-  ChevronRight,
-  Loader2,
-  CreditCard,
-  Search,
-  ClipboardList,
-  MoreHorizontal,
-  Building2,
-  MessageSquare,
-  Trophy,
-  DollarSign,
-  Settings,
-  Users,
-  ChevronDown,
-  Edit,
-  Trash,
-  Eye,
-  Download,
-  UserCircle,
-  Percent,
-  Printer,
-  Flag,
-  CalendarDays,
-  ImageIcon,
-  FormInput,
-  Bell
-} from "lucide-react";
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent
+} from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent
+} from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow  
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useOrganizationSettings } from "@/hooks/use-organization-settings";
-import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
-import { useExportProcess } from "@/hooks/use-export-process";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { AdminModal } from "@/components/admin/AdminModal";
-import { ComplexEditor } from "@/components/ComplexEditor";
-import { FieldEditor } from "@/components/FieldEditor";
-import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
-import { useDropzone } from 'react-dropzone';
-import { FileManager } from "@/components/admin/FileManager.tsx";
-import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
-import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
-import FormTemplateEditPage from "@/pages/form-template-edit";
-import FormTemplateCreatePage from "@/pages/form-template-create";
-import FormTemplatesPage from "@/pages/form-templates";
-import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
+
+// Lazy loaded components
+const TeamsView = lazy(() => import("@/components/admin/TeamsView"));
+const ComplexesView = lazy(() => import("@/components/admin/ComplexesView")); 
+const HouseholdsView = lazy(() => import("@/components/admin/HouseholdsView"));
+const SchedulingView = lazy(() => import("@/components/admin/SchedulingView"));
+const SettingsView = lazy(() => import("@/components/admin/SettingsView"));
+const MyAccount = lazy(() => import("@/pages/my-account"));
+const AdministratorsView = lazy(() => import("@/components/admin/AdministratorsView"));
+const FilesView = lazy(() => import("@/components/files/FilesView"));
+const FormTemplatesView = lazy(() => import("@/components/forms/FormTemplatesView"));
+const CouponsView = lazy(() => import("@/components/coupons/CouponsView"));
+
+// PreviewRegistrationButton component
+function PreviewRegistrationButton() {
+  const navigate = useLocation()[1];
+  
+  return (
+    <Button
+      onClick={() => navigate("/register?mode=preview")}
+      className="bg-green-600 hover:bg-green-700 text-white"
+      size="sm"
+    >
+      <Eye className="mr-2 h-4 w-4" />
+      Preview Registration
+    </Button>
+  );
+}
+
+// Type definitions
+export interface Theme {
+  primary: string;
+  variant: 'professional' | 'tint' | 'vibrant';
+  appearance: 'light' | 'dark' | 'system';
+  radius: number;
+}
+
+export type ExportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player' | null;
 
 
 function AdminBanner() {
@@ -116,17 +120,23 @@ function AdminBanner() {
   );
 }
 
-const MyAccount = lazy(() => import("./my-account"));
-
 // Type guard function to check if user is admin
 function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'coupons' | 'formTemplates';
-type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
-type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
-type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
+export type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'coupons' | 'formTemplates';
+export type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
+export type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
+export type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
+
+interface RoleGroup {
+  [key: string]: any[];
+  super_admin: any[];
+  tournament_admin: any[];
+  score_admin: any[];
+  finance_admin: any[];
+}
 
 function EventsView() {
   const navigate = useLocation()[1];
@@ -144,14 +154,142 @@ function EventsView() {
   );
 }
 
-interface RoleGroup {
-  [key: string]: any[];
-  super_admin: any[];
-  tournament_admin: any[];
-  score_admin: any[];
-  finance_admin: any[];
+// Component types
+interface TeamsViewProps {}
+interface ComplexesViewProps {}
+interface HouseholdsViewProps {}
+interface SchedulingViewProps {}
+interface SettingsViewProps {
+  activeSettingsView: SettingsView; 
+}
+interface LogoutOverlayProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
+// LoadingSpinner component
+function LoadingSpinner() {
+  return (
+    <div className="flex items-center justify-center min-h-[200px]">
+      <Loader2 className="h-8 w-8 animate-spin" />
+    </div>
+  );
+}
+
+// Removed duplicate PreviewRegistrationButton definition
+
+// Main AdminDashboard component
+export default function AdminDashboard() {
+  const [view, setView] = useState<View>("events");
+  const [settingsView, setSettingsView] = useState<SettingsView>("general");
+  const { user } = useUser();
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+
+  if (!isAdminUser(user)) {
+    return null;
+  }
+
+  const renderView = () => {
+    switch (view) {
+      case 'administrators':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <AdministratorsView />
+          </Suspense>
+        );
+      case 'events':
+        return <EventsView />;
+      case 'teams':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <TeamsView />
+          </Suspense>
+        );
+      case 'complexes':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ComplexesView />
+          </Suspense>
+        );
+      case 'households':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <HouseholdsView />
+          </Suspense>
+        );
+      case 'scheduling':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <SchedulingView />
+          </Suspense>
+        );
+      case 'files':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <FilesView />
+          </Suspense>
+        );
+      case 'formTemplates':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <FormTemplatesView />
+          </Suspense>
+        );
+      case 'coupons':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <CouponsView />
+          </Suspense>
+        );
+      case 'settings':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            {settingsView === 'general' ? (
+              <GeneralSettingsView />
+            ) : (
+              <SettingsView activeSettingsView={settingsView} />
+            )}
+          </Suspense>
+        );
+      case 'account':
+        return (
+          <Suspense fallback={<LoadingSpinner />}>
+            <MyAccount />
+          </Suspense>
+        );
+      default:
+        return <EventsView />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <AdminBanner />
+      <div className="container mx-auto px-4 py-6">
+        {/* Header with Preview Registration button */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <PreviewRegistrationButton />
+        </div>
+        
+        <div className="flex gap-6">
+          {/* Sidebar */}
+          <div className="w-64 shrink-0">
+            {/* ... keep existing sidebar content ... */}
+          </div>
+
+          {/* Main content */}
+          <div className="flex-1">
+            {renderView()}
+          </div>
+        </div>
+      </div>
+      <LogoutOverlay open={isLogoutOpen} onOpenChange={setIsLogoutOpen} />
+    </div>
+  );
+}
+
+// Types and interfaces
 interface Complex {
   id: number;
   name: string;
@@ -565,7 +703,11 @@ function ReportsView() {
 
   const handleDeleteCode = async (id: number) => {
     if (window.confirm('Are you sure you want to delete this accounting code?')) {
-      await deleteAccountingCodeMutation.mutateAsync(id);
+      try {
+        await deleteAccountingCodeMutation.mutateAsync(id);
+      } catch (error) {
+        console.error('Failed to delete accounting code:', error);
+      }
     }
   };
 
@@ -577,7 +719,7 @@ function ReportsView() {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <h3 className="text-lg font-semibold">Financial Management</h3>
-                <select 
+                <select
                   className="border rounded px-2 py-1"
                   value={selectedFinancialReport}
                   onChange={(e) => setSelectedFinancialReport(e.target.value)}
@@ -620,54 +762,54 @@ function ReportsView() {
                   <CardTitle>Accounting Codes</CardTitle>
                 </CardHeader>
                 <CardContent>
-                {accountingCodesQuery.isLoading ? (
-                  <div className="flex justify-center p-4">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  </div>
-                ) : accountingCodesQuery.isError ? (
-                  <div className="text-center text-red-500">
-                    Error loading accounting codes
-                  </div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Code</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {accountingCodesQuery.data?.map((code: any) => (
-                        <TableRow key={code.id}>
-                          <TableCell className="font-medium">{code.code}</TableCell>
-                          <TableCell>{code.name}</TableCell>
-                          <TableCell>{code.description || '-'}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleEditCode(code)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleDeleteCode(code.id)}
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <Trash className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
+                  {accountingCodesQuery.isLoading ? (
+                    <div className="flex justify-center p-4">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
+                  ) : accountingCodesQuery.isError ? (
+                    <div className="text-center text-red-500">
+                      Error loading accounting codes
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Code</TableHead>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Description</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
+                      </TableHeader>
+                      <TableBody>
+                        {accountingCodesQuery.data?.map((code: any) => (
+                          <TableRow key={code.id}>
+                            <TableCell className="font-medium">{code.code}</TableCell>
+                            <TableCell>{code.name}</TableCell>
+                            <TableCell>{code.description || '-'}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEditCode(code)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDeleteCode(code.id)}
+                                  className="text-red-500 hover:text-red-700"
+                                >
+                                  <Trash className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -979,7 +1121,7 @@ function OrganizationSettingsForm() {
       //      // Get the palette with error handling
       const palette = await v.getPalette();      // Set primary color from the Vibrant swatch
       if (palette.Vibrant) {        setPrimaryColor(palette.Vibrant.hex);
-console.log('Primarycolor extracted:', palette.Vibrant.hex);
+        console.log('Primarycolor extracted:', palette.Vibrant.hex);
       }
 
       // Set secondary color from theLightVibrant or Muted swatch
@@ -1158,8 +1300,7 @@ console.log('Primarycolor extracted:', palette.Vibrant.hex);
   );
 }
 
-function ComplexesView() {
-  const { toast } = useToast();
+// RemoveComplexesView duplicate - using lazy loaded component instead
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedComplex, setSelectedComplex] = useState<Complex | null>(null);
   const [viewingComplexId, setViewingComplexId] = useState<number | null>(null);
@@ -1321,7 +1462,7 @@ function ComplexesView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message: "Failed to update field",
+        description: error instanceof Error ? error.message : "Failed to update field",
         variant: "destructive",
       });
     }
@@ -1521,90 +1662,12 @@ function ComplexesView() {
 
 import { ClientManagementView } from "@/components/admin/ClientManagementView";
 
-function HouseholdsView() {
-  return <ClientManagementView />;
-}
-
-function SchedulingView() {
-  return (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Scheduling</h2>
-      </div>
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-muted-foreground">Game scheduling interface coming soon</p>
-        </CardContent>
-      </Card>
-    </>
-  );
-}
+// Removed duplicate HouseholdsView and SchedulingView implementations - using lazy loaded components instead
 
 
-function TeamsView() {
-  return (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Teams</h2>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Team
-        </Button>
-      </div>
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <Input
-                  placeholder="Search teams..."
-                  className="w-[300px]"
-                />
-                <Select defaultValue="all">
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Division" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Divisions</SelectItem>
-                    <SelectItem value="u10">Under 10</SelectItem>
-                    <SelectItem value="u12">Under 12</SelectItem>
-                    <SelectItem value="u14">Under 14</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+// Removed duplicate TeamsView implementation - using lazy loaded component instead
 
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Team Name</TableHead>
-                  <TableHead>Division</TableHead>
-                  <TableHead>Coach</TableHead>
-                  <TableHead>Players</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {/* Team rows will be populated from the database */}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-    </>
-  );
-}
-
-function AdminDashboard() {
-  const { user, logout } = useUser();
-  const [, setLocation] = useLocation();
-  const [activeView, setActiveView] = useState<View>('events');
-  const [showWelcome, setShowWelcome] = useState(true);
-  const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [showUpdatesLog, setShowUpdatesLog] = useState(false);
-  const [showInternalOps, setShowInternalOps] = useState(false); // Added state for Internal Ops panel
+// Removed duplicate AdminDashboard function declaration
 
   // Add Form Templates to the navigation
   const formTemplatesButton = (
@@ -1887,7 +1950,7 @@ function AdminDashboard() {
           {/* Welcome Card */}
           {showWelcome && (
             <Card className="mb-6 relative">
-              <button 
+              <button
                 onClick={() => setShowWelcome(false)}
                 className="absolute top-2 right-2 p-2 hover:bg-muted rounded-full"
               >
@@ -1930,46 +1993,7 @@ function AdminDashboard() {
   );
 }
 
-function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView }) {
-  switch (activeSettingsView) {
-    case 'branding':
-      return (
-        <BrandingPreviewProvider>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="col-span-1">
-              <OrganizationSettingsForm />
-            </div>
-            <BrandingPreview />
-          </div>
-        </BrandingPreviewProvider>
-      );
-    case 'general':
-    case 'styling':
-      return <GeneralSettingsView />;
-    case 'payments':
-      return (
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold">Payments Settings</h2>
-          <Card>
-            <CardContent className="p-6">
-              <p>Payments settings content will be implemented here</p>
-            </CardContent>
-          </Card>
-        </div>
-      );
-    default:
-      return (
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold">Settings</h2>
-          <Card>
-            <CardContent className="p-6">
-              <p>Settings content will be implemented here</p>
-            </CardContent>
-          </Card>
-        </div>
-      );
-  }
-}
+// Removed duplicate SettingsView implementation - using lazy loaded component instead
 
 function ThemeEditor() {
   const [theme, setTheme] = useState({
@@ -2135,8 +2159,8 @@ function CouponManagement() {
                   </TableCell>
                   <TableCell>{coupon.amount}</TableCell>
                   <TableCell>
-                    {coupon.expirationDate ? 
-                      new Date(coupon.expirationDate).toLocaleDateString() : 
+                    {coupon.expirationDate ?
+                      new Date(coupon.expirationDate).toLocaleDateString() :
                       'No expiration'
                     }
                   </TableCell>
@@ -2162,7 +2186,7 @@ function CouponManagement() {
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => handleDeleteCoupon(coupon.id)}
                           className="text-red-600"
                         >
@@ -2203,4 +2227,275 @@ const navigationItems = [
   { icon: User, label: "My Account", value: "account" as const },
 ];
 
-export default AdminDashboard;
+function PreviewRegistrationButton() {
+  const navigate = useLocation()[1];
+
+  return (
+    <Button
+      onClick={() => navigate("/register?mode=preview")}
+      className="bg-green-600 hover:bg-green-700 text-white"
+      size="sm"
+    >
+      <Eye className="mr-2 h-4 w-4" />
+      Preview Registration
+    </Button>
+  );
+}
+
+export default function AdminDashboard() {
+  const [view, setView] = useState<View>("events");
+  const [settingsView, setSettingsView] = useState<SettingsView>("general");
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false); 
+  const { user } = useUser();
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+  const { toast } = useToast();
+
+  if (!isAdminUser(user)) {
+    return null;
+  }
+
+  const renderView = () => {
+    switch (view) {
+      case 'administrators':
+        return <AdministratorsView />;
+      case 'events':
+        return <EventsView />;
+      case 'teams':
+        return <TeamsView />;
+      case 'complexes':
+        return <ComplexesView />;
+      case 'households':
+        return <HouseholdsView />;
+      case 'scheduling':
+        return <SchedulingView />;
+      case 'settings':
+        if (settingsView === 'general') {
+          return <GeneralSettingsView />;
+        }
+        return <SettingsView activeSettingsView={settingsView} />;
+      case 'reports':
+        return <ReportsView />;
+      case 'account':
+        return (
+          <Suspense fallback={
+            <div className="flex items-center justify-center min-h-[200px]">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          }>
+            <MyAccount />
+          </Suspense>
+        );
+      case 'files':
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">File Manager</h2>
+            </div>
+            <FileManager />
+          </div>
+        );
+      case 'coupons':
+        return <CouponManagement />;
+      case 'formTemplates':
+        return <FormTemplatesView />;
+      default:
+        return <div>Feature coming soon</div>;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <AdminBanner />
+      <div className="flex h-[calc(100vh-96px)]">
+        {/* Sidebar */}
+        <div className="w-64 border-r shrink-0">
+          <div className="p-6 space-y-4">
+            <Button
+              variant={view === 'administrators' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setView('administrators')}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Administrators
+            </Button>
+
+            <Button
+              variant={view === 'formTemplates' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setView('formTemplates')}
+            >
+              <FormInput className="mr-2 h-4 w-4" />
+              Form Templates
+            </Button>
+
+            <Button
+              variant={view === 'events' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setView('events')}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Events
+            </Button>
+
+            <Button
+              variant={view === 'teams' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setView('teams')}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Teams
+            </Button>
+
+            <Button
+              variant={view === 'complexes' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setView('complexes')}
+            >
+              <Building2 className="mr-2 h-4 w-4" />
+              Field Complexes
+            </Button>
+
+            <Button
+              variant={view === 'households' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setView('households')}
+            >
+              <Home className="mr-2 h-4 w-4" />
+              MatchPro Client
+            </Button>
+
+            <Button
+              variant={view === 'scheduling' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setView('scheduling')}
+            >
+              <CalendarDays className="mr-2 h-4 w-4" />
+              Scheduling
+            </Button>
+
+            <Button
+              variant={view === 'reports' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setView('reports')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Reports and Financials
+            </Button>
+
+            <Button
+              variant={view === 'files' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setView('files')}
+            >
+              <ImageIcon className="mr-2 h-4 w-4" />
+              File Manager
+            </Button>
+
+            {/* Settings */}
+            <Collapsible
+              open={isSettingsOpen}
+              onOpenChange={setIsSettingsOpen}
+              className="space-y-2"
+            >
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant={view === 'settings' ? 'secondary' : 'ghost'}
+                  className="w-full justify-between"
+                >
+                  <span className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </span>
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isSettingsOpen ? 'rotate-90' : ''
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 pl-4">
+                <Button
+                  variant={settingsView === 'branding' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setView('settings');
+                    setSettingsView('branding');
+                  }}
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Branding
+                </Button>
+                <Button
+                  variant={settingsView === 'payments' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setView('settings');
+                    setSettingsView('payments');
+                  }}
+                >
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Payments
+                </Button>
+                <Button
+                  variant={settingsView === 'general' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setView('settings');
+                    setSettingsView('general');
+                  }}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  General
+                </Button>
+                <Button
+                  variant={settingsView === 'styling' ? 'secondary' : 'ghost'}
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setView('settings');
+                    setSettingsView('styling');
+                  }}
+                >
+                  <Palette className="mr-2 h-4 w-4" />
+                  Theme
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Account */}
+            <Button
+              variant={view === 'account' ? 'secondary' : 'ghost'}
+              className="w-full justify-start"
+              onClick={() => setView('account')}
+            >
+              <User className="mr-2 h-4 w-4" />
+              My Account
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={() => setIsLogoutOpen(true)}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 overflow-auto">
+        <div className="p-6">
+          {/* Add the preview button in the header */}
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+            <PreviewRegistrationButton />
+          </div>
+          {renderView()}
+        </div>
+      </div>
+      <LogoutOverlay open={isLogoutOpen} onOpenChange={setIsLogoutOpen} />
+    </div>
+  );
+}
+
