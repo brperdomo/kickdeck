@@ -141,3 +141,30 @@ router.delete("/:id", async (req, res) => {
 });
 
 export default router;
+// Test email provider connection
+router.post("/test-connection", async (req, res) => {
+  const { providerType, settings } = req.body;
+  
+  try {
+    if (providerType === 'smtp') {
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransport({
+        host: settings.host,
+        port: settings.port,
+        secure: settings.port === 465,
+        auth: {
+          user: settings.username,
+          pass: settings.password,
+        },
+      });
+
+      await transporter.verify();
+      res.json({ success: true, message: 'Connection successful' });
+    } else {
+      res.status(400).json({ error: 'Unsupported provider type' });
+    }
+  } catch (error) {
+    console.error('Email provider connection test failed:', error);
+    res.status(400).json({ error: 'Connection failed: ' + error.message });
+  }
+});
