@@ -41,6 +41,27 @@ const providerSchema = z.object({
 
 type ProviderFormValues = z.infer<typeof providerSchema>;
 
+const testConnection = async (values: ProviderFormValues) => {
+  const response = await fetch("/api/admin/email-providers/test-connection", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(values),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorData;
+    try {
+      errorData = JSON.parse(errorText);
+    } catch (e) {
+      throw new Error(errorText || 'Failed to test connection');
+    }
+    throw new Error(errorData.error || 'Failed to test connection');
+  }
+
+  return response.json();
+};
+
 export function EmailProviderSettings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -321,9 +342,34 @@ export function EmailProviderSettings() {
               )}
             />
 
-            <Button type="submit" className="w-full">
-              Save Provider Settings
-            </Button>
+            <div className="flex justify-between space-x-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={async () => {
+                  try {
+                    const values = form.getValues();
+                    await testConnection(values);
+                    toast({
+                      title: "Success",
+                      description: "Email provider connection test successful",
+                    });
+                  } catch (error: any) {
+                    toast({
+                      title: "Error",
+                      description: error.message || "Failed to test connection",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+              >
+                Test Connection
+              </Button>
+              <Button type="submit" className="flex-1">
+                Save Provider Settings
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>
