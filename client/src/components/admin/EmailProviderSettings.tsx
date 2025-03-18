@@ -23,9 +23,10 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, Pencil } from "lucide-react";
 
 const providerSchema = z.object({
+  id: z.number().optional(),
   providerType: z.enum(["smtp", "sendgrid", "mailgun"]),
   providerName: z.string().min(1, "Provider name is required"),
   settings: z.object({
@@ -88,11 +89,17 @@ export function EmailProviderSettings() {
     },
   });
 
-  const createMutation = useMutation({
+  const mutation = useMutation({
     mutationFn: async (values: ProviderFormValues) => {
       try {
-        const response = await fetch("/api/admin/email-providers", {
-          method: "POST",
+        const url = values.id 
+          ? `/api/admin/email-providers/${values.id}`
+          : "/api/admin/email-providers";
+
+        const method = values.id ? "PATCH" : "POST";
+
+        const response = await fetch(url, {
+          method,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(values),
         });
@@ -134,7 +141,29 @@ export function EmailProviderSettings() {
   });
 
   const onSubmit = (values: ProviderFormValues) => {
-    createMutation.mutate(values);
+    mutation.mutate(values);
+  };
+
+  const editProvider = (provider: any) => {
+    form.reset({
+      id: provider.id,
+      providerType: provider.providerType,
+      providerName: provider.providerName,
+      settings: provider.settings,
+      isActive: provider.isActive,
+      isDefault: provider.isDefault,
+    });
+  };
+
+  const viewSettings = (provider: any) => {
+    toast({
+      title: "Provider Settings",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(provider.settings, null, 2)}</code>
+        </pre>
+      ),
+    });
   };
 
   if (isLoading) {
@@ -149,7 +178,9 @@ export function EmailProviderSettings() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Email Provider Settings</CardTitle>
+          <CardTitle>
+            {form.watch("id") ? "Edit Email Provider" : "Add Email Provider"}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -377,17 +408,34 @@ export function EmailProviderSettings() {
                 <Button 
                   type="submit" 
                   className="flex-1"
-                  disabled={createMutation.isPending}
+                  disabled={mutation.isPending}
                 >
-                  {createMutation.isPending ? (
+                  {mutation.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Saving...
                     </>
                   ) : (
-                    'Save Provider Settings'
+                    form.watch("id") ? 'Update Provider' : 'Save Provider'
                   )}
                 </Button>
+                {form.watch("id") && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      form.reset({
+                        providerType: "smtp",
+                        providerName: "",
+                        settings: {},
+                        isActive: true,
+                        isDefault: false,
+                      });
+                    }}
+                  >
+                    Cancel Edit
+                  </Button>
+                )}
               </div>
             </form>
           </Form>
@@ -427,6 +475,20 @@ export function EmailProviderSettings() {
                     >
                       {provider.isActive ? "Active" : "Inactive"}
                     </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => viewSettings(provider)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => editProvider(provider)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               ))}
