@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean, jsonb, time, integer, date, timestamp, bigint, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, jsonb, timestamp, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
@@ -701,7 +701,7 @@ export const accountingCodes = pgTable("accounting_codes", {
   name: text("name").notNull(),
   description: text("description"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const insertAccountingCodeSchema = createInsertSchema(accountingCodes, {
@@ -890,3 +890,35 @@ export const selectEmailProviderSettingsSchema = createSelectSchema(emailProvide
 
 export type InsertEmailProviderSettings = typeof emailProviderSettings.$inferInsert;
 export type SelectEmailProviderSettings = typeof emailProviderSettings.$inferSelect;
+
+export const emailTemplateRouting = pgTable("email_template_routing", {
+  id: serial("id").primaryKey(),
+  templateType: text("template_type").notNull(),  // e.g., 'password_reset', 'registration', 'payment'
+  providerId: integer("provider_id").notNull().references(() => emailProviderSettings.id),
+  fromEmail: text("from_email").notNull(),
+  fromName: text("from_name").notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertEmailTemplateRoutingSchema = createInsertSchema(emailTemplateRouting, {
+  templateType: z.string().min(1, "Template type is required"),
+  providerId: z.number().positive("Provider ID is required"),
+  fromEmail: z.string().email("Valid email address is required"),
+  fromName: z.string().min(1, "From name is required"),
+  isActive: z.boolean().default(true),
+});
+
+export const selectEmailTemplateRoutingSchema = createSelectSchema(emailTemplateRouting);
+
+export type InsertEmailTemplateRouting = typeof emailTemplateRouting.$inferInsert;
+export type SelectEmailTemplateRouting = typeof emailTemplateRouting.$inferSelect;
+
+// Add relations
+export const emailTemplateRoutingRelations = relations(emailTemplateRouting, ({ one }) => ({
+  provider: one(emailProviderSettings, {
+    fields: [emailTemplateRouting.providerId],
+    references: [emailProviderSettings.id],
+  }),
+}));

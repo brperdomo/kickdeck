@@ -1,9 +1,11 @@
 import { db } from "@db";
 import { sql } from "drizzle-orm";
 import { createEmailTemplatesTable } from "./migrations/create_email_templates";
+import { createEmailTemplateRoutingTable } from "./migrations/create_email_template_routing";
 
 export async function createTables() {
   try {
+    console.log('Starting database migrations...');
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS event_form_templates (
         id SERIAL PRIMARY KEY,
@@ -82,7 +84,7 @@ export async function createTables() {
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
-      
+
       CREATE TABLE IF NOT EXISTS event_settings (
         id SERIAL PRIMARY KEY,
         event_id BIGINT NOT NULL,
@@ -92,15 +94,27 @@ export async function createTables() {
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
     `);
-    
-    // Create email_templates table
+
+    console.log('Creating email templates table...');
     await createEmailTemplatesTable();
 
-    console.log("Tables created successfully");
+    console.log('Creating email template routing table...');
+    await createEmailTemplateRoutingTable();
+
+    console.log("All tables created successfully");
+    return { success: true };
   } catch (error) {
     console.error("Error creating tables:", error);
+    return { success: false, error };
   }
-  process.exit(0);
 }
 
-createTables();
+// Only run migrations directly if this file is being executed directly
+if (require.main === module) {
+  createTables().then(result => {
+    if (!result.success) {
+      process.exit(1);
+    }
+    process.exit(0);
+  });
+}

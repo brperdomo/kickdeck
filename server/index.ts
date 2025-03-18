@@ -7,8 +7,9 @@ import { createAdmin } from "./create-admin";
 import { WebSocketServer } from "ws";
 import path from "path";
 import uploadRouter from "./routes/upload";
-import { createEmailTemplatesTable } from './migrations/create_email_templates'; // Added import
-
+import { createEmailTemplatesTable } from './migrations/create_email_templates';
+import { createEmailTemplateRoutingTable } from './migrations/create_email_template_routing';
+import { createTables } from './create-tables';
 
 const app = express();
 
@@ -73,48 +74,16 @@ async function testDbConnection() {
       throw new Error("Could not connect to database");
     }
 
+    // Run database migrations
+    const migrationsResult = await createTables();
+    if (!migrationsResult.success) {
+      throw new Error("Failed to run migrations: " + migrationsResult.error);
+    }
+    log("Database migrations completed successfully");
+
     // Create admin user if it doesn't exist
     await createAdmin();
     log("Admin user setup completed");
-
-    // Create seasonal scopes table if it doesn't exist
-    await db.execute(`
-      CREATE TABLE IF NOT EXISTS seasonal_scopes (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL,
-        start_year INTEGER NOT NULL,
-        end_year INTEGER NOT NULL,
-        is_active BOOLEAN NOT NULL DEFAULT false,
-        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-      );
-
-      CREATE TABLE IF NOT EXISTS age_group_settings (
-        id SERIAL PRIMARY KEY,
-        seasonal_scope_id INTEGER NOT NULL REFERENCES seasonal_scopes(id) ON DELETE CASCADE,
-        age_group TEXT NOT NULL,
-        min_birth_year INTEGER NOT NULL,
-        max_birth_year INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-
-    // Create email_templates table if it doesn't exist
-    try {
-      await createEmailTemplatesTable();
-      log("Email templates table created successfully");
-    } catch (error) {
-      log("Error creating email templates table: " + (error as Error).message);
-    }
-    
-    // Add domain field to organization_settings table
-    try {
-      const { addDomainToOrganizationSettings } = await import('./migrations/add_domain_to_organization_settings');
-      await addDomainToOrganizationSettings();
-    } catch (error) {
-      log("Error updating organization_settings table: " + (error as Error).message);
-    }
 
 
     // Register routes first to ensure all middleware is set up
