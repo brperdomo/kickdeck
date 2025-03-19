@@ -35,7 +35,11 @@ export function EmailTemplatesView({ isEmbedded = false }: EmailTemplatesViewPro
   });
 
   const handleEdit = (template: EmailTemplate) => {
-    setSelectedTemplate(template);
+    // Ensure we pass the complete template data including provider
+    setSelectedTemplate({
+      ...template,
+      providerId: template.providerId || null
+    });
     setIsModalOpen(true);
   };
 
