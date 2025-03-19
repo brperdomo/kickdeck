@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 
@@ -19,27 +18,7 @@ interface StyleConfig {
   primary: {
     primary: string;
     secondary: string;
-  };
-  buttons: {
-    buttonDefault: string;
-    buttonHover: string;
-    buttonActive: string;
-  };
-  interactive: {
-    hoverBackground: string;
-    activeBackground: string;
-  };
-  navigation: {
-    navBackground: string;
-    navText: string;
-    navHover: string;
-  };
-  adminRoles: {
-    superAdmin: string;
-    tournamentAdmin: string;
-    scoreAdmin: string;
-    financeAdmin: string;
-  };
+  }
 }
 
 const ThemeProviderContext = createContext<ThemeProviderState>({
