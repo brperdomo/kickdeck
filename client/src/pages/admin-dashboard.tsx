@@ -971,7 +971,7 @@ console.log('Primarycolor extracted:', palette.Vibrant.hex);
 
       // Set secondary color from theLightVibrant or Muted swatch
       if (palette.LightVibrant) {
-        setSecondaryColor(palette.LightVibrant.hex);
+        setSecondaryColor(paletteLightVibrant.hex);
         console.log('Secondary color (Light Vibrant) extracted:', palette.LightVibrant.hex);
       } else if (palette.Muted) {
         setSecondaryColor(palette.Muted.hex);
@@ -1986,7 +1986,8 @@ function ThemeEditor() {
           />
         </div>
         <div>
-          <Label htmlFor="textColor">Text Color</Label><Input
+          <Label htmlFor="textColor">Text Color</Label>
+          <Input
             id="textColor"
             type="color"
             value={theme.textColor}
@@ -1994,7 +1995,7 @@ function ThemeEditor() {
           />
         </div>
         <div>
-          <Label htmlFor="buttonColor">Button ColorLabel>
+          <Label htmlFor="buttonColor">Button Color</Label>
           <Input
             id="buttonColor"
             type="color"
