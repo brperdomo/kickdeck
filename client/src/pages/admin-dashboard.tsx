@@ -1956,11 +1956,7 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
       return (
         <div className="space-y-6">
           <h2 className="text-2xl font-bold">Payments Settings</h2>
-          <Card>
-            <CardContent className="p-6">
-              <p>Payments settings content will be implemented here</p>
-            </CardContent>
-          </Card>
+          <StripeSettingsView />
         </div>
       );
     default:

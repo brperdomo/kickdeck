@@ -19,7 +19,6 @@ export function GeneralSettingsView() {
           <TabsTrigger value="styling">UI Styling</TabsTrigger>
           <TabsTrigger value="emailTemplates">Email Templates</TabsTrigger>
           <TabsTrigger value="emailProvider">Email Provider</TabsTrigger>
-          <TabsTrigger value="stripe">Stripe Payment</TabsTrigger>
         </TabsList>
 
         <TabsContent value="organization">
@@ -54,10 +53,6 @@ export function GeneralSettingsView() {
 
         <TabsContent value="emailProvider">
           <EmailProviderSettings />
-        </TabsContent>
-
-        <TabsContent value="stripe">
-          <StripeSettingsView />
         </TabsContent>
       </Tabs>
     </div>
