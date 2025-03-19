@@ -109,6 +109,10 @@ export function registerRoutes(app: Express): Server {
   setupWebSocketServer(httpServer);
 
   try {
+    // Add health check endpoint
+    app.get('/', (req, res) => {
+      res.status(200).send('OK');
+    });
     // Set up authentication first
     setupAuth(app);
     log("Authentication routes registered successfully");
