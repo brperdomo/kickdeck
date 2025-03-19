@@ -98,7 +98,7 @@ import FormTemplateCreatePage from "@/pages/form-template-create";
 import FormTemplatesPage from "@/pages/form-templates";
 import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
 import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
-import { ThemeEditor } from "@/components/admin/ThemeEditor";
+
 
 function AdminBanner() {
   const { settings } = useOrganizationSettings();
@@ -585,7 +585,7 @@ function ReportsView() {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <h3 className="text-lg font-semibold">Financial Management</h3>
-                <select
+                <select 
                   className="border rounded px-2 py-1"
                   value={selectedFinancialReport}
                   onChange={(e) => setSelectedFinancialReport(e.target.value)}
@@ -628,54 +628,54 @@ function ReportsView() {
                   <CardTitle>Accounting Codes</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {accountingCodesQuery.isLoading ? (
-                    <div className="flex justify-center p-4">
-                      <Loader2 className="h-6 w-6 animate-spin" />
-                    </div>
-                  ) : accountingCodesQuery.isError ? (
-                    <div className="text-center text-red-500">
-                      Error loading accounting codes
-                    </div>
-                  ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Code</TableHead>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Description</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                {accountingCodesQuery.isLoading ? (
+                  <div className="flex justify-center p-4">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                ) : accountingCodesQuery.isError ? (
+                  <div className="text-center text-red-500">
+                    Error loading accounting codes
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Code</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {accountingCodesQuery.data?.map((code: any) => (
+                        <TableRow key={code.id}>
+                          <TableCell className="font-medium">{code.code}</TableCell>
+                          <TableCell>{code.name}</TableCell>
+                          <TableCell>{code.description || '-'}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditCode(code)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteCode(code.id)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
                         </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {accountingCodesQuery.data?.map((code: any) => (
-                          <TableRow key={code.id}>
-                            <TableCell className="font-medium">{code.code}</TableCell>
-                            <TableCell>{code.name}</TableCell>
-                            <TableCell>{code.description || '-'}</TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex justify-end gap-2">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleEditCode(code)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleDeleteCode(code.id)}
-                                  className="text-red-500 hover:text-red-700"
-                                >
-                                  <Trash className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  )}
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
                 </CardContent>
               </Card>
             )}
@@ -960,13 +960,10 @@ function OrganizationSettingsForm() {
       // Create new Vibrant instance
       const v = new Vibrant(objectUrl);
 
-      // Get the palette with error handling
-      constpalette = await v.getPalette();
-
-      // Set primary color from the Vibrant swatch
-      if (palette.Vibrant) {
-        setPrimaryColor(palette.Vibrant.hex);
-        console.log('Primary color extracted:', palette.Vibrant.hex);
+      //      // Get the palette with error handling
+      const palette = await v.getPalette();      // Set primary color from the Vibrant swatch
+      if (palette.Vibrant) {        setPrimaryColor(palette.Vibrant.hex);
+console.log('Primarycolor extracted:', palette.Vibrant.hex);
       }
 
       // Set secondary color from theLightVibrant or Muted swatch
@@ -978,15 +975,26 @@ function OrganizationSettingsForm() {
         console.log('Secondary color (Muted) extracted:', palette.Muted.hex);
       }
 
+      // Update the preview
       updatePreview({
         logoUrl: objectUrl,
         primaryColor: palette.Vibrant?.hex || primaryColor,
-        secondaryColor: palette.LightVibrant?.hex || palette.Muted?.hex || secondaryColor
+        secondaryColor: palette.LightVibrant?.hex || palette.Muted?.hex || secondaryColor,
+      });
+
+      toast({
+        title: "Colors extracted",
+        description: "Brand colors have been updated based on your logo.",
       });
     } catch (error) {
-      console.error('Error extracting colors:', error);
+      console.error('Color extraction error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to extract colors from the logo. Please try a different image.",
+        variant: "destructive",
+      });
     }
-  }, [setPrimaryColor, setSecondaryColor, updatePreview, primaryColor, secondaryColor]);
+  }, [primaryColor, secondaryColor, updatePreview, toast]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -1129,7 +1137,7 @@ function OrganizationSettingsForm() {
         </CardContent>
       </Card>
 
-      <BrandingPreviewCard />
+      <BrandingPreview />
     </div>
   );
 }
@@ -1297,7 +1305,7 @@ function ComplexesView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update field",
+        description: error instanceof Error ? error.message: "Failed to update field",
         variant: "destructive",
       });
     }
@@ -1577,6 +1585,7 @@ function AdminDashboard() {
   const [, setLocation] = useLocation();
   const [activeView, setActiveView] = useState<View>('events');
   const [showWelcome, setShowWelcome] = useState(true);
+  const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
   const [showInternalOps, setShowInternalOps] = useState(false); // Added state for Internal Ops panel
@@ -1635,7 +1644,10 @@ function AdminDashboard() {
       case 'scheduling':
         return <SchedulingView />;
       case 'settings':
-        return <SettingsView />;
+        if (activeSettingsView === 'general') {
+          return <GeneralSettingsView />;
+        }
+        return <SettingsView activeSettingsView={activeSettingsView} />;
       case 'reports':
         return <ReportsView />;
       case 'account':
@@ -1859,7 +1871,7 @@ function AdminDashboard() {
           {/* Welcome Card */}
           {showWelcome && (
             <Card className="mb-6 relative">
-              <button
+              <button 
                 onClick={() => setShowWelcome(false)}
                 className="absolute top-2 right-2 p-2 hover:bg-muted rounded-full"
               >
@@ -1902,77 +1914,59 @@ function AdminDashboard() {
   );
 }
 
-function SettingsView() {
-  const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
-
-  const renderSettingsContent = (view: SettingsView) => {
-    switch (view) {
-      case 'general':
-        return <GeneralSettingsView />;
-      case 'branding':
-        return (
+function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView }) {
+  switch (activeSettingsView) {
+    case 'branding':
+      return (
+        <BrandingPreviewProvider>
           <div className="grid grid-cols-2 gap-6">
-            <Card className="col-span-1">
-              <CardHeader>
-                <CardTitle>Organization Settings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <OrganizationSettingsForm />
-              </CardContent>
-            </Card>
-            <BrandingPreviewCard />
+            <div className="col-span-1">
+              <OrganizationSettingsForm />
+            </div>
+            <BrandingPreview />
           </div>
-        );
-      case 'styling':
-        return <ThemeEditor />;
-      case 'payments':
-        return <StripeSettingsView />;
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Settings</h2>
-      </div>
-
-      <Tabs value={activeSettingsView} onValueChange={(value) => setActiveSettingsView(value as SettingsView)}>
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="general">
-            <Settings className="h-4 w-4 mr-2" />
-            General
-          </TabsTrigger>
-          <TabsTrigger value="branding">
-            <ImageIcon className="h-4 w-4 mr-2" />
-            Branding
-          </TabsTrigger>
-          <TabsTrigger value="styling">
-            <Palette className="h-4 w-4 mr-2" />
-            Theme
-          </TabsTrigger>
-          <TabsTrigger value="payments">
-            <CreditCard className="h-4 w-4 mr-2" />
-            Payments
-          </TabsTrigger>
-        </TabsList>
-
-        <div className="mt-4">
-          {renderSettingsContent(activeSettingsView)}
+        </BrandingPreviewProvider>
+      );
+    case 'general':
+    case 'styling':
+      return <GeneralSettingsView />;
+    case 'payments':
+      return (
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold">Payments Settings</h2>
+          <StripeSettingsView />
         </div>
-      </Tabs>
-    </div>
-  );
+      );
+    default:
+      return (
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold">Settings</h2>
+          <Card>
+            <CardContent className="p-6">
+              <p>Settings content will be implemented here</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+  }
 }
 
-// ThemeEditor component moved to client/src/components/admin/ThemeEditor.tsx
+function ThemeEditor() {
+  const [theme, setTheme] = useState({
+    backgroundColor: '#ffffff',
+    textColor: '#000000',
+    buttonColor: '#4CAF50',
+    // Add more colors as needed
+  });
+
+  const handleColorChange = (color: string, value: string) => {
+    setTheme({ ...theme, [color]: value });
   };
 
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Theme Editor</h2>
-      <div className="spacey-2">
+      <div className="space-y-2">
         <div>
           <Label htmlFor="backgroundColor">Background Color</Label>
           <Input
@@ -1983,8 +1977,7 @@ function SettingsView() {
           />
         </div>
         <div>
-          <Label htmlFor="textColor">Text Color</Label>
-          <Input
+          <Label htmlFor="textColor">Text Color</Label><Input
             id="textColor"
             type="color"
             value={theme.textColor}
@@ -2122,8 +2115,8 @@ function CouponManagement() {
                   </TableCell>
                   <TableCell>{coupon.amount}</TableCell>
                   <TableCell>
-                    {coupon.expirationDate ?
-                      new Date(coupon.expirationDate).toLocaleDateString() :
+                    {coupon.expirationDate ? 
+                      new Date(coupon.expirationDate).toLocaleDateString() : 
                       'No expiration'
                     }
                   </TableCell>
@@ -2149,7 +2142,7 @@ function CouponManagement() {
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem
+                        <DropdownMenuItem 
                           onClick={() => handleDeleteCoupon(coupon.id)}
                           className="text-red-600"
                         >
