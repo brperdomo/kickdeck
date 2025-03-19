@@ -52,6 +52,21 @@ export interface StyleConfig {
 export function useTheme() {
   const [currentColor, setCurrentColor] = useState<ColorName>('slate');
   const [styleConfig, setStyleConfig] = useState<StyleConfig | null>(null);
+  const [currentAppearance, setCurrentAppearance] = useState<'light' | 'dark'>(
+    typeof window !== 'undefined'
+      ? (localStorage.getItem('theme-appearance') as 'light' | 'dark') || 'light'
+      : 'light'
+  );
+
+  useEffect(() => {
+    // Set the dark mode class on the document root
+    if (currentAppearance === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme-appearance', currentAppearance);
+  }, [currentAppearance]);
 
   const themeMutation = useMutation({
     mutationFn: async (theme: Theme) => {
@@ -98,10 +113,20 @@ export function useTheme() {
     await themeMutation.mutateAsync({
       variant: 'professional',
       primary: colorValue,
-      appearance: 'light',
+      appearance: currentAppearance,
       radius: 0.5,
     });
-  }, [themeMutation]);
+  }, [themeMutation, currentAppearance]);
+
+  const setAppearance = useCallback(async (appearance: 'light' | 'dark') => {
+    setCurrentAppearance(appearance);
+    await themeMutation.mutateAsync({
+      variant: 'professional',
+      primary: colors[currentColor],
+      appearance: appearance,
+      radius: 0.5,
+    });
+  }, [themeMutation, currentColor]);
 
   const updateStyleConfig = useCallback(async (config: StyleConfig) => {
     setStyleConfig(config);
@@ -111,6 +136,8 @@ export function useTheme() {
   return {
     currentColor,
     setColor,
+    currentAppearance,
+    setAppearance,
     styleConfig,
     updateStyleConfig,
     isLoading: themeMutation.isPending || styleConfigMutation.isPending,
