@@ -111,8 +111,8 @@ export async function previewEmailTemplate(req: Request, res: Response) {
     
     // Default sample values for user variables
     const defaultValues = {
-      firstName: 'John',
-      lastName: 'Doe'
+      firstName: '[Sample First Name]',
+      lastName: '[Sample Last Name]'
     };
     
     // Create sample data for each variable
