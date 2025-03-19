@@ -1967,7 +1967,6 @@ function SettingsView() {
 }
 
 // ThemeEditor component moved to client/src/components/admin/ThemeEditor.tsx
-  };
 
   return (
     <div className="space-y-4">
