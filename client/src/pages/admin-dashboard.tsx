@@ -64,6 +64,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
+import { BrandingPreview } from "@/components/BrandingPreview";
 import { useExportProcess } from "@/hooks/use-export-process";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
