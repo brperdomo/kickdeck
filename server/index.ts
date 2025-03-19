@@ -130,7 +130,11 @@ async function testDbConnection() {
       res.status(status).json({ message });
     });
 
-    // Add health check endpoint
+    // Add health check endpoints
+    app.get('/', (_req, res) => {
+      res.status(200).send('OK');
+    });
+
     app.get('/health', (_req, res) => {
       res.status(200).json({ status: 'healthy' });
     });
