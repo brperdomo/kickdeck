@@ -1,3 +1,4 @@
+import React from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -92,6 +93,16 @@ export function StripeSettingsView() {
 
   const testConnection = async () => {
     try {
+      const isValid = await form.trigger();
+      if (!isValid) {
+        toast({
+          title: "Validation Error",
+          description: "Please fill in all required fields correctly",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const response = await fetch("/api/admin/stripe-config/test", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

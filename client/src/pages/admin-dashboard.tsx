@@ -64,6 +64,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
+import { BrandingPreview } from "@/components/BrandingPreview";
 import { useExportProcess } from "@/hooks/use-export-process";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -96,6 +97,7 @@ import FormTemplateEditPage from "@/pages/form-template-edit";
 import FormTemplateCreatePage from "@/pages/form-template-create";
 import FormTemplatesPage from "@/pages/form-templates";
 import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
+import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
 
 
 function AdminBanner() {
@@ -902,7 +904,7 @@ function ReportsView() {
   );
 }
 
-function BrandingPreview() {
+function BrandingPreviewCard() {
   const { preview } = useBrandingPreview();
 
   return (
@@ -910,36 +912,12 @@ function BrandingPreview() {
       <CardHeader>
         <CardTitle>Live Preview</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-4">
-          {/* Logo Preview */}
-          {preview.logoUrl && (
-            <div className="flex justify-center p-4 bg-background rounded-lg">
-              <img
-                src={preview.logoUrl}
-                alt="Organization logo"
-                className="h-20 w-20 object-contain"
-              />
-            </div>
-          )}
-          {/* Color Preview */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-8 h-8 rounded"
-                style={{ backgroundColor: preview.primaryColor }}
-              />
-              <span className="text-sm">Primary Color</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div
-                className="w-8 h-8 rounded"
-                style={{ backgroundColor: preview.secondaryColor }}
-              />
-              <span className="text-sm">Secondary Color</span>
-            </div>
-          </div>
-        </div>
+      <CardContent>
+        <BrandingPreview
+          logoUrl={preview.logoUrl}
+          primaryColor={preview.primaryColor}
+          secondaryColor={preview.secondaryColor}
+        />
       </CardContent>
     </Card>
   );
@@ -1956,11 +1934,7 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
       return (
         <div className="space-y-6">
           <h2 className="text-2xl font-bold">Payments Settings</h2>
-          <Card>
-            <CardContent className="p-6">
-              <p>Payments settings content will be implemented here</p>
-            </CardContent>
-          </Card>
+          <StripeSettingsView />
         </div>
       );
     default:

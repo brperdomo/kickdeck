@@ -680,33 +680,11 @@ export default function CreateEvent() {
 
           <div className="border rounded-lg p-4">
             <h4 className="text-sm font-medium mb-4">Brand Preview</h4>
-            <div className="space-y-4">
-              {previewUrl && (
-                <div className="flex justify-center p-4 bg-background rounded-lg">
-                  <img
-                    src={previewUrl}
-                    alt="Event logo preview"
-                    className="h-20 w-20 object-contain"
-                  />
-                </div>
-              )}
-              <div className="flex items-center gap-4">
-                <div>
-                  <div
-                    className="w-8 h-8 rounded"
-                    style={{ backgroundColor: primaryColor }}
-                  />
-                  <span className="text-sm">Primary</span>
-                </div>
-                <div>
-                  <div
-                    className="w-8 h-8 rounded"
-                    style={{ backgroundColor: secondaryColor }}
-                  />
-                  <span className="text-sm">Secondary</span>
-                </div>
-              </div>
-            </div>
+            <BrandingPreview
+              logoUrl={previewUrl}
+              primaryColor={primaryColor}
+              secondaryColor={secondaryColor}
+            />
           </div>
         </CardContent>
       </Card>
