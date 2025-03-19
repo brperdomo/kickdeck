@@ -1966,16 +1966,7 @@ function SettingsView() {
   );
 }
 
-function ThemeEditor() {
-  const [theme, setTheme] = useState({
-    backgroundColor: '#ffffff',
-    textColor: '#000000',
-    buttonColor: '#4CAF50',
-    // Add more colors as needed
-  });
-
-  const handleColorChange = (color: string, value: string) => {
-    setTheme({ ...theme, [color]: value });
+// ThemeEditor component moved to client/src/components/admin/ThemeEditor.tsx
   };
 
   return (
