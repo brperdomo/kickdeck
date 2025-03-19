@@ -181,6 +181,37 @@ export function EmailTemplatesView({ isEmbedded = false }: EmailTemplatesViewPro
                             <Eye className="mr-2 h-4 w-4" />
                             Preview
                           </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => {
+                              if (window.confirm('Are you sure you want to delete this template?')) {
+                                fetch(`/api/admin/email-templates/${template.id}`, {
+                                  method: 'DELETE',
+                                })
+                                .then((response) => {
+                                  if (response.ok) {
+                                    queryClient.invalidateQueries({ queryKey: ['email-templates'] });
+                                    toast({
+                                      title: "Success",
+                                      description: "Template deleted successfully",
+                                    });
+                                  } else {
+                                    throw new Error('Failed to delete template');
+                                  }
+                                })
+                                .catch((error) => {
+                                  toast({
+                                    title: "Error",
+                                    description: error.message,
+                                    variant: "destructive",
+                                  });
+                                });
+                              }
+                            }}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
