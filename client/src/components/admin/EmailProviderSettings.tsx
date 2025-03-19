@@ -166,6 +166,34 @@ export function EmailProviderSettings() {
     });
   };
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/admin/email-providers/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to delete provider");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["email-providers"] });
+      toast({
+        title: "Success",
+        description: "Email provider deleted successfully",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete email provider",
+        variant: "destructive",
+      });
+    },
+  });
+
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -488,6 +516,19 @@ export function EmailProviderSettings() {
                       onClick={() => editProvider(provider)}
                     >
                       <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => {
+                        if (window.confirm('Are you sure you want to delete this provider?')) {
+                          deleteMutation.mutate(provider.id);
+                        }
+                      }}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
                     </Button>
                   </div>
                 </div>
