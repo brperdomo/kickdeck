@@ -130,9 +130,13 @@ async function testDbConnection() {
       res.status(status).json({ message });
     });
 
+    // Add health check endpoint
+    app.get('/health', (_req, res) => {
+      res.status(200).json({ status: 'healthy' });
+    });
+
     // Start the server
-    // For production use port 80, otherwise use 5000
-    const PORT = process.env.NODE_ENV === 'production' ? 80 : 5000;
+    const PORT = process.env.PORT || 5000;
 
     // Serve static files in production
     if (app.get('env') === 'production') {
