@@ -1993,7 +1993,8 @@ function ThemeEditor() {
             onChange={(e) => handleColorChange('textColor', e.target.value)}
           />
         </div>
-        <div<Label htmlFor="buttonColor">Button Color</Label>
+        <div>
+          <Label htmlFor="buttonColor">Button Color</Label>
           <Input
             id="buttonColor"
             type="color"
