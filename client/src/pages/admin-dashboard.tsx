@@ -51,8 +51,7 @@ import {
   CalendarDays,
   ImageIcon,
   FormInput,
-  Bell,
-  Menu
+  Bell
 } from "lucide-react";
 import {
   Table,
@@ -99,7 +98,6 @@ import FormTemplateCreatePage from "@/pages/form-template-create";
 import FormTemplatesPage from "@/pages/form-templates";
 import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
 import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
-import { ThemeToggle } from "@/components/ui/theme-toggle"; // Added import
 
 
 function AdminBanner() {
