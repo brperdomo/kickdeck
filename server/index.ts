@@ -131,34 +131,21 @@ async function testDbConnection() {
     });
 
     // Start the server
-    const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
+    // For production use port 80, otherwise use 5000
+    const PORT = process.env.NODE_ENV === 'production' ? 80 : 5000;
 
-    const findAvailablePort = async (startPort: number): Promise<number> => {
-      return new Promise((resolve, reject) => {
-        const tryPort = async (port: number) => {
-          const { createServer } = await import('http');
-          const tempServer = createServer();
-          tempServer.listen(port, "0.0.0.0")
-            .on('listening', () => {
-              tempServer.close(() => resolve(port));
-            })
-            .on('error', (err: any) => {
-              if (err.code === 'EADDRINUSE') {
-                log(`Port ${port} is busy, trying ${port + 1}`);
-                tryPort(port + 1);
-              } else {
-                reject(err);
-              }
-            });
-        };
-        tryPort(startPort);
-      });
-    };
+    // Add root path handler
+    app.get('/', (_req: Request, res: Response) => {
+      if (app.get('env') === 'production') {
+        res.sendFile(path.join(process.cwd(), 'dist', 'public', 'index.html'));
+      } else {
+        res.send('Server is running. In development mode, please use the Vite dev server.');
+      }
+    });
 
     try {
-      const availablePort = await findAvailablePort(PORT);
-      server.listen(availablePort, "0.0.0.0", () => {
-        log(`Server started successfully on port ${availablePort}`);
+      server.listen(PORT, "0.0.0.0", () => {
+        log(`Server started successfully on port ${PORT}`);
       });
     } catch (error) {
       log(`Error starting server: ${(error as Error).message}`);
