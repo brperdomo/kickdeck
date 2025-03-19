@@ -143,7 +143,11 @@ async function testDbConnection() {
     const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
     const HOST = "0.0.0.0"; // Listen on all interfaces
 
-    // Quick health check endpoint
+    // Health check endpoint must come before static file handling
+    app.get('/health', (_req: Request, res: Response) => {
+      res.status(200).send('OK');
+    });
+
     app.get('/', (_req: Request, res: Response) => {
       res.status(200).send('OK');
     });
@@ -152,8 +156,8 @@ async function testDbConnection() {
     if (app.get('env') === 'production') {
       app.use(express.static(path.join(process.cwd(), 'dist', 'public')));
       // Handle SPA routing by serving index.html for any unknown routes
-      app.get('*', (_req: Request, res: Response) => {
-        if (req.path === '/') return; // Skip for root path as it's handled above
+      app.get('*', (req: Request, res: Response) => {
+        if (req.path === '/' || req.path === '/health') return; // Skip health check paths
         res.sendFile(path.join(process.cwd(), 'dist', 'public', 'index.html'));
       });
     }
