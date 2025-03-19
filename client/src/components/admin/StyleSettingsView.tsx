@@ -10,21 +10,21 @@ export function StyleSettingsView() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [previewStyles, setPreviewStyles] = useState({
-    primary: '#0052CC',
-    secondary: '#344563',
-    accent: '#00B8D9',
-    background: '#FAFBFC',
-    adminNavBackground: '#FFFFFF',
-    adminNavText: '#42526E',
-    adminNavActive: '#DEEBFF',
-    adminNavHover: '#F4F5F7',
-    tableHeaderBg: "#F4F5F7",
-    tableRowHoverBg: "#F4F5F7",
-    cardBg: "#FFFFFF",
-    textColor: '#172B4D',
-    cardHeaderBg: "#f9fafb",
-    inputBg: "#FFFFFF",
-    inputBorder: "#d1d5db",
+    primary: currentAppearance === 'dark' ? '#4C9AFF' : '#0052CC',
+    secondary: currentAppearance === 'dark' ? '#A2B0C3' : '#344563',
+    accent: currentAppearance === 'dark' ? '#00C7E6' : '#00B8D9',
+    background: currentAppearance === 'dark' ? '#1D2330' : '#FAFBFC',
+    adminNavBackground: currentAppearance === 'dark' ? '#2D3748' : '#FFFFFF',
+    adminNavText: currentAppearance === 'dark' ? '#E2E8F0' : '#42526E',
+    adminNavActive: currentAppearance === 'dark' ? '#2C3E50' : '#DEEBFF',
+    adminNavHover: currentAppearance === 'dark' ? '#364150' : '#F4F5F7',
+    tableHeaderBg: currentAppearance === 'dark' ? '#2D3748' : '#F4F5F7',
+    tableRowHoverBg: currentAppearance === 'dark' ? '#364150' : '#F4F5F7',
+    cardBg: currentAppearance === 'dark' ? '#2D3748' : '#FFFFFF',
+    textColor: currentAppearance === 'dark' ? '#E2E8F0' : '#172B4D',
+    cardHeaderBg: currentAppearance === 'dark' ? '#364150' : '#f9fafb',
+    inputBg: currentAppearance === 'dark' ? '#1D2330' : '#FFFFFF',
+    inputBorder: currentAppearance === 'dark' ? '#4A5568' : '#d1d5db',
   });
   const { toast } = useToast();
 
