@@ -701,7 +701,7 @@ export const accountingCodes = pgTable("accounting_codes", {
   name: text("name").notNull(),
   description: text("description"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const insertAccountingCodeSchema = createInsertSchema(accountingCodes, {
@@ -919,6 +919,29 @@ export type SelectEmailTemplateRouting = typeof emailTemplateRouting.$inferSelec
 export const emailTemplateRoutingRelations = relations(emailTemplateRouting, ({ one }) => ({
   provider: one(emailProviderSettings, {
     fields: [emailTemplateRouting.providerId],
+    references: [emailProviderSettings.id],
+  }),
+}));
+
+export const emailTemplates = pgTable("email_templates", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  type: text("type").notNull(),
+  subject: text("subject").notNull(),
+  content: text("content").notNull(),
+  providerId: integer("provider_id").references(() => emailProviderSettings.id),
+  sender_name: text("sender_name").notNull(),
+  sender_email: text("sender_email").notNull(),
+  is_active: boolean("is_active").default(true),
+  variables: jsonb("variables").default('[]'),
+  created_at: timestamp("created_at").notNull().defaultNow(),
+  updated_at: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const emailTemplatesRelations = relations(emailTemplates, ({ one }) => ({
+  provider: one(emailProviderSettings, {
+    fields: [emailTemplates.providerId],
     references: [emailProviderSettings.id],
   }),
 }));

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import {
@@ -64,6 +64,15 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
   const [variables, setVariables] = useState<string[]>([]);
   const [newVariable, setNewVariable] = useState<string>("");
 
+  const { data: providers } = useQuery({
+    queryKey: ["email-providers"],
+    queryFn: async () => {
+      const response = await fetch("/api/admin/email-providers");
+      if (!response.ok) throw new Error("Failed to fetch providers");
+      return response.json();
+    },
+  });
+
   const form = useForm<FormValues>({
     resolver: zodResolver(insertEmailTemplateSchema),
     defaultValues: {
@@ -76,6 +85,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
       senderEmail: "",
       isActive: true,
       variables: [],
+      providerId: "", // Added providerId
     },
   });
 
@@ -91,6 +101,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
         senderEmail: template.senderEmail,
         isActive: template.isActive ?? true,
         variables: template.variables ?? [],
+        providerId: template.providerId?.toString() ?? "", // Added providerId
       });
 
       if (template.variables) {
@@ -107,6 +118,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
         senderEmail: "",
         isActive: true,
         variables: [],
+        providerId: "", // Added providerId
       });
       setVariables([]);
     }
@@ -160,6 +172,36 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" id="template-form">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="providerId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Provider</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange}
+                      defaultValue={field.value?.toString()}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a provider" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {providers?.map((provider) => (
+                          <SelectItem 
+                            key={provider.id} 
+                            value={provider.id.toString()}
+                          >
+                            {provider.providerName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="name"
