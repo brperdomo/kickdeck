@@ -130,18 +130,26 @@ async function testDbConnection() {
       res.status(status).json({ message });
     });
 
-    // Start the server
-    // For production use port 80, otherwise use 5000
-    const PORT = process.env.NODE_ENV === 'production' ? 80 : 5000;
-
-    // Add root path handler
-    app.get('/', (_req: Request, res: Response) => {
-      if (app.get('env') === 'production') {
-        res.sendFile(path.join(process.cwd(), 'dist', 'public', 'index.html'));
-      } else {
-        res.send('Server is running. In development mode, please use the Vite dev server.');
-      }
+    // Add health check endpoint
+    app.get('/health', (_req, res) => {
+      res.status(200).json({ status: 'healthy' });
     });
+
+    // Start the server
+    const PORT = process.env.PORT || 5000;
+
+    // Serve static files in production
+    if (app.get('env') === 'production') {
+      app.use(express.static(path.join(process.cwd(), 'dist', 'public')));
+      // Handle SPA routing by serving index.html for any unknown routes
+      app.get('*', (_req: Request, res: Response) => {
+        res.sendFile(path.join(process.cwd(), 'dist', 'public', 'index.html'));
+      });
+    } else {
+      app.get('/', (_req: Request, res: Response) => {
+        res.send('Server is running. In development mode, please use the Vite dev server.');
+      });
+    }
 
     try {
       server.listen(PORT, "0.0.0.0", () => {
