@@ -107,11 +107,21 @@ export async function previewEmailTemplate(req: Request, res: Response) {
     
     // Replace variables with sample values
     let content = templateData.content || '';
-    const variables = templateData.variables || [];
+    const variables = templateData.variables || ['firstName', 'lastName'];
+    
+    // Default sample values for user variables
+    const defaultValues = {
+      firstName: 'John',
+      lastName: 'Doe'
+    };
     
     // Create sample data for each variable
     variables.forEach((variable: string) => {
-      content = content.replace(new RegExp(`{{${variable}}}`, 'g'), `<span style="background-color:#FFFF00">[Sample ${variable}]</span>`);
+      const sampleValue = defaultValues[variable as keyof typeof defaultValues] || `[Sample ${variable}]`;
+      content = content.replace(
+        new RegExp(`{{${variable}}}`, 'g'), 
+        `<span style="background-color:#FFFF00">${sampleValue}</span>`
+      );
     });
 
     // Create HTML for preview
