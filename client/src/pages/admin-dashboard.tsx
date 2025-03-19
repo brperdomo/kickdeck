@@ -101,6 +101,7 @@ import FormTemplatesPage from "@/pages/form-templates";
 import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
 import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
 import { Toggle } from '@/components/ui/toggle';
+import { Moon, Sun } from "lucide-react";
 
 
 function AdminBanner() {
@@ -1994,7 +1995,7 @@ function ThemeEditor() {
           />
         </div>
         <div>
-          <Label htmlFor="buttonColor">Button Color</Label>
+          <Label htmlFor="buttonColor">Button ColorLabel>
           <Input
             id="buttonColor"
             type="color"
