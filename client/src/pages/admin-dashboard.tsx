@@ -973,7 +973,7 @@ console.log('Primarycolor extracted:', palette.Vibrant.hex);
       if (palette.LightVibrant) {
         setSecondaryColor(palette.LightVibrant.hex);
         console.log('Secondary color (Light Vibrant) extracted:', palette.LightVibrant.hex);
-      } else if (palette.Muted) {
+      } else if (palette.Muted)) {
         setSecondaryColor(palette.Muted.hex);
         console.log('Secondary color (Muted) extracted:', palette.Muted.hex);
       }
@@ -1593,6 +1593,7 @@ function AdminDashboard() {
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
   const [showInternalOps, setShowInternalOps] = useState(false); // Added state for Internal Ops panel
   const { setAppearance, currentAppearance } = useTheme();
+  const [theme, setTheme] = useState(currentAppearance); // Added theme state
 
   // Add Form Templates to the navigation
   const formTemplatesButton = (
@@ -1861,13 +1862,21 @@ function AdminDashboard() {
               My Account
             </Button>
 
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-              onClick={handleLogout}
-            >
+            <Button onClick={handleLogout} className="w-full mb-2" variant="outline">
               <LogOut className="mr-2 h-4 w-4" />
               Logout
+            </Button>
+            <Button 
+              onClick={handleAppearanceToggle} 
+              className="w-full" 
+              variant="outline"
+            >
+              {theme === 'dark' ? (
+                <Sun className="mr-2 h-4 w-4" />
+              ) : (
+                <Moon className="mr-2 h-4 w-4" />
+              )}
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
             </Button>
           </div>
         </div>
@@ -1985,7 +1994,7 @@ function ThemeEditor() {
             onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
           />
         </div>
-        <div>
+        <div<div>
           <Label htmlFor="textColor">Text Color</Label>
           <Input
             id="textColor"
