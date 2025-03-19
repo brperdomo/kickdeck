@@ -11,6 +11,10 @@ build = ["sh", "-c", "npm run build"]
 run = ["sh", "-c", "PORT=80 NODE_ENV=production node dist/index.js"]
 
 [[ports]]
+localPort = 80
+externalPort = 3003
+
+[[ports]]
 localPort = 3000
 externalPort = 3001
 
