@@ -110,11 +110,6 @@ export function registerRoutes(app: Express): Server {
 
   try {
     // Set up authentication first
-    // Add health check endpoint first
-    app.get('/', (_req, res) => {
-      res.status(200).send('Health check OK');
-    });
-
     setupAuth(app);
     log("Authentication routes registered successfully");
     
