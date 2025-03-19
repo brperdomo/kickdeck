@@ -188,7 +188,7 @@ export function EmailTemplatesView({ isEmbedded = false }: EmailTemplatesViewPro
                                 fetch(`/api/admin/email-templates/${template.id}`, {
                                   method: 'DELETE',
                                 })
-                                .then((response) => {
+                                .then(async (response) => {
                                   if (response.ok) {
                                     queryClient.invalidateQueries({ queryKey: ['email-templates'] });
                                     toast({
@@ -196,10 +196,12 @@ export function EmailTemplatesView({ isEmbedded = false }: EmailTemplatesViewPro
                                       description: "Template deleted successfully",
                                     });
                                   } else {
-                                    throw new Error('Failed to delete template');
+                                    const errorData = await response.json();
+                                    throw new Error(errorData.error || 'Failed to delete template');
                                   }
                                 })
                                 .catch((error) => {
+                                  queryClient.invalidateQueries({ queryKey: ['email-templates'] });
                                   toast({
                                     title: "Error",
                                     description: error.message,
