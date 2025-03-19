@@ -40,6 +40,7 @@ import { ComplexEditor } from "@/components/ComplexEditor";
 import { ComplexSelector } from "@/components/events/ComplexSelector";
 import { useDropzone } from 'react-dropzone';
 import { QueryClient } from '@tanstack/react-query';
+import { BrandingPreview } from '@/components/BrandingPreview';
 
 interface Complex {
   id: number;
@@ -912,7 +913,7 @@ export default function CreateEvent() {
                 <FormField
                   control={form.control}
                   name="name"
-                  render={({ field }) => (
+render={({ field }) => (
                     <FormItem>
                       <FormLabel>Event Name</FormLabel>
                       <FormControl>
