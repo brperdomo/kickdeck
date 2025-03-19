@@ -5,6 +5,7 @@ import { SeasonalScopeSettings } from "./SeasonalScopeSettings";
 import { StyleSettingsView } from "./StyleSettingsView";
 import { EmailTemplatesView } from "./EmailTemplatesView";
 import { EmailProviderSettings } from "./EmailProviderSettings";
+import { StripeSettingsView } from "./StripeSettingsView";
 
 export function GeneralSettingsView() {
   return (
@@ -18,6 +19,7 @@ export function GeneralSettingsView() {
           <TabsTrigger value="styling">UI Styling</TabsTrigger>
           <TabsTrigger value="emailTemplates">Email Templates</TabsTrigger>
           <TabsTrigger value="emailProvider">Email Provider</TabsTrigger>
+          <TabsTrigger value="stripe">Stripe Payment</TabsTrigger>
         </TabsList>
 
         <TabsContent value="organization">
@@ -52,6 +54,10 @@ export function GeneralSettingsView() {
 
         <TabsContent value="emailProvider">
           <EmailProviderSettings />
+        </TabsContent>
+
+        <TabsContent value="stripe">
+          <StripeSettingsView />
         </TabsContent>
       </Tabs>
     </div>
