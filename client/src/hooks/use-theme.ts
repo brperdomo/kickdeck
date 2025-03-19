@@ -1,28 +1,20 @@
-import { useState, useCallback, useEffect } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { useMutation } from "@tanstack/react-query";
 
-export const colors = {
-  slate: 'hsl(222.2 47.4% 11.2%)',
-  red: 'hsl(0 72.2% 50.6%)',
-  orange: 'hsl(24.6 95% 53.1%)',
-  green: 'hsl(142.1 76.2% 36.3%)',
-  blue: 'hsl(221.2 83.2% 53.3%)',
-  violet: 'hsl(262.1 83.3% 57.8%)',
-} as const;
+type Theme = "dark" | "light";
 
-type ColorName = keyof typeof colors;
+type ThemeProviderProps = {
+  children: React.ReactNode;
+  defaultTheme?: Theme;
+  storageKey?: string;
+};
 
-export interface Theme {
-  variant: 'professional' | 'tint' | 'vibrant';
-  primary: string;
-  appearance: 'light' | 'dark' | 'system';
-  radius: number;
-  colors?: {
-    [key: string]: string;
-  };
-}
+type ThemeProviderState = {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+};
 
-export interface StyleConfig {
+interface StyleConfig {
   primary: {
     primary: string;
     secondary: string;
@@ -49,95 +41,10 @@ export interface StyleConfig {
   };
 }
 
-export function useTheme() {
-  const [currentColor, setCurrentColor] = useState<ColorName>('slate');
-  const [styleConfig, setStyleConfig] = useState<StyleConfig | null>(null);
-
-  const themeMutation = useMutation({
-    mutationFn: async (theme: Theme) => {
-      const response = await fetch('/api/theme', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(theme),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update theme');
-      }
-
-      return response.json();
-    },
-  });
-
-  const styleConfigMutation = useMutation({
-    mutationFn: async (config: StyleConfig) => {
-      const response = await fetch('/api/admin/styling', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(config),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update style configuration');
-      }
-
-      return response.json();
-    },
-  });
-
-  const setColor = useCallback(async (colorName: ColorName | string) => {
-    const colorValue = colorName in colors 
-      ? colors[colorName as ColorName]
-      : colorName;
-
-    setCurrentColor(colorName as ColorName);
-    await themeMutation.mutateAsync({
-      variant: 'professional',
-      primary: colorValue,
-      appearance: 'light',
-      radius: 0.5,
-    });
-  }, [themeMutation]);
-
-  const updateStyleConfig = useCallback(async (config: StyleConfig) => {
-    setStyleConfig(config);
-    await styleConfigMutation.mutateAsync(config);
-  }, [styleConfigMutation]);
-
-  return {
-    currentColor,
-    setColor,
-    styleConfig,
-    updateStyleConfig,
-    isLoading: themeMutation.isPending || styleConfigMutation.isPending,
-    error: themeMutation.error || styleConfigMutation.error,
-  };
-}
-import { createContext, useContext, useEffect, useState } from "react";
-
-type Theme = "dark" | "light";
-
-type ThemeProviderProps = {
-  children: React.ReactNode;
-  defaultTheme?: Theme;
-  storageKey?: string;
-};
-
-type ThemeProviderState = {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-};
-
-const initialState: ThemeProviderState = {
+const ThemeProviderContext = createContext<ThemeProviderState>({
   theme: "light",
   setTheme: () => null,
-};
-
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
+});
 
 export function ThemeProvider({
   children,
@@ -168,11 +75,61 @@ export function ThemeProvider({
   );
 }
 
-export const useTheme = () => {
+export function useTheme() {
   const context = useContext(ThemeProviderContext);
 
-  if (context === undefined)
+  if (context === undefined) {
     throw new Error("useTheme must be used within a ThemeProvider");
+  }
 
-  return context;
-};
+  const [styleConfig, setStyleConfig] = useState<StyleConfig | null>(null);
+
+  const themeMutation = useMutation({
+    mutationFn: async (theme: Theme) => {
+      const response = await fetch('/api/theme', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ theme }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update theme');
+      }
+
+      return response.json();
+    },
+  });
+
+  const styleConfigMutation = useMutation({
+    mutationFn: async (config: StyleConfig) => {
+      const response = await fetch('/api/admin/styling', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update style configuration');
+      }
+
+      return response.json();
+    },
+  });
+
+  const updateStyleConfig = useCallback(async (config: StyleConfig) => {
+    setStyleConfig(config);
+    await styleConfigMutation.mutateAsync(config);
+  }, [styleConfigMutation]);
+
+  return {
+    ...context,
+    styleConfig,
+    updateStyleConfig,
+    isLoading: themeMutation.isPending || styleConfigMutation.isPending,
+    error: themeMutation.error || styleConfigMutation.error,
+  };
+}
