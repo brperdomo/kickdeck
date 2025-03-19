@@ -1994,7 +1994,7 @@ function ThemeEditor() {
             onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
           />
         </div>
-        <div<div>
+        <div>
           <Label htmlFor="textColor">Text Color</Label>
           <Input
             id="textColor"
