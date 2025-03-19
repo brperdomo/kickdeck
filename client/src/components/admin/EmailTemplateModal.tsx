@@ -323,10 +323,10 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                           toolbar: 'undo redo | blocks | ' +
                             'bold italic forecolor | alignleft aligncenter ' +
                             'alignright alignjustify | bullist numlist outdent indent | ' +
-                            'removeformat | mergefields | help',
-                          menubar: 'tools',
+                            'mergefields | removeformat | help',
+                          menubar: 'file edit view insert format tools table help',
                           menu: {
-                            tools: { title: 'Tools', items: 'mergefields' }
+                            tools: { title: 'Merge Tools', items: 'mergefields' }
                           },
                           setup: (editor) => {
                             editor.ui.registry.addMenuButton('mergefields', {
