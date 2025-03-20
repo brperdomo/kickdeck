@@ -97,7 +97,14 @@ async function testDbConnection() {
     log("Admin user setup completed");
 
     // Register routes first to ensure all middleware is set up
-    server = registerRoutes(app);
+
+    const PORT = process.env.PORT || 5000;
+    server = app.listen(PORT, () => {
+      log(`Server is running on port ${PORT}`);
+    });
+
+    // Register routes
+    registerRoutes(app);
 
     // Create WebSocket server
     const wss = new WebSocketServer({ 
@@ -113,15 +120,30 @@ async function testDbConnection() {
     wss.on('connection', (ws) => {
       log("New WebSocket connection established");
 
+      // Set a timeout to close idle connections after 5 minutes
+      const idleTimeout = 5 * 60 * 1000; // 5 minutes in milliseconds
+      let timeoutId = setTimeout(() => {
+        log("Closing idle WebSocket connection");
+        ws.close();
+      }, idleTimeout);
+
       ws.on('message', (message) => {
+        // Reset timeout on activity
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          log("Closing idle WebSocket connection");
+          ws.close();
+        }, idleTimeout);
+
         // Handle incoming messages
         log("Received WebSocket message: " + message);
       });
 
       ws.on('close', () => {
+        clearTimeout(timeoutId);
         log("WebSocket connection closed");
       });
-    });
+    }
 
     if (app.get("env") === "development") {
       // Setup Vite middleware
