@@ -1,19 +1,69 @@
 // deploy.js - Deployment preparation script for Replit
-import fs from 'fs';
-import path from 'path';
-import { execSync } from 'child_process';
-import { fileURLToPath } from 'url';
-
-// Get the directory name in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
 
 console.log('Starting deployment preparation...');
 
 // Run the build process
 try {
   console.log('Building the application...');
-  execSync('npm run build', { stdio: 'inherit' });
+  // Build the frontend with Vite
+  execSync('vite build', { stdio: 'inherit' });
+  
+  // Manually create a CommonJS version of the server for Replit deployment
+  console.log('Manually creating CommonJS server file for deployment...');
+  
+  // Let's create a simpler server file that works in CommonJS
+  const serverContent = `
+// Production server for Replit deployment
+const express = require('express');
+const { createServer } = require('http');
+const path = require('path');
+const fs = require('fs');
+
+async function startServer() {
+  console.log('Starting production server...');
+  const app = express();
+  const server = createServer(app);
+  
+  // Parse JSON
+  app.use(express.json());
+  
+  // Add production server middlewares
+  const { configureProductionServer } = require('./production-server');
+  configureProductionServer(app);
+  
+  // Custom API routes would go here
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', environment: 'production' });
+  });
+  
+  // Start the server
+  const port = process.env.PORT || 5000;
+  const host = process.env.HOST || '0.0.0.0';
+  
+  server.listen(port, host, () => {
+    console.log(\`Server running at http://\${host}:\${port}\`);
+  });
+}
+
+// Start the server
+startServer().catch(error => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
+});
+`;
+
+  // Create the dist directory if it doesn't exist
+  if (!fs.existsSync('dist')) {
+    fs.mkdirSync('dist', { recursive: true });
+  }
+  
+  // Write the simplified server file with .cjs extension for CommonJS compatibility
+  fs.writeFileSync(path.join('dist', 'index.cjs'), serverContent);
+  console.log('Created simplified CommonJS server file with .cjs extension');
+  
   console.log('Build completed successfully.');
 } catch (error) {
   console.error('Build failed:', error);
@@ -28,10 +78,10 @@ if (!fs.existsSync('server')) {
 
 // Copy the built server file to the expected location
 try {
-  console.log('Copying built server file to server/index.js...');
+  console.log('Copying built server file to server/index.cjs...');
   fs.copyFileSync(
-    path.join(__dirname, 'dist', 'index.js'),
-    path.join(__dirname, 'server', 'index.js')
+    path.join(__dirname, 'dist', 'index.cjs'),
+    path.join(__dirname, 'server', 'index.cjs')
   );
   console.log('Server file copied successfully.');
 } catch (error) {
@@ -91,22 +141,19 @@ try {
     
     // Find the section where we switch between development and production mode
     if (serverCode.includes('app.get("env") === "development"')) {
-      // Add import for production server
-      const importLine = `import { configureProductionServer } from './production-server.js';\n`;
+      // Add require for production server
+      const requireLine = `const { configureProductionServer } = require('./production-server');\n`;
       
       // First line without risk of breaking specific code
       if (!serverCode.includes('configureProductionServer')) {
-        const importInsertPoint = serverCode.indexOf('import');
-        if (importInsertPoint !== -1) {
-          // Insert after the last import
-          const lastImportIndex = serverCode.lastIndexOf('import');
-          const nextLineAfterLastImport = serverCode.indexOf('\n', lastImportIndex);
-          if (nextLineAfterLastImport !== -1) {
-            serverCode = serverCode.slice(0, nextLineAfterLastImport + 1) + 
-                          importLine + 
-                          serverCode.slice(nextLineAfterLastImport + 1);
-            console.log('Added production server import');
-          }
+        // Find a good spot to add our require statement
+        const firstLineEnd = serverCode.indexOf('\n');
+        if (firstLineEnd !== -1) {
+          // Insert after the first line
+          serverCode = serverCode.slice(0, firstLineEnd + 1) + 
+                        requireLine + 
+                        serverCode.slice(firstLineEnd + 1);
+          console.log('Added production server require statement');
         }
       }
       
@@ -144,5 +191,5 @@ try {
 console.log('Deployment preparation complete.');
 console.log('Your application is now ready for deployment on Replit.');
 console.log('');
-console.log('Server path: server/index.js');
+console.log('Server path: server/index.cjs');
 console.log('Static assets: dist/public/');

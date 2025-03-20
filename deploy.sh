@@ -4,7 +4,7 @@
 echo "Starting deployment process..."
 
 # Run the Node.js deployment script
-node deploy.js
+node deploy.cjs
 
 # Check if the deployment was successful
 if [ $? -eq 0 ]; then
@@ -12,7 +12,7 @@ if [ $? -eq 0 ]; then
   echo "The application is ready to be deployed on Replit."
   echo ""
   echo "Files prepared:"
-  echo "  - server/index.js: Main server entry point"
+  echo "  - server/index.cjs: Main server entry point (CommonJS format)"
   echo "  - server/public → dist/public: Static assets (symlink)"
   echo ""
   echo "To deploy, use the Replit interface to Deploy this repl."
