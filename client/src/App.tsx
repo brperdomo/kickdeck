@@ -38,22 +38,26 @@ function Router() {
     );
   }
 
-  // Handle unauthenticated routes
+  // Public routes that don't require authentication
   if (!user) {
     return (
       <Switch>
+        <Route path="/auth" component={AuthPage} />
         <Route path="/register" component={Register} />
         <Route path="/forgot-password" component={ForgotPassword} />
         <Route path="/register/event/:eventId" component={EventRegistration} />
-        <Route path="/" component={AuthPage} />
-        <Route component={AuthPage} />
+        {/* Redirect all other routes to auth page */}
+        <Route>
+          <AuthPage />
+        </Route>
       </Switch>
     );
   }
 
-  // Handle authenticated routes
+  // Protected routes for authenticated users
   return (
     <Switch>
+      {/* Admin routes */}
       <Route path="/admin/events/create">
         {user.isAdmin ? <CreateEvent /> : <NotFound />}
       </Route>
@@ -84,18 +88,26 @@ function Router() {
       <Route path="/admin">
         {user.isAdmin ? <AdminDashboard /> : <NotFound />}
       </Route>
+
+      {/* User routes */}
       <Route path="/household" component={HouseholdPage} />
       <Route path="/chat" component={ChatPage} />
       <Route path="/register/event/:eventId" component={EventRegistration} />
+
+      {/* Preview routes */}
       <Route path="/admin/events/preview">
         {user.isAdmin ? <EventPreviewSelector /> : <NotFound />}
       </Route>
       <Route path="/admin/events/:id/preview-registration">
         {user.isAdmin ? <RegistrationPreview /> : <NotFound />}
       </Route>
+
+      {/* Home route */}
       <Route path="/">
         {user.isAdmin ? <AdminDashboard /> : <UserDashboard />}
       </Route>
+
+      {/* 404 route */}
       <Route component={NotFound} />
     </Switch>
   );
