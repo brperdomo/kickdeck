@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode, createContext, useContext, useState } from "react";
 import {
   useQuery,
   useMutation,
@@ -44,11 +44,13 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const {
     data: user,
     error,
     isLoading,
+    isFetching,
   } = useQuery<User | null>({
     queryKey: ["/api/user"],
     queryFn: async () => {
@@ -59,10 +61,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
     retry: false, // Don't retry on failure
+    refetchOnWindowFocus: false,
   });
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
+      setIsTransitioning(true);
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -76,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return res.json();
     },
     onSuccess: (data) => {
-      // Update cache immediately to avoid white flash
+      // Update cache immediately with new user data
       queryClient.setQueryData(["/api/user"], data.user);
 
       toast({
@@ -85,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     },
     onError: (error: Error) => {
-      // Clear user data on error
+      // Clear user data and show error
       queryClient.setQueryData(["/api/user"], null);
       toast({
         title: "Login failed",
@@ -93,10 +97,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         variant: "destructive",
       });
     },
+    onSettled: () => {
+      setIsTransitioning(false);
+    },
   });
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
+      setIsTransitioning(true);
       const res = await fetch("/api/logout", { 
         method: "POST",
         credentials: "include"
@@ -107,10 +115,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     },
     onSuccess: () => {
-      // Clear user data immediately
+      // Clear all query cache data
+      queryClient.clear();
+      // Set user to null
       queryClient.setQueryData(["/api/user"], null);
-      // Reset all queries
-      queryClient.resetQueries();
 
       toast({
         title: "Success",
@@ -124,10 +132,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         variant: "destructive",
       });
     },
+    onSettled: () => {
+      setIsTransitioning(false);
+    },
   });
 
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterData) => {
+      setIsTransitioning(true);
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -141,7 +153,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return res.json();
     },
     onSuccess: (data) => {
-      // Update cache immediately
+      // Update cache with new user data
       queryClient.setQueryData(["/api/user"], data.user);
 
       toast({
@@ -157,13 +169,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         variant: "destructive",
       });
     },
+    onSettled: () => {
+      setIsTransitioning(false);
+    },
   });
 
   return (
     <AuthContext.Provider
       value={{
         user: user ?? null,
-        isLoading,
+        isLoading: isLoading || isFetching || isTransitioning,
         error,
         loginMutation,
         logoutMutation,

@@ -60,26 +60,24 @@ export default function AuthPage() {
       }
     };
 
-    // Handle login mutation success
+    // Handle successful login or existing session
     if (loginMutation.isSuccess && loginMutation.data?.user) {
       handleRedirect(loginMutation.data.user);
-    }
-    // Handle existing session
-    else if (user && !loginMutation.isPending) {
+    } else if (user && !loginMutation.isPending && !isLoading) {
       handleRedirect(user);
     }
-  }, [loginMutation.isSuccess, loginMutation.data?.user, user, loginMutation.isPending, setLocation]);
+  }, [loginMutation.isSuccess, loginMutation.data?.user, user, loginMutation.isPending, isLoading, setLocation]);
 
-  async function onSubmit(data: LoginFormData) {
+  const onSubmit = async (data: LoginFormData) => {
     try {
       await loginMutation.mutateAsync(data);
     } catch (error: any) {
       console.error('Login error:', error);
     }
-  }
+  };
 
-  // Show loading spinner during initial load or auth state changes
-  if (isLoading || (loginMutation.isSuccess && !user)) {
+  // Show loading spinner during transitions
+  if (isLoading || loginMutation.isPending) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
