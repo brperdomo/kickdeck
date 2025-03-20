@@ -34,7 +34,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function AuthPage() {
   const { toast } = useToast();
-  const { loginMutation, user } = useAuth();
+  const { loginMutation, user, isLoading } = useAuth();
   const [, setLocation] = useLocation();
 
   const loginForm = useForm<LoginFormData>({
@@ -79,13 +79,18 @@ export default function AuthPage() {
     }
   }
 
-  // If already logged in, redirect immediately
-  if (user) {
+  // Show loading spinner only during initial auth check
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
+  }
+
+  // Skip rendering login form if already authenticated
+  if (user) {
+    return null;
   }
 
   return (

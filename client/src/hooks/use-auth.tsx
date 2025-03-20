@@ -57,6 +57,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!res.ok) throw new Error("Failed to fetch user");
       return res.json();
     },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    retry: false, // Don't retry on failure
   });
 
   const loginMutation = useMutation({
