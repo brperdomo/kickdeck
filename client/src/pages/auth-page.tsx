@@ -49,11 +49,14 @@ export default function AuthPage() {
   useEffect(() => {
     if (user) {
       const redirectPath = sessionStorage.getItem('redirectAfterAuth');
+
       if (redirectPath) {
+        // If we have a redirect path (e.g., from event registration), use it
         sessionStorage.removeItem('redirectAfterAuth');
         setLocation(redirectPath);
       } else {
-        setLocation('/');
+        // Otherwise redirect based on user role
+        setLocation(user.isAdmin ? '/admin' : '/');
       }
     }
   }, [user, setLocation]);
