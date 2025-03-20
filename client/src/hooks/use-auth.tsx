@@ -21,9 +21,9 @@ type AuthContextType = {
   user: User | null;
   isLoading: boolean;
   error: Error | null;
-  loginMutation: UseMutationResult<User, Error, LoginData>;
+  loginMutation: UseMutationResult<{ user: User }, Error, LoginData>;
   logoutMutation: UseMutationResult<void, Error, void>;
-  registerMutation: UseMutationResult<User, Error, RegisterData>;
+  registerMutation: UseMutationResult<{ user: User }, Error, RegisterData>;
 };
 
 type LoginData = {
@@ -62,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
+        credentials: "include",
       });
       if (!res.ok) {
         const error = await res.text();
@@ -69,9 +70,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return res.json();
     },
+    onSuccess: (data) => {
+      toast({
+        title: "Success",
+        description: "Successfully logged in",
+      });
+    },
     onError: (error: Error) => {
       toast({
         title: "Login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/logout", { 
+        method: "POST",
+        credentials: "include"
+      });
+      if (!res.ok) {
+        const error = await res.text();
+        throw new Error(error);
+      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Logout failed",
         description: error.message,
         variant: "destructive",
       });
@@ -84,6 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
+        credentials: "include",
       });
       if (!res.ok) {
         const error = await res.text();
@@ -94,23 +122,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onError: (error: Error) => {
       toast({
         title: "Registration failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      const res = await fetch("/api/logout", { method: "POST" });
-      if (!res.ok) {
-        const error = await res.text();
-        throw new Error(error);
-      }
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Logout failed",
         description: error.message,
         variant: "destructive",
       });

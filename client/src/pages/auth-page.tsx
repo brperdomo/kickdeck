@@ -23,7 +23,7 @@ import { useEffect } from "react";
 
 // Login schema
 const loginSchema = z.object({
-  loginEmail: z.string().email("Please enter a valid email address"),
+  email: z.string().email("Please enter a valid email address"),
   password: z.string()
     .min(8, "Password must be at least 8 characters")
     .regex(/[0-9]/, "Password must contain at least one number")
@@ -40,7 +40,7 @@ export default function AuthPage() {
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      loginEmail: "",
+      email: "",
       password: "",
     },
   });
@@ -60,12 +60,8 @@ export default function AuthPage() {
 
   async function onSubmit(data: LoginFormData) {
     try {
-      await loginMutation.mutateAsync({
-        username: data.loginEmail,
-        password: data.password,
-      });
+      await loginMutation.mutateAsync(data);
     } catch (error: any) {
-      // Error handling is done in the mutation's onError callback
       console.error('Login error:', error);
     }
   }
@@ -102,7 +98,7 @@ export default function AuthPage() {
                 >
                   <FormField
                     control={loginForm.control}
-                    name="loginEmail"
+                    name="email"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-base">Email</FormLabel>
