@@ -1687,7 +1687,7 @@ function AdminDashboard() {
       default:
         return <div>Feature coming soon</div>;
     }
-  };
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
