@@ -5,66 +5,44 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useTheme } from "@/hooks/use-theme"; // Added import for useTheme hook
+import { useTheme } from "@/hooks/use-theme";
+import { Toggle } from "@/components/ui/toggle";
+import { Moon, Sun } from "lucide-react";
 
 export function StyleSettingsView() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { theme } = useTheme(); // Get the current theme
+  const { theme, setAppearance, currentAppearance } = useTheme();
   const [previewStyles, setPreviewStyles] = useState({
-    primary: theme === 'dark' ? '#4C9AFF' : '#0052CC',
-    secondary: theme === 'dark' ? '#A2B0C3' : '#344563',
-    accent: theme === 'dark' ? '#00C7E6' : '#00B8D9',
-    background: theme === 'dark' ? '#1D2330' : '#FAFBFC',
-    adminNavBackground: theme === 'dark' ? '#2D3748' : '#FFFFFF',
-    adminNavText: theme === 'dark' ? '#E2E8F0' : '#42526E',
-    adminNavActive: theme === 'dark' ? '#2C3E50' : '#DEEBFF',
-    adminNavHover: theme === 'dark' ? '#364150' : '#F4F5F7',
-    tableHeaderBg: theme === 'dark' ? '#2D3748' : '#F4F5F7',
-    tableRowHoverBg: theme === 'dark' ? '#364150' : '#F4F5F7',
-    cardBg: theme === 'dark' ? '#2D3748' : '#FFFFFF',
-    textColor: theme === 'dark' ? '#E2E8F0' : '#172B4D',
-    cardHeaderBg: theme === 'dark' ? '#364150' : '#f9fafb',
-    inputBg: theme === 'dark' ? '#1D2330' : '#FFFFFF',
-    inputBorder: theme === 'dark' ? '#4A5568' : '#d1d5db',
+    primary: '#0052CC',
+    secondary: '#344563',
+    accent: '#00B8D9',
+    background: '#FAFBFC',
+    adminNavBackground: '#FFFFFF',
+    adminNavText: '#42526E',
+    adminNavActive: '#DEEBFF',
+    adminNavHover: '#F4F5F7',
+    tableHeaderBg: '#F4F5F7',
+    tableRowHoverBg: '#F4F5F7',
+    cardBg: '#FFFFFF',
+    textColor: '#172B4D',
+    cardHeaderBg: '#f9fafb',
+    inputBg: '#FFFFFF',
+    inputBorder: '#d1d5db',
+    darkBackground: '#1D2330',
+    darkText: '#E2E8F0',
+    darkAccent: '#2C3E50',
+
   });
   const { toast } = useToast();
 
-  // Apply CSS styles to document head
   useEffect(() => {
-    // Check if our custom style element already exists
     let styleElement = document.getElementById('admin-dashboard-styles');
-
-    // Create it if it doesn't exist
     if (!styleElement) {
       styleElement = document.createElement('style');
       styleElement.id = 'admin-dashboard-styles';
       document.head.appendChild(styleElement);
     }
-
-    // Update CSS variables for admin navigation
-    styleElement.innerHTML = `
-      :root {
-        --admin-nav-bg: ${previewStyles.adminNavBackground || '#FFFFFF'};
-        --admin-nav-text: ${previewStyles.adminNavText || '#000000'};
-        --admin-nav-active: ${previewStyles.adminNavActive || previewStyles.primary || '#000000'};
-        --admin-nav-hover: ${previewStyles.adminNavHover || '#f3f4f6'};
-      }
-
-      .admin-sidebar-item {
-        transition: background-color 0.2s ease;
-      }
-
-      .admin-sidebar-item:hover {
-        background-color: var(--admin-nav-hover) !important;
-      }
-
-      .admin-sidebar-item.active {
-        background-color: var(--admin-nav-active) !important;
-      }
-    `;
-
-    // Update the CSS variables
     styleElement.textContent = `
       :root {
         --admin-nav-bg: ${previewStyles.adminNavBackground || '#FFFFFF'};
@@ -113,10 +91,8 @@ export function StyleSettingsView() {
   const handleSaveStyles = async () => {
     setIsSaving(true);
     try {
-      // Make sure we include all style settings
       const completeStyles = {
         ...previewStyles,
-        // Ensure the admin dashboard specific colors are included
         adminNavBackground: previewStyles.adminNavBackground || '#FFFFFF',
         adminNavText: previewStyles.adminNavText || '#000000',
         adminNavActive: previewStyles.adminNavActive || previewStyles.primary || '#000000',
@@ -128,8 +104,6 @@ export function StyleSettingsView() {
         inputBg: previewStyles.inputBg || "#FFFFFF",
         inputBorder: previewStyles.inputBorder || "#d1d5db",
       };
-
-      console.log('Saving complete style settings:', completeStyles);
 
       const response = await fetch('/api/admin/styling', {
         method: 'POST',
@@ -174,6 +148,21 @@ export function StyleSettingsView() {
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium">UI Colors</h3>
+        <Toggle
+          pressed={currentAppearance === 'dark'}
+          onPressedChange={() => setAppearance(currentAppearance === 'dark' ? 'light' : 'dark')}
+          aria-label="Toggle dark mode"
+          className="p-2"
+        >
+          {currentAppearance === 'dark' ? (
+            <Moon className="h-5 w-5" />
+          ) : (
+            <Sun className="h-5 w-5" />
+          )}
+        </Toggle>
+      </div>
       <div 
         className="p-4 rounded-md shadow mb-6" 
         style={{ backgroundColor: previewStyles.adminSectionBg || "#FFFFFF" }}
@@ -269,6 +258,68 @@ export function StyleSettingsView() {
             <p className="text-sm text-gray-500 mt-1">Used for page backgrounds</p>
           </div>
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="darkBackground">Dark Background</Label>
+              <div className="flex items-center gap-2 mt-1.5">
+                <div className="w-12 h-12 rounded-md border overflow-hidden">
+                  <Input
+                    id="darkBackground"
+                    type="color"
+                    value={previewStyles.darkBackground}
+                    onChange={(e) => handleStyleChange('darkBackground', e.target.value)}
+                    className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                  />
+                </div>
+                <Input
+                  value={previewStyles.darkBackground}
+                  onChange={(e) => handleStyleChange('darkBackground', e.target.value)}
+                  className="font-mono"
+                  placeholder="#1D2330"
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="darkText">Dark Mode Text</Label>
+              <div className="flex items-center gap-2 mt-1.5">
+                <div className="w-12 h-12 rounded-md border overflow-hidden">
+                  <Input
+                    id="darkText"
+                    type="color"
+                    value={previewStyles.darkText}
+                    onChange={(e) => handleStyleChange('darkText', e.target.value)}
+                    className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                  />
+                </div>
+                <Input
+                  value={previewStyles.darkText}
+                  onChange={(e) => handleStyleChange('darkText', e.target.value)}
+                  className="font-mono"
+                  placeholder="#E2E8F0"
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="darkAccent">Dark Mode Accent</Label>
+              <div className="flex items-center gap-2 mt-1.5">
+                <div className="w-12 h-12 rounded-md border overflow-hidden">
+                  <Input
+                    id="darkAccent"
+                    type="color"
+                    value={previewStyles.darkAccent}
+                    onChange={(e) => handleStyleChange('darkAccent', e.target.value)}
+                    className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                  />
+                </div>
+                <Input
+                  value={previewStyles.darkAccent}
+                  onChange={(e) => handleStyleChange('darkAccent', e.target.value)}
+                  className="font-mono"
+                  placeholder="#2C3E50"
+                />
+              </div>
+            </div>
+          </div>
       </div>
 
       <div 

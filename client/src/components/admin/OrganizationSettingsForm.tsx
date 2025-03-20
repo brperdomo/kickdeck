@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { useState, useEffect } from "react"; // Added useEffect import
 
 const formSchema = z.object({
   name: z.string().min(1, "Organization name is required"),
