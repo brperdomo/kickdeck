@@ -12,7 +12,8 @@ import { Moon, Sun } from "lucide-react";
 export function StyleSettingsView() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { theme, setAppearance, currentAppearance } = useTheme();
+  const { theme, setAppearance } = useTheme();
+  const [currentAppearance, setCurrentAppearance] = useState(theme || 'light');
   const [previewStyles, setPreviewStyles] = useState({
     primary: '#0052CC',
     secondary: '#344563',
@@ -155,8 +156,12 @@ export function StyleSettingsView() {
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">UI Colors</h3>
         <Toggle
-          pressed={currentAppearance === 'dark'}
-          onPressedChange={() => setAppearance(currentAppearance === 'dark' ? 'light' : 'dark')}
+          pressed={theme === 'dark'}
+          onPressedChange={() => {
+            const newTheme = theme === 'dark' ? 'light' : 'dark';
+            setAppearance(newTheme);
+            setCurrentAppearance(newTheme);
+          }}
           aria-label="Toggle dark mode"
           className="p-2"
         >
