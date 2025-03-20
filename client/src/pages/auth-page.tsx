@@ -45,24 +45,31 @@ export default function AuthPage() {
     },
   });
 
-  // Handle redirect on login success
+  // Handle redirect for both successful mutation and existing user
   useEffect(() => {
-    if (loginMutation.isSuccess || user) {
+    const redirectUser = (userData: { isAdmin: boolean } | null) => {
+      if (!userData) return;
+
       const redirectPath = sessionStorage.getItem('redirectAfterAuth');
       if (redirectPath) {
         sessionStorage.removeItem('redirectAfterAuth');
         setLocation(redirectPath);
+      } else if (userData.isAdmin) {
+        setLocation('/admin');
       } else {
-        // Handle role-based redirection
-        const userData = loginMutation.data?.user || user;
-        if (userData?.isAdmin) {
-          setLocation('/admin');
-        } else {
-          setLocation('/');
-        }
+        setLocation('/');
       }
+    };
+
+    // Check for successful login mutation
+    if (loginMutation.isSuccess && loginMutation.data?.user) {
+      redirectUser(loginMutation.data.user);
     }
-  }, [loginMutation.isSuccess, user, setLocation]);
+    // Check for existing user session
+    else if (user) {
+      redirectUser(user);
+    }
+  }, [loginMutation.isSuccess, loginMutation.data, user, setLocation]);
 
   async function onSubmit(data: LoginFormData) {
     try {
@@ -70,6 +77,15 @@ export default function AuthPage() {
     } catch (error: any) {
       console.error('Login error:', error);
     }
+  }
+
+  // If already logged in, redirect immediately
+  if (user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return (
