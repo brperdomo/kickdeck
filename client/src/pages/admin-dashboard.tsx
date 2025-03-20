@@ -972,9 +972,8 @@ console.log('Primarycolor extracted:', palette.Vibrant.hex);
       // Set secondary color from theLightVibrant or Muted swatch
       if (palette.LightVibrant) {
         setSecondaryColor(palette.LightVibrant.hex);
-        consolelog('Secondary color (Light Vibrant) extracted:', palette.LightVibrant.hex);
-      } else if```javascript
-      palette.Muted) {
+        console.log('Secondary color (Light Vibrant) extracted:', palette.LightVibrant.hex);
+      } else if (palette.Muted) {
         setSecondaryColor(palette.Muted.hex);
         console.log('Secondary color (Muted) extracted:', palette.Muted.hex);
       }
@@ -1617,27 +1616,6 @@ function AdminDashboard() {
       setLocation("/");
     }
   }, [user, setLocation]);
-
-  // Prefetch critical data
-  const { data: orgSettings } = useQuery({
-    queryKey: ['organization-settings'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/organization-settings');
-      return response.json();
-    },
-    staleTime: 300000, // Cache for 5 minutes
-    cacheTime: 3600000 // Keep in cache for 1 hour
-  });
-
-  const { data: events } = useQuery({
-    queryKey: ['events'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/events');
-      return response.json();
-    },
-    staleTime: 300000,
-    cacheTime: 3600000
-  });
 
   if (!user) {
     return (
