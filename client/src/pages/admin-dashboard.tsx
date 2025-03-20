@@ -973,7 +973,8 @@ console.log('Primarycolor extracted:', palette.Vibrant.hex);
       if (palette.LightVibrant) {
         setSecondaryColor(palette.LightVibrant.hex);
         consolelog('Secondary color (Light Vibrant) extracted:', palette.LightVibrant.hex);
-      } else if (palette.Muted) {
+      } else if```javascript
+      palette.Muted) {
         setSecondaryColor(palette.Muted.hex);
         console.log('Secondary color (Muted) extracted:', palette.Muted.hex);
       }
@@ -1985,7 +1986,7 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
               <p>Settings content will be implemented here</p>
             </CardContent>
           </Card>
-        </</div>
+        </div>
       );
   }
 }
