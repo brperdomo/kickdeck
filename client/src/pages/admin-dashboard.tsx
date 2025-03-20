@@ -53,7 +53,8 @@ import {
   FormInput,
   Bell,
   Moon,
-  Sun
+  Sun,
+  Trash2
 } from "lucide-react";
 import {
   Table,
@@ -387,6 +388,34 @@ function AdministratorsView() {
     }
   });
 
+  const deleteAdminMutation = useMutation({
+    mutationFn: async (adminId: number) => {
+      const response = await fetch(`/api/admin/administrators/${adminId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete administrator');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['/api/admin/administrators']);
+      toast({
+        title: 'Success',
+        description: 'Administrator deleted successfully',
+        variant: 'success'
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to delete administrator',
+        variant: 'destructive'
+      });
+    }
+  });
+
 
   if (administratorsQuery.isLoading) {
     return (
@@ -484,24 +513,30 @@ function AdministratorsView() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleEditAdmin(admin)}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem className="text-red-600">
-                                <Trash className="mr-2 h-4 w-4" />
-                                Remove
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                          <div className="flex justify-end gap-2">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleEditAdmin(admin)}>
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  onClick={() => deleteAdminMutation.mutate(admin.id)}
+                                  disabled={deleteAdminMutation.isPending}
+                                  className="text-red-600"
+                                >
+                                  <Trash className="mr-2 h-4 w-4" />
+                                  Remove
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -1954,7 +1989,7 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
           <h2 className="text-2xl font-bold">Payments Settings</h2>
           <StripeSettingsView />
         </div>
-      );
+        );
     default:
       return (
         <div className="space-y-6">

@@ -7,26 +7,41 @@ import { createAdmin } from "./create-admin";
 import { WebSocketServer } from "ws";
 import path from "path";
 import uploadRouter from "./routes/upload";
-import { createEmailTemplatesTable } from './migrations/create_email_templates';
-import { createEmailTemplateRoutingTable } from './migrations/create_email_template_routing';
-import { createTables } from './create-tables';
+import { createEmailTemplatesTable } from "./migrations/create_email_templates";
+import { createEmailTemplateRoutingTable } from "./migrations/create_email_template_routing";
+import { createTables } from "./create-tables";
+import express from "express";
+import { fileURLToPath } from "url";
+import { serveStatic } from "./vite.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
+const PORT = process.env.PORT || 5000;
+
+if (process.env.NODE_ENV === "production") {
+  serveStatic(app);
+}
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 // Health check endpoints
-app.get(['/', '/_health'], (req, res) => {
-  res.status(200).send('OK');
+app.get(["/", "/_health"], (req, res) => {
+  res.status(200).send("OK");
 });
 
 // Basic middleware setup
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: false, limit: "50mb" }));
 
 // Serve uploaded files
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Register upload routes
-app.use('/api/files', uploadRouter);
+app.use("/api/files", uploadRouter);
 
 // Add request logging middleware
 app.use((req, res, next) => {
@@ -73,7 +88,7 @@ async function testDbConnection() {
 
 (async () => {
   let server;
-  
+
   try {
     // Test database connection first
     const dbConnected = await testDbConnection();
@@ -86,7 +101,11 @@ async function testDbConnection() {
     // Run database migrations
     const migrationsResult = await createTables();
     if (!migrationsResult.success) {
-      log("Migration failed: " + migrationsResult.error + " - retrying in 5 seconds...");
+      log(
+        "Migration failed: " +
+          migrationsResult.error +
+          " - retrying in 5 seconds...",
+      );
       setTimeout(() => createTables(), 5000);
       return;
     }
@@ -99,25 +118,24 @@ async function testDbConnection() {
     // Register routes first to ensure all middleware is set up
 
     const PORT = process.env.PORT || 5000;
-    server = app.listen(PORT, () => {
-      log(`Server is running on port ${PORT}`);
-    });
+    server = app.listen();
+    server.close(); // Create but don't start listening yet
 
     // Register routes
     registerRoutes(app);
 
     // Create WebSocket server
-    const wss = new WebSocketServer({ 
+    const wss = new WebSocketServer({
       server,
       path: "/api/ws",
       verifyClient: (info) => {
-        const protocol = info.req.headers['sec-websocket-protocol'];
-        return !protocol || protocol !== 'vite-hmr';
-      }
+        const protocol = info.req.headers["sec-websocket-protocol"];
+        return !protocol || protocol !== "vite-hmr";
+      },
     });
 
     // WebSocket connection handling
-    wss.on('connection', (ws) => {
+    wss.on("connection", (ws) => {
       log("New WebSocket connection established");
 
       // Set a timeout to close idle connections after 5 minutes
@@ -127,7 +145,7 @@ async function testDbConnection() {
         ws.close();
       }, idleTimeout);
 
-      ws.on('message', (message) => {
+      ws.on("message", (message) => {
         // Reset timeout on activity
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
@@ -139,11 +157,11 @@ async function testDbConnection() {
         log("Received WebSocket message: " + message);
       });
 
-      ws.on('close', () => {
+      ws.on("close", () => {
         clearTimeout(timeoutId);
         log("WebSocket connection closed");
       });
-    }
+    });
 
     if (app.get("env") === "development") {
       // Setup Vite middleware
@@ -163,20 +181,20 @@ async function testDbConnection() {
     });
 
     // Start the server
-    const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
     const HOST = process.env.HOST || "0.0.0.0";
 
     const findAvailablePort = async (startPort: number): Promise<number> => {
       return new Promise((resolve, reject) => {
         const tryPort = async (port: number) => {
-          const { createServer } = await import('http');
+          const { createServer } = await import("http");
           const tempServer = createServer();
-          tempServer.listen(port, "0.0.0.0")
-            .on('listening', () => {
+          tempServer
+            .listen(port, "0.0.0.0")
+            .on("listening", () => {
               tempServer.close(() => resolve(port));
             })
-            .on('error', (err: any) => {
-              if (err.code === 'EADDRINUSE') {
+            .on("error", (err: any) => {
+              if (err.code === "EADDRINUSE") {
                 log(`Port ${port} is busy, trying ${port + 1}`);
                 tryPort(port + 1);
               } else {
@@ -189,13 +207,17 @@ async function testDbConnection() {
     };
 
     try {
-      const availablePort = await findAvailablePort(PORT);
-      server.listen(availablePort, HOST, () => {
-        log(`Server started successfully on ${HOST}:${availablePort}`);
+      // Use port 3000 for production deployment, otherwise use dynamic port
+      const port = process.env.NODE_ENV === "production" ? 3000 : PORT;
+      server.listen(port, HOST, () => {
+        log(`Server started successfully on ${HOST}:${port}`);
       });
     } catch (error) {
       log(`Error starting server: ${(error as Error).message}`);
-      process.exit(1);
+      // Don't exit in production, let the process manager handle it
+      if (process.env.NODE_ENV !== "production") {
+        process.exit(1);
+      }
     }
 
     // Handle shutdown gracefully
