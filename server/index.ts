@@ -208,7 +208,7 @@ async function testDbConnection() {
 
     try {
       // Use port 3000 for production deployment, otherwise use dynamic port
-      const port = process.env.NODE_ENV === "production" ? 3000 : PORT;
+      const port = process.env.NODE_ENV === "production" ? 3000 : await findAvailablePort(PORT);
       server.listen(port, HOST, () => {
         log(`Server started successfully on ${HOST}:${port}`);
       });
