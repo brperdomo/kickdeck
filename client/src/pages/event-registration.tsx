@@ -216,6 +216,7 @@ export default function EventRegistration() {
   };
 
   const handleAuthRedirect = () => {
+    // Store current location before redirecting
     sessionStorage.setItem('redirectAfterAuth', window.location.pathname);
     setLocation('/auth');
   };
