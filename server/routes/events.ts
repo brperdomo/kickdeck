@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../db';
-import { events, eventAgeGroups, eventSettings, teams, tournamentGroups, eventAdministrators, eventFees, eventComplexes } from '@db/schema';
-import { eq } from 'drizzle-orm';
+import { events, eventAgeGroups, eventSettings, teams, tournamentGroups, eventAdministrators, eventFees, eventComplexes, eventAgeGroupFees } from '@db/schema';
+import { eq, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router = Router();
@@ -603,7 +603,7 @@ router.post('/:eventId/fee-assignments', async (req, res) => {
 });
 
 // Add DELETE route for events
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) =>{
   const eventId = req.params.id;
   console.log(`Starting event deletion for ID: ${eventId}`);
 
@@ -611,7 +611,29 @@ router.delete('/:id', async (req, res) => {
     await db.transaction(async (tx) => {
       // Delete related records in correct order to respect foreign key constraints
 
-      // 1. Delete teams first since they reference tournament groups
+      // 1. Delete fee assignments first since they reference age groups
+      try {
+        // Get all age group IDs for this event
+        const eventAgeGroupIds = await tx
+          .select({ id: eventAgeGroups.id })
+          .from(eventAgeGroups)
+          .where(eq(eventAgeGroups.eventId, eventId));
+
+        const ageGroupIds = eventAgeGroupIds.map(g => g.id);
+
+        if (ageGroupIds.length > 0) {
+          // Delete fee assignments for these age groups
+          const deletedAssignments = await tx
+            .delete(eventAgeGroupFees)
+            .where(inArray(eventAgeGroupFees.ageGroupId, ageGroupIds))
+            .returning();
+          console.log(`Deleted ${deletedAssignments.length} fee assignments`);
+        }
+      } catch (error) {
+        console.log('No fee assignments to delete or error:', error);
+      }
+
+      // 2. Delete teams since they reference tournament groups
       try {
         const deletedTeams = await tx.delete(teams)
           .where(eq(teams.eventId, eventId))
@@ -621,7 +643,7 @@ router.delete('/:id', async (req, res) => {
         console.log('No teams to delete or error:', error);
       }
 
-      // 2. Delete tournament groups
+      // 3. Delete tournament groups
       try {
         const deletedGroups = await tx.delete(tournamentGroups)
           .where(eq(tournamentGroups.eventId, eventId))
@@ -631,7 +653,7 @@ router.delete('/:id', async (req, res) => {
         console.log('No tournament groups to delete or error:', error);
       }
 
-      // 3. Delete age groups
+      // 4. Delete age groups
       try {
         const deletedAgeGroups = await tx.delete(eventAgeGroups)
           .where(eq(eventAgeGroups.eventId, eventId))
@@ -641,7 +663,7 @@ router.delete('/:id', async (req, res) => {
         console.log('No age groups to delete or error:', error);
       }
 
-      // 4. Delete event settings
+      // 5. Delete event settings
       try {
         const deletedSettings = await tx.delete(eventSettings)
           .where(eq(eventSettings.eventId, eventId))
@@ -651,7 +673,7 @@ router.delete('/:id', async (req, res) => {
         console.log('No settings to delete or error:', error);
       }
 
-      // 5. Delete event administrators
+      // 6. Delete event administrators
       try {
         const deletedAdmins = await tx.delete(eventAdministrators)
           .where(eq(eventAdministrators.eventId, eventId))
@@ -661,7 +683,7 @@ router.delete('/:id', async (req, res) => {
         console.log('No administrators to delete or error:', error);
       }
 
-      // 6. Delete event fees
+      // 7. Delete event fees
       try {
         const deletedFees = await tx.delete(eventFees)
           .where(eq(eventFees.eventId, eventId))
@@ -671,7 +693,7 @@ router.delete('/:id', async (req, res) => {
         console.log('No fees to delete or error:', error);
       }
 
-      // 7. Delete event complexes
+      // 8. Delete event complexes
       try {
         const deletedComplexes = await tx.delete(eventComplexes)
           .where(eq(eventComplexes.eventId, eventId))
