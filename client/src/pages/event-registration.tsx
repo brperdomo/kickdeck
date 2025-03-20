@@ -10,7 +10,8 @@ interface AgeGroup {
   id: number;
   ageGroup: string;
   gender: string;
-  divisionCode: string;
+  divisionCode: string | null;
+  birthYear: number | null;
 }
 
 interface Event {
@@ -32,13 +33,16 @@ export default function EventRegistration() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
+        console.log('Fetching event details for ID:', eventId);
         const response = await fetch(`/api/events/${eventId}`);
         if (!response.ok) {
           throw new Error("Event not found");
         }
         const data = await response.json();
+        console.log('Received event data:', data);
         setEvent(data);
       } catch (error) {
+        console.error('Error fetching event:', error);
         toast({
           variant: "destructive",
           title: "Error",
@@ -53,13 +57,19 @@ export default function EventRegistration() {
   }, [eventId]);
 
   const renderAgeGroups = (ageGroups: AgeGroup[]) => {
+    // Group by gender first
     const groupedByGender = ageGroups.reduce((acc, group) => {
       if (!acc[group.gender]) {
         acc[group.gender] = [];
       }
-      acc[group.gender].push(group);
+      // Use division code if available, otherwise fallback to age group
+      const displayText = group.divisionCode || `${group.gender} ${group.ageGroup}`;
+      acc[group.gender].push({
+        ...group,
+        displayText
+      });
       return acc;
-    }, {} as Record<string, AgeGroup[]>);
+    }, {} as Record<string, (AgeGroup & { displayText: string })[]>);
 
     return (
       <div className="space-y-4">
@@ -68,8 +78,11 @@ export default function EventRegistration() {
             <h4 className="font-semibold text-blue-800 mb-2">{gender}:</h4>
             <div className="flex flex-wrap gap-2">
               {groups.map((group) => (
-                <span key={group.id} className="bg-white px-3 py-1 rounded-full text-sm text-blue-600">
-                  {group.ageGroup}
+                <span 
+                  key={group.id} 
+                  className="bg-white px-3 py-1 rounded-full text-sm text-blue-600 border border-blue-100"
+                >
+                  {group.displayText}
                 </span>
               ))}
             </div>

@@ -1,4 +1,3 @@
-
 import { Router } from 'express';
 import { db } from '@db';
 import { eventAgeGroups } from '@db/schema';
@@ -6,28 +5,59 @@ import { eq, sql } from 'drizzle-orm';
 
 const router = Router();
 
+// Add an endpoint to fetch age groups with proper type safety
+interface AgeGroup {
+  id: number;
+  eventId: string;
+  ageGroup: string;
+  gender: string;
+  birthYear: number | null;
+  divisionCode: string | null;
+}
+
+// Get age groups for an event
+router.get('/:eventId', async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+
+    console.log(`Fetching age groups for event ${eventId}`);
+
+    const groups = await db
+      .select()
+      .from(eventAgeGroups)
+      .where(eq(eventAgeGroups.eventId, eventId));
+
+    console.log(`Found ${groups.length} age groups`);
+
+    // Return all age groups, regardless of duplicates (cleanup will handle this)
+    res.json(groups);
+  } catch (error) {
+    console.error('Error fetching age groups:', error);
+    res.status(500).json({ error: "Failed to fetch age groups" });
+  }
+});
+
 // Add an endpoint to clean up age groups
 router.post('/cleanup/:eventId', async (req, res) => {
   try {
     const eventId = req.params.eventId;
-    
+
     // First, get all existing age groups
     const allAgeGroups = await db
       .select()
       .from(eventAgeGroups)
       .where(eq(eventAgeGroups.eventId, eventId));
-    
+
     console.log(`Found ${allAgeGroups.length} age groups for event ${eventId}`);
-    
+
     // Create a map to track unique age groups
-    const uniqueGroups = new Map();
-    const keptGroups = [];
-    const deletedGroupIds = [];
-    
-    // First pass - identify unique groups to keep (one per division code)
+    const uniqueGroups = new Map<string, typeof allAgeGroups[0]>();
+    const keptGroups: typeof allAgeGroups[0][] = [];
+    const deletedGroupIds: number[] = [];
+
+    // First pass - identify unique groups to keep
     for (const group of allAgeGroups) {
       // Always use division code format for consistent keys
-      // If not present, generate it based on gender and birth year or age group
       let key;
       if (group.divisionCode) {
         key = group.divisionCode;
@@ -43,40 +73,35 @@ router.post('/cleanup/:eventId', async (req, res) => {
         // Fallback
         key = `${group.gender}-${group.ageGroup}`;
       }
-      
+
       if (!uniqueGroups.has(key)) {
         // Keep this group and ensure it has a division code
         if (!group.divisionCode) {
-          // Set a proper division code if missing
           group.divisionCode = key;
         }
         uniqueGroups.set(key, group);
         keptGroups.push(group);
       } else {
-        // Mark for deletion
         deletedGroupIds.push(group.id);
       }
     }
-    
+
     // Delete duplicate groups
     if (deletedGroupIds.length > 0) {
-      const deleted = await db.transaction(async (tx) => {
+      await db.transaction(async (tx) => {
         // First, update any references from teams
         for (const keptGroup of keptGroups) {
           const matchingDuplicates = allAgeGroups.filter(g => {
             if (keptGroup.divisionCode && g.divisionCode) {
-              // If both have division codes, use that for matching
               return g.divisionCode === keptGroup.divisionCode && g.id !== keptGroup.id;
             } else {
-              // Fall back to gender and age group matching
               return g.gender === keptGroup.gender && 
                      g.ageGroup === keptGroup.ageGroup && 
                      g.id !== keptGroup.id;
             }
           });
-          
+
           for (const duplicate of matchingDuplicates) {
-            // Update teams to use the kept group ID instead
             await tx.execute(sql`
               UPDATE teams 
               SET age_group_id = ${keptGroup.id} 
@@ -84,17 +109,16 @@ router.post('/cleanup/:eventId', async (req, res) => {
             `);
           }
         }
-        
+
         // Now delete the duplicate age groups
-        return await tx
+        await tx
           .delete(eventAgeGroups)
-          .where(sql`id = ANY(${deletedGroupIds})`)
-          .returning({ id: eventAgeGroups.id });
+          .where(sql`id = ANY(${deletedGroupIds})`);
       });
-      
-      console.log(`Deleted ${deleted.length} duplicate age groups`);
+
+      console.log(`Deleted ${deletedGroupIds.length} duplicate age groups`);
     }
-    
+
     res.json({
       message: "Age groups cleaned up successfully",
       totalBefore: allAgeGroups.length,
