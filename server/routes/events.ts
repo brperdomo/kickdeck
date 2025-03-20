@@ -194,7 +194,7 @@ router.patch('/:id', async (req, res) => {
 
 // Get event age groups endpoint
 router.get('/:id/age-groups', async (req, res) => {
-  const eventId = req.params.id; // Keep as string
+  const eventId = req.params.id; // Keep as string since eventId is text in eventAgeGroups
   console.log(`Fetching age groups for event: ${eventId}`);
 
   try {
@@ -226,7 +226,7 @@ router.get('/:id/age-groups', async (req, res) => {
 
           // Convert scope age groups to event age groups format
           const ageGroupsToInsert = scopeAgeGroups.map(ag => ({
-            eventId: eventId,
+            eventId,  // Already a string
             ageGroup: ag.ageGroup,
             birthYear: ag.birthYear,
             gender: ag.gender,
@@ -610,9 +610,9 @@ router.delete('/:id', async (req, res) => {
   try {
     await db.transaction(async (tx) => {
       // Delete all related records first, handling each one separately      try {
-        await tx.delete(eventAgeGroups)
-          .where(eq(eventAgeGroups.eventId, eventId));
-        console.log('Deleted event age groups');
+            await tx.delete(eventAgeGroups)
+        .where(eq(eventAgeGroups.eventId, eventId));
+      console.log('Deleted event age groups');
       } catch (error) {
         console.log('No age groups to delete or error:', error);
       }
