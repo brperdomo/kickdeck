@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { db } from "@db";
 import { emailTemplateRouting, emailProviderSettings } from "@db/schema";
 import { eq } from "drizzle-orm";
@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 const router = Router();
 
 // Error handler middleware
-const asyncHandler = (fn: Function) => (req: any, res: any, next: any) => {
+const asyncHandler = (fn: Function) => (req: Request, res: Response, next: any) => {
   Promise.resolve(fn(req, res, next)).catch((error) => {
     console.error('Email template routing error:', error);
     res.status(500).json({ error: error.message || 'Internal server error' });
@@ -14,7 +14,7 @@ const asyncHandler = (fn: Function) => (req: any, res: any, next: any) => {
 };
 
 // Get all template routings
-router.get("/", asyncHandler(async (req, res) => {
+router.get("/", asyncHandler(async (req: Request, res: Response) => {
   console.log('Fetching email template routings...');
 
   try {
@@ -34,7 +34,7 @@ router.get("/", asyncHandler(async (req, res) => {
 }));
 
 // Create template routing
-router.post("/", asyncHandler(async (req, res) => {
+router.post("/", asyncHandler(async (req: Request, res: Response) => {
   const { templateType, providerId, fromEmail, fromName, isActive } = req.body;
 
   if (!templateType || !providerId || !fromEmail || !fromName) {
@@ -84,7 +84,7 @@ router.post("/", asyncHandler(async (req, res) => {
 }));
 
 // Update template routing
-router.patch("/:id", asyncHandler(async (req, res) => {
+router.patch("/:id", asyncHandler(async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
     return res.status(400).json({ error: "Invalid routing ID" });
@@ -141,7 +141,7 @@ router.patch("/:id", asyncHandler(async (req, res) => {
 }));
 
 // Delete template routing
-router.delete("/:id", asyncHandler(async (req, res) => {
+router.delete("/:id", asyncHandler(async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
     return res.status(400).json({ error: "Invalid routing ID" });

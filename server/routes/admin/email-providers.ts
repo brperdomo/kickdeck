@@ -1,11 +1,11 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { db } from "@db";
 import { emailProviderSettings } from "@db/schema";
 import { eq } from "drizzle-orm";
 import * as nodemailer from 'nodemailer';
 
 // Error handler middleware
-const asyncHandler = (fn: Function) => (req: any, res: any, next: any) => {
+const asyncHandler = (fn: Function) => (req: Request, res: Response, next: any) => {
   Promise.resolve(fn(req, res, next)).catch((error) => {
     console.error('Email provider error:', error);
     res.status(500).json({ error: error.message || 'Internal server error' });
@@ -15,7 +15,7 @@ const asyncHandler = (fn: Function) => (req: any, res: any, next: any) => {
 const router = Router();
 
 // Test email provider connection
-router.post("/test-connection", asyncHandler(async (req, res) => {
+router.post("/test-connection", asyncHandler(async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   const { providerType, settings } = req.body;
 
@@ -54,7 +54,7 @@ router.post("/test-connection", asyncHandler(async (req, res) => {
 }));
 
 // Get all email providers
-router.get("/", asyncHandler(async (req, res) => {
+router.get("/", asyncHandler(async (req: Request, res: Response) => {
   console.log('Fetching email providers...');
 
   try {
@@ -72,7 +72,7 @@ router.get("/", asyncHandler(async (req, res) => {
 }));
 
 // Create email provider
-router.post("/", asyncHandler(async (req, res) => {
+router.post("/", asyncHandler(async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   const { providerType, providerName, settings, isActive, isDefault } = req.body;
 
@@ -126,7 +126,7 @@ router.post("/", asyncHandler(async (req, res) => {
 }));
 
 // Update email provider
-router.patch("/:id", asyncHandler(async (req, res) => {
+router.patch("/:id", asyncHandler(async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
@@ -194,7 +194,7 @@ router.patch("/:id", asyncHandler(async (req, res) => {
 }));
 
 // Delete email provider
-router.delete("/:id", asyncHandler(async (req, res) => {
+router.delete("/:id", asyncHandler(async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
     return res.status(400).json({ error: "Invalid provider ID" });

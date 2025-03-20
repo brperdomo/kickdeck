@@ -10,15 +10,14 @@ import uploadRouter from "./routes/upload";
 import { createEmailTemplatesTable } from "./migrations/create_email_templates";
 import { createEmailTemplateRoutingTable } from "./migrations/create_email_template_routing";
 import { createTables } from "./create-tables";
-import express from "express";
 import { fileURLToPath } from "url";
-import { serveStatic } from "./vite.js";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 80; // Updated port configuration
 
 if (process.env.NODE_ENV === "production") {
   serveStatic(app);
@@ -29,7 +28,7 @@ app.listen(PORT, () => {
 });
 
 // Health check endpoints
-app.get(["/", "/_health"], (req, res) => {
+app.get(["/", "/_health"], (req: Request, res: Response) => {
   res.status(200).send("OK");
 });
 
@@ -44,13 +43,13 @@ app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/api/files", uploadRouter);
 
 // Add request logging middleware
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   const start = Date.now();
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
+  res.json = function (bodyJson: any, ...args: any[]) {
     capturedJsonResponse = bodyJson;
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
@@ -117,7 +116,7 @@ async function testDbConnection() {
 
     // Register routes first to ensure all middleware is set up
 
-    const PORT = process.env.PORT || 5000;
+    const PORT = process.env.PORT || 80; // Updated port configuration
     server = app.listen();
     server.close(); // Create but don't start listening yet
 
