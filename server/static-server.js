@@ -1,13 +1,13 @@
 // Production static file server configuration
-import express from 'express';
-import path from 'path';
-import fs from 'fs';
+const express = require('express');
+const path = require('path');
+const fs = require('fs');
 
 /**
  * Configure the server to serve static files in production mode
  * This addresses the specific requirements for Replit deployment
  */
-export function configureStaticServer(app) {
+function configureStaticServer(app) {
   console.log('Setting up production static file server...');
   
   // Check multiple possible locations for static assets
@@ -68,3 +68,5 @@ export function configureStaticServer(app) {
   
   console.log('Production static file server configured successfully');
 }
+
+module.exports = { configureStaticServer };

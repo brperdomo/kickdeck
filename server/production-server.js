@@ -1,16 +1,12 @@
 // Production server initialization module
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { configureStaticServer } from './static-server.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require('express');
+const path = require('path');
+const { configureStaticServer } = require('./static-server');
 
 /**
  * Configure the server specifically for production deployment on Replit
  */
-export function configureProductionServer(app) {
+function configureProductionServer(app) {
   console.log('Configuring server for production mode...');
   
   // Add a simple diagnostic endpoint
@@ -36,3 +32,5 @@ export function configureProductionServer(app) {
   console.log('Production server configuration complete');
   return app;
 }
+
+module.exports = { configureProductionServer };
