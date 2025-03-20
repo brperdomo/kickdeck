@@ -21,6 +21,7 @@ import EmailTemplatesPage from "@/pages/email-templates";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import { FeeManagement } from "@/components/events/FeeManagement";
+import { AuthProvider } from "@/hooks/use-auth";
 
 // Placeholder components
 const EventPreviewSelector = () => <div>Event Preview Selector</div>;
@@ -43,6 +44,7 @@ function Router() {
       <Switch>
         <Route path="/register" component={Register} />
         <Route path="/forgot-password" component={ForgotPassword} />
+        <Route path="/register/event/:eventId" component={EventRegistration} />
         <Route path="/" component={AuthPage} />
         <Route component={AuthPage} />
       </Switch>
@@ -102,10 +104,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Router />
-        <Toaster />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Router />
+          <Toaster />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

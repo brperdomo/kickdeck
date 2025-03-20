@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
+import { useAuth } from "@/hooks/use-auth";
 
 interface AgeGroup {
   id: number;
@@ -24,11 +25,16 @@ interface Event {
   ageGroups: AgeGroup[];
 }
 
+type RegistrationStep = 'auth' | 'personal' | 'team' | 'review' | 'complete';
+
 export default function EventRegistration() {
   const { eventId } = useParams();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
+  const { user, isLoading: authLoading } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentStep, setCurrentStep] = useState<RegistrationStep>('auth');
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -56,13 +62,52 @@ export default function EventRegistration() {
     fetchEvent();
   }, [eventId]);
 
+  // Effect to handle step transitions based on auth state
+  useEffect(() => {
+    if (!authLoading && user) {
+      setCurrentStep('personal');
+    }
+  }, [authLoading, user]);
+
+  const renderStepIndicator = () => {
+    const steps: { key: RegistrationStep; label: string }[] = [
+      { key: 'auth', label: 'Sign In' },
+      { key: 'personal', label: 'Personal Details' },
+      { key: 'team', label: 'Team Information' },
+      { key: 'review', label: 'Review & Confirm' }
+    ];
+
+    return (
+      <div className="flex items-center justify-center mb-8">
+        {steps.map((step, index) => (
+          <div key={step.key} className="flex items-center">
+            <div className={`flex flex-col items-center ${currentStep === step.key ? 'text-[#2C5282]' : 'text-gray-400'}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 
+                ${currentStep === step.key ? 'bg-[#2C5282] text-white' : 
+                  index < steps.findIndex(s => s.key === currentStep) ? 'bg-[#48BB78] text-white' : 'bg-gray-200'}`}>
+                {index < steps.findIndex(s => s.key === currentStep) ? (
+                  <CheckCircle2 className="w-5 h-5" />
+                ) : (
+                  index + 1
+                )}
+              </div>
+              <span className="text-sm">{step.label}</span>
+            </div>
+            {index < steps.length - 1 && (
+              <div className={`w-24 h-[2px] mx-2 
+                ${index < steps.findIndex(s => s.key === currentStep) ? 'bg-[#48BB78]' : 'bg-gray-200'}`} />
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const renderAgeGroups = (ageGroups: AgeGroup[]) => {
-    // Group by gender first
     const groupedByGender = ageGroups.reduce((acc, group) => {
       if (!acc[group.gender]) {
         acc[group.gender] = [];
       }
-      // Use division code if available, otherwise fallback to age group
       const displayText = group.divisionCode || `${group.gender} ${group.ageGroup}`;
       acc[group.gender].push({
         ...group,
@@ -92,7 +137,13 @@ export default function EventRegistration() {
     );
   };
 
-  if (loading) {
+  const handleAuthRedirect = () => {
+    // Store the current URL in session storage
+    sessionStorage.setItem('redirectAfterAuth', window.location.pathname);
+    setLocation('/auth');
+  };
+
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -134,54 +185,60 @@ export default function EventRegistration() {
     <div className="min-h-screen relative">
       <SoccerFieldBackground className="opacity-50" />
       <div className="container mx-auto px-4 py-8 relative z-10">
+        {renderStepIndicator()}
+
         <Card className="max-w-4xl mx-auto bg-white/95 backdrop-blur">
           <CardHeader className="text-center border-b">
-            <CardTitle className="text-3xl font-bold text-[#333333]">{event.name}</CardTitle>
+            <CardTitle className="text-3xl font-bold text-[#2C5282]">{event.name}</CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <h3 className="font-semibold text-[#1E88E5]">Event Dates</h3>
-                <p>{new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}</p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-semibold text-[#1E88E5]">Registration Deadline</h3>
-                <p>{new Date(event.applicationDeadline).toLocaleDateString()}</p>
-              </div>
-            </div>
-
-            {event.ageGroups && event.ageGroups.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="font-semibold text-[#1E88E5]">Eligible Age Groups</h3>
-                {renderAgeGroups(event.ageGroups)}
+            {currentStep === 'auth' && !user && (
+              <div className="text-center">
+                <h3 className="text-xl font-semibold mb-4">Sign In Required</h3>
+                <p className="text-gray-600 mb-6">
+                  Please sign in or create an account to register for this event.
+                </p>
+                <Button 
+                  size="lg"
+                  className="bg-[#2C5282] hover:bg-[#1A365D] text-white font-semibold px-8"
+                  onClick={handleAuthRedirect}
+                >
+                  Sign In / Register
+                </Button>
               </div>
             )}
 
-            {event.details && (
-              <div className="space-y-2">
-                <h3 className="font-semibold text-[#1E88E5]">Event Details</h3>
-                <div 
-                  className="prose max-w-none prose-blue prose-headings:text-[#1E88E5] prose-p:text-gray-700" 
-                  dangerouslySetInnerHTML={{ __html: event.details }} 
-                />
-              </div>
-            )}
+            {(currentStep !== 'auth' || user) && (
+              <>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-[#2C5282]">Event Dates</h3>
+                    <p>{new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-[#2C5282]">Registration Deadline</h3>
+                    <p>{new Date(event.applicationDeadline).toLocaleDateString()}</p>
+                  </div>
+                </div>
 
-            <div className="flex justify-center pt-4">
-              <Button 
-                size="lg"
-                className="bg-[#43A047] hover:bg-[#2E7D32] text-white font-semibold px-8"
-                onClick={() => {
-                  // TODO: Implement registration flow
-                  toast({
-                    title: "Coming Soon",
-                    description: "Registration functionality will be available soon.",
-                  });
-                }}
-              >
-                Register Now
-              </Button>
-            </div>
+                {event.ageGroups && event.ageGroups.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-[#2C5282]">Eligible Age Groups</h3>
+                    {renderAgeGroups(event.ageGroups)}
+                  </div>
+                )}
+
+                {event.details && (
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-[#2C5282]">Event Details</h3>
+                    <div 
+                      className="prose max-w-none prose-blue prose-headings:text-[#2C5282] prose-p:text-gray-700" 
+                      dangerouslySetInnerHTML={{ __html: event.details }} 
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
