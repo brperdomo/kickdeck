@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,13 +13,15 @@ export function ThemeEditor() {
   const { setColor, setAppearance, currentAppearance } = useTheme();
   const { toast } = useToast();
   const [theme, setTheme] = useState({
-    backgroundColor: '#ffffff',
-    textColor: '#000000',
-    buttonColor: '#4CAF50',
+    backgroundColor: '#F2F2F7',
+    textColor: '#1C1C1E',
+    primaryColor: '#34C759',
+    secondaryColor: '#FF9500',
+    accentColor: '#FF9500',
   });
 
-  const handleColorChange = (color: string, value: string) => {
-    setTheme(prev => ({ ...prev, [color]: value }));
+  const handleColorChange = (colorKey: string, value: string) => {
+    setTheme(prev => ({ ...prev, [colorKey]: value }));
   };
 
   const handleAppearanceToggle = async () => {
@@ -40,7 +43,7 @@ export function ThemeEditor() {
 
   const handleApplyTheme = async () => {
     try {
-      await setColor(theme.buttonColor);
+      await setColor(theme.primaryColor);
       toast({
         title: "Success",
         description: "Theme updated successfully"
@@ -77,60 +80,54 @@ export function ThemeEditor() {
           <CardTitle>Color Settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="backgroundColor">Background Color</Label>
-              <div className="flex gap-2 items-center">
-                <Input
-                  id="backgroundColor"
-                  type="color"
-                  value={theme.backgroundColor}
-                  onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
-                  className="w-12 h-12 p-1"
-                />
-                <Input
-                  value={theme.backgroundColor}
-                  onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
-                  className="font-mono"
-                />
-              </div>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="backgroundColor">Background Color</Label>
+            <Input
+              id="backgroundColor"
+              type="color"
+              value={theme.backgroundColor}
+              onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="textColor">Text Color</Label>
+            <Input
+              id="textColor"
+              type="color"
+              value={theme.textColor}
+              onChange={(e) => handleColorChange('textColor', e.target.value)}
+            />
+          </div>
 
-            <div>
-              <Label htmlFor="textColor">Text Color</Label>
-              <div className="flex gap-2 items-center">
-                <Input
-                  id="textColor"
-                  type="color"
-                  value={theme.textColor}
-                  onChange={(e) => handleColorChange('textColor', e.target.value)}
-                  className="w-12 h-12 p-1"
-                />
-                <Input
-                  value={theme.textColor}
-                  onChange={(e) => handleColorChange('textColor', e.target.value)}
-                  className="font-mono"
-                />
-              </div>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="primaryColor">Primary Color</Label>
+            <Input
+              id="primaryColor"
+              type="color"
+              value={theme.primaryColor}
+              onChange={(e) => handleColorChange('primaryColor', e.target.value)}
+            />
+          </div>
 
-            <div>
-              <Label htmlFor="buttonColor">Button Color</Label>
-              <div className="flex gap-2 items-center">
-                <Input
-                  id="buttonColor"
-                  type="color"
-                  value={theme.buttonColor}
-                  onChange={(e) => handleColorChange('buttonColor', e.target.value)}
-                  className="w-12 h-12 p-1"
-                />
-                <Input
-                  value={theme.buttonColor}
-                  onChange={(e) => handleColorChange('buttonColor', e.target.value)}
-                  className="font-mono"
-                />
-              </div>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="secondaryColor">Secondary Color</Label>
+            <Input
+              id="secondaryColor"
+              type="color"
+              value={theme.secondaryColor}
+              onChange={(e) => handleColorChange('secondaryColor', e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="accentColor">Accent Color</Label>
+            <Input
+              id="accentColor"
+              type="color"
+              value={theme.accentColor}
+              onChange={(e) => handleColorChange('accentColor', e.target.value)}
+            />
           </div>
 
           <Button 
