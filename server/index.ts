@@ -187,13 +187,17 @@ async function testDbConnection() {
     };
 
     try {
-      const availablePort = await findAvailablePort(PORT);
-      server.listen(availablePort, HOST, () => {
-        log(`Server started successfully on ${HOST}:${availablePort}`);
+      // Use port 3000 for production deployment, otherwise use dynamic port
+      const port = process.env.NODE_ENV === 'production' ? 3000 : PORT;
+      server.listen(port, HOST, () => {
+        log(`Server started successfully on ${HOST}:${port}`);
       });
     } catch (error) {
       log(`Error starting server: ${(error as Error).message}`);
-      process.exit(1);
+      // Don't exit in production, let the process manager handle it
+      if (process.env.NODE_ENV !== 'production') {
+        process.exit(1);
+      }
     }
 
     // Handle shutdown gracefully
