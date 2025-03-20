@@ -1,9 +1,12 @@
-import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTheme } from "@/hooks/use-theme";
 import { Link2, X, Ticket, Plus, Mail } from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
-import { useToast } from "@/hooks/use-toast";
 import {
   Collapsible,
   CollapsibleContent,
@@ -13,9 +16,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUser } from "@/hooks/use-user";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTheme } from "@/hooks/use-theme";
 import { SelectUser } from "@db/schema";
 import { LogoutOverlay } from "@/components/ui/logout-overlay";
 import {
@@ -23,7 +23,6 @@ import {
   Shield,
   UserPlus,
   Home,
-  LogOut,
   FileText,
   User,
   Palette,
@@ -53,7 +52,8 @@ import {
   FormInput,
   Bell,
   Moon,
-  Sun
+  Sun,
+  LogOut,
 } from "lucide-react";
 import {
   Table,
@@ -93,14 +93,16 @@ import { FieldEditor } from "@/components/FieldEditor";
 import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
 import { useDropzone } from 'react-dropzone';
 import { FileManager } from "@/components/admin/FileManager.tsx";
-import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
+import { FormTemplatesView } from "@/components/admin/FormTemplatesView";
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
 import FormTemplateEditPage from "@/pages/form-template-edit";
 import FormTemplateCreatePage from "@/pages/form-template-create";
 import FormTemplatesPage from "@/pages/form-templates";
-import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
-import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
+import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel";
+import { StripeSettingsView } from "@/components/admin/StripeSettingsView";
 import { Toggle } from '@/components/ui/toggle';
+import { lazy, Suspense } from 'react';
+
 
 
 function AdminBanner() {
@@ -588,7 +590,7 @@ function ReportsView() {
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <h3 className="text-lg font-semibold">Financial Management</h3>
-                <select 
+                <select
                   className="border rounded px-2 py-1"
                   value={selectedFinancialReport}
                   onChange={(e) => setSelectedFinancialReport(e.target.value)}
@@ -631,54 +633,54 @@ function ReportsView() {
                   <CardTitle>Accounting Codes</CardTitle>
                 </CardHeader>
                 <CardContent>
-                {accountingCodesQuery.isLoading ? (
-                  <div className="flex justify-center p-4">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  </div>
-                ) : accountingCodesQuery.isError ? (
-                  <div className="text-center text-red-500">
-                    Error loading accounting codes
-                  </div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Code</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {accountingCodesQuery.data?.map((code: any) => (
-                        <TableRow key={code.id}>
-                          <TableCell className="font-medium">{code.code}</TableCell>
-                          <TableCell>{code.name}</TableCell>
-                          <TableCell>{code.description || '-'}</TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleEditCode(code)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleDeleteCode(code.id)}
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <Trash className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
+                  {accountingCodesQuery.isLoading ? (
+                    <div className="flex justify-center p-4">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
+                  ) : accountingCodesQuery.isError ? (
+                    <div className="text-center text-red-500">
+                      Error loading accounting codes
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Code</TableHead>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Description</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
+                      </TableHeader>
+                      <TableBody>
+                        {accountingCodesQuery.data?.map((code: any) => (
+                          <TableRow key={code.id}>
+                            <TableCell className="font-medium">{code.code}</TableCell>
+                            <TableCell>{code.name}</TableCell>
+                            <TableCell>{code.description || '-'}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEditCode(code)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDeleteCode(code.id)}
+                                  className="text-red-500 hover:text-red-700"
+                                >
+                                  <Trash className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -966,8 +968,7 @@ function OrganizationSettingsForm() {
       //      // Get the palette with error handling
       const palette = await v.getPalette();      // Set primary color from the Vibrant swatch
       if (palette.Vibrant) {        setPrimaryColor(palette.Vibrant.hex);
-console.log('Primarycolor extracted:', palette.Vibrant.hex);
-      }
+      console.log('Primarycolor extracted:', palette.Vibrant.hex);      }
 
       // Set secondary color from theLightVibrant or Muted swatch
       if (palette.LightVibrant) {
@@ -1308,7 +1309,7 @@ function ComplexesView() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message: "Failed to update field",
+        description: error instanceof Error ? error.message : "Failed to update field",
         variant: "destructive",
       });
     }
@@ -1583,64 +1584,58 @@ function TeamsView() {
   );
 }
 
-function AdminDashboard() {
-  const { user, logout } = useUser();
-  const [, setLocation] = useLocation();
-  const [activeView, setActiveView] = useState<View>('events');
+export default function AdminDashboard() {
+  const [location, setLocation] = useLocation();
+  const { user, logoutMutation } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const { setAppearance, appearance } = useTheme();
+
+  // Declare all state variables at the top
+  const [currentView, setCurrentView] = useState<View>('events');
+  const [currentSettingsView, setCurrentSettingsView] = useState<SettingsView>('general');
   const [showWelcome, setShowWelcome] = useState(true);
-  const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
-  const [showInternalOps, setShowInternalOps] = useState(false); // Added state for Internal Ops panel
-  const { setAppearance, currentAppearance } = useTheme();
-  const [theme, setTheme] = useState(currentAppearance); // Added theme state
+  const [showInternalOps, setShowInternalOps] = useState(false);
+  const [theme, setTheme] = useState(appearance);
+  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
 
-  // Add Form Templates to the navigation
-  const formTemplatesButton = (
-    <Button
-      variant={activeView === 'formTemplates' ? 'secondary' : 'ghost'}
-      className="w-full justify-start"
-      onClick={() => setActiveView('formTemplates')}
-    >
-      <FormInput className="mr-2 h-4 w-4" />
-      Form Templates
-    </Button>
-  );
+  // Single handleLogout function
+  const handleLogout = async () => {
+    try {
+      setShowLogoutOverlay(true);
+      await logoutMutation.mutateAsync();
+      setLocation('/auth');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast({
+        title: "Logout failed",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setShowLogoutOverlay(false);
+    }
+  };
 
-
+  // Effect to redirect if not logged in
   useEffect(() => {
     if (!user) {
-      return; // Wait for user data to load
-    }
-    if (!isAdminUser(user)) {
-      setLocation("/");
+      setLocation('/auth');
+    } else if (!user.isAdmin) {
+      setLocation('/');
     }
   }, [user, setLocation]);
 
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
-
-  const handleLogout = () => {
-    setShowLogoutOverlay(true);
-    setTimeout(async () => {
-      await logout();
-    }, 1500);
-  };
-
   const handleAppearanceToggle = async () => {
-    const newAppearance = currentAppearance === 'dark' ? 'light' : 'dark';
+    const newAppearance = appearance === 'dark' ? 'light' : 'dark';
+    setTheme(newAppearance);
     await setAppearance(newAppearance);
   };
 
-  const renderView = () => {
-    switch (activeView) {
+  const renderContent = () => {
+    switch (currentView) {
       case 'administrators':
         return <AdministratorsView />;
       case 'events':
@@ -1654,10 +1649,7 @@ function AdminDashboard() {
       case 'scheduling':
         return <SchedulingView />;
       case 'settings':
-        if (activeSettingsView === 'general') {
-          return <GeneralSettingsView />;
-        }
-        return <SettingsView activeSettingsView={activeSettingsView} />;
+        return <SettingsView currentView={currentSettingsView} setCurrentView={setCurrentSettingsView} />;
       case 'reports':
         return <ReportsView />;
       case 'account':
@@ -1689,9 +1681,9 @@ function AdminDashboard() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="h-screen flex overflow-hidden bg-background">
       {/* Sidebar */}
-      <div className="w-64 bg-card border-r flex flex-col h-full text-foreground">
+      <div className="w-64 border-r shrink-0">
         <div className="p-4 flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center gap-2 mb-6">
@@ -1702,81 +1694,81 @@ function AdminDashboard() {
           {/* Navigation */}
           <div className="space-y-2">
             <Button
-              variant={activeView === 'administrators' ? 'secondary' : 'ghost'}
+              variant={currentView === 'administrators' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('administrators')}
+              onClick={() => setCurrentView('administrators')}
             >
               <Shield className="mr-2 h-4 w-4" />
               Administrators
             </Button>
 
             <Button
-              variant={activeView === 'formTemplates' ? 'secondary' : 'ghost'}
+              variant={currentView === 'formTemplates' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('formTemplates')}
+              onClick={() => setCurrentView('formTemplates')}
             >
               <FormInput className="mr-2 h-4 w-4" />
               Form Templates
             </Button>
 
             <Button
-              variant={activeView === 'events' ? 'secondary' : 'ghost'}
+              variant={currentView === 'events' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('events')}
+              onClick={() => setCurrentView('events')}
             >
               <Calendar className="mr-2 h-4 w-4" />
               Events
             </Button>
 
             <Button
-              variant={activeView === 'teams' ? 'secondary' : 'ghost'}
+              variant={currentView === 'teams' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('teams')}
+              onClick={() => setCurrentView('teams')}
             >
               <Users className="mr-2 h-4 w-4" />
               Teams
             </Button>
 
             <Button
-              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
+              variant={currentView === 'complexes' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('complexes')}
+              onClick={() => setCurrentView('complexes')}
             >
               <Building2 className="mr-2 h-4 w-4" />
               Field Complexes
             </Button>
 
             <Button
-              variant={activeView === 'households' ? 'secondary' : 'ghost'}
+              variant={currentView === 'households' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('households')}
+              onClick={() => setCurrentView('households')}
             >
               <Home className="mr-2 h-4 w-4" />
               MatchPro Client
             </Button>
 
             <Button
-              variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
+              variant={currentView === 'scheduling' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('scheduling')}
+              onClick={() => setCurrentView('scheduling')}
             >
               <CalendarDays className="mr-2 h-4 w-4" />
               Scheduling
             </Button>
 
             <Button
-              variant={activeView === 'reports' ? 'secondary' : 'ghost'}
+              variant={currentView === 'reports' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('reports')}
+              onClick={() => setCurrentView('reports')}
             >
               <FileText className="mr-2 h-4 w-4" />
               Reports and Financials
             </Button>
 
             <Button
-              variant={activeView === 'files' ? 'secondary' : 'ghost'}
+              variant={currentView === 'files' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('files')}
+              onClick={() => setCurrentView('files')}
             >
               <ImageIcon className="mr-2 h-4 w-4" />
               File Manager
@@ -1790,7 +1782,7 @@ function AdminDashboard() {
             >
               <CollapsibleTrigger asChild>
                 <Button
-                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+                  variant={currentView === 'settings' ? 'secondary' : 'ghost'}
                   className="w-full justify-between"
                 >
                   <span className="flex items-center">
@@ -1806,44 +1798,44 @@ function AdminDashboard() {
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-2 pl-4">
                 <Button
-                  variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
+                  variant={currentSettingsView === 'branding' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
                   onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('branding');
+                    setCurrentView('settings');
+                    setCurrentSettingsView('branding');
                   }}
                 >
                   <Palette className="mr-2 h-4 w-4" />
                   Branding
                 </Button>
                 <Button
-                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
+                  variant={currentSettingsView === 'payments' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
                   onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('payments');
+                    setCurrentView('settings');
+                    setCurrentSettingsView('payments');
                   }}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
                   Payments
                 </Button>
                 <Button
-                  variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
+                  variant={currentSettingsView === 'general' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
                   onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('general');
+                    setCurrentView('settings');
+                    setCurrentSettingsView('general');
                   }}
                 >
                   <Settings className="mr-2 h-4 w-4" />
                   General
                 </Button>
                 <Button
-                  variant={activeSettingsView === 'styling' ? 'secondary' : 'ghost'}
+                  variant={currentSettingsView === 'styling' ? 'secondary' : 'ghost'}
                   className="w-full justify-start"
                   onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('styling');
+                    setCurrentView('settings');
+                    setCurrentSettingsView('styling');
                   }}
                 >
                   <Palette className="mr-2 h-4 w-4" />
@@ -1854,9 +1846,9 @@ function AdminDashboard() {
 
             {/* Account */}
             <Button
-              variant={activeView === 'account' ? 'secondary' : 'ghost'}
+              variant={currentView === 'account' ? 'secondary' : 'ghost'}
               className="w-full justify-start"
-              onClick={() => setActiveView('account')}
+              onClick={() => setCurrentView('account')}
             >
               <User className="mr-2 h-4 w-4" />
               My Account
@@ -1866,9 +1858,9 @@ function AdminDashboard() {
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </Button>
-            <Button 
-              onClick={handleAppearanceToggle} 
-              className="w-full" 
+            <Button
+              onClick={handleAppearanceToggle}
+              className="w-full"
               variant="outline"
             >
               {theme === 'dark' ? (
@@ -1889,7 +1881,7 @@ function AdminDashboard() {
           {/* Welcome Card */}
           {showWelcome && (
             <Card className="mb-6 relative">
-              <button 
+              <button
                 onClick={() => setShowWelcome(false)}
                 className="absolute top-2 right-2 p-2 hover:bg-muted rounded-full"
               >
@@ -1911,29 +1903,27 @@ function AdminDashboard() {
             </Card>
           )}
 
-          {renderView()}
+          {renderContent()}
         </div>
 
         {/* Internal Operations Panel */}
         {showInternalOps && (
           <InternalOperationsPanel
-            setActiveView={setActiveView}
+            setActiveView={setCurrentView}
             openSettings={(section) => {
               setIsSettingsOpen(true);
-              setActiveSettingsView(section as SettingsView);
+              setCurrentSettingsView(section as SettingsView);
             }}
           />
         )}
       </div>
-      {showLogoutOverlay && (
-        <LogoutOverlay onFinished={() => setShowLogoutOverlay(false)} />
-      )}
+      {showLogoutOverlay && <LogoutOverlay />}
     </div>
   );
 }
 
-function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView }) {
-  switch (activeSettingsView) {
+function SettingsView({ currentView, setCurrentView }: { currentView: SettingsView; setCurrentView: (view: SettingsView) => void }) {
+  switch (currentView) {
     case 'branding':
       return (
         <BrandingPreviewProvider>
@@ -1941,7 +1931,7 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
             <div className="col-span-1">
               <OrganizationSettingsForm />
             </div>
-            <BrandingPreview />
+            <BrandingPreviewCard />
           </div>
         </BrandingPreviewProvider>
       );
@@ -2134,8 +2124,8 @@ function CouponManagement() {
                   </TableCell>
                   <TableCell>{coupon.amount}</TableCell>
                   <TableCell>
-                    {coupon.expirationDate ? 
-                      new Date(coupon.expirationDate).toLocaleDateString() : 
+                    {coupon.expirationDate ?
+                      new Date(coupon.expirationDate).toLocaleDateString() :
                       'No expiration'
                     }
                   </TableCell>
@@ -2161,7 +2151,7 @@ function CouponManagement() {
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => handleDeleteCoupon(coupon.id)}
                           className="text-red-600"
                         >

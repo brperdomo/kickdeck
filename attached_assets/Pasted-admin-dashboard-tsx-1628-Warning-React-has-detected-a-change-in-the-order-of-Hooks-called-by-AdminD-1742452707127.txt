@@ -1,0 +1,95 @@
+admin-dashboard.tsx:1628 Warning: React has detected a change in the order of Hooks called by AdminDashboard. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://reactjs.org/link/rules-of-hooks
+
+   Previous render            Next render
+   ------------------------------------------------------
+1. useContext                 useContext
+2. useContext                 useContext
+3. useContext                 useContext
+4. useContext                 useContext
+5. useEffect                  useEffect
+6. useState                   useState
+7. useCallback                useCallback
+8. useSyncExternalStore       useSyncExternalStore
+9. useEffect                  useEffect
+10. useContext                useContext
+11. useState                  useState
+12. useEffect                 useEffect
+13. useCallback               useCallback
+14. useSyncExternalStore      useSyncExternalStore
+15. useCallback               useCallback
+16. useContext                useContext
+17. useState                  useState
+18. useEffect                 useEffect
+19. useCallback               useCallback
+20. useSyncExternalStore      useSyncExternalStore
+21. useCallback               useCallback
+22. useContext                useContext
+23. useState                  useState
+24. useEffect                 useEffect
+25. useCallback               useCallback
+26. useSyncExternalStore      useSyncExternalStore
+27. useCallback               useCallback
+28. useContext                useContext
+29. useSyncExternalStore      useSyncExternalStore
+30. useRef                    useRef
+31. useInsertionEffect        useInsertionEffect
+32. useState                  useState
+33. useState                  useState
+34. useState                  useState
+35. useState                  useState
+36. useState                  useState
+37. useState                  useState
+38. useState                  useState
+39. useState                  useState
+40. useState                  useState
+41. useEffect                 useEffect
+42. useContext                useContext
+43. useState                  useState
+44. useEffect                 useEffect
+45. useCallback               useCallback
+46. useSyncExternalStore      useSyncExternalStore
+47. useCallback               useCallback
+48. useContext                useContext
+49. useState                  useState
+50. useEffect                 useEffect
+51. useCallback               useCallback
+52. useSyncExternalStore      useSyncExternalStore
+53. useCallback               useCallback
+54. useCallback               useCallback
+55. useCallback               useCallback
+56. useCallback               useCallback
+57. useState                  useState
+58. useEffect                 useEffect
+59. undefined                 useState
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2667:28)
+    at ProtectedRoute (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:42:38)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=82661182:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:79:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=82661182:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=82661182:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=82661182:2829:3)
+    at App
+
+chunk-RPCDYKBN.js?v=82661182:11678 Uncaught Error: Rendered more hooks than during the previous render.
+    at AdminDashboard (admin-dashboard.tsx:1628:53)
+chunk-RPCDYKBN.js?v=82661182:11678 Uncaught Error: Rendered more hooks than during the previous render.
+    at AdminDashboard (admin-dashboard.tsx:1628:53)
+chunk-RPCDYKBN.js?v=82661182:14032 The above error occurred in the <AdminDashboard> component:
+
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2667:28)
+    at ProtectedRoute (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:42:38)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=82661182:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:79:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=82661182:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=82661182:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=82661182:2829:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-RPCDYKBN.js?v=82661182:11678 Uncaught Error: Rendered more hooks than during the previous render.
+    at AdminDashboard (admin-dashboard.tsx:1628:53)
