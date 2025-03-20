@@ -74,9 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return res.json();
     },
     onSuccess: (data) => {
-      // Immediately update the user data in the cache
       queryClient.setQueryData(["/api/user"], data.user);
-      // Force a refetch to ensure we have the latest data
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       toast({
         title: "Success",

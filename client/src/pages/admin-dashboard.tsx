@@ -225,31 +225,13 @@ function AdministratorsView() {
   } | null>(null);
   const queryClient = useQueryClient();
 
-  // Add error boundary for query failures
-  const handleError = (error: Error) => {
-    toast({
-      title: "Error",
-      description: "Failed to load administrator data. Please try refreshing.",
-      variant: "destructive"
-    });
-    console.error("Admin data fetch error:", error);
-  };
-
   const administratorsQuery = useQuery({
     queryKey: ['/api/admin/administrators'],
     queryFn: async () => {
       const response = await fetch('/api/admin/administrators');
-      if (!response.ok) {
-        if (response.status === 401) {
-          window.location.href = '/login'; // Redirect to login if unauthorized
-          return null;
-        }
-        throw new Error('Failed to fetch administrators');
-      }
+      if (!response.ok) throw new Error('Failed to fetch administrators');
       return response.json();
-    },
-    retry: 1,
-    onError: handleError
+    }
   });
 
   const administrators = useMemo(() => {
@@ -1627,39 +1609,20 @@ function AdminDashboard() {
 
 
   useEffect(() => {
-    if (user === null) {
-      setLocation("/login");
-      return;
+    if (!user) {
+      return; // Wait for user data to load
     }
     if (!isAdminUser(user)) {
       setLocation("/");
-      return;
     }
   }, [user, setLocation]);
 
-  // Clear queries and redirect on logout
-  useEffect(() => {
-    const handleAuth = async () => {
-      if (!user) {
-        queryClient.clear();
-        setLocation("/login");
-      }
-    };
-    handleAuth();
-  }, [user, queryClient, setLocation]);
-
-  // Clear any stale TinyMCE instances on unmount
-  useEffect(() => {
-    return () => {
-      if (window.tinymce) {
-        window.tinymce.remove();
-      }
-    };
-  }, []);
-
   if (!user) {
-    setLocation("/login");
-    return null;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);

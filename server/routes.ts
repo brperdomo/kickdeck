@@ -13,7 +13,6 @@ import foldersRouter from "./routes/folders";
 import organizationsRouter from "./routes/admin/organizations"; 
 import emailProvidersRouter from "./routes/admin/email-providers";
 import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings";
-import userRouter from "./routes/user";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { sql, eq, and, or, inArray } from "drizzle-orm";
 import {
@@ -117,9 +116,6 @@ export function registerRoutes(app: Express): Server {
     // Add organization identification middleware
     app.use(identifyOrganization);
 
-    // Register user routes
-    app.use('/api/user', userRouter);
-    
     // Register admin routes
     app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
