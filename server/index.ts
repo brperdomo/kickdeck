@@ -17,9 +17,13 @@ const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
-// Health check endpoint for Cloud Run
-app.get('/_health', (req, res) => {
-  res.status(200).send('OK');
+// Health check endpoint that works in both dev and prod
+app.get('/', (req, res, next) => {
+  if (process.env.NODE_ENV !== 'production' && req.headers.accept?.includes('text/html')) {
+    next(); // Let Vite handle HTML requests in development
+  } else {
+    res.status(200).send('OK'); // Handle health checks and API requests
+  }
 });
 
 // Serve uploaded files
