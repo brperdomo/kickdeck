@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type InsertUser } from "@db/schema";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { YouTubeBackground } from "@/components/ui/YouTubeBackground";
@@ -16,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Link } from "wouter";
 import { useEffect } from "react";
@@ -47,7 +46,7 @@ export default function AuthPage() {
 
   // Handle redirect for both successful mutation and existing user
   useEffect(() => {
-    const redirectUser = (userData: { isAdmin: boolean } | null) => {
+    const handleRedirect = (userData: { isAdmin: boolean } | null) => {
       if (!userData) return;
 
       const redirectPath = sessionStorage.getItem('redirectAfterAuth');
@@ -61,15 +60,15 @@ export default function AuthPage() {
       }
     };
 
-    // Check for successful login mutation
+    // Handle login mutation success
     if (loginMutation.isSuccess && loginMutation.data?.user) {
-      redirectUser(loginMutation.data.user);
+      handleRedirect(loginMutation.data.user);
     }
-    // Check for existing user session
-    else if (user) {
-      redirectUser(user);
+    // Handle existing session
+    else if (user && !loginMutation.isPending) {
+      handleRedirect(user);
     }
-  }, [loginMutation.isSuccess, loginMutation.data, user, setLocation]);
+  }, [loginMutation.isSuccess, loginMutation.data?.user, user, loginMutation.isPending, setLocation]);
 
   async function onSubmit(data: LoginFormData) {
     try {
@@ -79,8 +78,8 @@ export default function AuthPage() {
     }
   }
 
-  // Show loading spinner only during initial auth check
-  if (isLoading) {
+  // Show loading spinner during initial load or auth state changes
+  if (isLoading || (loginMutation.isSuccess && !user)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

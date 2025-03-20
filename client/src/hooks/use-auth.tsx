@@ -76,16 +76,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return res.json();
     },
     onSuccess: (data) => {
-      // Immediately update the user data in the cache
+      // Update cache immediately to avoid white flash
       queryClient.setQueryData(["/api/user"], data.user);
-      // Force a refetch to ensure we have the latest data
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+
       toast({
         title: "Success",
         description: "Successfully logged in",
       });
     },
     onError: (error: Error) => {
+      // Clear user data on error
+      queryClient.setQueryData(["/api/user"], null);
       toast({
         title: "Login failed",
         description: error.message,
@@ -106,8 +107,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     },
     onSuccess: () => {
+      // Clear user data immediately
       queryClient.setQueryData(["/api/user"], null);
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      // Reset all queries
+      queryClient.resetQueries();
+
+      toast({
+        title: "Success",
+        description: "Successfully logged out",
+      });
     },
     onError: (error: Error) => {
       toast({
@@ -133,14 +141,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return res.json();
     },
     onSuccess: (data) => {
+      // Update cache immediately
       queryClient.setQueryData(["/api/user"], data.user);
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+
       toast({
         title: "Success",
         description: "Registration successful",
       });
     },
     onError: (error: Error) => {
+      queryClient.setQueryData(["/api/user"], null);
       toast({
         title: "Registration failed",
         description: error.message,
