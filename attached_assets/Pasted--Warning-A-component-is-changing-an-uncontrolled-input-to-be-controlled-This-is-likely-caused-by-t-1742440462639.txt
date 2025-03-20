@@ -1,0 +1,41 @@
+ Warning: A component is changing an uncontrolled input to be controlled. This is likely caused by the value changing from undefined to a defined value, which should not happen. Decide between using a controlled or uncontrolled input element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components
+    at input
+    at _c (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/input.tsx:20:11)
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at StyleSettingsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/StyleSettingsView.tsx:30:37)
+    at div
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=82661182:41:13
+    at Presence (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-4K3L2YAF.js?v=82661182:24:11)
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…orkspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=82661182:176:13
+    at _c5 (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/tabs.tsx:68:12)
+    at div
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=82661182:41:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=82661182:38:15)
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=82661182:54:7
+    at div
+    at GeneralSettingsView
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2667:28)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=82661182:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=82661182:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:55:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=82661182:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=82661182:64:5)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=82661182:2829:3)
+    at App
+onVisualColorChange_	@	unknown
+onColorSelectionRingUpdate_	@	unknown
+updateColor	@	unknown
+onPositionChange_	@	unknown
+set	@	unknown
+moveTo	@	unknown
+moveColorSelectionRingTo_	@	unknown
+pointerDown	@	unknown
+onColorWellMouseDown_	@	unknown
