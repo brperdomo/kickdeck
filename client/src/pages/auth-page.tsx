@@ -45,21 +45,24 @@ export default function AuthPage() {
     },
   });
 
-  // Handle redirect after successful login
+  // Handle redirect on login success
   useEffect(() => {
-    if (user) {
+    if (loginMutation.isSuccess || user) {
       const redirectPath = sessionStorage.getItem('redirectAfterAuth');
-
       if (redirectPath) {
-        // If we have a redirect path (e.g., from event registration), use it
         sessionStorage.removeItem('redirectAfterAuth');
         setLocation(redirectPath);
       } else {
-        // Otherwise redirect based on user role
-        setLocation(user.isAdmin ? '/admin' : '/');
+        // Handle role-based redirection
+        const userData = loginMutation.data?.user || user;
+        if (userData?.isAdmin) {
+          setLocation('/admin');
+        } else {
+          setLocation('/');
+        }
       }
     }
-  }, [user, setLocation]);
+  }, [loginMutation.isSuccess, user, setLocation]);
 
   async function onSubmit(data: LoginFormData) {
     try {
