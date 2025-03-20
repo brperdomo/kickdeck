@@ -72,17 +72,23 @@ async function testDbConnection() {
 }
 
 (async () => {
+  let server;
+  
   try {
     // Test database connection first
     const dbConnected = await testDbConnection();
     if (!dbConnected) {
-      throw new Error("Could not connect to database");
+      log("Database connection failed - retrying in 5 seconds...");
+      setTimeout(() => testDbConnection(), 5000);
+      return;
     }
 
     // Run database migrations
     const migrationsResult = await createTables();
     if (!migrationsResult.success) {
-      throw new Error("Failed to run migrations: " + migrationsResult.error);
+      log("Migration failed: " + migrationsResult.error + " - retrying in 5 seconds...");
+      setTimeout(() => createTables(), 5000);
+      return;
     }
     log("Database migrations completed successfully");
 
@@ -90,9 +96,15 @@ async function testDbConnection() {
     await createAdmin();
     log("Admin user setup completed");
 
-
     // Register routes first to ensure all middleware is set up
-    const server = registerRoutes(app);
+
+    const PORT = process.env.PORT || 5000;
+    server = app.listen(PORT, () => {
+      log(`Server is running on port ${PORT}`);
+    });
+
+    // Register routes
+    registerRoutes(app);
 
     // Create WebSocket server
     const wss = new WebSocketServer({ 
@@ -108,15 +120,30 @@ async function testDbConnection() {
     wss.on('connection', (ws) => {
       log("New WebSocket connection established");
 
+      // Set a timeout to close idle connections after 5 minutes
+      const idleTimeout = 5 * 60 * 1000; // 5 minutes in milliseconds
+      let timeoutId = setTimeout(() => {
+        log("Closing idle WebSocket connection");
+        ws.close();
+      }, idleTimeout);
+
       ws.on('message', (message) => {
+        // Reset timeout on activity
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          log("Closing idle WebSocket connection");
+          ws.close();
+        }, idleTimeout);
+
         // Handle incoming messages
         log("Received WebSocket message: " + message);
       });
 
       ws.on('close', () => {
+        clearTimeout(timeoutId);
         log("WebSocket connection closed");
       });
-    });
+    }
 
     if (app.get("env") === "development") {
       // Setup Vite middleware
