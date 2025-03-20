@@ -209,7 +209,7 @@ router.get('/:id/age-groups', async (req, res) => {
     if (ageGroups.length === 0) {
       // Get the seasonal scope ID from event settings
       const scopeSetting = await db.query.eventSettings.findFirst({
-        where: eq(eventSettings.eventId, eventId.toString())
+        where: eq(eventSettings.eventId, eventId)
       });
 
       if (scopeSetting) {
@@ -222,6 +222,8 @@ router.get('/:id/age-groups', async (req, res) => {
         });
 
         if (scopeAgeGroups.length > 0) {
+          console.log(`Found ${scopeAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
+
           // Convert scope age groups to event age groups format
           const ageGroupsToInsert = scopeAgeGroups.map(ag => ({
             eventId: eventId,
@@ -239,7 +241,7 @@ router.get('/:id/age-groups', async (req, res) => {
             birthDateEnd: new Date(ag.birthYear, 11, 31).toISOString().split('T')[0]
           }));
 
-          // Insert the age groups and update our ageGroups array
+          // Insert the age groups
           await db.insert(eventAgeGroups).values(ageGroupsToInsert);
           ageGroups = ageGroupsToInsert;
           console.log(`Created ${ageGroups.length} age groups from seasonal scope`);
@@ -494,11 +496,17 @@ router.get('/:id/edit', async (req, res) => {
 
     // Get the seasonal scope ID from event settings
     const scopeSetting = await db.query.eventSettings.findFirst({
-      where: eq(eventSettings.eventId, eventId.toString())
+      where: eq(eventSettings.eventId, eventId)
     });
 
     const seasonalScopeId = scopeSetting ? parseInt(scopeSetting.settingValue) : null;
     console.log(`Found seasonal scope ID for event: ${seasonalScopeId}`);
+
+    // Also fetch the age groups count for verification
+    const ageGroupsCount = await db.query.eventAgeGroups.findMany({
+      where: eq(eventAgeGroups.eventId, eventId)
+    });
+    console.log(`Found ${ageGroupsCount.length} age groups for event ${eventId}`);
 
     res.json({
       ...event,
@@ -601,8 +609,7 @@ router.delete('/:id', async (req, res) => {
 
   try {
     await db.transaction(async (tx) => {
-      // Delete all related records first, handling each one separately
-      try {
+      // Delete all related records first, handling each one separately      try {
         await tx.delete(eventAgeGroups)
           .where(eq(eventAgeGroups.eventId, eventId));
         console.log('Deleted event age groups');
