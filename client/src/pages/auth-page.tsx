@@ -53,16 +53,14 @@ export default function AuthPage() {
       const response = await fetch('/api/user');
       const userData = await response.json();
       
-      if (userData.isAdmin) {
+      const redirectPath = sessionStorage.getItem('redirectAfterAuth');
+      if (redirectPath) {
+        sessionStorage.removeItem('redirectAfterAuth');
+        window.location.href = redirectPath;
+      } else if (userData.isAdmin) {
         window.location.href = '/admin';
       } else {
-        const redirectPath = sessionStorage.getItem('redirectAfterAuth');
-        if (redirectPath) {
-          sessionStorage.removeItem('redirectAfterAuth');
-          window.location.href = redirectPath;
-        } else {
-          window.location.href = '/dashboard';
-        }
+        window.location.href = '/dashboard';
       }
     };
 
