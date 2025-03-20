@@ -143,7 +143,7 @@ async function testDbConnection() {
         clearTimeout(timeoutId);
         log("WebSocket connection closed");
       });
-    }
+    });
 
     if (app.get("env") === "development") {
       // Setup Vite middleware
