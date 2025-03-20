@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type InsertUser } from "@db/schema";
-import { useUser } from "@/hooks/use-user";
+import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { YouTubeBackground } from "@/components/ui/YouTubeBackground";
+import { useLocation } from "wouter";
 import {
   Form,
   FormControl,
@@ -15,9 +16,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy } from "lucide-react";
+import { Trophy, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Link } from "wouter";
+import { useEffect } from "react";
 
 // Login schema
 const loginSchema = z.object({
@@ -32,7 +34,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function AuthPage() {
   const { toast } = useToast();
-  const { login } = useUser();
+  const { loginMutation } = useAuth();
+  const [, setLocation] = useLocation();
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -42,39 +45,28 @@ export default function AuthPage() {
     },
   });
 
+  // Handle redirect after successful login
+  useEffect(() => {
+    if (loginMutation.isSuccess) {
+      const redirectPath = sessionStorage.getItem('redirectAfterAuth');
+      if (redirectPath) {
+        sessionStorage.removeItem('redirectAfterAuth');
+        setLocation(redirectPath);
+      } else {
+        setLocation('/');
+      }
+    }
+  }, [loginMutation.isSuccess, setLocation]);
+
   async function onSubmit(data: LoginFormData) {
     try {
-      const result = await login({
+      await loginMutation.mutateAsync({
         username: data.loginEmail,
         password: data.password,
-        email: data.loginEmail,
-        firstName: "",
-        lastName: "",
-        phone: null,
-        isParent: false,
-        isAdmin: false,
-        createdAt: new Date().toISOString(),
-      });
-
-      if (!result.ok) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: result.message,
-        });
-        return;
-      }
-
-      toast({
-        title: "Success",
-        description: "Login successful",
       });
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message,
-      });
+      // Error handling is done in the mutation's onError callback
+      console.error('Login error:', error);
     }
   }
 
@@ -147,8 +139,16 @@ export default function AuthPage() {
                   <Button
                     type="submit"
                     className="w-full h-11 text-base bg-green-600 hover:bg-green-700 transition-colors"
+                    disabled={loginMutation.isPending}
                   >
-                    Login
+                    {loginMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      'Login'
+                    )}
                   </Button>
                   <Link href="/forgot-password">
                     <Button variant="link" className="w-full text-sm text-green-600 p-0 h-auto font-semibold hover:text-green-700">
