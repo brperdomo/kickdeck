@@ -175,8 +175,11 @@ export function StyleSettingsView() {
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">UI Colors</h3>
         <Toggle
-          pressed={currentTheme === 'dark'}
-          onPressedChange={handleThemeToggle}
+          pressed={theme === 'dark'}
+          onPressedChange={(pressed) => {
+            const newTheme = pressed ? 'dark' : 'light';
+            setAppearance(newTheme);
+          }}
           aria-label="Toggle dark mode"
           className="p-2"
         >
