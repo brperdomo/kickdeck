@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
     // Save the seasonal scope ID in event settings
     if (seasonalScopeId) {
       await db.insert(eventSettings).values({
-        eventId: parseInt(event.id.toString()), // Convert BigInt to number
+        eventId: event.id.toString(), // Store as string since eventId column is text
         settingKey: 'seasonalScopeId',
         settingValue: seasonalScopeId.toString(),
         createdAt: new Date().toISOString(),
@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
       // Convert scope age groups to event age groups
       if (scopeAgeGroups.length > 0) {
         const ageGroupsToInsert = scopeAgeGroups.map(ag => ({
-          eventId: parseInt(event.id.toString()), // Convert BigInt to number
+          eventId: event.id.toString(), // Store as string since eventId column is text
           ageGroup: ag.ageGroup,
           birthYear: ag.birthYear,
           gender: ag.gender,
@@ -194,7 +194,7 @@ router.patch('/:id', async (req, res) => {
 
 // Get event age groups endpoint
 router.get('/:id/age-groups', async (req, res) => {
-  const eventId = parseInt(req.params.id);
+  const eventId = req.params.id; // Keep as string
   console.log(`Fetching age groups for event: ${eventId}`);
 
   try {
