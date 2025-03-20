@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../db';
-import { events, eventAgeGroups, eventSettings } from '@db/schema';
+import { events, eventAgeGroups, eventSettings, teams, tournamentGroups, eventAdministrators, eventFees, eventComplexes } from '@db/schema';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -609,20 +609,76 @@ router.delete('/:id', async (req, res) => {
 
   try {
     await db.transaction(async (tx) => {
-      // Delete all related records first, handling each one separately      try {
-            await tx.delete(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId));
-      console.log('Deleted event age groups');
+      // Delete related records in correct order to respect foreign key constraints
+
+      // 1. Delete teams first since they reference tournament groups
+      try {
+        const deletedTeams = await tx.delete(teams)
+          .where(eq(teams.eventId, eventId))
+          .returning();
+        console.log(`Deleted ${deletedTeams.length} teams`);
+      } catch (error) {
+        console.log('No teams to delete or error:', error);
+      }
+
+      // 2. Delete tournament groups
+      try {
+        const deletedGroups = await tx.delete(tournamentGroups)
+          .where(eq(tournamentGroups.eventId, eventId))
+          .returning();
+        console.log(`Deleted ${deletedGroups.length} tournament groups`);
+      } catch (error) {
+        console.log('No tournament groups to delete or error:', error);
+      }
+
+      // 3. Delete age groups
+      try {
+        const deletedAgeGroups = await tx.delete(eventAgeGroups)
+          .where(eq(eventAgeGroups.eventId, eventId))
+          .returning();
+        console.log(`Deleted ${deletedAgeGroups.length} age groups`);
       } catch (error) {
         console.log('No age groups to delete or error:', error);
       }
 
+      // 4. Delete event settings
       try {
-        await tx.delete(eventSettings)
-          .where(eq(eventSettings.eventId, eventId));
-        console.log('Deleted event settings');
+        const deletedSettings = await tx.delete(eventSettings)
+          .where(eq(eventSettings.eventId, eventId))
+          .returning();
+        console.log(`Deleted ${deletedSettings.length} event settings`);
       } catch (error) {
         console.log('No settings to delete or error:', error);
+      }
+
+      // 5. Delete event administrators
+      try {
+        const deletedAdmins = await tx.delete(eventAdministrators)
+          .where(eq(eventAdministrators.eventId, eventId))
+          .returning();
+        console.log(`Deleted ${deletedAdmins.length} event administrators`);
+      } catch (error) {
+        console.log('No administrators to delete or error:', error);
+      }
+
+      // 6. Delete event fees
+      try {
+        const deletedFees = await tx.delete(eventFees)
+          .where(eq(eventFees.eventId, eventId))
+          .returning();
+        console.log(`Deleted ${deletedFees.length} event fees`);
+      } catch (error) {
+        console.log('No fees to delete or error:', error);
+      }
+
+      // 7. Delete event complexes
+      try {
+        const deletedComplexes = await tx.delete(eventComplexes)
+          .where(eq(eventComplexes.eventId, eventId))
+          .returning();
+        console.log(`Deleted ${deletedComplexes.length} event complexes`);
+      } catch (error) {
+        console.log('No complexes to delete or error:', error);
       }
 
       // Finally delete the event itself
@@ -633,9 +689,10 @@ router.delete('/:id', async (req, res) => {
       if (!deletedEvent) {
         throw new Error('Event not found');
       }
+
+      console.log(`Successfully deleted event ${eventId}`);
     });
 
-    console.log(`Successfully deleted event ${eventId}`);
     res.json({ message: 'Event deleted successfully' });
   } catch (error) {
     console.error('Error deleting event:', error);
