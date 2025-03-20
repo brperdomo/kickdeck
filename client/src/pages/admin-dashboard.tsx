@@ -1627,22 +1627,26 @@ function AdminDashboard() {
 
 
   useEffect(() => {
-    if (!user) {
-      return; // Wait for user data to load
+    if (user === null) {
+      setLocation("/login");
+      return;
     }
     if (!isAdminUser(user)) {
       setLocation("/");
+      return;
     }
   }, [user, setLocation]);
 
-  const queryClient = useQueryClient();
-
+  // Clear queries and redirect on logout
   useEffect(() => {
-    // Clear query cache on logout
-    if (!user) {
-      queryClient.clear();
-    }
-  }, [user, queryClient]);
+    const handleAuth = async () => {
+      if (!user) {
+        queryClient.clear();
+        setLocation("/login");
+      }
+    };
+    handleAuth();
+  }, [user, queryClient, setLocation]);
 
   // Clear any stale TinyMCE instances on unmount
   useEffect(() => {
