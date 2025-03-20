@@ -17,6 +17,11 @@ const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
+// Health check endpoint for Cloud Run
+app.get('/', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
