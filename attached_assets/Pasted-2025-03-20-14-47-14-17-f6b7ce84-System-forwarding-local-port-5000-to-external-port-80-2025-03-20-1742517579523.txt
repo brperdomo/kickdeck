@@ -1,0 +1,148 @@
+2025-03-20 14:47:14.17
+f6b7ce84
+System
+forwarding local port 5000 to external port 80
+2025-03-20 14:47:15.22
+f6b7ce84
+User
+> rest-express@1.0.0 start
+2025-03-20 14:47:15.22
+f6b7ce84
+User
+> NODE_ENV=production node dist/index.js
+2025-03-20 14:47:16.24
+f6b7ce84
+User
+Starting database migrations...
+2025-03-20 14:47:16.82
+f6b7ce84
+User
+Creating email templates table...
+2025-03-20 14:47:16.82
+f6b7ce84
+User
+Creating email_templates table...
+2025-03-20 14:47:16.84
+f6b7ce84
+User
+email_templates table created successfully
+2025-03-20 14:47:16.84
+f6b7ce84
+User
+Creating email template routing table...
+2025-03-20 14:47:16.84
+f6b7ce84
+User
+Creating email_template_routing table...
+2025-03-20 14:47:16.87
+f6b7ce84
+User
+email_template_routing table created successfully
+2025-03-20 14:47:16.87
+f6b7ce84
+User
+All tables created successfully
+2025-03-20 14:47:16.88
+f6b7ce84
+User
+npm notice
+2025-03-20 14:47:16.88
+f6b7ce84
+User
+npm notice New major version of npm available! 10.8.2 -> 11.2.0
+2025-03-20 14:47:16.88
+f6b7ce84
+User
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.2.0
+2025-03-20 14:47:16.88
+f6b7ce84
+User
+npm notice To update run: npm install -g npm@11.2.0
+2025-03-20 14:47:16.88
+f6b7ce84
+User
+npm notice
+2025-03-20 14:47:16.92
+f6b7ce84
+System
+command finished successfully with exit code 0
+2025-03-20 14:47:16.92
+f6b7ce84
+System
+main done, exiting
+2025-03-20 14:57:46.34
+30562aa2
+User
+6:57:46 PM [express] GET /api/user 401 in 2ms
+2025-03-20 15:16:31.29
+00a1e5b2
+System
+starting up user application
+2025-03-20 15:16:31.44
+00a1e5b2
+System
+forwarding local port 5000 to external port 80
+2025-03-20 15:16:32.64
+00a1e5b2
+User
+> rest-express@1.0.0 start
+2025-03-20 15:16:32.64
+00a1e5b2
+User
+> NODE_ENV=production node dist/index.js
+2025-03-20 15:16:33.58
+00a1e5b2
+User
+Starting database migrations...
+2025-03-20 15:16:33.81
+00a1e5b2
+User
+7:16:33 PM [express] Database connection successful
+2025-03-20 15:16:33.81
+00a1e5b2
+User
+Starting database migrations...
+2025-03-20 15:16:33.81
+00a1e5b2
+User
+Creating email templates table...
+2025-03-20 15:16:33.81
+00a1e5b2
+User
+Creating email_templates table...
+2025-03-20 15:16:33.83
+00a1e5b2
+User
+email_templates table created successfully
+2025-03-20 15:16:33.83
+00a1e5b2
+User
+Creating email template routing table...
+2025-03-20 15:16:33.83
+00a1e5b2
+User
+Creating email_template_routing table...
+2025-03-20 15:16:33.83
+00a1e5b2
+User
+Creating email templates table...
+2025-03-20 15:16:33.83
+00a1e5b2
+User
+Creating email_templates table...
+2025-03-20 15:16:33.85
+00a1e5b2
+User
+email_template_routing table created successfully
+2025-03-20 15:16:33.85
+00a1e5b2
+User
+All tables created successfully
+2025-03-20 15:16:33.86
+00a1e5b2
+User
+npm notice
+2025-03-20 15:16:33.86
+00a1e5b2
+User
+npm notice New major version of npm available! 10.8.2 -> 11.2.0
