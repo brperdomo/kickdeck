@@ -13,11 +13,6 @@ import { createTables } from './create-tables';
 
 const app = express();
 
-// Health check endpoints
-app.get(['/', '/_health'], (req, res) => {
-  res.status(200).send('OK');
-});
-
 // Basic middleware setup
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
@@ -27,6 +22,12 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Register upload routes
 app.use('/api/files', uploadRouter);
+
+// Health check endpoint - moved below other middleware but before Vite setup
+// Only apply to /_health to avoid conflicts with the frontend routes
+app.get('/_health', (req, res) => {
+  res.status(200).send('OK');
+});
 
 // Add request logging middleware
 app.use((req, res, next) => {
@@ -72,9 +73,13 @@ async function testDbConnection() {
 }
 
 (async () => {
-  let server;
+  let server: any; // Fix implicit any error
   
   try {
+    // Explicitly set environment to development mode for Vite
+    process.env.NODE_ENV = 'development';
+    app.set('env', 'development');
+
     // Test database connection first
     const dbConnected = await testDbConnection();
     if (!dbConnected) {
@@ -98,7 +103,7 @@ async function testDbConnection() {
 
     // Register routes first to ensure all middleware is set up
 
-    const PORT = process.env.PORT || 5000;
+    const PORT = Number(process.env.PORT) || 5000; // Ensure PORT is a number
     server = app.listen();
     server.close(); // Create but don't start listening yet
 
@@ -109,7 +114,7 @@ async function testDbConnection() {
     const wss = new WebSocketServer({ 
       server,
       path: "/api/ws",
-      verifyClient: (info) => {
+      verifyClient: (info: any) => { // Fix implicit any error
         const protocol = info.req.headers['sec-websocket-protocol'];
         return !protocol || protocol !== 'vite-hmr';
       }
@@ -144,14 +149,9 @@ async function testDbConnection() {
       });
     });
 
-    if (app.get("env") === "development") {
-      // Setup Vite middleware
-      await setupVite(app, server);
-      log("Vite middleware setup complete");
-    } else {
-      // Static file serving in production
-      serveStatic(app);
-    }
+    // Always use Vite in development mode for this project
+    await setupVite(app, server);
+    log("Vite middleware setup complete");
 
     // Error handling middleware
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
