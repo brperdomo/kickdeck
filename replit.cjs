@@ -1,145 +1,97 @@
 /**
- * Replit deployment entry point (CommonJS version)
- * This file serves as the entry point for Replit deployments in CommonJS format
+ * CommonJS entry point specifically for Replit deployment
  */
-
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const { Client } = require('pg');
 
+// Create Express app
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-/**
- * Tests the database connection
- * @returns {Promise<boolean>} Whether the connection was successful
- */
-async function testDbConnection() {
-  console.log('Testing database connection...');
+// Setup database connection
+async function setupDatabase() {
   try {
-    if (!process.env.DATABASE_URL) {
-      console.error('DATABASE_URL environment variable is not set');
-      return false;
-    }
-    
     const client = new Client({
-      connectionString: process.env.DATABASE_URL
+      connectionString: process.env.DATABASE_URL,
     });
     await client.connect();
-    const result = await client.query('SELECT NOW()');
-    console.log('Database connection successful:', result.rows[0].now);
-    await client.end();
-    return true;
+    console.log('Database connected successfully');
+    return { client, connected: true };
   } catch (error) {
-    console.error('Database connection failed:', error.message);
-    return false;
+    console.error('Database connection error:', error);
+    return { client: null, connected: false };
   }
 }
 
-/**
- * Setup diagnostic endpoints for troubleshooting deployment issues
- * @param {express.Application} app - Express application
- * @param {boolean} dbConnected - Whether the database is connected
- */
-function setupDiagnosticEndpoints(app, dbConnected) {
-  // Basic health check endpoint
-  app.get('/api/health', (req, res) => {
-    res.json({
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      mode: 'CommonJS',
-      node_version: process.version,
-      database: {
-        connected: dbConnected
-      },
-      environment: process.env.NODE_ENV || 'development'
-    });
-  });
-  
-  // Deployment status endpoint
-  app.get('/api/deployment/status', (req, res) => {
-    // Check if frontend is built
-    const publicPath = path.join(__dirname, 'dist/public');
-    const indexPath = path.join(publicPath, 'index.html');
-    
-    const frontendBuilt = fs.existsSync(indexPath);
-    
-    res.json({
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      deployment: {
-        entry_point: 'replit.cjs (CommonJS)',
-        frontend_built: frontendBuilt,
-        static_path: publicPath,
-        index_found: frontendBuilt
-      },
-      database: {
-        connected: dbConnected,
-        url_set: !!process.env.DATABASE_URL
-      },
-      server: {
-        port: PORT,
-        node_env: process.env.NODE_ENV || 'development'
-      }
-    });
-  });
+// Check if dist/public/index.html exists
+function distExists() {
+  return fs.existsSync(path.join(__dirname, 'dist/public/index.html'));
 }
 
-/**
- * Start the server with replit-specific configuration
- * @returns {Promise<void>}
- */
-async function startServer() {
-  console.log('Starting server with Replit configuration (CommonJS)...');
+// Serve static files
+app.use(express.static(path.join(__dirname, 'dist/public')));
+
+// Log all requests
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// API health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    version: '1.0.0', 
+    mode: 'replit-commonjs',
+    distExists: distExists() 
+  });
+});
+
+// API deployment status endpoint
+app.get('/api/deployment/status', (req, res) => {
+  res.json({
+    status: 'ok',
+    entryPoint: 'replit.cjs (CommonJS)',
+    nodeVersion: process.version,
+    env: process.env.NODE_ENV || 'development',
+    time: new Date().toISOString(),
+    distExists: distExists(),
+    files: fs.readdirSync(path.join(__dirname)).slice(0, 10)
+  });
+});
+
+// Fallback route for SPA
+app.get('*', (req, res) => {
+  // Check if the request looks like an API call
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
   
-  // Test database connection
-  const dbConnected = await testDbConnection();
-  
-  // Add middleware
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-  
-  // Setup diagnostic endpoints
-  setupDiagnosticEndpoints(app, dbConnected);
-  
-  // Serve static files from dist/public
-  const staticDir = path.join(__dirname, 'dist/public');
-  if (fs.existsSync(staticDir)) {
-    console.log(`Serving static files from: ${staticDir}`);
-    app.use(express.static(staticDir));
-    
-    // Single page app fallback
-    app.get('*', (req, res) => {
-      // Skip API routes
-      if (req.path.startsWith('/api/')) {
-        return res.status(404).json({ error: 'API endpoint not found' });
-      }
-      
-      const indexFile = path.join(staticDir, 'index.html');
-      if (fs.existsSync(indexFile)) {
-        return res.sendFile(indexFile);
-      }
-      
-      res.status(404).send('Not found');
-    });
+  if (distExists()) {
+    // Serve the index.html for all other routes
+    res.sendFile(path.join(__dirname, 'dist/public/index.html'));
   } else {
-    console.warn('Static directory not found:', staticDir);
-    app.get('*', (req, res) => {
-      if (req.path.startsWith('/api/')) return;
-      res.status(500).send('Frontend not built. Please run `npm run build` first.');
-    });
+    // Return error if dist doesn't exist
+    res.status(500).send('Frontend build not found. Please run deployment script first.');
   }
+});
+
+// Start the server
+async function startServer() {
+  // Initialize database
+  const { client, connected } = await setupDatabase();
   
-  // Start the server
+  // Start listening
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT} (CommonJS mode)`);
-    console.log(`Database connection: ${dbConnected ? 'Successful' : 'Failed'}`);
-    console.log(`Replit environment deployed successfully`);
+    console.log(`Server running on http://0.0.0.0:${PORT}`);
+    console.log(`Database connection: ${connected ? 'successful' : 'failed'}`);
+    console.log(`Dist exists: ${distExists()}`);
   });
 }
 
 // Start the server
-startServer().catch(error => {
-  console.error('Critical server error:', error);
+startServer().catch(err => {
+  console.error('Failed to start server:', err);
 });
