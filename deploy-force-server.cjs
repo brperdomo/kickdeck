@@ -45,7 +45,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "npm run build"]
-run = ["sh", "-c", "node server.js"]
+run = ["sh", "-c", "node server.cjs"]
 
 [[ports]]
 localPort = 3000
@@ -78,23 +78,23 @@ runButton = "Start application"
   console.error('Error updating .replit file:', error);
 }
 
-// Ensure the server.js file exists and is executable
+// Ensure the server.cjs file exists and is executable
 try {
-  const serverJsPath = path.join(__dirname, 'server.js');
+  const serverJsPath = path.join(__dirname, 'server.cjs');
   if (!fs.existsSync(serverJsPath)) {
-    console.error('server.js not found! Please create it first.');
+    console.error('server.cjs not found! Please create it first.');
     process.exit(1);
   }
   
   // On Unix systems, make it executable (won't hurt on Windows)
   try {
     execSync(`chmod +x ${serverJsPath}`);
-    console.log('Made server.js executable');
+    console.log('Made server.cjs executable');
   } catch (err) {
     console.log('Could not change file permissions, but this is OK on some systems:', err.message);
   }
 } catch (error) {
-  console.error('Error checking server.js:', error);
+  console.error('Error checking server.cjs:', error);
 }
 
 console.log('Deployment configuration complete!');

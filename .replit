@@ -9,7 +9,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "npm run build"]
-run = ["sh", "-c", "node server.js"]
+run = ["sh", "-c", "node deploy-dual-mode-server.js"]
 
 [[ports]]
 localPort = 3000

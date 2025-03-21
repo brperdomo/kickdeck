@@ -2,17 +2,12 @@
  * Direct override for Replit deployment health check issue
  * This file serves as a drop-in replacement that's directly called by Replit 
  * when it needs a health check, bypassing other entry points
- * ES Module version
+ * CommonJS version
  */
-import express from 'express';
-import path from 'path';
-import fs from 'fs';
-import http from 'http';
-import { fileURLToPath } from 'url';
-
-// Get __dirname equivalent in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require('express');
+const path = require('path');
+const fs = require('fs');
+const http = require('http');
 
 // Create the app and server 
 const app = express();
