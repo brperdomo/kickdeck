@@ -1,0 +1,62 @@
+2025-03-21T14:41:13Z info: Deployment: da8bda3b-5561-4c68-b5a0-45abc6dc1167
+2025-03-21T14:41:13Z info: Build: 83f58c70-0424-4db5-9d94-a0e39eee5601
+2025-03-21T14:41:13Z info: Connecting to builder
+2025-03-21T14:41:17Z info: Builder connected
+2025-03-21T14:41:18Z info: Installing packages
+2025-03-21T14:41:18Z info: Starting Build
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+
+vite v5.4.10 building for production...
+
+transforming...
+
+✓ 2230 modules transformed.
+
+rendering chunks...
+
+computing gzip size...
+
+../dist/public/index.html                       1.70 kB │ gzip:   0.66 kB
+
+✓ built in 14.44s
+
+
+  dist/index.js  227.5kb
+
+⚡ Done in 52ms
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.2.0
+npm notice To update run: npm install -g npm@11.2.0
+npm notice
+
+2025-03-21T14:41:39Z info: Pushing pid1 binary layer...
+2025-03-21T14:41:40Z info: Created pid1 binary layer
+2025-03-21T14:41:41Z info: Pushing hosting layer...
+2025-03-21T14:41:41Z info: Pushing Repl layer...
+2025-03-21T14:41:41Z warning: Detected broken symlink! The path "/tmp/pulse-uqi9CQgq9SDP" does not exist.
+2025-03-21T14:41:41Z info: Retrieved cached nix layer
+2025-03-21T14:41:41Z info: Created hosting layer
+2025-03-21T14:42:04Z info: Created Repl layer
+2025-03-21T14:42:05Z info: Pushed image manifest
+2025-03-21T14:42:05Z info: Pushed soci index manifest
+2025-03-21T14:42:10Z info: Creating Autoscale service
+    at defaultResolve (node:internal/modules/esm/resolve:1169:11)
+Failed to start server: Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/dist/server/db.js' imported from /home/runner/workspace/deploy-dual-mode-server.js
+    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:253:12)
+  url: 'file:///home/runner/workspace/dist/server/db.js'
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:510:25)
+    at moduleResolve (node:internal/modules/esm/resolve:933:10)
+    at ModuleLoader.getModuleJob (node:internal/modules/esm/loader:239:38)
+Failed to start server: Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/dist/server/db.js' imported from /home/runner/workspace/deploy-dual-mode-server.js
+Starting server in ESM mode
+  url: 'file:///home/runner/workspace/dist/server/db.js'
+  code: 'ERR_MODULE_NOT_FOUND',
+}
+    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:253:12)
+crash loop detected
+2025-03-21T14:44:03Z error: The deployment is crash looping. This can happen if the run command fails or exits immediately after starting. Check the logs for more information.

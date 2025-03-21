@@ -1,118 +1,34 @@
 /**
- * Dual-mode deployment script for both ESM and CommonJS
- * This is designed to work around Replit's deployment quirks
+ * Dual-mode deployment setup for Replit
+ * This script configures Replit to use our dual-mode server for deployment
  */
+
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-console.log('Starting dual-mode deployment setup...');
-
-// Check for package.json and add necessary scripts
-try {
-  const packageJsonPath = path.join(__dirname, 'package.json');
-  console.log('Reading package.json...');
-  
-  if (fs.existsSync(packageJsonPath)) {
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-    
-    // Add/update scripts but keep the original start script
-    const originalStart = packageJson.scripts ? packageJson.scripts.start : null;
-    
-    packageJson.scripts = packageJson.scripts || {};
-    
-    // Add our dual-mode server as the replit:start script
-    packageJson.scripts['replit:start'] = 'node deploy-dual-mode-server.js';
-    
-    console.log('Updating package.json with dual-mode start script...');
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-    
-    console.log('Original start script:', originalStart);
-    console.log('New replit:start script:', packageJson.scripts['replit:start']);
-  } else {
-    console.error('package.json not found!');
-  }
-} catch (error) {
-  console.error('Error updating package.json:', error);
-}
-
-// Update or create .replit file to force the correct command
-try {
-  const replitPath = path.join(__dirname, '.replit');
-  console.log('Updating .replit configuration...');
-  
-  const replitContent = `
-modules = ["nodejs-20", "web", "postgresql-16"]
-run = "npm run dev"
-hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
-
-[nix]
-channel = "stable-24_05"
-
-[deployment]
-deploymentTarget = "cloudrun"
-build = ["sh", "-c", "npm run build"]
-run = ["sh", "-c", "node deploy-dual-mode-server.js"]
-
-[[ports]]
-localPort = 3000
-externalPort = 3001
-
-[[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
-localPort = 5001
-externalPort = 3002
-
-[[ports]]
-localPort = 8080
-externalPort = 8080
-
-[[ports]]
-localPort = 24678
-externalPort = 3000
-
-[workflows]
-runButton = "Start application"
-`;
-  
-  // Writing new replit configuration
-  fs.writeFileSync(replitPath, replitContent);
-  console.log('.replit file updated successfully.');
-} catch (error) {
-  console.error('Error updating .replit file:', error);
-}
-
-// Ensure the dual-mode server file exists and is executable
-try {
-  const serverPath = path.join(__dirname, 'deploy-dual-mode-server.js');
-  if (!fs.existsSync(serverPath)) {
-    console.error('deploy-dual-mode-server.js not found! Please create it first.');
-    process.exit(1);
-  }
-  
-  // On Unix systems, make it executable (won't hurt on Windows)
+/**
+ * Runs a system command and returns the output
+ */
+function runCommand(command) {
   try {
-    execSync(`chmod +x ${serverPath}`);
-    console.log('Made dual-mode server executable');
-  } catch (err) {
-    console.log('Could not change file permissions, but this is OK on some systems:', err.message);
+    return execSync(command, { encoding: 'utf8' });
+  } catch (error) {
+    console.error(`Error executing command: ${command}`);
+    console.error(error.message);
+    return null;
   }
-} catch (error) {
-  console.error('Error checking server file:', error);
 }
 
-// Create a simple index.html fallback
-try {
-  const indexPath = path.join(__dirname, 'index.html');
+/**
+ * Creates a fallback index.html file
+ */
+function createFallbackIndex() {
   const indexContent = `
 <!DOCTYPE html>
 <html>
   <head>
     <title>MatchPro Soccer Management Platform</title>
-    <meta http-equiv="refresh" content="0;url=/app">
     <style>
       body { font-family: Arial, sans-serif; margin: 0; padding: 20px; text-align: center; }
       .container { max-width: 800px; margin: 0 auto; }
@@ -131,18 +47,145 @@ try {
   <body>
     <div class="container">
       <h1>MatchPro Soccer Management Platform</h1>
-      <p>The application is redirecting...</p>
-      <p>If you are not redirected automatically, please click the button below.</p>
+      <p>The application is running successfully.</p>
       <a href="/app" class="button">Go to Application</a>
     </div>
   </body>
-</html>`;
-  
-  fs.writeFileSync(indexPath, indexContent);
-  console.log('Created fallback index.html');
-} catch (error) {
-  console.error('Error creating index.html:', error);
+</html>
+  `;
+
+  fs.writeFileSync('index.html', indexContent);
+  console.log('Created fallback index.html file');
 }
 
-console.log('Dual-mode deployment setup complete!');
-console.log('To deploy, run: node deploy-dual-mode.cjs && npm run build');
+/**
+ * Main function to setup the dual-mode deployment
+ */
+function setupDualModeDeployment() {
+  console.log('Setting up dual-mode deployment for Replit...');
+
+  // 1. Create a fallback index.html file
+  createFallbackIndex();
+
+  // 2. Install required dependencies
+  console.log('Installing http-proxy dependency...');
+  runCommand('npm install http-proxy --no-save');
+
+  // 3. Create a .replit file if it doesn't exist
+  if (!fs.existsSync('.replit')) {
+    const replitContent = `
+entrypoint = "deploy-dual-mode-server.js"
+modules = ["nodejs-20:v8-20230920-bd784b9"]
+
+hidden = [".config", "package-lock.json"]
+
+[nix]
+channel = "stable-23_05"
+
+[deployment]
+run = ["node", "deploy-dual-mode-server.js"]
+deploymentTarget = "cloudrun"
+ignorePorts = false
+
+[rules]
+
+[rules.formatter]
+
+[rules.formatter.fileExtensions]
+
+[rules.formatter.fileExtensions.".js"]
+id = "formatter_prettier"
+
+[rules.formatter.fileExtensions.".ts"]
+id = "formatter_prettier"
+
+[rules.formatter.fileExtensions.".html"]
+id = "formatter_prettier"
+    `;
+    fs.writeFileSync('.replit', replitContent);
+    console.log('Created .replit configuration file');
+  } else {
+    console.log('.replit file already exists, updating deployment configuration...');
+    
+    // Read the current .replit file
+    let replitConfig = fs.readFileSync('.replit', 'utf8');
+    
+    // Update the entrypoint and deployment settings
+    if (replitConfig.includes('entrypoint =')) {
+      replitConfig = replitConfig.replace(/entrypoint = .*/, 'entrypoint = "deploy-dual-mode-server.js"');
+    } else {
+      replitConfig += '\nentrypoint = "deploy-dual-mode-server.js"';
+    }
+    
+    if (replitConfig.includes('[deployment]')) {
+      // Update existing deployment section
+      let inDeployment = false;
+      let updatedConfig = '';
+      
+      for (const line of replitConfig.split('\n')) {
+        if (line.trim() === '[deployment]') {
+          inDeployment = true;
+          updatedConfig += line + '\n';
+        } else if (inDeployment && line.match(/run =/)) {
+          updatedConfig += 'run = ["node", "deploy-dual-mode-server.js"]\n';
+        } else if (inDeployment && line.match(/deploymentTarget =/)) {
+          updatedConfig += 'deploymentTarget = "cloudrun"\n';
+        } else if (inDeployment && line.match(/ignorePorts =/)) {
+          updatedConfig += 'ignorePorts = false\n';
+        } else if (line.trim().startsWith('[') && line.trim() !== '[deployment]') {
+          inDeployment = false;
+          updatedConfig += line + '\n';
+        } else {
+          updatedConfig += line + '\n';
+        }
+      }
+      
+      replitConfig = updatedConfig;
+    } else {
+      // Add deployment section
+      replitConfig += `
+[deployment]
+run = ["node", "deploy-dual-mode-server.js"]
+deploymentTarget = "cloudrun"
+ignorePorts = false
+      `;
+    }
+    
+    // Write the updated config back to .replit
+    fs.writeFileSync('.replit', replitConfig);
+    console.log('Updated .replit deployment configuration');
+  }
+
+  // 4. Create a replit.nix file if it doesn't exist or update it
+  if (!fs.existsSync('replit.nix')) {
+    const nixContent = `
+{ pkgs }: {
+	deps = [
+		pkgs.nodejs-20_x
+    pkgs.nodePackages.typescript-language-server
+    pkgs.yarn
+    pkgs.replitPackages.jest
+	];
+}
+    `;
+    fs.writeFileSync('replit.nix', nixContent);
+    console.log('Created replit.nix file');
+  }
+
+  // 5. Ensure dual-mode-server.js is executable
+  try {
+    fs.chmodSync('deploy-dual-mode-server.js', '755');
+    console.log('Made deploy-dual-mode-server.js executable');
+  } catch (error) {
+    console.warn('Unable to make deploy-dual-mode-server.js executable:', error.message);
+  }
+
+  console.log('\nDual-mode deployment setup complete!');
+  console.log('\nNext steps:');
+  console.log('1. Run "npm run build" to build your application');
+  console.log('2. Click "Deploy" in the Replit interface');
+  console.log('\nFor more information, see the DEPLOY-NOW.md file');
+}
+
+// Run the deployment setup
+setupDualModeDeployment();

@@ -9,7 +9,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "npm run build"]
-run = ["sh", "-c", "node deploy-dual-mode-server.js"]
+run = ["node", "deploy-dual-mode-server.js"]
 
 [[ports]]
 localPort = 3000
@@ -33,3 +33,5 @@ externalPort = 3000
 
 [workflows]
 runButton = "Start application"
+
+entrypoint = "deploy-dual-mode-server.js"
