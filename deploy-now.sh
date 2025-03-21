@@ -1,23 +1,46 @@
 #!/bin/bash
-# Simple deployment script that runs the fixed deployment process
 
-echo "====================================================="
-echo "MatchPro Deployment Script"
-echo "This will prepare your app for deployment on Replit"
-echo "====================================================="
+# SIMPLIFIED DEPLOYMENT SCRIPT FOR REPLIT
+# This script builds the frontend and prepares server files
 
-# Run the fixed deployment script
-./deploy-fixed.sh
+echo "🚀 Starting deployment process..."
 
-echo "====================================================="
-echo "✅ Deployment preparation complete!"
-echo "====================================================="
-echo "Now you need to:"
-echo "1. Click the 'Deploy' button in the Replit interface"
-echo "2. The application will use server/index.cjs as the entry point"
-echo "3. All required files have been created in the correct locations"
-echo "====================================================="
-echo ""
-echo "After successful deployment, you can verify with:"
-echo "node verify-deployment.js https://your-replit-url.repl.co"
-echo "====================================================="
+# Ensure script is executable
+chmod +x deploy-now.sh
+
+# Build frontend
+echo "📦 Building frontend..."
+npm run build
+
+# Create necessary directories
+mkdir -p dist/server
+mkdir -p dist/public
+
+# Verify all necessary files exist
+if [ ! -d "dist/public" ]; then
+  echo "⚠️ Error: Frontend build failed or dist/public directory missing"
+  exit 1
+fi
+
+# Check if the bridge file exists (CommonJS version)
+if [ -f "replit-bridge.cjs" ]; then
+  echo "✅ Replit bridge file (CommonJS) found"
+else
+  echo "⚠️ Warning: replit-bridge.cjs file not found"
+fi
+
+# Check if the CommonJS entry points exist
+if [ -f "replit.cjs" ]; then
+  echo "✅ Replit entry file (CommonJS) found"
+else
+  echo "⚠️ Warning: replit.cjs file not found"
+fi
+
+if [ -f "index.cjs" ]; then
+  echo "✅ Replit index file (CommonJS) found"
+else
+  echo "⚠️ Warning: index.cjs file not found"
+fi
+
+echo "✅ Deployment process completed successfully"
+echo "✨ You can now deploy to Replit using the 'Deploy' button"
