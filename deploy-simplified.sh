@@ -3,102 +3,50 @@
 set -e
 
 echo "========================================"
-echo "        MATCHPRO DEPLOYMENT TOOL"
+echo "   MatchPro Simplified Deployment"
 echo "========================================"
-echo "This script will build and prepare the app for deployment"
-echo
 
-# Make sure scripts are executable
-chmod +x *.sh
-echo "✓ Made scripts executable"
+# Make sure our scripts are executable
+chmod +x build-frontend.sh
+chmod +x make-executable.sh
 
-# Clean up any old deployment files
-echo "Cleaning previous build artifacts..."
-rm -rf dist || true
-mkdir -p dist
-mkdir -p dist/public
-
-# Build the frontend with enhanced error handling
-echo
-echo "Building frontend..."
+# Step 1: Build the frontend
+echo "Step 1: Building frontend..."
 ./build-frontend.sh
 
-# Verify frontend build succeeded before continuing
-if [ ! -f "dist/public/index.html" ]; then
-  echo "❌ Frontend build failed!"
-  echo "Please check build logs and try again."
+# Step 2: Ensure our server-side entry points are executable
+echo "Step 2: Making entry points executable..."
+./make-executable.sh
+
+# Step 3: Create dist/server directory if it doesn't exist
+echo "Step 3: Preparing server structure..."
+mkdir -p dist/server
+
+# Step 4: Copy required server files
+echo "Step 4: Copying server files..."
+cp -r server dist/
+
+# Step 5: Copy backend entry points
+echo "Step 5: Copying entry points..."
+cp index.js dist/
+cp index.cjs dist/
+cp package.json dist/
+cp package-lock.json dist/
+
+# Step 6: Verify deployment structure
+echo "Step 6: Verifying deployment structure..."
+if [ -f "dist/index.js" ] && [ -f "dist/index.cjs" ] && [ -d "dist/public" ] && [ -f "dist/public/index.html" ]; then
+  echo "✓ Deployment structure verified!"
+else
+  echo "❌ Deployment structure verification failed!"
+  echo "Missing required files in dist directory."
   exit 1
 fi
 
-# Copy server files to the dist directory
-echo
-echo "Setting up server files..."
-
-# Copy our entry points (both ES module and CommonJS versions)
-cp index.js dist/
-cp index.cjs dist/
-cp replit.js dist/ 2>/dev/null || true
-cp replit.cjs dist/ 2>/dev/null || true
-cp replit-bridge.cjs dist/ 2>/dev/null || true
-
-# Create a package.json for deployment 
-cat > dist/package.json << EOF
-{
-  "name": "matchpro-soccer-management",
-  "version": "1.0.0",
-  "description": "Soccer tournament management platform",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2"
-  }
-}
-EOF
-
-echo "✓ Server files copied to dist/"
-echo "✓ Created deployment package.json"
-
-# Create a .replit file in the dist directory for automatic configuration
-cat > dist/.replit << EOF
-run = "node index.js"
-hidden = [".config", ".git", ".github", "node_modules"]
-
-[nix]
-channel = "stable-23_05"
-
-[deployment]
-run = ["node", "index.js"]
-deploymentTarget = "cloudrun"
-ignorePorts = false
-EOF
-
-echo "✓ Created .replit configuration"
-
-# Create a startup script for production
-cat > dist/start.sh << EOF
-#!/bin/bash
-# MatchPro production startup script
-echo "Starting MatchPro Soccer Management Platform..."
-node index.js
-EOF
-chmod +x dist/start.sh
-
-echo "✓ Created production startup script"
-
-# Print deployment instructions
-echo
+# Success!
 echo "========================================"
-echo "      DEPLOYMENT INSTRUCTIONS"
+echo "   Deployment preparation complete!"
 echo "========================================"
-echo "Deployment files have been prepared in the 'dist' directory."
-echo
-echo "To deploy on Replit:"
-echo "1. Push the 'Deploy' button in the Replit UI"
-echo "2. Select the whole dist directory"
-echo
-echo "Your app should now be accessible at your Replit domain:"
-echo "https://<your-repl-name>.<your-username>.repl.co"
+echo "Your application is ready for deployment."
+echo "The dist/ directory contains all required files."
 echo "========================================"
