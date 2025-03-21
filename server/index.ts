@@ -99,15 +99,11 @@ async function testDbConnection() {
     // Register routes first to ensure all middleware is set up
 
     const PORT = process.env.PORT || 5000;
-    const HOST = process.env.HOST || "0.0.0.0";
-    
-    // Register routes before listening
-    server = registerRoutes(app);
-    
-    // Now listen on the server returned from registerRoutes
-    server.listen(PORT, HOST, () => {
-      log(`Server started successfully on ${HOST}:${PORT}`);
-    });
+    server = app.listen();
+    server.close(); // Create but don't start listening yet
+
+    // Register routes
+    registerRoutes(app);
 
     // Create WebSocket server
     const wss = new WebSocketServer({ 
@@ -170,6 +166,9 @@ async function testDbConnection() {
       res.status(status).json({ message });
     });
 
+    // Start the server
+    const HOST = process.env.HOST || "0.0.0.0";
+
     const findAvailablePort = async (startPort: number): Promise<number> => {
       return new Promise((resolve, reject) => {
         const tryPort = async (port: number) => {
@@ -193,8 +192,10 @@ async function testDbConnection() {
     };
 
     try {
-      // Server is already listening from earlier call
-      log(`Server started successfully on ${HOST}:${PORT}`);
+      const availablePort = await findAvailablePort(PORT);
+      server.listen(availablePort, HOST, () => {
+        log(`Server started successfully on ${HOST}:${availablePort}`);
+      });
     } catch (error) {
       log(`Error starting server: ${(error as Error).message}`);
       process.exit(1);

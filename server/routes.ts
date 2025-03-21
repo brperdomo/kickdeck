@@ -113,27 +113,6 @@ export function registerRoutes(app: Express): Server {
     setupAuth(app);
     log("Authentication routes registered successfully");
     
-    // Add public health endpoint
-    app.get('/api/health', async (req, res) => {
-      try {
-        // Check if database is connected
-        const dbConnected = await db.select().from(users).limit(1).then(() => true).catch(() => false);
-        
-        res.json({
-          status: 'ok',
-          timestamp: new Date().toISOString(),
-          db: dbConnected ? 'connected' : 'disconnected',
-          environment: process.env.NODE_ENV || 'development'
-        });
-      } catch (error) {
-        console.error('Health check error:', error);
-        res.status(500).json({
-          status: 'error',
-          message: error instanceof Error ? error.message : 'Unknown error'
-        });
-      }
-    });
-    
     // Add organization identification middleware
     app.use(identifyOrganization);
 

@@ -8,7 +8,7 @@ channel = "stable-24_05"
 [deployment]
 deploymentTarget = "cloudrun"
 build = ["sh", "-c", "npm run build"]
-run = ["sh", "-c", "node server/index.js"]
+run = ["sh", "-c", "NODE_OPTIONS='--import tsx' node server/index.ts"]
 
 [[ports]]
 localPort = 3000
@@ -21,10 +21,6 @@ externalPort = 80
 [[ports]]
 localPort = 5001
 externalPort = 3002
-
-[[ports]]
-localPort = 8080
-externalPort = 8080
 
 [[ports]]
 localPort = 24678
