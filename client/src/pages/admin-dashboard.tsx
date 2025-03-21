@@ -1619,29 +1619,38 @@ function TeamsView() {
 }
 
 function AdminDashboard() {
-  const { user, logout } = useUser();
+  const { user, logout, isLoading: isUserLoading } = useUser();
   const [, setLocation] = useLocation();
   const [activeView, setActiveView] = useState<View>('events');
   const [showWelcome, setShowWelcome] = useState(true);
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
-  const [showInternalOps, setShowInternalOps] = useState(false); // Added state for Internal Ops panel
+  const [showInternalOps, setShowInternalOps] = useState(false);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const { setAppearance, currentAppearance } = useTheme();
-  const [theme, setTheme] = useState(currentAppearance); // Added theme state
+  const [theme, setTheme] = useState(currentAppearance);
+  const queryClient = useQueryClient();
+  const { settings, isLoading: isSettingsLoading } = useOrganizationSettings();
 
-  // Add Form Templates to the navigation
-  const formTemplatesButton = (
-    <Button
-      variant={activeView === 'formTemplates' ? 'secondary' : 'ghost'}
-      className="w-full justify-start"
-      onClick={() => setActiveView('formTemplates')}
-    >
-      <FormInput className="mr-2 h-4 w-4" />
-      Form Templates
-    </Button>
-  );
+  // Track initial load completion
+  useEffect(() => {
+    if (!isUserLoading && !isSettingsLoading && !initialLoadComplete) {
+      // Mark initial loading as complete after both user and settings are loaded
+      setInitialLoadComplete(true);
+    }
+  }, [isUserLoading, isSettingsLoading, initialLoadComplete]);
 
+  // Prefetch critical data on initial load
+  useEffect(() => {
+    if (user && user.isAdmin) {
+      // Prefetch events data which is shown on the default dashboard view
+      queryClient.prefetchQuery({
+        queryKey: ['/api/admin/events'],
+        staleTime: 5 * 60 * 1000 // 5 minutes - match server cache time
+      }).catch(error => console.error('Failed to prefetch events:', error));
+    }
+  }, [user, queryClient]);
 
   useEffect(() => {
     if (!user) {
@@ -1652,6 +1661,19 @@ function AdminDashboard() {
     }
   }, [user, setLocation]);
 
+  // Show a loading state during the initial load
+  if (isUserLoading || !initialLoadComplete) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user data has loaded but no user is found, show the loading screen
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
