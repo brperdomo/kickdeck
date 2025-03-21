@@ -191,10 +191,8 @@ async function testDbConnection() {
     };
 
     try {
-      const availablePort = await findAvailablePort(PORT);
-      server.listen(availablePort, HOST, () => {
-        log(`Server started successfully on ${HOST}:${availablePort}`);
-      });
+      // Server is already listening from earlier call
+      log(`Server started successfully on ${HOST}:${PORT}`);
     } catch (error) {
       log(`Error starting server: ${(error as Error).message}`);
       process.exit(1);
