@@ -1628,6 +1628,7 @@ function AdminDashboard() {
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
   const [showInternalOps, setShowInternalOps] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
   const { setAppearance, currentAppearance } = useTheme();
   const [theme, setTheme] = useState(currentAppearance);
   const queryClient = useQueryClient();
@@ -2025,7 +2026,7 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
 }
 
 function ThemeEditor() {
-  const [theme, setTheme] = useState({
+  const [themeColors, setThemeColors] = useState({
     backgroundColor: '#ffffff',
     textColor: '#000000',
     buttonColor: '#4CAF50',
@@ -2033,7 +2034,7 @@ function ThemeEditor() {
   });
 
   const handleColorChange = (color: string, value: string) => {
-    setTheme({ ...theme, [color]: value });
+    setThemeColors({ ...themeColors, [color]: value });
   };
 
   return (
@@ -2045,7 +2046,7 @@ function ThemeEditor() {
           <Input
             id="backgroundColor"
             type="color"
-            value={theme.backgroundColor}
+            value={themeColors.backgroundColor}
             onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
           />
         </div>
@@ -2054,7 +2055,7 @@ function ThemeEditor() {
           <Input
             id="textColor"
             type="color"
-            value={theme.textColor}
+            value={themeColors.textColor}
             onChange={(e) => handleColorChange('textColor', e.target.value)}
           />
         </div>
@@ -2063,7 +2064,7 @@ function ThemeEditor() {
           <Input
             id="buttonColor"
             type="color"
-            value={theme.buttonColor}
+            value={themeColors.buttonColor}
             onChange={(e) => handleColorChange('buttonColor', e.target.value)}
           />
         </div>
@@ -2071,7 +2072,7 @@ function ThemeEditor() {
       </div>
       <Button onClick={() => {
         // Apply theme changes here
-        console.log("Theme updated:", theme);
+        console.log("Theme updated:", themeColors);
       }}>
         Apply Theme
       </Button>
