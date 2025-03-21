@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "NODE_OPTIONS=\"--import tsx\" node server/index.ts",
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
+    "start": "node server.js",
     "check": "tsc",
     "db:push": "drizzle-kit push",
-    "migrate:events": "NODE_OPTIONS=\"--import tsx\" node server/migrate-event-ids.ts"
+    "migrate:events": "NODE_OPTIONS=\"--import tsx\" node server/migrate-event-ids.ts",
+    "replit:start": "node server.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
