@@ -236,10 +236,13 @@ EOF
 echo "Building frontend with Vite..."
 npx vite build
 
-# Create Replit bridge file
-echo "Creating Replit bridge for deployment..."
-# replit-bridge.js was already created separately
-touch server/replit-bridge.js
+# Ensure Replit bridge file exists
+echo "Verifying Replit bridge file..."
+if [ ! -f server/replit-bridge.js ]; then
+  echo "⚠️ Missing server/replit-bridge.js - Please create this file before deploying"
+  exit 1
+fi
+echo "✅ Found server/replit-bridge.js"
 
 # Final message
 echo "---------------------------------------------"
