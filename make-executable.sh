@@ -1,11 +1,13 @@
 #!/bin/bash
-# Make all the shell scripts executable
+# Make important scripts and entry points executable
+set -e
 
-echo "Making all shell scripts executable..."
-find . -name "*.sh" -type f -exec chmod +x {} \;
-echo "Done!"
+echo "Making scripts executable..."
 
-# List all now-executable scripts
-echo 
-echo "Executable scripts:"
-find . -name "*.sh" -type f -ls | awk '{print $11}'
+# Make all shell scripts executable
+find . -name "*.sh" -exec chmod +x {} \;
+
+# Make entry points executable
+chmod +x index.js index.cjs replit.js replit.cjs 2>/dev/null || true
+
+echo "Done making scripts executable!"
