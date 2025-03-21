@@ -1,5 +1,5 @@
 /**
- * ESM deployment script for direct execution
+ * Fixed ESM deployment script with direct path imports
  */
 import { exec } from 'child_process';
 import { promises as fs } from 'fs';
@@ -50,6 +50,11 @@ async function setupDeployment() {
     await fs.mkdir('dist', { recursive: true });
     await fs.mkdir('dist/server', { recursive: true });
     await fs.mkdir('dist/public', { recursive: true });
+    await fs.mkdir('dist/db', { recursive: true });
+    
+    console.log('Copying db directory to dist...');
+    // Copy db files
+    await fs.cp('db', 'dist/db', { recursive: true });
 
     console.log('Building frontend with Vite...');
     try {
@@ -59,21 +64,21 @@ async function setupDeployment() {
       // Continue with server setup
     }
 
-    console.log('Compiling server-prod.ts with esbuild...');
+    console.log('Compiling prod-server.ts with esbuild...');
     await runCommand('npx', [
       'esbuild',
-      'server/server-prod.ts',
+      'server/prod-server.ts',
       '--platform=node',
       '--packages=external',
       '--format=esm',
-      '--outfile=dist/server/server-prod.js'
+      '--outfile=dist/server/prod-server.js'
     ]);
 
     // Create the main server entry point
     const serverEntry = `/**
  * ESM server entry point for Replit deployment
  */
-import { setupServer } from './server/server-prod.js';
+import { setupServer } from './server/prod-server.js';
 import express from 'express';
 import http from 'http';
 

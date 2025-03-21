@@ -1,13 +1,13 @@
 /**
- * Production server adapter - compiled version 
- * This file gets compiled to dist/server/index.js during build
+ * Production server adapter with direct imports (no path aliases)
+ * This file gets compiled to dist/server/prod-server.js during build
  */
 
 import { Express, Request, Response, NextFunction } from 'express';
 import { Server } from 'http';
-import { db } from '@db';
+import { db } from '../db/index.js';
 import { eq, or } from 'drizzle-orm';
-import { users, organizationSettings, events as eventsTable } from '@db/schema';
+import { users, organizationSettings, events as eventsTable } from '../db/schema.js';
 import path from 'path';
 import fs from 'fs';
 import express from 'express';

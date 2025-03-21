@@ -33,17 +33,39 @@ const viteBuild = () => {
 console.log('Building server files with esbuild...');
 const serverBuild = () => {
   return new Promise((resolve, reject) => {
-    // Build both server files
-    const buildCmd = 'npx esbuild server/index.js server/server-prod.ts --platform=node --packages=external --bundle --format=esm --outdir=dist/server';
-    
-    exec(buildCmd, (error, stdout, stderr) => {
-      if (error) {
-        console.error('Error during server build:', error);
-        return reject(error);
+    // First, compile TypeScript files
+    console.log('Compiling TypeScript server files...');
+    exec('npx tsc --project tsconfig.json', (tscError, tscStdout, tscStderr) => {
+      if (tscError) {
+        console.warn('Warning during TypeScript compilation (continuing anyway):', tscError);
+        // Continue anyway, as esbuild can still handle TypeScript
       }
-      console.log(stdout);
-      if (stderr) console.error(stderr);
-      resolve();
+      
+      if (tscStdout) console.log(tscStdout);
+      if (tscStderr) console.error(tscStderr);
+      
+      // Then build with esbuild for optimal compatibility
+      console.log('Bundling server files with esbuild...');
+      const buildCmd = 'npx esbuild server/index.js server/server-prod.ts --platform=node --packages=external --bundle --format=esm --outdir=dist/server';
+      
+      exec(buildCmd, (error, stdout, stderr) => {
+        if (error) {
+          console.error('Error during server build:', error);
+          return reject(error);
+        }
+        console.log(stdout);
+        if (stderr) console.error(stderr);
+        
+        // Copy server-prod.ts to dist/server directory
+        console.log('Copying production server file...');
+        exec('cp dist/server/server-prod.js dist/', (cpError) => {
+          if (cpError) {
+            console.warn('Warning during file copy:', cpError);
+          }
+          
+          resolve();
+        });
+      });
     });
   });
 };
