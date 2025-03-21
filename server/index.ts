@@ -150,12 +150,7 @@ async function testDbConnection() {
       log("Vite middleware setup complete");
     } else {
       // Static file serving in production
-      app.use(express.static(path.join(process.cwd(), 'dist')));
-      
-      // Serve index.html for all routes
-      app.get('*', (req, res) => {
-        res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
-      });
+      serveStatic(app);
     }
 
     // Error handling middleware
