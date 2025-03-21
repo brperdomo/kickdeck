@@ -1187,6 +1187,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .from(organizationSettings)
           .limit(1);
 
+        // Add caching to improve dashboard load times
+        // Cache for 5 minutes, must revalidate if stale
+        res.set('Cache-Control', 'private, max-age=300, must-revalidate');
         res.json(settings || {});
       } catch (error) {
         console.error('Error fetching organization settings:', error);

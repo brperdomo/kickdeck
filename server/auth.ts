@@ -184,6 +184,9 @@ export function setupAuth(app: Express) {
 
   app.get("/api/user", (req, res) => {
     if (req.isAuthenticated()) {
+      // Add caching headers to improve performance for repeated user info requests
+      // Cache for 5 minutes, must revalidate if stale
+      res.set('Cache-Control', 'private, max-age=300, must-revalidate');
       return res.json(req.user);
     }
 
