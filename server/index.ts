@@ -99,12 +99,13 @@ async function testDbConnection() {
     // Register routes first to ensure all middleware is set up
 
     const PORT = process.env.PORT || 5000;
+    const HOST = process.env.HOST || "0.0.0.0";
     
     // Register routes before listening
     server = registerRoutes(app);
     
     // Now listen on the server returned from registerRoutes
-    server.listen(PORT, '0.0.0.0', () => {
+    server.listen(PORT, HOST, () => {
       log(`Server started successfully on ${HOST}:${PORT}`);
     });
 
