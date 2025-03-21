@@ -6,8 +6,8 @@ export function useOrganizationSettings() {
 
   const { data: settings, isLoading } = useQuery<SelectOrganizationSettings>({
     queryKey: ['/api/admin/organization-settings'],
-    staleTime: 30000,
-    gcTime: 3600000,
+    staleTime: 5 * 60 * 1000, // 5 minutes - match server cache time
+    gcTime: 10 * 60 * 1000,   // 10 minutes garbage collection
   });
 
   const updateMutation = useMutation({
@@ -16,6 +16,7 @@ export function useOrganizationSettings() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache', // Don't cache mutations
         },
         body: JSON.stringify(newSettings),
         credentials: 'include',
@@ -28,6 +29,7 @@ export function useOrganizationSettings() {
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate the cache after updating settings
       queryClient.invalidateQueries({ queryKey: ['/api/admin/organization-settings'] });
     },
   });

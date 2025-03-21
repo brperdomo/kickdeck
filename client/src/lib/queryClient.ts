@@ -4,9 +4,19 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: async ({ queryKey }) => {
-        const res = await fetch(queryKey[0] as string, {
+        const [url, params] = Array.isArray(queryKey) 
+          ? [queryKey[0], queryKey.slice(1)] 
+          : [queryKey, []];
+          
+        // Add caching directives to improve performance
+        const options: RequestInit = {
           credentials: "include",
-        });
+          headers: {
+            "Cache-Control": "max-age=300" // Tell browser to cache for 5 minutes
+          }
+        };
+
+        const res = await fetch(url as string, options);
 
         if (!res.ok) {
           if (res.status >= 500) {
@@ -20,7 +30,8 @@ export const queryClient = new QueryClient({
       },
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      staleTime: 5 * 60 * 1000, // 5 minutes - match server cache time
+      gcTime: 10 * 60 * 1000, // Keep in garbage collection for 10 minutes
       retry: false,
     },
     mutations: {

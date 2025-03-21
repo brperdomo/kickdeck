@@ -1,10 +1,44 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons, eventAgeGroupFees } from '@db/schema';
+import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons, eventAgeGroupFees, teams } from '@db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router = Router();
+
+// Get all events with optimization and caching
+router.get('/', async (req, res) => {
+  try {
+    const eventsList = await db
+      .select({
+        event: events,
+        applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
+        teamCount: sql<number>`count(${teams.id})`.mapWith(Number),
+      })
+      .from(events)
+      .leftJoin(teams, eq(events.id, teams.eventId))
+      .groupBy(events.id)
+      .orderBy(events.startDate);
+
+    // Format the response
+    const formattedEvents = eventsList.map(({ event, applicationCount, teamCount }) => ({
+      ...event,
+      applicationCount,
+      teamCount
+    }));
+
+    // Add caching to improve dashboard load times
+    // Cache for 5 minutes, must revalidate if stale
+    res.set('Cache-Control', 'private, max-age=300, must-revalidate');
+    res.json(formattedEvents);
+  } catch (error) {
+    console.error('Error fetching events:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch events', 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+  }
+});
 
 // Get event details endpoint
 router.get('/:id', async (req, res) => {
