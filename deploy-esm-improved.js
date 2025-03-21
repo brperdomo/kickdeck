@@ -65,8 +65,14 @@ async function convertToESM(sourceFile, destFile) {
     // Fix imports to include .js extension where needed
     content = content.replace(/from\s+['"]([^'"]+)['"]/g, (match, path) => {
       // Skip external packages
-      if (!path.startsWith('.') && !path.startsWith('/')) {
+      if (!path.startsWith('.') && !path.startsWith('/') && !path.startsWith('@db')) {
         return match;
+      }
+      
+      // Handle path aliases (like @db/schema)
+      if (path.startsWith('@db/')) {
+        const relativePath = path.replace('@db/', './');
+        return `from '${relativePath}.js'`;
       }
       
       // Add .js extension if not already present
