@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Comprehensive deployment script for Replit
-# This script handles proper ESM module conversion with path fixes
+# Deployment script for Replit with enhanced error handling
+# This script handles both frontend and backend deployment
 
 echo "---------------------------------------------"
 echo "🚀 Starting Replit deployment process"
@@ -9,13 +9,13 @@ echo "---------------------------------------------"
 
 # Create directories
 echo "Creating directory structure..."
-mkdir -p dist/server dist/db dist/db/schema dist/public
+mkdir -p dist/server dist/db dist/db/schema
 
 # Compile server files with ESBuild
 echo "Compiling server files..."
 npx esbuild server/prod-server.ts --platform=node --packages=external --format=esm --outfile=dist/server/prod-server.js
 
-# Process db directory 
+# Process database files 
 echo "Processing database files..."
 npx esbuild db/index.ts --platform=node --packages=external --format=esm --outfile=dist/db/index.js
 npx esbuild db/schema.ts --platform=node --packages=external --format=esm --outfile=dist/db/schema.js
@@ -79,6 +79,9 @@ async function startServer() {
   const server = http.createServer(app);
 
   try {
+    // Test database connection first
+    const dbConnected = await testDbConnection();
+    
     // Import the setupServer function
     const { setupServer } = await import('./server/prod-server.js');
     
@@ -130,6 +133,7 @@ async function startServer() {
             <div class="container">
               <h1>Server Error</h1>
               <p>The server encountered an error during startup. Please check the server logs for details.</p>
+              <pre>${error.stack || error.message || 'Unknown error'}</pre>
               <div>
                 <h3>Troubleshooting Steps:</h3>
                 <ol>
@@ -152,71 +156,47 @@ async function startServer() {
   }
 }
 
+/**
+ * Test database connection
+ */
+async function testDbConnection() {
+  try {
+    console.log('Testing database connection...');
+    
+    // Check if DATABASE_URL is set
+    if (!process.env.DATABASE_URL) {
+      console.warn('⚠️ DATABASE_URL environment variable is not set');
+      return false;
+    }
+    
+    // Import db module
+    const { db } = await import('./db/index.js');
+    const { users } = await import('./db/schema.js');
+    
+    // Try to query users
+    const testUsers = await db.select().from(users).limit(1);
+    console.log('Database connection successful:', testUsers);
+    return true;
+  } catch (error) {
+    console.error('❌ Database connection failed:', error);
+    return false;
+  }
+}
+
 startServer();
 EOF
 
 # Build frontend with Vite
 echo "Building frontend with Vite..."
-if ! npx vite build --outDir dist/public; then
-  echo "⚠️ Frontend build failed or timed out. Will proceed with server-only deployment."
-  # Create minimal index.html if frontend build fails
-  mkdir -p dist/public
-  cat > dist/public/index.html << 'EOF'
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>API Server</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .card {
-      background: #f1f5f9;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    h1 { color: #0f172a; }
-    h2 { color: #334155; }
-    pre {
-      background: #e2e8f0;
-      padding: 10px;
-      border-radius: 4px;
-      overflow-x: auto;
-    }
-  </style>
-</head>
-<body>
-  <h1>API Server Running</h1>
-  <div class="card">
-    <h2>API Endpoints Available</h2>
-    <p>The server is running in API-only mode. Frontend assets were not built.</p>
-    <p>Available endpoints:</p>
-    <ul>
-      <li><a href="/api/health">/api/health</a> - Server health check</li>
-      <li>/api/login - Authentication endpoint</li>
-      <li>/api/user - Current user information</li>
-      <li>/api/admin/* - Admin-only endpoints</li>
-    </ul>
-  </div>
-  <div class="card">
-    <h2>Deployment Information</h2>
-    <p>This server was deployed using the enhanced ESM deployment script.</p>
-    <pre>NODE_ENV=production node dist/index.js</pre>
-  </div>
-</body>
-</html>
-EOF
-fi
+npx vite build
+
+# Create Replit bridge file
+echo "Creating Replit bridge for deployment..."
+# replit-bridge.js was already created separately
+touch server/replit-bridge.js
 
 # Final message
 echo "---------------------------------------------"
 echo "✅ Deployment process completed!"
-echo "You can now run: NODE_ENV=production node dist/index.js"
+echo "You can now run in production mode: node server/index.js"
 echo "---------------------------------------------"

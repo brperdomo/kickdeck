@@ -1,17 +1,28 @@
 #!/bin/bash
 
-# Run the production server for testing
-# This script ensures the server runs with the right environment configuration
+# Script to run the production server for testing
 
-# Kill any running Node.js processes
-echo "Cleaning up any running Node.js processes..."
-pkill -f "node dist/index.js" 2>/dev/null
+# Create a log file
+LOG_FILE="server.log"
+echo "Starting production server at $(date)" > $LOG_FILE
 
-# Set environment to production
+# Environment settings
 export NODE_ENV=production
 
-# Run with full stack trace and no warning deprecation notices
-echo "Starting production server..."
-node --trace-warnings --no-deprecation dist/index.js
+# Check if dist/index.js exists
+if [ ! -f dist/index.js ]; then
+  echo "❌ Production build not found! Please run ./deploy-server-only.sh first."
+  exit 1
+fi
 
-# This script should be run after running ./deploy-replit.sh to build the production files
+# Kill any existing node processes (optional, uncomment if needed)
+# pkill -f "node server/index.js" || true
+# pkill -f "node dist/index.js" || true
+
+echo "📝 Logs will be written to $LOG_FILE"
+echo "📊 API server will be available at http://localhost:3000"
+echo ""
+echo "🚀 Starting production server..."
+
+# Run the server through the bridge for maximum compatibility
+node server/index.js >> $LOG_FILE 2>&1
