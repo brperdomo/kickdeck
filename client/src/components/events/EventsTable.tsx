@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash } from "lucide-react";
 import { useLocation } from "wouter";
@@ -77,6 +77,9 @@ export function EventsTable() {
       const events = await response.json();
       return events;
     },
+    staleTime: 5 * 60 * 1000, // 5 minute cache
+    retry: 2,
+    refetchOnWindowFocus: false,
   });
 
   const deleteEventMutation = useMutation({
@@ -109,7 +112,7 @@ export function EventsTable() {
     },
   });
 
-  const calculateEventStatus = (startDate: string, endDate: string) => {
+  const calculateEventStatus = useCallback((startDate: string, endDate: string) => {
     const now = new Date();
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -122,20 +125,34 @@ export function EventsTable() {
     } else {
       return "upcoming";
     }
-  };
+  }, []);
 
-  const filterEvents = (events: Event[]) => {
-    return events.filter((event) => {
-      const status = calculateEventStatus(event.startDate, event.endDate);
-      const matchesSearch = event.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === "all" || status === statusFilter;
+  // Memoize the event status calculation for each event to avoid recalculating multiple times
+  const getEventWithStatus = useCallback((event: Event) => {
+    const status = calculateEventStatus(event.startDate, event.endDate);
+    return { ...event, status };
+  }, [calculateEventStatus]);
+
+  // Memoize all events with their statuses calculated once
+  const eventsWithStatus = useMemo(() => {
+    if (!eventsQuery.data) return [];
+    return eventsQuery.data.map(getEventWithStatus);
+  }, [eventsQuery.data, getEventWithStatus]);
+
+  // Memoize filtered events based on search and status filter
+  const filteredEvents = useMemo(() => {
+    const lowercaseQuery = searchQuery.toLowerCase();
+    return eventsWithStatus.filter((event) => {
+      const matchesSearch = event.name.toLowerCase().includes(lowercaseQuery);
+      const matchesStatus = statusFilter === "all" || event.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
-  };
+  }, [eventsWithStatus, searchQuery, statusFilter]);
 
-  const sortEvents = (events: Event[]) => {
-    return [...events].sort((a, b) => {
-      const multiplier = sortDirection === "asc" ? 1 : -1;
+  // Memoize sorted events based on the filtered events and sort settings
+  const sortedEvents = useMemo(() => {
+    const multiplier = sortDirection === "asc" ? 1 : -1;
+    return [...filteredEvents].sort((a, b) => {
       switch (sortField) {
         case "name":
           return multiplier * a.name.localeCompare(b.name);
@@ -144,12 +161,12 @@ export function EventsTable() {
         case "applications":
           return multiplier * (a.applicationsReceived - b.applicationsReceived);
         case "status":
-          return multiplier * calculateEventStatus(a.startDate, a.endDate).localeCompare(calculateEventStatus(b.startDate, b.endDate));
+          return multiplier * a.status.localeCompare(b.status);
         default:
           return 0;
       }
     });
-  };
+  }, [filteredEvents, sortField, sortDirection]);
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) return null;
@@ -249,8 +266,6 @@ export function EventsTable() {
     );
   }
 
-  const filteredEvents = filterEvents(sortEvents(eventsQuery.data || []));
-
   return (
     <Card className="shadow-sm">
       <div className="p-6">
@@ -307,7 +322,7 @@ export function EventsTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredEvents.map((event) => (
+              {sortedEvents.map((event) => (
                 <TableRow key={event.id}>
                   <TableCell className="font-medium">{event.name}</TableCell>
                   <TableCell>{formatDate(event.startDate)}</TableCell>
@@ -315,15 +330,14 @@ export function EventsTable() {
                   <TableCell>
                     <Badge
                       variant={
-                        calculateEventStatus(event.startDate, event.endDate) === "past"
+                        event.status === "past"
                           ? "secondary"
-                          : calculateEventStatus(event.startDate, event.endDate) === "active"
+                          : event.status === "active"
                           ? "default"
                           : "outline"
                       }
                     >
-                      {calculateEventStatus(event.startDate, event.endDate).charAt(0).toUpperCase() +
-                        calculateEventStatus(event.startDate, event.endDate).slice(1)}
+                      {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
                     </Badge>
                   </TableCell>
                   <TableCell>{formatDate(event.applicationDeadline)}</TableCell>
