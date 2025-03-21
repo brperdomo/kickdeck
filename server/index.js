@@ -1,74 +1,160 @@
 
 /**
  * Replit production server entry point
- * This file is designed to automatically redirect to our CommonJS implementation for Replit deployment
+ * ESM version that dynamically imports necessary components
  */
 
-// Check if we have the deployment bridge files
-try {
-  const path = require('path');
-  const fs = require('fs');
-  
-  console.log('Production environment detected, loading deployment bridge...');
-  
-  // First, check if we have the replit.cjs entry point
-  const replitPath = path.join(process.cwd(), 'replit.cjs');
-  
-  if (fs.existsSync(replitPath)) {
-    console.log('Found replit.cjs - loading production configuration');
-    require('../replit.cjs');
-  } else {
-    // Check for server/index.cjs bridge
-    const bridgePath = path.join(__dirname, 'index.cjs');
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import { existsSync } from 'fs';
+import express from 'express';
+import { createServer } from 'http';
+
+// Get current file directory (ESM equivalent of __dirname)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Setup process error handlers
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason);
+});
+
+async function startServer() {
+  try {
+    console.log('Starting server in ESM mode...');
     
-    if (fs.existsSync(bridgePath)) {
-      console.log('Found server/index.cjs - loading bridge');
-      require('./index.cjs');
+    const app = express();
+    const server = createServer(app);
+    
+    // Basic health check for diagnostics
+    app.get('/_health', (req, res) => {
+      res.json({
+        status: 'ok',
+        mode: 'esm',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'production'
+      });
+    });
+    
+    // Try to load the compiled server code
+    const serverIndexPath = join(process.cwd(), 'dist', 'server', 'index.js');
+    
+    if (existsSync(serverIndexPath)) {
+      console.log('Loading compiled server code from dist/server/index.js');
+      try {
+        const { setupServer } = await import(serverIndexPath);
+        await setupServer(app, server);
+        console.log('Server setup complete with compiled code');
+      } catch (error) {
+        console.error('Error loading compiled server code:', error);
+        setupFallbackServer(app, server);
+      }
     } else {
-      console.error('ERROR: Deployment bridge files not found!');
-      console.error('Please run deployment scripts first: node deploy-starter.cjs');
-      
-      // Fallback to basic express server if bridges not found
-      console.log('Starting minimal fallback server...');
-      
-      const express = require('express');
-      const { createServer } = require('http');
-      
-      const app = express();
-      const server = createServer(app);
-      
-      // Basic health check
-      app.get('/', (req, res) => {
-        res.send(`
-          <html>
-            <head><title>Deployment Error</title></head>
-            <body>
-              <h1>Deployment Configuration Error</h1>
-              <p>The application was not properly prepared for deployment.</p>
-              <p>Please run the deployment script: <code>node deploy-starter.cjs</code></p>
-            </body>
-          </html>
-        `);
-      });
-      
-      // Health check
-      app.get('/api/health', (req, res) => {
-        res.json({ 
-          status: 'error', 
-          message: 'Deployment not properly configured',
-          error: 'Bridge files missing',
-          timestamp: new Date().toISOString()
-        });
-      });
-      
-      // Start server
-      const port = process.env.PORT || 8080;
-      server.listen(port, '0.0.0.0', () => {
-        console.log(`Fallback server running on port ${port}`);
-      });
+      // When compiled server not available, try development setup
+      console.log('Compiled server not found, attempting to load development setup');
+      try {
+        const { setupVite } = await import('./vite.js');
+        const { registerRoutes } = await import('./routes.js');
+        const { setupAuth } = await import('./auth.js');
+        const { createTables } = await import('./create-tables.js');
+        const { createAdmin } = await import('./create-admin.js');
+        
+        // Setup auth
+        setupAuth(app);
+        
+        // Setup routes
+        registerRoutes(app);
+        
+        // Setup Vite (development mode)
+        await setupVite(app, server);
+        
+        // Initialize database
+        try {
+          await createTables();
+          await createAdmin();
+          console.log('Database initialization complete');
+        } catch (dbError) {
+          console.error('Database initialization error:', dbError);
+        }
+        
+        console.log('Development server setup complete');
+      } catch (setupError) {
+        console.error('Error setting up development server:', setupError);
+        setupFallbackServer(app, server);
+      }
     }
+    
+    // Handle static files for production
+    if (process.env.NODE_ENV === 'production') {
+      const distPath = join(process.cwd(), 'dist', 'public');
+      if (existsSync(distPath)) {
+        console.log(`Serving static files from ${distPath}`);
+        app.use(express.static(distPath));
+        
+        // SPA fallback
+        app.get('*', (req, res) => {
+          if (req.path.startsWith('/api/')) {
+            return res.status(404).json({ error: 'API endpoint not found' });
+          }
+          
+          const indexPath = join(distPath, 'index.html');
+          if (existsSync(indexPath)) {
+            return res.sendFile(indexPath);
+          }
+          
+          res.status(404).send('Not found');
+        });
+      }
+    }
+    
+    // Start server
+    const port = process.env.PORT || 3000;
+    server.listen(port, '0.0.0.0', () => {
+      console.log(`Server running on port ${port}`);
+    });
+    
+  } catch (error) {
+    console.error('Error starting server:', error);
+    process.exit(1);
   }
-} catch (error) {
-  console.error('Error loading production configuration:', error);
-  process.exit(1);
 }
+
+function setupFallbackServer(app, server) {
+  console.log('Setting up fallback server...');
+  
+  // Basic health check
+  app.get('/', (req, res) => {
+    res.send(`
+      <html>
+        <head><title>Server Status</title></head>
+        <body>
+          <h1>Server Running in Fallback Mode</h1>
+          <p>The application is running in a minimal fallback mode.</p>
+          <p>Timestamp: ${new Date().toISOString()}</p>
+        </body>
+      </html>
+    `);
+  });
+  
+  // API status
+  app.get('/api/status', (req, res) => {
+    res.json({ 
+      status: 'limited',
+      mode: 'fallback',
+      message: 'Server running in fallback mode',
+      timestamp: new Date().toISOString()
+    });
+  });
+  
+  console.log('Fallback server configured');
+}
+
+// Start the server
+startServer().catch(err => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
+});
