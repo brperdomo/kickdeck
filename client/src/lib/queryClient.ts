@@ -1,5 +1,12 @@
 import { QueryClient } from "@tanstack/react-query";
 
+// Global error handler for unhandled Promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+  console.warn('Unhandled Promise Rejection:', event.reason);
+  // Prevent the default browser behavior that would terminate scripts
+  event.preventDefault();
+});
+
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -8,34 +15,57 @@ export const queryClient = new QueryClient({
           ? [queryKey[0], queryKey.slice(1)] 
           : [queryKey, []];
           
-        // Add caching directives to improve performance
-        const options: RequestInit = {
-          credentials: "include",
-          headers: {
-            "Cache-Control": "max-age=300" // Tell browser to cache for 5 minutes
+        try {
+          // Add caching directives to improve performance
+          const options: RequestInit = {
+            credentials: "include",
+            headers: {
+              "Cache-Control": "max-age=300" // Tell browser to cache for 5 minutes
+            }
+          };
+
+          const res = await fetch(url as string, options);
+
+          if (!res.ok) {
+            if (res.status >= 500) {
+              console.error(`Server error: ${res.status}: ${res.statusText}`);
+              throw new Error(`Server error: ${res.status}: ${res.statusText}`);
+            }
+
+            const errorText = await res.text();
+            console.warn(`API error: ${res.status}: ${errorText}`);
+            throw new Error(`API error: ${res.status}: ${errorText}`);
           }
-        };
 
-        const res = await fetch(url as string, options);
-
-        if (!res.ok) {
-          if (res.status >= 500) {
-            throw new Error(`${res.status}: ${res.statusText}`);
-          }
-
-          throw new Error(`${res.status}: ${await res.text()}`);
+          return res.json();
+        } catch (error) {
+          // Improve error handling and logging
+          console.error(`Error fetching ${url}:`, error);
+          throw error; // Re-throw so React Query can handle it
         }
-
-        return res.json();
       },
       refetchInterval: false,
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000, // 5 minutes - match server cache time
       gcTime: 10 * 60 * 1000, // Keep in garbage collection for 10 minutes
-      retry: false,
+      retry: (failureCount, error) => {
+        // Only retry for network errors, not for 4xx client errors
+        if (error instanceof Error && error.message.includes('Server error')) {
+          return failureCount < 2; // Retry server errors up to 2 times
+        }
+        return false; // Don't retry other errors
+      },
+      // Add global error handler
+      onError: (error) => {
+        console.error('Query error:', error);
+      }
     },
     mutations: {
       retry: false,
+      // Add global error handler for mutations
+      onError: (error) => {
+        console.error('Mutation error:', error);
+      }
     }
   },
 });

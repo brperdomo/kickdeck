@@ -14,21 +14,69 @@ declare global {
   }
 }
 
+// Simple in-memory cache for user authentication
+interface UserCache {
+  [userId: number]: {
+    user: SelectUser;
+    timestamp: number;
+  };
+}
+
+// Cache user data for 5 minutes (300000 ms)
+const USER_CACHE_TTL = 300000;
+const userCache: UserCache = {};
+
+// Function to get user from cache or database
+async function getUserById(id: number): Promise<SelectUser | null> {
+  const now = Date.now();
+  const cachedData = userCache[id];
+  
+  // Return from cache if available and not expired
+  if (cachedData && (now - cachedData.timestamp < USER_CACHE_TTL)) {
+    return cachedData.user;
+  }
+  
+  // Get from database if not in cache or expired
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
+    
+  if (user) {
+    // Update cache with fresh data
+    userCache[id] = { 
+      user, 
+      timestamp: now 
+    };
+  }
+  
+  return user || null;
+}
+
+// Function to invalidate a user's cache entry
+function invalidateUserCache(id: number): void {
+  delete userCache[id];
+}
+
 export function setupAuth(app: Express) {
   const MemoryStore = createMemoryStore(session);
   const sessionSettings: session.SessionOptions = {
     secret: process.env.REPL_ID || "soccer-registration-secret",
     resave: false,
     saveUninitialized: false,
-    cookie: {},
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
     store: new MemoryStore({
-      checkPeriod: 86400000,
+      checkPeriod: 86400000, // 24 hours
     }),
   };
 
   if (app.get("env") === "production") {
     app.set("trust proxy", 1);
     sessionSettings.cookie = {
+      ...sessionSettings.cookie,
       secure: true,
     };
   }
@@ -56,6 +104,12 @@ export function setupAuth(app: Express) {
           return done(null, false, { message: "Incorrect password." });
         }
 
+        // Update user cache on successful login
+        userCache[user.id] = {
+          user,
+          timestamp: Date.now()
+        };
+
         return done(null, user);
       } catch (err) {
         return done(err);
@@ -69,11 +123,8 @@ export function setupAuth(app: Express) {
 
   passport.deserializeUser(async (id: number, done) => {
     try {
-      const [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, id))
-        .limit(1);
+      // Use cached user data if available, otherwise fetch from database
+      const user = await getUserById(id);
       done(null, user);
     } catch (err) {
       done(err);
@@ -135,10 +186,19 @@ export function setupAuth(app: Express) {
         })
         .returning();
 
+      // Cache the newly registered user
+      userCache[newUser.id] = {
+        user: newUser,
+        timestamp: Date.now()
+      };
+
       req.login(newUser, (err) => {
         if (err) {
           return next(err);
         }
+        
+        // Add caching headers
+        res.set('Cache-Control', 'private, max-age=300, must-revalidate');
         return res.json({
           message: "Registration successful",
           user: newUser,
@@ -164,6 +224,8 @@ export function setupAuth(app: Express) {
           return next(err);
         }
 
+        // Add caching headers
+        res.set('Cache-Control', 'private, max-age=300, must-revalidate');
         return res.json({
           message: "Login successful",
           user,
@@ -173,6 +235,11 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/logout", (req, res) => {
+    // If user is authenticated, invalidate their cache entry
+    if (req.isAuthenticated() && req.user && req.user.id) {
+      invalidateUserCache(req.user.id);
+    }
+    
     req.logout((err) => {
       if (err) {
         return res.status(500).send("Logout failed");
