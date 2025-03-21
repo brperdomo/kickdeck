@@ -170,9 +170,6 @@ async function testDbConnection() {
       res.status(status).json({ message });
     });
 
-    // Start the server
-    const HOST = process.env.HOST || "0.0.0.0";
-
     const findAvailablePort = async (startPort: number): Promise<number> => {
       return new Promise((resolve, reject) => {
         const tryPort = async (port: number) => {
