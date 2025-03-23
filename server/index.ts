@@ -101,14 +101,13 @@ async function testDbConnection() {
     await createAdmin();
     log("Admin user setup completed");
 
-    // Register routes first to ensure all middleware is set up
-
+    // Create the server object first
     const PORT = Number(process.env.PORT) || 5000; // Ensure PORT is a number
     server = app.listen();
     server.close(); // Create but don't start listening yet
-
-    // Register routes
-    registerRoutes(app);
+    
+    // Routes will be registered by registerRoutes AFTER auth setup
+    // which happens inside the registerRoutes function
 
     // Create WebSocket server
     const wss = new WebSocketServer({ 

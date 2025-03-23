@@ -235,91 +235,50 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/logout", (req, res) => {
-    // If user is authenticated, invalidate their cache entry
-    if (req.isAuthenticated() && req.user && req.user.id) {
-      invalidateUserCache(req.user.id);
-    }
-    
-    // Add cache control headers to prevent caching of this response
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-    res.setHeader('Surrogate-Control', 'no-store');
-    
-    // Try to destroy the session first to ensure complete logout
-    if (req.session) {
-      req.session.destroy((sessionErr) => {
-        if (sessionErr) {
-          console.error("Session destruction error:", sessionErr);
-          // Continue even if session destruction fails
-        }
-        
-        // Clear all cookies to ensure complete logout
-        res.clearCookie('connect.sid', { path: '/' });
-        
-        // Try to do the passport logout anyway
-        if (req.logout) {
-          try {
-            req.logout((passportErr) => {
-              if (passportErr) {
-                console.error("Passport logout error:", passportErr);
-              }
-              
-              // Return success response with anti-cache timestamp
-              return res.json({ 
-                message: "Logout successful",
-                timestamp: new Date().getTime() // Use numeric timestamp for better cache-busting
-              });
-            });
-          } catch (logoutErr) {
-            console.error("Logout function error:", logoutErr);
-            // Continue anyway since we've already destroyed the session
-            return res.json({ 
-              message: "Logout successful (session destroyed)",
-              timestamp: new Date().getTime()
-            });
-          }
-        } else {
-          // No logout function available, but we've already destroyed the session
-          return res.json({ 
-            message: "Logout successful (session destroyed)",
-            timestamp: new Date().getTime()
-          });
-        }
+    // Simple, synchronous logout handler
+    try {
+      // Clear user from cache if authenticated
+      if (req.isAuthenticated() && req.user && req.user.id) {
+        invalidateUserCache(req.user.id);
+        console.log(`Invalidated cache for user ID: ${req.user.id}`);
+      }
+      
+      // Add cache control headers
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
+      // Clear the session cookie first
+      res.clearCookie('connect.sid', { 
+        path: '/',
+        httpOnly: true,
+        secure: app.get("env") === 'production',
+        sameSite: 'lax'
       });
-    } else {
-      // No session to destroy
-      if (req.logout) {
-        try {
-          req.logout((passportErr) => {
-            if (passportErr) {
-              console.error("Passport logout error:", passportErr);
-            }
-            
-            // Clear cookies anyway
-            res.clearCookie('connect.sid', { path: '/' });
-            
-            return res.json({ 
-              message: "Logout successful (no session)",
-              timestamp: new Date().getTime()
-            });
-          });
-        } catch (logoutErr) {
-          console.error("Logout function error:", logoutErr);
-          res.clearCookie('connect.sid', { path: '/' });
-          return res.json({ 
-            message: "Logout successful (fallback)",
-            timestamp: new Date().getTime()
-          });
-        }
-      } else {
-        // Neither session nor logout function available
-        res.clearCookie('connect.sid', { path: '/' });
-        return res.json({ 
-          message: "Logout successful (no session or logout function)",
-          timestamp: new Date().getTime()
+      
+      // Synchronously return success right away
+      // This ensures the response is sent even if session destruction has issues
+      res.json({ 
+        message: "Logout successful",
+        success: true,
+        timestamp: Date.now()
+      });
+      
+      // Then try to destroy the session (after response is sent)
+      if (req.session) {
+        req.session.destroy((err) => {
+          if (err) {
+            console.log("Non-critical: Session destruction error:", err);
+          }
         });
       }
+    } catch (e) {
+      console.error("Logout error, but returning success anyway:", e);
+      res.status(200).json({
+        message: "Logout handled",
+        success: true,
+        timestamp: Date.now()
+      });
     }
   });
 
