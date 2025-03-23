@@ -1,6 +1,7 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
+import { setupWebSocketServer } from "./websocket";
 import { log } from "./vite";
 import { db } from "@db";
 import seasonalScopesRouter from "./routes/seasonal-scopes";
@@ -52,7 +53,6 @@ import path from "path";
 import { crypto } from "./crypto";
 import session from "express-session";
 import passport from "passport";
-import { setupWebSocketServer } from "./websocket";
 import { randomBytes } from "crypto";
 
 // Domain-based organization identification middleware
@@ -112,7 +112,8 @@ export function registerRoutes(app: Express): Server {
     // Authentication is already set up in index.ts, no need to call setupAuth again
     log("Using existing authentication middleware");
     
-    // Set up WebSocket server - this is now handled in index.ts
+    // WebSocket server setup
+    setupWebSocketServer(httpServer);
     
     // Add organization identification middleware
     app.use(identifyOrganization);
