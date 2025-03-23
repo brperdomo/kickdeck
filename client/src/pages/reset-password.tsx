@@ -68,7 +68,12 @@ export default function ResetPassword() {
   const verifyToken = async (token: string) => {
     try {
       console.log('Verifying token:', token);
-      const response = await fetch('/api/auth/verify-reset-token', {
+      // Create a URL that uses the current origin to avoid domain mismatches
+      const baseUrl = window.location.origin;
+      const url = `${baseUrl}/api/auth/verify-reset-token`;
+      console.log('Making request to:', url);
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
@@ -115,7 +120,12 @@ export default function ResetPassword() {
 
     try {
       setIsSubmitting(true);
-      const response = await fetch("/api/auth/reset-password", {
+      // Create a URL that uses the current origin to avoid domain mismatches
+      const baseUrl = window.location.origin;
+      const url = `${baseUrl}/api/auth/reset-password`;
+      console.log('Making reset password request to:', url);
+      
+      const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
