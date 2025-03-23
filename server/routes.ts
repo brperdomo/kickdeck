@@ -16,6 +16,7 @@ import emailProvidersRouter from "./routes/admin/email-providers";
 import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
+import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
 import { sql, eq, and, or, inArray, notInArray } from "drizzle-orm";
 import {
   users,
@@ -1983,6 +1984,15 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         res.status(500).send("Failed to update password");
       }
     });
+
+    // Password reset request endpoint
+    app.post('/api/auth/forgot-password', requestPasswordReset);
+
+    // Verify password reset token
+    app.post('/api/auth/verify-reset-token', verifyResetToken);
+
+    // Complete password reset (set new password)
+    app.post('/api/auth/reset-password', completePasswordReset);
 
     // Event creation endpoint
     app.post('/api/admin/events', isAdmin, async (req, res) => {

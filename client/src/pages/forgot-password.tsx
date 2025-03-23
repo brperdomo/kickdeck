@@ -37,7 +37,7 @@ export default function ForgotPassword() {
   async function onSubmit(data: ForgotPasswordFormData) {
     try {
       setIsSubmitting(true);
-      const response = await fetch("/api/reset-password", {
+      const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
