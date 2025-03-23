@@ -2781,10 +2781,18 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const uniqueGroups = [];
         const seenIds = new Set();
 
+        // Import the normalization function
+        const { normalizeDivisionCode } = require('./utils/age-group-utils');
+        
         for (const group of ageGroups) {
           if (!seenIds.has(group.id)) {
             seenIds.add(group.id);
-            uniqueGroups.push(group);
+            
+            // Add displayDivisionCode field to each group
+            uniqueGroups.push({
+              ...group,
+              displayDivisionCode: normalizeDivisionCode(group)
+            });
           }
         }
 
@@ -2877,19 +2885,31 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {
         const eventId = parseInt(req.params.id);
 
+        // Import the normalization function
+        const { normalizeDivisionCode } = require('./utils/age-group-utils');
+
         const ageGroups = await db
           .select({
+            id: eventAgeGroups.id,
             ageGroup: eventAgeGroups.ageGroup,
             gender: eventAgeGroups.gender,
+            divisionCode: eventAgeGroups.divisionCode,
+            birthYear: eventAgeGroups.birthYear,
             teamCount: sql<number>`count(${teams.id})`.mapWith(Number)
           })
           .from(eventAgeGroups)
           .leftJoin(teams, eq(teams.ageGroupId, eventAgeGroups.id))
           .where(eq(eventAgeGroups.eventId, eventId))
-          .groupBy(eventAgeGroups.id, eventAgeGroups.ageGroup, eventAgeGroups.gender)
+          .groupBy(eventAgeGroups.id, eventAgeGroups.ageGroup, eventAgeGroups.gender, eventAgeGroups.divisionCode, eventAgeGroups.birthYear)
           .orderBy(eventAgeGroups.ageGroup);
+          
+        // Add displayDivisionCode to each age group
+        const ageGroupsWithDisplayDivisionCode = ageGroups.map(group => ({
+          ...group,
+          displayDivisionCode: normalizeDivisionCode(group)
+        }));
 
-        res.json(ageGroups);
+        res.json(ageGroupsWithDisplayDivisionCode);
       } catch (error) {
         console.error('Error fetching age groups:', error);
         // Added basic error logging for white screen debugging.
