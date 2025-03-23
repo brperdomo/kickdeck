@@ -1628,7 +1628,7 @@ function AdminDashboard() {
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
   const [showInternalOps, setShowInternalOps] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-  const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
+
   const { setAppearance, currentAppearance } = useTheme();
   const [theme, setTheme] = useState(currentAppearance);
   const queryClient = useQueryClient();
@@ -1683,8 +1683,30 @@ function AdminDashboard() {
     );
   }
 
-  const handleLogout = () => {
-    setShowLogoutOverlay(true);
+  const handleLogout = async () => {
+    try {
+      // Call logout API directly
+      console.log("Logging out...");
+      await logout();
+      
+      // Clear all browser data
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Clear cookies
+      document.cookie.split(";").forEach((cookie) => {
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+      });
+      
+      // Force page refresh and redirect to root
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Fallback - force refresh even if API call fails
+      window.location.href = "/";
+    }
   };
 
   const handleAppearanceToggle = async () => {
@@ -1980,38 +2002,7 @@ function AdminDashboard() {
           />
         )}
       </div>
-      {showLogoutOverlay && (
-        <LogoutOverlay onFinished={() => {
-          // Initiate logout call but don't await it, in case it's stuck or taking too long
-          console.log("Initiating logout process...");
-          logout().catch(e => console.error("API logout error:", e));
-          
-          // Don't wait for API call to complete, immediately continue with cleanup
-          console.log("Performing client-side logout cleanup");
-          
-          // Clear all storage and force page reload to completely reset the application state
-          localStorage.clear();
-          sessionStorage.clear();
-          
-          // Clear cookies
-          document.cookie = "connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
-          
-          // Set cache control headers
-          const meta = document.createElement('meta');
-          meta.httpEquiv = 'Cache-Control';
-          meta.content = 'no-store, no-cache, must-revalidate, max-age=0';
-          document.head.appendChild(meta);
-          
-          const pragmaMeta = document.createElement('meta');
-          pragmaMeta.httpEquiv = 'Pragma';
-          pragmaMeta.content = 'no-cache';
-          document.head.appendChild(pragmaMeta);
-          
-          // Force navigation to root which shows login for unauthenticated users
-          console.log("Redirecting to login screen...");
-          window.location.replace("/");
-        }} />
-      )}
+
     </div>
   );
 }
