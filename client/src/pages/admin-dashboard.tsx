@@ -1916,12 +1916,17 @@ function AdminDashboard() {
             </Button>
 
             <div className="flex flex-col space-y-2 mb-2">
-              <Link href="/logout">
-                <Button className="w-full" variant="outline">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Direct Logout
-                </Button>
-              </Link>
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => {
+                  // Navigate directly to LogoutHandler component
+                  window.location.href = "/logout";
+                }}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Direct Logout
+              </Button>
               <Button onClick={handleLogout} className="w-full" variant="outline">
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout with Animation
@@ -1987,45 +1992,35 @@ function AdminDashboard() {
         )}
       </div>
       {showLogoutOverlay && (
-        <LogoutOverlay onFinished={async () => {
-          try {
-            console.log("Initiating logout process...");
-            await logout();
-            console.log("Logout API call completed");
-            
-            // After logout, we need to clear all storage and force page reload
-            // to completely reset the application state and prevent back navigation
-            localStorage.clear();
-            sessionStorage.clear();
-            
-            // Set no-cache headers and navigate to the login page
-            // This approach doesn't use the history API, just completely reloads the page
-            document.cookie = "connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
-            
-            // Create a new meta tag with cache control directives
-            const meta = document.createElement('meta');
-            meta.httpEquiv = 'Cache-Control';
-            meta.content = 'no-store, no-cache, must-revalidate, max-age=0';
-            document.head.appendChild(meta);
-            
-            // Add a second meta tag for Pragma
-            const pragmaMeta = document.createElement('meta');
-            pragmaMeta.httpEquiv = 'Pragma';
-            pragmaMeta.content = 'no-cache';
-            document.head.appendChild(pragmaMeta);
-            
-            // Use replace method which doesn't preserve history
-            // Redirect to root which handles unauthenticated users
-            window.location.replace("/");
-          } catch (error) {
-            console.error("Logout failed:", error);
-            // Force logout by clearing everything manually as a fallback
-            localStorage.clear();
-            sessionStorage.clear();
-            
-            // Use replace method for fallback which doesn't preserve history
-            window.location.replace("/");
-          }
+        <LogoutOverlay onFinished={() => {
+          // Initiate logout call but don't await it, in case it's stuck or taking too long
+          console.log("Initiating logout process...");
+          logout().catch(e => console.error("API logout error:", e));
+          
+          // Don't wait for API call to complete, immediately continue with cleanup
+          console.log("Performing client-side logout cleanup");
+          
+          // Clear all storage and force page reload to completely reset the application state
+          localStorage.clear();
+          sessionStorage.clear();
+          
+          // Clear cookies
+          document.cookie = "connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+          
+          // Set cache control headers
+          const meta = document.createElement('meta');
+          meta.httpEquiv = 'Cache-Control';
+          meta.content = 'no-store, no-cache, must-revalidate, max-age=0';
+          document.head.appendChild(meta);
+          
+          const pragmaMeta = document.createElement('meta');
+          pragmaMeta.httpEquiv = 'Pragma';
+          pragmaMeta.content = 'no-cache';
+          document.head.appendChild(pragmaMeta);
+          
+          // Force navigation to root which shows login for unauthenticated users
+          console.log("Redirecting to login screen...");
+          window.location.replace("/");
         }} />
       )}
     </div>

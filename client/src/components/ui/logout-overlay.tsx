@@ -50,13 +50,16 @@ export function LogoutOverlay({ className, onFinished, ...props }: LogoutOverlay
       console.error("Error clearing browser data during logout:", e);
     }
     
-    // After clearing everything, wait a moment and then redirect
-    const timer = setTimeout(() => {
-      // Call the finished callback
-      onFinished();
-    }, 1800); // Slightly longer timeout to ensure cleanup is done
+    // Skip the animation and redirect immediately
+    onFinished();
+    
+    // Force redirect as a fallback if the callback doesn't work
+    const fallbackTimer = setTimeout(() => {
+      console.log("Forcing logout redirect via fallback");
+      window.location.replace("/");
+    }, 800); // Use a shorter timeout for better UX
 
-    return () => clearTimeout(timer);
+    return () => clearTimeout(fallbackTimer);
   }, [onFinished]);
 
   return (
