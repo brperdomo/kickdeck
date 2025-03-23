@@ -148,6 +148,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (storageError) {
           console.error("Error clearing browser storage:", storageError);
         }
+        
+        // Force a reload of the page to completely reset React state
+        // This ensures that the router will detect that the user is logged out
+        window.location.href = "/auth";
+        return; // Early return to prevent toast from showing before redirect
       } catch (cacheError) {
         console.error("Error clearing cache:", cacheError);
       }
@@ -165,6 +170,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         queryClient.setQueryData(["/api/user"], null);
         localStorage.clear();
         sessionStorage.clear();
+        
+        // Also force redirect to auth page on error
+        window.location.href = "/auth";
+        return; // Early return to prevent toast from showing before redirect
       } catch (e) {
         console.error("Failed to clean up state after logout error:", e);
       }
