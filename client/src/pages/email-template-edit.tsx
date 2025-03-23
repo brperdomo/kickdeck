@@ -76,7 +76,21 @@ export default function EmailTemplateEdit() {
     enabled: !isCreateMode && !!id,
   });
 
-  const form = useForm<FormValues>({
+  // Define specific type for form values to ensure proper types
+  interface EmailTemplateFormValues {
+    name: string;
+    description: string;
+    type: string;
+    subject: string;
+    content: string;
+    senderName: string;
+    senderEmail: string;
+    isActive: boolean;
+    variables: string[];
+    providerId?: number;
+  }
+  
+  const form = useForm<EmailTemplateFormValues>({
     resolver: zodResolver(insertEmailTemplateSchema),
     defaultValues: {
       name: "",
@@ -90,20 +104,21 @@ export default function EmailTemplateEdit() {
       variables: [],
       providerId: undefined,
     },
+    mode: "onBlur", // Validate on blur for immediate feedback
   });
 
   useEffect(() => {
     if (template) {
       form.reset({
         name: template.name,
-        description: template.description ?? "",
+        description: template.description || "",
         type: template.type,
         subject: template.subject,
         content: template.content,
         senderName: template.senderName,
         senderEmail: template.senderEmail,
         isActive: template.isActive === false ? false : true, // Default to true, avoid null
-        variables: template.variables ?? [],
+        variables: template.variables || [],
         providerId: template.providerId ? template.providerId : undefined,
       });
 
@@ -114,16 +129,30 @@ export default function EmailTemplateEdit() {
   }, [template, form]);
 
   const mutation = useMutation({
-    mutationFn: async (data: FormValues) => {
+    mutationFn: async (data: EmailTemplateFormValues) => {
+      // Ensure all required fields are present and of the correct type
+      const cleanedData = {
+        ...data,
+        description: data.description || "", 
+        isActive: data.isActive === false ? false : true,
+        variables: data.variables || [],
+      };
+      
       const endpoint = !isCreateMode
         ? `/api/admin/email-templates/${id}`
         : "/api/admin/email-templates";
+        
       const response = await fetch(endpoint, {
         method: isCreateMode ? "POST" : "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(cleanedData),
       });
-      if (!response.ok) throw new Error("Failed to save template");
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Unknown error occurred" }));
+        throw new Error(errorData.error || "Failed to save template");
+      }
+      
       return response.json();
     },
     onSuccess: () => {
@@ -143,7 +172,7 @@ export default function EmailTemplateEdit() {
     },
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: EmailTemplateFormValues) => {
     mutation.mutate(data);
   };
 
@@ -275,8 +304,8 @@ export default function EmailTemplateEdit() {
                       </div>
                       <FormControl>
                         <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
+                          checked={field.value === true}
+                          onCheckedChange={(checked) => field.onChange(checked)}
                         />
                       </FormControl>
                     </FormItem>
@@ -293,7 +322,11 @@ export default function EmailTemplateEdit() {
                     <FormControl>
                       <Textarea
                         placeholder="Brief description of this email template's purpose"
-                        {...field}
+                        onChange={field.onChange}
+                        value={field.value || ""}
+                        name={field.name}
+                        ref={field.ref}
+                        onBlur={field.onBlur}
                       />
                     </FormControl>
                     <FormDescription>
