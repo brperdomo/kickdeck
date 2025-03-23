@@ -2006,19 +2006,17 @@ function AdminDashboard() {
             pragmaMeta.content = 'no-cache';
             document.head.appendChild(pragmaMeta);
             
-            // Use a simpler approach that works with the router
-            // Clear browser history and redirect to auth page
-            window.history.pushState(null, "", "/");
-            window.location.href = "/auth";
+            // Use replace method which doesn't preserve history
+            // Redirect to root, which will show login when user is null
+            window.location.replace("/");
           } catch (error) {
             console.error("Logout failed:", error);
             // Force logout by clearing everything manually as a fallback
             localStorage.clear();
             sessionStorage.clear();
             
-            // Use a simpler approach that works with the router
-            window.history.pushState(null, "", "/");
-            window.location.href = "/auth";
+            // Use replace method for fallback which doesn't preserve history
+            window.location.replace("/");
           }
         }} />
       )}
