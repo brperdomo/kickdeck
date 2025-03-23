@@ -138,14 +138,20 @@ router.delete('/:id', async (req, res) => {
         .execute();
       console.log('Deleted coupons');
 
-      // Delete fee assignments
-      await tx.delete(eventAgeGroupFees)
-        .where(
-          eq(eventAgeGroupFees.ageGroupId,
-            sql`(SELECT id FROM event_age_groups WHERE event_id = ${eventId.toString()})`
-          )
-        )
-        .execute();
+      // Get age group IDs first
+      const ageGroupRows = await tx
+        .select({ id: eventAgeGroups.id })
+        .from(eventAgeGroups)
+        .where(eq(eventAgeGroups.eventId, eventId.toString()));
+      
+      const ageGroupIds = ageGroupRows.map(row => row.id);
+      
+      if (ageGroupIds.length > 0) {
+        // Delete fee assignments for these age groups
+        await tx.delete(eventAgeGroupFees)
+          .where(sql`${eventAgeGroupFees.ageGroupId} IN (${ageGroupIds.join(',')})`)
+          .execute();
+      }
       console.log('Deleted fee assignments');
 
       // Delete fees
