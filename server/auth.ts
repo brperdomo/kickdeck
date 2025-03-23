@@ -240,12 +240,37 @@ export function setupAuth(app: Express) {
       invalidateUserCache(req.user.id);
     }
     
-    req.logout((err) => {
-      if (err) {
-        return res.status(500).send("Logout failed");
+    // Add cache control headers to prevent caching of this response
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    
+    // Destroy the session completely rather than just logging out
+    req.session.destroy((sessionErr) => {
+      if (sessionErr) {
+        console.error("Session destruction error:", sessionErr);
+        return res.status(500).json({ 
+          message: "Logout failed", 
+          error: "Session could not be destroyed" 
+        });
       }
-
-      res.json({ message: "Logout successful" });
+      
+      // Also clear cookies to ensure complete logout
+      res.clearCookie('connect.sid');
+      
+      // Now also call the regular logout for passport cleanup
+      req.logout((passportErr) => {
+        if (passportErr) {
+          console.error("Passport logout error:", passportErr);
+          // We continue anyway since session is already destroyed
+        }
+        
+        // Return success response
+        return res.json({ 
+          message: "Logout successful",
+          timestamp: new Date().toISOString() // Add timestamp to prevent response caching
+        });
+      });
     });
   });
 

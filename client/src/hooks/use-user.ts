@@ -1,19 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { InsertUser, SelectUser } from "@db/schema";
 
-// Temporary mock admin user for development
-const mockAdminUser: SelectUser = {
-  id: 1,
-  email: "admin@example.com",
-  username: "admin",
-  password: "",
-  firstName: "Admin",
-  lastName: "User",
-  phone: null,
-  isParent: false,
-  isAdmin: true,
-  createdAt: new Date().toISOString(),
-};
+// Mock admin user was removed to fix logout issues
+// Production code should never use mock data
 
 type RequestResult = {
   ok: true;
@@ -80,9 +69,11 @@ export function useUser() {
   const { data: user, error, isLoading } = useQuery<SelectUser | null, Error>({
     queryKey: ['user'],
     queryFn: fetchUser,
-    staleTime: Infinity, // Data never goes stale
-    gcTime: 3600000, // Keep unused data for 1 hour
-    retry: false
+    staleTime: 60000, // Data considered stale after 1 minute (rather than infinity)
+    gcTime: 300000, // Keep unused data for 5 minutes (reduced from 1 hour)
+    retry: 1, // Only retry once to avoid infinite loops with bad credentials
+    refetchOnWindowFocus: true, // Make sure we refresh on window focus
+    refetchOnMount: true // Make sure we refresh when components mount
   });
 
   const loginMutation = useMutation<RequestResult, Error, InsertUser>({
@@ -93,21 +84,54 @@ export function useUser() {
   });
 
   const logoutMutation = useMutation<RequestResult, Error>({
-    mutationFn: () => handleRequest('/api/logout', 'POST'),
+    mutationFn: async () => {
+      // Use custom fetch to add cache-busting headers
+      try {
+        const response = await fetch('/api/logout', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+            // Add a random query parameter to prevent caching
+            'X-Timestamp': new Date().getTime().toString()
+          }
+        });
+        
+        if (!response.ok) {
+          if (response.status >= 500) {
+            return { ok: false, message: response.statusText };
+          }
+          const message = await response.text();
+          return { ok: false, message };
+        }
+        
+        return { ok: true };
+      } catch (e: any) {
+        return { ok: false, message: e.toString() };
+      }
+    },
     onSuccess: () => {
-      // Clear the user data from cache
+      // Clear the user data from cache immediately
       queryClient.setQueryData(['user'], null);
       
-      // Invalidate all queries to ensure they are refetched when needed
-      queryClient.invalidateQueries();
+      // Clear the query completely, not just invalidate
+      queryClient.removeQueries({ queryKey: ['user'] });
+      
+      // Clear all query cache to ensure no stale data remains
+      queryClient.clear();
       
       // Clear browser session storage/local storage if used
       try {
         sessionStorage.clear();
-        localStorage.removeItem('user');
+        localStorage.clear(); // Clear all localStorage, not just user
       } catch (e) {
         console.error('Error clearing storage:', e);
       }
+      
+      // Ensure the next requests start fresh for auth checks
+      queryClient.resetQueries();
     },
   });
 
