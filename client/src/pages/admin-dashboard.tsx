@@ -1915,10 +1915,18 @@ function AdminDashboard() {
               My Account
             </Button>
 
-            <Button onClick={handleLogout} className="w-full mb-2" variant="outline">
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
+            <div className="flex flex-col space-y-2 mb-2">
+              <Link href="/logout">
+                <Button className="w-full" variant="outline">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Direct Logout
+                </Button>
+              </Link>
+              <Button onClick={handleLogout} className="w-full" variant="outline">
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout with Animation
+              </Button>
+            </div>
             <Button 
               onClick={handleAppearanceToggle} 
               className="w-full" 
