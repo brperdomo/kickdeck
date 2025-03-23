@@ -303,6 +303,19 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     },
     enabled: !!defaultValues?.id
   });
+  
+  const feeAssignmentsQuery = useQuery({
+    queryKey: ['eventFeeAssignments', defaultValues?.id],
+    queryFn: async () => {
+      if (!defaultValues?.id) return [];
+      const response = await fetch(`/api/admin/events/${defaultValues.id}/fee-assignments`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch fee assignments");
+      }
+      return response.json();
+    },
+    enabled: !!defaultValues?.id
+  });
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: acceptedFiles => {
@@ -382,20 +395,51 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   <TableHead>Gender</TableHead>
                   <TableHead>Birth Year</TableHead>
                   <TableHead>Division Code</TableHead>
+                  <TableHead>Assigned Fees</TableHead>
+                  <TableHead>Total Fee</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {ageGroups.map((group) => (
-                  <TableRow key={`${group.gender}-${group.birthYear}-${group.ageGroup}`}>
-                    <TableCell>{group.ageGroup}</TableCell>
-                    <TableCell>{group.gender}</TableCell>
-                    <TableCell>{group.birthYear}</TableCell>
-                    <TableCell>{group.divisionCode}</TableCell>
-                  </TableRow>
-                ))}
+                {ageGroups.map((group) => {
+                  // Find fee assignments for this age group
+                  const groupAssignments = feeAssignmentsQuery.data?.filter(
+                    (assignment: any) => assignment.ageGroupId === group.id
+                  ) || [];
+                  
+                  // Calculate total fee amount
+                  const totalFee = groupAssignments.reduce((sum: number, assignment: any) => {
+                    const fee = feesQuery.data?.find((f: any) => f.id === assignment.feeId);
+                    return sum + (fee?.amount || 0);
+                  }, 0);
+                  
+                  // Get fee names
+                  const feeNames = groupAssignments.map((assignment: any) => {
+                    const fee = feesQuery.data?.find((f: any) => f.id === assignment.feeId);
+                    return fee?.name || 'Unknown Fee';
+                  });
+                  
+                  return (
+                    <TableRow key={`${group.gender}-${group.birthYear}-${group.ageGroup}`}>
+                      <TableCell>{group.ageGroup}</TableCell>
+                      <TableCell>{group.gender}</TableCell>
+                      <TableCell>{group.birthYear}</TableCell>
+                      <TableCell>{group.divisionCode}</TableCell>
+                      <TableCell>
+                        {feeNames.length > 0 
+                          ? feeNames.join(', ') 
+                          : <span className="text-muted-foreground">No fees assigned</span>}
+                      </TableCell>
+                      <TableCell>
+                        {totalFee > 0 
+                          ? `$${totalFee.toFixed(2)}` 
+                          : <span className="text-muted-foreground">$0.00</span>}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
                 {ageGroups.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center text-muted-foreground">
+                    <TableCell colSpan={6} className="text-center text-muted-foreground">
                       No age groups found
                     </TableCell>
                   </TableRow>
