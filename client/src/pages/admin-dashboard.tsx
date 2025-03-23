@@ -129,7 +129,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'coupons' | 'formTemplates';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'coupons' | 'formTemplates' | 'roles';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -1736,6 +1736,16 @@ function AdminDashboard() {
         return <CouponManagement />;
       case 'formTemplates':
         return <FormTemplatesView />;
+      case 'roles':
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Role Permissions</h2>
+              <p className="text-muted-foreground">Configure permissions for administrator roles</p>
+            </div>
+            <RolePermissionsManager />
+          </div>
+        );
       default:
         return <div>Feature coming soon</div>;
     }
