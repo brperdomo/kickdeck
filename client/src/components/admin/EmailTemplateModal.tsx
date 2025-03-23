@@ -320,16 +320,16 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                           plugins: [
                             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                             'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount',
-                            'codesample', 'sourcecode', 'paste'
+                            'insertdatetime', 'media', 'table', 'help', 'wordcount',
+                            'codesample', 'paste', 'source'
                           ],
                           codesample_languages: [
                             { text: 'HTML/XML', value: 'markup' },
                             { text: 'JavaScript', value: 'javascript' },
                             { text: 'CSS', value: 'css' }
                           ],
-                          toolbar1: 'code | undo redo | formatselect | bold italic backcolor forecolor | alignleft aligncenter alignright alignjustify',
-                          toolbar2: 'bullist numlist outdent indent | link image media | codesample removeformat | mergefields customhtmlbutton | help',
+                          toolbar1: 'code source fullscreen | undo redo | formatselect | bold italic backcolor forecolor | alignleft aligncenter alignright alignjustify',
+                          toolbar2: 'bullist numlist outdent indent | link image media | codesample removeformat | mergefields | help',
                           extended_valid_elements: '*[*]', // Allow all elements and attributes
                           valid_children: '+body[style]', // Allow style tag in body
                           schema: 'html5',
@@ -423,87 +423,13 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                               document.body.appendChild(dialogElement);
                             };
                             
-                            const openHtmlDialog = () => {
-                              // Create a custom DOM element for the dialog
-                              const dialogElement = document.createElement('div');
-                              dialogElement.className = 'tinymce-custom-dialog';
-                              dialogElement.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;';
-                              
-                              // Create the dialog content
-                              const dialogContent = document.createElement('div');
-                              dialogContent.style.cssText = 'background: white; padding: 20px; border-radius: 4px; width: 600px; max-width: 90%; box-shadow: 0 4px 10px rgba(0,0,0,0.2);';
-                              
-                              // Add dialog title
-                              const title = document.createElement('h3');
-                              title.textContent = 'Insert Custom HTML';
-                              title.style.cssText = 'margin-top: 0; margin-bottom: 15px; font-size: 18px;';
-                              
-                              // Add textarea
-                              const textarea = document.createElement('textarea');
-                              textarea.style.cssText = 'width: 100%; min-height: 200px; padding: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;';
-                              textarea.placeholder = 'Paste your HTML code here...';
-                              
-                              // Add buttons container
-                              const buttonContainer = document.createElement('div');
-                              buttonContainer.style.cssText = 'display: flex; justify-content: flex-end; gap: 10px;';
-                              
-                              // Add cancel button
-                              const cancelButton = document.createElement('button');
-                              cancelButton.textContent = 'Cancel';
-                              cancelButton.style.cssText = 'padding: 8px 12px; background: #f1f1f1; border: none; border-radius: 4px; cursor: pointer;';
-                              cancelButton.onclick = () => {
-                                document.body.removeChild(dialogElement);
-                              };
-                              
-                              // Add insert button
-                              const insertButton = document.createElement('button');
-                              insertButton.textContent = 'Insert HTML';
-                              insertButton.style.cssText = 'padding: 8px 12px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer;';
-                              insertButton.onclick = () => {
-                                if (textarea.value) {
-                                  editor.insertContent(textarea.value);
-                                }
-                                document.body.removeChild(dialogElement);
-                              };
-                              
-                              // Assemble the dialog
-                              buttonContainer.appendChild(cancelButton);
-                              buttonContainer.appendChild(insertButton);
-                              
-                              dialogContent.appendChild(title);
-                              dialogContent.appendChild(textarea);
-                              dialogContent.appendChild(buttonContainer);
-                              
-                              dialogElement.appendChild(dialogContent);
-                              
-                              // Add click outside to close
-                              dialogElement.addEventListener('click', (e) => {
-                                if (e.target === dialogElement) {
-                                  document.body.removeChild(dialogElement);
-                                }
-                              });
-                              
-                              // Add to DOM
-                              document.body.appendChild(dialogElement);
-                              
-                              // Focus the textarea
-                              setTimeout(() => {
-                                textarea.focus();
-                              }, 0);
-                            };
+
                             
                             // Add a button for merge fields
                             editor.ui.registry.addButton('mergefields', {
                               text: 'Merge Fields',
                               tooltip: 'Insert merge field',
                               onAction: openMergeFieldsDialog
-                            });
-                            
-                            // Add a custom HTML button for direct HTML insertion
-                            editor.ui.registry.addButton('customhtmlbutton', {
-                              text: 'Insert HTML',
-                              tooltip: 'Insert custom HTML code',
-                              onAction: openHtmlDialog
                             });
                           },
                           // Disable auto-formatting of HTML 
@@ -517,7 +443,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                     </div>
                   </FormControl>
                   <FormDescription>
-                    The content of the email. HTML is supported.
+                    The content of the email. HTML is fully supported. Use the "source" button in the toolbar to edit HTML directly.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
