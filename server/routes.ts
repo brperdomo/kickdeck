@@ -387,7 +387,7 @@ export function registerRoutes(app: Express): Server {
 
         // Create new user
         const hashedPassword = await crypto.hash(password);
-        const timestamp = new Date().toISOString();
+        const timestamp = new Date(); // Use Date object directly
 
         const [newUser] = await db
           .insert(users)
@@ -420,7 +420,7 @@ export function registerRoutes(app: Express): Server {
               .values({
                 name: roleName,
                 description: `${roleName} role`,
-                createdAt: timestamp
+                createdAt: new Date() // Use Date object directly
               })
               .returning();
           }
@@ -431,7 +431,7 @@ export function registerRoutes(app: Express): Server {
             .values({
               userId: newUser.id,
               roleId: existingRole.id,
-              createdAt: timestamp
+              createdAt: new Date() // Use Date object directly
             });
 
           console.log(`Assigned role ${roleName} to user ${newUser.id}`);
@@ -787,7 +787,7 @@ export function registerRoutes(app: Express): Server {
             status: 'pending',
             expiresAt: expiresAt,
             createdBy: userId,
-            createdAt: new Date().toISOString(),
+            createdAt: new Date(), // Use Date object directly
           } as typeof householdInvitations.$inferInsert)
           .returning();
 
