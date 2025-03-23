@@ -15,6 +15,7 @@ import emailProvidersRouter from "./routes/admin/email-providers";
 import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { sql, eq, and, or, inArray, notInArray } from "drizzle-orm";
+import { normalizeDivisionCode } from "./utils/age-group-utils";
 import {
   users,
   organizationSettings,
@@ -2885,9 +2886,6 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {
         const eventId = parseInt(req.params.id);
 
-        // Import the normalization function
-        const { normalizeDivisionCode } = require('./utils/age-group-utils');
-
         const ageGroups = await db
           .select({
             id: eventAgeGroups.id,
@@ -2906,7 +2904,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         // Add displayDivisionCode to each age group
         const ageGroupsWithDisplayDivisionCode = ageGroups.map(group => ({
           ...group,
-          displayDivisionCode: normalizeDivisionCode(group)
+          displayDivisionCode: group.divisionCode || `${group.gender.startsWith('B') ? 'B' : 'G'}${group.birthYear || ''}`
         }));
 
         res.json(ageGroupsWithDisplayDivisionCode);
