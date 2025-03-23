@@ -256,10 +256,13 @@ function AdministratorsView() {
 
     // Group administrators by their roles
     administratorsQuery.data.forEach((admin: any) => {
-      // If admin has no roles or roles is null/undefined, add to super_admin
+      // If admin has no roles or roles is null/undefined, use default assignment
       if (!admin.roles || !Array.isArray(admin.roles) || admin.roles.length === 0 || admin.roles[0] === null) {
-        if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
-          groupedAdmins.super_admin.push({ ...admin, roles: ['super_admin'] });
+        // Check if the admin is flagged as isAdmin in the user record
+        if (admin.isAdmin) {
+          if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
+            groupedAdmins.super_admin.push({ ...admin, roles: ['super_admin'] });
+          }
         }
         return;
       }
@@ -274,12 +277,9 @@ function AdministratorsView() {
           if (!groupedAdmins[role].some((a: any) => a.id === admin.id)) {
             groupedAdmins[role].push(admin);
           }
-        } else {
-          // If role is not recognized, add to super_admin
-          if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
-            groupedAdmins.super_admin.push(admin);
-          }
         }
+        // We no longer add to super_admin if role is not recognized
+        // This prevents incorrectly categorizing admins
       });
     });
 
