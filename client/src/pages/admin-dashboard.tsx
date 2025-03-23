@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation, Link } from "wouter";
-import { Link2, X, Ticket, Plus, Mail } from "lucide-react";
+import { Link2, X, Ticket, Plus, Mail, KeyRound } from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import { useToast } from "@/hooks/use-toast";
@@ -101,6 +101,7 @@ import FormTemplateCreatePage from "@/pages/form-template-create";
 import FormTemplatesPage from "@/pages/form-templates";
 import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
 import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
+import RolePermissionsManager from "@/components/admin/RolePermissionsManager"; // Added import
 import { Toggle } from '@/components/ui/toggle';
 
 
@@ -2293,6 +2294,7 @@ const navigationItems = [
   { icon: ImageIcon, label: "File Manager", value: "files" as const },
   { icon: Ticket, label: "Coupons", value: "coupons" as const },
   { icon: FormInput, label: "Form Templates", value: "formTemplates" as const },
+  { icon: KeyRound, label: "Role Permissions", value: "roles" as const },
   { icon: User, label: "My Account", value: "account" as const },
 ];
 
