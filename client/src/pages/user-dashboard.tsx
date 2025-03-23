@@ -120,8 +120,18 @@ export default function UserDashboard() {
             // Small delay to ensure all state is cleared before navigation
             setTimeout(() => {
               console.log("Redirecting user to auth page...");
-              // Use replace instead of href to prevent back button from working
-              window.location.replace("/auth?logged_out=true");
+              
+              // Use Link routing API instead of direct window.location.replace
+              // This will correctly use the routing system
+              window.location.href = "/auth?logged_out=true";
+              
+              // As a fallback, also clear any storage
+              try {
+                localStorage.clear();
+                sessionStorage.clear();
+              } catch (e) {
+                console.error("Failed to clear storage:", e);
+              }
             }, 100);
           } catch (error) {
             console.error("User logout failed:", error);
@@ -129,8 +139,8 @@ export default function UserDashboard() {
             localStorage.clear();
             sessionStorage.clear();
             
-            // Use replace to completely clear history
-            window.location.replace("/auth?forced=true");
+            // Use proper routing
+            window.location.href = "/auth?forced=true";
           }
         }} />
       )}

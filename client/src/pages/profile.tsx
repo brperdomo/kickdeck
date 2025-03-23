@@ -28,8 +28,16 @@ export default function Profile() {
             // Small delay to ensure all state is cleared before navigation
             setTimeout(() => {
               console.log("Redirecting from profile to auth page...");
-              // Use replace instead of setLocation to prevent back button from working
-              window.location.replace("/auth?logged_out=true");
+              // Use setLocation for routing within the app
+              setLocation("/auth?logged_out=true");
+              
+              // As a fallback, also clear any storage
+              try {
+                localStorage.removeItem("lastActiveView");
+                sessionStorage.clear();
+              } catch (e) {
+                console.error("Failed to clear storage:", e);
+              }
             }, 100);
           } catch (error) {
             console.error("Profile logout failed:", error);
@@ -37,8 +45,8 @@ export default function Profile() {
             localStorage.clear();
             sessionStorage.clear();
             
-            // Use replace to completely clear history
-            window.location.replace("/auth?forced=true");
+            // Use setLocation for routing
+            setLocation("/auth?forced=true");
           }
         }} />
       )}
