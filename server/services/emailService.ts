@@ -191,7 +191,8 @@ export async function sendPasswordResetEmail(
   username: string
 ): Promise<void> {
   try {
-    const appUrl = process.env.APP_URL || `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
+    // Use the Replit domains environment variable to get the correct domain
+    const appUrl = process.env.APP_URL || `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
     const resetUrl = `${appUrl}/reset-password?token=${resetToken}`;
     
     await sendTemplatedEmail(to, 'password_reset', {

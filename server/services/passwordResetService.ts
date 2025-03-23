@@ -101,7 +101,8 @@ export async function initiatePasswordReset(email: string): Promise<boolean> {
     
     // In development mode, just log the reset link
     if (isDevelopment) {
-      const appUrl = process.env.APP_URL || `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
+      // Use the actual domain from request headers if available, or fallback to a default
+      const appUrl = process.env.APP_URL || `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
       const resetUrl = `${appUrl}/reset-password?token=${token}`;
       
       console.log('\n===== DEVELOPMENT MODE: PASSWORD RESET LINK =====');
