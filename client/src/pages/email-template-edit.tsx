@@ -51,7 +51,7 @@ export default function EmailTemplateEdit() {
   const [, navigate] = useLocation();
   // Check if we're in create mode by examining the path
   const path = window.location.pathname;
-  const isCreateMode = path.includes('/create') || !id;
+  const isCreateMode = path.includes('/create');
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [variables, setVariables] = useState<string[]>([]);
@@ -67,15 +67,21 @@ export default function EmailTemplateEdit() {
   });
 
   // Fetch template if in edit mode
-  const { data: template, isLoading: isTemplateLoading } = useQuery({
+  const { data: template, isLoading: isTemplateLoading, error } = useQuery({
     queryKey: ["email-template", id],
     queryFn: async () => {
-      if (isCreateMode) return null;
+      console.log("Fetching template with ID:", id);
       const response = await fetch(`/api/admin/email-templates/${id}`);
-      if (!response.ok) throw new Error("Failed to fetch template");
-      return response.json();
+      if (!response.ok) {
+        console.error("Failed to fetch template:", response.status, response.statusText);
+        throw new Error("Failed to fetch template");
+      }
+      const data = await response.json();
+      console.log("Fetched template data:", data);
+      return data;
     },
-    enabled: !isCreateMode && !!id,
+    enabled: !!id && !isCreateMode,
+    staleTime: 0, // Always fetch fresh data
   });
 
   // Define specific type for form values to ensure proper types
@@ -109,7 +115,23 @@ export default function EmailTemplateEdit() {
     mode: "onBlur", // Validate on blur for immediate feedback
   });
 
+  // Add debug logging on component mount to see query status
   useEffect(() => {
+    console.log('Component mounted with params:', { 
+      id, 
+      isCreateMode, 
+      path: window.location.pathname 
+    });
+  }, []);
+  
+  useEffect(() => {
+    console.log('Template query status:', { 
+      isTemplateLoading, 
+      hasTemplate: !!template,
+      templateId: template?.id,
+      isCreateMode
+    });
+    
     if (template) {
       console.log("Loading template data:", template);
       
