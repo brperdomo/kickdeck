@@ -76,13 +76,13 @@ export default function AuthPage() {
     const redirectPath = sessionStorage.getItem('redirectAfterAuth');
     if (redirectPath) {
       sessionStorage.removeItem('redirectAfterAuth');
-      window.location.href = redirectPath;
+      setLocation(redirectPath);
     } else if (user.isAdmin) {
-      window.location.href = '/admin';
+      setLocation('/admin');
     } else {
-      window.location.href = '/dashboard';
+      setLocation('/dashboard');
     }
-  }, [user]);
+  }, [user, setLocation]);
 
   async function onSubmit(data: LoginFormData) {
     try {

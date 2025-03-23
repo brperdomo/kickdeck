@@ -72,27 +72,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
+      console.log("Attempting login with:", credentials.email);
+      
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
         credentials: "include",
       });
+      
+      console.log("Login response status:", res.status);
+      
+      // Check for successful response
       if (!res.ok) {
         const error = await res.text();
+        console.error("Login error response:", error);
         throw new Error(error);
       }
-      return res.json();
+      
+      const data = await res.json();
+      console.log("Login successful, user data received:", data.user ? "User data present" : "No user data");
+      return data;
     },
     onSuccess: (data) => {
+      console.log("Login mutation success, updating user data in cache");
       queryClient.setQueryData(["/api/user"], data.user);
+      
+      // Invalidate and refetch user data to ensure it's current
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      
       toast({
         title: "Success",
         description: "Successfully logged in",
       });
     },
     onError: (error: Error) => {
+      console.error("Login mutation error:", error.message);
       toast({
         title: "Login failed",
         description: error.message,
