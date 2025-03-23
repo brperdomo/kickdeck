@@ -293,24 +293,6 @@ export function setupAuth(app: Express) {
     res.status(401).send("Not logged in");
   });
 
-  // Add email availability check endpoint
-  app.get("/api/check-email", async (req, res) => {
-    const email = req.query.email as string;
-    if (!email) {
-      return res.status(400).send("Email is required");
-    }
-
-    try {
-      const [existingUser] = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
-
-      return res.json({ available: !existingUser });
-    } catch (error) {
-      console.error("Error checking email availability:", error);
-      return res.status(500).send("Error checking email availability");
-    }
-  });
+  // Email availability check is handled in routes.ts
+  // to avoid duplicate route registration
 }
