@@ -14,6 +14,7 @@ import organizationsRouter from "./routes/admin/organizations";
 import emailProvidersRouter from "./routes/admin/email-providers";
 import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
+import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import { sql, eq, and, or, inArray, notInArray } from "drizzle-orm";
 import {
   users,
@@ -125,6 +126,10 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/organizations', isAdmin, organizationsRouter); // Add organizations router
     app.use('/api/admin/email-providers', isAdmin, emailProvidersRouter); // Add email providers router
     app.use('/api/admin/email-template-routings', isAdmin, emailTemplateRoutingsRouter); // Add email template routings router
+
+    // Register fee assignment routes for admin
+    app.get('/api/admin/events/:eventId/fee-assignments', isAdmin, getFeeAssignments);
+    app.post('/api/admin/events/:eventId/fee-assignments', isAdmin, updateFeeAssignments);
 
     // Register coupon routes
     app.post('/api/admin/coupons', isAdmin, createCoupon);

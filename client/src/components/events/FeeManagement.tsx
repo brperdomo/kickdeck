@@ -170,6 +170,14 @@ export function FeeManagement() {
       try {
         const response = await fetch(
           `/api/admin/events/${eventIdParam}/fee-assignments`,
+          {
+            // Add cache control headers to prevent browser caching
+            headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+              'Expires': '0'
+            }
+          }
         );
         
         if (!response.ok) {
@@ -204,9 +212,10 @@ export function FeeManagement() {
     },
     enabled: !!eventIdParam,
     staleTime: 0, // Don't cache - always fetch fresh data
+    cacheTime: 0, // Don't keep data in cache
     refetchOnWindowFocus: true, // Refresh when window regains focus
     refetchOnMount: true, // Always refetch when component mounts
-    retry: 2, // Retry failed requests twice
+    retry: 3, // Retry failed requests three times
   });
 
   // Initialize selected age groups when fee assignments load
@@ -544,12 +553,35 @@ export function FeeManagement() {
         throw new Error("Event ID is missing");
       }
 
-      // Use the React Query mutation
+      // Use the React Query mutation with retry logic
       try {
-        const result = await updateAssignmentsMutation.mutateAsync({
-          feeId: currentFeeId,
-          ageGroupIds,
-        });
+        // First attempt
+        let result;
+        let retryCount = 0;
+        const maxRetries = 2;
+        
+        while (retryCount <= maxRetries) {
+          try {
+            result = await updateAssignmentsMutation.mutateAsync({
+              feeId: currentFeeId,
+              ageGroupIds,
+            });
+            
+            // If successful, break out of retry loop
+            console.log(`Attempt ${retryCount + 1} succeeded:`, result);
+            break;
+          } catch (err) {
+            retryCount++;
+            console.error(`Attempt ${retryCount} failed:`, err);
+            
+            if (retryCount > maxRetries) {
+              throw err; // All retries failed, propagate the error
+            }
+            
+            // Wait a short time before retrying
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+        }
 
         console.log("Fee assignment update result:", result);
         
@@ -560,15 +592,18 @@ export function FeeManagement() {
         });
 
         // Force fresh data retrieval from server
-        queryClient.invalidateQueries(['feeAssignments', eventIdParam]);
-        queryClient.invalidateQueries(['fees', eventIdParam]);
-        queryClient.invalidateQueries(['eventAgeGroups', eventIdParam]);
+        queryClient.removeQueries(['feeAssignments', eventIdParam]); // Remove from cache completely
+        queryClient.removeQueries(['fees', eventIdParam]);
+        queryClient.removeQueries(['eventAgeGroups', eventIdParam]);
+        
+        // Wait a moment for server to process changes
+        await new Promise(resolve => setTimeout(resolve, 300));
         
         // Immediately refetch to update the UI with fresh data
         await Promise.all([
-          feeAssignmentsQuery.refetch(), 
-          feesQuery.refetch(), 
-          ageGroupsQuery.refetch()
+          feeAssignmentsQuery.refetch({ throwOnError: true }), 
+          feesQuery.refetch({ throwOnError: true }), 
+          ageGroupsQuery.refetch({ throwOnError: true })
         ]);
         
         // Close dialog if we're in one

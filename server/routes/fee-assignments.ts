@@ -1,7 +1,7 @@
 
 import { Request, Response } from 'express';
-import { db } from '../db';
-import { eventAgeGroupFees, eventFees, eventAgeGroups } from '../db/schema';
+import { db } from '@db';
+import { eventAgeGroupFees, eventFees, eventAgeGroups } from '@db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
 
 // Get fee assignments for an event
