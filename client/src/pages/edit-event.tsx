@@ -140,6 +140,12 @@ export default function EditEvent() {
   // Prepare the event data for the form
   const eventData = {
     ...eventQuery.data,
+    // Ensure seasonalScopeId is explicitly set and converted to number
+    seasonalScopeId: eventQuery.data.seasonalScopeId 
+      ? (typeof eventQuery.data.seasonalScopeId === 'string' 
+          ? parseInt(eventQuery.data.seasonalScopeId) 
+          : eventQuery.data.seasonalScopeId)
+      : null,
     ageGroups: ageGroupsQuery.data || [],
     selectedComplexIds: eventQuery.data.selectedComplexIds || [],
     complexFieldSizes: eventQuery.data.complexFieldSizes || {},
