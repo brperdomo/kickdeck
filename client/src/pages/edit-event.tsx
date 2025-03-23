@@ -93,11 +93,25 @@ export default function EditEvent() {
 
   const handleSubmit = async (formData: any) => {
     try {
+      console.log('Form data received:', formData);
       const { mode, defaultValues, ...submitData } = formData;
+      
+      // Ensure seasonalScopeId is a number and valid
+      const seasonalScopeId = submitData.seasonalScopeId 
+        ? (typeof submitData.seasonalScopeId === 'string' 
+            ? parseInt(submitData.seasonalScopeId) 
+            : submitData.seasonalScopeId)
+        : (eventQuery.data?.seasonalScopeId 
+            ? (typeof eventQuery.data.seasonalScopeId === 'string'
+                ? parseInt(eventQuery.data.seasonalScopeId)
+                : eventQuery.data.seasonalScopeId)
+            : null);
+            
+      console.log('Using seasonalScopeId:', seasonalScopeId);
+            
       await updateEventMutation.mutateAsync({
         ...submitData,
-        // Use the seasonalScopeId from the form if available, otherwise use the one from the query
-        seasonalScopeId: submitData.seasonalScopeId || eventQuery.data?.seasonalScopeId
+        seasonalScopeId
       });
     } catch (error) {
       console.error("Submit error:", error);
