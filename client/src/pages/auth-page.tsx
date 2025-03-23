@@ -4,7 +4,6 @@ import { type InsertUser } from "@db/schema";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { YouTubeBackground } from "@/components/ui/YouTubeBackground";
-import { useLocation } from "wouter";
 import {
   Form,
   FormControl,
@@ -18,8 +17,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Loader2 } from "lucide-react";
 import { z } from "zod";
-import { Link } from "wouter";
-import { useEffect } from "react";
+import { Link, useLocation } from "wouter";
+import { useEffect, useState } from "react";
 
 // Login schema
 const loginSchema = z.object({
@@ -35,7 +34,32 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function AuthPage() {
   const { toast } = useToast();
   const { loginMutation, user } = useAuth();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+  const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
+
+  // Check for logout param
+  useEffect(() => {
+    // Parse URL search params manually since wouter doesn't provide a hook for this
+    const searchParams = new URLSearchParams(window.location.search);
+    const loggedOut = searchParams.get('logged_out');
+    const forced = searchParams.get('forced');
+    
+    if (loggedOut) {
+      setLogoutMessage("You have been successfully logged out");
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out",
+        variant: "default"
+      });
+    } else if (forced) {
+      setLogoutMessage("Session expired. You have been logged out.");
+      toast({
+        title: "Session expired",
+        description: "You have been automatically logged out for security reasons",
+        variant: "destructive"
+      });
+    }
+  }, [location, toast]);
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -88,6 +112,13 @@ export default function AuthPage() {
               <CardTitle className="text-2xl sm:text-3xl font-bold text-center text-gray-900">
                 Sign In to MatchPro
               </CardTitle>
+              {logoutMessage && (
+                <div className={`mt-2 px-4 py-2 rounded-md text-sm font-medium ${
+                  window.location.search.includes('forced') ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                }`}>
+                  {logoutMessage}
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               <Form {...loginForm}>

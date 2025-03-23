@@ -112,10 +112,26 @@ export default function UserDashboard() {
 
       {showLogoutOverlay && (
         <LogoutOverlay onFinished={async () => {
-          await logout();
-          
-          // Force a complete page reload and redirect to auth
-          window.location.replace("/auth");
+          try {
+            console.log("Initiating user logout process...");
+            await logout();
+            console.log("User logout API call completed");
+            
+            // Small delay to ensure all state is cleared before navigation
+            setTimeout(() => {
+              console.log("Redirecting user to auth page...");
+              // Use replace instead of href to prevent back button from working
+              window.location.replace("/auth?logged_out=true");
+            }, 100);
+          } catch (error) {
+            console.error("User logout failed:", error);
+            // Force logout by clearing everything manually as a fallback
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Use replace to completely clear history
+            window.location.replace("/auth?forced=true");
+          }
         }} />
       )}
     </div>

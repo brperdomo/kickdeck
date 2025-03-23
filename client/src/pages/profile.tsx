@@ -20,9 +20,26 @@ export default function Profile() {
     <>
       {showLogoutOverlay && (
         <LogoutOverlay onFinished={async () => {
-          await logout();
-          setLocation("/auth");
-          setShowLogoutOverlay(false);
+          try {
+            console.log("Initiating profile page logout process...");
+            await logout();
+            console.log("Profile logout API call completed");
+            
+            // Small delay to ensure all state is cleared before navigation
+            setTimeout(() => {
+              console.log("Redirecting from profile to auth page...");
+              // Use replace instead of setLocation to prevent back button from working
+              window.location.replace("/auth?logged_out=true");
+            }, 100);
+          } catch (error) {
+            console.error("Profile logout failed:", error);
+            // Force logout by clearing everything manually as a fallback
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Use replace to completely clear history
+            window.location.replace("/auth?forced=true");
+          }
         }} />
       )}
       <div className="min-h-screen bg-background p-8">
