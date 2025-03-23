@@ -2006,11 +2006,10 @@ function AdminDashboard() {
             pragmaMeta.content = 'no-cache';
             document.head.appendChild(pragmaMeta);
             
-            // Force a hard reload by clearing browser history and going to login page
-            // The timestamp prevents any caching
-            const timestamp = new Date().getTime();
-            window.history.pushState(null, "", "/auth?logged_out=true&t=" + timestamp);
-            window.location.href = "/auth?logged_out=true&t=" + timestamp;
+            // Use a simpler approach that works with the router
+            // Clear browser history and redirect to auth page
+            window.history.pushState(null, "", "/");
+            window.location.href = "/auth";
           } catch (error) {
             console.error("Logout failed:", error);
             // Force logout by clearing everything manually as a fallback
