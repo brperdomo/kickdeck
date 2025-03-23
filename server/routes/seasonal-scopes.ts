@@ -38,6 +38,23 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Get age groups for a specific seasonal scope
+router.get('/:id/age-groups', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const scopeId = parseInt(id);
+    
+    const ageGroups = await db.query.ageGroupSettings.findMany({
+      where: eq(ageGroupSettings.seasonalScopeId, scopeId),
+    });
+    
+    console.log(`Found ${ageGroups.length} age groups for seasonal scope ${scopeId}`);
+    res.json(ageGroups);
+  } catch (error) {
+    console.error('Error fetching age groups for seasonal scope:', error);
+    res.status(500).json({ error: 'Failed to fetch age groups for seasonal scope' });
+  }
+});
 
 
 // Delete a seasonal scope

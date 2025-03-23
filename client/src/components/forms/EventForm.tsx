@@ -146,9 +146,26 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       const response = await fetch(`/api/admin/seasonal-scopes/${scopeId}/age-groups`);
       if (response.ok) {
         const ageGroupsData = await response.json();
+        
+        // Convert to the expected age group format with proper field sizes
+        const formattedAgeGroups = ageGroupsData.map((group: any) => ({
+          id: `${group.gender}-${group.birthYear}-${group.ageGroup}`,
+          ageGroup: group.ageGroup,
+          birthYear: group.birthYear,
+          gender: group.gender,
+          divisionCode: group.divisionCode,
+          fieldSize: group.ageGroup.startsWith('U') ?
+            (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
+              parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
+                parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+          selected: true
+        }));
+        
         // Update age groups state and form value
-        setAgeGroups(ageGroupsData);
-        form.setValue('ageGroups', ageGroupsData);
+        setAgeGroups(formattedAgeGroups);
+        form.setValue('ageGroups', formattedAgeGroups);
+        
+        console.log(`Loaded ${formattedAgeGroups.length} age groups for scope ${scopeId}`);
       }
     } catch (error) {
       console.error('Error fetching age groups for scope:', error);
