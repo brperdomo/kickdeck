@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Link2, X, Ticket, Plus, Mail } from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
