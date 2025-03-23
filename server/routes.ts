@@ -3953,6 +3953,28 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         res.status(500).send("Failed to fetch email templates");
       }
     });
+    
+    // Preview email template - must come before /:id route to avoid conflicts
+    app.get('/api/admin/email-templates/preview', isAdmin, async (req, res) => {
+      try {
+        const { previewEmailTemplate } = await import('./routes/email-templates');
+        await previewEmailTemplate(req, res);
+      } catch (error) {
+        console.error('Error previewing email template:', error);
+        res.status(500).send("Failed to preview email template");
+      }
+    });
+    
+    // Get single email template by ID
+    app.get('/api/admin/email-templates/:id', isAdmin, async (req, res) => {
+      try {
+        const { getEmailTemplate } = await import('./routes/email-templates');
+        await getEmailTemplate(req, res);
+      } catch (error) {
+        console.error(`Error fetching email template ${req.params.id}:`, error);
+        res.status(500).send("Failed to fetch email template");
+      }
+    });
 
     app.post('/api/admin/email-templates', isAdmin, async (req, res) => {
       try {
@@ -3984,15 +4006,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    app.get('/api/admin/email-templates/preview', isAdmin, async (req, res) => {
-      try {
-        const { previewEmailTemplate } = await import('./routes/email-templates');
-        await previewEmailTemplate(req, res);
-      } catch (error) {
-        console.error('Error previewing email template:', error);
-        res.status(500).send("Failed to preview email template");
-      }
-    });
+    // Preview route moved above to prevent route conflicts
 
     return httpServer;
   } catch (error) {
