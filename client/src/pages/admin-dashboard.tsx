@@ -1981,8 +1981,9 @@ function AdminDashboard() {
       {showLogoutOverlay && (
         <LogoutOverlay onFinished={async () => {
           await logout();
-          window.location.href = "/auth";
-          setShowLogoutOverlay(false);
+          
+          // Force a complete page reload and redirect to auth
+          window.location.replace("/auth");
         }} />
       )}
     </div>

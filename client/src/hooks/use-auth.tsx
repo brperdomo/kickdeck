@@ -96,16 +96,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     mutationFn: async () => {
       const res = await fetch("/api/logout", { 
         method: "POST",
-        credentials: "include"
+        credentials: "include",
+        // Add cache-busting to ensure the request isn't cached
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
       });
       if (!res.ok) {
         const error = await res.text();
         throw new Error(error);
       }
+      
+      // Return the successful response
+      return res.json();
     },
     onSuccess: () => {
+      // Clear all data from cache immediately
+      queryClient.clear();
+      
+      // Set user to null and invalidate all user-related queries
       queryClient.setQueryData(["/api/user"], null);
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      queryClient.removeQueries({ queryKey: ["/api/user"] });
+      
+      // Additional invalidation for related data to prevent stale data
+      queryClient.invalidateQueries();
+      
+      // Show success message
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out",
+      });
     },
     onError: (error: Error) => {
       toast({
