@@ -85,7 +85,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
       senderEmail: template?.senderEmail || "",
       isActive: template?.isActive ?? true,
       variables: template?.variables || [],
-      providerId: template?.providerId?.toString() || "",
+      providerId: template?.providerId ? template.providerId : undefined,
     },
   });
 
@@ -101,7 +101,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
         senderEmail: template.senderEmail,
         isActive: template.isActive ?? true,
         variables: template.variables ?? [],
-        providerId: template.providerId?.toString() ?? "", // Added providerId
+        providerId: template.providerId ? template.providerId : undefined, // Properly handle providerId
       });
 
       if (template.variables) {
@@ -118,7 +118,7 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
         senderEmail: "",
         isActive: true,
         variables: [],
-        providerId: "", // Added providerId
+        providerId: undefined, // Use undefined for proper form validation
       });
       setVariables([]);
     }
@@ -179,7 +179,9 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                   <FormItem>
                     <FormLabel>Email Provider</FormLabel>
                     <Select 
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value ? parseInt(value, 10) : undefined);
+                      }}
                       value={field.value?.toString() || ""}
                     >
                       <FormControl>
@@ -328,37 +330,47 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                             tools: { title: 'Merge Tools', items: 'mergefields' }
                           },
                           setup: (editor) => {
-                            editor.ui.registry.addMenuButton('mergefields', {
+                            // Add a button (not a menu button) to insert these specific merge fields
+                            editor.ui.registry.addButton('mergefields', {
                               text: 'Merge Fields',
-                              fetch: (callback) => {
-                                const items = [
-                                  {
-                                    type: 'menuitem',
-                                    text: 'First Name',
-                                    onAction: () => editor.insertContent('{{firstName}}')
+                              tooltip: 'Insert merge field',
+                              onAction: () => {
+                                editor.windowManager.open({
+                                  title: 'Insert Merge Field',
+                                  body: {
+                                    type: 'panel',
+                                    items: [
+                                      {
+                                        type: 'selectbox',
+                                        name: 'mergefield',
+                                        label: 'Field',
+                                        items: [
+                                          { text: 'First Name', value: '{{firstName}}' },
+                                          { text: 'Last Name', value: '{{lastName}}' },
+                                          { text: 'Username', value: '{{username}}' },
+                                          { text: 'Reset URL', value: '{{resetUrl}}' },
+                                          { text: 'Reset Token', value: '{{token}}' }
+                                        ]
+                                      }
+                                    ]
                                   },
-                                  {
-                                    type: 'menuitem',
-                                    text: 'Last Name',
-                                    onAction: () => editor.insertContent('{{lastName}}')
-                                  },
-                                  {
-                                    type: 'menuitem',
-                                    text: 'Username',
-                                    onAction: () => editor.insertContent('{{username}}')
-                                  },
-                                  {
-                                    type: 'menuitem',
-                                    text: 'Reset URL',
-                                    onAction: () => editor.insertContent('{{resetUrl}}')
-                                  },
-                                  {
-                                    type: 'menuitem',
-                                    text: 'Reset Token',
-                                    onAction: () => editor.insertContent('{{token}}')
+                                  buttons: [
+                                    {
+                                      type: 'cancel',
+                                      text: 'Close'
+                                    },
+                                    {
+                                      type: 'submit',
+                                      text: 'Insert Field',
+                                      primary: true
+                                    }
+                                  ],
+                                  onSubmit: (api) => {
+                                    const data = api.getData();
+                                    editor.insertContent(data.mergefield);
+                                    api.close();
                                   }
-                                ];
-                                callback(items);
+                                });
                               }
                             });
                           },

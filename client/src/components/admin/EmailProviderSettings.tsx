@@ -31,7 +31,7 @@ const providerSchema = z.object({
   providerName: z.string().min(1, "Provider name is required"),
   settings: z.object({
     host: z.string().optional(),
-    port: z.string().optional(),
+    port: z.coerce.number().optional(),
     username: z.string().optional(),
     password: z.string().optional(),
     apiKey: z.string().optional(),
