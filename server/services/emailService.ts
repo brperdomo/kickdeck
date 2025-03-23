@@ -121,12 +121,34 @@ function renderTemplate(template: string, context: TemplateContext): string {
  * Sends an email using the configured provider
  */
 export async function sendEmail(options: EmailOptions): Promise<void> {
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  
   try {
+    if (isDevelopment) {
+      // In development mode, just log the email content
+      console.log('\n===== DEVELOPMENT MODE: EMAIL NOT ACTUALLY SENT =====');
+      console.log(`To: ${options.to}`);
+      console.log(`Subject: ${options.subject}`);
+      console.log(`From: ${options.from || 'default-sender'}`);
+      console.log('Content:');
+      console.log(options.html);
+      console.log('=====================================================\n');
+      return;
+    }
+    
+    // In production, try to send the actual email
     const transporter = await getEmailTransporter();
     await transporter.sendMail(options);
     console.log(`Email sent to ${options.to}`);
   } catch (error) {
     console.error('Error sending email:', error);
+    
+    if (isDevelopment) {
+      // In development, don't throw errors from email failures
+      console.log('Email sending failed, but continuing in development mode');
+      return;
+    }
+    
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to send email: ${errorMessage}`);
   }

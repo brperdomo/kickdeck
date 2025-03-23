@@ -14,7 +14,13 @@ export async function requestPasswordReset(req: Request, res: Response) {
     }
     
     // Initiate the password reset process
-    await initiatePasswordReset(email);
+    try {
+      await initiatePasswordReset(email);
+    } catch (emailError) {
+      // Log the error but continue - we don't want to expose if the email failed
+      // This prevents user enumeration
+      console.error('Email sending failed but continuing:', emailError);
+    }
     
     // Always return success to prevent user enumeration
     return res.status(200).json({

@@ -82,6 +82,8 @@ export async function markTokenAsUsed(token: string): Promise<void> {
  * Initiate the password reset process for a given email
  */
 export async function initiatePasswordReset(email: string): Promise<boolean> {
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  
   try {
     // Find the user by email
     const [user] = await db
@@ -97,12 +99,31 @@ export async function initiatePasswordReset(email: string): Promise<boolean> {
     // Create a reset token
     const token = await createPasswordResetToken(user.id);
     
+    // In development mode, just log the reset link
+    if (isDevelopment) {
+      const appUrl = process.env.APP_URL || `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
+      const resetUrl = `${appUrl}/reset-password?token=${token}`;
+      
+      console.log('\n===== DEVELOPMENT MODE: PASSWORD RESET LINK =====');
+      console.log(`User: ${user.username} (${user.email})`);
+      console.log(`Reset URL: ${resetUrl}`);
+      console.log(`Token: ${token}`);
+      console.log('Use this link to reset the password (valid for 24 hours)');
+      console.log('==================================================\n');
+      
+      return true;
+    }
+    
     // Send the reset email
     await sendPasswordResetEmail(user.email, token, user.username);
     
     return true;
   } catch (error) {
     console.error('Error initiating password reset:', error);
+    if (isDevelopment) {
+      console.log('Password reset failed in development mode, but continuing execution');
+      return true;
+    }
     throw error;
   }
 }
