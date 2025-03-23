@@ -2016,10 +2016,9 @@ function AdminDashboard() {
             localStorage.clear();
             sessionStorage.clear();
             
-            // Force a hard reload by clearing browser history and going to login page
-            // The timestamp prevents any caching
-            const timestamp = new Date().getTime();
-            window.location.replace(`/auth?forced=true&t=${timestamp}`);
+            // Use a simpler approach that works with the router
+            window.history.pushState(null, "", "/");
+            window.location.href = "/auth";
           }
         }} />
       )}

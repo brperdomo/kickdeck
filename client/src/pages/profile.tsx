@@ -44,12 +44,10 @@ export default function Profile() {
             pragmaMeta.content = 'no-cache';
             document.head.appendChild(pragmaMeta);
             
-            // Completely clear history and navigate to login with cache-busting parameter
-            const timestamp = new Date().getTime();
-            
-            // This approach prevents back navigation working after logout
-            window.history.pushState(null, "", "/auth?logged_out=true&t=" + timestamp);
-            window.location.href = "/auth?logged_out=true&t=" + timestamp;
+            // Use a simpler approach that works with the router
+            // Clear browser history and redirect to auth page
+            window.history.pushState(null, "", "/");
+            window.location.href = "/auth";
           } catch (error) {
             console.error("Profile logout failed:", error);
             // Force logout by clearing everything manually as a fallback
@@ -59,10 +57,9 @@ export default function Profile() {
             // Clear cookies
             document.cookie = "connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
             
-            // Force a hard reload
-            const timestamp = new Date().getTime();
-            window.history.pushState(null, "", "/auth?forced=true&t=" + timestamp);
-            window.location.href = "/auth?forced=true&t=" + timestamp;
+            // Use a simpler approach that works with the router
+            window.history.pushState(null, "", "/");
+            window.location.href = "/auth";
           }
         }} />
       )}
