@@ -350,7 +350,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         </div>
       )}
 
-      {selectedSeasonalScopeId && (
+      {(selectedSeasonalScopeId || (ageGroups && ageGroups.length > 0)) && (
         <Card>
           <CardHeader>
             <CardTitle>Age Groups</CardTitle>
