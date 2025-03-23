@@ -5,6 +5,7 @@ import { createEmailTemplateRoutingTable } from "./migrations/create_email_templ
 import { createPasswordResetTokensTable } from "./migrations/create_password_reset_tokens";
 import { createDefaultEmailTemplates } from "./migrations/create_default_email_templates";
 import { addProviderIdToEmailTemplates } from "./migrations/add_provider_id_to_email_templates";
+import { createRolePermissions } from "./migrations/create_role_permissions";
 
 export async function createTables() {
   try {
@@ -112,6 +113,9 @@ export async function createTables() {
     
     console.log('Adding providerId to email templates...');
     await addProviderIdToEmailTemplates();
+    
+    console.log('Creating role permissions table and default permissions...');
+    await createRolePermissions();
 
     console.log("All tables created successfully");
     return { success: true };
