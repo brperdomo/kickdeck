@@ -157,7 +157,8 @@ export async function previewEmailTemplate(req: Request, res: Response) {
       email: '[sample@email.com]',
       username: '[Sample Username]',
       resetLink: '[Reset Password Link]',
-      token: '[Reset Token]'
+      token: '[Reset Token]',
+      reset_link: '[Reset Password Link]'
     };
 
     // Replace all merge fields
@@ -166,6 +167,16 @@ export async function previewEmailTemplate(req: Request, res: Response) {
       content = content.replace(regex, sampleValue);
     });
 
+    // Fix relative image paths to absolute paths
+    const protocol = req.protocol;
+    const host = req.get('host');
+    const baseUrl = `${protocol}://${host}`;
+    
+    // Fix image paths: convert relative paths (../../uploads/ or ../uploads/) to absolute paths
+    content = content.replace(/src=["'](\.\.\/)*uploads\//g, `src="${baseUrl}/api/uploads/`);
+    
+    // Also handle paths without ../
+    content = content.replace(/src=["']uploads\//g, `src="${baseUrl}/api/uploads/`);
 
     // Create HTML for preview
     const html = `
