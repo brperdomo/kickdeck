@@ -1,20 +1,35 @@
-import { useOrganizationSettings } from "@/hooks/use-organization-settings";
+import { Link } from "wouter";
+import { Home, Settings, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
+/**
+ * AdminBanner component displays a navigation bar at the top of admin pages
+ * for consistent navigation and access to common admin functions
+ */
 export function AdminBanner() {
-  const { settings } = useOrganizationSettings();
-
   return (
-    <div className="w-full bg-white shadow-sm border-b sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-2">
-        <div className="flex justify-center items-center">
-          <img
-            src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"}
-            alt="Organization Logo"
-            className="w-auto h-48 md:h-60 max-w-[840px] md:max-w-[960px] object-contain"
-            loading="eager"
-            fetchPriority="high"
-          />
+    <div className="bg-primary text-primary-foreground p-4 sticky top-0 z-10 shadow-md">
+      <div className="container mx-auto flex justify-between items-center">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" asChild className="text-primary-foreground hover:bg-primary/80">
+            <Link href="/admin">
+              <Home className="mr-2 h-4 w-4" />
+              Dashboard
+            </Link>
+          </Button>
+          <Button variant="ghost" asChild className="text-primary-foreground hover:bg-primary/80">
+            <Link href="/admin/settings">
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+            </Link>
+          </Button>
         </div>
+        <Button variant="ghost" asChild className="text-primary-foreground hover:bg-primary/80">
+          <Link href="/logout">
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Link>
+        </Button>
       </div>
     </div>
   );

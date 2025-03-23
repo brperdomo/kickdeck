@@ -19,6 +19,7 @@ import ChatPage from "@/pages/chat";
 import EditEvent from "@/pages/edit-event";
 import EventApplicationForm from "@/pages/event-application-form";
 import EmailTemplatesPage from "@/pages/email-templates";
+import EmailTemplateEdit from "@/pages/email-template-edit";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import { FeeManagement } from "@/components/events/FeeManagement";
@@ -83,6 +84,12 @@ function Router() {
           </Route>
           <Route path="/admin/accounting-codes">
             {user.isAdmin ? <AccountingCodeManagement /> : <NotFound />}
+          </Route>
+          <Route path="/admin/email-templates/create">
+            {user.isAdmin ? <EmailTemplateEdit /> : <NotFound />}
+          </Route>
+          <Route path="/admin/email-templates/:id">
+            {user.isAdmin ? <EmailTemplateEdit /> : <NotFound />}
           </Route>
           <Route path="/admin/email-templates">
             {user.isAdmin ? <EmailTemplatesPage /> : <NotFound />}
