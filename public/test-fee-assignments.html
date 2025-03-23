@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Assignments Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .step {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+        .output {
+            font-family: monospace;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fee Assignments Test</h1>
+    <p>This page tests the fee assignments functionality to ensure it works correctly.</p>
+    
+    <div class="step">
+        <h2>Step 1: Login</h2>
+        <button id="login-btn">Login as Admin</button>
+        <div id="login-output" class="output"></div>
+    </div>
+    
+    <div class="step">
+        <h2>Step 2: Check User Status</h2>
+        <button id="check-user-btn">Check User</button>
+        <div id="check-user-output" class="output"></div>
+    </div>
+    
+    <div class="step">
+        <h2>Step 3: Create Test Event</h2>
+        <button id="create-event-btn">Create Event</button>
+        <div id="create-event-output" class="output"></div>
+    </div>
+    
+    <div class="step">
+        <h2>Step 4: Create Test Fee</h2>
+        <button id="create-fee-btn">Create Fee</button>
+        <div id="create-fee-output" class="output"></div>
+    </div>
+    
+    <div class="step">
+        <h2>Step 5: Get Age Groups</h2>
+        <button id="get-age-groups-btn">Get Age Groups</button>
+        <div id="get-age-groups-output" class="output"></div>
+    </div>
+    
+    <div class="step">
+        <h2>Step 6: Assign Fee to Age Group</h2>
+        <button id="assign-fee-btn">Assign Fee</button>
+        <div id="assign-fee-output" class="output"></div>
+    </div>
+    
+    <div class="step">
+        <h2>Step 7: Get Fee Assignments</h2>
+        <button id="get-assignments-btn">Get Assignments</button>
+        <div id="get-assignments-output" class="output"></div>
+    </div>
+    
+    <script>
+        // Global variables to store IDs
+        let eventId = null;
+        let feeId = null;
+        let ageGroupId = null;
+        
+        // Helper to display output
+        function displayOutput(elementId, data, isError = false) {
+            const outputElement = document.getElementById(elementId);
+            if (typeof data === 'object') {
+                data = JSON.stringify(data, null, 2);
+            }
+            outputElement.textContent = data;
+            outputElement.className = isError ? 'output error' : 'output success';
+        }
+        
+        // Step 1: Login
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@example.com',
+                        password: 'password123',
+                    }),
+                    credentials: 'include',
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Login failed: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayOutput('login-output', 'Login successful!');
+            } catch (error) {
+                displayOutput('login-output', `Error: ${error.message}`, true);
+            }
+        });
+        
+        // Step 2: Check User Status
+        document.getElementById('check-user-btn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/user', {
+                    credentials: 'include',
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`User check failed: ${response.status}`);
+                }
+                
+                const user = await response.json();
+                displayOutput('check-user-output', user);
+            } catch (error) {
+                displayOutput('check-user-output', `Error: ${error.message}`, true);
+            }
+        });
+        
+        // Step 3: Create Test Event
+        document.getElementById('create-event-btn').addEventListener('click', async () => {
+            try {
+                const eventData = {
+                    name: 'Test Event for Fee Assignments',
+                    startDate: '2025-08-01',
+                    endDate: '2025-08-05',
+                    applicationDeadline: '2025-07-15',
+                    timezone: 'America/New_York',
+                    details: 'This is a test event',
+                    ageGroups: [
+                        {
+                            ageGroup: 'U10',
+                            gender: 'Boys',
+                            birthYear: 2015,
+                            fieldSize: '7v7',
+                            projectedTeams: 8
+                        },
+                        {
+                            ageGroup: 'U12',
+                            gender: 'Girls',
+                            birthYear: 2013,
+                            fieldSize: '9v9',
+                            projectedTeams: 6
+                        }
+                    ]
+                };
+                
+                const response = await fetch('/api/admin/events', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(eventData),
+                    credentials: 'include',
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Event creation failed: ${response.status}`);
+                }
+                
+                const event = await response.json();
+                eventId = event.id;
+                displayOutput('create-event-output', `Created event with ID: ${eventId}\n${JSON.stringify(event, null, 2)}`);
+            } catch (error) {
+                displayOutput('create-event-output', `Error: ${error.message}`, true);
+            }
+        });
+        
+        // Step 4: Create Test Fee
+        document.getElementById('create-fee-btn').addEventListener('click', async () => {
+            try {
+                if (!eventId) {
+                    throw new Error('No event ID available. Create an event first.');
+                }
+                
+                const feeData = {
+                    name: 'Early Registration Fee',
+                    amount: 450,
+                    beginDate: '2025-05-01',
+                    endDate: '2025-06-15',
+                    eventId: eventId
+                };
+                
+                const response = await fetch(`/api/admin/events/${eventId}/fees`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(feeData),
+                    credentials: 'include',
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Fee creation failed: ${response.status}`);
+                }
+                
+                const fee = await response.json();
+                feeId = fee.id;
+                displayOutput('create-fee-output', `Created fee with ID: ${feeId}\n${JSON.stringify(fee, null, 2)}`);
+            } catch (error) {
+                displayOutput('create-fee-output', `Error: ${error.message}`, true);
+            }
+        });
+        
+        // Step 5: Get Age Groups
+        document.getElementById('get-age-groups-btn').addEventListener('click', async () => {
+            try {
+                if (!eventId) {
+                    throw new Error('No event ID available. Create an event first.');
+                }
+                
+                const response = await fetch(`/api/admin/age-groups?eventId=${eventId}`, {
+                    credentials: 'include',
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Age groups retrieval failed: ${response.status}`);
+                }
+                
+                const ageGroups = await response.json();
+                ageGroupId = ageGroups[0].id;
+                displayOutput('get-age-groups-output', `Got age groups. First group ID: ${ageGroupId}\n${JSON.stringify(ageGroups, null, 2)}`);
+            } catch (error) {
+                displayOutput('get-age-groups-output', `Error: ${error.message}`, true);
+            }
+        });
+        
+        // Step 6: Assign Fee to Age Group
+        document.getElementById('assign-fee-btn').addEventListener('click', async () => {
+            try {
+                if (!eventId || !feeId || !ageGroupId) {
+                    throw new Error('Missing IDs. Complete previous steps first.');
+                }
+                
+                const assignmentData = {
+                    feeId: feeId,
+                    ageGroupIds: [ageGroupId]
+                };
+                
+                const response = await fetch(`/api/admin/events/${eventId}/fee-assignments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(assignmentData),
+                    credentials: 'include',
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Fee assignment failed: ${response.status}\n${errorText}`);
+                }
+                
+                const assignment = await response.json();
+                displayOutput('assign-fee-output', `Created fee assignment:\n${JSON.stringify(assignment, null, 2)}`);
+            } catch (error) {
+                displayOutput('assign-fee-output', `Error: ${error.message}`, true);
+            }
+        });
+        
+        // Step 7: Get Fee Assignments
+        document.getElementById('get-assignments-btn').addEventListener('click', async () => {
+            try {
+                if (!eventId) {
+                    throw new Error('No event ID available. Create an event first.');
+                }
+                
+                const response = await fetch(`/api/admin/events/${eventId}/fee-assignments`, {
+                    credentials: 'include',
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Fee assignments retrieval failed: ${response.status}`);
+                }
+                
+                const assignments = await response.json();
+                displayOutput('get-assignments-output', `Fee assignments:\n${JSON.stringify(assignments, null, 2)}`);
+            } catch (error) {
+                displayOutput('get-assignments-output', `Error: ${error.message}`, true);
+            }
+        });
+    </script>
+</body>
+</html>
