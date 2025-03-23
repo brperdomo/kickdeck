@@ -47,7 +47,7 @@ export function LogoutHandler() {
           setRedirectTimeoutActive(true);
           // Use a very short timeout to ensure UI has time to update
           setTimeout(() => {
-            window.location.replace('/auth?logged_out=true'); // Use replace to prevent back button issues
+            window.location.replace('/'); // Redirect to root which will show auth page for logged out users
           }, 100);
         }
       } catch (error) {
@@ -57,7 +57,7 @@ export function LogoutHandler() {
         // Fallback redirect
         if (!redirectTimeoutActive) {
           setRedirectTimeoutActive(true);
-          window.location.replace('/auth?logged_out=true&fallback=true');
+          window.location.replace('/');
         }
       }
     };
@@ -70,7 +70,7 @@ export function LogoutHandler() {
       if (!redirectTimeoutActive) {
         console.log("Fallback logout redirect triggered");
         setRedirectTimeoutActive(true);
-        window.location.replace('/auth?logged_out=true&final_fallback=true');
+        window.location.replace('/');
       }
     }, 3000);
     

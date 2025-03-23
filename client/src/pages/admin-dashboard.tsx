@@ -2015,8 +2015,8 @@ function AdminDashboard() {
             document.head.appendChild(pragmaMeta);
             
             // Use replace method which doesn't preserve history
-            // Redirect explicitly to auth page
-            window.location.replace("/auth?logged_out=true");
+            // Redirect to root which handles unauthenticated users
+            window.location.replace("/");
           } catch (error) {
             console.error("Logout failed:", error);
             // Force logout by clearing everything manually as a fallback
@@ -2024,7 +2024,7 @@ function AdminDashboard() {
             sessionStorage.clear();
             
             // Use replace method for fallback which doesn't preserve history
-            window.location.replace("/auth?logged_out=true&fallback=true");
+            window.location.replace("/");
           }
         }} />
       )}
