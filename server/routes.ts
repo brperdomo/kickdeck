@@ -107,12 +107,14 @@ const isAdmin = (req: Request, res: Response, next: Function) => {
 
 export function registerRoutes(app: Express): Server {
   const httpServer = createServer(app);
-  setupWebSocketServer(httpServer);
-
+  
   try {
-    // Set up authentication first
+    // Set up authentication first - this adds session and passport middleware
     setupAuth(app);
-    log("Authentication routes registered successfully");
+    log("Authentication and session middleware set up successfully");
+    
+    // Set up WebSocket server after authentication
+    setupWebSocketServer(httpServer);
     
     // Add organization identification middleware
     app.use(identifyOrganization);
