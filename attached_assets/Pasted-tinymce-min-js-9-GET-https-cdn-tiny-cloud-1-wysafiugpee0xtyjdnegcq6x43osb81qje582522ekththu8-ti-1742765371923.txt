@@ -1,0 +1,104 @@
+tinymce.min.js:9 
+ GET https://cdn.tiny.cloud/1/wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8/tinymce/7.7.2-153/plugins/paste/plugin.min.js net::ERR_ABORTED 404 (Not Found)
+(anonymous)	@	tinymce.min.js:9
+loadScript	@	tinymce.min.js:9
+(anonymous)	@	tinymce.min.js:9
+V	@	tinymce.min.js:9
+r	@	tinymce.min.js:9
+s	@	tinymce.min.js:9
+loadScripts	@	tinymce.min.js:9
+loadQueue	@	tinymce.min.js:9
+UO	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+render	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+Ae	@	tinymce.min.js:9
+s	@	tinymce.min.js:336
+executeHandlers	@	tinymce.min.js:9
+i	@	tinymce.min.js:9
+s	@	tinymce.min.js:9
+ta	@	tinymce.min.js:9
+bind	@	tinymce.min.js:9
+V	@	tinymce.min.js:9
+init	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:345
+
+tinymce.min.js:336 Failed to load plugin: paste from url plugins/paste/plugin.min.js
+eE	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+Promise.catch		
+n	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+q	@	tinymce.min.js:9
+(anonymous)	@	tinymce.min.js:336
+UO	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+render	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+Ae	@	tinymce.min.js:9
+s	@	tinymce.min.js:336
+executeHandlers	@	tinymce.min.js:9
+i	@	tinymce.min.js:9
+s	@	tinymce.min.js:9
+ta	@	tinymce.min.js:9
+bind	@	tinymce.min.js:9
+V	@	tinymce.min.js:9
+init	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:345
+tinymce.min.js:9 
+ GET https://cdn.tiny.cloud/1/wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8/tinymce/7.7.2-153/plugins/source/plugin.min.js net::ERR_ABORTED 404 (Not Found)
+(anonymous)	@	tinymce.min.js:9
+loadScript	@	tinymce.min.js:9
+(anonymous)	@	tinymce.min.js:9
+V	@	tinymce.min.js:9
+r	@	tinymce.min.js:9
+s	@	tinymce.min.js:9
+loadScripts	@	tinymce.min.js:9
+loadQueue	@	tinymce.min.js:9
+UO	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+render	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+Ae	@	tinymce.min.js:9
+s	@	tinymce.min.js:336
+executeHandlers	@	tinymce.min.js:9
+i	@	tinymce.min.js:9
+s	@	tinymce.min.js:9
+ta	@	tinymce.min.js:9
+bind	@	tinymce.min.js:9
+V	@	tinymce.min.js:9
+init	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:345
+tinymce.min.js:336 Failed to load plugin: source from url plugins/source/plugin.min.js
+eE	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+Promise.catch		
+n	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+q	@	tinymce.min.js:9
+(anonymous)	@	tinymce.min.js:336
+UO	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+render	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:336
+Ae	@	tinymce.min.js:9
+s	@	tinymce.min.js:336
+executeHandlers	@	tinymce.min.js:9
+i	@	tinymce.min.js:9
+s	@	tinymce.min.js:9
+ta	@	tinymce.min.js:9
+bind	@	tinymce.min.js:9
+V	@	tinymce.min.js:9
+init	@	tinymce.min.js:336
+(anonymous)	@	tinymce.min.js:345
+email-template-edit.tsx:121 
+ PUT https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/email-templates/2 400 (Bad Request)
+mutationFn	@	email-template-edit.tsx:121
+await in execute		
+onSubmit	@	email-template-edit.tsx:147

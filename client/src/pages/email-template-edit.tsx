@@ -102,7 +102,7 @@ export default function EmailTemplateEdit() {
         content: template.content,
         senderName: template.senderName,
         senderEmail: template.senderEmail,
-        isActive: template.isActive ?? true,
+        isActive: template.isActive === false ? false : true, // Default to true, avoid null
         variables: template.variables ?? [],
         providerId: template.providerId ? template.providerId : undefined,
       });
@@ -375,14 +375,14 @@ export default function EmailTemplateEdit() {
                               'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                               'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
                               'insertdatetime', 'media', 'table', 'help', 'wordcount',
-                              'codesample', 'paste', 'source'
+                              'codesample', 'wordcount'
                             ],
                             codesample_languages: [
                               { text: 'HTML/XML', value: 'markup' },
                               { text: 'JavaScript', value: 'javascript' },
                               { text: 'CSS', value: 'css' }
                             ],
-                            toolbar1: 'code source fullscreen | undo redo | formatselect | bold italic backcolor forecolor | alignleft aligncenter alignright alignjustify',
+                            toolbar1: 'code fullscreen | undo redo | formatselect | bold italic backcolor forecolor | alignleft aligncenter alignright alignjustify',
                             toolbar2: 'bullist numlist outdent indent | link image media | codesample removeformat | mergefields | help',
                             extended_valid_elements: '*[*]', // Allow all elements and attributes
                             valid_children: '+body[style]', // Allow style tag in body
@@ -495,7 +495,7 @@ export default function EmailTemplateEdit() {
                       </div>
                     </FormControl>
                     <FormDescription>
-                      The content of the email. HTML is fully supported. Use the "source" button in the toolbar to edit HTML directly.
+                      The content of the email. HTML is fully supported. Use the "code" button in the toolbar to edit HTML.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
