@@ -1683,30 +1683,9 @@ function AdminDashboard() {
     );
   }
 
-  const handleLogout = async () => {
-    try {
-      // Call logout API directly
-      console.log("Logging out...");
-      await logout();
-      
-      // Clear all browser data
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      // Clear cookies
-      document.cookie.split(";").forEach((cookie) => {
-        const eqPos = cookie.indexOf("=");
-        const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
-        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-      });
-      
-      // Force page refresh and redirect to root
-      window.location.href = "/";
-    } catch (error) {
-      console.error("Error during logout:", error);
-      // Fallback - force refresh even if API call fails
-      window.location.href = "/";
-    }
+  const handleLogout = () => {
+    // Navigate to dedicated logout page
+    window.location.href = "/logout";
   };
 
   const handleAppearanceToggle = async () => {
