@@ -136,10 +136,9 @@ export default function UserDashboard() {
             pragmaMeta.content = 'no-cache';
             document.head.appendChild(pragmaMeta);
             
-            // Use a simpler approach that works with the router
-            // Clear browser history and redirect to auth page
-            window.history.pushState(null, "", "/");
-            window.location.href = "/auth";
+            // Use replace method which doesn't preserve history
+            // Redirect to root, which will show login when user is null
+            window.location.replace("/");
           } catch (error) {
             console.error("User logout failed:", error);
             // Force logout by clearing everything manually as a fallback
@@ -149,9 +148,9 @@ export default function UserDashboard() {
             // Clear cookies
             document.cookie = "connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
             
-            // Use a simpler approach that works with the router
-            window.history.pushState(null, "", "/");
-            window.location.href = "/auth";
+            // Use replace method which doesn't preserve history
+            // Redirect to root, which will show login when user is null
+            window.location.replace("/");
           }
         }} />
       )}
