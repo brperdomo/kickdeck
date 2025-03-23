@@ -390,7 +390,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                     <TableCell>{group.ageGroup}</TableCell>
                     <TableCell>{group.gender}</TableCell>
                     <TableCell>{group.birthYear}</TableCell>
-                    <TableCell>{group.divisionCode}</TableCell>
+                    <TableCell>{group.displayDivisionCode || group.divisionCode}</TableCell>
                   </TableRow>
                 ))}
                 {ageGroups.length === 0 && (
