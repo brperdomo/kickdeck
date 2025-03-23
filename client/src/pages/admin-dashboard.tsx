@@ -1916,20 +1916,9 @@ function AdminDashboard() {
             </Button>
 
             <div className="flex flex-col space-y-2 mb-2">
-              <Button 
-                className="w-full" 
-                variant="outline"
-                onClick={() => {
-                  // Navigate directly to LogoutHandler component
-                  window.location.href = "/logout";
-                }}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Direct Logout
-              </Button>
               <Button onClick={handleLogout} className="w-full" variant="outline">
                 <LogOut className="mr-2 h-4 w-4" />
-                Logout with Animation
+                Logout
               </Button>
             </div>
             <Button 
