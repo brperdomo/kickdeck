@@ -17,6 +17,13 @@ import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings"
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
+import { 
+  getRolesWithPermissions, 
+  getRoleWithPermissions, 
+  updateRolePermissions, 
+  getAllPermissions,
+  resetRolePermissions 
+} from "./routes/admin/role-permissions";
 import { sql, eq, and, or, inArray, notInArray } from "drizzle-orm";
 import {
   users,
@@ -128,6 +135,13 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/organizations', isAdmin, organizationsRouter); // Add organizations router
     app.use('/api/admin/email-providers', isAdmin, emailProvidersRouter); // Add email providers router
     app.use('/api/admin/email-template-routings', isAdmin, emailTemplateRoutingsRouter); // Add email template routings router
+    
+    // Role permissions management endpoints
+    app.get('/api/admin/roles', isAdmin, getRolesWithPermissions);
+    app.get('/api/admin/roles/:id', isAdmin, getRoleWithPermissions);
+    app.patch('/api/admin/roles/:id/permissions', isAdmin, updateRolePermissions);
+    app.post('/api/admin/roles/:id/permissions/reset', isAdmin, resetRolePermissions);
+    app.get('/api/admin/permissions', isAdmin, getAllPermissions);
 
     // Register fee assignment routes for admin
     app.get('/api/admin/events/:eventId/fee-assignments', isAdmin, getFeeAssignments);

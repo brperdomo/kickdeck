@@ -1,5 +1,5 @@
-import { db } from "../db";
-import { roles } from "../db/schema";
+import { db } from "../../db";
+import { roles } from "../../db/schema";
 import { sql } from "drizzle-orm";
 
 /**
