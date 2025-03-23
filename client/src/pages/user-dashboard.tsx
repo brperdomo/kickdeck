@@ -27,9 +27,6 @@ export default function UserDashboard() {
 
   const handleLogout = () => {
     setShowLogoutOverlay(true);
-    setTimeout(async () => {
-      await logout();
-    }, 1500);
   };
 
   return (
@@ -114,7 +111,11 @@ export default function UserDashboard() {
       </Dialog>
 
       {showLogoutOverlay && (
-        <LogoutOverlay onFinished={() => setShowLogoutOverlay(false)} />
+        <LogoutOverlay onFinished={async () => {
+          await logout();
+          window.location.href = "/auth";
+          setShowLogoutOverlay(false);
+        }} />
       )}
     </div>
   );

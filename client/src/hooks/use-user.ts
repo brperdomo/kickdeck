@@ -51,11 +51,8 @@ async function handleRequest(
 }
 
 async function fetchUser(): Promise<SelectUser | null> {
-  // Check for development mode bypass
-  if (import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === 'true') {
-    console.log('🔓 Development mode - Using mock admin user');
-    return mockAdminUser;
-  }
+  // Removed automatic development mode bypass to fix logout issues
+  // The VITE_BYPASS_AUTH check is now handled at the return statement level
 
   try {
     const response = await fetch('/api/user', {
@@ -121,12 +118,10 @@ export function useUser() {
     },
   });
 
-  // Check for development mode bypass
-  const bypassAuth = import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === 'true';
-
+  // Removed bypass auth for production stability and to fix logout issues
   return {
-    user: bypassAuth ? mockAdminUser : user,
-    isLoading: bypassAuth ? false : isLoading,
+    user,
+    isLoading,
     error,
     login: loginMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
