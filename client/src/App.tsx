@@ -22,6 +22,7 @@ import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import { FeeManagement } from "@/components/events/FeeManagement";
 import { AuthProvider } from "@/hooks/use-auth";
+import { LogoutHandler } from "@/components/LogoutHandler";
 
 // Placeholder components
 const EventPreviewSelector = () => <div>Event Preview Selector</div>;
@@ -38,77 +39,81 @@ function Router() {
     );
   }
 
-  // Public routes that don't require authentication
-  if (!user) {
-    return (
-      <Switch>
-        <Route path="/auth" component={AuthPage} />
-        <Route path="/register" component={Register} />
-        <Route path="/forgot-password" component={ForgotPassword} />
-        <Route path="/register/event/:eventId" component={EventRegistration} />
-        {/* Redirect all other routes to auth page */}
-        <Route>
-          <AuthPage />
-        </Route>
-      </Switch>
-    );
-  }
-
-  // Protected routes for authenticated users
+  // Logout route - available to all users
   return (
     <Switch>
-      {/* Admin routes */}
-      <Route path="/admin/events/create">
-        {user.isAdmin ? <CreateEvent /> : <NotFound />}
-      </Route>
-      <Route path="/admin/events/:id/edit">
-        {user.isAdmin ? <EditEvent /> : <NotFound />}
-      </Route>
-      <Route path="/admin/events/:id/application-form">
-        {user.isAdmin ? <EventApplicationForm /> : <NotFound />}
-      </Route>
-      <Route path="/admin/events/:eventId/fees">
-        {({ eventId }) => user.isAdmin ? <FeeManagement eventId={eventId} /> : <NotFound />}
-      </Route>
-      <Route path="/admin/events/:id">
-        {user.isAdmin ? <EditEvent /> : <NotFound />}
-      </Route>
-      <Route path="/admin/events/:id/coupons">
-        {user.isAdmin ? <CouponManagement /> : <NotFound />}
-      </Route>
-      <Route path="/admin/accounting-codes">
-        {user.isAdmin ? <AccountingCodeManagement /> : <NotFound />}
-      </Route>
-      <Route path="/admin/email-templates">
-        {user.isAdmin ? <EmailTemplatesPage /> : <NotFound />}
-      </Route>
-      <Route path="/admin/events">
-        {user.isAdmin ? <AdminDashboard /> : <NotFound />}
-      </Route>
-      <Route path="/admin">
-        {user.isAdmin ? <AdminDashboard /> : <NotFound />}
-      </Route>
+      {/* Dedicated logout route that will forcibly clear all app state */}
+      <Route path="/logout" component={LogoutHandler} />
+      
+      {/* Public routes that don't require authentication */}
+      {!user ? (
+        <>
+          <Route path="/auth" component={AuthPage} />
+          <Route path="/register" component={Register} />
+          <Route path="/forgot-password" component={ForgotPassword} />
+          <Route path="/register/event/:eventId" component={EventRegistration} />
+          {/* Redirect all other routes to auth page */}
+          <Route>
+            <AuthPage />
+          </Route>
+        </>
+      ) : (
+        // Protected routes for authenticated users
+        <>
+          {/* Admin routes */}
+          <Route path="/admin/events/create">
+            {user.isAdmin ? <CreateEvent /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id/edit">
+            {user.isAdmin ? <EditEvent /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id/application-form">
+            {user.isAdmin ? <EventApplicationForm /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:eventId/fees">
+            {({ eventId }) => user.isAdmin ? <FeeManagement eventId={eventId} /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id">
+            {user.isAdmin ? <EditEvent /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id/coupons">
+            {user.isAdmin ? <CouponManagement /> : <NotFound />}
+          </Route>
+          <Route path="/admin/accounting-codes">
+            {user.isAdmin ? <AccountingCodeManagement /> : <NotFound />}
+          </Route>
+          <Route path="/admin/email-templates">
+            {user.isAdmin ? <EmailTemplatesPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events">
+            {user.isAdmin ? <AdminDashboard /> : <NotFound />}
+          </Route>
+          <Route path="/admin">
+            {user.isAdmin ? <AdminDashboard /> : <NotFound />}
+          </Route>
 
-      {/* User routes */}
-      <Route path="/household" component={HouseholdPage} />
-      <Route path="/chat" component={ChatPage} />
-      <Route path="/register/event/:eventId" component={EventRegistration} />
+          {/* User routes */}
+          <Route path="/household" component={HouseholdPage} />
+          <Route path="/chat" component={ChatPage} />
+          <Route path="/register/event/:eventId" component={EventRegistration} />
 
-      {/* Preview routes */}
-      <Route path="/admin/events/preview">
-        {user.isAdmin ? <EventPreviewSelector /> : <NotFound />}
-      </Route>
-      <Route path="/admin/events/:id/preview-registration">
-        {user.isAdmin ? <RegistrationPreview /> : <NotFound />}
-      </Route>
+          {/* Preview routes */}
+          <Route path="/admin/events/preview">
+            {user.isAdmin ? <EventPreviewSelector /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id/preview-registration">
+            {user.isAdmin ? <RegistrationPreview /> : <NotFound />}
+          </Route>
 
-      {/* Home route */}
-      <Route path="/">
-        {user.isAdmin ? <AdminDashboard /> : <UserDashboard />}
-      </Route>
+          {/* Home route */}
+          <Route path="/">
+            {user.isAdmin ? <AdminDashboard /> : <UserDashboard />}
+          </Route>
 
-      {/* 404 route */}
-      <Route component={NotFound} />
+          {/* 404 route */}
+          <Route component={NotFound} />
+        </>
+      )}
     </Switch>
   );
 }
