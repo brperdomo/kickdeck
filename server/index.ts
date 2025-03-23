@@ -10,6 +10,7 @@ import uploadRouter from "./routes/upload";
 import { createEmailTemplatesTable } from './migrations/create_email_templates';
 import { createEmailTemplateRoutingTable } from './migrations/create_email_template_routing';
 import { createTables } from './create-tables';
+import { setupAuth } from './auth';
 
 const app = express();
 
@@ -106,9 +107,14 @@ async function testDbConnection() {
     server = app.listen();
     server.close(); // Create but don't start listening yet
     
-    // Routes will be registered by registerRoutes AFTER auth setup
-    // which happens inside the registerRoutes function
-
+    // Set up authentication BEFORE registering routes
+    setupAuth(app);
+    log("Authentication middleware set up successfully");
+    
+    // Register routes after authentication setup
+    const routes = registerRoutes(app);
+    log("API routes registered");
+    
     // Create WebSocket server
     const wss = new WebSocketServer({ 
       server,
