@@ -1,0 +1,22 @@
+(32) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+edit-event.tsx:175 Prepared event data: {id: 12, name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', …}
+edit-event.tsx:175 Prepared event data: {id: 12, name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', …}
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warningAI
+edit-event.tsx:175 Prepared event data: {id: 12, name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', …}
+edit-event.tsx:175 Prepared event data: {id: 12, name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', …}
+EventForm.tsx:212 Loaded 30 age groups for scope 15
+edit-event.tsx:96 Form data received: {name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', applicationDeadline: '2025-02-21', …}
+edit-event.tsx:110 Using seasonalScopeId: 15
+edit-event.tsx:56 Submitting event update with data: {name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', applicationDeadline: '2025-02-21', …}
+edit-event.tsx:175 Prepared event data: {id: 12, name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', …}
+edit-event.tsx:175 Prepared event data: {id: 12, name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', …}
+edit-event.tsx:47 Fetched age groups: (24) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+edit-event.tsx:175 Prepared event data: {id: 12, name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', …}
+edit-event.tsx:175 Prepared event data: {id: 12, name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', …}
+edit-event.tsx:175 Prepared event data: {id: 12, name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', …}
+edit-event.tsx:175 Prepared event data: {id: 12, name: 'Xmas over the Moon', startDate: '2025-06-18', endDate: '2025-06-24', timezone: 'America/New_York', …}

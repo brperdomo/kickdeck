@@ -315,25 +315,40 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const renderAgeGroupsContent = (mode: 'create' | 'edit', ageGroups: AgeGroup[], seasonalScopesQuery: any, selectedSeasonalScopeId: number | null, handleSeasonalScopeChange: (id: number) => void) => (
     <div className="space-y-6">
-      <div className="mb-6">
-        <Label htmlFor="seasonalScope">Seasonal Scope</Label>
-        <Select 
-          onValueChange={(value) => handleSeasonalScopeChange(Number(value))}
-          value={selectedSeasonalScopeId ? selectedSeasonalScopeId.toString() : undefined}
-          defaultValue={selectedSeasonalScopeId ? selectedSeasonalScopeId.toString() : undefined}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select a seasonal scope" />
-          </SelectTrigger>
-          <SelectContent>
-            {seasonalScopesQuery.data?.map((scope) => (
-              <SelectItem key={scope.id} value={scope.id.toString()}>
-                {scope.name} ({scope.startYear}-{scope.endYear})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {/* Only show seasonal scope selector in create mode or if no scope is selected yet in edit mode */}
+      {(mode === 'create' || (mode === 'edit' && !selectedSeasonalScopeId)) && (
+        <div className="mb-6">
+          <Label htmlFor="seasonalScope">Seasonal Scope</Label>
+          <Select 
+            onValueChange={(value) => handleSeasonalScopeChange(Number(value))}
+            value={selectedSeasonalScopeId ? selectedSeasonalScopeId.toString() : undefined}
+            defaultValue={selectedSeasonalScopeId ? selectedSeasonalScopeId.toString() : undefined}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a seasonal scope" />
+            </SelectTrigger>
+            <SelectContent>
+              {seasonalScopesQuery.data?.map((scope) => (
+                <SelectItem key={scope.id} value={scope.id.toString()}>
+                  {scope.name} ({scope.startYear}-{scope.endYear})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+      
+      {/* Display the selected scope information in edit mode */}
+      {mode === 'edit' && selectedSeasonalScopeId && seasonalScopesQuery.data && (
+        <div className="mb-6">
+          <div className="font-medium text-sm mb-2">Selected Seasonal Scope</div>
+          <div className="bg-muted p-3 rounded-md">
+            {seasonalScopesQuery.data.find((scope: any) => scope.id === selectedSeasonalScopeId)?.name || 'Selected Scope'} 
+            ({seasonalScopesQuery.data.find((scope: any) => scope.id === selectedSeasonalScopeId)?.startYear || ''}-
+            {seasonalScopesQuery.data.find((scope: any) => scope.id === selectedSeasonalScopeId)?.endYear || ''})
+          </div>
+        </div>
+      )}
 
       {selectedSeasonalScopeId && (
         <Card>
