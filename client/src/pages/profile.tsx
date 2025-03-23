@@ -25,28 +25,25 @@ export default function Profile() {
             await logout();
             console.log("Profile logout API call completed");
             
-            // Small delay to ensure all state is cleared before navigation
-            setTimeout(() => {
-              console.log("Redirecting from profile to auth page...");
-              // Use setLocation for routing within the app
-              setLocation("/auth?logged_out=true");
-              
-              // As a fallback, also clear any storage
-              try {
-                localStorage.removeItem("lastActiveView");
-                sessionStorage.clear();
-              } catch (e) {
-                console.error("Failed to clear storage:", e);
-              }
-            }, 100);
+            // After logout, we need to clear all storage and force page reload
+            // to completely reset the application state and prevent back navigation
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Replace the current history entry with the auth page
+            // and add a cache-busting parameter to force a clean reload
+            const timestamp = new Date().getTime();
+            window.location.replace(`/auth?logged_out=true&t=${timestamp}`);
           } catch (error) {
             console.error("Profile logout failed:", error);
             // Force logout by clearing everything manually as a fallback
             localStorage.clear();
             sessionStorage.clear();
             
-            // Use setLocation for routing
-            setLocation("/auth?forced=true");
+            // Replace the current history entry with the auth page
+            // and add a cache-busting parameter to force a clean reload
+            const timestamp = new Date().getTime();
+            window.location.replace(`/auth?forced=true&t=${timestamp}`);
           }
         }} />
       )}

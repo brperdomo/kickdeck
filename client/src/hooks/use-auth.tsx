@@ -94,34 +94,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch("/api/logout", { 
+      // Add a timestamp to bust any caching completely
+      const timestamp = new Date().getTime();
+      const res = await fetch(`/api/logout?t=${timestamp}`, { 
         method: "POST",
         credentials: "include",
         // Add cache-busting to ensure the request isn't cached
         headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Cache-Control': 'no-cache, no-store, must-revalidate, private',
           'Pragma': 'no-cache',
-          'Expires': '0'
+          'Expires': '0',
+          'Surrogate-Control': 'no-store',
+          'X-Cache-Bust': timestamp.toString()
         }
       });
-      if (!res.ok) {
-        const error = await res.text();
-        throw new Error(error);
+      
+      // Even if the response isn't ok, we should still try to clear the local state
+      let responseData;
+      try {
+        responseData = await res.json();
+      } catch (e) {
+        // If we can't parse the response, create a default response
+        responseData = { 
+          message: "Logout processed", 
+          timestamp: timestamp 
+        };
       }
       
-      // Return the successful response
-      return res.json();
+      // If there was an error from the server, we still want to clear client-side state
+      if (!res.ok) {
+        console.error("Server error during logout:", responseData);
+      }
+      
+      // Always return some data to trigger onSuccess in all cases
+      return responseData;
     },
     onSuccess: () => {
-      // Clear all data from cache immediately
-      queryClient.clear();
-      
-      // Set user to null and invalidate all user-related queries
-      queryClient.setQueryData(["/api/user"], null);
-      queryClient.removeQueries({ queryKey: ["/api/user"] });
-      
-      // Additional invalidation for related data to prevent stale data
-      queryClient.invalidateQueries();
+      try {
+        // Clear all data from cache immediately
+        queryClient.clear();
+        
+        // Set user to null and remove all user-related queries
+        queryClient.setQueryData(["/api/user"], null);
+        queryClient.removeQueries({ queryKey: ["/api/user"] });
+        
+        // Invalidate all queries to clear any remaining cache
+        queryClient.invalidateQueries();
+        
+        // Also clear browser storage to be extra safe
+        try {
+          localStorage.clear();
+          sessionStorage.clear();
+        } catch (storageError) {
+          console.error("Error clearing browser storage:", storageError);
+        }
+      } catch (cacheError) {
+        console.error("Error clearing cache:", cacheError);
+      }
       
       // Show success message
       toast({
@@ -130,9 +159,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     },
     onError: (error: Error) => {
+      // Even if there's an error, try to clear the cache and state
+      try {
+        queryClient.clear();
+        queryClient.setQueryData(["/api/user"], null);
+        localStorage.clear();
+        sessionStorage.clear();
+      } catch (e) {
+        console.error("Failed to clean up state after logout error:", e);
+      }
+      
+      // Show error message
       toast({
-        title: "Logout failed",
-        description: error.message,
+        title: "Logout issue",
+        description: "There was an issue during logout, but your session has been cleared.",
         variant: "destructive",
       });
     },

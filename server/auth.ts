@@ -244,34 +244,83 @@ export function setupAuth(app: Express) {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
     
-    // Destroy the session completely rather than just logging out
-    req.session.destroy((sessionErr) => {
-      if (sessionErr) {
-        console.error("Session destruction error:", sessionErr);
-        return res.status(500).json({ 
-          message: "Logout failed", 
-          error: "Session could not be destroyed" 
-        });
-      }
-      
-      // Also clear cookies to ensure complete logout
-      res.clearCookie('connect.sid');
-      
-      // Now also call the regular logout for passport cleanup
-      req.logout((passportErr) => {
-        if (passportErr) {
-          console.error("Passport logout error:", passportErr);
-          // We continue anyway since session is already destroyed
+    // Try to destroy the session first to ensure complete logout
+    if (req.session) {
+      req.session.destroy((sessionErr) => {
+        if (sessionErr) {
+          console.error("Session destruction error:", sessionErr);
+          // Continue even if session destruction fails
         }
         
-        // Return success response
-        return res.json({ 
-          message: "Logout successful",
-          timestamp: new Date().toISOString() // Add timestamp to prevent response caching
-        });
+        // Clear all cookies to ensure complete logout
+        res.clearCookie('connect.sid', { path: '/' });
+        
+        // Try to do the passport logout anyway
+        if (req.logout) {
+          try {
+            req.logout((passportErr) => {
+              if (passportErr) {
+                console.error("Passport logout error:", passportErr);
+              }
+              
+              // Return success response with anti-cache timestamp
+              return res.json({ 
+                message: "Logout successful",
+                timestamp: new Date().getTime() // Use numeric timestamp for better cache-busting
+              });
+            });
+          } catch (logoutErr) {
+            console.error("Logout function error:", logoutErr);
+            // Continue anyway since we've already destroyed the session
+            return res.json({ 
+              message: "Logout successful (session destroyed)",
+              timestamp: new Date().getTime()
+            });
+          }
+        } else {
+          // No logout function available, but we've already destroyed the session
+          return res.json({ 
+            message: "Logout successful (session destroyed)",
+            timestamp: new Date().getTime()
+          });
+        }
       });
-    });
+    } else {
+      // No session to destroy
+      if (req.logout) {
+        try {
+          req.logout((passportErr) => {
+            if (passportErr) {
+              console.error("Passport logout error:", passportErr);
+            }
+            
+            // Clear cookies anyway
+            res.clearCookie('connect.sid', { path: '/' });
+            
+            return res.json({ 
+              message: "Logout successful (no session)",
+              timestamp: new Date().getTime()
+            });
+          });
+        } catch (logoutErr) {
+          console.error("Logout function error:", logoutErr);
+          res.clearCookie('connect.sid', { path: '/' });
+          return res.json({ 
+            message: "Logout successful (fallback)",
+            timestamp: new Date().getTime()
+          });
+        }
+      } else {
+        // Neither session nor logout function available
+        res.clearCookie('connect.sid', { path: '/' });
+        return res.json({ 
+          message: "Logout successful (no session or logout function)",
+          timestamp: new Date().getTime()
+        });
+      }
+    }
   });
 
   app.get("/api/user", (req, res) => {

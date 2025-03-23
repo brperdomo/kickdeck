@@ -2,6 +2,7 @@ import * as React from "react"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { Card, CardContent } from "@/components/ui/card"
+import { QueryClient } from "@tanstack/react-query"
 
 const logoutMessages = [
   "See you soon! 👋",
@@ -25,9 +26,35 @@ export function LogoutOverlay({ className, onFinished, ...props }: LogoutOverlay
   });
 
   useEffect(() => {
+    // Clear any browser storage immediately
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Also try to clear any cookies by setting them to expire
+      document.cookie.split(";").forEach((cookie) => {
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+      });
+      
+      // Clear browser cache for API endpoints
+      if (window.caches) {
+        caches.keys().then(names => {
+          names.forEach(name => {
+            caches.delete(name);
+          });
+        });
+      }
+    } catch (e) {
+      console.error("Error clearing browser data during logout:", e);
+    }
+    
+    // After clearing everything, wait a moment and then redirect
     const timer = setTimeout(() => {
+      // Call the finished callback
       onFinished();
-    }, 1500);
+    }, 1800); // Slightly longer timeout to ensure cleanup is done
 
     return () => clearTimeout(timer);
   }, [onFinished]);
@@ -54,6 +81,9 @@ export function LogoutOverlay({ className, onFinished, ...props }: LogoutOverlay
               >
                 {message}
               </h2>
+              <p className="text-sm text-muted-foreground">
+                Clearing session data...
+              </p>
             </div>
           </CardContent>
         </Card>
