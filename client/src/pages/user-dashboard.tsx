@@ -122,20 +122,39 @@ export default function UserDashboard() {
             localStorage.clear();
             sessionStorage.clear();
             
-            // Replace the current history entry with the auth page
-            // and add a cache-busting parameter to force a clean reload
+            // Clear cookies
+            document.cookie = "connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+            
+            // Create cache control meta tags
+            const meta = document.createElement('meta');
+            meta.httpEquiv = 'Cache-Control';
+            meta.content = 'no-store, no-cache, must-revalidate, max-age=0';
+            document.head.appendChild(meta);
+            
+            const pragmaMeta = document.createElement('meta');
+            pragmaMeta.httpEquiv = 'Pragma';
+            pragmaMeta.content = 'no-cache';
+            document.head.appendChild(pragmaMeta);
+            
+            // Completely clear history and navigate to login with cache-busting parameter
             const timestamp = new Date().getTime();
-            window.location.replace(`/auth?logged_out=true&t=${timestamp}`);
+            
+            // Need to use this approach to prevent back navigation working
+            window.history.pushState(null, "", "/auth?logged_out=true&t=" + timestamp);
+            window.location.href = "/auth?logged_out=true&t=" + timestamp;
           } catch (error) {
             console.error("User logout failed:", error);
             // Force logout by clearing everything manually as a fallback
             localStorage.clear();
             sessionStorage.clear();
             
-            // Replace the current history entry with the auth page
-            // and add a cache-busting parameter to force a clean reload
+            // Clear cookies
+            document.cookie = "connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+            
+            // Force a hard reload
             const timestamp = new Date().getTime();
-            window.location.replace(`/auth?forced=true&t=${timestamp}`);
+            window.history.pushState(null, "", "/auth?forced=true&t=" + timestamp);
+            window.location.href = "/auth?forced=true&t=" + timestamp;
           }
         }} />
       )}

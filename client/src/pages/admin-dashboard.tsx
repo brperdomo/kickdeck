@@ -1990,18 +1990,35 @@ function AdminDashboard() {
             localStorage.clear();
             sessionStorage.clear();
             
-            // Replace the current history entry with the auth page
-            // and add a cache-busting parameter to force a clean reload
+            // Set no-cache headers and navigate to the login page
+            // This approach doesn't use the history API, just completely reloads the page
+            document.cookie = "connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+            
+            // Create a new meta tag with cache control directives
+            const meta = document.createElement('meta');
+            meta.httpEquiv = 'Cache-Control';
+            meta.content = 'no-store, no-cache, must-revalidate, max-age=0';
+            document.head.appendChild(meta);
+            
+            // Add a second meta tag for Pragma
+            const pragmaMeta = document.createElement('meta');
+            pragmaMeta.httpEquiv = 'Pragma';
+            pragmaMeta.content = 'no-cache';
+            document.head.appendChild(pragmaMeta);
+            
+            // Force a hard reload by clearing browser history and going to login page
+            // The timestamp prevents any caching
             const timestamp = new Date().getTime();
-            window.location.replace(`/auth?logged_out=true&t=${timestamp}`);
+            window.history.pushState(null, "", "/auth?logged_out=true&t=" + timestamp);
+            window.location.href = "/auth?logged_out=true&t=" + timestamp;
           } catch (error) {
             console.error("Logout failed:", error);
             // Force logout by clearing everything manually as a fallback
             localStorage.clear();
             sessionStorage.clear();
             
-            // Replace the current history entry with the auth page
-            // and add a cache-busting parameter to force a clean reload
+            // Force a hard reload by clearing browser history and going to login page
+            // The timestamp prevents any caching
             const timestamp = new Date().getTime();
             window.location.replace(`/auth?forced=true&t=${timestamp}`);
           }
