@@ -126,9 +126,29 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   useEffect(() => {
     if (defaultValues?.seasonalScopeId) {
+      console.log('Setting initial seasonal scope ID from defaultValues:', defaultValues.seasonalScopeId);
       setSelectedSeasonalScopeId(defaultValues.seasonalScopeId);
+      
+      // Also set the seasonalScopeId in the form
+      form.setValue('seasonalScopeId', defaultValues.seasonalScopeId);
+
+      // If in edit mode and we have a scope ID, also immediately fetch its age groups
+      if (mode === 'edit' && defaultValues.seasonalScopeId) {
+        const fetchAgeGroups = async () => {
+          try {
+            const response = await fetch(`/api/admin/seasonal-scopes/${defaultValues.seasonalScopeId}/age-groups`);
+            if (response.ok) {
+              const ageGroupsData = await response.json();
+              console.log('Fetched age groups from scope on initial load:', ageGroupsData);
+            }
+          } catch (error) {
+            console.error('Error fetching age groups for initial scope:', error);
+          }
+        };
+        fetchAgeGroups();
+      }
     }
-  }, [defaultValues?.seasonalScopeId]);
+  }, [defaultValues?.seasonalScopeId, form, mode]);
 
   useEffect(() => {
     if (ageGroupsQuery.data) {
