@@ -407,6 +407,9 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   ) || [];
                   
                   // Calculate total fee amount
+                  // Format currency to display dollars instead of cents
+                  const formatCurrency = (amount: number) => `$${(amount / 100).toFixed(2)}`;
+                  
                   const totalFee = groupAssignments.reduce((sum: number, assignment: any) => {
                     const fee = feesQuery.data?.find((f: any) => f.id === assignment.feeId);
                     return sum + (fee?.amount || 0);
@@ -431,7 +434,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       </TableCell>
                       <TableCell>
                         {totalFee > 0 
-                          ? `$${totalFee.toFixed(2)}` 
+                          ? formatCurrency(totalFee) 
                           : <span className="text-muted-foreground">$0.00</span>}
                       </TableCell>
                     </TableRow>
