@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { initiatePasswordReset, resetPassword } from '../services/passwordResetService';
+import { initiatePasswordReset, resetPassword, verifyPasswordResetToken } from '../services/passwordResetService';
 
 /**
  * Request a password reset
@@ -48,8 +48,8 @@ export async function verifyResetToken(req: Request, res: Response) {
       return res.status(400).json({ success: false, message: 'Token is required' });
     }
     
-    // The resetPassword service validates the token and returns the user id
-    const userId = await resetPassword(token, '');
+    // Use the verifyPasswordResetToken function to check the token without using it
+    const userId = await verifyPasswordResetToken(token);
     
     return res.status(200).json({
       success: !!userId,
