@@ -13,6 +13,27 @@ export async function getEmailTemplates(req: Request, res: Response) {
   }
 }
 
+export async function getEmailTemplate(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    console.log(`Fetching template with ID: ${id}`);
+    
+    const template = await db.select().from(emailTemplates)
+      .where(eq(emailTemplates.id, parseInt(id)))
+      .then(results => results[0]);
+    
+    if (!template) {
+      return res.status(404).json({ error: "Template not found" });
+    }
+    
+    console.log(`Found template:`, template);
+    res.json(template);
+  } catch (error) {
+    console.error(`Error fetching email template ${req.params.id}:`, error);
+    res.status(500).json({ error: "Failed to fetch email template" });
+  }
+}
+
 export async function createEmailTemplate(req: Request, res: Response) {
   try {
     const { 
