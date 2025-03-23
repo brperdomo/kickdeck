@@ -20,6 +20,7 @@ export function setupWebSocketServer(server: Server) {
   const wss = new WebSocketServer({ 
     server,
     host: '0.0.0.0',
+    path: '/api/ws',
     verifyClient: ({ req }, done) => {
       // Skip verification for Vite HMR
       if (req.headers['sec-websocket-protocol'] === 'vite-hmr') {
