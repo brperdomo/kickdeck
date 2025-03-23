@@ -256,21 +256,29 @@ function AdministratorsView() {
 
     // Group administrators by their roles
     administratorsQuery.data.forEach((admin: any) => {
-      // If admin has no roles or roles is null/undefined, use default assignment
-      if (!admin.roles || !Array.isArray(admin.roles) || admin.roles.length === 0 || admin.roles[0] === null) {
-        // Check if the admin is flagged as isAdmin in the user record
-        if (admin.isAdmin) {
-          if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
-            groupedAdmins.super_admin.push({ ...admin, roles: ['super_admin'] });
-          }
+      // Make sure admin.roles is always a valid array
+      if (!admin.roles || !Array.isArray(admin.roles)) {
+        admin.roles = [];
+      }
+      
+      // Filter out null roles
+      const validRoles = admin.roles.filter((role: string | null) => role !== null);
+      
+      // If user has isAdmin flag but no roles, default to super_admin
+      if (admin.isAdmin && validRoles.length === 0) {
+        if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
+          groupedAdmins.super_admin.push({ ...admin, roles: ['super_admin'] });
         }
         return;
       }
 
-      // Add admin to each role group they belong to
-      admin.roles.forEach((role: string) => {
-        if (role === null) return; // Skip null roles
+      // If admin has no valid roles, skip them
+      if (validRoles.length === 0) {
+        return;
+      }
 
+      // Add admin to each role group they belong to
+      validRoles.forEach((role: string) => {
         // Only add if it's a valid role group
         if (role in groupedAdmins) {
           // Avoid duplicate entries
@@ -278,9 +286,10 @@ function AdministratorsView() {
             groupedAdmins[role].push(admin);
           }
         }
-        // We no longer add to super_admin if role is not recognized
-        // This prevents incorrectly categorizing admins
       });
+      
+      // Debug output to console
+      console.log(`Admin ${admin.email} with roles:`, validRoles);
     });
 
     return groupedAdmins;
