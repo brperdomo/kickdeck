@@ -56,7 +56,37 @@ export function EmailTemplatesView({ isEmbedded = false }: EmailTemplatesViewPro
       console.log("Preparing preview with data:", cleanedData);
       // Encode the entire template object to pass as query parameter
       const encodedData = encodeURIComponent(JSON.stringify(cleanedData));
-      window.open(`/api/admin/email-templates/preview?template=${encodedData}`, '_blank');
+      const url = `/api/admin/email-templates/preview?template=${encodedData}`;
+      console.log("Preview URL length:", url.length);
+      console.log("Preview URL (truncated):", url.substring(0, 100) + "...");
+      
+      // Use POST method instead of GET to handle large template data
+      const win = window.open('about:blank', '_blank');
+      
+      if (!win) {
+        toast({
+          title: "Preview blocked",
+          description: "Please allow popups for this site to use the preview feature.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Create a form to submit the data via POST
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/api/admin/email-templates/preview';
+      form.target = '_blank';
+      
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'template';
+      input.value = JSON.stringify(cleanedData);
+      
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
     } catch (e) {
       console.error("Failed to generate preview:", e);
       toast({

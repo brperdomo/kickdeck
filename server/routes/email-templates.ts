@@ -131,20 +131,41 @@ export async function updateEmailTemplate(req: Request, res: Response) {
 
 export async function previewEmailTemplate(req: Request, res: Response) {
   try {
+    console.log("Preview template request method:", req.method);
     console.log("Preview template query:", req.query.template);
+    console.log("Preview template body:", req.body?.template);
     
-    // Handle missing template data
-    if (!req.query.template) {
-      console.error("No template data provided for preview");
-      return res.status(400).json({ error: "No template data provided for preview" });
-    }
-
+    // Handle different request methods
     let templateData;
-    try {
-      templateData = JSON.parse(req.query.template as string);
-    } catch (e) {
-      console.error("Failed to parse template data:", e);
-      return res.status(400).json({ error: "Invalid template data format" });
+    
+    if (req.method === 'POST') {
+      // Handle data from POST body
+      if (!req.body?.template) {
+        console.error("No template data provided in POST body");
+        return res.status(400).json({ error: "No template data provided in POST body" });
+      }
+      
+      try {
+        templateData = typeof req.body.template === 'string' 
+          ? JSON.parse(req.body.template) 
+          : req.body.template;
+      } catch (e) {
+        console.error("Failed to parse template data from POST:", e);
+        return res.status(400).json({ error: "Invalid template data format in POST" });
+      }
+    } else {
+      // Handle data from query parameter
+      if (!req.query.template) {
+        console.error("No template data provided in query");
+        return res.status(400).json({ error: "No template data provided for preview" });
+      }
+      
+      try {
+        templateData = JSON.parse(req.query.template as string);
+      } catch (e) {
+        console.error("Failed to parse template data from query:", e);
+        return res.status(400).json({ error: "Invalid template data format in query" });
+      }
     }
 
     // Replace variables with sample values
