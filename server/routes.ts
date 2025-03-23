@@ -109,12 +109,10 @@ export function registerRoutes(app: Express): Server {
   const httpServer = createServer(app);
   
   try {
-    // Set up authentication first - this adds session and passport middleware
-    setupAuth(app);
-    log("Authentication and session middleware set up successfully");
+    // Authentication is already set up in index.ts, no need to call setupAuth again
+    log("Using existing authentication middleware");
     
-    // Set up WebSocket server after authentication
-    setupWebSocketServer(httpServer);
+    // Set up WebSocket server - this is now handled in index.ts
     
     // Add organization identification middleware
     app.use(identifyOrganization);
