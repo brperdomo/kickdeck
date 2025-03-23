@@ -22,7 +22,7 @@ import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import { FeeManagement } from "@/components/events/FeeManagement";
 import { AuthProvider } from "@/hooks/use-auth";
-import LogoutPage from "@/pages/logout";
+import { LogoutHandler } from "@/components/LogoutHandler";
 
 // Placeholder components
 const EventPreviewSelector = () => <div>Event Preview Selector</div>;
@@ -43,7 +43,7 @@ function Router() {
   return (
     <Switch>
       {/* Dedicated logout route that will forcibly clear all app state */}
-      <Route path="/logout" component={LogoutPage} />
+      <Route path="/logout" component={LogoutHandler} />
       
       {/* Public routes that don't require authentication */}
       {!user ? (
