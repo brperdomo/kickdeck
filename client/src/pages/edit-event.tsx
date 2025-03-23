@@ -96,7 +96,8 @@ export default function EditEvent() {
       const { mode, defaultValues, ...submitData } = formData;
       await updateEventMutation.mutateAsync({
         ...submitData,
-        seasonalScopeId: eventQuery.data?.seasonalScopeId
+        // Use the seasonalScopeId from the form if available, otherwise use the one from the query
+        seasonalScopeId: submitData.seasonalScopeId || eventQuery.data?.seasonalScopeId
       });
     } catch (error) {
       console.error("Submit error:", error);

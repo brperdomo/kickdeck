@@ -236,26 +236,24 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const renderAgeGroupsContent = (mode: 'create' | 'edit', ageGroups: AgeGroup[], seasonalScopesQuery: any, selectedSeasonalScopeId: number | null, handleSeasonalScopeChange: (id: number) => void) => (
     <div className="space-y-6">
-      {mode === 'create' && (
-        <div className="mb-6">
-          <Label htmlFor="seasonalScope">Seasonal Scope</Label>
-          <Select 
-            onValueChange={(value) => handleSeasonalScopeChange(Number(value))}
-            value={selectedSeasonalScopeId?.toString()}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select a seasonal scope" />
-            </SelectTrigger>
-            <SelectContent>
-              {seasonalScopesQuery.data?.map((scope) => (
-                <SelectItem key={scope.id} value={scope.id.toString()}>
-                  {scope.name} ({scope.startYear}-{scope.endYear})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
+      <div className="mb-6">
+        <Label htmlFor="seasonalScope">Seasonal Scope</Label>
+        <Select 
+          onValueChange={(value) => handleSeasonalScopeChange(Number(value))}
+          value={selectedSeasonalScopeId?.toString()}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a seasonal scope" />
+          </SelectTrigger>
+          <SelectContent>
+            {seasonalScopesQuery.data?.map((scope) => (
+              <SelectItem key={scope.id} value={scope.id.toString()}>
+                {scope.name} ({scope.startYear}-{scope.endYear})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       {((mode === 'create' && selectedSeasonalScopeId) || mode === 'edit') && (
         <Card>
