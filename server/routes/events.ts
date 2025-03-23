@@ -326,7 +326,6 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
           ageGroup: group.ageGroup,
           gender: group.gender,
           divisionCode: group.divisionCode,
-          displayDivisionCode: group.divisionCode, // Standard groups already have correct formats
           birthDateStart: null,
           birthDateEnd: null,
           fieldSize: group.ageGroup.startsWith('U') ?
@@ -349,16 +348,11 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
       const key = divisionCode;
 
       if (!uniqueMap.has(key)) {
-        // Import the normalization function
-        const { normalizeDivisionCode } = require('../../utils/age-group-utils');
-        
         // Create a simplified version of the group with standard field size
-        // and a normalized division code for display
         const simplifiedGroup = {
           ...group,
           fieldSize: group.fieldSize || null,
           selected: true,
-          displayDivisionCode: normalizeDivisionCode(group)
         };
         uniqueMap.set(key, simplifiedGroup);
         uniqueGroups.push(simplifiedGroup);
@@ -418,7 +412,6 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
           ageGroup: stdGroup.ageGroup,
           gender: stdGroup.gender,
           divisionCode: stdGroup.divisionCode,
-          displayDivisionCode: stdGroup.divisionCode, // Standard groups already have correct formats
           birthDateStart: null,
           birthDateEnd: null,
           fieldSize: fieldSize,
@@ -465,7 +458,6 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
           ageGroup: group.ageGroup,
           gender: group.gender,
           divisionCode: group.divisionCode,
-          displayDivisionCode: group.divisionCode, // Standard groups already have correct formats
           birthDateStart: null,
           birthDateEnd: null,
           fieldSize: fieldSize,

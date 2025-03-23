@@ -46,7 +46,6 @@ export interface AgeGroup {
   birthYear: number;
   gender: string;
   divisionCode: string;
-  displayDivisionCode?: string;
   projectedTeams: number;
   fieldSize: FieldSize;
   amountDue?: number | null;

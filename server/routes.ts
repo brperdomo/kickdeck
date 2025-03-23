@@ -15,7 +15,6 @@ import emailProvidersRouter from "./routes/admin/email-providers";
 import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { sql, eq, and, or, inArray, notInArray } from "drizzle-orm";
-import { normalizeDivisionCode } from "./utils/age-group-utils";
 import {
   users,
   organizationSettings,
@@ -2782,18 +2781,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const uniqueGroups = [];
         const seenIds = new Set();
 
-        // Import the normalization function
-        const { normalizeDivisionCode } = require('./utils/age-group-utils');
-        
         for (const group of ageGroups) {
           if (!seenIds.has(group.id)) {
             seenIds.add(group.id);
-            
-            // Add displayDivisionCode field to each group
-            uniqueGroups.push({
-              ...group,
-              displayDivisionCode: normalizeDivisionCode(group)
-            });
+            uniqueGroups.push(group);
           }
         }
 
@@ -2888,26 +2879,17 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
         const ageGroups = await db
           .select({
-            id: eventAgeGroups.id,
             ageGroup: eventAgeGroups.ageGroup,
             gender: eventAgeGroups.gender,
-            divisionCode: eventAgeGroups.divisionCode,
-            birthYear: eventAgeGroups.birthYear,
             teamCount: sql<number>`count(${teams.id})`.mapWith(Number)
           })
           .from(eventAgeGroups)
           .leftJoin(teams, eq(teams.ageGroupId, eventAgeGroups.id))
           .where(eq(eventAgeGroups.eventId, eventId))
-          .groupBy(eventAgeGroups.id, eventAgeGroups.ageGroup, eventAgeGroups.gender, eventAgeGroups.divisionCode, eventAgeGroups.birthYear)
+          .groupBy(eventAgeGroups.id, eventAgeGroups.ageGroup, eventAgeGroups.gender)
           .orderBy(eventAgeGroups.ageGroup);
-          
-        // Add displayDivisionCode to each age group
-        const ageGroupsWithDisplayDivisionCode = ageGroups.map(group => ({
-          ...group,
-          displayDivisionCode: group.divisionCode || `${group.gender.startsWith('B') ? 'B' : 'G'}${group.birthYear || ''}`
-        }));
 
-        res.json(ageGroupsWithDisplayDivisionCode);
+        res.json(ageGroups);
       } catch (error) {
         console.error('Error fetching age groups:', error);
         // Added basic error logging for white screen debugging.

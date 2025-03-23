@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { db } from '@db';
 import { eventAgeGroups } from '@db/schema';
 import { eq, sql } from 'drizzle-orm';
-import { createDivisionCode } from '../../utils/age-group-utils';
 
 const router = Router();
 
@@ -14,34 +13,6 @@ interface AgeGroup {
   gender: string;
   birthYear: number | null;
   divisionCode: string | null;
-}
-
-/**
- * Normalizes a division code to follow the standard format (B2022, G2021, etc.)
- * @param group The age group with all its properties
- * @returns A standardized division code
- */
-function normalizeDivisionCode(group: any): string {
-  // If the group already has a well-formatted division code like B2022 or G2021, return it
-  if (group.divisionCode && /^[BG]\d{4}$/.test(group.divisionCode)) {
-    return group.divisionCode;
-  }
-  
-  // Otherwise, generate a new division code using the createDivisionCode function
-  // This handles the conversion from formats like "Girls-U19-11v11" to "G2006"
-  const genderPrefix = group.gender === 'Boys' ? 'B' : 'G';
-  
-  if (group.birthYear) {
-    return `${genderPrefix}${group.birthYear}`;
-  } else if (group.ageGroup && group.ageGroup.startsWith('U')) {
-    const ageNum = parseInt(group.ageGroup.substring(1));
-    const currentYear = new Date().getFullYear();
-    const derivedBirthYear = currentYear - ageNum;
-    return `${genderPrefix}${derivedBirthYear}`;
-  }
-  
-  // If we can't normalize, return the existing code as fallback
-  return group.divisionCode || `${genderPrefix}-Unknown`;
 }
 
 // Get age groups for an event
@@ -58,15 +29,8 @@ router.get('/:eventId', async (req, res) => {
 
     console.log(`Found ${groups.length} age groups`);
 
-    // Fix division codes for display
-    const normalizedGroups = groups.map(group => ({
-      ...group,
-      // Keep the original divisionCode in DB but display a normalized version
-      displayDivisionCode: normalizeDivisionCode(group)
-    }));
-
     // Return all age groups, regardless of duplicates (cleanup will handle this)
-    res.json(normalizedGroups);
+    res.json(groups);
   } catch (error) {
     console.error('Error fetching age groups:', error);
     res.status(500).json({ error: "Failed to fetch age groups" });
