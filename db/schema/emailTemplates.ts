@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, boolean, json } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, boolean, json, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const emailTemplates = pgTable('email_templates', {
@@ -12,6 +12,7 @@ export const emailTemplates = pgTable('email_templates', {
   senderEmail: text('sender_email').notNull(),
   isActive: boolean('is_active').default(true),
   variables: json('variables').$type<string[]>().default([]),
+  providerId: integer('provider_id'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });

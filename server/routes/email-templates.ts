@@ -24,7 +24,8 @@ export async function createEmailTemplate(req: Request, res: Response) {
       senderName, 
       senderEmail, 
       isActive,
-      variables 
+      variables,
+      providerId
     } = req.body;
 
     // Validate required fields
@@ -42,6 +43,7 @@ export async function createEmailTemplate(req: Request, res: Response) {
       senderEmail,
       isActive: isActive ?? true,
       variables,
+      providerId: providerId ? parseInt(providerId) : null,
       createdAt: new Date(),
       updatedAt: new Date()
     }).returning();
@@ -65,7 +67,8 @@ export async function updateEmailTemplate(req: Request, res: Response) {
       senderName, 
       senderEmail, 
       isActive,
-      variables 
+      variables,
+      providerId
     } = req.body;
 
     // Validate required fields
@@ -84,6 +87,7 @@ export async function updateEmailTemplate(req: Request, res: Response) {
         senderEmail,
         isActive,
         variables,
+        providerId: providerId ? parseInt(providerId) : null,
         updatedAt: new Date()
       })
       .where(eq(emailTemplates.id, parseInt(id)))
