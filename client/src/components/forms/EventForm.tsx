@@ -126,6 +126,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   // Effect for initializing seasonal scope ID from defaultValues
   useEffect(() => {
+    // First check if we have a scope ID directly from defaultValues
     if (defaultValues?.seasonalScopeId) {
       console.log('Setting initial seasonal scope ID from defaultValues:', defaultValues.seasonalScopeId);
       // Convert to number to ensure proper type for the select component
@@ -137,42 +138,73 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       
       // Also set the seasonalScopeId in the form
       form.setValue('seasonalScopeId', scopeId);
-
-      // If in edit mode and we have a scope ID, also immediately fetch its age groups
-      if (mode === 'edit' && scopeId) {
-        const fetchAgeGroups = async () => {
-          try {
-            const response = await fetch(`/api/admin/seasonal-scopes/${scopeId}/age-groups`);
-            if (response.ok) {
-              const ageGroupsData = await response.json();
-              console.log('Fetched age groups from scope on initial load:', ageGroupsData);
-              
-              // Format age groups for the form
-              const formattedAgeGroups = ageGroupsData.map((group: any) => ({
-                id: `${group.gender}-${group.birthYear}-${group.ageGroup}`,
-                ageGroup: group.ageGroup,
-                birthYear: group.birthYear,
-                gender: group.gender,
-                divisionCode: group.divisionCode,
-                fieldSize: group.ageGroup.startsWith('U') ?
-                  (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
-                    parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
-                      parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
-                selected: true
-              }));
-              
-              // Update age groups state and form value
-              setAgeGroups(formattedAgeGroups);
-              form.setValue('ageGroups', formattedAgeGroups);
-            }
-          } catch (error) {
-            console.error('Error fetching age groups for initial scope:', error);
+    } 
+    // If we're in edit mode and have age groups but no scope ID, try to determine it
+    else if (mode === 'edit' && defaultValues?.ageGroups && defaultValues.ageGroups.length > 0 && seasonalScopesQuery.data) {
+      console.log('No seasonal scope ID but have age groups, attempting to determine scope');
+      
+      // Look through available scopes to find a match with our age groups
+      for (const scope of seasonalScopesQuery.data) {
+        if (scope.ageGroups && scope.ageGroups.length > 0) {
+          // Check if any age groups from this scope match our event's age groups
+          const matchingGroups = scope.ageGroups.filter((scopeGroup: any) => 
+            defaultValues.ageGroups.some((eventGroup: any) => 
+              eventGroup.ageGroup === scopeGroup.ageGroup && 
+              eventGroup.gender === scopeGroup.gender
+            )
+          );
+          
+          // If we have a significant number of matches, this is likely the right scope
+          if (matchingGroups.length > 0 && matchingGroups.length / scope.ageGroups.length > 0.5) {
+            console.log(`Found matching scope: ${scope.id} - ${scope.name}`);
+            setSelectedSeasonalScopeId(scope.id);
+            form.setValue('seasonalScopeId', scope.id);
+            break;
           }
-        };
-        fetchAgeGroups();
+        }
       }
     }
-  }, [defaultValues?.seasonalScopeId, form, mode]);
+  }, [defaultValues?.seasonalScopeId, defaultValues?.ageGroups, form, mode, seasonalScopesQuery.data]);
+  
+  // Skip fetching age groups from the scope in edit mode if we already have age groups
+  useEffect(() => {
+    const scopeId = selectedSeasonalScopeId;
+    
+    // Only fetch age groups if we don't already have them
+    if (mode === 'edit' && scopeId && (!ageGroups || ageGroups.length === 0)) {
+      const fetchAgeGroups = async () => {
+        try {
+          const response = await fetch(`/api/admin/seasonal-scopes/${scopeId}/age-groups`);
+          if (response.ok) {
+            const ageGroupsData = await response.json();
+            console.log('Fetched age groups from scope on initial load:', ageGroupsData);
+            
+            // Format age groups for the form
+            const formattedAgeGroups = ageGroupsData.map((group: any) => ({
+              id: `${group.gender}-${group.birthYear}-${group.ageGroup}`,
+              ageGroup: group.ageGroup,
+              birthYear: group.birthYear,
+              gender: group.gender,
+              divisionCode: group.divisionCode,
+              displayDivisionCode: group.displayDivisionCode,
+              fieldSize: group.ageGroup.startsWith('U') ?
+                (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
+                  parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
+                    parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+              selected: true
+            }));
+            
+            // Update age groups state and form value
+            setAgeGroups(formattedAgeGroups);
+            form.setValue('ageGroups', formattedAgeGroups);
+          }
+        } catch (error) {
+          console.error('Error fetching age groups for initial scope:', error);
+        }
+      };
+      fetchAgeGroups();
+    }
+  }, [selectedSeasonalScopeId, ageGroups, form, mode]);
 
   useEffect(() => {
     if (ageGroupsQuery.data) {
@@ -198,6 +230,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           birthYear: group.birthYear,
           gender: group.gender,
           divisionCode: group.divisionCode,
+          displayDivisionCode: group.displayDivisionCode || group.divisionCode,
           fieldSize: group.ageGroup.startsWith('U') ?
             (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
               parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
@@ -315,7 +348,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const renderAgeGroupsContent = (mode: 'create' | 'edit', ageGroups: AgeGroup[], seasonalScopesQuery: any, selectedSeasonalScopeId: number | null, handleSeasonalScopeChange: (id: number) => void) => (
     <div className="space-y-6">
-      {/* Only show seasonal scope selector in create mode or if no age groups exist */}
+      {/* Show seasonal scope selector in create mode, or in edit mode when no age groups exist */}
       {(mode === 'create' || (mode === 'edit' && (!ageGroups || ageGroups.length === 0))) && (
         <div className="mb-6">
           <Label htmlFor="seasonalScope">Seasonal Scope</Label>
@@ -343,7 +376,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         <div className="mb-6">
           <div className="font-medium text-sm mb-2">Selected Seasonal Scope</div>
           <div className="bg-muted p-3 rounded-md">
-            {seasonalScopesQuery.data.find((scope: any) => scope.id === selectedSeasonalScopeId)?.name || 'Selected Scope'} 
+            {seasonalScopesQuery.data.find((scope: any) => scope.id === selectedSeasonalScopeId)?.name || 'Current Scope'} 
             ({seasonalScopesQuery.data.find((scope: any) => scope.id === selectedSeasonalScopeId)?.startYear || ''}-
             {seasonalScopesQuery.data.find((scope: any) => scope.id === selectedSeasonalScopeId)?.endYear || ''})
           </div>
