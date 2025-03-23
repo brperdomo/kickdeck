@@ -72,6 +72,7 @@ export default function ResetPassword() {
       const baseUrl = window.location.origin;
       const url = `${baseUrl}/api/auth/verify-reset-token`;
       console.log('Making request to:', url);
+      console.log('Request body:', JSON.stringify({ token }));
       
       const response = await fetch(url, {
         method: 'POST',
@@ -80,17 +81,23 @@ export default function ResetPassword() {
         credentials: 'include',
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', JSON.stringify(Array.from(response.headers.entries())));
+
       if (!response.ok) {
-        console.error('Token verification failed:', await response.text());
-        throw new Error('Token verification failed');
+        const errorText = await response.text();
+        console.error('Token verification failed:', errorText);
+        throw new Error(`Token verification failed: ${errorText}`);
       }
 
       const data = await response.json();
       console.log('Token verification response:', data);
 
       if (data.valid) {
+        console.log('Token is valid, updating state');
         setIsTokenValid(true);
       } else {
+        console.log('Token is invalid according to server response');
         toast({
           variant: "destructive",
           title: "Invalid Token",
@@ -273,4 +280,4 @@ export default function ResetPassword() {
       </Card>
     </div>
   );
-}
+}console.log("Console debugging enabled")
