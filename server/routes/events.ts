@@ -326,6 +326,7 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
           ageGroup: group.ageGroup,
           gender: group.gender,
           divisionCode: group.divisionCode,
+          displayDivisionCode: group.divisionCode, // Standard groups already have correct formats
           birthDateStart: null,
           birthDateEnd: null,
           fieldSize: group.ageGroup.startsWith('U') ?
@@ -417,6 +418,7 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
           ageGroup: stdGroup.ageGroup,
           gender: stdGroup.gender,
           divisionCode: stdGroup.divisionCode,
+          displayDivisionCode: stdGroup.divisionCode, // Standard groups already have correct formats
           birthDateStart: null,
           birthDateEnd: null,
           fieldSize: fieldSize,
@@ -463,6 +465,7 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
           ageGroup: group.ageGroup,
           gender: group.gender,
           divisionCode: group.divisionCode,
+          displayDivisionCode: group.divisionCode, // Standard groups already have correct formats
           birthDateStart: null,
           birthDateEnd: null,
           fieldSize: fieldSize,
