@@ -44,25 +44,44 @@ export default function ResetPassword() {
   });
 
   useEffect(() => {
-    // Extract token from the URL query params
-    const queryParams = new URLSearchParams(location.split('?')[1]);
-    const resetToken = queryParams.get('token');
+    // Extract token from the URL query params - use window.location for full URL with query params
+    console.log('Current location path:', location);
+    console.log('Full URL:', window.location.href);
     
-    if (!resetToken) {
+    try {
+      // Use window.location.search to get the query string instead of parsing location from wouter
+      const queryString = window.location.search.startsWith('?') 
+        ? window.location.search.substring(1) 
+        : window.location.search;
+      
+      console.log('Query string:', queryString);
+      
+      if (!queryString) {
+        throw new Error('No query string found');
+      }
+      
+      const queryParams = new URLSearchParams(queryString);
+      const resetToken = queryParams.get('token');
+      console.log('Extracted token:', resetToken);
+      
+      if (!resetToken) {
+        throw new Error('Token parameter not found');
+      }
+
+      // Set the token in state
+      setToken(resetToken);
+
+      // Verify the token on component mount
+      verifyToken(resetToken);
+    } catch (error) {
+      console.error('Error extracting token:', error);
       setIsLoading(false);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Reset token is missing from the URL",
       });
-      return;
     }
-
-    // Set the token in state
-    setToken(resetToken);
-
-    // Verify the token on component mount
-    verifyToken(resetToken);
   }, [location, toast]);
 
   const verifyToken = async (token: string) => {
@@ -280,4 +299,4 @@ export default function ResetPassword() {
       </Card>
     </div>
   );
-}console.log("Console debugging enabled")
+}
