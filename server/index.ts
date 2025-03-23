@@ -4,7 +4,6 @@ import { setupVite, serveStatic, log } from "./vite";
 import { db } from "@db";
 import { users } from "@db/schema";
 import { createAdmin } from "./create-admin";
-import { WebSocketServer } from "ws";
 import path from "path";
 import uploadRouter from "./routes/upload";
 import { createEmailTemplatesTable } from './migrations/create_email_templates';
@@ -114,45 +113,6 @@ async function testDbConnection() {
     // Register routes after authentication setup
     const routes = registerRoutes(app);
     log("API routes registered");
-    
-    // Create WebSocket server
-    const wss = new WebSocketServer({ 
-      server,
-      path: "/api/ws",
-      verifyClient: (info: any) => { // Fix implicit any error
-        const protocol = info.req.headers['sec-websocket-protocol'];
-        return !protocol || protocol !== 'vite-hmr';
-      }
-    });
-
-    // WebSocket connection handling
-    wss.on('connection', (ws) => {
-      log("New WebSocket connection established");
-
-      // Set a timeout to close idle connections after 5 minutes
-      const idleTimeout = 5 * 60 * 1000; // 5 minutes in milliseconds
-      let timeoutId = setTimeout(() => {
-        log("Closing idle WebSocket connection");
-        ws.close();
-      }, idleTimeout);
-
-      ws.on('message', (message) => {
-        // Reset timeout on activity
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          log("Closing idle WebSocket connection");
-          ws.close();
-        }, idleTimeout);
-
-        // Handle incoming messages
-        log("Received WebSocket message: " + message);
-      });
-
-      ws.on('close', () => {
-        clearTimeout(timeoutId);
-        log("WebSocket connection closed");
-      });
-    });
 
     // Always use Vite in development mode for this project
     await setupVite(app, server);
