@@ -43,7 +43,28 @@ export function EmailTemplatesView({ isEmbedded = false }: EmailTemplatesViewPro
   };
 
   const handlePreview = (template: EmailTemplate) => {
-    window.open(`/api/admin/email-templates/preview?id=${template.id}`, '_blank');
+    try {
+      // Clean and prepare the template data
+      const cleanedData = {
+        ...template,
+        description: template.description || "",
+        isActive: template.isActive === false ? false : true,
+        variables: template.variables || [],
+        providerId: template.providerId ? Number(template.providerId) : null
+      };
+      
+      console.log("Preparing preview with data:", cleanedData);
+      // Encode the entire template object to pass as query parameter
+      const encodedData = encodeURIComponent(JSON.stringify(cleanedData));
+      window.open(`/api/admin/email-templates/preview?template=${encodedData}`, '_blank');
+    } catch (e) {
+      console.error("Failed to generate preview:", e);
+      toast({
+        title: "Preview error",
+        description: "Could not generate preview. Check console for details.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleDuplicate = async (template: EmailTemplate) => {
