@@ -85,7 +85,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   const [selectedSeasonalScopeId, setSelectedSeasonalScopeId] = useState<number | null>(
     defaultValues?.seasonalScopeId || null
   );
-  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>([]);
+  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(defaultValues?.ageGroups || []);
   const [scoringRules, setScoringRules] = useState<ScoringRule[]>(defaultValues?.scoringRules || []);
   const [settings, setSettings] = useState<EventSetting[]>(defaultValues?.settings || []);
   const [isScoringDialogOpen, setIsScoringDialogOpen] = useState(false);
