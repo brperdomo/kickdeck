@@ -88,14 +88,15 @@ export default function EventRegistration() {
   const updatePersonalDetailsMutation = useMutation({
     mutationFn: async (data: PersonalDetailsForm) => {
       const response = await fetch('/api/user/profile', {
-        method: 'PATCH',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
       if (!response.ok) {
-        throw new Error('Failed to update profile');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to update profile');
       }
       return response.json();
     },

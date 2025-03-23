@@ -1891,7 +1891,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
 
       try {
-        const { firstName, lastName, email, phone } = req.body;
+        const { firstName, lastName, email, phone, address, city, state, zipCode } = req.body;
 
         // Check if email is already taken by another user
         if (email !== req.user.email) {
@@ -1914,6 +1914,15 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             lastName,
             email,
             phone,
+            // Store address fields as JSON in the metadata field if they exist
+            ...(address || city || state || zipCode ? {
+              metadata: JSON.stringify({
+                address,
+                city,
+                state,
+                zipCode
+              })
+            } : {}),
             updatedAt: new Date().toISOString(),
           } as typeof users.$inferInsert)
           .where(eq(users.id, req.user.id))
