@@ -49,7 +49,7 @@ const TINYMCE_API_KEY = "wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8";
 export default function EmailTemplateEdit() {
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
-  const isCreateMode = id === 'create';
+  const isCreateMode = !id || id === 'create';
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [variables, setVariables] = useState<string[]>([]);
@@ -179,8 +179,28 @@ export default function EmailTemplateEdit() {
   };
 
   const handlePreview = () => {
-    const formData = form.getValues();
-    window.open(`/api/admin/email-templates/preview?template=${encodeURIComponent(JSON.stringify(formData))}`, '_blank');
+    try {
+      const formData = form.getValues();
+      // Make sure we're sending valid data
+      const cleanedData = {
+        ...formData,
+        description: formData.description || "",
+        isActive: formData.isActive === false ? false : true,
+        variables: formData.variables || [],
+        providerId: formData.providerId ? Number(formData.providerId) : null
+      };
+      
+      console.log("Preparing preview with data:", cleanedData);
+      const encodedData = encodeURIComponent(JSON.stringify(cleanedData));
+      window.open(`/api/admin/email-templates/preview?template=${encodedData}`, '_blank');
+    } catch (e) {
+      console.error("Failed to generate preview:", e);
+      toast({
+        title: "Preview error",
+        description: "Could not generate preview. Check console for details.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (isTemplateLoading && !isCreateMode) {
@@ -221,7 +241,7 @@ export default function EmailTemplateEdit() {
                         onValueChange={(value) => {
                           field.onChange(value ? parseInt(value, 10) : undefined);
                         }}
-                        value={field.value?.toString() || ""}
+                        value={field.value ? field.value.toString() : ""}
                       >
                         <FormControl>
                           <SelectTrigger>

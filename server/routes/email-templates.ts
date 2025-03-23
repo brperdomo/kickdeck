@@ -45,7 +45,7 @@ export async function createEmailTemplate(req: Request, res: Response) {
       senderEmail,
       isActive: isActive === false ? false : true,
       variables: variables || [],
-      providerId: providerId ? parseInt(providerId.toString()) : null,
+      providerId: providerId ? Number(providerId) : null,
       createdAt: new Date(),
       updatedAt: new Date()
     }).returning();
@@ -91,7 +91,7 @@ export async function updateEmailTemplate(req: Request, res: Response) {
         senderEmail,
         isActive: isActive === false ? false : true,
         variables: variables || [],
-        providerId: providerId ? parseInt(providerId.toString()) : null,
+        providerId: providerId ? Number(providerId) : null,
         updatedAt: new Date()
       })
       .where(eq(emailTemplates.id, parseInt(id)))
@@ -110,7 +110,21 @@ export async function updateEmailTemplate(req: Request, res: Response) {
 
 export async function previewEmailTemplate(req: Request, res: Response) {
   try {
-    const templateData = JSON.parse(req.query.template as string);
+    console.log("Preview template query:", req.query.template);
+    
+    // Handle missing template data
+    if (!req.query.template) {
+      console.error("No template data provided for preview");
+      return res.status(400).json({ error: "No template data provided for preview" });
+    }
+
+    let templateData;
+    try {
+      templateData = JSON.parse(req.query.template as string);
+    } catch (e) {
+      console.error("Failed to parse template data:", e);
+      return res.status(400).json({ error: "Invalid template data format" });
+    }
 
     // Replace variables with sample values
     let content = templateData.content || '';
@@ -121,7 +135,8 @@ export async function previewEmailTemplate(req: Request, res: Response) {
       lastName: '[Sample Last Name]',
       email: '[sample@email.com]',
       username: '[Sample Username]',
-      resetLink: '[Reset Password Link]'
+      resetLink: '[Reset Password Link]',
+      token: '[Reset Token]'
     };
 
     // Replace all merge fields
