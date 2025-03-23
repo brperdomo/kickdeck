@@ -14,7 +14,7 @@ import organizationsRouter from "./routes/admin/organizations";
 import emailProvidersRouter from "./routes/admin/email-providers";
 import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
-import { sql, eq, and, or, inArray } from "drizzle-orm";
+import { sql, eq, and, or, inArray, notInArray } from "drizzle-orm";
 import {
   users,
   organizationSettings,
@@ -2251,21 +2251,46 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             console.log(`Found ${scopeAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
             
             if (scopeAgeGroups.length > 0) {
-              // Create a map of existing age groups
-              const existingAgeGroupMap = new Map();
+              // Find any existing age groups from this event that have teams to preserve
+              const ageGroupsToPreserve = new Map();
               for (const group of existingAgeGroups) {
+                if (ageGroupsWithTeamsMap.has(group.id)) {
+                  // Keep age groups that have teams
+                  ageGroupsToPreserve.set(group.id, group);
+                }
+              }
+              
+              // Delete all existing age groups that don't have teams
+              const idsToKeep = Array.from(ageGroupsToPreserve.keys());
+              if (idsToKeep.length > 0) {
+                console.log(`Preserving ${idsToKeep.length} age groups that have teams`);
+                await tx
+                  .delete(eventAgeGroups)
+                  .where(and(
+                    eq(eventAgeGroups.eventId, eventId), 
+                    notInArray(eventAgeGroups.id, idsToKeep)
+                  ));
+              } else {
+                // Delete all existing age groups if none have teams
+                console.log('Removing all existing age groups and replacing with scope age groups');
+                await tx
+                  .delete(eventAgeGroups)
+                  .where(eq(eventAgeGroups.eventId, eventId));
+              }
+              
+              // Create a map of existing age groups after deletion (only ones with teams)
+              const existingAgeGroupMap = new Map();
+              for (const group of Array.from(ageGroupsToPreserve.values())) {
                 const key = `${group.gender}-${group.ageGroup}`;
                 existingAgeGroupMap.set(key, group);
               }
               
-              // Add age groups that don't exist yet
+              // Add all age groups from the seasonal scope
               for (const scopeGroup of scopeAgeGroups) {
                 const key = `${scopeGroup.gender}-${scopeGroup.ageGroup}`;
                 const existingGroup = existingAgeGroupMap.get(key);
                 
                 if (!existingGroup) {
-                  console.log(`Adding new age group from scope: ${scopeGroup.ageGroup} ${scopeGroup.gender}`);
-                  
                   // Calculate field size based on age group
                   const ageNum = scopeGroup.ageGroup.startsWith('U') ? 
                     parseInt(scopeGroup.ageGroup.substring(1)) : 18;
