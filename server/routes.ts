@@ -2071,6 +2071,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
         // Start a transaction to update event and related records
         await db.transaction(async (tx) => {
+          console.log('Updating event with data:', JSON.stringify(eventData, null, 2));
+          
           // Update the event
           const [updatedEvent] = await tx
             .update(events)
@@ -2235,6 +2237,95 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             }
           }
 
+          // Handle age groups from seasonal scope if it was changed
+          if (eventData.seasonalScopeId) {
+            const seasonalScopeId = parseInt(eventData.seasonalScopeId.toString());
+            console.log(`Event update is using seasonal scope: ${seasonalScopeId}`);
+            
+            // Get age groups from the seasonal scope
+            const scopeAgeGroups = await tx
+              .select()
+              .from(ageGroupSettings)
+              .where(eq(ageGroupSettings.seasonalScopeId, seasonalScopeId));
+            
+            console.log(`Found ${scopeAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
+            
+            if (scopeAgeGroups.length > 0) {
+              // Create a map of existing age groups
+              const existingAgeGroupMap = new Map();
+              for (const group of existingAgeGroups) {
+                const key = `${group.gender}-${group.ageGroup}`;
+                existingAgeGroupMap.set(key, group);
+              }
+              
+              // Add age groups that don't exist yet
+              for (const scopeGroup of scopeAgeGroups) {
+                const key = `${scopeGroup.gender}-${scopeGroup.ageGroup}`;
+                const existingGroup = existingAgeGroupMap.get(key);
+                
+                if (!existingGroup) {
+                  console.log(`Adding new age group from scope: ${scopeGroup.ageGroup} ${scopeGroup.gender}`);
+                  
+                  // Calculate field size based on age group
+                  const ageNum = scopeGroup.ageGroup.startsWith('U') ? 
+                    parseInt(scopeGroup.ageGroup.substring(1)) : 18;
+                  
+                  const fieldSize = ageNum <= 7 ? '4v4' : 
+                                    ageNum <= 10 ? '7v7' : 
+                                    ageNum <= 12 ? '9v9' : '11v11';
+                                    
+                  await tx
+                    .insert(eventAgeGroups)
+                    .values({
+                      eventId,
+                      ageGroup: scopeGroup.ageGroup,
+                      birthYear: scopeGroup.birthYear,
+                      gender: scopeGroup.gender,
+                      divisionCode: scopeGroup.divisionCode,
+                      fieldSize: fieldSize,
+                      projectedTeams: 8,
+                      createdAt: new Date().toISOString(),
+                      birthDateStart: new Date(scopeGroup.birthYear, 0, 1).toISOString().split('T')[0],
+                      birthDateEnd: new Date(scopeGroup.birthYear, 11, 31).toISOString().split('T')[0],
+                      seasonalScopeId: seasonalScopeId,
+                      scoringRule: null,
+                      amountDue: null,
+                    });
+                }
+              }
+              
+              // Save the seasonal scope ID in event settings
+              const existingSetting = await tx
+                .select()
+                .from(eventSettings)
+                .where(and(
+                  eq(eventSettings.eventId, eventId),
+                  eq(eventSettings.settingKey, 'seasonalScopeId')
+                ))
+                .limit(1);
+                
+              if (existingSetting.length > 0) {
+                await tx
+                  .update(eventSettings)
+                  .set({
+                    settingValue: seasonalScopeId.toString(),
+                    updatedAt: new Date().toISOString()
+                  })
+                  .where(eq(eventSettings.id, existingSetting[0].id));
+              } else {
+                await tx
+                  .insert(eventSettings)
+                  .values({
+                    eventId,
+                    settingKey: 'seasonalScopeId',
+                    settingValue: seasonalScopeId.toString(),
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                  });
+              }
+            }
+          }
+          
           // Handle age groups that were removed
           const remainingGroups = Array.from(existingAgeGroupsMap.entries());
           for (const [, group] of remainingGroups) {
