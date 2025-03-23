@@ -348,11 +348,16 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
       const key = divisionCode;
 
       if (!uniqueMap.has(key)) {
+        // Import the normalization function
+        const { normalizeDivisionCode } = require('../../utils/age-group-utils');
+        
         // Create a simplified version of the group with standard field size
+        // and a normalized division code for display
         const simplifiedGroup = {
           ...group,
           fieldSize: group.fieldSize || null,
           selected: true,
+          displayDivisionCode: normalizeDivisionCode(group)
         };
         uniqueMap.set(key, simplifiedGroup);
         uniqueGroups.push(simplifiedGroup);
