@@ -315,22 +315,35 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                         value={field.value}
                         onEditorChange={(content) => field.onChange(content)}
                         init={{
-                          height: 400,
-                          menubar: true,
+                          height: 500,
+                          menubar: 'file edit view insert format tools table help',
                           plugins: [
                             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                             'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount',
+                            'codesample', 'sourcecode', 'paste'
                           ],
-                          toolbar: 'undo redo | blocks | ' +
-                            'bold italic forecolor | alignleft aligncenter ' +
-                            'alignright alignjustify | bullist numlist outdent indent | ' +
-                            'mergefields code | removeformat | help',
-                          menu: {
-                            tools: { title: 'Merge Tools', items: 'mergefields' }
+                          codesample_languages: [
+                            { text: 'HTML/XML', value: 'markup' },
+                            { text: 'JavaScript', value: 'javascript' },
+                            { text: 'CSS', value: 'css' }
+                          ],
+                          toolbar1: 'code | undo redo | formatselect | bold italic backcolor forecolor | alignleft aligncenter alignright alignjustify',
+                          toolbar2: 'bullist numlist outdent indent | link image media | codesample removeformat | mergefields customhtmlbutton | help',
+                          extended_valid_elements: '*[*]', // Allow all elements and attributes
+                          valid_children: '+body[style]', // Allow style tag in body
+                          schema: 'html5',
+                          entity_encoding: 'raw',
+                          verify_html: false, // Don't verify/filter HTML
+                          valid_elements: '*[*]', // Allow all elements and attributes
+                          // Add custom file browser for images and media
+                          file_picker_callback: function (callback, value, meta) {
+                            // Use prompt to allow direct URL input
+                            let url = prompt('Enter URL', 'https://');
+                            if (url) callback(url);
                           },
                           setup: (editor) => {
-                            // Add a button (not a menu button) to insert these specific merge fields
+                            // Add a button for merge fields
                             editor.ui.registry.addButton('mergefields', {
                               text: 'Merge Fields',
                               tooltip: 'Insert merge field',
@@ -373,7 +386,50 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                                 });
                               }
                             });
+                            
+                            // Add a custom HTML button for direct HTML insertion
+                            editor.ui.registry.addButton('customhtmlbutton', {
+                              text: 'Insert HTML',
+                              tooltip: 'Insert custom HTML code',
+                              onAction: () => {
+                                editor.windowManager.open({
+                                  title: 'Insert Custom HTML',
+                                  body: {
+                                    type: 'panel',
+                                    items: [
+                                      {
+                                        type: 'textarea',
+                                        name: 'customhtml',
+                                        label: 'HTML Code',
+                                        placeholder: 'Paste your HTML code here...'
+                                      }
+                                    ]
+                                  },
+                                  buttons: [
+                                    {
+                                      type: 'cancel',
+                                      text: 'Cancel'
+                                    },
+                                    {
+                                      type: 'submit',
+                                      text: 'Insert',
+                                      primary: true
+                                    }
+                                  ],
+                                  onSubmit: (api) => {
+                                    const data = api.getData();
+                                    editor.insertContent(data.customhtml);
+                                    api.close();
+                                  }
+                                });
+                              }
+                            });
                           },
+                          // Disable auto-formatting of HTML 
+                          indent: false,
+                          forced_root_block: '',
+                          force_br_newlines: false,
+                          force_p_newlines: false,
                           content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
                         }}
                       />
