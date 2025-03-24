@@ -28,6 +28,7 @@ export async function getEventAdministrators(req: Request, res: Response) {
         eventId: eventAdministrators.eventId,
         userId: eventAdministrators.userId,
         role: eventAdministrators.role,
+        permissions: eventAdministrators.permissions,
         createdAt: eventAdministrators.createdAt,
         user: users,
         roles: sql<string[]>`array_agg(distinct ${roles.name})`
@@ -136,6 +137,7 @@ export async function addEventAdministrator(req: Request, res: Response) {
         eventId,
         userId,
         role,
+        permissions: {},
         createdAt: new Date().toISOString()
       })
       .returning();
@@ -147,6 +149,7 @@ export async function addEventAdministrator(req: Request, res: Response) {
         eventId: eventAdministrators.eventId,
         userId: eventAdministrators.userId,
         role: eventAdministrators.role,
+        permissions: eventAdministrators.permissions,
         createdAt: eventAdministrators.createdAt,
         user: users,
         roles: sql<string[]>`array_agg(${roles.name})`
@@ -211,6 +214,7 @@ export async function updateEventAdministrator(req: Request, res: Response) {
         eventId: eventAdministrators.eventId,
         userId: eventAdministrators.userId,
         role: eventAdministrators.role,
+        permissions: eventAdministrators.permissions,
         createdAt: eventAdministrators.createdAt,
         user: users,
         roles: sql<string[]>`array_agg(${roles.name})`
