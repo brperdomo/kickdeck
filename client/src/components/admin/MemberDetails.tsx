@@ -74,7 +74,7 @@ interface MemberDetails {
   registrations: Registration[];
 }
 
-export const MemberDetails: React.FC = () => {
+const MemberDetails: React.FC = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
