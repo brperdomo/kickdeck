@@ -27,13 +27,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
-import { loadStripe } from "@stripe/stripe-js";
-import { 
-  Elements, 
-  PaymentElement, 
-  useStripe, 
-  useElements 
-} from "@stripe/react-stripe-js";
+import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import StripeProvider from "@/components/StripeProvider";
 
 interface AgeGroup {
   id: number;
@@ -1355,7 +1350,7 @@ export default function EventRegistration() {
                     <h4 className="font-semibold text-blue-800">Payment Information</h4>
                     <p className="text-sm text-gray-600 mb-4">Please provide your payment details to complete registration</p>
                     
-                    <Elements stripe={stripePromise}>
+                    <StripeProvider>
                       <PaymentForm 
                         amount={selectedAgeGroup.registrationFee} 
                         onSuccess={() => {
@@ -1367,7 +1362,7 @@ export default function EventRegistration() {
                         isProcessing={registerTeamMutation.isPending}
                         setIsProcessing={() => {}} // This is a mock function since we can't directly control mutation state
                       />
-                    </Elements>
+                    </StripeProvider>
                   </div>
                 )}
                 
