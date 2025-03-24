@@ -30,6 +30,7 @@ import {
   stopEmulatingAdmin,
   getEmulationStatus
 } from "./routes/admin/emulation";
+import { getCurrentUserPermissions } from "./routes/admin/permissions";
 import { sql, eq, and, or, inArray, notInArray } from "drizzle-orm";
 import {
   users,
@@ -154,6 +155,9 @@ export function registerRoutes(app: Express): Server {
     app.post('/api/admin/emulation/start/:adminId', isAdmin, startEmulatingAdmin);
     app.post('/api/admin/emulation/stop/:token', isAdmin, stopEmulatingAdmin);
     app.get('/api/admin/emulation/status', isAdmin, getEmulationStatus);
+    
+    // Get current user permissions for role-based UI
+    app.get('/api/admin/permissions/me', isAdmin, getCurrentUserPermissions);
 
     // Register fee assignment routes for admin
     app.get('/api/admin/events/:eventId/fee-assignments', isAdmin, getFeeAssignments);
