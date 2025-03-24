@@ -223,21 +223,35 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const handleSubmit = async (data: EventFormValues) => {
     try {
-      // Get seasonalScopeId from selectedSeasonalScopeId or from form data (which may have been set from defaultValues)
-      const effectiveScopeId = selectedSeasonalScopeId || data.seasonalScopeId || defaultValues?.seasonalScopeId;
+      // If age groups already exist, we don't need to validate the seasonal scope
+      // as the age groups are already associated with the event
+      const hasExistingAgeGroups = ageGroups && ageGroups.length > 0;
       
-      if (!effectiveScopeId) {
-        toast({
-          title: "Error",
-          description: "Please select a seasonal scope",
-          variant: "destructive"
-        });
-        return;
+      // Only validate the seasonal scope if no age groups exist yet
+      if (!hasExistingAgeGroups) {
+        // Get seasonalScopeId from selectedSeasonalScopeId or from form data (which may have been set from defaultValues)
+        const effectiveScopeId = selectedSeasonalScopeId || data.seasonalScopeId || defaultValues?.seasonalScopeId;
+        
+        if (!effectiveScopeId) {
+          toast({
+            title: "Error",
+            description: "Please select a seasonal scope",
+            variant: "destructive"
+          });
+          return;
+        }
       }
 
+      // Determine the scope ID to use:
+      // 1. Use the original scope ID from defaultValues if we have age groups already 
+      // 2. Otherwise use the selected scope ID or form value
+      const scopeIdToSubmit = hasExistingAgeGroups && defaultValues?.seasonalScopeId
+        ? defaultValues.seasonalScopeId
+        : selectedSeasonalScopeId || data.seasonalScopeId || defaultValues?.seasonalScopeId;
+      
       const submitData = {
         ...data,
-        seasonalScopeId: effectiveScopeId,
+        seasonalScopeId: scopeIdToSubmit,
         ageGroups,
         scoringRules,
         settings,
@@ -355,13 +369,25 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       )}
       
       {/* Display the selected scope information when scope is selected or age groups exist */}
-      {((mode === 'edit' && ageGroups && ageGroups.length > 0) || selectedSeasonalScopeId) && seasonalScopesQuery.data && (
+      {((mode === 'edit' && ageGroups && ageGroups.length > 0) || selectedSeasonalScopeId || defaultValues?.seasonalScopeId) && seasonalScopesQuery.data && (
         <div className="mb-6">
           <div className="font-medium text-sm mb-2">Selected Seasonal Scope</div>
           <div className="bg-muted p-3 rounded-md">
-            {seasonalScopesQuery.data.find((scope: any) => scope.id === selectedSeasonalScopeId)?.name || 'Selected Scope'} 
-            ({seasonalScopesQuery.data.find((scope: any) => scope.id === selectedSeasonalScopeId)?.startYear || ''}-
-            {seasonalScopesQuery.data.find((scope: any) => scope.id === selectedSeasonalScopeId)?.endYear || ''})
+            {(() => {
+              // Get the effective scope ID from any available source
+              const effectiveScopeId = selectedSeasonalScopeId || 
+                (typeof defaultValues?.seasonalScopeId === 'string' 
+                  ? parseInt(defaultValues.seasonalScopeId) 
+                  : defaultValues?.seasonalScopeId);
+              
+              const scope = seasonalScopesQuery.data.find((s: any) => s.id === effectiveScopeId);
+              
+              if (scope) {
+                return `${scope.name} (${scope.startYear}-${scope.endYear})`;
+              } else {
+                return 'Scope ID: ' + (effectiveScopeId || 'Unknown');
+              }
+            })()}
           </div>
         </div>
       )}
