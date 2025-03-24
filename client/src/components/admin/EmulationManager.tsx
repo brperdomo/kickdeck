@@ -91,9 +91,9 @@ export default function EmulationManager() {
       // Refresh all queries to reflect emulated user data
       queryClient.invalidateQueries();
       
-      // Force refresh the user data
-      queryClient.invalidateQueries(['user']);
-      queryClient.invalidateQueries(['user-permissions']);
+      // Force refresh the user data with proper query key that includes the token
+      queryClient.invalidateQueries({ queryKey: ['user', data.token] });
+      queryClient.invalidateQueries({ queryKey: ['user-permissions', data.token] });
       
       // Reload the page to ensure all components update properly with the emulated user
       window.location.reload();
@@ -132,8 +132,10 @@ export default function EmulationManager() {
       
       // Refresh all queries to reflect actual user data
       queryClient.invalidateQueries();
-      queryClient.invalidateQueries(['user']);
-      queryClient.invalidateQueries(['user-permissions']);
+      
+      // Force refresh the user data after removing emulation
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      queryClient.invalidateQueries({ queryKey: ['user-permissions'] });
       
       // Reload the page to ensure all components update properly
       window.location.reload();

@@ -44,8 +44,24 @@ async function fetchUser(): Promise<SelectUser | null> {
   // The VITE_BYPASS_AUTH check is now handled at the return statement level
 
   try {
+    // Check for emulation token to include in the request
+    const emulationToken = typeof window !== 'undefined' ? localStorage.getItem('emulationToken') : null;
+    
+    // Prepare headers - include emulation token if present
+    const headers: HeadersInit = {};
+    if (emulationToken) {
+      headers['x-emulation-token'] = emulationToken;
+      // Add cache busting for emulation requests
+      headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+      headers['Pragma'] = 'no-cache';
+    }
+    
+    console.log('Fetching user with emulation token:', emulationToken ? 'present' : 'not present');
+    
     const response = await fetch('/api/user', {
-      credentials: 'include'
+      credentials: 'include',
+      headers,
+      cache: 'no-cache' // Ensure fresh data
     });
 
     if (!response.ok) {
@@ -56,7 +72,9 @@ async function fetchUser(): Promise<SelectUser | null> {
       throw new Error(`${response.status}: ${await response.text()}`);
     }
 
-    return response.json();
+    const userData = await response.json();
+    console.log('User data fetched:', userData);
+    return userData;
   } catch (error) {
     console.error('Error fetching user:', error);
     return null;
@@ -65,11 +83,15 @@ async function fetchUser(): Promise<SelectUser | null> {
 
 export function useUser() {
   const queryClient = useQueryClient();
+  
+  // Get emulation token to include in query key for proper cache invalidation
+  const emulationToken = typeof window !== 'undefined' ? localStorage.getItem('emulationToken') : null;
 
   const { data: user, error, isLoading } = useQuery<SelectUser | null, Error>({
-    queryKey: ['user'],
+    // Include emulation token in query key to ensure proper cache invalidation
+    queryKey: ['user', emulationToken],
     queryFn: fetchUser,
-    staleTime: 60000, // Data considered stale after 1 minute (rather than infinity)
+    staleTime: 10000, // Reduced stale time to ensure more frequent refreshes during emulation
     gcTime: 300000, // Keep unused data for 5 minutes (reduced from 1 hour)
     retry: 1, // Only retry once to avoid infinite loops with bad credentials
     refetchOnWindowFocus: true, // Make sure we refresh on window focus
