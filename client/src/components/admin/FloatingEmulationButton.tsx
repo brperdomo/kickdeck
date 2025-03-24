@@ -15,6 +15,8 @@ export function FloatingEmulationButton() {
   const [isLoading, setIsLoading] = useState(false);
   const [isEmulating, setIsEmulating] = useState(false);
   const [checkCount, setCheckCount] = useState(0);
+  const [emulatedRoles, setEmulatedRoles] = useState<string[]>([]);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -59,6 +61,25 @@ export function FloatingEmulationButton() {
             const emulatedName = sessionStorage.getItem('emulatedAdminName');
             if (emulatedName) {
               console.log(`Emulating ${emulatedName}`);
+            }
+
+            // Check for emulated roles
+            if (data.roles && Array.isArray(data.roles)) {
+              setEmulatedRoles(data.roles);
+              // Store roles in sessionStorage for other components
+              sessionStorage.setItem('emulatedRoles', JSON.stringify(data.roles));
+            } else {
+              // Try to get roles from sessionStorage if not in API response
+              const storedRoles = sessionStorage.getItem('emulatedRoles');
+              if (storedRoles) {
+                try {
+                  const parsedRoles = JSON.parse(storedRoles);
+                  setEmulatedRoles(Array.isArray(parsedRoles) ? parsedRoles : []);
+                } catch (e) {
+                  console.error('Error parsing stored roles:', e);
+                  setEmulatedRoles([]);
+                }
+              }
             }
           } else {
             console.log('Token exists but emulation not active');
@@ -132,8 +153,10 @@ export function FloatingEmulationButton() {
       localStorage.removeItem('emulationToken');
       sessionStorage.removeItem('emulationActive');
       sessionStorage.removeItem('emulatedAdminName');
+      sessionStorage.removeItem('emulatedRoles');
       setEmulationToken(null);
       setIsEmulating(false);
+      setEmulatedRoles([]);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -172,19 +195,78 @@ export function FloatingEmulationButton() {
   
   const emulatedName = sessionStorage.getItem('emulatedAdminName');
 
+  // Function to get badge color based on role
+  const getRoleBadgeColor = (role: string) => {
+    switch (role) {
+      case 'super_admin':
+        return 'bg-red-500 hover:bg-red-600';
+      case 'tournament_admin':
+        return 'bg-blue-500 hover:bg-blue-600';
+      case 'score_admin':
+        return 'bg-green-500 hover:bg-green-600';
+      case 'finance_admin':
+        return 'bg-yellow-500 hover:bg-yellow-600';
+      default:
+        return 'bg-gray-500 hover:bg-gray-600';
+    }
+  };
+
+  // Function to get formatted role name
+  const getFormattedRoleName = (role: string) => {
+    return role.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <Button 
-        onClick={handleStopEmulation}
-        size="lg"
-        className="shadow-lg bg-red-600 hover:bg-red-700 text-white"
-        disabled={isLoading}
-      >
-        <LogOut className="mr-2 h-4 w-4" />
-        {isLoading ? 'Exiting...' : emulatedName 
-          ? `Exit Emulation (${emulatedName})` 
-          : 'Exit Emulation Mode'}
-      </Button>
+      <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+        <PopoverTrigger asChild>
+          <Button 
+            size="lg"
+            className="shadow-lg bg-red-600 hover:bg-red-700 text-white"
+            disabled={isLoading}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            {isLoading ? 'Exiting...' : emulatedName 
+              ? `Emulating: ${emulatedName}` 
+              : 'Emulation Mode'}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80">
+          <div className="space-y-2">
+            <h4 className="font-medium text-sm">Emulating Admin User</h4>
+            <div className="text-xs text-muted-foreground">
+              You are currently viewing the system as {emulatedName || 'another administrator'}
+            </div>
+            
+            {emulatedRoles.length > 0 && (
+              <div className="mt-2">
+                <p className="text-xs font-medium mb-1">Active Roles:</p>
+                <div className="flex flex-wrap gap-1">
+                  {emulatedRoles.map((role) => (
+                    <Badge key={role} className={`${getRoleBadgeColor(role)}`}>
+                      {getFormattedRoleName(role)}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <div className="pt-2 mt-2 border-t">
+              <Button 
+                onClick={handleStopEmulation}
+                variant="destructive"
+                className="w-full"
+                disabled={isLoading}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                {isLoading ? 'Exiting...' : 'Exit Emulation Mode'}
+              </Button>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
