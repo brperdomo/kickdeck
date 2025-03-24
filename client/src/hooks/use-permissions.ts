@@ -85,14 +85,51 @@ export function usePermissions() {
       if (!user?.isAdmin) return;
       
       try {
-        const response = await fetch('/api/admin/emulation/status');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.emulating && data.token) {
-            localStorage.setItem('emulationToken', data.token);
-          } else if (!data.emulating) {
-            localStorage.removeItem('emulationToken');
+        // Check if we have a saved token in localStorage
+        const existingToken = localStorage.getItem('emulationToken');
+        const isEmulationActive = sessionStorage.getItem('emulationActive') === 'true';
+        
+        if (existingToken) {
+          console.log('Checking saved emulation token validity');
+          // Send the token to verify it's valid
+          const response = await fetch('/api/admin/emulation/status', {
+            headers: {
+              'X-Emulation-Token': existingToken,
+              'Cache-Control': 'no-cache, no-store',
+              'Pragma': 'no-cache'
+            }
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            console.log('Emulation status check response:', data);
+            
+            if (data.emulating === true) {
+              // Valid token, ensure localStorage is set
+              localStorage.setItem('emulationToken', existingToken);
+              sessionStorage.setItem('emulationActive', 'true');
+              
+              // Store emulated user name if available
+              if (data.emulatedAdmin && data.emulatedAdmin.firstName && data.emulatedAdmin.lastName) {
+                sessionStorage.setItem('emulatedAdminName', 
+                  `${data.emulatedAdmin.firstName} ${data.emulatedAdmin.lastName}`);
+              }
+            } else {
+              // Invalid token, clean up storage
+              console.log('Emulation token is invalid or expired, clearing');
+              localStorage.removeItem('emulationToken');
+              sessionStorage.removeItem('emulationActive');
+              sessionStorage.removeItem('emulatedAdminName');
+            }
+          } else {
+            // API error, be cautious and keep token
+            console.log('Error checking emulation status, keeping token');
           }
+        } else if (isEmulationActive) {
+          // Session says we're emulating but token is missing, clear session
+          console.log('Emulation session flag exists but token is missing, clearing session');
+          sessionStorage.removeItem('emulationActive');
+          sessionStorage.removeItem('emulatedAdminName');
         }
       } catch (error) {
         console.error('Error checking emulation status:', error);
@@ -100,6 +137,13 @@ export function usePermissions() {
     };
     
     refreshEmulationToken();
+    
+    // Set up interval to refresh token status every 30 seconds
+    const intervalId = setInterval(refreshEmulationToken, 30000);
+    
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [user]);
   
   const { data: userPermissions, isLoading, refetch } = useQuery({

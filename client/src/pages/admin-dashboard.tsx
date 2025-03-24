@@ -108,11 +108,52 @@ import RolePermissionsManager from "@/components/admin/RolePermissionsManager"; 
 import { Toggle } from '@/components/ui/toggle';
 
 
+function EmulationStatus() {
+  // Check if we're in emulation mode
+  const isEmulating = typeof window !== 'undefined' && !!localStorage.getItem('emulationToken');
+  const emulatedName = typeof window !== 'undefined' ? sessionStorage.getItem('emulatedAdminName') : null;
+  
+  if (!isEmulating) return null;
+  
+  return (
+    <div className="w-full bg-red-100 border-b border-red-300 py-2">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <AlertTriangle className="text-red-600 h-5 w-5 mr-2" />
+            <p className="text-red-800 font-medium">
+              <span className="font-bold">EMULATION MODE:</span> 
+              {emulatedName ? ` Viewing as ${emulatedName}` : ' Viewing as another administrator'}
+            </p>
+          </div>
+          <Button 
+            variant="outline"
+            size="sm"
+            className="border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
+            onClick={() => {
+              // Remove emulation
+              localStorage.removeItem('emulationToken');
+              sessionStorage.removeItem('emulationActive');
+              sessionStorage.removeItem('emulatedAdminName');
+              // Redirect to admin page to reset
+              window.location.href = '/admin';
+            }}
+          >
+            <LogOut className="h-4 w-4 mr-1" />
+            Exit Emulation
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AdminBanner() {
   const { settings } = useOrganizationSettings();
 
   return (
     <div className="w-full bg-white shadow-sm border-b sticky top-0 z-50">
+      <EmulationStatus />
       <div className="container mx-auto px-4 py-2">
         <div className="flex justify-center items-center">
           <img

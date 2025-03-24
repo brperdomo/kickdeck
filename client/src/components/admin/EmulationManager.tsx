@@ -85,28 +85,43 @@ export default function EmulationManager() {
       return response.json();
     },
     onSuccess: (data) => {
-      // First show toast before reload
-      toast({
-        title: 'Emulation Started',
-        description: `You are now viewing the system as ${data.emulatedAdmin.firstName} ${data.emulatedAdmin.lastName}`,
-      });
-      
-      // Set emulation token in localStorage
-      setEmulationToken(data.token);
-      localStorage.setItem('emulationToken', data.token);
-      
-      // Wait a brief moment to ensure the toast is displayed
-      setTimeout(() => {
-        // Refresh all queries to reflect emulated user data
-        queryClient.invalidateQueries();
+      try {
+        console.log('Emulation started successfully with data:', data);
         
-        // Force refresh the user data with proper query key that includes the token
-        queryClient.invalidateQueries({ queryKey: ['user'] });
-        queryClient.invalidateQueries({ queryKey: ['user-permissions'] });
+        // Set emulation token in localStorage
+        if (data && data.token) {
+          setEmulationToken(data.token);
+          localStorage.setItem('emulationToken', data.token);
+          
+          // Set a session storage flag to prevent state loss on reload
+          sessionStorage.setItem('emulationActive', 'true');
+          sessionStorage.setItem('emulatedAdminName', `${data.emulatedAdmin.firstName} ${data.emulatedAdmin.lastName}`);
+        }
         
-        // Reload the page to ensure all components update properly with the emulated user
-        window.location.reload();
-      }, 500);
+        // First show toast before reload
+        toast({
+          title: 'Emulation Started',
+          description: `You are now viewing the system as ${data.emulatedAdmin.firstName} ${data.emulatedAdmin.lastName}`,
+        });
+        
+        // Wait a bit longer to ensure the token is properly saved
+        setTimeout(() => {
+          // Invalidate all queries to force refetch with new token
+          queryClient.invalidateQueries();
+          
+          // Force refresh key queries
+          queryClient.invalidateQueries({ queryKey: ['user'] });
+          queryClient.invalidateQueries({ queryKey: ['user-permissions'] });
+          queryClient.invalidateQueries({ queryKey: ['emulation-status'] });
+          
+          console.log('Emulation token stored in localStorage:', localStorage.getItem('emulationToken'));
+          
+          // Reload the page to ensure all components update properly
+          window.location.href = window.location.origin + '/admin';
+        }, 1000);
+      } catch (error) {
+        console.error('Error in emulation success handler:', error);
+      }
     },
     onError: (error: Error) => {
       toast({
