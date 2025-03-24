@@ -30,6 +30,7 @@ import {
   FileText,
   AlertTriangle,
   User,
+  UserRound,
   Palette,
   ChevronRight,
   Loader2,
@@ -98,6 +99,7 @@ import { FieldEditor } from "@/components/FieldEditor";
 import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
 import { useDropzone } from 'react-dropzone';
 import { FileManager } from "@/components/admin/FileManager.tsx";
+import { MemberManagement } from "@/components/admin/MembersManagement";
 import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
 import FormTemplateEditPage from "@/pages/form-template-edit";
@@ -175,7 +177,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'formTemplates' | 'roles';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'formTemplates' | 'roles' | 'members';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -2537,6 +2539,7 @@ const navigationItems = [
   { icon: Ticket, label: "Coupons", value: "coupons" as const },
   { icon: FormInput, label: "Form Templates", value: "formTemplates" as const },
   { icon: KeyRound, label: "Role Permissions", value: "roles" as const },
+  { icon: UserRound, label: "Members", value: "members" as const },
   { icon: User, label: "My Account", value: "account" as const },
 ];
 
