@@ -19,6 +19,7 @@ import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/c
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import { createStripePaymentIntent, getPaymentIntentStatus, handleStripeWebhook, getStripeConfig } from "./routes/payments";
 import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
+import { getCurrentUserRegistrations } from "./routes/admin/members";
 import { 
   getRolesWithPermissions, 
   getRoleWithPermissions, 
@@ -2255,6 +2256,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
     // Complete password reset (set new password)
     app.post('/api/auth/reset-password', completePasswordReset);
+    
+    // Get current user's registrations
+    app.get('/api/user/registrations', getCurrentUserRegistrations);
 
     // Event creation endpoint
     app.post('/api/admin/events', isAdmin, async (req, res) => {
