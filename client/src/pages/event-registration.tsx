@@ -62,7 +62,96 @@ interface Fee {
   amount: number; // In cents
 }
 
-type RegistrationStep = 'auth' | 'personal' | 'team' | 'agreement' | 'review' | 'complete';
+type RegistrationStep = 'auth' | 'personal' | 'team' | 'payment' | 'review' | 'complete';
+
+// Initialize Stripe
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || '');
+
+// Payment component for handling Stripe checkout
+function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing }: { 
+  amount: number; 
+  onSuccess: () => void; 
+  isProcessing: boolean;
+  setIsProcessing: (value: boolean) => void;
+}) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const { toast } = useToast();
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!stripe || !elements) {
+      // Stripe.js has not loaded yet
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      // Create payment using card element
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/payment-complete`,
+        },
+        redirect: 'if_required',
+      });
+
+      if (error) {
+        toast({
+          title: "Payment Failed",
+          description: error.message || "An error occurred during payment processing",
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+        return;
+      }
+
+      if (paymentIntent && paymentIntent.status === 'succeeded') {
+        toast({
+          title: "Payment Successful",
+          description: "Your payment has been processed successfully",
+        });
+        onSuccess();
+      }
+    } catch (e) {
+      console.error("Payment error:", e);
+      toast({
+        title: "Payment Error",
+        description: "An unexpected error occurred during payment processing",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <PaymentElement />
+      <div className="flex justify-end mt-4">
+        <Button 
+          disabled={!stripe || isProcessing} 
+          type="submit"
+          className="bg-[#2C5282] hover:bg-[#1A365D] text-white mt-4"
+        >
+          {isProcessing ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            <>
+              <CreditCard className="mr-2 h-4 w-4" />
+              Pay ${(amount / 100).toFixed(2)}
+            </>
+          )}
+        </Button>
+      </div>
+    </form>
+  );
+}
 
 const personalDetailsSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -253,7 +342,7 @@ export default function EventRegistration() {
       { key: 'auth', label: 'Sign In' },
       { key: 'personal', label: 'Personal Details' },
       { key: 'team', label: 'Team Information' },
-      { key: 'agreement', label: 'Terms & Fees' },
+      { key: 'payment', label: 'Payment & Terms' },
       { key: 'review', label: 'Review & Confirm' }
     ];
 
@@ -525,9 +614,9 @@ export default function EventRegistration() {
       return;
     }
     
-    // Now proceed to the agreement step instead of submitting right away
-    console.log("Form validation passed, proceeding to agreement step");
-    setCurrentStep('agreement');
+    // Now proceed to the payment step instead of submitting right away
+    console.log("Form validation passed, proceeding to payment step");
+    setCurrentStep('payment');
   };
 
   if (loading || authLoading) {
