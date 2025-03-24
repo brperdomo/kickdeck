@@ -1,0 +1,796 @@
+Fetching user with emulation token: present
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+use-user.ts:76 User data fetched: {id: 68, email: 'nombe@example.com', username: 'nombe@example.com', password: '35a71f84b26197bc6c50f8a86f65d295cb48bacfd21e6961c0…03772dad4e6d6f7d.a4b1c32573ae004d080b434baf1efce9', firstName: 'Finance', …}
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+FloatingEmulationButton.tsx:32 Checking emulation status
+FloatingEmulationButton.tsx:45 Found emulation token: r7pek...
+use-permissions.ts:93 Checking saved emulation token validity
+use-permissions.ts:158 Using emulation token for permissions request: r7pek5xthskrcmerpptbkd
+use-permissions.ts:164 Fetching permissions, emulation token: present
+admin:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warningAI
+admin:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warningAI
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+10use-permissions.ts:93 Checking saved emulation token validity
+10use-permissions.ts:93 Checking saved emulation token validity
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+3chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+FloatingEmulationButton.tsx:66 Emulation status response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+FloatingEmulationButton.tsx:69 Active emulation detected
+FloatingEmulationButton.tsx:76 Emulating Finance Guy
+5chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:176 Fetched permissions: {roles: Array(1), permissions: Array(11)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+6chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+6chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+2chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+7chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+1348chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:93 Checking saved emulation token validity
+10chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+10use-permissions.ts:93 Checking saved emulation token validity
+15chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+6chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+4chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+5chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
+use-permissions.ts:105 Emulation status check response: {emulating: true, token: 'r7pek5xthskrcmerpptbkd', emulatedAdmin: {…}, roles: Array(1)}
+319chunk-RPCDYKBN.js?v=1e8c8975:521 Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1982:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:117:13
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1917:15)
+    at Popper (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VFDGA425.js?v=1e8c8975:1974:11)
+    at Popover (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=1e8c8975:66:5)
+    at div
+    at FloatingEmulationButton (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/admin/FloatingEmulationButton.tsx:31:47)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=1e8c8975:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1e8c8975:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1e8c8975:2829:3)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=1e8c8975:521
+error @ chunk-RPCDYKBN.js?v=1e8c8975:505
+checkForNestedUpdates @ chunk-RPCDYKBN.js?v=1e8c8975:19665
+scheduleUpdateOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18533
+dispatchSetState @ chunk-RPCDYKBN.js?v=1e8c8975:12403
+(anonymous) @ chunk-VFDGA425.js?v=1e8c8975:1987
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1e8c8975:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1e8c8975:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1e8c8975:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1e8c8975:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1e8c8975:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1e8c8975:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1e8c8975:19447
+(anonymous) @ chunk-RPCDYKBN.js?v=1e8c8975:19328
+workLoop @ chunk-RPCDYKBN.js?v=1e8c8975:197
+flushWork @ chunk-RPCDYKBN.js?v=1e8c8975:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1e8c8975:384Understand this errorAI
