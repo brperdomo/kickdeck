@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@/hooks/use-user";
 import { FileManager } from "@/components/admin/FileManager.tsx";
+import UserRegistrationsView from "@/components/UserRegistrationsView";
 import {
   LucideHome,
   User,
   ChevronDown,
   LogOut,
   Upload,
+  ListTodo,
+  ClipboardList
 } from "lucide-react";
 import { Link } from "wouter";
 import {
@@ -93,8 +96,6 @@ export default function UserDashboard() {
       {/* Main Content */}
       <div className="flex-1 p-8 overflow-auto">
         <div className="max-w-4xl mx-auto">
-          
-
           {/* Welcome Card */}
           <Card className="mb-6">
             <CardHeader>
@@ -103,6 +104,11 @@ export default function UserDashboard() {
               </CardTitle>
             </CardHeader>
           </Card>
+          
+          {/* User Registrations Section */}
+          <div className="mt-8">
+            <UserRegistrationsView />
+          </div>
         </div>
       </div>
 

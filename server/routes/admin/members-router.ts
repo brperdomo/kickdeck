@@ -1,5 +1,11 @@
 import express from 'express';
-import { getAllMembers, getMemberById, getTeamRegistrationDetails, resendPaymentConfirmation } from './members';
+import { 
+  getAllMembers, 
+  getMemberById, 
+  getTeamRegistrationDetails, 
+  resendPaymentConfirmation,
+  getCurrentUserRegistrations
+} from './members';
 
 const membersRouter = express.Router();
 
