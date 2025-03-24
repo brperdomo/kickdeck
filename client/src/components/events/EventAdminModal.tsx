@@ -105,7 +105,7 @@ export default function EventAdminModal({
 
   // Add administrator to event mutation
   const addAdminMutation = useMutation({
-    mutationFn: async (data: { userId: number; role: string; adminType: string }) => {
+    mutationFn: async (data: { userId: number; role: string }) => {
       const response = await fetch(`/api/admin/events/${eventId}/administrators`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -140,7 +140,7 @@ export default function EventAdminModal({
 
   // Update administrator role mutation
   const updateAdminMutation = useMutation({
-    mutationFn: async ({ adminId, data }: { adminId: number; data: { role: string; adminType: string } }) => {
+    mutationFn: async ({ adminId, data }: { adminId: number; data: { role: string } }) => {
       const response = await fetch(`/api/admin/events/${eventId}/administrators/${adminId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -255,21 +255,7 @@ export default function EventAdminModal({
     }
   };
 
-  // Get admin type badge color
-  const getAdminTypeBadgeColor = (type: string) => {
-    switch (type) {
-      case 'super_admin':
-        return 'bg-purple-500';
-      case 'tournament_admin':
-        return 'bg-indigo-500';
-      case 'score_admin':
-        return 'bg-orange-500';
-      case 'finance_admin':
-        return 'bg-cyan-500';
-      default:
-        return '';
-    }
-  };
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
