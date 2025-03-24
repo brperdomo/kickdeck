@@ -189,4 +189,29 @@ body {
   .dark * {
     @apply border-gray-800;
   }
+  
+  /* Force light mode styling for event registration pages */
+  [class*="register-event-page"] {
+    color: #333333 !important;
+    background-color: #F5F5F5 !important;
+  }
+  
+  [class*="register-event-page"] input,
+  [class*="register-event-page"] textarea,
+  [class*="register-event-page"] select,
+  [class*="register-event-page"] .input-wrapper {
+    color: #333333 !important;
+    background-color: #FFFFFF !important;
+    border-color: #D1D5DB !important;
+  }
+  
+  [class*="register-event-page"] label,
+  [class*="register-event-page"] h1, 
+  [class*="register-event-page"] h2, 
+  [class*="register-event-page"] h3, 
+  [class*="register-event-page"] h4, 
+  [class*="register-event-page"] p, 
+  [class*="register-event-page"] span {
+    color: #333333 !important;
+  }
 }

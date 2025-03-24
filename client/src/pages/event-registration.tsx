@@ -299,7 +299,7 @@ export default function EventRegistration() {
   }
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative register-event-page">
       <SoccerFieldBackground className="opacity-50" />
       <div className="container mx-auto px-4 py-8 relative z-10">
         {renderStepIndicator()}
