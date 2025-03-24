@@ -114,8 +114,8 @@ export async function getMemberById(req: Request, res: Response) {
       registrationDate: reg.team.createdAt,
       status: reg.team.status || 'pending',
       amountPaid: reg.team.registrationFee || 0,
-      termsAccepted: reg.team.termsAcknowledged || false,
-      termsAcceptedAt: reg.team.termsAcknowledgedAt || reg.team.createdAt
+      termsAccepted: reg.team.terms_acknowledged || false,
+      termsAcceptedAt: reg.team.terms_acknowledged_at || reg.team.createdAt
     }));
     
     res.json({
