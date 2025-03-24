@@ -87,22 +87,24 @@ const MemberDetails: React.FC = () => {
 
   // Query to fetch members with pagination and search
   const membersQuery = useQuery({
-    queryKey: ['/api/admin/members', currentPage, pageSize, searchTerm],
+    queryKey: ['members', currentPage, pageSize, searchTerm],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/admin/members?page=${currentPage}&limit=${pageSize}&search=${encodeURIComponent(searchTerm)}`
-      );
+      const searchParams = new URLSearchParams();
+      if (searchTerm) searchParams.append('search', searchTerm);
+      searchParams.append('page', currentPage.toString());
+      searchParams.append('limit', pageSize.toString());
+      
+      const response = await fetch(`/api/admin/members?${searchParams.toString()}`);
       if (!response.ok) {
         throw new Error('Failed to fetch members');
       }
       return response.json();
     },
-    keepPreviousData: true,
   });
 
   // Query to fetch a specific member's details (lazy loaded)
   const memberDetailsQuery = useQuery({
-    queryKey: ['/api/admin/members', selectedMemberId],
+    queryKey: ['member', selectedMemberId],
     queryFn: async () => {
       if (!selectedMemberId) return null;
       const response = await fetch(`/api/admin/members/${selectedMemberId}`);
@@ -421,8 +423,8 @@ const MemberDetails: React.FC = () => {
             <Button variant="outline" onClick={() => setConfirmResendOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={confirmResendPaymentConfirmation} disabled={resendPaymentMutation.isLoading}>
-              {resendPaymentMutation.isLoading ? (
+            <Button onClick={confirmResendPaymentConfirmation} disabled={resendPaymentMutation.isPending}>
+              {resendPaymentMutation.isPending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   Sending...
