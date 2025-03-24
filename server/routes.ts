@@ -24,6 +24,12 @@ import {
   getAllPermissions,
   resetRolePermissions 
 } from "./routes/admin/role-permissions";
+import {
+  getEmulatableAdmins,
+  startEmulatingAdmin,
+  stopEmulatingAdmin,
+  getEmulationStatus
+} from "./routes/admin/emulation";
 import { sql, eq, and, or, inArray, notInArray } from "drizzle-orm";
 import {
   users,
@@ -142,6 +148,12 @@ export function registerRoutes(app: Express): Server {
     app.patch('/api/admin/roles/:id/permissions', isAdmin, updateRolePermissions);
     app.post('/api/admin/roles/:id/permissions/reset', isAdmin, resetRolePermissions);
     app.get('/api/admin/permissions', isAdmin, getAllPermissions);
+    
+    // Emulation endpoints for admin testing
+    app.get('/api/admin/emulation/admins', isAdmin, getEmulatableAdmins);
+    app.post('/api/admin/emulation/start', isAdmin, startEmulatingAdmin);
+    app.post('/api/admin/emulation/stop', isAdmin, stopEmulatingAdmin);
+    app.get('/api/admin/emulation/status', isAdmin, getEmulationStatus);
 
     // Register fee assignment routes for admin
     app.get('/api/admin/events/:eventId/fee-assignments', isAdmin, getFeeAssignments);

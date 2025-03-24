@@ -1,16 +1,21 @@
 import passport from "passport";
 import { IVerifyOptions, Strategy as LocalStrategy } from "passport-local";
-import { type Express } from "express";
+import { type Express, Request } from "express";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 import { users, insertUserSchema, households, insertHouseholdSchema, type SelectUser } from "@db/schema";
 import { db } from "@db";
 import { eq, or } from "drizzle-orm";
 import { crypto } from "./crypto";
+import { emulationMiddleware, getEmulatedUserId } from "./services/emulationService";
 
 declare global {
   namespace Express {
     interface User extends SelectUser {}
+    interface Request {
+      actualUserId?: number;
+      emulatedUserId?: number;
+    }
   }
 }
 
@@ -84,6 +89,9 @@ export function setupAuth(app: Express) {
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
+  
+  // Add emulation middleware after the passport middleware
+  app.use(emulationMiddleware);
 
   passport.use(
     new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
