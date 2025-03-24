@@ -97,7 +97,8 @@ const MemberDetails: React.FC = () => {
       }
       return response.json();
     },
-    keepPreviousData: true,
+    // Replace keepPreviousData with staleTime
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // Query to fetch a specific member's details (lazy loaded)
@@ -211,7 +212,7 @@ const MemberDetails: React.FC = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {membersQuery.isLoading ? (
+              {membersQuery.isPending ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-8">
                     <div className="flex flex-col items-center justify-center">
@@ -276,7 +277,7 @@ const MemberDetails: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage((old) => Math.max(old - 1, 1))}
-                disabled={currentPage === 1 || membersQuery.isLoading}
+                disabled={currentPage === 1 || membersQuery.isPending}
               >
                 Previous
               </Button>
@@ -287,7 +288,7 @@ const MemberDetails: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage((old) => Math.min(old + 1, membersQuery.data?.totalPages || 1))}
-                disabled={currentPage === membersQuery.data?.totalPages || membersQuery.isLoading}
+                disabled={currentPage === membersQuery.data?.totalPages || membersQuery.isPending}
               >
                 Next
               </Button>
@@ -302,7 +303,7 @@ const MemberDetails: React.FC = () => {
           <DialogHeader>
             <DialogTitle>Member Details</DialogTitle>
           </DialogHeader>
-          {memberDetailsQuery.isLoading ? (
+          {memberDetailsQuery.isPending ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
@@ -421,8 +422,8 @@ const MemberDetails: React.FC = () => {
             <Button variant="outline" onClick={() => setConfirmResendOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={confirmResendPaymentConfirmation} disabled={resendPaymentMutation.isLoading}>
-              {resendPaymentMutation.isLoading ? (
+            <Button onClick={confirmResendPaymentConfirmation} disabled={resendPaymentMutation.isPending}>
+              {resendPaymentMutation.isPending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   Sending...

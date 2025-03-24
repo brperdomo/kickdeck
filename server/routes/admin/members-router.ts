@@ -6,11 +6,11 @@ const membersRouter = express.Router();
 // Get all members with search and pagination
 membersRouter.get('/', getAllMembers);
 
-// Get a specific member by ID with their registrations
-membersRouter.get('/:id', getMemberById);
-
 // Get team registration details
 membersRouter.get('/registrations/:teamId', getTeamRegistrationDetails);
+
+// Get a specific member by ID with their registrations
+membersRouter.get('/:id', getMemberById);
 
 // Resend payment confirmation email
 membersRouter.post('/registrations/:teamId/resend-payment-confirmation', resendPaymentConfirmation);
