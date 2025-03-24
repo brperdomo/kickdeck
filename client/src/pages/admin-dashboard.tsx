@@ -99,7 +99,7 @@ import { FieldEditor } from "@/components/FieldEditor";
 import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
 import { useDropzone } from 'react-dropzone';
 import { FileManager } from "@/components/admin/FileManager.tsx";
-import MemberDetails from "@/components/admin/MemberDetails";
+import Members from "@/components/admin/Members";
 import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
 import FormTemplateEditPage from "@/pages/form-template-edit";
@@ -1711,7 +1711,7 @@ function MembersView() {
       </div>
       <Card>
         <CardContent className="p-6">
-          <MemberDetails />
+          <Members />
         </CardContent>
       </Card>
     </div>
@@ -1873,6 +1873,8 @@ function AdminDashboard() {
         return <SettingsView activeSettingsView={activeSettingsView} />;
       case 'reports':
         return <ReportsView />;
+      case 'members':
+        return <MembersView />;
       case 'account':
         return (
           <Suspense fallback={
