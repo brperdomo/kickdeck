@@ -98,6 +98,13 @@ export async function getMemberById(req: Request, res: Response) {
       .where(eq(teams.userId, memberId))
       .orderBy(desc(teams.createdAt));
     
+    // Fix mapping for coach field
+    teamRegistrations.forEach(reg => {
+      if ((reg.team as any).coach) {
+        (reg.team as any).headCoachName = (reg.team as any).coach;
+      }
+    });
+    
     // Get count of players registered by this member
     const [playerCount] = await db
       .select({ count: sql<number>`count(*)` })
