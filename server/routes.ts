@@ -380,7 +380,7 @@ export function registerRoutes(app: Express): Server {
               registrationStatus: "Registered", // Initial status
               registrationFee: registrationFee || null,
               termsAcknowledged: termsAcknowledged || false,
-              termsAcknowledgedAt: termsAcknowledgedAt || new Date().toISOString(),
+              termsAcknowledgedAt: termsAcknowledgedAt ? new Date(termsAcknowledgedAt).toISOString() : new Date().toISOString(),
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
             })
@@ -392,7 +392,7 @@ export function registerRoutes(app: Express): Server {
             firstName: player.firstName,
             lastName: player.lastName,
             jerseyNumber: player.jerseyNumber ? parseInt(player.jerseyNumber) : null,
-            dateOfBirth: player.dateOfBirth,
+            dateOfBirth: player.dateOfBirth ? new Date(player.dateOfBirth).toISOString() : null,
             position: player.position || null,
             medicalNotes: player.medicalNotes || null,
             parentGuardianName: player.parentGuardianName || null,
