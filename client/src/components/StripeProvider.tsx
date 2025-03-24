@@ -1,16 +1,44 @@
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { ReactNode } from 'react';
-
-// Load the stripe.js script with your publishable key
-// Use the direct key from environment secrets
-const stripePromise = loadStripe('pk_test_51R6Ix6CGdBwOWAK0GmV4un3LdaDvGFGsXswjpVFyq5YNM86sO9EiKnbIUMlezs3SalgCJlyDBFnGKS28JuMlRAH600RSLiHpXA');
+import { ReactNode, useEffect, useState } from 'react';
 
 interface StripeProviderProps {
   children: ReactNode;
 }
 
 export default function StripeProvider({ children }: StripeProviderProps) {
+  const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
+
+  useEffect(() => {
+    // Fetch the publishable key from backend to avoid exposing in client code
+    const fetchPublishableKey = async () => {
+      try {
+        const response = await fetch('/api/payments/config');
+        if (!response.ok) {
+          throw new Error('Failed to load Stripe configuration');
+        }
+        const { publishableKey } = await response.json();
+        
+        if (!publishableKey) {
+          console.error('No Stripe publishable key found.');
+          return;
+        }
+        
+        console.log('Initializing Stripe with publishable key');
+        const stripe = loadStripe(publishableKey);
+        setStripePromise(stripe);
+      } catch (error) {
+        console.error('Error loading Stripe configuration:', error);
+      }
+    };
+
+    fetchPublishableKey();
+  }, []);
+
+  if (!stripePromise) {
+    return <div className="p-4 text-center">Loading payment system...</div>;
+  }
+
   return (
     <Elements stripe={stripePromise}>
       {children}
