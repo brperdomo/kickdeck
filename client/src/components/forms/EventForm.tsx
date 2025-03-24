@@ -789,8 +789,19 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     </div>
   );
 
+  // Query to get event administrators
+  const { data: eventAdmins, isLoading: isLoadingAdmins } = useQuery({
+    queryKey: ['event-admins', defaultValues?.id],
+    queryFn: async () => {
+      if (!defaultValues?.id) return [];
+      const response = await fetch(`/api/admin/events/${defaultValues.id}/administrators`);
+      if (!response.ok) throw new Error('Failed to fetch event administrators');
+      return response.json();
+    },
+    enabled: !!defaultValues?.id
+  });
+
   const renderAdministratorsContent = () => {
-    // We'll use our EventAdminModal component directly here now
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -801,12 +812,56 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           </Button>
         </div>
         
-        <div className="p-4 bg-muted rounded-md">
-          <p className="text-sm text-muted-foreground">
-            Event administrators can be assigned specific roles and permissions for this event. 
-            Click the button above to add administrators.
-          </p>
-        </div>
+        {isLoadingAdmins ? (
+          <div className="py-8 text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+            <p className="mt-2">Loading administrators...</p>
+          </div>
+        ) : eventAdmins && eventAdmins.length > 0 ? (
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {eventAdmins.map((admin: any) => (
+                  <TableRow key={admin.id}>
+                    <TableCell>
+                      {admin.user.firstName} {admin.user.lastName}
+                    </TableCell>
+                    <TableCell>{admin.user.email}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        {admin.role.charAt(0).toUpperCase() + admin.role.slice(1)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsAdminModalOpen(true)}
+                      >
+                        Edit
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <div className="p-4 bg-muted rounded-md">
+            <p className="text-sm text-muted-foreground">
+              No administrators have been assigned to this event yet.
+              Click the "Add Administrator" button to assign administrators with specific roles and permissions.
+            </p>
+          </div>
+        )}
       </div>
     );
   };
