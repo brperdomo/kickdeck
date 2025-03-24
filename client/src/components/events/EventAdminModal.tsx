@@ -148,7 +148,7 @@ export default function EventAdminModal({
 
   // Add administrator to event mutation
   const addAdminMutation = useMutation({
-    mutationFn: async (data: { userId: number; role: string }) => {
+    mutationFn: async (data: { userId: number; role: string; permissions: Record<string, boolean> }) => {
       const response = await fetch(`/api/admin/events/${eventId}/administrators`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -183,7 +183,7 @@ export default function EventAdminModal({
 
   // Update administrator role mutation
   const updateAdminMutation = useMutation({
-    mutationFn: async ({ adminId, data }: { adminId: number; data: { role: string } }) => {
+    mutationFn: async ({ adminId, data }: { adminId: number; data: { role: string; permissions?: Record<string, boolean> } }) => {
       const response = await fetch(`/api/admin/events/${eventId}/administrators/${adminId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -203,6 +203,7 @@ export default function EventAdminModal({
         title: "Administrator Updated",
         description: "Administrator roles have been updated.",
       });
+      setPermissionsModalOpen(false);
     },
     onError: (error: Error) => {
       toast({
@@ -263,7 +264,8 @@ export default function EventAdminModal({
 
     addAdminMutation.mutate({
       userId: selectedAdmin.id,
-      role: adminRole
+      role: adminRole,
+      permissions: selectedPermissions
     });
   };
 
@@ -301,158 +303,252 @@ export default function EventAdminModal({
 
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
-        <DialogHeader>
-          <DialogTitle>Event Administrators</DialogTitle>
-          <DialogDescription>
-            Manage administrators for this event. Assigned administrators will have access to manage aspects of this event.
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Event Administrators</DialogTitle>
+            <DialogDescription>
+              Manage administrators for this event. Assigned administrators will have access to manage aspects of this event.
+            </DialogDescription>
+          </DialogHeader>
 
-        {/* Add Administrator Form */}
-        <div className="border rounded-lg p-4 mb-6">
-          <h3 className="text-lg font-medium mb-3">Add Administrator</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="admin-select">Select Administrator</Label>
-              <Select
-                onValueChange={(value) => {
-                  const admin = availableAdmins?.find(a => a.id === parseInt(value));
-                  setSelectedAdmin(admin || null);
-                }}
-                value={selectedAdmin ? String(selectedAdmin.id) : ""}
-              >
-                <SelectTrigger id="admin-select" className="w-full">
-                  <SelectValue placeholder="Select an administrator" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Available Administrators</SelectLabel>
-                    {isLoadingAvailable && <div className="p-2 text-center">Loading...</div>}
-                    {!isLoadingAvailable && availableAdmins?.length === 0 && (
-                      <div className="p-2 text-center">No available administrators</div>
-                    )}
-                    {availableAdmins?.map((admin) => (
-                      <SelectItem key={admin.id} value={String(admin.id)}>
-                        {admin.firstName} {admin.lastName} ({admin.email})
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+          {/* Add Administrator Form */}
+          <div className="border rounded-lg p-4 mb-6">
+            <h3 className="text-lg font-medium mb-3">Add Administrator</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="admin-select">Select Administrator</Label>
+                <Select
+                  onValueChange={(value) => {
+                    const admin = availableAdmins?.find(a => a.id === parseInt(value));
+                    setSelectedAdmin(admin || null);
+                  }}
+                  value={selectedAdmin ? String(selectedAdmin.id) : ""}
+                >
+                  <SelectTrigger id="admin-select" className="w-full">
+                    <SelectValue placeholder="Select an administrator" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Available Administrators</SelectLabel>
+                      {isLoadingAvailable && <div className="p-2 text-center">Loading...</div>}
+                      {!isLoadingAvailable && availableAdmins?.length === 0 && (
+                        <div className="p-2 text-center">No available administrators</div>
+                      )}
+                      {availableAdmins?.map((admin) => (
+                        <SelectItem key={admin.id} value={String(admin.id)}>
+                          {admin.firstName} {admin.lastName} ({admin.email})
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="role-select">Role</Label>
+                <Select
+                  onValueChange={(value) => setAdminRole(value as AdminRole)}
+                  value={adminRole}
+                >
+                  <SelectTrigger id="role-select" className="w-full">
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="owner">Owner</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="moderator">Moderator</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div>
-              <Label htmlFor="role-select">Role</Label>
-              <Select
-                onValueChange={(value) => setAdminRole(value as AdminRole)}
-                value={adminRole}
+            <div className="mt-4 flex justify-end">
+              <Button
+                onClick={handleAddAdmin}
+                disabled={addAdminMutation.isLoading || !selectedAdmin}
               >
-                <SelectTrigger id="role-select" className="w-full">
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="owner">Owner</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="moderator">Moderator</SelectItem>
-                </SelectContent>
-              </Select>
+                {addAdminMutation.isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Add Administrator
+                  </>
+                )}
+              </Button>
             </div>
           </div>
 
-          <div className="mt-4 flex justify-end">
-            <Button
-              onClick={handleAddAdmin}
-              disabled={addAdminMutation.isLoading || !selectedAdmin}
-            >
-              {addAdminMutation.isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Adding...
-                </>
-              ) : (
-                <>
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Add Administrator
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-
-        {/* Current Administrators Table */}
-        <div>
-          <h3 className="text-lg font-medium mb-3">Current Administrators</h3>
-          {isLoadingAdmins ? (
-            <div className="py-8 text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto" />
-              <p className="mt-2">Loading administrators...</p>
-            </div>
-          ) : eventAdmins && eventAdmins.length > 0 ? (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {eventAdmins.map((admin) => (
-                    <TableRow key={admin.id}>
-                      <TableCell>
-                        {admin.user.firstName} {admin.user.lastName}
-                      </TableCell>
-                      <TableCell>{admin.user.email}</TableCell>
-                      <TableCell>
-                        <Select
-                          defaultValue={admin.role}
-                          onValueChange={(value) => 
-                            handleUpdateAdmin(admin, value as AdminRole)
-                          }
-                        >
-                          <SelectTrigger className="w-32">
-                            <Badge className={`${getRoleBadgeColor(admin.role)} text-white`}>
-                              {admin.role.charAt(0).toUpperCase() + admin.role.slice(1)}
-                            </Badge>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="owner">Owner</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
-                            <SelectItem value="moderator">Moderator</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleRemoveAdmin(admin.id)}
-                          disabled={removeAdminMutation.isLoading}
-                        >
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </TableCell>
+          {/* Current Administrators Table */}
+          <div>
+            <h3 className="text-lg font-medium mb-3">Current Administrators</h3>
+            {isLoadingAdmins ? (
+              <div className="py-8 text-center">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+                <p className="mt-2">Loading administrators...</p>
+              </div>
+            ) : eventAdmins && eventAdmins.length > 0 ? (
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          ) : (
-            <div className="py-8 text-center border rounded-md">
-              <ShieldCheck className="h-8 w-8 mx-auto text-gray-400" />
-              <p className="mt-2 text-gray-500">No administrators assigned to this event yet.</p>
-            </div>
-          )}
-        </div>
+                  </TableHeader>
+                  <TableBody>
+                    {eventAdmins.map((admin) => (
+                      <TableRow key={admin.id}>
+                        <TableCell>
+                          {admin.user.firstName} {admin.user.lastName}
+                        </TableCell>
+                        <TableCell>{admin.user.email}</TableCell>
+                        <TableCell>
+                          <Select
+                            defaultValue={admin.role}
+                            onValueChange={(value) => 
+                              handleUpdateAdmin(admin, value as AdminRole)
+                            }
+                          >
+                            <SelectTrigger className="w-32">
+                              <Badge className={`${getRoleBadgeColor(admin.role)} text-white`}>
+                                {admin.role.charAt(0).toUpperCase() + admin.role.slice(1)}
+                              </Badge>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="owner">Owner</SelectItem>
+                              <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="moderator">Moderator</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end space-x-2">
+                            <Button
+                              variant="ghost"
+                              size="icon" 
+                              onClick={() => {
+                                setEditingAdminId(admin.id);
+                                setSelectedPermissions(admin.permissions || {});
+                                setPermissionsModalOpen(true);
+                              }}
+                              title="Edit Permissions"
+                            >
+                              <Settings className="h-4 w-4 text-slate-500" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRemoveAdmin(admin.id)}
+                              disabled={removeAdminMutation.isLoading}
+                              title="Remove Administrator"
+                            >
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <div className="py-8 text-center border rounded-md">
+                <ShieldCheck className="h-8 w-8 mx-auto text-gray-400" />
+                <p className="mt-2 text-gray-500">No administrators assigned to this event yet.</p>
+              </div>
+            )}
+          </div>
 
-        <DialogFooter>
-          <Button onClick={() => onOpenChange(false)}>Done</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DialogFooter>
+            <Button onClick={() => onOpenChange(false)}>Done</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Permissions Management Dialog */}
+      <Dialog open={permissionsModalOpen} onOpenChange={setPermissionsModalOpen}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Manage Permissions</DialogTitle>
+            <DialogDescription>
+              Configure specific permissions for this administrator.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <div className="mb-4">
+              <h3 className="font-medium text-lg mb-2">Permission Groups</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Select the permissions you want to grant to this administrator.
+              </p>
+              
+              <Accordion type="multiple" className="w-full">
+                {Object.entries(EVENT_PERMISSION_GROUPS).map(([groupName, permissionList]) => (
+                  <AccordionItem key={groupName} value={groupName}>
+                    <AccordionTrigger className="text-base">
+                      {groupName.charAt(0).toUpperCase() + groupName.slice(1)} Permissions
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2">
+                        {/* Ensure permissions is treated as an array */}
+                        {Array.isArray(permissionList) && permissionList.map((permission) => (
+                          <div key={permission} className="flex items-center space-x-2">
+                            <Checkbox 
+                              id={permission}
+                              checked={selectedPermissions[permission] || false}
+                              onCheckedChange={(checked) => {
+                                setSelectedPermissions({
+                                  ...selectedPermissions,
+                                  [permission]: !!checked
+                                });
+                              }}
+                            />
+                            <Label htmlFor={permission} className="cursor-pointer">
+                              {permission.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          </div>
+          
+          <DialogFooter className="flex justify-between">
+            <Button
+              variant="outline"
+              onClick={() => setPermissionsModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (editingAdminId) {
+                  updateAdminMutation.mutate({
+                    adminId: editingAdminId,
+                    data: {
+                      role: eventAdmins?.find(admin => admin.id === editingAdminId)?.role || 'admin',
+                      permissions: selectedPermissions
+                    }
+                  });
+                }
+              }}
+            >
+              Save Permissions
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
