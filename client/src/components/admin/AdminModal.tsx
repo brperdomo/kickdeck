@@ -172,7 +172,8 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["administrators"] });
+      // Use the same query key as in the admin dashboard to ensure real-time updates
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/administrators'] });
       toast({
         title: "Success",
         description: admin ? "Administrator updated successfully" : "Administrator created successfully",
