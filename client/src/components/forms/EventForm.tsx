@@ -535,7 +535,11 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             <FormItem>
               <FormLabel>Registration Deadline *</FormLabel>
               <FormControl>
-                <Input type="date" {...field} />
+                <Input 
+                  type="date" 
+                  {...field} 
+                  value={field.value ? (field.value.includes('T') ? field.value.split('T')[0] : field.value) : ''} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
