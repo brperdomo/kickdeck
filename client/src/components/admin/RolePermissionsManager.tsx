@@ -87,30 +87,52 @@ const RolePermissionsManager = () => {
   // Mutation to update a role's permissions
   const updatePermissionsMutation = useMutation({
     mutationFn: async ({ roleId, permissions }: { roleId: number, permissions: string[] }) => {
+      console.log('Updating permissions for role:', roleId, 'with permissions:', permissions);
+      
       const response = await fetch(`/api/admin/roles/${roleId}/permissions`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ permissions })
+        body: JSON.stringify({ permissions }),
+        // Add cache busting to ensure the request is fresh
+        cache: 'no-cache'
       });
       
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('Error updating permissions:', errorData);
         throw new Error(errorData.error || 'Failed to update permissions');
       }
       
-      return response.json();
+      const result = await response.json();
+      console.log('Update permissions result:', result);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Force a full refetch of all related data
+      queryClient.invalidateQueries();
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       queryClient.invalidateQueries({ queryKey: ['role', activeRole] });
+      
+      // Update the user permissions as they may have changed
+      queryClient.invalidateQueries({ queryKey: ['user-permissions'] });
+      
+      // Update local state with the saved permissions
+      if (activeRole && data.permissions) {
+        setSelectedPermissions((prev) => ({
+          ...prev,
+          [activeRole]: [...data.permissions]
+        }));
+      }
+      
       toast({
         title: "Permissions Updated",
         description: "Role permissions have been updated successfully.",
       });
     },
     onError: (error: Error) => {
+      console.error('Error in permission update mutation:', error);
       toast({
         title: "Update Failed",
         description: error.message,
@@ -122,23 +144,35 @@ const RolePermissionsManager = () => {
   // Mutation to reset a role's permissions to defaults
   const resetPermissionsMutation = useMutation({
     mutationFn: async (roleId: number) => {
+      console.log('Resetting permissions for role:', roleId);
+      
       const response = await fetch(`/api/admin/roles/${roleId}/permissions/reset`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        // Add cache busting to ensure the request is fresh
+        cache: 'no-cache'
       });
       
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('Error resetting permissions:', errorData);
         throw new Error(errorData.error || 'Failed to reset permissions');
       }
       
-      return response.json();
+      const result = await response.json();
+      console.log('Reset permissions result:', result);
+      return result;
     },
     onSuccess: (data) => {
+      // Force a full refetch of all related data
+      queryClient.invalidateQueries();
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       queryClient.invalidateQueries({ queryKey: ['role', activeRole] });
+      
+      // Update the user permissions as they may have changed
+      queryClient.invalidateQueries({ queryKey: ['user-permissions'] });
       
       // Update local state with the reset permissions
       if (activeRole && data.permissions) {
@@ -154,8 +188,14 @@ const RolePermissionsManager = () => {
       });
       
       setResetConfirmOpen(false);
+      
+      // Give it a moment to process the updates, then reload the page
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     },
     onError: (error: Error) => {
+      console.error('Error in permission reset mutation:', error);
       toast({
         title: "Reset Failed",
         description: error.message,
