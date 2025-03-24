@@ -165,6 +165,13 @@ export function registerRoutes(app: Express): Server {
     
     // Get current user permissions for role-based UI
     app.get('/api/admin/permissions/me', isAdmin, getCurrentUserPermissions);
+    
+    // Event administrator management endpoints
+    app.get('/api/admin/events/:eventId/administrators', isAdmin, getEventAdministrators);
+    app.post('/api/admin/events/:eventId/administrators', isAdmin, addEventAdministrator);
+    app.patch('/api/admin/events/:eventId/administrators/:adminId', isAdmin, updateEventAdministrator);
+    app.delete('/api/admin/events/:eventId/administrators/:adminId', isAdmin, removeEventAdministrator);
+    app.get('/api/admin/available-admins', isAdmin, getAvailableAdministrators);
 
     // Register fee assignment routes for admin
     app.get('/api/admin/events/:eventId/fee-assignments', isAdmin, getFeeAssignments);

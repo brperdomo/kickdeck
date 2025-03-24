@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
 import { useDropzone } from 'react-dropzone';
-import { EventAdminModal } from "@/components/events/EventAdminModal";
+import EventAdminModal from "@/components/events/EventAdminModal";
 import {
   Table,
   TableBody,
