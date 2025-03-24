@@ -621,34 +621,41 @@ export default function EventRegistration() {
                       )}
                     />
 
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Select Age Group</Label>
-                      <div className="grid gap-4 md:grid-cols-2">
-                        {event.ageGroups?.map((ageGroup) => (
-                          <div 
-                            key={ageGroup.id}
-                            onClick={() => onSelectAgeGroup(ageGroup)}
-                            className={`p-3 border rounded-md cursor-pointer transition-colors ${
-                              selectedAgeGroup?.id === ageGroup.id 
-                                ? 'border-blue-500 bg-blue-50' 
-                                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
-                            }`}
+                    <FormField
+                      control={teamForm.control}
+                      name="ageGroupId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Age Group</FormLabel>
+                          <Select
+                            onValueChange={(value) => {
+                              const selectedGroup = event.ageGroups?.find(
+                                (group) => group.id === parseInt(value)
+                              );
+                              if (selectedGroup) {
+                                onSelectAgeGroup(selectedGroup);
+                              }
+                            }}
+                            value={selectedAgeGroup ? String(selectedAgeGroup.id) : undefined}
                           >
-                            <div className="font-medium">
-                              {ageGroup.divisionCode || `${ageGroup.gender} ${ageGroup.ageGroup}`}
-                            </div>
-                            {ageGroup.birthYear && (
-                              <div className="text-sm text-gray-500">
-                                Birth Year: {ageGroup.birthYear}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                      {teamForm.formState.errors.ageGroupId && (
-                        <p className="text-sm font-medium text-destructive">{teamForm.formState.errors.ageGroupId.message}</p>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select an age group" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {event.ageGroups?.map((ageGroup) => (
+                                <SelectItem key={ageGroup.id} value={String(ageGroup.id)}>
+                                  {ageGroup.divisionCode || `${ageGroup.gender} ${ageGroup.ageGroup}`}
+                                  {ageGroup.birthYear ? ` (Birth Year: ${ageGroup.birthYear})` : ''}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
                       )}
-                    </div>
+                    />
                   </div>
 
                   <div className="space-y-4 border-t pt-4">
