@@ -223,7 +223,10 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const handleSubmit = async (data: EventFormValues) => {
     try {
-      if (!selectedSeasonalScopeId) {
+      // Get seasonalScopeId from selectedSeasonalScopeId or from form data (which may have been set from defaultValues)
+      const effectiveScopeId = selectedSeasonalScopeId || data.seasonalScopeId || defaultValues?.seasonalScopeId;
+      
+      if (!effectiveScopeId) {
         toast({
           title: "Error",
           description: "Please select a seasonal scope",
@@ -234,7 +237,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
       const submitData = {
         ...data,
-        seasonalScopeId: selectedSeasonalScopeId,
+        seasonalScopeId: effectiveScopeId,
         ageGroups,
         scoringRules,
         settings,
