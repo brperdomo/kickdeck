@@ -55,15 +55,20 @@ export function useTheme() {
   // Default to light mode, only use localStorage if explicitly set by user
   const [currentAppearance, setCurrentAppearance] = useState<'light' | 'dark'>('light');
 
-  // Initialize theme from localStorage only once on component mount
+  // DARK MODE DISABLED - Always use light mode
   useEffect(() => {
-    // Only read from localStorage once on initial load
-    const savedAppearance = localStorage.getItem('theme-appearance') as 'light' | 'dark';
-    if (savedAppearance) {
-      setCurrentAppearance(savedAppearance);
-    }
+    // Force light mode only
+    setCurrentAppearance('light');
+    
+    // Remove dark mode class
+    document.documentElement.classList.remove('dark');
+    
+    // Save light mode to localStorage
+    localStorage.setItem('theme-appearance', 'light');
   }, []);
   
+  // Disabled original dark mode effect
+  /*
   useEffect(() => {
     // Check if we're on a registration, auth page, or event page
     const isAuthPage = window.location.pathname.includes('/auth') || 
@@ -84,6 +89,7 @@ export function useTheme() {
     // Save to localStorage when changed by user action
     localStorage.setItem('theme-appearance', currentAppearance);
   }, [currentAppearance]);
+  */
 
   const themeMutation = useMutation({
     mutationFn: async (theme: Theme) => {
@@ -127,20 +133,30 @@ export function useTheme() {
       : colorName;
 
     setCurrentColor(colorName as ColorName);
+    
+    // DARK MODE DISABLED - Force light mode in color changes
     await themeMutation.mutateAsync({
       variant: 'professional',
       primary: colorValue,
-      appearance: currentAppearance,
+      appearance: 'light', // Always use light mode
       radius: 0.5,
     });
-  }, [themeMutation, currentAppearance]);
+  }, [themeMutation]);
 
   const setAppearance = useCallback(async (appearance: 'light' | 'dark') => {
+    // DARK MODE DISABLED - Force light mode only
+    setCurrentAppearance('light');
+    document.documentElement.classList.remove('dark');
+    
+    // Original code commented out:
+    /*
     setCurrentAppearance(appearance);
+    */
+    
     await themeMutation.mutateAsync({
       variant: 'professional',
       primary: colors[currentColor],
-      appearance: appearance,
+      appearance: 'light', // Always use light mode
       radius: 0.5,
     });
   }, [themeMutation, currentColor]);
@@ -151,8 +167,17 @@ export function useTheme() {
    */
   const updateTheme = useCallback(async (themeUpdate: Partial<Theme>) => {
     try {
-      // Handle appearance changes locally first (UI updates)
+      // DARK MODE DISABLED - Force light mode
       if (themeUpdate.appearance) {
+        // Force light mode regardless of the setting
+        setCurrentAppearance('light');
+        localStorage.setItem('theme-appearance', 'light');
+        
+        // Always remove dark mode class
+        document.documentElement.classList.remove('dark');
+        
+        // Original code commented out:
+        /*
         // Only accept 'light' or 'dark' for the state (ignore 'system')
         if (themeUpdate.appearance === 'light' || themeUpdate.appearance === 'dark') {
           // Update state and localStorage
@@ -175,6 +200,7 @@ export function useTheme() {
             document.documentElement.classList.remove('dark');
           }
         }
+        */
       }
       
       // If primary color is specified, update current color in state
@@ -190,12 +216,11 @@ export function useTheme() {
       }
       
       // Construct complete theme object with existing values + updates
+      // DARK MODE DISABLED - Force light mode in all theme objects
       const updatedTheme: Theme = {
         variant: themeUpdate.variant || 'professional',
         primary: themeUpdate.primary || colors[currentColor],
-        appearance: (themeUpdate.appearance === 'light' || themeUpdate.appearance === 'dark') 
-          ? themeUpdate.appearance 
-          : currentAppearance,
+        appearance: 'light', // Always use light mode
         radius: themeUpdate.radius || 0.5,
       };
       
