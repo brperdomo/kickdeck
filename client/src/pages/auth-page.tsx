@@ -225,7 +225,7 @@ export default function AuthPage() {
                   <div className="text-center">
                     <p className="text-sm sm:text-base text-gray-600">
                       New to MatchPro?{" "}
-                      <Link href="/register">
+                      <Link href={`/register${window.location.search}`}>
                         <Button variant="link" className="p-0 h-auto font-semibold text-green-600 hover:text-green-700">
                           Register Here
                         </Button>
