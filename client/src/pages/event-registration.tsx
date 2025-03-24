@@ -389,7 +389,10 @@ export default function EventRegistration() {
   
   const registerTeamMutation = useMutation({
     mutationFn: async (data: TeamRegistrationForm) => {
-      // Include terms agreement and fee in submission
+      // Ensure player data is synchronized
+      teamForm.setValue('players', players);
+      
+      // Transform dates and include terms agreement and fee in submission
       const response = await fetch(`/api/events/${eventId}/register-team`, {
         method: 'POST',
         headers: {
@@ -399,7 +402,7 @@ export default function EventRegistration() {
           ...data,
           players: players.map(player => ({
             ...player,
-            dateOfBirth: new Date(player.dateOfBirth).toISOString(),
+            dateOfBirth: player.dateOfBirth ? new Date(player.dateOfBirth).toISOString() : null,
           })),
           termsAcknowledged: termsAgreed,
           registrationFee: registrationFee,
