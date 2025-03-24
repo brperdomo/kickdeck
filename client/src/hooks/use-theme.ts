@@ -65,12 +65,20 @@ export function useTheme() {
   }, []);
   
   useEffect(() => {
+    // Check if we're on a registration or auth page
+    const isAuthPage = window.location.pathname.includes('/auth') || 
+                        window.location.pathname.includes('/register') || 
+                        window.location.pathname.includes('/forgot-password') ||
+                        window.location.pathname.includes('/reset-password');
+    
     // Set the dark mode class on the document root
-    if (currentAppearance === 'dark') {
+    // but only if we're not on an authentication page
+    if (currentAppearance === 'dark' && !isAuthPage) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
+    
     // Save to localStorage when changed by user action
     localStorage.setItem('theme-appearance', currentAppearance);
   }, [currentAppearance]);
@@ -149,8 +157,15 @@ export function useTheme() {
           setCurrentAppearance(themeUpdate.appearance);
           localStorage.setItem('theme-appearance', themeUpdate.appearance);
           
+          // Check if we're on a registration or auth page
+          const isAuthPage = window.location.pathname.includes('/auth') || 
+                             window.location.pathname.includes('/register') || 
+                             window.location.pathname.includes('/forgot-password') ||
+                             window.location.pathname.includes('/reset-password');
+          
           // Apply appearance change to document immediately
-          if (themeUpdate.appearance === 'dark') {
+          // but only if we're not on an authentication page
+          if (themeUpdate.appearance === 'dark' && !isAuthPage) {
             document.documentElement.classList.add('dark');
           } else {
             document.documentElement.classList.remove('dark');
