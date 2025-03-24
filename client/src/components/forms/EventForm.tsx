@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
@@ -790,7 +791,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   );
 
   // Query to get event administrators
-  const { data: eventAdmins, isLoading: isLoadingAdmins } = useQuery({
+  const { data: eventAdmins, isLoading: isLoadingAdmins, refetch: refetchAdmins } = useQuery({
     queryKey: ['event-admins', defaultValues?.id],
     queryFn: async () => {
       if (!defaultValues?.id) return [];
@@ -844,7 +845,15 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setIsAdminModalOpen(true)}
+                        onClick={() => {
+                          setEditingAdmin({
+                            id: admin.id,
+                            userId: admin.userId,
+                            role: admin.role,
+                            permissions: admin.permissions || {}
+                          });
+                          setIsAdminModalOpen(true);
+                        }}
                       >
                         Edit
                       </Button>
@@ -1091,6 +1100,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         adminToEdit={editingAdmin}
         eventId={defaultValues?.id}
         onSave={() => {
+          refetchAdmins();
           setIsAdminModalOpen(false);
           setEditingAdmin(null);
         }}
