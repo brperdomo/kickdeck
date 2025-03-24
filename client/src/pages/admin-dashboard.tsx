@@ -133,7 +133,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
   return user !== null && user.isAdmin === true;
 }
 
-type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'coupons' | 'formTemplates' | 'roles';
+type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'formTemplates' | 'roles';
 type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
@@ -1833,8 +1833,7 @@ function AdminDashboard() {
             <FileManager />
           </div>
         );
-      case 'coupons':
-        return <CouponManagement />;
+      /* Coupons are managed within events, not as a standalone view */
       case 'formTemplates':
         return <FormTemplatesView />;
       case 'roles':
@@ -1946,14 +1945,7 @@ function AdminDashboard() {
               permission="view_files"
             />
             
-            <NavigationButton
-              view="coupons"
-              activeView={activeView}
-              onClick={() => setActiveView('coupons')}
-              icon={<Ticket className="mr-2 h-4 w-4" />}
-              label="Coupons"
-              permission="view_coupons"
-            />
+            {/* Coupons are managed within events, so no standalone navigation is needed */}
             
             <NavigationButton
               view="roles"
