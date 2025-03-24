@@ -3554,7 +3554,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const { name, description, isPublished, fields } = req.body;
 
         // Start a transaction
-        awaitdb.transaction(async (tx) => {
+        await db.transaction(async (tx) => {
           // Create form template
           const [template] = await tx
             .insert(eventFormTemplates)
