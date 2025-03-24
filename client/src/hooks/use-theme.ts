@@ -65,11 +65,12 @@ export function useTheme() {
   }, []);
   
   useEffect(() => {
-    // Check if we're on a registration or auth page
+    // Check if we're on a registration, auth page, or event registration page
     const isAuthPage = window.location.pathname.includes('/auth') || 
                         window.location.pathname.includes('/register') || 
                         window.location.pathname.includes('/forgot-password') ||
-                        window.location.pathname.includes('/reset-password');
+                        window.location.pathname.includes('/reset-password') ||
+                        window.location.pathname.includes('/events/');
     
     // Set the dark mode class on the document root
     // but only if we're not on an authentication page
@@ -157,11 +158,12 @@ export function useTheme() {
           setCurrentAppearance(themeUpdate.appearance);
           localStorage.setItem('theme-appearance', themeUpdate.appearance);
           
-          // Check if we're on a registration or auth page
+          // Check if we're on a registration, auth page, or event registration page
           const isAuthPage = window.location.pathname.includes('/auth') || 
                              window.location.pathname.includes('/register') || 
                              window.location.pathname.includes('/forgot-password') ||
-                             window.location.pathname.includes('/reset-password');
+                             window.location.pathname.includes('/reset-password') ||
+                             window.location.pathname.includes('/events/');
           
           // Apply appearance change to document immediately
           // but only if we're not on an authentication page
