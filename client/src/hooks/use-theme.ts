@@ -128,6 +128,61 @@ export function useTheme() {
     });
   }, [themeMutation, currentColor]);
 
+  /**
+   * Update theme settings with partial Theme object
+   */
+  const updateTheme = useCallback(async (themeUpdate: Partial<Theme>) => {
+    // Store appearance change in state and localStorage
+    if (themeUpdate.appearance) {
+      // Only accept 'light' or 'dark' for the state (ignore 'system')
+      if (themeUpdate.appearance === 'light' || themeUpdate.appearance === 'dark') {
+        setCurrentAppearance(themeUpdate.appearance);
+        localStorage.setItem('theme-appearance', themeUpdate.appearance);
+        
+        // Apply appearance change to document immediately
+        if (themeUpdate.appearance === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    }
+    
+    // If primary color is specified, update current color
+    if (themeUpdate.primary) {
+      // Check if it's one of our predefined colors or a custom color
+      const matchedColor = Object.entries(colors).find(
+        ([, value]) => value === themeUpdate.primary
+      );
+      
+      if (matchedColor) {
+        setCurrentColor(matchedColor[0] as ColorName);
+      }
+    }
+    
+    try {
+      // Construct complete theme object with existing values + updates
+      const updatedTheme: Theme = {
+        variant: themeUpdate.variant || 'professional',
+        primary: themeUpdate.primary || colors[currentColor],
+        appearance: (themeUpdate.appearance === 'light' || themeUpdate.appearance === 'dark') 
+          ? themeUpdate.appearance 
+          : currentAppearance,
+        radius: themeUpdate.radius || 0.5,
+      };
+      
+      // Only call API if we're connected and logged in
+      if (document.cookie.includes('connect.sid')) {
+        await themeMutation.mutateAsync(updatedTheme);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Failed to update theme:', error);
+      return false;
+    }
+  }, [themeMutation, currentColor, currentAppearance]);
+
   const updateStyleConfig = useCallback(async (config: StyleConfig) => {
     setStyleConfig(config);
     await styleConfigMutation.mutateAsync(config);
@@ -140,6 +195,7 @@ export function useTheme() {
     setAppearance,
     styleConfig,
     updateStyleConfig,
+    updateTheme,
     isLoading: themeMutation.isPending || styleConfigMutation.isPending,
     error: themeMutation.error || styleConfigMutation.error,
   };
