@@ -3025,6 +3025,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
     app.get('/api/admin/administrators', isAdmin, async (req, res) => {
       try {
+        // Get all admin users first
         const administrators = await db
           .select({
             id: users.id,
@@ -3032,12 +3033,36 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             firstName: users.firstName,
             lastName: users.lastName,
             createdAt: users.createdAt,
+            isAdmin: users.isAdmin,
           })
           .from(users)
           .where(eq(users.isAdmin, true))
           .orderBy(users.createdAt);
 
-        res.json(administrators);
+        // Now fetch all admin roles in a single query
+        const userRoles = await db
+          .select({
+            userId: adminRoles.userId,
+            roleId: adminRoles.roleId,
+            roleName: roles.name,
+          })
+          .from(adminRoles)
+          .innerJoin(roles, eq(adminRoles.roleId, roles.id))
+          .where(inArray(adminRoles.userId, administrators.map(admin => admin.id)));
+
+        // Map roles to each admin
+        const adminsWithRoles = administrators.map(admin => {
+          const adminRoles = userRoles
+            .filter(role => role.userId === admin.id)
+            .map(role => role.roleName);
+          
+          return {
+            ...admin,
+            roles: adminRoles.length > 0 ? adminRoles : []
+          };
+        });
+
+        res.json(adminsWithRoles);
       } catch (error) {
         console.error('Error fetching administrators:', error);
         // Added basic error logging for white screen debugging.
