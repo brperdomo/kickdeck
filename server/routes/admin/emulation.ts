@@ -193,9 +193,10 @@ export async function getEmulationStatus(req: Request, res: Response) {
         id: emulatedAdmin?.id,
         email: emulatedAdmin?.email,
         firstName: emulatedAdmin?.firstName,
-        lastName: emulatedAdmin?.lastName,
-        roles: roleNames
-      }
+        lastName: emulatedAdmin?.lastName
+      },
+      // Include roles separately as well for easier access
+      roles: roleNames
     });
   } catch (error) {
     console.error('Error getting emulation status:', error);
