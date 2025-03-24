@@ -718,6 +718,18 @@ export default function EventRegistration() {
                         </FormItem>
                       )}
                     />
+                    
+                    {/* Fee display when age group is selected */}
+                    {selectedAgeGroup && registrationFee !== null && (
+                      <div className="mt-2 bg-blue-50 p-3 rounded-md">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-gray-600">Registration Fee:</span>
+                          <span className="text-base font-semibold text-blue-700">
+                            ${(registrationFee / 100).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-4 border-t pt-4">
@@ -1067,7 +1079,7 @@ export default function EventRegistration() {
                           Registering...
                         </>
                       ) : (
-                        'Complete Registration'
+                        'Continue to Next Step'
                       )}
                     </Button>
                   </div>
@@ -1189,7 +1201,7 @@ export default function EventRegistration() {
                         Processing...
                       </>
                     ) : (
-                      'Complete Registration'
+                      'Submit Registration'
                     )}
                   </Button>
                 </div>
