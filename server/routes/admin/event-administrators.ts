@@ -147,7 +147,6 @@ export async function addEventAdministrator(req: Request, res: Response) {
         eventId: eventAdministrators.eventId,
         userId: eventAdministrators.userId,
         role: eventAdministrators.role,
-        adminType: eventAdministrators.adminType,
         createdAt: eventAdministrators.createdAt,
         user: users,
         roles: sql<string[]>`array_agg(${roles.name})`
@@ -162,7 +161,6 @@ export async function addEventAdministrator(req: Request, res: Response) {
         eventAdministrators.eventId,
         eventAdministrators.userId,
         eventAdministrators.role,
-        eventAdministrators.adminType,
         eventAdministrators.createdAt,
         users.id
       )
@@ -192,8 +190,7 @@ export async function updateEventAdministrator(req: Request, res: Response) {
     const [updatedAdmin] = await db
       .update(eventAdministrators)
       .set({
-        role: role || undefined,
-        adminType: adminType || undefined
+        role: role || undefined
       })
       .where(
         and(
@@ -214,7 +211,6 @@ export async function updateEventAdministrator(req: Request, res: Response) {
         eventId: eventAdministrators.eventId,
         userId: eventAdministrators.userId,
         role: eventAdministrators.role,
-        adminType: eventAdministrators.adminType,
         createdAt: eventAdministrators.createdAt,
         user: users,
         roles: sql<string[]>`array_agg(${roles.name})`
@@ -229,7 +225,6 @@ export async function updateEventAdministrator(req: Request, res: Response) {
         eventAdministrators.eventId,
         eventAdministrators.userId,
         eventAdministrators.role,
-        eventAdministrators.adminType,
         eventAdministrators.createdAt,
         users.id
       )

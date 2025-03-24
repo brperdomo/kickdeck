@@ -44,7 +44,6 @@ interface EventAdmin {
   userId: number;
   eventId: string;
   role: string;
-  adminType: string;
   user: {
     id: number;
     email: string;
@@ -55,7 +54,6 @@ interface EventAdmin {
 }
 
 type AdminRole = 'owner' | 'admin' | 'moderator';
-type AdminType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
 
 interface EventAdminModalProps {
   eventId: string | number;
@@ -82,7 +80,6 @@ export default function EventAdminModal({
   const queryClient = useQueryClient();
   const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
   const [adminRole, setAdminRole] = useState<AdminRole>('admin');
-  const [adminType, setAdminType] = useState<AdminType>('tournament_admin');
   
   // Fetch event administrators
   const { data: eventAdmins, isLoading: isLoadingAdmins } = useQuery({
