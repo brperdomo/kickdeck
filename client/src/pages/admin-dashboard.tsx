@@ -1703,6 +1703,21 @@ function TeamsView() {
   );
 }
 
+function MembersView() {
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Member Management</h2>
+      </div>
+      <Card>
+        <CardContent className="p-6">
+          <MemberManagement />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 // Navigation Button with permission check
 interface NavigationButtonProps {
   view: View;
