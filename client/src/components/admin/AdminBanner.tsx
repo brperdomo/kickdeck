@@ -9,21 +9,45 @@ import { useEffect, useState } from "react";
  * for consistent navigation and access to common admin functions
  */
 export function AdminBanner() {
-  const { updateTheme, currentAppearance } = useTheme();
+  // Using local state for dark mode preference
+  const [isDarkMode, setIsDarkMode] = useState(
+    typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false
+  );
   
-  // Using the current appearance from the theme hook instead of local state
-  // This ensures we always show the correct icon without a hard refresh
-  const isDarkMode = currentAppearance === 'dark';
-  
-  // Toggle between light and dark mode without causing a page reload
-  const toggleDarkMode = () => {
-    // Simply call updateTheme with the new appearance
-    // The theme hook will handle updating localStorage and document classes
-    updateTheme({ 
-      appearance: isDarkMode ? 'light' : 'dark' 
-    }).catch(err => {
-      console.error('Failed to update theme:', err);
-    });
+  // Toggle function that only updates the DOM and localStorage
+  // Skip API calls completely to prevent page refresh
+  const toggleDarkMode = (e: React.MouseEvent) => {
+    // Prevent default button behavior
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Toggle the state
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    
+    // Update the document class directly
+    if (newMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    // Update localStorage for persistence
+    localStorage.setItem('theme-appearance', newMode ? 'dark' : 'light');
+    
+    // Silently update theme on the server in a delayed manner
+    setTimeout(() => {
+      fetch('/api/theme', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          variant: 'professional',
+          primary: localStorage.getItem('theme-primary') || 'hsl(221.2 83.2% 53.3%)',
+          appearance: newMode ? 'dark' : 'light',
+          radius: 0.5
+        })
+      }).catch(err => console.error('Background theme update failed:', err));
+    }, 500);
   };
 
   return (
