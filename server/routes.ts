@@ -151,8 +151,8 @@ export function registerRoutes(app: Express): Server {
     
     // Emulation endpoints for admin testing
     app.get('/api/admin/emulation/admins', isAdmin, getEmulatableAdmins);
-    app.post('/api/admin/emulation/start', isAdmin, startEmulatingAdmin);
-    app.post('/api/admin/emulation/stop', isAdmin, stopEmulatingAdmin);
+    app.post('/api/admin/emulation/start/:adminId', isAdmin, startEmulatingAdmin);
+    app.post('/api/admin/emulation/stop/:token', isAdmin, stopEmulatingAdmin);
     app.get('/api/admin/emulation/status', isAdmin, getEmulationStatus);
 
     // Register fee assignment routes for admin
