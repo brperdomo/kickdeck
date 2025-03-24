@@ -241,6 +241,15 @@ export default function EventRegistration() {
   const [currentStep, setCurrentStep] = useState<RegistrationStep>('auth');
   const [players, setPlayers] = useState<PlayerForm[]>([]);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup | null>(null);
+  
+  // Handle redirection to auth pages with proper return URL
+  const handleAuthRedirect = () => {
+    // Create the redirect URL with the current page as the return destination
+    const currentPath = window.location.pathname;
+    const redirectUrl = encodeURIComponent(currentPath);
+    // Pass the current page URL as a redirect parameter
+    setLocation(`/auth?redirect=${redirectUrl}`);
+  };
 
   // Helper function to parse user metadata
   const getUserAddressData = () => {
@@ -437,11 +446,7 @@ export default function EventRegistration() {
     );
   };
 
-  const handleAuthRedirect = () => {
-    // Store current location before redirecting
-    sessionStorage.setItem('redirectAfterAuth', window.location.pathname);
-    setLocation('/auth');
-  };
+  // The handleAuthRedirect function is already defined above
 
   const onSubmitPersonalDetails = (data: PersonalDetailsForm) => {
     updatePersonalDetailsMutation.mutate(data);
@@ -541,8 +546,8 @@ export default function EventRegistration() {
             // Keep the original string if conversion fails
           }
         } else {
-          // If dateOfBirth is not a string or is empty, set to null
-          processedPlayer.dateOfBirth = null;
+          // If dateOfBirth is not a string or is empty, set to empty string as fallback
+          processedPlayer.dateOfBirth = '';
         }
         
         return processedPlayer;

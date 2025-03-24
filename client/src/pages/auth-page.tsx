@@ -70,8 +70,18 @@ export default function AuthPage() {
   useEffect(() => {
     if (!user) return;
     
+    // First check URL params for redirect
+    const searchParams = new URLSearchParams(window.location.search);
+    const redirectParam = searchParams.get('redirect');
+    
+    // Then check session storage (legacy method)
     const redirectPath = sessionStorage.getItem('redirectAfterAuth');
-    if (redirectPath) {
+    
+    if (redirectParam) {
+      // Decode the URL-encoded path
+      const decodedPath = decodeURIComponent(redirectParam);
+      window.location.href = decodedPath;
+    } else if (redirectPath) {
       sessionStorage.removeItem('redirectAfterAuth');
       window.location.href = redirectPath;
     } else if (user.isAdmin) {
