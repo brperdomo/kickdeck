@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, User, UserCheck, LogOut } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, User, UserCheck, LogOut, UserCog } from 'lucide-react';
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"; 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 
@@ -212,67 +211,76 @@ export default function EmulationManager() {
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>User Emulation</CardTitle>
-        <CardDescription>
-          Emulate other administrators to test their perspective and permissions
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Card className="w-full overflow-hidden border border-border/40 shadow-lg">
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-700 p-6 flex gap-4">
+        <div className="rounded-full bg-white/10 p-3 h-fit">
+          <UserCheck className="h-6 w-6 text-white" />
+        </div>
+        <div>
+          <h3 className="text-white text-xl font-semibold mb-1">User Emulation Console</h3>
+          <p className="text-indigo-100 opacity-90 text-sm">
+            Emulate other administrators to test their perspective and permissions
+          </p>
+        </div>
+      </div>
+      <CardContent className="pt-6">
         {statusData?.emulating ? (
           <div className="space-y-4">
-            <Alert variant="destructive">
-              <User className="h-4 w-4" />
-              <AlertTitle>Emulation Active</AlertTitle>
-              <AlertDescription className="flex flex-col gap-4">
-                <div>
-                  <p className="mb-2">
-                    You are currently viewing the system as{' '}
-                    <strong>
-                      {statusData.emulatedAdmin?.firstName} {statusData.emulatedAdmin?.lastName}
-                    </strong>{' '}
-                    ({statusData.emulatedAdmin?.email})
-                  </p>
-                  
-                  {statusData.emulatedAdmin?.roles && statusData.emulatedAdmin.roles.length > 0 && (
-                    <div className="mt-2">
-                      <p className="text-sm font-medium mb-1">Active roles:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {statusData.emulatedAdmin.roles.map((role) => {
-                          let badgeClass = "capitalize";
-                          
-                          // Apply different colors based on role type with more modern gradient styling
-                          if (role === 'tournament_admin') {
-                            badgeClass += " bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-sm";
-                          } else if (role === 'score_admin') {
-                            badgeClass += " bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm";
-                          } else if (role === 'finance_admin') {
-                            badgeClass += " bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm";
-                          }
-                          
-                          return (
-                            <Badge key={role} className={badgeClass}>
-                              {role.replace('_', ' ')}
-                            </Badge>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+            <div className="bg-gradient-to-r from-purple-800 to-violet-900 rounded-lg p-4 shadow-lg text-white border border-purple-500/20">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="p-2 bg-purple-500/20 rounded-full">
+                  <User className="h-5 w-5 text-purple-200" />
                 </div>
+                <h3 className="text-lg font-semibold text-purple-100">Emulation Mode Active</h3>
+              </div>
+              
+              <div className="rounded-md bg-purple-500/10 p-3 border border-purple-500/20 mb-4">
+                <p className="mb-2 text-purple-100">
+                  You are currently viewing the system as{' '}
+                  <span className="font-semibold text-white">
+                    {statusData.emulatedAdmin?.firstName} {statusData.emulatedAdmin?.lastName}
+                  </span>
+                </p>
+                <p className="text-sm text-purple-200 mb-3">
+                  {statusData.emulatedAdmin?.email}
+                </p>
                 
-                <Button 
-                  onClick={handleStopEmulation}
-                  variant="secondary"
-                  className="w-fit"
-                  disabled={stopEmulationMutation.isPending}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  {stopEmulationMutation.isPending ? 'Exiting...' : 'Exit Emulation Mode'}
-                </Button>
-              </AlertDescription>
-            </Alert>
+                {statusData.emulatedAdmin?.roles && statusData.emulatedAdmin.roles.length > 0 && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-purple-300 font-medium mb-2">Active roles</p>
+                    <div className="flex flex-wrap gap-1">
+                      {statusData.emulatedAdmin.roles.map((role) => {
+                        let badgeClass = "capitalize";
+                        
+                        // Apply different colors based on role type with more modern gradient styling
+                        if (role === 'tournament_admin') {
+                          badgeClass += " bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-sm";
+                        } else if (role === 'score_admin') {
+                          badgeClass += " bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm";
+                        } else if (role === 'finance_admin') {
+                          badgeClass += " bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm";
+                        }
+                        
+                        return (
+                          <Badge key={role} className={badgeClass}>
+                            {role.replace('_', ' ')}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <Button 
+                onClick={handleStopEmulation}
+                className="w-fit bg-purple-100 hover:bg-white text-purple-900 hover:text-purple-950 shadow-sm transition-all duration-200"
+                disabled={stopEmulationMutation.isPending}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                {stopEmulationMutation.isPending ? 'Exiting...' : 'Exit Emulation Mode'}
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
@@ -285,31 +293,36 @@ export default function EmulationManager() {
                 </p>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {adminsData.map((admin) => (
-                    <Card key={admin.id} className="flex flex-col">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">
-                          {admin.firstName} {admin.lastName}
+                    <Card key={admin.id} className="flex flex-col overflow-hidden border border-border/40 hover:border-primary/20 hover:shadow-md transition-all duration-200">
+                      <div className="bg-gradient-to-r from-slate-100 to-gray-50 dark:from-slate-950 dark:to-gray-900 px-4 py-3">
+                        <CardTitle className="text-sm font-medium flex items-center gap-2">
+                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                            <User className="h-4 w-4" />
+                          </div>
+                          <div>
+                            {admin.firstName} {admin.lastName}
+                            <CardDescription className="text-xs mt-0.5">
+                              {admin.email}
+                            </CardDescription>
+                          </div>
                         </CardTitle>
-                        <CardDescription className="text-xs">
-                          {admin.email}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="flex-1">
+                      </div>
+                      <CardContent className="flex-1 pt-4">
                         <div className="flex flex-wrap gap-1 mb-4">
                           {admin.roles.map((role) => {
                             let badgeClass = "capitalize";
                             
-                            // Apply different colors based on role type
+                            // Apply different colors based on role type with the same modern gradient styling
                             if (role === 'tournament_admin') {
-                              badgeClass += " bg-blue-100 text-blue-800 hover:bg-blue-200";
+                              badgeClass += " bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-sm";
                             } else if (role === 'score_admin') {
-                              badgeClass += " bg-green-100 text-green-800 hover:bg-green-200";
+                              badgeClass += " bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm";
                             } else if (role === 'finance_admin') {
-                              badgeClass += " bg-amber-100 text-amber-800 hover:bg-amber-200";
+                              badgeClass += " bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm";
                             }
                             
                             return (
-                              <Badge key={role} variant="outline" className={badgeClass}>
+                              <Badge key={role} className={badgeClass}>
                                 {role.replace('_', ' ')}
                               </Badge>
                             );
@@ -319,7 +332,7 @@ export default function EmulationManager() {
                           size="sm"
                           onClick={() => handleStartEmulation(admin.id)}
                           disabled={startEmulationMutation.isPending}
-                          className="w-full"
+                          className="w-full bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white shadow-sm"
                         >
                           <UserCheck className="mr-2 h-4 w-4" />
                           {startEmulationMutation.isPending && startEmulationMutation.variables === admin.id
@@ -332,13 +345,17 @@ export default function EmulationManager() {
                 </div>
               </div>
             ) : (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>No Administrators Available</AlertTitle>
-                <AlertDescription>
+              <div className="bg-gradient-to-r from-gray-100 to-slate-100 dark:from-gray-900 dark:to-slate-900 rounded-lg p-6 border border-gray-200 dark:border-gray-800 shadow-md">
+                <div className="flex gap-3 items-center mb-4">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-full text-blue-600 dark:text-blue-400">
+                    <AlertCircle className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-lg font-medium">No Administrators Available</h3>
+                </div>
+                <p className="text-muted-foreground">
                   There are no administrators available for emulation. Only super admins can emulate other administrators.
-                </AlertDescription>
-              </Alert>
+                </p>
+              </div>
             )}
           </div>
         )}
