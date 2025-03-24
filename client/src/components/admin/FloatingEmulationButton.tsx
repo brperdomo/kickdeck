@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, AlertTriangle, Users } from "lucide-react";
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from "@/hooks/use-toast";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
 
 export function FloatingEmulationButton() {
   const [emulationToken, setEmulationToken] = useState<string | null>(null);

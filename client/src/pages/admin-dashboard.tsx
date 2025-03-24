@@ -28,6 +28,7 @@ import {
   Home,
   LogOut,
   FileText,
+  AlertTriangle,
   User,
   Palette,
   ChevronRight,
