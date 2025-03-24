@@ -8,6 +8,7 @@ import { db } from "@db";
 import { eq, or } from "drizzle-orm";
 import { crypto } from "./crypto";
 import { emulationMiddleware, getEmulatedUserId } from "./services/emulationService";
+import { sendTemplatedEmail } from './services/emailService';
 
 declare global {
   namespace Express {
@@ -202,8 +203,8 @@ export function setupAuth(app: Express) {
 
       // Try to send welcome email
       try {
-        const { sendTemplatedEmail } = require('./services/emailService');
-        await sendTemplatedEmail(
+        // Send welcome email asynchronously (don't await to avoid delaying registration)
+        sendTemplatedEmail(
           email,
           'welcome',
           {
@@ -212,8 +213,11 @@ export function setupAuth(app: Express) {
             email,
             username
           }
-        ).catch((err: Error) => console.error('Welcome email error:', err));
-        console.log(`Welcome email sent to ${email}`);
+        ).then(() => {
+          console.log(`Welcome email sent to ${email}`);
+        }).catch((err: Error) => {
+          console.error('Welcome email error:', err);
+        });
       } catch (emailError) {
         console.error('Failed to send welcome email:', emailError);
         // Non-blocking - continue registration process even if email fails

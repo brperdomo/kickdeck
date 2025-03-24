@@ -80,6 +80,17 @@ export default function AuthPage() {
     if (redirectParam) {
       // Decode the URL-encoded path
       const decodedPath = decodeURIComponent(redirectParam);
+      
+      // Check if this looks like /register/event/ID and fix it
+      if (decodedPath.includes('/register/event/')) {
+        // Get the event ID
+        const eventId = decodedPath.split('/register/event/')[1];
+        if (eventId) {
+          window.location.href = `/register/event/${eventId}`;
+          return;
+        }
+      }
+      
       window.location.href = decodedPath;
     } else if (redirectPath) {
       sessionStorage.removeItem('redirectAfterAuth');

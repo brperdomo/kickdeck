@@ -155,11 +155,37 @@ export default function Register() {
         description: "Registration successful",
       });
       
-      // Allow the toast to be visible briefly before redirecting
+      // Automatically log in the user after registration
+      try {
+        // No need to await, just trigger the login
+        fetch('/api/user', { 
+          credentials: 'include',
+          cache: 'no-cache' // Force fresh data
+        });
+      } catch (err) {
+        console.error('Error fetching user after registration:', err);
+      }
+      
+      // Redirect handling
+      // Parse the redirect URL to handle special case for event registration
+      const decodedUrl = decodeURIComponent(redirectUrl);
+      
+      // Check if this is a registration from an event
+      if (decodedUrl.includes('/register/event/')) {
+        const eventId = decodedUrl.split('/register/event/')[1];
+        if (eventId) {
+          // Use a shorter timeout to improve UX
+          setTimeout(() => {
+            window.location.href = `/register/event/${eventId}`;
+          }, 500);
+          return;
+        }
+      }
+      
+      // For all other URLs, use the standard redirect
       setTimeout(() => {
-        // Redirect back to the originating page or default to dashboard
-        setLocation(decodeURIComponent(redirectUrl));
-      }, 1000);
+        window.location.href = decodedUrl;
+      }, 500);
     } catch (error: any) {
       toast({
         variant: "destructive",
