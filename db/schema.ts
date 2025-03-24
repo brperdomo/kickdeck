@@ -318,7 +318,6 @@ export const eventAdministrators = pgTable("event_administrators", {
   eventId: text("event_id").notNull().references(() => events.id),
   userId: integer("user_id").notNull().references(() => users.id),
   role: text("role").notNull(),
-  adminType: text("admin_type").notNull().default('super_admin'),
   permissions: jsonb("permissions"),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
 });
@@ -334,7 +333,6 @@ export const eventSettings = pgTable("event_settings", {
 
 export const insertEventAdministratorSchema = createInsertSchema(eventAdministrators, {
   role: z.enum(['owner', 'admin', 'moderator']),
-  adminType: z.enum(['super_admin', 'tournament_admin', 'score_admin', 'finance_admin']).default('super_admin'),
   permissions: z.record(z.boolean()).optional(),
 });
 
