@@ -1,7 +1,7 @@
 import React from 'react';
 import { Shield } from 'lucide-react';
 import { usePermissions } from '@/hooks/use-permissions';
-import { MemberManagement } from './MembersManagement';
+import MemberDetails from './MemberDetails';
 
 const Members: React.FC = () => {
   const { hasPermission } = usePermissions();
@@ -19,7 +19,7 @@ const Members: React.FC = () => {
     );
   }
 
-  return <MemberManagement />;
+  return <MemberDetails />;
 };
 
 export default Members;
