@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { LogOut, AlertTriangle, Users } from "lucide-react";
 import { useQueryClient } from '@tanstack/react-query';
@@ -20,29 +20,38 @@ export function FloatingEmulationButton() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  // To prevent unnecessary renders, we'll maintain the last checked token
+  const lastCheckedTokenRef = useRef<string | null>(null);
+  
   // Check for emulation token on mount and window focus
   useEffect(() => {
+    // This function will handle emulation status checking
     const checkEmulationStatus = async () => {
-      // Skip check if we're already emulating to reduce API calls
-      if (isEmulating && emulationToken) {
+      // Get token from localStorage
+      const token = localStorage.getItem('emulationToken');
+      
+      // If no token exists, we're definitely not emulating
+      if (!token) {
+        console.log('No emulation token found in localStorage');
+        // Only update state if needed
+        if (emulationToken !== null || isEmulating !== false) {
+          setEmulationToken(null);
+          setIsEmulating(false);
+          setEmulatedRoles([]);
+        }
         return;
       }
       
-      try {
-        console.log('Checking emulation status');
-        
-        // Get token from localStorage
-        const token = localStorage.getItem('emulationToken');
-        
-        // If no token exists, we're definitely not emulating
-        if (!token) {
-          console.log('No emulation token found in localStorage');
-          setEmulationToken(null);
-          setIsEmulating(false);
-          return;
-        }
+      // Skip if we're already emulating with this token and have checked it
+      if (isEmulating && emulationToken === token && lastCheckedTokenRef.current === token) {
+        return;
+      }
 
+      console.log('Checking emulation status');
+      
+      try {
         console.log(`Found emulation token: ${token.substring(0, 5)}...`);
+        lastCheckedTokenRef.current = token;
         
         // Create an AbortController with timeout to prevent hanging requests
         const controller = new AbortController();
