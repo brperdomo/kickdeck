@@ -232,6 +232,9 @@ export function registerRoutes(app: Express): Server {
           return res.status(400).json({ error: 'Age group ID is required' });
         }
         
+        // Import fee schemas
+        const { eventFees, eventAgeGroupFees } = await import("@db/schema");
+        
         // Fetch fee assigned to this age group
         const feeAssignment = await db
           .select({
