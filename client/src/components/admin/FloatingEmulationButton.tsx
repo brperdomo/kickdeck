@@ -21,7 +21,7 @@ export default function FloatingEmulationButton() {
   const [emulationToken, setEmulationToken] = useState<string | null>(null);
   
   // Check current emulation status
-  const { data: statusData } = useQuery({
+  const { data: statusData, refetch } = useQuery({
     queryKey: ['emulation-status'],
     queryFn: async () => {
       const headers: HeadersInit = {};
@@ -29,14 +29,21 @@ export default function FloatingEmulationButton() {
         headers['x-emulation-token'] = emulationToken;
       }
       
-      const response = await fetch('/api/admin/emulation/status', { headers });
+      const response = await fetch('/api/admin/emulation/status', { 
+        headers,
+        // Add cache busting to ensure we get the latest data
+        cache: 'no-cache'
+      });
+      
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to fetch emulation status');
       }
       return response.json() as Promise<EmulationStatus>;
     },
-    refetchInterval: 60000 // Refresh every minute
+    refetchInterval: 10000, // Refresh more frequently (every 10 seconds)
+    refetchOnWindowFocus: true, // Refresh when window gets focus
+    staleTime: 5000 // Data becomes stale after 5 seconds
   });
 
   // Check if there's a saved emulation token in localStorage on component mount
@@ -45,7 +52,15 @@ export default function FloatingEmulationButton() {
     if (savedToken) {
       setEmulationToken(savedToken);
     }
-  }, []);
+    
+    // Set up an interval to check for emulation status changes
+    const intervalId = setInterval(() => {
+      refetch();
+    }, 5000);
+    
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [refetch]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

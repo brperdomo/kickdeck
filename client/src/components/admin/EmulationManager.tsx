@@ -84,6 +84,13 @@ export default function EmulationManager() {
       // Refresh all queries to reflect emulated user data
       queryClient.invalidateQueries();
       
+      // Force refresh the user data
+      queryClient.invalidateQueries(['user']);
+      queryClient.invalidateQueries(['user-permissions']);
+      
+      // Reload the page to ensure all components update properly with the emulated user
+      window.location.reload();
+      
       toast({
         title: 'Emulation Started',
         description: `You are now viewing the system as ${data.emulatedAdmin.firstName} ${data.emulatedAdmin.lastName}`,
@@ -118,6 +125,11 @@ export default function EmulationManager() {
       
       // Refresh all queries to reflect actual user data
       queryClient.invalidateQueries();
+      queryClient.invalidateQueries(['user']);
+      queryClient.invalidateQueries(['user-permissions']);
+      
+      // Reload the page to ensure all components update properly
+      window.location.reload();
       
       toast({
         title: 'Emulation Stopped',

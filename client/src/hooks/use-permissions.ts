@@ -73,19 +73,38 @@ export type Role = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance
 export function usePermissions() {
   const { user } = useAuth();
   
+  // Check for emulation token
+  const emulationToken = typeof window !== 'undefined' ? localStorage.getItem('emulationToken') : null;
+  
   // Fetch user permissions from the API
-  const { data: userPermissions, isLoading } = useQuery({
-    queryKey: ['user-permissions'],
+  const { data: userPermissions, isLoading, refetch } = useQuery({
+    queryKey: ['user-permissions', user?.id, emulationToken],
     queryFn: async () => {
       if (!user || !user.isAdmin) return null;
       
-      const response = await fetch('/api/admin/permissions/me');
+      const headers: HeadersInit = {};
+      if (emulationToken) {
+        headers['x-emulation-token'] = emulationToken;
+      }
+      
+      console.log('Fetching permissions, emulation token:', emulationToken ? 'present' : 'not present');
+      
+      const response = await fetch('/api/admin/permissions/me', {
+        headers,
+        cache: 'no-cache' // Ensure we don't get a cached response
+      });
+      
       if (!response.ok) {
         throw new Error('Failed to fetch user permissions');
       }
-      return response.json() as Promise<{ permissions: Permission[], roles: Role[] }>;
+      
+      const data = await response.json() as { permissions: Permission[], roles: Role[] };
+      console.log('Fetched permissions:', data);
+      return data;
     },
     enabled: !!user?.isAdmin,
+    staleTime: 10000, // Consider data fresh for 10 seconds
+    refetchOnWindowFocus: true, // Refetch when the window regains focus
   });
 
   /**

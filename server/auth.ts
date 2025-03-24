@@ -292,9 +292,13 @@ export function setupAuth(app: Express) {
 
   app.get("/api/user", async (req, res) => {
     if (req.isAuthenticated()) {
-      // Add caching headers to improve performance for repeated user info requests
-      // Cache for 5 minutes, must revalidate if stale
-      res.set('Cache-Control', 'private, max-age=300, must-revalidate');
+      // Disable caching during emulation to ensure latest data
+      // Otherwise, add caching headers to improve performance
+      if (req.emulatedUserId) {
+        res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      } else {
+        res.set('Cache-Control', 'private, max-age=300, must-revalidate');
+      }
       
       // Check if this is an emulated session
       if (req.emulatedUserId) {
