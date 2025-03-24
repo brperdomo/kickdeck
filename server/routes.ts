@@ -17,6 +17,7 @@ import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings"
 import membersRouter from "./routes/admin/members-router";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
+import { createStripePaymentIntent, getPaymentIntentStatus, handleStripeWebhook } from "./routes/payments";
 import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
 import { 
   getRolesWithPermissions, 
