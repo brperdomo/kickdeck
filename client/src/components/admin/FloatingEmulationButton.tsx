@@ -13,6 +13,7 @@ interface EmulationStatus {
     email: string;
     firstName: string;
     lastName: string;
+    roles?: string[];
   };
 }
 
@@ -65,13 +66,30 @@ export default function FloatingEmulationButton() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button 
-          className="fixed bottom-6 right-6 rounded-full shadow-lg z-50"
-          size="icon"
-          variant={statusData?.emulating ? "default" : "secondary"}
-        >
-          {statusData?.emulating ? <UserCheck className="h-5 w-5" /> : <Users className="h-5 w-5" />}
-        </Button>
+        {statusData?.emulating ? (
+          <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+            {statusData.emulatedAdmin?.roles && statusData.emulatedAdmin.roles.length > 0 && (
+              <div className="bg-destructive text-white text-xs px-3 py-1 rounded-full shadow-md">
+                Emulating: {statusData.emulatedAdmin.roles.map(r => r.replace('_', ' ')).join(', ')}
+              </div>
+            )}
+            <Button 
+              className="rounded-full shadow-lg animate-pulse"
+              size="icon"
+              variant="destructive"
+            >
+              <UserCheck className="h-5 w-5" />
+            </Button>
+          </div>
+        ) : (
+          <Button 
+            className="fixed bottom-6 right-6 rounded-full shadow-lg z-50"
+            size="icon"
+            variant="secondary"
+          >
+            <Users className="h-5 w-5" />
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[700px]">
         <EmulationManager />

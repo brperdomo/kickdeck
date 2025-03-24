@@ -99,10 +99,20 @@ export async function startEmulatingAdmin(req: Request, res: Response) {
       });
     }
 
-    // Fetch the emulated admin's details
+    // Fetch the emulated admin's details with their roles
     const emulatedAdmin = await db.query.users.findFirst({
       where: eq(users.id, parseInt(adminId))
     });
+
+    // Fetch the user's roles
+    const userRoles = await db.select({
+      roleName: roles.name
+    })
+    .from(adminRoles)
+    .innerJoin(roles, eq(adminRoles.roleId, roles.id))
+    .where(eq(adminRoles.userId, parseInt(adminId)));
+
+    const roleNames = userRoles.map(r => r.roleName);
 
     return res.json({ 
       token: emulationToken,
@@ -110,7 +120,8 @@ export async function startEmulatingAdmin(req: Request, res: Response) {
         id: emulatedAdmin?.id,
         email: emulatedAdmin?.email,
         firstName: emulatedAdmin?.firstName,
-        lastName: emulatedAdmin?.lastName
+        lastName: emulatedAdmin?.lastName,
+        roles: roleNames
       }
     });
   } catch (error) {

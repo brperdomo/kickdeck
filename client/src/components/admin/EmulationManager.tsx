@@ -24,6 +24,7 @@ interface EmulationStatus {
     email: string;
     firstName: string;
     lastName: string;
+    roles?: string[];
   };
 }
 
@@ -45,7 +46,7 @@ export default function EmulationManager() {
   });
 
   // Check current emulation status
-  const { data: statusData, error: statusError, isLoading: statusLoading } = useQuery({
+  const { data: statusData, error: statusError, isLoading: statusLoading, refetch: refetchStatus } = useQuery({
     queryKey: ['emulation-status'],
     queryFn: async () => {
       const headers: HeadersInit = {};
@@ -53,14 +54,20 @@ export default function EmulationManager() {
         headers['x-emulation-token'] = emulationToken;
       }
       
-      const response = await fetch('/api/admin/emulation/status', { headers });
+      const response = await fetch('/api/admin/emulation/status', { 
+        headers,
+        cache: 'no-cache' // Ensure we don't get cached responses
+      });
+      
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.error || 'Failed to fetch emulation status');
       }
+      
       return response.json() as Promise<EmulationStatus>;
     },
-    refetchInterval: 60000 // Refresh every minute
+    refetchInterval: 15000, // Refresh more frequently (every 15 seconds)
+    refetchOnWindowFocus: true
   });
 
   // Start emulation mutation
@@ -188,20 +195,36 @@ export default function EmulationManager() {
       <CardContent>
         {statusData?.emulating ? (
           <div className="space-y-4">
-            <Alert>
+            <Alert variant="destructive">
               <User className="h-4 w-4" />
               <AlertTitle>Emulation Active</AlertTitle>
-              <AlertDescription className="flex flex-col gap-2">
-                <p>
-                  You are currently viewing the system as{' '}
-                  <strong>
-                    {statusData.emulatedAdmin?.firstName} {statusData.emulatedAdmin?.lastName}
-                  </strong>{' '}
-                  ({statusData.emulatedAdmin?.email})
-                </p>
+              <AlertDescription className="flex flex-col gap-4">
+                <div>
+                  <p className="mb-2">
+                    You are currently viewing the system as{' '}
+                    <strong>
+                      {statusData.emulatedAdmin?.firstName} {statusData.emulatedAdmin?.lastName}
+                    </strong>{' '}
+                    ({statusData.emulatedAdmin?.email})
+                  </p>
+                  
+                  {statusData.emulatedAdmin?.roles && statusData.emulatedAdmin.roles.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-sm font-medium mb-1">Active roles:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {statusData.emulatedAdmin.roles.map((role) => (
+                          <Badge key={role} variant="outline" className="capitalize bg-white/10">
+                            {role.replace('_', ' ')}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
                 <Button 
                   onClick={handleStopEmulation}
-                  variant="outline"
+                  variant="secondary"
                   className="w-fit"
                   disabled={stopEmulationMutation.isPending}
                 >
