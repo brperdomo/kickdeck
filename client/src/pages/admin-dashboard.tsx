@@ -1837,7 +1837,8 @@ function AdminDashboard() {
       'files': 'view_files',
       'coupons': 'view_coupons',
       'formTemplates': 'view_form_templates',
-      'roles': 'view_role_permissions'
+      'roles': 'view_role_permissions',
+      'members': 'view_members'
     };
     
     // Check if user has permission to access the active view
@@ -2004,6 +2005,15 @@ function AdminDashboard() {
               icon={<ImageIcon className="mr-2 h-4 w-4" />}
               label="File Manager"
               permission="view_files"
+            />
+            
+            <NavigationButton
+              view="members"
+              activeView={activeView}
+              onClick={() => setActiveView('members')}
+              icon={<UsersIcon className="mr-2 h-4 w-4" />}
+              label="Members"
+              permission="view_members"
             />
             
             {/* Coupons are managed within events, so no standalone navigation is needed */}
