@@ -344,11 +344,15 @@ export default function EventRegistration() {
       emergencyContactName: '',
       emergencyContactPhone: '',
     };
-    setPlayers([...players, newPlayer]);
+    const updatedPlayers = [...players, newPlayer];
+    setPlayers(updatedPlayers);
+    teamForm.setValue('players', updatedPlayers);
   };
 
   const removePlayer = (playerId: string) => {
-    setPlayers(players.filter(player => player.id !== playerId));
+    const updatedPlayers = players.filter(player => player.id !== playerId);
+    setPlayers(updatedPlayers);
+    teamForm.setValue('players', updatedPlayers);
   };
 
   // State to track terms agreement
@@ -902,6 +906,8 @@ export default function EventRegistration() {
                                     const newPlayers = [...players];
                                     newPlayers[index].firstName = e.target.value;
                                     setPlayers(newPlayers);
+                                    // Update form state with the modified players array
+                                    teamForm.setValue('players', newPlayers);
                                   }}
                                   className="w-full"
                                 />
@@ -1198,7 +1204,10 @@ export default function EventRegistration() {
                     className="bg-[#2C5282] hover:bg-[#1A365D] text-white"
                     disabled={!termsAgreed || registerTeamMutation.isPending}
                     onClick={() => {
-                      if (termsAgreed && teamForm.getValues()) {
+                      if (termsAgreed) {
+                        // Make sure to sync the latest players array with form data
+                        teamForm.setValue('players', players);
+                        // Then submit the form values along with player data
                         registerTeamMutation.mutate(teamForm.getValues());
                       } else {
                         toast({
