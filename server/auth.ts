@@ -290,25 +290,30 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.get("/api/user", async (req, res) => {
+  app.get("/api/user", async (req: Request, res) => {
     if (req.isAuthenticated()) {
+      // Access the emulatedUserId that we attached in the middleware
+      const emulatedUserId = (req as any).emulatedUserId;
+      const actualUserId = (req as any).actualUserId;
+      
       // Disable caching during emulation to ensure latest data
       // Otherwise, add caching headers to improve performance
-      if (req.emulatedUserId) {
+      if (emulatedUserId) {
         res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       } else {
         res.set('Cache-Control', 'private, max-age=300, must-revalidate');
       }
       
       // Check if this is an emulated session
-      if (req.emulatedUserId) {
+      if (emulatedUserId) {
+        console.log('Emulating user:', emulatedUserId, 'for actual user:', actualUserId);
         // Get the emulated user from the database or cache
-        const emulatedUser = await getUserById(req.emulatedUserId);
+        const emulatedUser = await getUserById(emulatedUserId);
         if (emulatedUser) {
           return res.json({
             ...emulatedUser,
             _emulated: true,
-            _actualUserId: req.actualUserId
+            _actualUserId: actualUserId
           });
         }
       }
