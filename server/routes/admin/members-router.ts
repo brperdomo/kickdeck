@@ -1,23 +1,18 @@
 import express from 'express';
-import { 
-  getAllMembers,
-  getMemberById,
-  getTeamRegistrationDetails,
-  resendPaymentConfirmation
-} from './members';
+import { getAllMembers, getMemberById, getTeamRegistrationDetails, resendPaymentConfirmation } from './members';
 
 const router = express.Router();
 
-// Get all members (with search/pagination)
+// GET /api/admin/members - Get all members with pagination and search
 router.get('/', getAllMembers);
 
-// Get member details by ID
+// GET /api/admin/members/:id - Get specific member details with their registrations
 router.get('/:id', getMemberById);
 
-// Get team registration details 
-router.get('/registration/:teamId', getTeamRegistrationDetails);
+// GET /api/admin/members/registrations/:teamId - Get specific team registration details
+router.get('/registrations/:teamId', getTeamRegistrationDetails);
 
-// Resend payment confirmation email
-router.post('/registration/:teamId/resend-confirmation', resendPaymentConfirmation);
+// POST /api/admin/members/registrations/:teamId/resend-payment-confirmation - Resend payment confirmation email
+router.post('/registrations/:teamId/resend-payment-confirmation', resendPaymentConfirmation);
 
 export default router;
