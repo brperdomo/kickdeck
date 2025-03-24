@@ -198,21 +198,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterData) => {
-      const res = await fetch("/api/register", {
+      // Always include cache-busting headers
+      const timestamp = new Date().getTime();
+      const res = await fetch(`/api/register?t=${timestamp}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          'Cache-Control': 'no-cache, no-store, must-revalidate, private',
+          'Pragma': 'no-cache',
+          'X-Cache-Bust': timestamp.toString()
+        },
         body: JSON.stringify(data),
         credentials: "include",
       });
+      
       if (!res.ok) {
         const error = await res.text();
         throw new Error(error);
       }
-      return res.json();
+      
+      const responseData = await res.json();
+      
+      // Trigger an immediate user fetch after registration to ensure session is active
+      try {
+        const userRes = await fetch('/api/user', {
+          credentials: 'include',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'X-Cache-Bust': (timestamp + 1).toString()
+          },
+        });
+        
+        if (userRes.ok) {
+          const userData = await userRes.json();
+          // Update cache with fresh user data
+          responseData.freshUserData = userData;
+        }
+      } catch (e) {
+        console.error('Error fetching user after registration:', e);
+      }
+      
+      return responseData;
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["/api/user"], data.user);
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      // Set user data in cache, prioritizing the freshly fetched data if available
+      const userData = data.freshUserData || data.user;
+      
+      if (userData) {
+        // Set the user data in cache
+        queryClient.setQueryData(["/api/user"], userData);
+        
+        // Force refetch to ensure we have the latest data
+        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      } else {
+        // Just invalidate in case we couldn't get user data
+        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      }
+      
+      // Show success message
       toast({
         title: "Success",
         description: "Registration successful",

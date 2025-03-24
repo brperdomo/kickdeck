@@ -56,6 +56,9 @@ function Router() {
           <Route path="/forgot-password" component={ForgotPassword} />
           <Route path="/reset-password" component={ResetPassword} />
           <Route path="/register/event/:eventId" component={EventRegistration} />
+          <Route path="/dashboard">
+            <AuthPage />
+          </Route>
           {/* Redirect all other routes to auth page */}
           <Route>
             <AuthPage />

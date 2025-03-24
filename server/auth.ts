@@ -69,14 +69,19 @@ export function setupAuth(app: Express) {
   const MemoryStore = createMemoryStore(session);
   const sessionSettings: session.SessionOptions = {
     secret: process.env.REPL_ID || "soccer-registration-secret",
-    resave: false,
+    resave: true, // Changed to true to ensure session is saved on every request
     saveUninitialized: false,
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/'
     },
     store: new MemoryStore({
       checkPeriod: 86400000, // 24 hours
     }),
+    rolling: true, // Reset expiration countdown on every response
+    unset: 'destroy' // Immediately destroy when unset
   };
 
   if (app.get("env") === "production") {
@@ -223,18 +228,40 @@ export function setupAuth(app: Express) {
         // Non-blocking - continue registration process even if email fails
       }
 
-      req.login(newUser, (err) => {
-        if (err) {
-          return next(err);
-        }
-        
-        // Add caching headers
-        res.set('Cache-Control', 'private, max-age=300, must-revalidate');
-        return res.json({
-          message: "Registration successful",
-          user: newUser,
+      // Use a Promise to ensure proper session handling
+      const loginPromise = new Promise<void>((resolve, reject) => {
+        req.login(newUser, (err) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve();
         });
       });
+
+      try {
+        // Wait for login to complete
+        await loginPromise;
+        
+        // Add caching headers to ensure the response is fresh
+        res.set('Cache-Control', 'private, max-age=0, must-revalidate');
+        res.set('Pragma', 'no-cache');
+        
+        // Return success with the user data
+        return res.status(200).json({
+          message: "Registration successful",
+          user: newUser,
+          timestamp: Date.now() // Add timestamp to prevent caching
+        });
+      } catch (loginError) {
+        console.error('Login error after registration:', loginError);
+        // Even though login failed, return success since registration worked
+        res.status(200).json({
+          message: "Registration successful, but auto-login failed. Please log in.",
+          registrationSuccess: true,
+          loginSuccess: false
+        });
+      }
     } catch (error) {
       next(error);
     }
@@ -255,11 +282,14 @@ export function setupAuth(app: Express) {
           return next(err);
         }
 
-        // Add caching headers
-        res.set('Cache-Control', 'private, max-age=300, must-revalidate');
+        // Add stricter caching headers to ensure freshness
+        res.set('Cache-Control', 'private, max-age=0, must-revalidate');
+        res.set('Pragma', 'no-cache');
+        
         return res.json({
           message: "Login successful",
           user,
+          timestamp: Date.now() // Add timestamp to prevent caching
         });
       });
     })(req, res, next);
