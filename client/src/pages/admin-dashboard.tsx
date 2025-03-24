@@ -1659,6 +1659,35 @@ function TeamsView() {
   );
 }
 
+// Navigation Button with permission check
+interface NavigationButtonProps {
+  view: View;
+  activeView: View;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  permission: string;
+}
+
+function NavigationButton({ view, activeView, onClick, icon, label, permission }: NavigationButtonProps) {
+  const { hasPermission } = usePermissions();
+  
+  if (!hasPermission(permission)) {
+    return null;
+  }
+  
+  return (
+    <Button
+      variant={activeView === view ? 'secondary' : 'ghost'}
+      className="w-full justify-start"
+      onClick={onClick}
+    >
+      {icon}
+      {label}
+    </Button>
+  );
+}
+
 function AdminDashboard() {
   const { user, logout, isLoading: isUserLoading } = useUser();
   const { hasPermission } = usePermissions();
@@ -1736,6 +1765,35 @@ function AdminDashboard() {
   };
 
   const renderView = () => {
+    // First verify permissions for the active view
+    const permissionMap = {
+      'administrators': 'view_administrators',
+      'events': 'view_events',
+      'teams': 'view_teams',
+      'complexes': 'view_complexes',
+      'households': 'view_households',
+      'scheduling': 'view_scheduling',
+      'settings': 'view_organization_settings',
+      'reports': 'view_reports',
+      'files': 'view_files',
+      'coupons': 'view_coupons',
+      'formTemplates': 'view_form_templates',
+      'roles': 'view_role_permissions'
+    };
+    
+    // Check if user has permission to access the active view
+    const permissionRequired = permissionMap[activeView as keyof typeof permissionMap];
+    if (permissionRequired && !hasPermission(permissionRequired)) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
+          <Shield className="h-12 w-12 text-muted-foreground" />
+          <h2 className="text-xl font-semibold">Access Restricted</h2>
+          <p className="text-muted-foreground">You don't have permission to view this content.</p>
+        </div>
+      );
+    }
+    
+    // If user has permission, render the appropriate view
     switch (activeView) {
       case 'administrators':
         return <AdministratorsView />;
@@ -1807,156 +1865,187 @@ function AdminDashboard() {
 
           {/* Navigation */}
           <div className="space-y-2">
-            <Button
-              variant={activeView === 'administrators' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
+            <NavigationButton
+              view="administrators"
+              activeView={activeView}
               onClick={() => setActiveView('administrators')}
-            >
-              <Shield className="mr-2 h-4 w-4" />
-              Administrators
-            </Button>
-
-            <Button
-              variant={activeView === 'formTemplates' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
+              icon={<Shield className="mr-2 h-4 w-4" />}
+              label="Administrators"
+              permission="view_administrators"
+            />
+            
+            <NavigationButton
+              view="formTemplates"
+              activeView={activeView}
               onClick={() => setActiveView('formTemplates')}
-            >
-              <FormInput className="mr-2 h-4 w-4" />
-              Form Templates
-            </Button>
-
-            <Button
-              variant={activeView === 'events' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
+              icon={<FormInput className="mr-2 h-4 w-4" />}
+              label="Form Templates"
+              permission="view_form_templates"
+            />
+            
+            <NavigationButton
+              view="events"
+              activeView={activeView}
               onClick={() => setActiveView('events')}
-            >
-              <Calendar className="mr-2 h-4 w-4" />
-              Events
-            </Button>
-
-            <Button
-              variant={activeView === 'teams' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
+              icon={<Calendar className="mr-2 h-4 w-4" />}
+              label="Events"
+              permission="view_events"
+            />
+            
+            <NavigationButton
+              view="teams"
+              activeView={activeView}
               onClick={() => setActiveView('teams')}
-            >
-              <Users className="mr-2 h-4 w-4" />
-              Teams
-            </Button>
-
-            <Button
-              variant={activeView === 'complexes' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
+              icon={<Users className="mr-2 h-4 w-4" />}
+              label="Teams"
+              permission="view_teams"
+            />
+            
+            <NavigationButton
+              view="complexes"
+              activeView={activeView}
               onClick={() => setActiveView('complexes')}
-            >
-              <Building2 className="mr-2 h-4 w-4" />
-              Field Complexes
-            </Button>
-
-            <Button
-              variant={activeView === 'households' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
+              icon={<Building2 className="mr-2 h-4 w-4" />}
+              label="Field Complexes"
+              permission="view_complexes"
+            />
+            
+            <NavigationButton
+              view="households"
+              activeView={activeView}
               onClick={() => setActiveView('households')}
-            >
-              <Home className="mr-2 h-4 w-4" />
-              MatchPro Client
-            </Button>
-
-            <Button
-              variant={activeView === 'scheduling' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
+              icon={<Home className="mr-2 h-4 w-4" />}
+              label="MatchPro Client"
+              permission="view_households"
+            />
+            
+            <NavigationButton
+              view="scheduling"
+              activeView={activeView}
               onClick={() => setActiveView('scheduling')}
-            >
-              <CalendarDays className="mr-2 h-4 w-4" />
-              Scheduling
-            </Button>
-
-            <Button
-              variant={activeView === 'reports' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
+              icon={<CalendarDays className="mr-2 h-4 w-4" />}
+              label="Scheduling"
+              permission="view_scheduling"
+            />
+            
+            <NavigationButton
+              view="reports"
+              activeView={activeView}
               onClick={() => setActiveView('reports')}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Reports and Financials
-            </Button>
-
-            <Button
-              variant={activeView === 'files' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
+              icon={<FileText className="mr-2 h-4 w-4" />}
+              label="Reports and Financials"
+              permission="view_reports"
+            />
+            
+            <NavigationButton
+              view="files"
+              activeView={activeView}
               onClick={() => setActiveView('files')}
-            >
-              <ImageIcon className="mr-2 h-4 w-4" />
-              File Manager
-            </Button>
+              icon={<ImageIcon className="mr-2 h-4 w-4" />}
+              label="File Manager"
+              permission="view_files"
+            />
+            
+            <NavigationButton
+              view="coupons"
+              activeView={activeView}
+              onClick={() => setActiveView('coupons')}
+              icon={<Ticket className="mr-2 h-4 w-4" />}
+              label="Coupons"
+              permission="view_coupons"
+            />
+            
+            <NavigationButton
+              view="roles"
+              activeView={activeView}
+              onClick={() => setActiveView('roles')}
+              icon={<KeyRound className="mr-2 h-4 w-4" />}
+              label="Role Permissions"
+              permission="view_role_permissions"
+            />
 
             {/* Settings */}
-            <Collapsible
-              open={isSettingsOpen}
-              onOpenChange={setIsSettingsOpen}
-              className="space-y-2"
-            >
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
-                  className="w-full justify-between"
-                >
-                  <span className="flex items-center">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </span>
-                  <ChevronRight
-                    className={`h-4 w-4 transition-transform duration-200 ${
-                      isSettingsOpen ? 'rotate-90' : ''
-                    }`}
-                  />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-2 pl-4">
-                <Button
-                  variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('branding');
-                  }}
-                >
-                  <Palette className="mr-2 h-4 w-4" />
-                  Branding
-                </Button>
-                <Button
-                  variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('payments');
-                  }}
-                >
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Payments
-                </Button>
-                <Button
-                  variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('general');
-                  }}
-                >
-                  <Settings className="mr-2 h-4 w-4" />
-                  General
-                </Button>
-                <Button
-                  variant={activeSettingsView === 'styling' ? 'secondary' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => {
-                    setActiveView('settings');
-                    setActiveSettingsView('styling');
-                  }}
-                >
-                  <Palette className="mr-2 h-4 w-4" />
-                  Theme
-                </Button>
-              </CollapsibleContent>
-            </Collapsible>
+            {hasPermission('view_organization_settings') && (
+              <Collapsible
+                open={isSettingsOpen}
+                onOpenChange={setIsSettingsOpen}
+                className="space-y-2"
+              >
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+                    className="w-full justify-between"
+                  >
+                    <span className="flex items-center">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </span>
+                    <ChevronRight
+                      className={`h-4 w-4 transition-transform duration-200 ${
+                        isSettingsOpen ? 'rotate-90' : ''
+                      }`}
+                    />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-2 pl-4">
+                  {hasPermission('edit_organization_settings') && (
+                    <Button
+                      variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setActiveView('settings');
+                        setActiveSettingsView('branding');
+                      }}
+                    >
+                      <Palette className="mr-2 h-4 w-4" />
+                      Branding
+                    </Button>
+                  )}
+                  
+                  {hasPermission('process_payments') && (
+                    <Button
+                      variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setActiveView('settings');
+                        setActiveSettingsView('payments');
+                      }}
+                    >
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Payments
+                    </Button>
+                  )}
+                  
+                  {hasPermission('view_organization_settings') && (
+                    <Button
+                      variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setActiveView('settings');
+                        setActiveSettingsView('general');
+                      }}
+                    >
+                      <Settings className="mr-2 h-4 w-4" />
+                      General
+                    </Button>
+                  )}
+                  
+                  {hasPermission('edit_organization_settings') && (
+                    <Button
+                      variant={activeSettingsView === 'styling' ? 'secondary' : 'ghost'}
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setActiveView('settings');
+                        setActiveSettingsView('styling');
+                      }}
+                    >
+                      <Palette className="mr-2 h-4 w-4" />
+                      Theme
+                    </Button>
+                  )}
+                </CollapsibleContent>
+              </Collapsible>
+            )}
 
             {/* Account */}
             <Button
@@ -2067,7 +2156,7 @@ function AdminDashboard() {
       )}
       
       {/* Floating Emulation Button for Super Admins */}
-      {user && user.isAdmin && <FloatingEmulationButton />}
+      {user && user.isAdmin && hasPermission('emulate_users') && <FloatingEmulationButton />}
     </div>
   );
 }
