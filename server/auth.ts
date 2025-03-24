@@ -212,7 +212,7 @@ export function setupAuth(app: Express) {
             email,
             username
           }
-        ).catch(err => console.error('Welcome email error:', err));
+        ).catch((err: Error) => console.error('Welcome email error:', err));
         console.log(`Welcome email sent to ${email}`);
       } catch (emailError) {
         console.error('Failed to send welcome email:', emailError);

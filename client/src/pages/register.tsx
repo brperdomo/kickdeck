@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, ArrowLeft, Loader2 } from "lucide-react";
 import { z } from "zod";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useEffect, useState } from "react";
 
 const registerSchema = z.object({
@@ -46,11 +46,16 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export default function Register() {
   const { toast } = useToast();
   const { register } = useUser();
+  const [, setLocation] = useLocation();
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const [emailAvailability, setEmailAvailability] = useState<{
     available: boolean;
     message?: string;
   } | null>(null);
+  
+  // Parse URL to check if registration was initiated from event registration
+  const params = new URLSearchParams(window.location.search);
+  const redirectUrl = params.get('redirect') || '/';
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -149,6 +154,12 @@ export default function Register() {
         title: "Success",
         description: "Registration successful",
       });
+      
+      // Allow the toast to be visible briefly before redirecting
+      setTimeout(() => {
+        // Redirect back to the originating page or default to dashboard
+        setLocation(decodeURIComponent(redirectUrl));
+      }, 1000);
     } catch (error: any) {
       toast({
         variant: "destructive",
