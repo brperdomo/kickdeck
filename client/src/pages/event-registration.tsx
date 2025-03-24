@@ -65,7 +65,7 @@ interface Fee {
 type RegistrationStep = 'auth' | 'personal' | 'team' | 'payment' | 'review' | 'complete';
 
 // Initialize Stripe
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || '');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
 // Payment component for handling Stripe checkout
 function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing }: { 
