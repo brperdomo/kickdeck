@@ -98,12 +98,7 @@ export async function getMemberById(req: Request, res: Response) {
       .where(eq(teams.userId, memberId))
       .orderBy(desc(teams.createdAt));
     
-    // Fix mapping for coach field
-    teamRegistrations.forEach(reg => {
-      if ((reg.team as any).coach) {
-        (reg.team as any).headCoachName = (reg.team as any).coach;
-      }
-    });
+    // No need to map fields as headCoachName is already in the schema
     
     // Get count of players registered by this member
     const [playerCount] = await db
@@ -157,14 +152,7 @@ export async function getTeamRegistrationDetails(req: Request, res: Response) {
       .where(eq(teams.id, teamIdNumber))
       .limit(1);
       
-    // Ensure the data is accessible by expected frontend property names
-    if (registration) {
-      // Handle mappings between database column names and JS property names
-      if ((registration.team as any).coach) {
-        (registration.team as any).headCoachName = (registration.team as any).coach;
-      }
-    }
-    
+    // Check if registration exists
     if (!registration) {
       return res.status(404).json({ error: 'Team registration not found' });
     }
@@ -218,14 +206,7 @@ export async function resendPaymentConfirmation(req: Request, res: Response) {
       .where(eq(teams.id, teamIdNumber))
       .limit(1);
     
-    // Ensure data is accessible by expected frontend property names
-    if (registration) {
-      // Handle mappings between database column names and JS property names
-      if ((registration.team as any).coach) {
-        (registration.team as any).headCoachName = (registration.team as any).coach;
-      }
-    }
-    
+    // Check if registration exists
     if (!registration) {
       return res.status(404).json({ error: 'Team registration not found' });
     }
@@ -273,5 +254,60 @@ export async function resendPaymentConfirmation(req: Request, res: Response) {
   } catch (error) {
     console.error('Error resending payment confirmation:', error);
     res.status(500).json({ error: 'Failed to resend payment confirmation email' });
+  }
+}
+
+/**
+ * Get current user's registrations - can be used by members to see their own registrations
+ */
+export async function getCurrentUserRegistrations(req: Request, res: Response) {
+  try {
+    // Get user ID from session
+    const userId = req.user?.id;
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'You must be logged in to view your registrations' });
+    }
+    
+    // Get all team registrations submitted by this user
+    const teamRegistrations = await db
+      .select({
+        team: teams,
+        event: events,
+        ageGroup: eventAgeGroups
+      })
+      .from(teams)
+      .leftJoin(events, eq(teams.eventId, events.id))
+      .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
+      .where(eq(teams.userId, userId))
+      .orderBy(desc(teams.createdAt));
+    
+    // Get count of players registered by this user
+    const [playerCount] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(players)
+      .leftJoin(teams, eq(players.teamId, teams.id))
+      .where(eq(teams.userId, userId));
+    
+    // Transform team registrations to match the frontend's expected format
+    const formattedRegistrations = teamRegistrations.map(reg => ({
+      id: reg.team.id,
+      teamName: reg.team.name,
+      eventName: reg.event?.name || 'Unknown Event',
+      ageGroup: reg.ageGroup?.ageGroup || 'Unknown Age Group',
+      registrationDate: reg.team.createdAt,
+      status: reg.team.status || 'pending',
+      amountPaid: reg.team.registrationFee || 0,
+      termsAccepted: reg.team.termsAcknowledged || false,
+      termsAcceptedAt: reg.team.termsAcknowledgedAt || reg.team.createdAt
+    }));
+    
+    res.json({
+      registrations: formattedRegistrations,
+      playerCount: playerCount?.count || 0
+    });
+  } catch (error) {
+    console.error('Error fetching user registrations:', error);
+    res.status(500).json({ error: 'Failed to fetch registration details' });
   }
 }
