@@ -243,8 +243,8 @@ export function registerRoutes(app: Express): Server {
             fee: {
               id: eventFees.id,
               name: eventFees.name,
-              amount: eventFees.amount,
-              description: eventFees.description
+              amount: eventFees.amount
+              // description removed - doesn't exist in schema
             }
           })
           .from(eventAgeGroupFees)
@@ -253,19 +253,19 @@ export function registerRoutes(app: Express): Server {
           .limit(1);
         
         if (feeAssignment.length === 0) {
-          // Check if there's a default fee for this event
+          // Check if there's a default fee for this event (use applyToAll instead of isDefault)
           const defaultFee = await db
             .select({
               id: eventFees.id,
               name: eventFees.name,
-              amount: eventFees.amount,
-              description: eventFees.description
+              amount: eventFees.amount
+              // description field doesn't exist in schema
             })
             .from(eventFees)
             .where(
               and(
                 eq(eventFees.eventId, eventId),
-                eq(eventFees.isDefault, true)
+                eq(eventFees.applyToAll, true)
               )
             )
             .limit(1);
