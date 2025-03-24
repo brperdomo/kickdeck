@@ -1661,6 +1661,7 @@ function TeamsView() {
 
 function AdminDashboard() {
   const { user, logout, isLoading: isUserLoading } = useUser();
+  const { hasPermission } = usePermissions();
   const [, setLocation] = useLocation();
   const [activeView, setActiveView] = useState<View>('events');
   const [showWelcome, setShowWelcome] = useState(true);
