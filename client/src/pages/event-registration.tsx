@@ -10,7 +10,8 @@ import {
   X, 
   Plus, 
   PlusCircle, 
-  UserRoundPlus 
+  UserRoundPlus,
+  CreditCard 
 } from "lucide-react";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { useAuth } from "@/hooks/use-auth";
@@ -26,6 +27,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
+import { loadStripe } from "@stripe/stripe-js";
+import { 
+  Elements, 
+  PaymentElement, 
+  useStripe, 
+  useElements 
+} from "@stripe/react-stripe-js";
 
 interface AgeGroup {
   id: number;
@@ -392,6 +400,34 @@ export default function EventRegistration() {
       // Ensure player data is synchronized
       teamForm.setValue('players', players);
       
+      // Safely process player dates to prevent conversion errors
+      const processedPlayers = players.map(player => {
+        let processedPlayer = { ...player };
+        
+        // Only convert valid date strings to ISO format
+        if (player.dateOfBirth && typeof player.dateOfBirth === 'string') {
+          try {
+            // Try to create a valid date object first
+            const dateObj = new Date(player.dateOfBirth);
+            // Check if we got a valid date before using toISOString
+            if (!isNaN(dateObj.getTime())) {
+              processedPlayer.dateOfBirth = dateObj.toISOString();
+            } else {
+              // If date is invalid, send as is - backend should handle validation
+              console.warn(`Invalid date for player: ${player.firstName} ${player.lastName}`);
+            }
+          } catch (error) {
+            console.error('Error processing player date:', error);
+            // Keep the original string if conversion fails
+          }
+        } else {
+          // If dateOfBirth is not a string or is empty, set to null
+          processedPlayer.dateOfBirth = null;
+        }
+        
+        return processedPlayer;
+      });
+      
       // Transform dates and include terms agreement and fee in submission
       const response = await fetch(`/api/events/${eventId}/register-team`, {
         method: 'POST',
@@ -400,10 +436,7 @@ export default function EventRegistration() {
         },
         body: JSON.stringify({
           ...data,
-          players: players.map(player => ({
-            ...player,
-            dateOfBirth: player.dateOfBirth ? new Date(player.dateOfBirth).toISOString() : null,
-          })),
+          players: processedPlayers,
           termsAcknowledged: termsAgreed,
           registrationFee: registrationFee,
           termsAcknowledgedAt: new Date().toISOString()
