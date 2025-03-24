@@ -114,8 +114,8 @@ export async function getMemberById(req: Request, res: Response) {
       registrationDate: reg.team.createdAt,
       status: reg.team.status || 'pending',
       amountPaid: reg.team.registrationFee || 0,
-      termsAccepted: reg.team.terms_acknowledged || false,
-      termsAcceptedAt: reg.team.terms_acknowledged_at || reg.team.createdAt
+      termsAccepted: reg.team.termsAcknowledged || false,
+      termsAcceptedAt: reg.team.termsAcknowledgedAt || reg.team.createdAt
     }));
     
     res.json({
@@ -149,6 +149,14 @@ export async function getTeamRegistrationDetails(req: Request, res: Response) {
       .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
       .where(eq(teams.id, teamIdNumber))
       .limit(1);
+      
+    // Ensure the data is accessible by expected frontend property names
+    if (registration) {
+      // Handle mappings between database column names and JS property names
+      if ((registration.team as any).coach) {
+        (registration.team as any).headCoachName = (registration.team as any).coach;
+      }
+    }
     
     if (!registration) {
       return res.status(404).json({ error: 'Team registration not found' });
@@ -203,6 +211,14 @@ export async function resendPaymentConfirmation(req: Request, res: Response) {
       .where(eq(teams.id, teamIdNumber))
       .limit(1);
     
+    // Ensure data is accessible by expected frontend property names
+    if (registration) {
+      // Handle mappings between database column names and JS property names
+      if ((registration.team as any).coach) {
+        (registration.team as any).headCoachName = (registration.team as any).coach;
+      }
+    }
+    
     if (!registration) {
       return res.status(404).json({ error: 'Team registration not found' });
     }
@@ -233,13 +249,13 @@ export async function resendPaymentConfirmation(req: Request, res: Response) {
       'payment_confirmation',
       {
         teamName: registration.team.name,
-        eventName: registration.event.name,
+        eventName: registration.event?.name || 'Unknown Event',
         registrationDate: new Date(registration.team.createdAt).toLocaleDateString(),
         amount: feeAmount,
-        ageGroup: registration.ageGroup.ageGroup,
+        ageGroup: registration.ageGroup?.ageGroup || 'Unknown Age Group',
         paymentId: `TEAM-${registration.team.id}`,
         receiptNumber: `R-${registration.team.id}-${Date.now().toString().substr(-6)}`,
-        status: registration.team.status
+        status: registration.team.status || 'pending'
       }
     );
     
