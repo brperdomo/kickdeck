@@ -1269,9 +1269,9 @@ export default function EventRegistration() {
               </Form>
             )}
 
-            {currentStep === 'agreement' && user && (
+            {currentStep === 'payment' && user && (
               <div className="space-y-6">
-                <h3 className="text-xl font-semibold text-[#2C5282]">Terms and Registration Fee</h3>
+                <h3 className="text-xl font-semibold text-[#2C5282]">Payment and Terms</h3>
                 
                 {/* Fee Display */}
                 <div className="bg-blue-50 p-4 rounded-lg">
@@ -1352,6 +1352,28 @@ export default function EventRegistration() {
                   </div>
                 </div>
                 
+                {/* Payment Form */}
+                {termsAgreed && selectedAgeGroup?.registrationFee && (
+                  <div className="border rounded-lg p-4 space-y-4">
+                    <h4 className="font-semibold text-blue-800">Payment Information</h4>
+                    <p className="text-sm text-gray-600 mb-4">Please provide your payment details to complete registration</p>
+                    
+                    <Elements stripe={stripePromise}>
+                      <PaymentForm 
+                        amount={selectedAgeGroup.registrationFee} 
+                        onSuccess={() => {
+                          // Make sure to sync the latest players array with form data
+                          teamForm.setValue('players', players);
+                          // Then submit the form values along with player data
+                          registerTeamMutation.mutate(teamForm.getValues());
+                        }}
+                        isProcessing={registerTeamMutation.isPending}
+                        setIsProcessing={() => {}} // This is a mock function since we can't directly control mutation state
+                      />
+                    </Elements>
+                  </div>
+                )}
+                
                 <div className="flex justify-between pt-6">
                   <Button
                     type="button"
@@ -1359,35 +1381,6 @@ export default function EventRegistration() {
                     onClick={() => setCurrentStep('team')}
                   >
                     Back
-                  </Button>
-                  
-                  <Button 
-                    type="button"
-                    className="bg-[#2C5282] hover:bg-[#1A365D] text-white"
-                    disabled={!termsAgreed || registerTeamMutation.isPending}
-                    onClick={() => {
-                      if (termsAgreed) {
-                        // Make sure to sync the latest players array with form data
-                        teamForm.setValue('players', players);
-                        // Then submit the form values along with player data
-                        registerTeamMutation.mutate(teamForm.getValues());
-                      } else {
-                        toast({
-                          title: "Agreement Required",
-                          description: "You must agree to the terms to continue",
-                          variant: "destructive",
-                        });
-                      }
-                    }}
-                  >
-                    {registerTeamMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      'Submit Registration'
-                    )}
                   </Button>
                 </div>
               </div>
