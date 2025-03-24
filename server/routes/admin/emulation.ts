@@ -6,7 +6,7 @@ import {
 } from '../../services/emulationService';
 import { db } from '@db/index';
 import { users, adminRoles, roles } from '@db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 
 /**
  * Get all administrators that can be emulated (non-super admins)
@@ -44,8 +44,8 @@ export async function getEmulatableAdmins(req: Request, res: Response) {
     .where(
       and(
         eq(users.isAdmin, true),
-        // Exclude super admins
-        roles.name !== 'super_admin'
+        // Exclude super admins - use not equal for SQL comparison
+        sql`${roles.name} != 'super_admin'`
       )
     );
 

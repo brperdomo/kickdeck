@@ -10,6 +10,7 @@ import { createEmailTemplatesTable } from './migrations/create_email_templates';
 import { createEmailTemplateRoutingTable } from './migrations/create_email_template_routing';
 import { createTables } from './create-tables';
 import { setupAuth } from './auth';
+import { emulationMiddleware } from './services/emulationService';
 
 const app = express();
 
@@ -109,6 +110,10 @@ async function testDbConnection() {
     // Set up authentication BEFORE registering routes
     setupAuth(app);
     log("Authentication middleware set up successfully");
+    
+    // Apply emulation middleware after authentication but before routes
+    app.use(emulationMiddleware);
+    log("User emulation middleware set up successfully");
     
     // Register routes after authentication setup
     const routes = registerRoutes(app);

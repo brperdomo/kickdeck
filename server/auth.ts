@@ -290,11 +290,26 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.get("/api/user", (req, res) => {
+  app.get("/api/user", async (req, res) => {
     if (req.isAuthenticated()) {
       // Add caching headers to improve performance for repeated user info requests
       // Cache for 5 minutes, must revalidate if stale
       res.set('Cache-Control', 'private, max-age=300, must-revalidate');
+      
+      // Check if this is an emulated session
+      if (req.emulatedUserId) {
+        // Get the emulated user from the database or cache
+        const emulatedUser = await getUserById(req.emulatedUserId);
+        if (emulatedUser) {
+          return res.json({
+            ...emulatedUser,
+            _emulated: true,
+            _actualUserId: req.actualUserId
+          });
+        }
+      }
+      
+      // Return the actual user
       return res.json(req.user);
     }
 
