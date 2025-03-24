@@ -1120,16 +1120,21 @@ export default function EventRegistration() {
                   
                   {/* Agreement Checkbox */}
                   <div className="flex items-center space-x-2 mt-4">
-                    <input
-                      type="checkbox"
-                      id="terms-agreement"
-                      className="w-4 h-4 rounded border-gray-300"
-                      checked={termsAgreed}
-                      onChange={(e) => setTermsAgreed(e.target.checked)}
-                    />
-                    <label htmlFor="terms-agreement" className="text-sm text-gray-700">
-                      I have read and agree to the tournament terms, conditions, and refund policy
-                    </label>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="terms-agreement"
+                        checked={termsAgreed}
+                        onCheckedChange={(checked) => {
+                          setTermsAgreed(checked === true);
+                        }}
+                      />
+                      <label
+                        htmlFor="terms-agreement"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700"
+                      >
+                        I have read and agree to the tournament terms, conditions, and refund policy
+                      </label>
+                    </div>
                   </div>
                 </div>
                 

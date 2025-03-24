@@ -195,6 +195,8 @@ export function registerRoutes(app: Express): Server {
             endDate: events.endDate,
             applicationDeadline: events.applicationDeadline,
             details: events.details,
+            agreement: events.agreement,
+            refundPolicy: events.refundPolicy
           })
           .from(events)
           .where(eq(events.id, eventId));
@@ -217,6 +219,63 @@ export function registerRoutes(app: Express): Server {
       } catch (error) {
         console.error('Error fetching event:', error);
         res.status(500).send("Failed to fetch event details");
+      }
+    });
+    
+    // Get fees for a specific age group in an event
+    app.get('/api/events/:eventId/fees', async (req, res) => {
+      try {
+        const eventId = req.params.eventId;
+        const ageGroupId = req.query.ageGroupId as string;
+        
+        if (!ageGroupId) {
+          return res.status(400).json({ error: 'Age group ID is required' });
+        }
+        
+        // Fetch fee assigned to this age group
+        const feeAssignment = await db
+          .select({
+            fee: {
+              id: eventFees.id,
+              name: eventFees.name,
+              amount: eventFees.amount,
+              description: eventFees.description
+            }
+          })
+          .from(eventAgeGroupFees)
+          .innerJoin(eventFees, eq(eventAgeGroupFees.feeId, eventFees.id))
+          .where(eq(eventAgeGroupFees.ageGroupId, parseInt(ageGroupId)))
+          .limit(1);
+        
+        if (feeAssignment.length === 0) {
+          // Check if there's a default fee for this event
+          const defaultFee = await db
+            .select({
+              id: eventFees.id,
+              name: eventFees.name,
+              amount: eventFees.amount,
+              description: eventFees.description
+            })
+            .from(eventFees)
+            .where(
+              and(
+                eq(eventFees.eventId, eventId),
+                eq(eventFees.isDefault, true)
+              )
+            )
+            .limit(1);
+          
+          if (defaultFee.length > 0) {
+            return res.json({ fee: defaultFee[0] });
+          }
+          
+          return res.json({ fee: null });
+        }
+        
+        res.json({ fee: feeAssignment[0].fee });
+      } catch (error) {
+        console.error('Error fetching fee:', error);
+        res.status(500).json({ error: 'Failed to fetch fee information' });
       }
     });
     
