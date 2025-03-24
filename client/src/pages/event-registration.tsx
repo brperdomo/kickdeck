@@ -454,6 +454,20 @@ export default function EventRegistration() {
       return;
     }
     
+    // Validate each player has required fields
+    const invalidPlayers = players.filter(player => 
+      !player.firstName || !player.lastName || !player.dateOfBirth
+    );
+    
+    if (invalidPlayers.length > 0) {
+      toast({
+        title: "Incomplete Player Information",
+        description: "Please complete all required player fields (First Name, Last Name, Date of Birth)",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     // Now proceed to the agreement step instead of submitting right away
     console.log("Form validation passed, proceeding to agreement step");
     setCurrentStep('agreement');
