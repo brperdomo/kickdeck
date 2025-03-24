@@ -200,6 +200,25 @@ export function setupAuth(app: Express) {
         timestamp: Date.now()
       };
 
+      // Try to send welcome email
+      try {
+        const { sendTemplatedEmail } = require('./services/emailService');
+        await sendTemplatedEmail(
+          email,
+          'welcome',
+          {
+            firstName,
+            lastName,
+            email,
+            username
+          }
+        ).catch(err => console.error('Welcome email error:', err));
+        console.log(`Welcome email sent to ${email}`);
+      } catch (emailError) {
+        console.error('Failed to send welcome email:', emailError);
+        // Non-blocking - continue registration process even if email fails
+      }
+
       req.login(newUser, (err) => {
         if (err) {
           return next(err);
