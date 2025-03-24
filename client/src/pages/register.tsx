@@ -311,7 +311,7 @@ export default function Register() {
                   Create Account
                 </Button>
                 <div className="pt-2 text-center">
-                  <Link href="/">
+                  <Link href={`/${window.location.search}`}>
                     <Button variant="link" className="text-sm sm:text-base text-green-600 hover:text-green-700" type="button">
                       <ArrowLeft className="h-4 w-4 mr-2" />
                       Back to Login
