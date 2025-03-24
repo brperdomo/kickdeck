@@ -9,29 +9,21 @@ import { useEffect, useState } from "react";
  * for consistent navigation and access to common admin functions
  */
 export function AdminBanner() {
-  const { updateTheme } = useTheme();
-  const [darkMode, setDarkMode] = useState(false);
+  const { updateTheme, currentAppearance } = useTheme();
   
-  // Check the current theme on component mount
-  useEffect(() => {
-    // Check if the document has the dark class
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    setDarkMode(isDarkMode);
-  }, []);
+  // Using the current appearance from the theme hook instead of local state
+  // This ensures we always show the correct icon without a hard refresh
+  const isDarkMode = currentAppearance === 'dark';
   
-  // Toggle between light and dark mode
+  // Toggle between light and dark mode without causing a page reload
   const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    
-    // Update the theme in localStorage and apply the class to the document
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-      updateTheme({ appearance: 'dark' });
-    } else {
-      document.documentElement.classList.remove('dark');
-      updateTheme({ appearance: 'light' });
-    }
+    // Simply call updateTheme with the new appearance
+    // The theme hook will handle updating localStorage and document classes
+    updateTheme({ 
+      appearance: isDarkMode ? 'light' : 'dark' 
+    }).catch(err => {
+      console.error('Failed to update theme:', err);
+    });
   };
 
   return (
@@ -68,7 +60,7 @@ export function AdminBanner() {
             className="rounded-full w-9 h-9 p-0 text-white hover:bg-white/10"
             aria-label="Toggle dark mode"
           >
-            {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
           
           <Button 
