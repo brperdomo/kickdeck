@@ -646,7 +646,7 @@ export default function EventRegistration() {
                             <SelectContent>
                               {event.ageGroups?.map((ageGroup) => (
                                 <SelectItem key={ageGroup.id} value={String(ageGroup.id)}>
-                                  {ageGroup.divisionCode || `${ageGroup.gender} ${ageGroup.ageGroup}`}
+                                  {ageGroup.divisionCode ? `${ageGroup.divisionCode} - ` : ''}{`${ageGroup.gender} ${ageGroup.ageGroup}`}
                                   {ageGroup.birthYear ? ` (Birth Year: ${ageGroup.birthYear})` : ''}
                                 </SelectItem>
                               ))}
