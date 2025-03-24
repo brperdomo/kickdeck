@@ -114,8 +114,8 @@ export async function getMemberById(req: Request, res: Response) {
       registrationDate: reg.team.createdAt,
       status: reg.team.status || 'pending',
       amountPaid: reg.team.registrationFee || 0,
-      termsAccepted: reg.team.termsAccepted || false,
-      termsAcceptedAt: reg.team.termsAcceptedAt || reg.team.createdAt
+      termsAccepted: reg.team.termsAcknowledged || false,
+      termsAcceptedAt: reg.team.termsAcknowledgedAt || reg.team.createdAt
     }));
     
     res.json({
@@ -155,7 +155,7 @@ export async function getTeamRegistrationDetails(req: Request, res: Response) {
     }
     
     // Get players registered for this team
-    const players = await db
+    const teamPlayers = await db
       .select()
       .from(players)
       .where(eq(players.teamId, teamIdNumber))
@@ -173,7 +173,7 @@ export async function getTeamRegistrationDetails(req: Request, res: Response) {
     
     res.json({
       registration,
-      players,
+      players: teamPlayers,
       submitter
     });
   } catch (error) {
