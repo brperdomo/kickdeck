@@ -223,7 +223,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const handleSubmit = async (data: EventFormValues) => {
     try {
-      // If age groups already exist, we don't need to validate the seasonal scope
+      // Check if age groups already exist, we don't need to validate the seasonal scope
       // as the age groups are already associated with the event
       const hasExistingAgeGroups = ageGroups && ageGroups.length > 0;
       
