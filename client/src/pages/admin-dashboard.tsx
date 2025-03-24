@@ -2063,6 +2063,9 @@ function AdminDashboard() {
           window.location.replace("/");
         }} />
       )}
+      
+      {/* Floating Emulation Button for Super Admins */}
+      {user && user.isAdmin && <FloatingEmulationButton />}
     </div>
   );
 }
@@ -2085,16 +2088,6 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
         <div className="space-y-6">
           <h2 className="text-2xl font-bold">General Settings</h2>
           <GeneralSettingsView />
-          
-          {/* Add Emulation Manager for user role testing */}
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-4">User Emulation</h2>
-            <Card>
-              <CardContent className="p-6">
-                <EmulationManager />
-              </CardContent>
-            </Card>
-          </div>
         </div>
       );
     case 'styling':
