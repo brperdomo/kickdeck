@@ -6,6 +6,7 @@ import { createPasswordResetTokensTable } from "./migrations/create_password_res
 import { createDefaultEmailTemplates } from "./migrations/create_default_email_templates";
 import { addProviderIdToEmailTemplates } from "./migrations/add_provider_id_to_email_templates";
 import { createRolePermissions } from "./migrations/create_role_permissions";
+import { updateDivisionCodes } from "./migrations/update_division_codes";
 
 export async function createTables() {
   try {
@@ -116,6 +117,9 @@ export async function createTables() {
     
     console.log('Creating role permissions table and default permissions...');
     await createRolePermissions();
+    
+    console.log('Updating division codes to new format...');
+    await updateDivisionCodes();
 
     console.log("All tables created successfully");
     return { success: true };
