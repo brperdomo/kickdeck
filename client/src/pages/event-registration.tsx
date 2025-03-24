@@ -439,6 +439,9 @@ export default function EventRegistration() {
     console.log("Team form submission attempted with data:", data);
     console.log("Form errors:", teamForm.formState.errors);
     
+    // Ensure player data is synced with form state
+    teamForm.setValue('players', players);
+    
     // Check required fields
     if (!data.name || !data.ageGroupId || !data.headCoachName || !data.headCoachEmail || !data.headCoachPhone) {
       toast({
@@ -467,6 +470,20 @@ export default function EventRegistration() {
       toast({
         title: "Incomplete Player Information",
         description: "Please complete all required player fields (First Name, Last Name, Date of Birth)",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Check for missing emergency contact information
+    const missingEmergency = players.filter(player => 
+      !player.emergencyContactName || !player.emergencyContactPhone
+    );
+    
+    if (missingEmergency.length > 0) {
+      toast({
+        title: "Missing Emergency Contact",
+        description: "Please provide emergency contact information for all players",
         variant: "destructive",
       });
       return;
