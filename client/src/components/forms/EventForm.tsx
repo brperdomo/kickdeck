@@ -789,54 +789,27 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     </div>
   );
 
-  const renderAdministratorsContent = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Event Administrators</h3>
-        <Button onClick={() => {
-          setEditingAdmin(null);
-          setIsAdminModalOpen(true);
-        }}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Administrator
-        </Button>
+  const renderAdministratorsContent = () => {
+    // We'll use our EventAdminModal component directly here now
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Event Administrators</h3>
+          <Button onClick={() => setIsAdminModalOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Administrator
+          </Button>
+        </div>
+        
+        <div className="p-4 bg-muted rounded-md">
+          <p className="text-sm text-muted-foreground">
+            Event administrators can be assigned specific roles and permissions for this event. 
+            Click the button above to add administrators.
+          </p>
+        </div>
       </div>
-
-      <div className="grid gap-4">
-        {defaultValues?.administrators?.map((admin) => (
-          <Card key={admin.id}>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-center">
-                <div className="space-y-1">
-                  <h4 className="font-semibold">
-                    {admin.firstName} {admin.lastName}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    {admin.email}
-                  </p>
-                  <p className="text-sm text-muted-foreground capitalize">
-                    Roles: {admin.roles?.join(', ') || ''}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setEditingAdmin(admin);
-                      setIsAdminModalOpen(true);
-                    }}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
+    );
+  };
 
   const getTabValidationState = () => {
     const errors: Record<EventTab, boolean> = {

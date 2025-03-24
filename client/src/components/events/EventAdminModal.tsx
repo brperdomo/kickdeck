@@ -59,11 +59,25 @@ type AdminType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_a
 
 interface EventAdminModalProps {
   eventId: string | number;
-  isOpen: boolean;
-  onClose: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  adminToEdit?: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    roles: string[];
+  } | null;
+  onSave?: () => void;
 }
 
-export default function EventAdminModal({ eventId, isOpen, onClose }: EventAdminModalProps) {
+export default function EventAdminModal({ 
+  eventId, 
+  open, 
+  onOpenChange, 
+  adminToEdit, 
+  onSave 
+}: EventAdminModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
@@ -78,7 +92,7 @@ export default function EventAdminModal({ eventId, isOpen, onClose }: EventAdmin
       if (!response.ok) throw new Error('Failed to fetch event administrators');
       return response.json() as Promise<EventAdmin[]>;
     },
-    { enabled: isOpen }
+    { enabled: open }
   );
 
   // Fetch available administrators (admins who aren't assigned to this event yet)
@@ -89,7 +103,7 @@ export default function EventAdminModal({ eventId, isOpen, onClose }: EventAdmin
       if (!response.ok) throw new Error('Failed to fetch available administrators');
       return response.json() as Promise<Admin[]>;
     },
-    { enabled: isOpen }
+    { enabled: open }
   );
 
   // Add administrator to event mutation
@@ -270,7 +284,7 @@ export default function EventAdminModal({ eventId, isOpen, onClose }: EventAdmin
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
         <DialogHeader>
           <DialogTitle>Event Administrators</DialogTitle>
@@ -461,7 +475,7 @@ export default function EventAdminModal({ eventId, isOpen, onClose }: EventAdmin
         </div>
 
         <DialogFooter>
-          <Button onClick={onClose}>Done</Button>
+          <Button onClick={() => onOpenChange(false)}>Done</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
