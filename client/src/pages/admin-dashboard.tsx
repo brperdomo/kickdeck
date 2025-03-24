@@ -2162,6 +2162,28 @@ function AdminDashboard() {
 }
 
 function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView }) {
+  const { hasPermission } = usePermissions();
+  
+  // Permission mapping for different settings views
+  const permissionMap = {
+    'branding': 'edit_organization_settings',
+    'general': 'view_organization_settings',
+    'styling': 'edit_organization_settings',
+    'payments': 'process_payments'
+  };
+  
+  // Check if user has permission to access the requested settings view
+  const requiredPermission = permissionMap[activeSettingsView as keyof typeof permissionMap];
+  if (requiredPermission && !hasPermission(requiredPermission)) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
+        <Shield className="h-12 w-12 text-muted-foreground" />
+        <h2 className="text-xl font-semibold">Access Restricted</h2>
+        <p className="text-muted-foreground">You don't have permission to access these settings.</p>
+      </div>
+    );
+  }
+  
   switch (activeSettingsView) {
     case 'branding':
       return (
@@ -2273,6 +2295,7 @@ interface SelectCoupon {
 
 function CouponManagement() {
   const { toast } = useToast();
+  const { hasPermission } = usePermissions();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedCoupon, setSelectedCoupon] = useState<SelectCoupon | null>(null);
   const queryClient = useQueryClient();
@@ -2312,6 +2335,17 @@ function CouponManagement() {
     },
   });
 
+  // Check for view permission first
+  if (!hasPermission('view_coupons')) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
+        <Shield className="h-12 w-12 text-muted-foreground" />
+        <h2 className="text-xl font-semibold">Access Restricted</h2>
+        <p className="text-muted-foreground">You don't have permission to view coupons.</p>
+      </div>
+    );
+  }
+
   if (couponsQuery.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[200px]">
@@ -2337,10 +2371,12 @@ function CouponManagement() {
     <>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Coupon Management</h2>
-        <Button onClick={() => setIsAddModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Coupon
-        </Button>
+        {hasPermission('create_coupons') && (
+          <Button onClick={() => setIsAddModalOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Coupon
+          </Button>
+        )}
       </div>
 
       <Card>
@@ -2391,18 +2427,24 @@ function CouponManagement() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEditCoupon(coupon)}>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                          onClick={() => handleDeleteCoupon(coupon.id)}
-                          className="text-red-600"
-                        >
-                          <Trash className="mr-2 h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
+                        {hasPermission('edit_coupons') && (
+                          <DropdownMenuItem onClick={() => handleEditCoupon(coupon)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                        )}
+                        {hasPermission('edit_coupons') && hasPermission('delete_coupons') && (
+                          <DropdownMenuSeparator />
+                        )}
+                        {hasPermission('delete_coupons') && (
+                          <DropdownMenuItem 
+                            onClick={() => handleDeleteCoupon(coupon.id)}
+                            className="text-red-600"
+                          >
+                            <Trash className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
