@@ -246,6 +246,9 @@ function AdministratorsView() {
       };
     }
 
+    // Log the full administrator data to console for debugging
+    console.log("Full administrator data:", administratorsQuery.data);
+
     // Initialize with empty arrays for each role type
     const groupedAdmins: RoleGroup = {
       super_admin: [],
@@ -254,42 +257,67 @@ function AdministratorsView() {
       finance_admin: []
     };
 
+    // Hard-code a role map based on the database table
+    const roleIdToName: Record<number, string> = {
+      1: 'super_admin',
+      2: 'tournament_admin',
+      3: 'score_admin',
+      4: 'finance_admin'
+    };
+
     // Group administrators by their roles
     administratorsQuery.data.forEach((admin: any) => {
-      // Make sure admin.roles is always a valid array
-      if (!admin.roles || !Array.isArray(admin.roles)) {
-        admin.roles = [];
-      }
+      console.log(`Processing admin ${admin.email}:`, admin);
       
-      // Filter out null roles
-      const validRoles = admin.roles.filter((role: string | null) => role !== null);
-      
-      // If user has isAdmin flag but no roles, default to super_admin
-      if (admin.isAdmin && validRoles.length === 0) {
-        if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
-          groupedAdmins.super_admin.push({ ...admin, roles: ['super_admin'] });
-        }
-        return;
-      }
-
-      // If admin has no valid roles, skip them
-      if (validRoles.length === 0) {
-        return;
-      }
-
-      // Add admin to each role group they belong to
-      validRoles.forEach((role: string) => {
-        // Only add if it's a valid role group
-        if (role in groupedAdmins) {
-          // Avoid duplicate entries
-          if (!groupedAdmins[role].some((a: any) => a.id === admin.id)) {
-            groupedAdmins[role].push(admin);
+      // The admin object might have multiple formats, let's check both
+      // 1. Using roles array from API if it exists
+      if (admin.roles && Array.isArray(admin.roles) && admin.roles.length > 0) {
+        // Filter out null roles and process each role
+        const validRoles = admin.roles.filter((role: any) => role !== null);
+        
+        validRoles.forEach((role: string) => {
+          if (role in groupedAdmins) {
+            if (!groupedAdmins[role].some((a) => a.id === admin.id)) {
+              console.log(`Adding ${admin.email} to ${role} group based on roles array`);
+              groupedAdmins[role].push(admin);
+            }
+          }
+        });
+      } 
+      // 2. Using roles array based on raw database
+      else if (admin.rolesRaw && Array.isArray(admin.rolesRaw)) {
+        const roleNames = admin.rolesRaw
+          .filter((r: any) => r !== null && r.role_id)
+          .map((r: any) => roleIdToName[r.role_id])
+          .filter((r: string) => r); // Remove undefined values
+        
+        if (roleNames.length > 0) {
+          // Add the mapped role names to the admin object for display
+          const adminWithRoles = { ...admin, roles: roleNames };
+          
+          roleNames.forEach((roleName: string) => {
+            if (roleName in groupedAdmins) {
+              if (!groupedAdmins[roleName].some((a) => a.id === admin.id)) {
+                console.log(`Adding ${admin.email} to ${roleName} group based on role_id mapping`);
+                groupedAdmins[roleName].push(adminWithRoles);
+              }
+            }
+          });
+        } else if (admin.isAdmin) {
+          // If admin has isAdmin flag but no valid roles, default to super_admin
+          if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
+            console.log(`Admin ${admin.email} has isAdmin flag but no valid roles, assigning to super_admin`);
+            groupedAdmins.super_admin.push({ ...admin, roles: ['super_admin'] });
           }
         }
-      });
-      
-      // Debug output to console
-      console.log(`Admin ${admin.email} with roles:`, validRoles);
+      }
+      // 3. Fallback for missing roles data but isAdmin flag is true
+      else if (admin.isAdmin === true) {
+        if (!groupedAdmins.super_admin.some(a => a.id === admin.id)) {
+          console.log(`Admin ${admin.email} has isAdmin flag but missing roles data, assigning to super_admin`);
+          groupedAdmins.super_admin.push({ ...admin, roles: ['super_admin'] });
+        }
+      }
     });
 
     return groupedAdmins;
