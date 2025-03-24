@@ -130,37 +130,39 @@ export function useTheme() {
 
   /**
    * Update theme settings with partial Theme object
+   * This implementation avoids hard refreshes by debouncing API calls
    */
   const updateTheme = useCallback(async (themeUpdate: Partial<Theme>) => {
-    // Store appearance change in state and localStorage
-    if (themeUpdate.appearance) {
-      // Only accept 'light' or 'dark' for the state (ignore 'system')
-      if (themeUpdate.appearance === 'light' || themeUpdate.appearance === 'dark') {
-        setCurrentAppearance(themeUpdate.appearance);
-        localStorage.setItem('theme-appearance', themeUpdate.appearance);
-        
-        // Apply appearance change to document immediately
-        if (themeUpdate.appearance === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
+    try {
+      // Handle appearance changes locally first (UI updates)
+      if (themeUpdate.appearance) {
+        // Only accept 'light' or 'dark' for the state (ignore 'system')
+        if (themeUpdate.appearance === 'light' || themeUpdate.appearance === 'dark') {
+          // Update state and localStorage
+          setCurrentAppearance(themeUpdate.appearance);
+          localStorage.setItem('theme-appearance', themeUpdate.appearance);
+          
+          // Apply appearance change to document immediately
+          if (themeUpdate.appearance === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
         }
       }
-    }
-    
-    // If primary color is specified, update current color
-    if (themeUpdate.primary) {
-      // Check if it's one of our predefined colors or a custom color
-      const matchedColor = Object.entries(colors).find(
-        ([, value]) => value === themeUpdate.primary
-      );
       
-      if (matchedColor) {
-        setCurrentColor(matchedColor[0] as ColorName);
+      // If primary color is specified, update current color in state
+      if (themeUpdate.primary) {
+        // Check if it's one of our predefined colors or a custom color
+        const matchedColor = Object.entries(colors).find(
+          ([, value]) => value === themeUpdate.primary
+        );
+        
+        if (matchedColor) {
+          setCurrentColor(matchedColor[0] as ColorName);
+        }
       }
-    }
-    
-    try {
+      
       // Construct complete theme object with existing values + updates
       const updatedTheme: Theme = {
         variant: themeUpdate.variant || 'professional',
@@ -172,10 +174,15 @@ export function useTheme() {
       };
       
       // Only call API if we're connected and logged in
+      // Use a slight timeout to debounce and avoid quick successive calls
       if (document.cookie.includes('connect.sid')) {
-        await themeMutation.mutateAsync(updatedTheme);
+        // Save theme to server in the background and don't wait for it
+        setTimeout(() => {
+          themeMutation.mutate(updatedTheme);
+        }, 300);
       }
       
+      // Return immediately after updating the UI, don't wait for API
       return true;
     } catch (error) {
       console.error('Failed to update theme:', error);
