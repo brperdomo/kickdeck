@@ -1,68 +1,53 @@
 import { Request, Response } from 'express';
-import { log } from '../vite';
 import { createPaymentIntent, retrievePaymentIntent } from '../services/stripeService';
-import { z } from 'zod';
-import { db } from '../../db';
-import { teams, eventAgeGroups } from '../../db/schema';
+import Stripe from 'stripe';
+import { log } from '../vite';
+import { db } from '@db';
+import { teams } from '@db/schema';
 import { eq } from 'drizzle-orm';
-
-// Validate payment intent creation request
-const createPaymentIntentSchema = z.object({
-  amount: z.number().positive('Amount must be positive'),
-  currency: z.string().default('usd').optional(),
-  description: z.string().optional(),
-  eventId: z.string(),
-  teamId: z.number().optional(),
-  ageGroupId: z.number()
-});
 
 /**
  * Create a Stripe payment intent
  */
 export async function createStripePaymentIntent(req: Request, res: Response) {
   try {
-    const validation = createPaymentIntentSchema.safeParse(req.body);
-    if (!validation.success) {
-      return res.status(400).json({ 
-        error: 'Invalid request parameters', 
-        details: validation.error.errors 
-      });
+    const { amount, currency, description, metadata, eventId, ageGroupId } = req.body;
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ error: 'Valid amount is required' });
     }
 
-    const { amount, currency, description, eventId, teamId, ageGroupId } = validation.data;
-
-    // Verify age group exists for this event
-    const ageGroup = await db.query.eventAgeGroups.findFirst({
-      where: eq(eventAgeGroups.id, ageGroupId)
-    });
-
-    if (!ageGroup) {
-      return res.status(404).json({ error: 'Age group not found' });
+    // Make sure user is authenticated
+    if (!req.user) {
+      return res.status(401).json({ error: 'You must be logged in to process payments' });
     }
     
-    // Create metadata for the payment intent
-    const metadata = {
-      eventId,
-      ageGroupId: ageGroupId.toString(),
-      userId: req.user?.id.toString() || '',
+    // Add user ID to metadata for later reference
+    const enhancedMetadata = {
+      ...metadata,
+      userId: String(req.user.id),
+      eventId: String(eventId),
+      ageGroupId: String(ageGroupId)
     };
     
-    if (teamId) {
-      metadata.teamId = teamId.toString();
-    }
-
-    // Create the payment intent
+    // Create the payment intent with Stripe
     const paymentIntent = await createPaymentIntent({
       amount,
       currency,
-      description: description || `Registration for Event #${eventId}`,
-      metadata
+      description,
+      metadata: enhancedMetadata
     });
-
-    res.status(200).json(paymentIntent);
+    
+    return res.json({
+      clientSecret: paymentIntent.clientSecret,
+      paymentIntentId: paymentIntent.id
+    });
   } catch (error) {
-    log(`Error creating payment intent: ${error}`, 'payment');
-    res.status(500).json({ error: 'Failed to create payment intent' });
+    log(`Error creating payment intent: ${error instanceof Error ? error.message : String(error)}`, 'payment');
+    return res.status(500).json({ 
+      error: 'Failed to create payment intent',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }
 
@@ -71,24 +56,50 @@ export async function createStripePaymentIntent(req: Request, res: Response) {
  */
 export async function getPaymentIntentStatus(req: Request, res: Response) {
   try {
-    const { paymentIntentId } = req.params;
+    const { id } = req.params;
     
-    if (!paymentIntentId) {
+    if (!id) {
       return res.status(400).json({ error: 'Payment intent ID is required' });
     }
-
-    const paymentIntent = await retrievePaymentIntent(paymentIntentId);
     
-    res.status(200).json({
-      id: paymentIntent.id,
+    const paymentIntent = await retrievePaymentIntent(id);
+    
+    // If payment was successful and has team ID in metadata, update team record
+    if (paymentIntent.status === 'succeeded' && 
+        paymentIntent.metadata && 
+        paymentIntent.metadata.teamId) {
+      
+      try {
+        // Update team's payment status
+        await db
+          .update(teams)
+          .set({
+            paymentStatus: 'paid',
+            paymentAmount: paymentIntent.amount,
+            paymentDate: new Date().toISOString(),
+            paymentId: paymentIntent.id
+          })
+          .where(eq(teams.id, parseInt(paymentIntent.metadata.teamId)));
+          
+        log(`Updated team ${paymentIntent.metadata.teamId} payment status to paid`, 'payment');
+      } catch (dbError) {
+        // Log but don't fail the request
+        log(`Error updating team payment status: ${dbError}`, 'payment');
+      }
+    }
+    
+    return res.json({
       status: paymentIntent.status,
       amount: paymentIntent.amount,
       currency: paymentIntent.currency,
-      metadata: paymentIntent.metadata
+      created: paymentIntent.created
     });
   } catch (error) {
     log(`Error retrieving payment intent: ${error}`, 'payment');
-    res.status(500).json({ error: 'Failed to retrieve payment intent status' });
+    return res.status(500).json({ 
+      error: 'Failed to retrieve payment status',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }
 
@@ -96,12 +107,69 @@ export async function getPaymentIntentStatus(req: Request, res: Response) {
  * Handle webhook events from Stripe
  */
 export async function handleStripeWebhook(req: Request, res: Response) {
-  const sig = req.headers['stripe-signature'] as string;
+  const sig = req.headers['stripe-signature'];
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
   
-  // For now, just log that we received a webhook
-  // In a production app, you'd validate the signature and process the event
-  log('Received Stripe webhook event', 'payment');
+  if (!sig || !endpointSecret) {
+    return res.status(400).json({ error: 'Missing signature or endpoint secret' });
+  }
   
-  res.status(200).json({ received: true });
+  let event: Stripe.Event;
+  
+  try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+      apiVersion: '2023-10-16',
+    });
+    
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      endpointSecret
+    );
+  } catch (err) {
+    log(`Webhook Error: ${err}`, 'stripe-webhook');
+    return res.status(400).json({ error: `Webhook Error: ${err}` });
+  }
+  
+  // Handle specific events
+  switch (event.type) {
+    case 'payment_intent.succeeded':
+      const paymentIntent = event.data.object as Stripe.PaymentIntent;
+      log(`PaymentIntent was successful! ID: ${paymentIntent.id}`, 'stripe-webhook');
+      
+      // If payment has team ID in metadata, update team record
+      if (paymentIntent.metadata && paymentIntent.metadata.teamId) {
+        try {
+          // Update team's payment status
+          await db
+            .update(teams)
+            .set({
+              paymentStatus: 'paid',
+              paymentAmount: paymentIntent.amount,
+              paymentDate: new Date().toISOString(),
+              paymentId: paymentIntent.id
+            })
+            .where(eq(teams.id, parseInt(paymentIntent.metadata.teamId)));
+            
+          log(`Updated team ${paymentIntent.metadata.teamId} payment status to paid from webhook`, 'payment');
+        } catch (dbError) {
+          log(`Error updating team payment status from webhook: ${dbError}`, 'payment');
+        }
+      }
+      break;
+    
+    case 'payment_intent.payment_failed':
+      const failedPaymentIntent = event.data.object as Stripe.PaymentIntent;
+      log(`Payment failed: ${failedPaymentIntent.id}`, 'stripe-webhook');
+      // Optional: Update team status to payment_failed
+      break;
+      
+    // Add more event handlers as needed
+      
+    default:
+      log(`Unhandled event type: ${event.type}`, 'stripe-webhook');
+  }
+  
+  // Return success to Stripe
+  res.json({ received: true });
 }

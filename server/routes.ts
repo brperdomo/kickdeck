@@ -422,6 +422,11 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Payment processing endpoints
+    app.post('/api/payments/create-intent', createStripePaymentIntent);
+    app.get('/api/payments/intent/:id', getPaymentIntentStatus);
+    app.post('/api/payments/webhook', handleStripeWebhook);
+
     // Use events router for all admin event operations
     app.use('/api/admin/events', isAdmin, eventsRouter);
 
