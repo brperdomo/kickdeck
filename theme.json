@@ -1,13 +1,6 @@
 {
-  "variant": "vibrant",
-  "primary": "hsl(215 100% 50%)",
-  "appearance": "light",
-  "radius": 0.6,
-  "colors": {
-    "secondary": "hsl(165 65% 42%)",
-    "accent": "hsl(260 60% 55%)",
-    "success": "hsl(156 60% 45%)",
-    "warning": "hsl(36 100% 55%)",
-    "destructive": "hsl(350 90% 50%)"
-  }
+  "variant": "professional",
+  "primary": "hsl(222.2 47.4% 11.2%)",
+  "appearance": "dark",
+  "radius": 0.5
 }
