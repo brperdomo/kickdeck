@@ -13,6 +13,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { X, Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AgeGroup {
   id: number;
@@ -47,6 +52,40 @@ const personalDetailsSchema = z.object({
 
 type PersonalDetailsForm = z.infer<typeof personalDetailsSchema>;
 
+const playerSchema = z.object({
+  id: z.string().optional(),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  jerseyNumber: z.string().regex(/^\d{1,2}$/, "Jersey number must be 1-2 digits").optional(),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  position: z.string().optional(),
+  medicalNotes: z.string().optional(),
+  parentGuardianName: z.string().optional(),
+  parentGuardianEmail: z.string().email("Invalid email").optional(),
+  parentGuardianPhone: z.string().min(10, "Phone number must be at least 10 digits").optional(),
+  emergencyContactName: z.string().min(1, "Emergency contact name is required"),
+  emergencyContactPhone: z.string().min(10, "Emergency contact phone is required"),
+});
+
+const teamRegistrationSchema = z.object({
+  name: z.string().min(1, "Team name is required"),
+  ageGroupId: z.number({
+    required_error: "Age group is required",
+    invalid_type_error: "Age group must be selected"
+  }),
+  headCoachName: z.string().min(1, "Head coach name is required"),
+  headCoachEmail: z.string().email("Invalid email address"),
+  headCoachPhone: z.string().min(10, "Phone number must be at least 10 digits"),
+  assistantCoachName: z.string().optional(),
+  managerName: z.string().min(1, "Manager name is required"),
+  managerEmail: z.string().email("Invalid email address"),
+  managerPhone: z.string().min(10, "Phone number must be at least 10 digits"),
+  players: z.array(playerSchema).min(1, "At least one player is required"),
+});
+
+type TeamRegistrationForm = z.infer<typeof teamRegistrationSchema>;
+type PlayerForm = z.infer<typeof playerSchema>;
+
 export default function EventRegistration() {
   const { eventId } = useParams();
   const { toast } = useToast();
@@ -55,6 +94,8 @@ export default function EventRegistration() {
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState<RegistrationStep>('auth');
+  const [players, setPlayers] = useState<PlayerForm[]>([]);
+  const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup | null>(null);
 
   // Helper function to parse user metadata
   const getUserAddressData = () => {
@@ -260,6 +301,95 @@ export default function EventRegistration() {
     updatePersonalDetailsMutation.mutate(data);
   };
 
+  const teamForm = useForm<TeamRegistrationForm>({
+    resolver: zodResolver(teamRegistrationSchema),
+    defaultValues: {
+      name: '',
+      ageGroupId: 0,
+      headCoachName: '',
+      headCoachEmail: '',
+      headCoachPhone: '',
+      assistantCoachName: '',
+      managerName: '',
+      managerEmail: '',
+      managerPhone: '',
+      players: [],
+    }
+  });
+
+  const addPlayer = () => {
+    const newPlayer: PlayerForm = {
+      id: crypto.randomUUID(),
+      firstName: '',
+      lastName: '',
+      dateOfBirth: '',
+      emergencyContactName: '',
+      emergencyContactPhone: '',
+    };
+    setPlayers([...players, newPlayer]);
+  };
+
+  const removePlayer = (playerId: string) => {
+    setPlayers(players.filter(player => player.id !== playerId));
+  };
+
+  const registerTeamMutation = useMutation({
+    mutationFn: async (data: TeamRegistrationForm) => {
+      const response = await fetch(`/api/events/${eventId}/register-team`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...data,
+          players: players.map(player => ({
+            ...player,
+            dateOfBirth: new Date(player.dateOfBirth).toISOString(),
+          })),
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to register team');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Team registered successfully",
+      });
+      setCurrentStep('review');
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSelectAgeGroup = (ageGroup: AgeGroup) => {
+    setSelectedAgeGroup(ageGroup);
+    teamForm.setValue('ageGroupId', ageGroup.id);
+  };
+  
+  const onSubmitTeamRegistration = (data: TeamRegistrationForm) => {
+    if (players.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please add at least one player to the roster",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    registerTeamMutation.mutate(data);
+  };
+
   if (loading || authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -462,6 +592,430 @@ export default function EventRegistration() {
                   </div>
                 </form>
               </Form>
+            )}
+
+            {currentStep === 'team' && user && (
+              <Form {...teamForm}>
+                <form onSubmit={teamForm.handleSubmit(onSubmitTeamRegistration)} className="space-y-6">
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-semibold text-[#2C5282]">Team Information</h3>
+                    
+                    <FormField
+                      control={teamForm.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Team Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Select Age Group</Label>
+                      <div className="grid gap-4 md:grid-cols-2">
+                        {event.ageGroups?.map((ageGroup) => (
+                          <div 
+                            key={ageGroup.id}
+                            onClick={() => onSelectAgeGroup(ageGroup)}
+                            className={`p-3 border rounded-md cursor-pointer transition-colors ${
+                              selectedAgeGroup?.id === ageGroup.id 
+                                ? 'border-blue-500 bg-blue-50' 
+                                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
+                            }`}
+                          >
+                            <div className="font-medium">
+                              {ageGroup.divisionCode || `${ageGroup.gender} ${ageGroup.ageGroup}`}
+                            </div>
+                            {ageGroup.birthYear && (
+                              <div className="text-sm text-gray-500">
+                                Birth Year: {ageGroup.birthYear}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      {teamForm.formState.errors.ageGroupId && (
+                        <p className="text-sm font-medium text-destructive">{teamForm.formState.errors.ageGroupId.message}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 border-t pt-4">
+                    <h3 className="text-xl font-semibold text-[#2C5282]">Coach Information</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={teamForm.control}
+                        name="headCoachName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Head Coach Name</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={teamForm.control}
+                        name="assistantCoachName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Assistant Coach Name (Optional)</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={teamForm.control}
+                        name="headCoachEmail"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Head Coach Email</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="email" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={teamForm.control}
+                        name="headCoachPhone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Head Coach Phone</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="tel" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 border-t pt-4">
+                    <h3 className="text-xl font-semibold text-[#2C5282]">Team Manager Information</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={teamForm.control}
+                        name="managerName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Manager Name</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div></div>
+
+                      <FormField
+                        control={teamForm.control}
+                        name="managerEmail"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Manager Email</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="email" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={teamForm.control}
+                        name="managerPhone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Manager Phone</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="tel" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4 border-t pt-4">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-xl font-semibold text-[#2C5282]">Player Roster</h3>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addPlayer}
+                        className="flex items-center"
+                      >
+                        <PlusCircle className="w-4 h-4 mr-2" />
+                        Add Player
+                      </Button>
+                    </div>
+                    
+                    {players.length === 0 ? (
+                      <div className="text-center p-8 border border-dashed rounded-md">
+                        <UserRoundPlus className="w-12 h-12 mx-auto text-gray-300 mb-2" />
+                        <p className="text-gray-500">No players added yet. Click "Add Player" to begin building your roster.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        {players.map((player, index) => (
+                          <div key={player.id} className="p-4 border rounded-md relative">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="absolute right-2 top-2 text-gray-400 hover:text-red-500"
+                              onClick={() => removePlayer(player.id as string)}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                            
+                            <h4 className="font-medium mb-4">Player {index + 1}</h4>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor={`player-${index}-firstName`}>First Name *</Label>
+                                <Input
+                                  id={`player-${index}-firstName`}
+                                  value={player.firstName}
+                                  onChange={(e) => {
+                                    const newPlayers = [...players];
+                                    newPlayers[index].firstName = e.target.value;
+                                    setPlayers(newPlayers);
+                                  }}
+                                  className="w-full"
+                                />
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Label htmlFor={`player-${index}-lastName`}>Last Name *</Label>
+                                <Input
+                                  id={`player-${index}-lastName`}
+                                  value={player.lastName}
+                                  onChange={(e) => {
+                                    const newPlayers = [...players];
+                                    newPlayers[index].lastName = e.target.value;
+                                    setPlayers(newPlayers);
+                                  }}
+                                  className="w-full"
+                                />
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Label htmlFor={`player-${index}-dateOfBirth`}>Date of Birth *</Label>
+                                <Input
+                                  id={`player-${index}-dateOfBirth`}
+                                  type="date"
+                                  value={player.dateOfBirth}
+                                  onChange={(e) => {
+                                    const newPlayers = [...players];
+                                    newPlayers[index].dateOfBirth = e.target.value;
+                                    setPlayers(newPlayers);
+                                  }}
+                                  className="w-full"
+                                />
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Label htmlFor={`player-${index}-position`}>Position</Label>
+                                <Input
+                                  id={`player-${index}-position`}
+                                  value={player.position || ''}
+                                  onChange={(e) => {
+                                    const newPlayers = [...players];
+                                    newPlayers[index].position = e.target.value;
+                                    setPlayers(newPlayers);
+                                  }}
+                                  className="w-full"
+                                  placeholder="Optional"
+                                />
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <Label htmlFor={`player-${index}-jerseyNumber`}>Jersey #</Label>
+                                <Input
+                                  id={`player-${index}-jerseyNumber`}
+                                  value={player.jerseyNumber || ''}
+                                  onChange={(e) => {
+                                    const newPlayers = [...players];
+                                    newPlayers[index].jerseyNumber = e.target.value;
+                                    setPlayers(newPlayers);
+                                  }}
+                                  className="w-full"
+                                  maxLength={2}
+                                  placeholder="Optional"
+                                />
+                              </div>
+                              
+                              <div className="space-y-2 md:col-span-1">
+                                <Label htmlFor={`player-${index}-medicalNotes`}>Medical Notes</Label>
+                                <Input
+                                  id={`player-${index}-medicalNotes`}
+                                  value={player.medicalNotes || ''}
+                                  onChange={(e) => {
+                                    const newPlayers = [...players];
+                                    newPlayers[index].medicalNotes = e.target.value;
+                                    setPlayers(newPlayers);
+                                  }}
+                                  className="w-full"
+                                  placeholder="Optional"
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="mt-4 pt-4 border-t">
+                              <h5 className="font-medium mb-2">Parent/Guardian Information (For minors)</h5>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor={`player-${index}-parentName`}>Parent/Guardian Name</Label>
+                                  <Input
+                                    id={`player-${index}-parentName`}
+                                    value={player.parentGuardianName || ''}
+                                    onChange={(e) => {
+                                      const newPlayers = [...players];
+                                      newPlayers[index].parentGuardianName = e.target.value;
+                                      setPlayers(newPlayers);
+                                    }}
+                                    className="w-full"
+                                    placeholder="Optional"
+                                  />
+                                </div>
+                                
+                                <div className="space-y-2">
+                                  <Label htmlFor={`player-${index}-parentEmail`}>Parent/Guardian Email</Label>
+                                  <Input
+                                    id={`player-${index}-parentEmail`}
+                                    type="email"
+                                    value={player.parentGuardianEmail || ''}
+                                    onChange={(e) => {
+                                      const newPlayers = [...players];
+                                      newPlayers[index].parentGuardianEmail = e.target.value;
+                                      setPlayers(newPlayers);
+                                    }}
+                                    className="w-full"
+                                    placeholder="Optional"
+                                  />
+                                </div>
+                                
+                                <div className="space-y-2">
+                                  <Label htmlFor={`player-${index}-parentPhone`}>Parent/Guardian Phone</Label>
+                                  <Input
+                                    id={`player-${index}-parentPhone`}
+                                    type="tel"
+                                    value={player.parentGuardianPhone || ''}
+                                    onChange={(e) => {
+                                      const newPlayers = [...players];
+                                      newPlayers[index].parentGuardianPhone = e.target.value;
+                                      setPlayers(newPlayers);
+                                    }}
+                                    className="w-full"
+                                    placeholder="Optional"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="mt-4 pt-4 border-t">
+                              <h5 className="font-medium mb-2">Emergency Contact</h5>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor={`player-${index}-emergencyName`}>Emergency Contact Name *</Label>
+                                  <Input
+                                    id={`player-${index}-emergencyName`}
+                                    value={player.emergencyContactName || ''}
+                                    onChange={(e) => {
+                                      const newPlayers = [...players];
+                                      newPlayers[index].emergencyContactName = e.target.value;
+                                      setPlayers(newPlayers);
+                                    }}
+                                    className="w-full"
+                                  />
+                                </div>
+                                
+                                <div className="space-y-2">
+                                  <Label htmlFor={`player-${index}-emergencyPhone`}>Emergency Contact Phone *</Label>
+                                  <Input
+                                    id={`player-${index}-emergencyPhone`}
+                                    type="tel"
+                                    value={player.emergencyContactPhone || ''}
+                                    onChange={(e) => {
+                                      const newPlayers = [...players];
+                                      newPlayers[index].emergencyContactPhone = e.target.value;
+                                      setPlayers(newPlayers);
+                                    }}
+                                    className="w-full"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex justify-end space-x-4 pt-6">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setCurrentStep('personal')}
+                    >
+                      Back
+                    </Button>
+                    <Button 
+                      type="submit"
+                      className="bg-[#2C5282] hover:bg-[#1A365D] text-white"
+                      disabled={registerTeamMutation.isPending}
+                    >
+                      {registerTeamMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Registering...
+                        </>
+                      ) : (
+                        'Complete Registration'
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            )}
+
+            {currentStep === 'review' && user && (
+              <div className="space-y-6">
+                <h3 className="text-xl font-semibold text-[#2C5282]">Registration Complete</h3>
+                <div className="bg-green-50 border border-green-200 rounded-md p-4">
+                  <div className="flex items-center">
+                    <CheckCircle className="h-6 w-6 text-green-500 mr-2" />
+                    <p className="text-green-700 font-medium">Your team has been successfully registered for this event.</p>
+                  </div>
+                </div>
+                
+                <Button
+                  onClick={() => setLocation('/user-dashboard')}
+                  className="bg-[#2C5282] hover:bg-[#1A365D] text-white"
+                >
+                  Go to Dashboard
+                </Button>
+              </div>
             )}
 
             {(currentStep === 'auth' || currentStep === 'personal') && (
