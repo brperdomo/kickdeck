@@ -31,6 +31,13 @@ import {
   getEmulationStatus
 } from "./routes/admin/emulation";
 import { getCurrentUserPermissions } from "./routes/admin/permissions";
+import {
+  getEventAdministrators,
+  getAvailableAdministrators,
+  addEventAdministrator,
+  updateEventAdministrator,
+  removeEventAdministrator
+} from "./routes/admin/event-administrators";
 import { sql, eq, and, or, inArray, notInArray } from "drizzle-orm";
 import {
   users,

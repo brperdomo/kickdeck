@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
 import { useDropzone } from 'react-dropzone';
-import { AdminModal } from "@/components/admin/AdminModal";
+import { EventAdminModal } from "@/components/events/EventAdminModal";
 import {
   Table,
   TableBody,
@@ -1057,7 +1057,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           </div>
         </CardContent>
       </Card>
-      <AdminModal
+      <EventAdminModal
         open={isAdminModalOpen}
         onOpenChange={setIsAdminModalOpen}
         adminToEdit={editingAdmin}
