@@ -1,22 +1,21 @@
 import React from 'react';
+import { Shield } from 'lucide-react';
 import { usePermissions } from '@/hooks/use-permissions';
 import MemberDetails from './MemberDetails';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
 
 const Members: React.FC = () => {
   const { hasPermission } = usePermissions();
-  const canViewMembers = hasPermission('view_members');
 
-  if (!canViewMembers) {
+  // Check if user has permission to view members
+  if (!hasPermission('view_members')) {
     return (
-      <Alert variant="destructive" className="mt-4">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Access Denied</AlertTitle>
-        <AlertDescription>
-          You don't have permission to view the members section.
-        </AlertDescription>
-      </Alert>
+      <div className="flex flex-col items-center justify-center h-[400px] space-y-4">
+        <Shield className="h-12 w-12 text-muted-foreground" />
+        <h2 className="text-xl font-semibold">Access Restricted</h2>
+        <p className="text-muted-foreground text-center max-w-md">
+          You don't have permission to view member information. Please contact an administrator if you believe you should have access.
+        </p>
+      </div>
     );
   }
 

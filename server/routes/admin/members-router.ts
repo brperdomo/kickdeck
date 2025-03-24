@@ -1,18 +1,22 @@
-import express from 'express';
+import { Router } from 'express';
 import { getAllMembers, getMemberById, getTeamRegistrationDetails, resendPaymentConfirmation } from './members';
+import { validateAdmin } from '../../middleware/auth';
 
-const router = express.Router();
+const membersRouter = Router();
 
-// GET /api/admin/members - Get all members with pagination and search
-router.get('/', getAllMembers);
+// Apply admin validation middleware to all routes
+membersRouter.use(validateAdmin);
 
-// GET /api/admin/members/:id - Get specific member details with their registrations
-router.get('/:id', getMemberById);
+// Get all members with pagination and search
+membersRouter.get('/', getAllMembers);
 
-// GET /api/admin/members/registrations/:teamId - Get specific team registration details
-router.get('/registrations/:teamId', getTeamRegistrationDetails);
+// Get a specific member by ID with their registrations
+membersRouter.get('/:id', getMemberById);
 
-// POST /api/admin/members/registrations/:teamId/resend-payment-confirmation - Resend payment confirmation email
-router.post('/registrations/:teamId/resend-payment-confirmation', resendPaymentConfirmation);
+// Get team registration details
+membersRouter.get('/registrations/:registrationId', getTeamRegistrationDetails);
 
-export default router;
+// Resend payment confirmation email
+membersRouter.post('/registrations/:registrationId/resend-payment-confirmation', resendPaymentConfirmation);
+
+export default membersRouter;

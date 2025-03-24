@@ -2011,7 +2011,7 @@ function AdminDashboard() {
               view="members"
               activeView={activeView}
               onClick={() => setActiveView('members')}
-              icon={<UsersIcon className="mr-2 h-4 w-4" />}
+              icon={<Users className="mr-2 h-4 w-4" />}
               label="Members"
               permission="view_members"
             />
