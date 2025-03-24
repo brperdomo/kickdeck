@@ -27,7 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
-import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { PaymentElement, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import StripeProvider from "@/components/StripeProvider";
 
 interface AgeGroup {
@@ -75,19 +75,42 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing }: {
 
     if (!stripe || !elements) {
       // Stripe.js has not loaded yet
+      toast({
+        title: "Stripe Not Ready",
+        description: "The payment system is still initializing. Please try again in a moment.",
+        variant: "destructive",
+      });
       return;
     }
 
     setIsProcessing(true);
 
     try {
-      // Create payment using card element
-      const { error, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/payment-complete`,
+      // First create a payment intent on the server
+      const response = await fetch('/api/payments/create-intent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        redirect: 'if_required',
+        body: JSON.stringify({
+          amount, // amount is in cents
+          currency: 'usd',
+          description: 'Team Registration Fee',
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create payment intent');
+      }
+      
+      const { clientSecret } = await response.json();
+      
+      // Use the client secret to confirm the payment
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement('card')!,
+        }
       });
 
       if (error) {
@@ -121,7 +144,23 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing }: {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <PaymentElement />
+      <div className="p-4 border rounded-md">
+        {/* Replace PaymentElement with CardElement which is more reliable */}
+        <CardElement className="p-3 border rounded" options={{
+          style: {
+            base: {
+              fontSize: '16px',
+              color: '#424770',
+              '::placeholder': {
+                color: '#aab7c4',
+              },
+            },
+            invalid: {
+              color: '#9e2146',
+            },
+          },
+        }} />
+      </div>
       <div className="flex justify-end mt-4">
         <Button 
           disabled={!stripe || isProcessing} 

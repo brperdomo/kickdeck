@@ -17,7 +17,7 @@ import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings"
 import membersRouter from "./routes/admin/members-router";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
-import { createStripePaymentIntent, getPaymentIntentStatus, handleStripeWebhook } from "./routes/payments";
+import { createStripePaymentIntent, getPaymentIntentStatus, handleStripeWebhook, getStripeConfig } from "./routes/payments";
 import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
 import { 
   getRolesWithPermissions, 
@@ -423,6 +423,7 @@ export function registerRoutes(app: Express): Server {
     });
 
     // Payment processing endpoints
+    app.get('/api/payments/config', getStripeConfig);
     app.post('/api/payments/create-intent', createStripePaymentIntent);
     app.get('/api/payments/intent/:id', getPaymentIntentStatus);
     app.post('/api/payments/webhook', handleStripeWebhook);

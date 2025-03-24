@@ -7,6 +7,31 @@ import { teams } from '@db/schema';
 import { eq } from 'drizzle-orm';
 
 /**
+ * Get Stripe configuration including publishable key
+ */
+export async function getStripeConfig(req: Request, res: Response) {
+  try {
+    // Return the publishable key from environment variables
+    const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
+    
+    if (!publishableKey) {
+      log('Stripe publishable key not found in environment variables', 'payment');
+      return res.status(500).json({ error: 'Stripe configuration is missing' });
+    }
+    
+    return res.json({
+      publishableKey
+    });
+  } catch (error) {
+    log(`Error retrieving Stripe config: ${error instanceof Error ? error.message : String(error)}`, 'payment');
+    return res.status(500).json({ 
+      error: 'Failed to retrieve Stripe configuration',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+}
+
+/**
  * Create a Stripe payment intent
  */
 export async function createStripePaymentIntent(req: Request, res: Response) {
