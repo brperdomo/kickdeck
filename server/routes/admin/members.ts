@@ -105,9 +105,22 @@ export async function getMemberById(req: Request, res: Response) {
       .leftJoin(teams, eq(players.teamId, teams.id))
       .where(eq(teams.userId, memberId));
     
+    // Transform team registrations to match the frontend's expected format
+    const formattedRegistrations = teamRegistrations.map(reg => ({
+      id: reg.team.id,
+      teamName: reg.team.name,
+      eventName: reg.event?.name || 'Unknown Event',
+      ageGroup: reg.ageGroup?.ageGroup || 'Unknown Age Group',
+      registrationDate: reg.team.createdAt,
+      status: reg.team.status || 'pending',
+      amountPaid: reg.team.registrationFee || 0,
+      termsAccepted: reg.team.termsAccepted || false,
+      termsAcceptedAt: reg.team.termsAcceptedAt || reg.team.createdAt
+    }));
+    
     res.json({
       member,
-      registrations: teamRegistrations,
+      registrations: formattedRegistrations,
       playerCount: playerCount?.count || 0
     });
   } catch (error) {
