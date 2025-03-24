@@ -218,12 +218,16 @@ export const teams = pgTable("teams", {
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   groupId: integer("group_id").references(() => tournamentGroups.id),
   name: text("name").notNull(),
-  coach: text("coach"),
-  managerName: text("manager_name"),
-  managerPhone: text("manager_phone"),
-  managerEmail: text("manager_email"),
+  headCoachName: text("head_coach_name").notNull(),
+  headCoachEmail: text("head_coach_email").notNull(),
+  headCoachPhone: text("head_coach_phone").notNull(),
+  assistantCoachName: text("assistant_coach_name"),
+  managerName: text("manager_name").notNull(),
+  managerPhone: text("manager_phone").notNull(),
+  managerEmail: text("manager_email").notNull(),
   seedRanking: integer("seed_ranking"),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  userId: integer("user_id").references(() => users.id),
 });
 
 export const games = pgTable("games", {
@@ -264,6 +268,57 @@ export type InsertGameTimeSlot = typeof gameTimeSlots.$inferInsert;
 export type SelectGameTimeSlot = typeof gameTimeSlots.$inferSelect;
 export type InsertTournamentGroup = typeof tournamentGroups.$inferInsert;
 export type SelectTournamentGroup = typeof tournamentGroups.$inferSelect;
+export const players = pgTable("players", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").notNull().references(() => teams.id, { onDelete: 'cascade' }),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  jerseyNumber: integer("jersey_number"),
+  dateOfBirth: text("date_of_birth").notNull(),
+  position: text("position"),
+  medicalNotes: text("medical_notes"),
+  parentGuardianName: text("parent_guardian_name"),
+  parentGuardianEmail: text("parent_guardian_email"),
+  parentGuardianPhone: text("parent_guardian_phone"),
+  emergencyContactName: text("emergency_contact_name").notNull(),
+  emergencyContactPhone: text("emergency_contact_phone").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
+export const teamsRelations = relations(teams, ({ many, one }) => ({
+  players: many(players),
+  event: one(events, {
+    fields: [teams.eventId],
+    references: [events.id]
+  }),
+  ageGroup: one(eventAgeGroups, {
+    fields: [teams.ageGroupId],
+    references: [eventAgeGroups.id]
+  }),
+}));
+
+export const playersRelations = relations(players, ({ one }) => ({
+  team: one(teams, {
+    fields: [players.teamId],
+    references: [teams.id]
+  }),
+}));
+
+export const insertPlayerSchema = createInsertSchema(players, {
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  jerseyNumber: z.number().int().min(0).max(99).optional(),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  emergencyContactName: z.string().min(1, "Emergency contact name is required"),
+  emergencyContactPhone: z.string().min(1, "Emergency contact phone is required"),
+});
+
+export const selectPlayerSchema = createSelectSchema(players);
+
+export type InsertPlayer = typeof players.$inferInsert;
+export type SelectPlayer = typeof players.$inferSelect;
 export type InsertTeam = typeof teams.$inferInsert;
 export type SelectTeam = typeof teams.$inferSelect;
 export type InsertGame = typeof games.$inferInsert;
