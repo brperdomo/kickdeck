@@ -218,16 +218,14 @@ export const teams = pgTable("teams", {
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   groupId: integer("group_id").references(() => tournamentGroups.id),
   name: text("name").notNull(),
-  headCoachName: text("head_coach_name").notNull(),
-  headCoachEmail: text("head_coach_email").notNull(),
-  headCoachPhone: text("head_coach_phone").notNull(),
-  assistantCoachName: text("assistant_coach_name"),
-  managerName: text("manager_name").notNull(),
-  managerPhone: text("manager_phone").notNull(),
-  managerEmail: text("manager_email").notNull(),
+  // Use a single coach JSON field to match the actual database structure
+  coach: text("coach"),
+  managerName: text("manager_name"),
+  managerPhone: text("manager_phone"),
+  managerEmail: text("manager_email"),
   seedRanking: integer("seed_ranking"),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
-  userId: integer("user_id").references(() => users.id),
+  // User ID is not in the actual database schema
   // New fields for registration status and fee tracking
   status: text("status").notNull().default("registered"), // registered, approved, rejected, etc.
   registrationFee: integer("registration_fee"), // Store amount in cents
