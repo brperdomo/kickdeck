@@ -54,6 +54,33 @@ export async function retrievePaymentIntent(paymentIntentId: string) {
 }
 
 /**
+ * Update a payment intent status to simulate successful payment
+ * Only used for testing purposes
+ */
+export async function updatePaymentIntentStatus(paymentIntentId: string, status: 'succeeded') {
+  try {
+    // In real Stripe, we can't directly update status, but we can mimic it via test mode
+    const updated = await stripe.paymentIntents.update(
+      paymentIntentId,
+      { metadata: { test_status_simulation: status } }
+    );
+    
+    // For test accounts, this additional call would confirm and mark as succeeded
+    // This will only work in test mode with test keys
+    const confirmed = await stripe.paymentIntents.confirm(
+      paymentIntentId,
+      { payment_method: 'pm_card_visa' } // Using a test payment method
+    );
+    
+    log(`Updated payment intent ${paymentIntentId} to status: ${status}`, 'stripe');
+    return confirmed;
+  } catch (error) {
+    log(`Error updating payment intent status: ${error}`, 'stripe');
+    throw error;
+  }
+}
+
+/**
  * Create a new customer in Stripe
  */
 export async function createCustomer(email: string, name?: string, metadata?: Record<string, string>) {

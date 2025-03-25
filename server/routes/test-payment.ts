@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { log } from '../vite';
-import { createPaymentIntent } from '../services/stripeService';
+import { createPaymentIntent, updatePaymentIntentStatus } from '../services/stripeService';
 import { teams } from '@db/schema';
 import { db } from '@db';
 import { eq } from 'drizzle-orm';
@@ -76,6 +76,15 @@ export async function simulatePaymentWebhook(req: Request, res: Response) {
         termsAcknowledgedAt: new Date()
       })
       .where(eq(teams.id, Number(teamId)));
+    
+    // Update the Stripe payment intent status to succeeded (for test purposes only)
+    try {
+      await updatePaymentIntentStatus(paymentIntentId, 'succeeded');
+      log(`Updated Stripe payment intent ${paymentIntentId} to succeeded status`, 'test-payment');
+    } catch (stripeError) {
+      log(`Warning: Could not update Stripe payment intent status: ${stripeError}`, 'test-payment');
+      // Continue even if Stripe update fails - we've updated our database already
+    }
     
     log(`Simulated successful payment for team ${teamId} with payment ID: ${paymentIntentId}`, 'test-payment');
     
