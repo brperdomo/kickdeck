@@ -362,27 +362,28 @@ export function registerRoutes(app: Express): Server {
         
         // Create the team in a transaction to ensure all operations succeed or fail together
         const result = await db.transaction(async (tx) => {
-          // Insert team with registration info
+          // Insert team with registration info - using proper column mapping
           const [team] = await tx
             .insert(teams)
             .values({
               name,
-              eventId,
-              ageGroupId,
-              headCoachName,
-              headCoachEmail,
-              headCoachPhone,
-              assistantCoachName,
-              managerName,
-              managerEmail,
-              managerPhone,
-              userId,
+              event_id: eventId,  // Correct snake_case for DB columns
+              age_group_id: ageGroupId,  // Correct snake_case for DB columns
+              // Match JavaScript camelCase to database snake_case column names
+              head_coach_name: headCoachName,
+              head_coach_email: headCoachEmail,
+              head_coach_phone: headCoachPhone,
+              assistant_coach_name: assistantCoachName,
+              manager_name: managerName,
+              manager_email: managerEmail,
+              manager_phone: managerPhone,
+              user_id: userId,  // Correct snake_case for DB columns
               // Add new registration fields
               status: "registered", // Initial status - 'registered', 'approved', 'rejected', etc.
-              registrationFee: registrationFee || null,
-              termsAcknowledged: termsAcknowledged || false,
-              termsAcknowledgedAt: termsAcknowledgedAt ? new Date(termsAcknowledgedAt) : new Date(),
-              createdAt: new Date().toISOString(), // Use ISO string for consistency
+              registration_fee: registrationFee || null,  // Correct snake_case for DB columns
+              terms_acknowledged: termsAcknowledged || false,  // Correct snake_case for DB columns
+              terms_acknowledged_at: termsAcknowledgedAt ? new Date(termsAcknowledgedAt) : new Date(),  // Correct snake_case for DB columns
+              created_at: new Date().toISOString(), // Use ISO string for consistency
             })
             .returning();
             
@@ -403,21 +404,21 @@ export function registerRoutes(app: Express): Server {
             }
             
             return {
-              teamId: team.id,
-              firstName: player.firstName,
-              lastName: player.lastName,
-              jerseyNumber: player.jerseyNumber ? parseInt(player.jerseyNumber) : null,
-              dateOfBirth: dateOfBirthValue,
+              team_id: team.id,
+              first_name: player.firstName,
+              last_name: player.lastName,
+              jersey_number: player.jerseyNumber ? parseInt(player.jerseyNumber) : null,
+              date_of_birth: dateOfBirthValue,
               position: player.position || null,
-              medicalNotes: player.medicalNotes || null,
-              parentGuardianName: player.parentGuardianName || null,
-              parentGuardianEmail: player.parentGuardianEmail || null,
-              parentGuardianPhone: player.parentGuardianPhone || null,
-              emergencyContactName: player.emergencyContactName,
-              emergencyContactPhone: player.emergencyContactPhone,
-              isActive: true,
-              createdAt: new Date(),
-              updatedAt: new Date(),
+              medical_notes: player.medicalNotes || null,
+              parent_guardian_name: player.parentGuardianName || null,
+              parent_guardian_email: player.parentGuardianEmail || null,
+              parent_guardian_phone: player.parentGuardianPhone || null,
+              emergency_contact_name: player.emergencyContactName,
+              emergency_contact_phone: player.emergencyContactPhone,
+              is_active: true,
+              created_at: new Date(),
+              updated_at: new Date(),
             };
           });
           
