@@ -1,148 +1,307 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
 import './onboarding.css';
 
-// Define available emotions for the mascot
-export type MascotEmotion = 'excited' | 'thinking' | 'waving' | 'pointing' | 'surprised';
+// All the possible mascot emotions we can render
+export type MascotEmotion = 
+  | 'neutral'      // Default expression 
+  | 'happy'        // Excited, smiling expression
+  | 'thinking'     // Thoughtful, pondering expression
+  | 'confused'     // Confused or puzzled expression
+  | 'pointing'     // Pointing to highlight a feature
+  | 'thumbsUp'     // Giving a thumbs up for success/approval
+  | 'waving'       // Waving hello
+  | 'surprised'    // Surprised or shocked expression
+  | 'celebrating'  // Celebrating an accomplishment
+
+// Size options for the mascot
+type MascotSize = 'sm' | 'md' | 'lg' | 'xl';
 
 interface MascotCharacterProps {
+  /**
+   * Emotional expression of the mascot
+   */
   emotion?: MascotEmotion;
-  size?: 'sm' | 'md' | 'lg';
+  
+  /**
+   * Size of the mascot
+   */
+  size?: MascotSize;
+  
+  /**
+   * Whether to animate the mascot
+   */
+  animate?: boolean;
+  
+  /**
+   * Additional CSS classes
+   */
   className?: string;
 }
 
-// SVG mascot character component with different emotional states
+/**
+ * MascotCharacter component that displays different emotional states
+ * and can be animated to guide the user through the onboarding process.
+ */
 const MascotCharacter: React.FC<MascotCharacterProps> = ({
-  emotion = 'excited',
+  emotion = 'neutral',
   size = 'md',
-  className = '',
+  animate = false,
+  className,
 }) => {
-  // Determine size dimensions based on prop
-  const getSizeStyle = () => {
+  // Map size to dimensions (width/height in pixels)
+  const getSizeDimensions = (): { width: number; height: number } => {
     switch (size) {
-      case 'sm':
-        return { width: '60px', height: '60px' };
-      case 'lg':
-        return { width: '160px', height: '160px' };
-      case 'md':
-      default:
-        return { width: '120px', height: '120px' };
+      case 'sm': return { width: 40, height: 40 };
+      case 'md': return { width: 60, height: 60 };
+      case 'lg': return { width: 80, height: 80 };
+      case 'xl': return { width: 120, height: 120 };
+      default: return { width: 60, height: 60 }; // Default to medium
     }
   };
   
-  // Determine emotion-specific classes or animations
-  const getEmotionClass = () => {
+  // Get SVG content based on emotion
+  const renderMascotSVG = () => {
+    const { width, height } = getSizeDimensions();
+    
+    // Common SVG attributes
+    const svgProps = {
+      width,
+      height,
+      viewBox: "0 0 100 100",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg",
+      className: cn(
+        "mascot-character",
+        animate && "animate",
+        className
+      )
+    };
+    
     switch (emotion) {
-      case 'excited':
-        return 'animate-bounce-mascot';
-      case 'waving':
-        return 'animate-wave';
-      case 'thinking':
-      case 'pointing':
-      case 'surprised':
-      default:
-        return '';
-    }
-  };
-  
-  // Render the appropriate SVG based on the selected emotion
-  const renderMascot = () => {
-    switch (emotion) {
-      case 'excited':
+      case 'happy':
         return (
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            {/* Soccer ball mascot excited */}
-            <circle cx="100" cy="100" r="80" fill="white" stroke="black" strokeWidth="3" />
-            <path d="M100,20 L120,40 L140,30 L130,60 L150,80 L120,80 L100,100 L80,80 L50,80 L70,60 L60,30 L80,40 Z" fill="black" />
-            <circle cx="70" cy="80" r="10" fill="white" />
-            <circle cx="130" cy="80" r="10" fill="white" />
-            <circle cx="70" cy="80" r="5" fill="black" />
-            <circle cx="130" cy="80" r="5" fill="black" />
-            <path d="M70,120 Q100,150 130,120" fill="none" stroke="black" strokeWidth="3" />
+          <svg {...svgProps}>
+            {/* Base mascot body */}
+            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
+            
+            {/* Face */}
+            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
+            
+            {/* Eyes */}
+            <circle cx="35" cy="45" r="5" fill="#312E81" />
+            <circle cx="65" cy="45" r="5" fill="#312E81" />
+            
+            {/* Smile */}
+            <path d="M35 65 Q50 80 65 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
+            
+            {/* Rosy cheeks */}
+            <circle cx="28" cy="55" r="5" fill="#FDA4AF" fillOpacity="0.6" />
+            <circle cx="72" cy="55" r="5" fill="#FDA4AF" fillOpacity="0.6" />
           </svg>
         );
+      
       case 'thinking':
         return (
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            {/* Soccer ball mascot thinking */}
-            <circle cx="100" cy="100" r="80" fill="white" stroke="black" strokeWidth="3" />
-            <path d="M100,20 L120,40 L140,30 L130,60 L150,80 L120,80 L100,100 L80,80 L50,80 L70,60 L60,30 L80,40 Z" fill="black" />
-            <circle cx="70" cy="80" r="10" fill="white" />
-            <circle cx="130" cy="80" r="10" fill="white" />
-            <circle cx="70" cy="80" r="5" fill="black" />
-            <circle cx="130" cy="80" r="5" fill="black" transform="rotate(20 130 80)" />
-            <path d="M80,120 Q100,125 120,120" fill="none" stroke="black" strokeWidth="3" />
-            <circle cx="150" cy="60" r="15" fill="white" stroke="black" strokeWidth="2" />
-            <circle cx="160" cy="40" r="10" fill="white" stroke="black" strokeWidth="2" />
+          <svg {...svgProps}>
+            {/* Base mascot body */}
+            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
+            
+            {/* Face */}
+            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
+            
+            {/* Eyes */}
+            <circle cx="35" cy="45" r="5" fill="#312E81" />
+            <circle cx="65" cy="45" r="5" fill="#312E81" />
+            
+            {/* Thinking expression - raised eyebrow and hand */}
+            <path d="M30 38 Q35 35 40 38" stroke="#312E81" strokeWidth="2" strokeLinecap="round" />
+            <path d="M40 65 Q50 67 60 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
+            
+            {/* Hand on chin */}
+            <path d="M20 70 Q35 85 40 70" stroke="#4F46E5" strokeWidth="5" strokeLinecap="round" />
+            
+            {/* Thought bubble */}
+            <circle cx="80" cy="25" r="3" fill="#C7D2FE" />
+            <circle cx="85" cy="20" r="5" fill="#C7D2FE" />
+            <circle cx="92" cy="15" r="7" fill="#C7D2FE" />
           </svg>
         );
-      case 'waving':
+      
+      case 'confused':
         return (
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            {/* Soccer ball mascot waving */}
-            <circle cx="100" cy="100" r="80" fill="white" stroke="black" strokeWidth="3" />
-            <path d="M100,20 L120,40 L140,30 L130,60 L150,80 L120,80 L100,100 L80,80 L50,80 L70,60 L60,30 L80,40 Z" fill="black" />
-            <circle cx="70" cy="80" r="10" fill="white" />
-            <circle cx="130" cy="80" r="10" fill="white" />
-            <circle cx="70" cy="80" r="5" fill="black" />
-            <circle cx="130" cy="80" r="5" fill="black" />
-            <path d="M70,120 Q100,140 130,120" fill="none" stroke="black" strokeWidth="3" />
-            <path d="M150,50 Q170,40 180,50 Q190,60 180,70 Q170,80 160,70 Q150,60 150,50 Z" fill="white" stroke="black" strokeWidth="2" />
+          <svg {...svgProps}>
+            {/* Base mascot body */}
+            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
+            
+            {/* Face */}
+            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
+            
+            {/* Eyes */}
+            <circle cx="35" cy="45" r="5" fill="#312E81" />
+            <circle cx="65" cy="45" r="5" fill="#312E81" />
+            
+            {/* Confused expression - raised eyebrow and squiggly mouth */}
+            <path d="M30 38 Q35 35 40 38" stroke="#312E81" strokeWidth="2" strokeLinecap="round" />
+            <path d="M35 65 Q45 60 50 65 Q55 70 65 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
+            
+            {/* Question mark above head */}
+            <path d="M65 15 Q75 15 75 25 Q75 35 65 35 L65 45" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
+            <circle cx="65" cy="50" r="2" fill="#312E81" />
           </svg>
         );
+      
       case 'pointing':
         return (
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            {/* Soccer ball mascot pointing */}
-            <circle cx="100" cy="100" r="80" fill="white" stroke="black" strokeWidth="3" />
-            <path d="M100,20 L120,40 L140,30 L130,60 L150,80 L120,80 L100,100 L80,80 L50,80 L70,60 L60,30 L80,40 Z" fill="black" />
-            <circle cx="70" cy="80" r="10" fill="white" />
-            <circle cx="130" cy="80" r="10" fill="white" />
-            <circle cx="70" cy="80" r="5" fill="black" />
-            <circle cx="130" cy="80" r="5" fill="black" />
-            <path d="M80,120 Q100,130 120,120" fill="none" stroke="black" strokeWidth="3" />
-            <path d="M160,100 L180,60" fill="none" stroke="black" strokeWidth="3" />
-            <circle cx="180" cy="55" r="5" fill="white" stroke="black" strokeWidth="2" />
+          <svg {...svgProps}>
+            {/* Base mascot body */}
+            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
+            
+            {/* Face */}
+            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
+            
+            {/* Eyes */}
+            <circle cx="35" cy="45" r="5" fill="#312E81" />
+            <circle cx="65" cy="45" r="5" fill="#312E81" />
+            
+            {/* Neutral expression */}
+            <path d="M40 65 Q50 67 60 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
+            
+            {/* Pointing arm */}
+            <path d="M80 30 L100 10" stroke="#4F46E5" strokeWidth="5" strokeLinecap="round" />
+            <path d="M75 45 Q85 35 80 30" stroke="#4F46E5" strokeWidth="5" strokeLinecap="round" />
           </svg>
         );
+      
+      case 'thumbsUp':
+        return (
+          <svg {...svgProps}>
+            {/* Base mascot body */}
+            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
+            
+            {/* Face */}
+            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
+            
+            {/* Eyes */}
+            <circle cx="35" cy="45" r="5" fill="#312E81" />
+            <circle cx="65" cy="45" r="5" fill="#312E81" />
+            
+            {/* Smile */}
+            <path d="M35 65 Q50 75 65 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
+            
+            {/* Thumbs up arm */}
+            <path d="M75 40 L85 25 L95 35 L90 50 L75 40Z" fill="#4F46E5" stroke="#312E81" strokeWidth="2" />
+            <path d="M75 50 Q65 70 75 40" stroke="#4F46E5" strokeWidth="5" strokeLinecap="round" />
+          </svg>
+        );
+      
+      case 'waving':
+        return (
+          <svg {...svgProps}>
+            {/* Base mascot body */}
+            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
+            
+            {/* Face */}
+            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
+            
+            {/* Eyes */}
+            <circle cx="35" cy="45" r="5" fill="#312E81" />
+            <circle cx="65" cy="45" r="5" fill="#312E81" />
+            
+            {/* Smile */}
+            <path d="M35 65 Q50 75 65 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
+            
+            {/* Waving arm */}
+            <path 
+              d="M85 30 Q95 20 90 10" 
+              stroke="#4F46E5" 
+              strokeWidth="5" 
+              strokeLinecap="round"
+              className="wave-arm"
+            />
+            <path d="M75 45 Q85 35 85 30" stroke="#4F46E5" strokeWidth="5" strokeLinecap="round" />
+          </svg>
+        );
+      
       case 'surprised':
         return (
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            {/* Soccer ball mascot surprised */}
-            <circle cx="100" cy="100" r="80" fill="white" stroke="black" strokeWidth="3" />
-            <path d="M100,20 L120,40 L140,30 L130,60 L150,80 L120,80 L100,100 L80,80 L50,80 L70,60 L60,30 L80,40 Z" fill="black" />
-            <circle cx="70" cy="80" r="12" fill="white" />
-            <circle cx="130" cy="80" r="12" fill="white" />
-            <circle cx="70" cy="80" r="5" fill="black" />
-            <circle cx="130" cy="80" r="5" fill="black" />
-            <circle cx="100" cy="120" r="15" fill="none" stroke="black" strokeWidth="3" />
+          <svg {...svgProps}>
+            {/* Base mascot body */}
+            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
+            
+            {/* Face */}
+            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
+            
+            {/* Wide eyes */}
+            <circle cx="35" cy="45" r="7" fill="#312E81" />
+            <circle cx="65" cy="45" r="7" fill="#312E81" />
+            <circle cx="35" cy="45" r="2" fill="white" />
+            <circle cx="65" cy="45" r="2" fill="white" />
+            
+            {/* Surprised mouth */}
+            <circle cx="50" cy="65" r="8" fill="#312E81" />
+            <circle cx="50" cy="63" r="5" fill="#C7D2FE" />
+            
+            {/* Exclamation mark */}
+            <path d="M50 10 L50 25" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
+            <circle cx="50" cy="30" r="2" fill="#312E81" />
           </svg>
         );
+      
+      case 'celebrating':
+        return (
+          <svg {...svgProps}>
+            {/* Base mascot body */}
+            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
+            
+            {/* Face */}
+            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
+            
+            {/* Happy eyes */}
+            <path d="M30 43 Q35 38 40 43" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
+            <path d="M60 43 Q65 38 70 43" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
+            
+            {/* Big smile */}
+            <path d="M35 65 Q50 80 65 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
+            
+            {/* Party hat */}
+            <path d="M30 20 L50 5 L70 20" fill="#FCD34D" stroke="#312E81" strokeWidth="2" />
+            
+            {/* Confetti */}
+            <circle cx="25" cy="25" r="2" fill="#EC4899" />
+            <circle cx="35" cy="15" r="2" fill="#10B981" />
+            <circle cx="75" cy="25" r="2" fill="#EC4899" />
+            <circle cx="85" cy="35" r="2" fill="#10B981" />
+            <path d="M20 30 L25 35" stroke="#FCD34D" strokeWidth="2" strokeLinecap="round" />
+            <path d="M70 15 L75 20" stroke="#10B981" strokeWidth="2" strokeLinecap="round" />
+            <path d="M80 25 L85 30" stroke="#EC4899" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        );
+      
+      case 'neutral':
       default:
         return (
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            {/* Default soccer ball mascot */}
-            <circle cx="100" cy="100" r="80" fill="white" stroke="black" strokeWidth="3" />
-            <path d="M100,20 L120,40 L140,30 L130,60 L150,80 L120,80 L100,100 L80,80 L50,80 L70,60 L60,30 L80,40 Z" fill="black" />
-            <circle cx="70" cy="80" r="10" fill="white" />
-            <circle cx="130" cy="80" r="10" fill="white" />
-            <circle cx="70" cy="80" r="5" fill="black" />
-            <circle cx="130" cy="80" r="5" fill="black" />
-            <path d="M70,120 Q100,140 130,120" fill="none" stroke="black" strokeWidth="3" />
+          <svg {...svgProps}>
+            {/* Base mascot body */}
+            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
+            
+            {/* Face */}
+            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
+            
+            {/* Eyes */}
+            <circle cx="35" cy="45" r="5" fill="#312E81" />
+            <circle cx="65" cy="45" r="5" fill="#312E81" />
+            
+            {/* Neutral expression */}
+            <path d="M40 65 Q50 67 60 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
           </svg>
         );
     }
   };
-  
-  // Combining size, emotion class, and any additional classes
-  const combinedClasses = `mascot-character ${getEmotionClass()} ${className}`;
   
   return (
-    <div 
-      className={combinedClasses} 
-      style={getSizeStyle()}
-      aria-label={`Mascot with ${emotion} emotion`}
-    >
-      {renderMascot()}
+    <div className="mascot-character-container">
+      {renderMascotSVG()}
     </div>
   );
 };
