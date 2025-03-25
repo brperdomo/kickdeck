@@ -367,18 +367,20 @@ export function registerRoutes(app: Express): Server {
         
         // Create the team in a transaction to ensure all operations succeed or fail together
         const result = await db.transaction(async (tx) => {
-          // Insert team with registration info - using proper column mapping
+          // Insert team with registration info - using proper column mapping that matches actual DB schema
           const [team] = await tx
             .insert(teams)
             .values({
               name,
               event_id: eventId,  // Correct snake_case for DB columns
               age_group_id: ageGroupId,  // Correct snake_case for DB columns
-              // Match JavaScript camelCase to database snake_case column names
-              head_coach_name: headCoachName,
-              head_coach_email: headCoachEmail,
-              head_coach_phone: headCoachPhone,
-              assistant_coach_name: assistantCoachName,
+              // Combine coach data into a single JSON field to match the 'coach' column in DB
+              coach: JSON.stringify({
+                headCoachName,
+                headCoachEmail,
+                headCoachPhone,
+                assistantCoachName
+              }),
               manager_name: managerName,
               manager_email: managerEmail,
               manager_phone: managerPhone,
