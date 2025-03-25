@@ -68,7 +68,7 @@ import {
   formFieldOptions,
   formResponses,
   teams,
-  players,
+  players as playersTable,
   games,
   gameTimeSlots,
   eventSettings,
@@ -405,7 +405,7 @@ export function registerRoutes(app: Express): Server {
           // Insert players using the schema's property names (camelCase)
           try {
             console.log('Players data to insert:', JSON.stringify(players, null, 2));
-            console.log('Players table schema:', JSON.stringify(players, null, 2));
+            console.log('Players table schema:', JSON.stringify(playersTable, null, 2));
             
             for (const player of players) {
               console.log(`Processing player: ${player.firstName} ${player.lastName}`);
@@ -460,7 +460,7 @@ export function registerRoutes(app: Express): Server {
                 
                 // IMPORTANT: Use camelCase with Drizzle ORM - it maps to snake_case columns automatically
                 const insertResult = await tx
-                  .insert(players)
+                  .insert(playersTable)
                   .values({
                     teamId: team.id, 
                     firstName: player.firstName,
