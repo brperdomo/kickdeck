@@ -101,7 +101,7 @@ export async function getPaymentIntentStatus(req: Request, res: Response) {
           .set({
             paymentStatus: 'paid',
             paymentAmount: paymentIntent.amount,
-            paymentDate: new Date().toISOString(),
+            paymentDate: new Date(), // Use Date object directly
             paymentId: paymentIntent.id
           })
           .where(eq(teams.id, parseInt(paymentIntent.metadata.teamId)));
@@ -171,7 +171,7 @@ export async function handleStripeWebhook(req: Request, res: Response) {
             .set({
               paymentStatus: 'paid',
               paymentAmount: paymentIntent.amount,
-              paymentDate: new Date().toISOString(),
+              paymentDate: new Date(), // Use Date object directly
               paymentId: paymentIntent.id
             })
             .where(eq(teams.id, parseInt(paymentIntent.metadata.teamId)));
