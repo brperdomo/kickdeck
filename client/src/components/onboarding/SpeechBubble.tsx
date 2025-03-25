@@ -1,154 +1,116 @@
 import React from 'react';
+import { X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import ReactMarkdown from 'react-markdown';
-import { XCircle } from 'lucide-react';
 import MascotCharacter, { MascotEmotion } from './MascotCharacter';
 import './onboarding.css';
 
 interface SpeechBubbleProps {
   message: string;
   position?: 'top' | 'right' | 'bottom' | 'left';
-  actionLabel?: string;
-  onAction?: () => void;
   onClose?: () => void;
-  showClose?: boolean;
-  showMascot?: boolean;
+  onAction?: () => void;
+  actionLabel?: string;
+  width?: number;
   mascotEmotion?: MascotEmotion;
-  width?: string | number;
-  maxHeight?: string | number;
+  showMascot?: boolean;
+  className?: string;
 }
 
 const SpeechBubble: React.FC<SpeechBubbleProps> = ({
   message,
-  position = 'top',
-  actionLabel,
-  onAction,
+  position = 'bottom',
   onClose,
-  showClose = true,
-  showMascot = true,
-  mascotEmotion = 'excited',
+  onAction,
+  actionLabel = 'Got it',
   width = 300,
-  maxHeight = 'none',
+  mascotEmotion = 'excited',
+  showMascot = true,
+  className = '',
 }) => {
-  // Style for the bubble wrapper
-  const bubbleStyle: React.CSSProperties = {
-    position: 'relative',
-    width: typeof width === 'number' ? `${width}px` : width,
-    maxHeight: maxHeight,
-    overflow: maxHeight !== 'none' ? 'auto' : 'visible',
+  // Determine speech bubble styling based on position
+  const getBubbleStyles = () => {
+    const baseStyles = {
+      width: `${width}px`,
+      maxWidth: '100%',
+    };
+    
+    // Add position-specific styles
+    switch (position) {
+      case 'top':
+        return {
+          ...baseStyles,
+          clipPath: 'polygon(0% 0%, 100% 0%, 100% 95%, 55% 95%, 50% 100%, 45% 95%, 0% 95%)',
+        };
+      case 'right':
+        return {
+          ...baseStyles,
+          clipPath: 'polygon(5% 0%, 100% 0%, 100% 100%, 5% 100%, 5% 55%, 0% 50%, 5% 45%)',
+        };
+      case 'bottom':
+        return {
+          ...baseStyles,
+          clipPath: 'polygon(0% 5%, 45% 5%, 50% 0%, 55% 5%, 100% 5%, 100% 100%, 0% 100%)',
+        };
+      case 'left':
+        return {
+          ...baseStyles,
+          clipPath: 'polygon(0% 0%, 95% 0%, 95% 45%, 100% 50%, 95% 55%, 95% 100%, 0% 100%)',
+        };
+      default:
+        return baseStyles;
+    }
   };
   
-  // Style for the speech bubble with appropriate arrow
-  const speechBubbleStyle: React.CSSProperties = {
-    backgroundColor: 'white',
-    color: '#333',
-    padding: '16px',
-    borderRadius: '12px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    position: 'relative',
-    zIndex: 2,
-  };
-  
-  // Add arrow based on position
-  const arrowStyle: React.CSSProperties = {
-    position: 'absolute',
-    width: '20px',
-    height: '20px',
-    backgroundColor: 'white',
-    transform: 'rotate(45deg)',
-    zIndex: 1,
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-  };
-  
-  // Calculate arrow position based on bubble position
-  switch (position) {
-    case 'top':
-      arrowStyle.bottom = '-10px';
-      arrowStyle.left = '50%';
-      arrowStyle.marginLeft = '-10px';
-      break;
-    case 'right':
-      arrowStyle.left = '-10px';
-      arrowStyle.top = '50%';
-      arrowStyle.marginTop = '-10px';
-      break;
-    case 'bottom':
-      arrowStyle.top = '-10px';
-      arrowStyle.left = '50%';
-      arrowStyle.marginLeft = '-10px';
-      break;
-    case 'left':
-      arrowStyle.right = '-10px';
-      arrowStyle.top = '50%';
-      arrowStyle.marginTop = '-10px';
-      break;
-  }
+  // Combined className
+  const bubbleClassName = `speech-bubble ${position} bg-white p-4 rounded-lg shadow-md ${className}`;
   
   return (
-    <div style={bubbleStyle} className="fade-in">
-      <div style={speechBubbleStyle}>
-        {/* Close button */}
-        {showClose && onClose && (
+    <div className="speech-bubble-container">
+      {/* Mascot Character (optional) */}
+      {showMascot && (
+        <div className={`speech-mascot speech-mascot-${position}`}>
+          <MascotCharacter emotion={mascotEmotion} size="sm" />
+        </div>
+      )}
+      
+      {/* Speech Bubble Card */}
+      <Card 
+        className={bubbleClassName} 
+        style={getBubbleStyles()}
+      >
+        {/* Close Button */}
+        {onClose && (
           <button 
             onClick={onClose}
-            className="absolute top-2 right-2 text-gray-400 hover:text-gray-800 transition-colors"
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700" 
             aria-label="Close"
           >
-            <XCircle size={18} />
+            <X size={16} />
           </button>
         )}
         
         {/* Content */}
-        <div className="flex gap-4">
-          {/* Mascot character */}
-          {showMascot && (
-            <div className="flex-shrink-0">
-              <MascotCharacter emotion={mascotEmotion} size="sm" />
-            </div>
-          )}
-          
-          {/* Message content with markdown support */}
-          <div className="flex-grow">
-            <div className="prose prose-sm max-w-none mb-4">
-              <ReactMarkdown>
-                {message}
-              </ReactMarkdown>
-            </div>
-            
-            {/* Action button */}
-            {actionLabel && onAction && (
-              <button
-                onClick={onAction}
-                className="px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-md text-sm font-medium transition-colors"
-                aria-label={actionLabel}
-              >
-                {actionLabel}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-      
-      {/* Arrow */}
-      <div style={arrowStyle} />
-      
-      {/* Optional styled content */}
-      <style>
-        {`
-          .prose h1, .prose h2, .prose h3, .prose h4 {
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-          }
-          .prose p {
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-          }
-          .prose ul, .prose ol {
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
-            padding-left: 1.5em;
-          }
-        `}
-      </style>
+        <CardContent className="pt-6 pb-2">
+          <ReactMarkdown className="prose prose-sm max-w-none">
+            {message}
+          </ReactMarkdown>
+        </CardContent>
+        
+        {/* Action Button (optional) */}
+        {onAction && (
+          <CardFooter className="flex justify-end pt-2 pb-2">
+            <Button 
+              variant="default" 
+              size="sm" 
+              onClick={onAction}
+            >
+              {actionLabel}
+            </Button>
+          </CardFooter>
+        )}
+      </Card>
     </div>
   );
 };

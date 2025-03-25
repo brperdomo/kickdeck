@@ -1,172 +1,170 @@
-import React, { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import React, { useState } from 'react';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
-import { X, ArrowRight, ArrowLeft } from 'lucide-react';
-import { MascotCharacter, MascotEmotion } from './MascotCharacter';
-import { useOnboarding } from './OnboardingContext';
+import MascotCharacter, { MascotEmotion } from './MascotCharacter';
 import './onboarding.css';
 
-export interface OnboardingStep {
+interface OnboardingStep {
   title: string;
   description: string;
-  image?: string;
   mascotEmotion?: MascotEmotion;
+  nextButtonText?: string;
+  prevButtonText?: string;
+  skipButtonText?: string;
+  footerContent?: React.ReactNode;
 }
 
 interface OnboardingModalProps {
+  steps: OnboardingStep[];
+  initialStep?: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  steps: OnboardingStep[];
-  title?: string;
   onComplete?: () => void;
+  showSkip?: boolean;
+  onSkip?: () => void;
+  showProgress?: boolean;
+  showMascot?: boolean;
+  mascotSize?: 'sm' | 'md' | 'lg';
 }
 
 const OnboardingModal: React.FC<OnboardingModalProps> = ({
+  steps,
+  initialStep = 0,
   open,
   onOpenChange,
-  steps,
-  title = 'Welcome to MatchPro.ai!',
   onComplete,
+  showSkip = true,
+  onSkip,
+  showProgress = true,
+  showMascot = true,
+  mascotSize = 'lg',
 }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const { completeOnboarding } = useOnboarding();
-
-  // Reset to first step when modal opens
-  useEffect(() => {
-    if (open) {
-      setCurrentStep(0);
-    }
-  }, [open]);
-
+  const [currentStep, setCurrentStep] = useState(initialStep);
+  
+  // Ensure current step is within bounds
+  const safeCurrentStep = Math.max(0, Math.min(currentStep, steps.length - 1));
+  const currentStepData = steps[safeCurrentStep];
+  
+  // Progress calculation
+  const progress = ((safeCurrentStep + 1) / steps.length) * 100;
+  
+  // Handle next step
   const handleNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+    if (safeCurrentStep < steps.length - 1) {
+      setCurrentStep(safeCurrentStep + 1);
     } else {
-      handleComplete();
+      // Last step - complete the onboarding
+      if (onComplete) {
+        onComplete();
+      }
+      onOpenChange(false);
     }
   };
-
+  
+  // Handle previous step
   const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+    if (safeCurrentStep > 0) {
+      setCurrentStep(safeCurrentStep - 1);
     }
   };
-
-  const handleComplete = () => {
-    onOpenChange(false);
-    if (onComplete) {
-      onComplete();
-    }
-    completeOnboarding();
-  };
-
+  
+  // Handle skip
   const handleSkip = () => {
+    if (onSkip) {
+      onSkip();
+    }
     onOpenChange(false);
-    completeOnboarding();
   };
-
-  if (steps.length === 0) return null;
-
-  const step = steps[currentStep];
-  const isLastStep = currentStep === steps.length - 1;
-
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl p-0 gap-0 overflow-hidden">
-        <div className="absolute top-4 right-4 z-10">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => onOpenChange(false)}
-            className="rounded-full h-6 w-6 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+      <DialogContent className="onboarding-modal sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-2xl">{currentStepData.title}</DialogTitle>
+          
+          {/* Progress indicator */}
+          {showProgress && (
+            <div className="w-full h-1 bg-gray-200 rounded-full mb-4 mt-2">
+              <div 
+                className="h-1 bg-primary rounded-full transition-all duration-300 ease-in-out" 
+                style={{ width: `${progress}%` }}
+                role="progressbar"
+                aria-valuenow={progress}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              />
+            </div>
+          )}
+        </DialogHeader>
+        
+        <div className="flex flex-col md:flex-row gap-4 py-4">
+          {/* Mascot display */}
+          {showMascot && (
+            <div className="flex-shrink-0 flex items-center justify-center">
+              <MascotCharacter 
+                emotion={currentStepData.mascotEmotion || 'excited'} 
+                size={mascotSize} 
+              />
+            </div>
+          )}
+          
+          {/* Content */}
+          <div className="flex-grow">
+            <DialogDescription className="text-base">
+              {currentStepData.description}
+            </DialogDescription>
+          </div>
         </div>
         
-        <div className="flex flex-col md:flex-row">
-          {/* Left panel - Image/Mascot section */}
-          <div className="flex-1 bg-gradient-to-br from-green-100 to-green-50 dark:from-slate-800 dark:to-slate-900 p-6 md:p-10 flex flex-col items-center justify-center relative">
-            <div className="w-full max-w-xs">
-              {step.image ? (
-                <img 
-                  src={step.image} 
-                  alt={step.title} 
-                  className="w-full h-auto rounded-lg shadow-md mx-auto"
-                />
-              ) : (
-                <div className="w-full h-full flex justify-center items-center py-8">
-                  <MascotCharacter 
-                    emotion={step.mascotEmotion || 'happy'} 
-                    size="lg" 
-                    animated={true}
-                  />
-                </div>
-              )}
-            </div>
+        {/* Custom footer content */}
+        {currentStepData.footerContent && (
+          <div className="mb-4">
+            {currentStepData.footerContent}
+          </div>
+        )}
+        
+        <DialogFooter className="flex justify-between sm:justify-between">
+          <div className="flex gap-2">
+            {/* Back button - only show if not on first step */}
+            {safeCurrentStep > 0 && (
+              <Button 
+                variant="outline" 
+                onClick={handlePrevious}
+                className="text-sm"
+              >
+                {currentStepData.prevButtonText || 'Back'}
+              </Button>
+            )}
+            
+            {/* Skip button */}
+            {showSkip && (
+              <Button 
+                variant="ghost" 
+                onClick={handleSkip}
+                className="text-sm text-gray-500"
+              >
+                {currentStepData.skipButtonText || 'Skip'}
+              </Button>
+            )}
           </div>
           
-          {/* Right panel - Content section */}
-          <div className="flex-1 p-6 md:p-10 flex flex-col">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-              {currentStep === 0 ? title : step.title}
-            </h2>
-            
-            <div className="mb-4 text-slate-600 dark:text-slate-300">
-              <p>{step.description}</p>
-            </div>
-
-            <div className="mt-auto flex items-center justify-between">
-              <div className="flex gap-2">
-                {currentStep > 0 && (
-                  <Button 
-                    variant="outline" 
-                    onClick={handlePrevious}
-                    className="gap-1"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Back
-                  </Button>
-                )}
-                
-                {currentStep === 0 && (
-                  <Button 
-                    variant="ghost" 
-                    onClick={handleSkip}
-                    className="text-slate-500"
-                  >
-                    Skip tour
-                  </Button>
-                )}
-              </div>
-              
-              <div className="flex items-center gap-4">
-                <div className="flex gap-1">
-                  {steps.map((_, index) => (
-                    <span 
-                      key={index}
-                      className={cn(
-                        "block h-2 w-2 rounded-full transition-colors",
-                        index === currentStep 
-                          ? "bg-green-500" 
-                          : "bg-slate-200 dark:bg-slate-700"
-                      )}
-                    />
-                  ))}
-                </div>
-                
-                <Button 
-                  onClick={handleNext}
-                  className="gap-1 bg-green-600 hover:bg-green-700"
-                >
-                  {isLastStep ? 'Get Started' : 'Next'}
-                  {!isLastStep && <ArrowRight className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+          {/* Next/Complete button */}
+          <Button 
+            onClick={handleNext}
+            className="text-sm"
+          >
+            {safeCurrentStep < steps.length - 1 
+              ? (currentStepData.nextButtonText || 'Next') 
+              : 'Complete'}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
