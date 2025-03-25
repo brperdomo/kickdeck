@@ -369,7 +369,7 @@ export function registerRoutes(app: Express): Server {
         // Create the team in a transaction to ensure all operations succeed or fail together
         const result = await db.transaction(async (tx) => {
           // Insert team with registration info - using proper property names that match the schema
-          const [team] = await tx
+          const insertedTeam = await tx
             .insert(teams)
             .values({
               name,
@@ -393,6 +393,9 @@ export function registerRoutes(app: Express): Server {
               createdAt: new Date().toISOString() // Use camelCase as defined in the schema
             })
             .returning();
+          
+          // Get the first team from the returned array
+          const team = insertedTeam[0];
             
           console.log('Team created with ID:', team?.id, 'Team data:', JSON.stringify(team, null, 2));
             
@@ -448,27 +451,38 @@ export function registerRoutes(app: Express): Server {
                 const now = new Date().toISOString();
                 const jerseyNumberInt = player.jerseyNumber ? parseInt(player.jerseyNumber) : null;
                 
+                // Debug team object
+                console.log("Team object for player insertion:", JSON.stringify(team, null, 2));
+                
+                if (!team || typeof team.id === 'undefined') {
+                  console.error("Team ID is missing or undefined!");
+                  throw new Error("Team ID is missing for player insertion");
+                }
+                
                 // Use Drizzle's insert method which handles the field name mapping properly
-                const [insertedPlayer] = await tx
+                const insertResult = await tx
                   .insert(players)
                   .values({
-                    teamId: team.id,
-                    firstName: player.firstName,
-                    lastName: player.lastName,
-                    jerseyNumber: jerseyNumberInt,
-                    dateOfBirth: dateOfBirthValue || player.dateOfBirth || now,
+                    team_id: team.id, // Use snake_case for direct SQL insert
+                    first_name: player.firstName,
+                    last_name: player.lastName,
+                    jersey_number: jerseyNumberInt,
+                    date_of_birth: dateOfBirthValue || player.dateOfBirth || now,
                     position: player.position || null,
-                    medicalNotes: player.medicalNotes || null,
-                    parentGuardianName: player.parentGuardianName || null,
-                    parentGuardianEmail: player.parentGuardianEmail || null,
-                    parentGuardianPhone: player.parentGuardianPhone || null,
-                    emergencyContactName: player.emergencyContactName,
-                    emergencyContactPhone: player.emergencyContactPhone,
-                    isActive: true,
-                    createdAt: now,
-                    updatedAt: now
+                    medical_notes: player.medicalNotes || null,
+                    parent_guardian_name: player.parentGuardianName || null,
+                    parent_guardian_email: player.parentGuardianEmail || null,
+                    parent_guardian_phone: player.parentGuardianPhone || null,
+                    emergency_contact_name: player.emergencyContactName,
+                    emergency_contact_phone: player.emergencyContactPhone,
+                    is_active: true,
+                    created_at: now,
+                    updated_at: now
                   })
                   .returning();
+                  
+                // Get the first player from the returned array
+                const insertedPlayer = insertResult[0];
                 
                 console.log('Player inserted successfully with ID:', insertedPlayer?.id);
                 insertedPlayerId = insertedPlayer?.id;
