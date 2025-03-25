@@ -10,7 +10,7 @@ import { SQL, sql } from 'drizzle-orm';
  */
 export async function getAllMembers(req: Request, res: Response) {
   try {
-    const { search, page = '1', limit = '10', sort = 'lastName', order = 'asc' } = req.query;
+    const { search, page = '1', limit = '15', sort = 'lastName', order = 'asc' } = req.query;
     const pageNumber = parseInt(page as string);
     const limitNumber = parseInt(limit as string);
     const offset = (pageNumber - 1) * limitNumber;

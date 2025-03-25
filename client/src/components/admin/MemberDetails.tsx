@@ -83,7 +83,7 @@ const MemberDetails: React.FC = () => {
   const [confirmResendOpen, setConfirmResendOpen] = useState(false);
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize] = useState(15);
 
   // Query to fetch members with pagination and search
   const membersQuery = useQuery({
@@ -180,6 +180,12 @@ const MemberDetails: React.FC = () => {
     <div className="space-y-4">
       {/* Search and filters */}
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold mb-2">All Members</h3>
+          <p className="text-sm text-muted-foreground">
+            View and manage all registered members in the system.
+          </p>
+        </div>
         <div className="flex items-center gap-2 w-full md:w-[300px]">
           <div className="relative w-full">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -194,8 +200,8 @@ const MemberDetails: React.FC = () => {
       </div>
 
       {/* Members table */}
-      <Card>
-        <CardHeader>
+      <Card className="border shadow-sm">
+        <CardHeader className="bg-card">
           <CardTitle>Members</CardTitle>
           <CardDescription>
             Manage and track all members, their registrations, and payment information.
@@ -203,7 +209,7 @@ const MemberDetails: React.FC = () => {
         </CardHeader>
         <CardContent>
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-muted/50">
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
@@ -272,27 +278,36 @@ const MemberDetails: React.FC = () => {
           </Table>
 
           {/* Pagination */}
-          {membersQuery.data?.totalPages > 1 && (
-            <div className="flex items-center justify-end space-x-2 mt-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((old) => Math.max(old - 1, 1))}
-                disabled={currentPage === 1 || membersQuery.isLoading}
-              >
-                Previous
-              </Button>
-              <div className="text-sm">
-                Page {currentPage} of {membersQuery.data?.totalPages}
+          {membersQuery.data?.pagination && (
+            <div className="flex items-center justify-between border-t border-border py-4 px-1 mt-4">
+              <div className="text-sm text-muted-foreground">
+                Showing <span className="font-medium">{((membersQuery.data.pagination.page - 1) * membersQuery.data.pagination.limit) + 1}</span> to <span className="font-medium">{Math.min(membersQuery.data.pagination.page * membersQuery.data.pagination.limit, membersQuery.data.pagination.total)}</span> of <span className="font-medium">{membersQuery.data.pagination.total}</span> members
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((old) => Math.min(old + 1, membersQuery.data?.totalPages || 1))}
-                disabled={currentPage === membersQuery.data?.totalPages || membersQuery.isLoading}
-              >
-                Next
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((old) => Math.max(old - 1, 1))}
+                  disabled={currentPage === 1 || membersQuery.isLoading}
+                  className="h-8 flex items-center px-3"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1 h-4 w-4"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  Prev
+                </Button>
+                <div className="text-sm font-medium">
+                  Page {currentPage} of {membersQuery.data.pagination.totalPages}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((old) => Math.min(old + 1, membersQuery.data.pagination.totalPages || 1))}
+                  disabled={currentPage === membersQuery.data.pagination.totalPages || membersQuery.isLoading}
+                  className="h-8 flex items-center px-3"
+                >
+                  Next
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1 h-4 w-4"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
