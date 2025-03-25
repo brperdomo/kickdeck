@@ -378,12 +378,11 @@ export function registerRoutes(app: Express): Server {
               managerPhone,
               userId,
               // Add new registration fields
-              registrationStatus: "Registered", // Initial status
+              status: "registered", // Initial status - 'registered', 'approved', 'rejected', etc.
               registrationFee: registrationFee || null,
               termsAcknowledged: termsAcknowledged || false,
               termsAcknowledgedAt: termsAcknowledgedAt ? new Date(termsAcknowledgedAt) : new Date(),
-              createdAt: new Date(),
-              updatedAt: new Date(),
+              createdAt: new Date().toISOString(), // Use ISO string for consistency
             })
             .returning();
             

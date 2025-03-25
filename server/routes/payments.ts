@@ -142,7 +142,7 @@ export async function handleStripeWebhook(req: Request, res: Response) {
   
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-      apiVersion: '2022-11-15', // Use a compatible API version
+      apiVersion: '2023-10-16', // Match the version used in stripeService.ts
     });
     
     event = stripe.webhooks.constructEvent(
