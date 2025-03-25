@@ -3,10 +3,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Configuration for the test
 const config = {
-  baseUrl: 'http://localhost:3000',
-  adminEmail: 'admin@matchpro.ai',
-  adminPassword: 'Admin123!',
-  testEventId: '1154838784', // Demo event ID
+  baseUrl: 'http://localhost:5000',
+  adminEmail: 'bperdomo@zoho.com',
+  adminPassword: '!Nova2025',
+  testEventId: '1154838784', // Demo event ID, we saw this event ID in the logs
   testAgeGroupId: 1,
 };
 
