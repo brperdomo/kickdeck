@@ -5,9 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 const config = {
   baseUrl: 'http://localhost:5000',
   adminEmail: 'bperdomo@zoho.com',
-  adminPassword: '!Nova2025',
-  testEventId: '2079688377', // Our test event ID created specifically for testing
-  testAgeGroupId: 2572,      // Our test age group ID created specifically for testing
+  adminPassword: 'password123', // Updated with a simpler password for testing
+  testEventId: '1154838784', // Updated with a real event ID that exists in the system
+  testAgeGroupId: 2509,      // Updated with a real age group ID from the system
 };
 
 // Helper function to make API requests with cookie support
@@ -72,7 +72,7 @@ async function testTeamRegistration() {
     // Step 1: User Authentication (auth step in the workflow)
     console.log('Step 1: User Authentication');
     // For testing, we'll login with an existing account
-    const loginResponse = await apiRequest('/api/login', 'POST', {
+    const loginResponse = await apiRequest('/api/auth/login', 'POST', {
       email: config.adminEmail,
       password: config.adminPassword,
     });
@@ -212,7 +212,7 @@ async function testTeamRegistration() {
     
     // Simulate webhook for successful payment (in development only)
     const webhookResponse = await apiRequest(
-      '/api/test/payment/simulate-webhook',
+      '/api/test-payment/simulate-webhook',
       'POST',
       {
         paymentIntentId: paymentIntentId,
@@ -235,7 +235,7 @@ async function testTeamRegistration() {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     const teamVerificationResponse = await apiRequest(
-      `/api/admin/teams/${teamId}`,
+      `/api/teams/${teamId}`,
       'GET',
       null,
       cookies
