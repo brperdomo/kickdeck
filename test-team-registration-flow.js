@@ -6,8 +6,8 @@ const config = {
   baseUrl: 'http://localhost:5000',
   adminEmail: 'bperdomo@zoho.com',
   adminPassword: '!Nova2025',
-  testEventId: '1154838784', // Demo event ID, we saw this event ID in the logs
-  testAgeGroupId: 1,
+  testEventId: '2079688377', // Our test event ID created specifically for testing
+  testAgeGroupId: 2572,      // Our test age group ID created specifically for testing
 };
 
 // Helper function to make API requests with cookie support
@@ -99,12 +99,10 @@ async function testTeamRegistration() {
       name: `Test Team ${uuidv4().substring(0, 8)}`,
       eventId: config.testEventId,
       ageGroupId: config.testAgeGroupId,
-      coach: {
-        name: 'John Coach',
-        email: 'coach@example.com',
-        phone: '555-1234',
-        assistantName: 'Assistant Coach',
-      },
+      headCoachName: 'John Coach',
+      headCoachEmail: 'coach@example.com',
+      headCoachPhone: '555-1234',
+      assistantCoachName: 'Assistant Coach',
       managerName: 'Team Manager',
       managerEmail: 'manager@example.com',
       managerPhone: '555-5678',
@@ -113,7 +111,7 @@ async function testTeamRegistration() {
           firstName: 'Player',
           lastName: 'One',
           jerseyNumber: '10',
-          dateOfBirth: '2010-01-01',
+          dateOfBirth: '2015-01-01',
           position: 'Forward',
           medicalNotes: 'None',
           parentGuardianName: 'Parent One',
@@ -126,7 +124,7 @@ async function testTeamRegistration() {
           firstName: 'Player',
           lastName: 'Two',
           jerseyNumber: '20',
-          dateOfBirth: '2010-02-02',
+          dateOfBirth: '2015-02-02',
           position: 'Midfielder',
           medicalNotes: '',
           parentGuardianName: 'Parent Two',
