@@ -1,25 +1,12 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
 import './onboarding.css';
 
-// All the possible mascot emotions we can render
-export type MascotEmotion = 
-  | 'neutral'      // Default expression 
-  | 'happy'        // Excited, smiling expression
-  | 'thinking'     // Thoughtful, pondering expression
-  | 'confused'     // Confused or puzzled expression
-  | 'pointing'     // Pointing to highlight a feature
-  | 'thumbsUp'     // Giving a thumbs up for success/approval
-  | 'waving'       // Waving hello
-  | 'surprised'    // Surprised or shocked expression
-  | 'celebrating'  // Celebrating an accomplishment
-
-// Size options for the mascot
-type MascotSize = 'sm' | 'md' | 'lg' | 'xl';
+export type MascotEmotion = 'neutral' | 'happy' | 'excited' | 'thinking' | 'confused' | 'waving';
+export type MascotSize = 'sm' | 'md' | 'lg' | 'xl';
 
 interface MascotCharacterProps {
   /**
-   * Emotional expression of the mascot
+   * The emotional state of the mascot
    */
   emotion?: MascotEmotion;
   
@@ -34,274 +21,185 @@ interface MascotCharacterProps {
   animate?: boolean;
   
   /**
-   * Additional CSS classes
+   * Additional class names
    */
   className?: string;
 }
 
 /**
- * MascotCharacter component that displays different emotional states
- * and can be animated to guide the user through the onboarding process.
+ * The mascot character component for the app's onboarding and guidance features
+ * Supports different emotional states and sizes
  */
 const MascotCharacter: React.FC<MascotCharacterProps> = ({
   emotion = 'neutral',
   size = 'md',
   animate = false,
-  className,
+  className = '',
 }) => {
-  // Map size to dimensions (width/height in pixels)
-  const getSizeDimensions = (): { width: number; height: number } => {
-    switch (size) {
-      case 'sm': return { width: 40, height: 40 };
-      case 'md': return { width: 60, height: 60 };
-      case 'lg': return { width: 80, height: 80 };
-      case 'xl': return { width: 120, height: 120 };
-      default: return { width: 60, height: 60 }; // Default to medium
+  // Size map (width in pixels)
+  const sizeMap = {
+    sm: 40,
+    md: 80,
+    lg: 120,
+    xl: 160,
+  };
+  
+  // Get the width based on size
+  const width = sizeMap[size];
+  
+  // Build the class name with animation if needed
+  const mascotClassName = `mascot-character ${animate ? 'animate' : ''} ${className}`;
+  
+  // Return the appropriate SVG based on the emotion
+  const renderMascot = () => {
+    switch (emotion) {
+      case 'happy':
+        return renderHappyMascot();
+      case 'excited':
+        return renderExcitedMascot();
+      case 'thinking':
+        return renderThinkingMascot();
+      case 'confused':
+        return renderConfusedMascot();
+      case 'waving':
+        return renderWavingMascot();
+      case 'neutral':
+      default:
+        return renderNeutralMascot();
     }
   };
   
-  // Get SVG content based on emotion
-  const renderMascotSVG = () => {
-    const { width, height } = getSizeDimensions();
-    
-    // Common SVG attributes
-    const svgProps = {
-      width,
-      height,
-      viewBox: "0 0 100 100",
-      fill: "none",
-      xmlns: "http://www.w3.org/2000/svg",
-      className: cn(
-        "mascot-character",
-        animate && "animate",
-        className
-      )
-    };
-    
-    switch (emotion) {
-      case 'happy':
-        return (
-          <svg {...svgProps}>
-            {/* Base mascot body */}
-            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
-            
-            {/* Face */}
-            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
-            
-            {/* Eyes */}
-            <circle cx="35" cy="45" r="5" fill="#312E81" />
-            <circle cx="65" cy="45" r="5" fill="#312E81" />
-            
-            {/* Smile */}
-            <path d="M35 65 Q50 80 65 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-            
-            {/* Rosy cheeks */}
-            <circle cx="28" cy="55" r="5" fill="#FDA4AF" fillOpacity="0.6" />
-            <circle cx="72" cy="55" r="5" fill="#FDA4AF" fillOpacity="0.6" />
-          </svg>
-        );
+  // Neutral expression mascot
+  const renderNeutralMascot = () => (
+    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
+      {/* Body */}
+      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
       
-      case 'thinking':
-        return (
-          <svg {...svgProps}>
-            {/* Base mascot body */}
-            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
-            
-            {/* Face */}
-            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
-            
-            {/* Eyes */}
-            <circle cx="35" cy="45" r="5" fill="#312E81" />
-            <circle cx="65" cy="45" r="5" fill="#312E81" />
-            
-            {/* Thinking expression - raised eyebrow and hand */}
-            <path d="M30 38 Q35 35 40 38" stroke="#312E81" strokeWidth="2" strokeLinecap="round" />
-            <path d="M40 65 Q50 67 60 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-            
-            {/* Hand on chin */}
-            <path d="M20 70 Q35 85 40 70" stroke="#4F46E5" strokeWidth="5" strokeLinecap="round" />
-            
-            {/* Thought bubble */}
-            <circle cx="80" cy="25" r="3" fill="#C7D2FE" />
-            <circle cx="85" cy="20" r="5" fill="#C7D2FE" />
-            <circle cx="92" cy="15" r="7" fill="#C7D2FE" />
-          </svg>
-        );
+      {/* Eyes */}
+      <circle cx="70" cy="80" r="10" fill="white" />
+      <circle cx="130" cy="80" r="10" fill="white" />
       
-      case 'confused':
-        return (
-          <svg {...svgProps}>
-            {/* Base mascot body */}
-            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
-            
-            {/* Face */}
-            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
-            
-            {/* Eyes */}
-            <circle cx="35" cy="45" r="5" fill="#312E81" />
-            <circle cx="65" cy="45" r="5" fill="#312E81" />
-            
-            {/* Confused expression - raised eyebrow and squiggly mouth */}
-            <path d="M30 38 Q35 35 40 38" stroke="#312E81" strokeWidth="2" strokeLinecap="round" />
-            <path d="M35 65 Q45 60 50 65 Q55 70 65 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-            
-            {/* Question mark above head */}
-            <path d="M65 15 Q75 15 75 25 Q75 35 65 35 L65 45" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-            <circle cx="65" cy="50" r="2" fill="#312E81" />
-          </svg>
-        );
+      {/* Pupils */}
+      <circle cx="70" cy="80" r="5" fill="#111827" />
+      <circle cx="130" cy="80" r="5" fill="#111827" />
       
-      case 'pointing':
-        return (
-          <svg {...svgProps}>
-            {/* Base mascot body */}
-            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
-            
-            {/* Face */}
-            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
-            
-            {/* Eyes */}
-            <circle cx="35" cy="45" r="5" fill="#312E81" />
-            <circle cx="65" cy="45" r="5" fill="#312E81" />
-            
-            {/* Neutral expression */}
-            <path d="M40 65 Q50 67 60 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-            
-            {/* Pointing arm */}
-            <path d="M80 30 L100 10" stroke="#4F46E5" strokeWidth="5" strokeLinecap="round" />
-            <path d="M75 45 Q85 35 80 30" stroke="#4F46E5" strokeWidth="5" strokeLinecap="round" />
-          </svg>
-        );
+      {/* Mouth */}
+      <path d="M80 120 Q100 130 120 120" stroke="white" strokeWidth="4" fill="none" />
+    </svg>
+  );
+  
+  // Happy expression mascot
+  const renderHappyMascot = () => (
+    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
+      {/* Body */}
+      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
       
-      case 'thumbsUp':
-        return (
-          <svg {...svgProps}>
-            {/* Base mascot body */}
-            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
-            
-            {/* Face */}
-            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
-            
-            {/* Eyes */}
-            <circle cx="35" cy="45" r="5" fill="#312E81" />
-            <circle cx="65" cy="45" r="5" fill="#312E81" />
-            
-            {/* Smile */}
-            <path d="M35 65 Q50 75 65 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-            
-            {/* Thumbs up arm */}
-            <path d="M75 40 L85 25 L95 35 L90 50 L75 40Z" fill="#4F46E5" stroke="#312E81" strokeWidth="2" />
-            <path d="M75 50 Q65 70 75 40" stroke="#4F46E5" strokeWidth="5" strokeLinecap="round" />
-          </svg>
-        );
+      {/* Eyes */}
+      <circle cx="70" cy="80" r="10" fill="white" />
+      <circle cx="130" cy="80" r="10" fill="white" />
       
-      case 'waving':
-        return (
-          <svg {...svgProps}>
-            {/* Base mascot body */}
-            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
-            
-            {/* Face */}
-            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
-            
-            {/* Eyes */}
-            <circle cx="35" cy="45" r="5" fill="#312E81" />
-            <circle cx="65" cy="45" r="5" fill="#312E81" />
-            
-            {/* Smile */}
-            <path d="M35 65 Q50 75 65 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-            
-            {/* Waving arm */}
-            <path 
-              d="M85 30 Q95 20 90 10" 
-              stroke="#4F46E5" 
-              strokeWidth="5" 
-              strokeLinecap="round"
-              className="wave-arm"
-            />
-            <path d="M75 45 Q85 35 85 30" stroke="#4F46E5" strokeWidth="5" strokeLinecap="round" />
-          </svg>
-        );
+      {/* Happy curved eyes */}
+      <path d="M65 75 Q70 70 75 75" stroke="#111827" strokeWidth="3" fill="none" />
+      <path d="M125 75 Q130 70 135 75" stroke="#111827" strokeWidth="3" fill="none" />
       
-      case 'surprised':
-        return (
-          <svg {...svgProps}>
-            {/* Base mascot body */}
-            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
-            
-            {/* Face */}
-            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
-            
-            {/* Wide eyes */}
-            <circle cx="35" cy="45" r="7" fill="#312E81" />
-            <circle cx="65" cy="45" r="7" fill="#312E81" />
-            <circle cx="35" cy="45" r="2" fill="white" />
-            <circle cx="65" cy="45" r="2" fill="white" />
-            
-            {/* Surprised mouth */}
-            <circle cx="50" cy="65" r="8" fill="#312E81" />
-            <circle cx="50" cy="63" r="5" fill="#C7D2FE" />
-            
-            {/* Exclamation mark */}
-            <path d="M50 10 L50 25" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-            <circle cx="50" cy="30" r="2" fill="#312E81" />
-          </svg>
-        );
+      {/* Big smile */}
+      <path d="M70 120 Q100 150 130 120" stroke="white" strokeWidth="4" fill="none" />
+    </svg>
+  );
+  
+  // Excited expression mascot
+  const renderExcitedMascot = () => (
+    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
+      {/* Body */}
+      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
       
-      case 'celebrating':
-        return (
-          <svg {...svgProps}>
-            {/* Base mascot body */}
-            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
-            
-            {/* Face */}
-            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
-            
-            {/* Happy eyes */}
-            <path d="M30 43 Q35 38 40 43" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-            <path d="M60 43 Q65 38 70 43" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-            
-            {/* Big smile */}
-            <path d="M35 65 Q50 80 65 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-            
-            {/* Party hat */}
-            <path d="M30 20 L50 5 L70 20" fill="#FCD34D" stroke="#312E81" strokeWidth="2" />
-            
-            {/* Confetti */}
-            <circle cx="25" cy="25" r="2" fill="#EC4899" />
-            <circle cx="35" cy="15" r="2" fill="#10B981" />
-            <circle cx="75" cy="25" r="2" fill="#EC4899" />
-            <circle cx="85" cy="35" r="2" fill="#10B981" />
-            <path d="M20 30 L25 35" stroke="#FCD34D" strokeWidth="2" strokeLinecap="round" />
-            <path d="M70 15 L75 20" stroke="#10B981" strokeWidth="2" strokeLinecap="round" />
-            <path d="M80 25 L85 30" stroke="#EC4899" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        );
+      {/* Excited eyes with stars */}
+      <path d="M70 80 L74 76 L66 76 L70 80 L70 88 L70 72" stroke="white" strokeWidth="2" fill="white" />
+      <path d="M130 80 L134 76 L126 76 L130 80 L130 88 L130 72" stroke="white" strokeWidth="2" fill="white" />
       
-      case 'neutral':
-      default:
-        return (
-          <svg {...svgProps}>
-            {/* Base mascot body */}
-            <circle cx="50" cy="50" r="45" fill="#4F46E5" />
-            
-            {/* Face */}
-            <circle cx="50" cy="50" r="35" fill="#C7D2FE" />
-            
-            {/* Eyes */}
-            <circle cx="35" cy="45" r="5" fill="#312E81" />
-            <circle cx="65" cy="45" r="5" fill="#312E81" />
-            
-            {/* Neutral expression */}
-            <path d="M40 65 Q50 67 60 65" stroke="#312E81" strokeWidth="3" strokeLinecap="round" />
-          </svg>
-        );
-    }
-  };
+      {/* Big open mouth */}
+      <circle cx="100" cy="120" r="15" fill="white" />
+    </svg>
+  );
+  
+  // Thinking expression mascot
+  const renderThinkingMascot = () => (
+    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
+      {/* Body */}
+      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
+      
+      {/* Eyes */}
+      <circle cx="70" cy="80" r="10" fill="white" />
+      <circle cx="130" cy="80" r="10" fill="white" />
+      
+      {/* Pupils looking up */}
+      <circle cx="70" cy="75" r="5" fill="#111827" />
+      <circle cx="130" cy="75" r="5" fill="#111827" />
+      
+      {/* Thinking mouth */}
+      <path d="M90 120 L110 120" stroke="white" strokeWidth="4" fill="none" />
+      
+      {/* Thought bubble */}
+      <circle cx="150" cy="50" r="10" fill="white" opacity="0.8" />
+      <circle cx="140" cy="40" r="6" fill="white" opacity="0.6" />
+      <circle cx="130" cy="35" r="3" fill="white" opacity="0.4" />
+    </svg>
+  );
+  
+  // Confused expression mascot
+  const renderConfusedMascot = () => (
+    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
+      {/* Body */}
+      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
+      
+      {/* Eyes with raised eyebrow */}
+      <circle cx="70" cy="80" r="10" fill="white" />
+      <circle cx="130" cy="80" r="10" fill="white" />
+      
+      {/* Pupils */}
+      <circle cx="70" cy="80" r="5" fill="#111827" />
+      <circle cx="130" cy="80" r="5" fill="#111827" />
+      
+      {/* Eyebrows */}
+      <path d="M60 70 L80 65" stroke="white" strokeWidth="3" fill="none" />
+      <path d="M120 65 L140 70" stroke="white" strokeWidth="3" fill="none" />
+      
+      {/* Confused mouth */}
+      <path d="M85 120 Q100 110 115 120" stroke="white" strokeWidth="4" fill="none" />
+      
+      {/* Question mark */}
+      <text x="140" y="65" fill="white" fontSize="24" fontWeight="bold">?</text>
+    </svg>
+  );
+  
+  // Waving mascot
+  const renderWavingMascot = () => (
+    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
+      {/* Body */}
+      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
+      
+      {/* Eyes */}
+      <circle cx="70" cy="80" r="10" fill="white" />
+      <circle cx="130" cy="80" r="10" fill="white" />
+      
+      {/* Pupils */}
+      <circle cx="70" cy="80" r="5" fill="#111827" />
+      <circle cx="130" cy="80" r="5" fill="#111827" />
+      
+      {/* Smile */}
+      <path d="M75 120 Q100 140 125 120" stroke="white" strokeWidth="4" fill="none" />
+      
+      {/* Waving arm */}
+      <g className="wave-arm">
+        <path d="M170 100 L150 70 L140 60 L130 50" stroke="white" strokeWidth="6" fill="none" />
+        <circle cx="170" cy="100" r="10" fill="white" /> {/* Hand */}
+      </g>
+    </svg>
+  );
   
   return (
     <div className="mascot-character-container">
-      {renderMascotSVG()}
+      {renderMascot()}
     </div>
   );
 };

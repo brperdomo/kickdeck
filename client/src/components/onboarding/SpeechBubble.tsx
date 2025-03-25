@@ -1,179 +1,172 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import MascotCharacter, { MascotEmotion } from './MascotCharacter';
+import { X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import MascotCharacter, { MascotEmotion } from './MascotCharacter';
 import './onboarding.css';
 
-interface SpeechBubbleProps {
+export type SpeechBubblePosition = 'top' | 'right' | 'bottom' | 'left';
+
+export interface SpeechBubbleProps {
   /**
-   * Content of the speech bubble
+   * The content/message to display
    */
   message: string;
   
   /**
-   * Position of the mascot character relative to the bubble
+   * The position of the speech bubble relative to its container
    */
-  position?: 'top' | 'right' | 'bottom' | 'left';
+  position?: SpeechBubblePosition;
   
   /**
-   * Emotion of the mascot character
-   */
-  mascotEmotion?: MascotEmotion;
-  
-  /**
-   * Whether to show the mascot character
+   * Whether to show the mascot alongside the speech bubble
    */
   showMascot?: boolean;
   
   /**
-   * Callback when the action button is clicked
+   * The emotion/expression of the mascot
    */
-  onAction?: () => void;
+  mascotEmotion?: MascotEmotion;
   
   /**
-   * Label for the action button
+   * Optional action button label
    */
   actionLabel?: string;
   
   /**
-   * Whether to auto focus the action button
+   * Callback when action button is clicked
    */
-  autoFocus?: boolean;
+  onAction?: () => void;
   
   /**
    * Width of the speech bubble in pixels
    */
   width?: number;
+  
+  /**
+   * Additional class names for styling
+   */
+  className?: string;
+  
+  /**
+   * Callback when closing the speech bubble
+   */
+  onClose?: () => void;
 }
 
 /**
- * SpeechBubble component displays a message with a mascot character
- * in a stylized bubble format, supporting markdown content.
+ * A speech bubble component with optional mascot character
+ * Used for guiding users and providing contextual help
  */
 const SpeechBubble: React.FC<SpeechBubbleProps> = ({
   message,
-  position = 'left',
-  mascotEmotion = 'neutral',
+  position = 'right',
   showMascot = true,
+  mascotEmotion = 'neutral',
+  actionLabel,
   onAction,
-  actionLabel = 'Got it',
-  autoFocus = false,
-  width = 280,
+  width = 300,
+  className = '',
+  onClose,
 }) => {
-  // Define bubble tail style based on position
-  const getTailStyle = (): React.CSSProperties => {
-    const baseStyle: React.CSSProperties = {
-      position: 'absolute',
-      width: 0,
-      height: 0,
-      borderStyle: 'solid',
-    };
-    
+  // Construct class names for positioning
+  const containerClassName = `speech-bubble-container ${className}`;
+  
+  // Arrow styles based on position
+  const getArrowStyles = () => {
     switch (position) {
       case 'top':
         return {
-          ...baseStyle,
-          bottom: '-10px',
+          bottom: '-8px',
           left: '50%',
-          marginLeft: '-10px',
-          borderWidth: '10px 10px 0 10px',
-          borderColor: 'var(--background) transparent transparent transparent',
+          transform: 'translateX(-50%) rotate(45deg)',
+          borderRadius: '0 0 2px 0',
         };
-        
       case 'right':
         return {
-          ...baseStyle,
-          left: '-10px',
+          left: '-8px',
           top: '50%',
-          marginTop: '-10px',
-          borderWidth: '10px 10px 10px 0',
-          borderColor: 'transparent var(--background) transparent transparent',
+          transform: 'translateY(-50%) rotate(45deg)',
+          borderRadius: '0 0 0 2px',
         };
-        
       case 'bottom':
         return {
-          ...baseStyle,
-          top: '-10px',
+          top: '-8px',
           left: '50%',
-          marginLeft: '-10px',
-          borderWidth: '0 10px 10px 10px',
-          borderColor: 'transparent transparent var(--background) transparent',
+          transform: 'translateX(-50%) rotate(45deg)',
+          borderRadius: '2px 0 0 0',
         };
-        
       case 'left':
-      default:
         return {
-          ...baseStyle,
-          right: '-10px',
+          right: '-8px',
           top: '50%',
-          marginTop: '-10px',
-          borderWidth: '10px 0 10px 10px',
-          borderColor: 'transparent transparent transparent var(--background)',
+          transform: 'translateY(-50%) rotate(45deg)',
+          borderRadius: '0 2px 0 0',
         };
+      default:
+        return {};
     }
   };
   
+  // Mascot position based on bubble position
+  const getMascotPosition = () => {
+    if (!showMascot) return null;
+    
+    const mascotClassName = `speech-mascot speech-mascot-${position}`;
+    
+    return (
+      <div className={mascotClassName}>
+        <MascotCharacter 
+          emotion={mascotEmotion} 
+          size="md" 
+          animate={mascotEmotion === 'waving' || mascotEmotion === 'excited'} 
+        />
+      </div>
+    );
+  };
+  
   return (
-    <div 
-      className="speech-bubble-container"
-      style={{ width: `${width}px` }}
-    >
-      {/* Mascot Character */}
-      {showMascot && (
-        <div className={`speech-mascot speech-mascot-${position}`}>
-          <MascotCharacter
-            emotion={mascotEmotion}
-            size="md"
-            animate={true}
-          />
-        </div>
-      )}
+    <div className={containerClassName} style={{ width: `${width}px` }}>
+      {/* The mascot character */}
+      {getMascotPosition()}
       
-      {/* Speech Bubble */}
-      <Card className="relative w-full">
-        {/* Bubble Content */}
-        <div className="p-4">
-          <ReactMarkdown
-            children={message}
-            className="prose prose-sm max-w-none"
-            components={{
-              p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-              strong: ({ children }) => <strong className="font-bold">{children}</strong>,
-              em: ({ children }) => <em className="italic">{children}</em>,
-              ul: ({ children }) => <ul className="list-disc pl-4 mb-2">{children}</ul>,
-              ol: ({ children }) => <ol className="list-decimal pl-4 mb-2">{children}</ol>,
-              li: ({ children }) => <li className="mb-1">{children}</li>,
-              a: ({ children, href }) => (
-                <a
-                  href={href}
-                  className="text-primary underline hover:text-primary/80"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {children}
-                </a>
-              ),
-            }}
-          />
+      {/* The speech bubble card */}
+      <Card className="relative">
+        {/* Close button if onClose is provided */}
+        {onClose && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-1 right-1 h-6 w-6"
+            onClick={onClose}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+        
+        {/* Content of the speech bubble */}
+        <CardContent className="p-4">
+          {/* Message text with markdown support */}
+          <div className="prose prose-sm dark:prose-invert max-w-none mb-3">
+            <ReactMarkdown>{message}</ReactMarkdown>
+          </div>
           
-          {/* Action Button */}
-          {onAction && (
-            <div className="mt-3 flex justify-end">
-              <Button
-                size="sm"
-                onClick={onAction}
-                autoFocus={autoFocus}
-              >
+          {/* Action button if provided */}
+          {actionLabel && onAction && (
+            <div className="flex justify-end mt-2">
+              <Button size="sm" onClick={onAction}>
                 {actionLabel}
               </Button>
             </div>
           )}
-        </div>
+        </CardContent>
         
-        {/* Bubble Tail */}
-        <div style={getTailStyle()} />
+        {/* The arrow/pointer */}
+        <div
+          className="absolute w-4 h-4 bg-card"
+          style={getArrowStyles()}
+        />
       </Card>
     </div>
   );
