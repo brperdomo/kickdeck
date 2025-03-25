@@ -1,72 +1,79 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import FeatureSpotlight from './FeatureSpotlight';
+import { MascotEmotion } from './MascotCharacter';
 
 export interface TourStep {
-  selector: string;
-  title: string;
-  description: string;
+  targetSelector: string;
+  message: string;
   position?: 'top' | 'right' | 'bottom' | 'left';
-  mascotEmotion?: 'happy' | 'excited' | 'thinking' | 'pointing' | 'waving';
+  mascotEmotion?: MascotEmotion;
+  showMascot?: boolean;
+  nextLabel?: string;
 }
 
 interface FeatureTourProps {
   steps: TourStep[];
-  isActive: boolean;
-  onComplete: () => void;
-  onExit?: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onComplete?: () => void;
+  currentStep?: number;
 }
 
-export const FeatureTour: React.FC<FeatureTourProps> = ({
+const FeatureTour: React.FC<FeatureTourProps> = ({
   steps,
-  isActive,
+  open = false,
+  onOpenChange,
   onComplete,
-  onExit,
+  currentStep: initialStep = 0,
 }) => {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [currentStep, setCurrentStep] = useState(initialStep);
+  const [isOpen, setIsOpen] = useState(open);
 
-  // Reset to first step when tour is activated
-  useEffect(() => {
-    if (isActive) {
-      setCurrentStepIndex(0);
-    }
-  }, [isActive]);
+  // Update local state when open prop changes
+  React.useEffect(() => {
+    setIsOpen(open);
+  }, [open]);
 
-  // Handle step navigation
-  const nextStep = () => {
-    if (currentStepIndex < steps.length - 1) {
-      setCurrentStepIndex(currentStepIndex + 1);
+  const handleStepChange = (next: boolean) => {
+    if (next) {
+      if (currentStep < steps.length - 1) {
+        setCurrentStep(currentStep + 1);
+      } else {
+        handleComplete();
+      }
     } else {
-      // Tour complete
-      onComplete();
+      if (currentStep > 0) {
+        setCurrentStep(currentStep - 1);
+      }
     }
   };
 
-  const handleClose = () => {
-    if (onExit) {
-      onExit();
-    } else {
-      onComplete();
-    }
+  const handleComplete = () => {
+    setIsOpen(false);
+    if (onOpenChange) onOpenChange(false);
+    if (onComplete) onComplete();
   };
 
-  if (!isActive || steps.length === 0) {
+  if (!isOpen || steps.length === 0 || currentStep >= steps.length) {
     return null;
   }
 
-  const currentStep = steps[currentStepIndex];
+  const step = steps[currentStep];
 
   return (
     <FeatureSpotlight
-      targetSelector={currentStep.selector}
-      title={currentStep.title}
-      description={currentStep.description}
-      position={currentStep.position || 'bottom'}
-      mascotEmotion={currentStep.mascotEmotion || 'pointing'}
-      show={isActive}
-      onClose={handleClose}
-      onNext={nextStep}
-      step={currentStepIndex + 1}
-      totalSteps={steps.length}
+      targetSelector={step.targetSelector}
+      message={`${currentStep + 1}/${steps.length}: ${step.message}`}
+      position={step.position || 'bottom'}
+      mascotEmotion={step.mascotEmotion || 'pointing'}
+      showMascot={step.showMascot !== false}
+      open={isOpen}
+      onOpenChange={value => {
+        setIsOpen(value);
+        if (onOpenChange) onOpenChange(value);
+      }}
+      onNext={() => handleStepChange(true)}
+      nextLabel={step.nextLabel || (currentStep === steps.length - 1 ? 'Finish' : 'Next')}
     />
   );
 };

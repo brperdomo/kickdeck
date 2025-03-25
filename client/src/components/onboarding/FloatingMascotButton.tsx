@@ -1,103 +1,99 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { HelpCircle, X } from 'lucide-react';
 import { MascotCharacter } from './MascotCharacter';
 import { useOnboarding } from './OnboardingContext';
-import { Button } from '@/components/ui/button';
-import {
-  HelpCircle,
-  BookOpen,
-  Lightbulb,
-  RefreshCcw,
-  X
-} from 'lucide-react';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import SpeechBubble from './SpeechBubble';
+import './onboarding.css';
 
-export const FloatingMascotButton: React.FC = () => {
-  const { startOnboarding } = useOnboarding();
-  const [isOpen, setIsOpen] = useState(false);
+interface FloatingMascotButtonProps {
+  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  message?: string;
+  onHelp?: () => void;
+}
 
-  const handleStartTour = () => {
-    setIsOpen(false);
-    startOnboarding();
+const FloatingMascotButton: React.FC<FloatingMascotButtonProps> = ({
+  position = 'bottom-right',
+  message = "Need help? I'm here to assist you!",
+  onHelp,
+}) => {
+  const [showSpeechBubble, setShowSpeechBubble] = useState(false);
+  const { isOnboardingComplete, restartOnboarding } = useOnboarding();
+  
+  // Determine button position classes
+  const getPositionClasses = () => {
+    switch (position) {
+      case 'bottom-right':
+        return 'bottom-4 right-4';
+      case 'bottom-left':
+        return 'bottom-4 left-4';
+      case 'top-right':
+        return 'top-4 right-4';
+      case 'top-left':
+        return 'top-4 left-4';
+      default:
+        return 'bottom-4 right-4';
+    }
   };
-
+  
+  // Determine speech bubble position
+  const getSpeechBubblePosition = () => {
+    if (position.startsWith('bottom')) {
+      return 'top';
+    } else {
+      return 'bottom';
+    }
+  };
+  
+  const handleHelp = () => {
+    if (onHelp) {
+      onHelp();
+    } else if (isOnboardingComplete) {
+      setShowSpeechBubble(!showSpeechBubble);
+    } else {
+      restartOnboarding();
+    }
+  };
+  
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <Button 
-            className="w-14 h-14 rounded-full shadow-lg bg-green-600 hover:bg-green-500 focus:ring-green-500 focus:ring-offset-2 transition-all duration-300 hover:scale-110 p-0"
-            variant="default"
-          >
-            {isOpen ? (
-              <X className="h-6 w-6 text-white" />
-            ) : (
-              <div className="scale-90">
-                <MascotCharacter emotion="happy" size="sm" animated={false} />
-              </div>
-            )}
-          </Button>
-        </PopoverTrigger>
-        
-        <PopoverContent 
-          side="top" 
-          align="end" 
-          className="w-64 p-0 shadow-xl rounded-lg border-green-100"
-        >
-          <div className="p-4 bg-green-50 rounded-t-lg border-b border-green-100">
-            <h4 className="font-semibold flex items-center gap-2 text-green-800">
-              <HelpCircle className="h-4 w-4" />
-              Need assistance?
-            </h4>
-            <p className="text-sm text-green-700 mt-1">
-              I'm Striker, your MatchPro assistant! How can I help you today?
-            </p>
-          </div>
-
-          <div className="p-2">
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start text-slate-700 hover:text-green-700 hover:bg-green-50 rounded-md p-2 h-auto"
-              onClick={handleStartTour}
-            >
-              <BookOpen className="mr-2 h-4 w-4 text-green-600" />
-              <span className="text-sm">Start guided tour</span>
-            </Button>
-
-            <Button 
-              variant="ghost"
-              className="w-full justify-start text-slate-700 hover:text-green-700 hover:bg-green-50 rounded-md p-2 h-auto"
-              onClick={() => {
-                setIsOpen(false);
-                // Open documentation in a new tab
-                window.open('https://docs.matchpro.ai', '_blank');
-              }}
-            >
-              <Lightbulb className="mr-2 h-4 w-4 text-amber-500" />
-              <span className="text-sm">View documentation</span>
-            </Button>
-
-            <Button 
-              variant="ghost"
-              className="w-full justify-start text-slate-700 hover:text-green-700 hover:bg-green-50 rounded-md p-2 h-auto"
-              onClick={() => {
-                setIsOpen(false);
-                // Reset onboarding state in local storage
-                localStorage.removeItem('matchpro_onboarding');
-                localStorage.removeItem('matchpro_first_login');
-                // Reload the page to apply changes
-                window.location.reload();
-              }}
-            >
-              <RefreshCcw className="mr-2 h-4 w-4 text-blue-500" />
-              <span className="text-sm">Reset tutorials</span>
-            </Button>
-          </div>
-        </PopoverContent>
-      </Popover>
+    <div className={`fixed ${getPositionClasses()} z-40`}>
+      {/* Speech bubble */}
+      {showSpeechBubble && (
+        <div className="mb-3 absolute bottom-16 right-0">
+          <SpeechBubble
+            message={message}
+            position={getSpeechBubblePosition()}
+            onClose={() => setShowSpeechBubble(false)}
+            actionLabel="Get Started"
+            onAction={() => {
+              setShowSpeechBubble(false);
+              restartOnboarding();
+            }}
+            mascotEmotion="happy"
+          />
+        </div>
+      )}
+      
+      {/* Mascot button */}
+      <Button
+        onClick={handleHelp}
+        className="h-14 w-14 rounded-full p-0 relative shadow-lg overflow-hidden bg-white hover:bg-slate-100 border border-slate-200"
+        variant="outline"
+      >
+        <div className="animate-float">
+          <MascotCharacter
+            emotion={showSpeechBubble ? "happy" : "neutral"}
+            size="md"
+            animated={false}
+          />
+        </div>
+        <span className="sr-only">Get help</span>
+      </Button>
+      
+      {/* Notification dot for new users */}
+      {!isOnboardingComplete && (
+        <div className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full border-2 border-white" />
+      )}
     </div>
   );
 };
