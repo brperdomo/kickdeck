@@ -5,58 +5,110 @@ import './onboarding.css';
 
 interface FloatingMascotButtonProps {
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  offset?: { x: number; y: number };
   message?: string;
+  mascotEmotion?: MascotEmotion;
+  bubblePosition?: 'top' | 'right' | 'bottom' | 'left';
   actionLabel?: string;
   onAction?: () => void;
-  mascotEmotion?: MascotEmotion;
-  offset?: { x: number; y: number };
+  onClick?: () => void;
+  showInitialMessage?: boolean;
+  initialDelay?: number;
+  hideAfter?: number;
   size?: 'sm' | 'md' | 'lg';
-  pulseEffect?: boolean;
-  showOnLoad?: boolean;
-  openDelay?: number;
-  bubblePosition?: 'top' | 'right' | 'bottom' | 'left';
+  zIndex?: number;
 }
 
 const FloatingMascotButton: React.FC<FloatingMascotButtonProps> = ({
   position = 'bottom-right',
-  message = "Need help? Click me for assistance!",
+  offset = { x: 20, y: 20 },
+  message,
+  mascotEmotion = 'waving',
+  bubblePosition = 'left',
   actionLabel,
   onAction,
-  mascotEmotion = 'happy',
-  offset = { x: 20, y: 20 },
+  onClick,
+  showInitialMessage = false,
+  initialDelay = 2000,
+  hideAfter = 0,
   size = 'md',
-  pulseEffect = false,
-  showOnLoad = false,
-  openDelay = 1000,
-  bubblePosition = 'top',
+  zIndex = 100,
 }) => {
-  const [showBubble, setShowBubble] = useState(showOnLoad);
+  // State for showing/hiding speech bubble
+  const [showBubble, setShowBubble] = useState(false);
+  // State for auto-showing initial message
+  const [initialMessageShown, setInitialMessageShown] = useState(false);
   
-  // Calculate position styles
-  const getPositionStyles = () => {
-    const styles: React.CSSProperties = {};
-    
-    if (position.includes('bottom')) {
-      styles.bottom = offset.y;
-    } else {
-      styles.top = offset.y;
+  // Show initial message after delay if enabled
+  React.useEffect(() => {
+    if (showInitialMessage && !initialMessageShown && message) {
+      const timer = setTimeout(() => {
+        setShowBubble(true);
+        setInitialMessageShown(true);
+        
+        // Hide after specified duration if hideAfter > 0
+        if (hideAfter > 0) {
+          const hideTimer = setTimeout(() => {
+            setShowBubble(false);
+          }, hideAfter);
+          
+          return () => clearTimeout(hideTimer);
+        }
+      }, initialDelay);
+      
+      return () => clearTimeout(timer);
     }
+  }, [showInitialMessage, initialMessageShown, message, initialDelay, hideAfter]);
+  
+  // Determine position styling
+  const getPositionStyle = () => {
+    const baseStyle: React.CSSProperties = {
+      position: 'fixed',
+      zIndex,
+    };
     
-    if (position.includes('right')) {
-      styles.right = offset.x;
-    } else {
-      styles.left = offset.x;
+    switch (position) {
+      case 'bottom-right':
+        return {
+          ...baseStyle,
+          right: offset.x,
+          bottom: offset.y,
+        };
+      case 'bottom-left':
+        return {
+          ...baseStyle,
+          left: offset.x,
+          bottom: offset.y,
+        };
+      case 'top-right':
+        return {
+          ...baseStyle,
+          right: offset.x,
+          top: offset.y,
+        };
+      case 'top-left':
+        return {
+          ...baseStyle,
+          left: offset.x,
+          top: offset.y,
+        };
+      default:
+        return baseStyle;
     }
-    
-    return styles;
   };
   
-  // Toggle the speech bubble
-  const toggleBubble = () => {
-    setShowBubble(!showBubble);
+  // Handle mascot click
+  const handleMascotClick = () => {
+    if (message) {
+      setShowBubble(!showBubble);
+    }
+    
+    if (onClick) {
+      onClick();
+    }
   };
   
-  // Handle the action button click
+  // Handle action button in speech bubble
   const handleAction = () => {
     if (onAction) {
       onAction();
@@ -64,60 +116,37 @@ const FloatingMascotButton: React.FC<FloatingMascotButtonProps> = ({
     setShowBubble(false);
   };
   
-  // Show the speech bubble after a delay if showOnLoad is true
-  React.useEffect(() => {
-    if (showOnLoad) {
-      const timer = setTimeout(() => {
-        setShowBubble(true);
-      }, openDelay);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [showOnLoad, openDelay]);
-  
-  // Determine appropriate emotion for the mascot
-  const getDisplayEmotion = (): MascotEmotion => {
-    if (showBubble) {
-      return mascotEmotion === 'happy' || mascotEmotion === 'neutral' ? 'excited' : mascotEmotion;
-    }
-    return mascotEmotion;
+  // Close speech bubble
+  const handleCloseBubble = () => {
+    setShowBubble(false);
   };
   
   return (
-    <div
-      className={`floating-mascot-button ${pulseEffect ? 'pulse' : ''}`}
-      style={getPositionStyles()}
-    >
-      {/* Speech bubble when shown */}
-      {showBubble && (
-        <div className="absolute" style={{ 
-          [bubblePosition === 'right' ? 'right' : 'left']: bubblePosition === 'right' ? '-320px' : '0',
-          [bubblePosition === 'bottom' ? 'bottom' : 'top']: bubblePosition === 'bottom' ? '100%' : bubblePosition === 'top' ? 'auto' : '50%',
-          transform: bubblePosition === 'bottom' ? 'translateY(10px)' : bubblePosition === 'top' ? 'translateY(-100%)' : 'translateY(-50%)',
-        }}>
+    <div style={getPositionStyle()} className="floating-mascot">
+      {/* Speech bubble shown when active */}
+      {showBubble && message && (
+        <div className="floating-mascot-bubble">
           <SpeechBubble
             message={message}
             position={bubblePosition}
+            onClose={handleCloseBubble}
+            onAction={onAction ? handleAction : undefined}
             actionLabel={actionLabel}
-            onClose={toggleBubble}
-            onAction={handleAction}
-            mascotEmotion={mascotEmotion}
             showMascot={false}
+            width={250}
           />
         </div>
       )}
       
-      {/* Mascot character button */}
+      {/* Clickable mascot character */}
       <div 
-        className="cursor-pointer z-50" 
-        onClick={toggleBubble}
-        aria-label="Help mascot"
+        className="floating-mascot-button cursor-pointer"
+        onClick={handleMascotClick}
+        role="button"
+        aria-label="Mascot assistant"
+        tabIndex={0}
       >
-        <MascotCharacter
-          emotion={getDisplayEmotion()}
-          size={size}
-          className={pulseEffect ? 'pulse' : ''}
-        />
+        <MascotCharacter emotion={mascotEmotion} size={size} />
       </div>
     </div>
   );
