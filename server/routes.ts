@@ -381,30 +381,46 @@ export function registerRoutes(app: Express): Server {
               registrationStatus: "Registered", // Initial status
               registrationFee: registrationFee || null,
               termsAcknowledged: termsAcknowledged || false,
-              termsAcknowledgedAt: termsAcknowledgedAt ? new Date(termsAcknowledgedAt).toISOString() : new Date().toISOString(),
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
+              termsAcknowledgedAt: termsAcknowledgedAt ? new Date(termsAcknowledgedAt) : new Date(),
+              createdAt: new Date(),
+              updatedAt: new Date(),
             })
             .returning();
             
           // Insert players
-          const playerRecords = players.map(player => ({
-            teamId: team.id,
-            firstName: player.firstName,
-            lastName: player.lastName,
-            jerseyNumber: player.jerseyNumber ? parseInt(player.jerseyNumber) : null,
-            dateOfBirth: player.dateOfBirth ? new Date(player.dateOfBirth).toISOString() : null,
-            position: player.position || null,
-            medicalNotes: player.medicalNotes || null,
-            parentGuardianName: player.parentGuardianName || null,
-            parentGuardianEmail: player.parentGuardianEmail || null,
-            parentGuardianPhone: player.parentGuardianPhone || null,
-            emergencyContactName: player.emergencyContactName,
-            emergencyContactPhone: player.emergencyContactPhone,
-            isActive: true,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          }));
+          const playerRecords = players.map(player => {
+            // Safely convert date of birth to a Date object if it exists
+            let dateOfBirthValue = null;
+            if (player.dateOfBirth) {
+              try {
+                // Create a Date object to ensure it's properly formatted
+                const dateObj = new Date(player.dateOfBirth);
+                if (!isNaN(dateObj.getTime())) {
+                  dateOfBirthValue = dateObj;
+                }
+              } catch (err) {
+                console.error('Error converting player date of birth:', err);
+              }
+            }
+            
+            return {
+              teamId: team.id,
+              firstName: player.firstName,
+              lastName: player.lastName,
+              jerseyNumber: player.jerseyNumber ? parseInt(player.jerseyNumber) : null,
+              dateOfBirth: dateOfBirthValue,
+              position: player.position || null,
+              medicalNotes: player.medicalNotes || null,
+              parentGuardianName: player.parentGuardianName || null,
+              parentGuardianEmail: player.parentGuardianEmail || null,
+              parentGuardianPhone: player.parentGuardianPhone || null,
+              emergencyContactName: player.emergencyContactName,
+              emergencyContactPhone: player.emergencyContactPhone,
+              isActive: true,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+          });
           
           await tx.insert(players).values(playerRecords);
           
