@@ -17,7 +17,11 @@ async function apiRequest(endpoint, method = 'GET', body = null, cookies = '') {
   };
 
   if (cookies) {
-    headers['Cookie'] = cookies;
+    // Make sure to properly parse and format cookies
+    // node-fetch is strict about cookie format
+    const parsedCookies = cookies.split(';').map(c => c.trim()).join('; ');
+    headers.cookie = parsedCookies;
+    console.log(`Using cookies in request: ${parsedCookies}`);
   }
 
   const options = {
@@ -36,7 +40,16 @@ async function apiRequest(endpoint, method = 'GET', body = null, cookies = '') {
     
     // Save cookies from response
     const setCookieHeader = response.headers.get('set-cookie');
-    const newCookies = setCookieHeader || '';
+    let newCookies = '';
+    
+    if (setCookieHeader) {
+      // Extract the cookie value without attributes (path, expires, etc.)
+      // This simpler format works better with node-fetch
+      const cookieMatch = setCookieHeader.match(/^([^;]+)/);
+      if (cookieMatch && cookieMatch[1]) {
+        newCookies = cookieMatch[1];
+      }
+    }
     
     // Parse JSON response or return text if not JSON
     let data;

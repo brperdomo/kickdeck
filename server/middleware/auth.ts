@@ -29,6 +29,12 @@ import { Request, Response, NextFunction } from 'express';
 
 // Middleware to validate authentication
 export const validateAuth = (req: Request, res: Response, next: NextFunction) => {
+  console.log(`[Auth Debug] Request headers: ${JSON.stringify(req.headers)}`);
+  console.log(`[Auth Debug] isAuthenticated: ${req.isAuthenticated()}`);
+  console.log(`[Auth Debug] Session ID: ${req.sessionID}`);
+  console.log(`[Auth Debug] Session: ${JSON.stringify(req.session)}`);
+  console.log(`[Auth Debug] User: ${JSON.stringify(req.user)}`);
+  
   if (!req.isAuthenticated()) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
