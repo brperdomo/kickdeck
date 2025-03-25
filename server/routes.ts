@@ -444,6 +444,17 @@ export function registerRoutes(app: Express): Server {
     app.get('/api/payments/intent/:id', getPaymentIntentStatus);
     app.post('/api/payments/webhook', handleStripeWebhook);
 
+    // Test endpoints for payment processing (only in development)
+    if (process.env.NODE_ENV !== 'production') {
+      import('./routes/test-payment.js').then(({ createTestPaymentIntent, simulatePaymentWebhook }) => {
+        app.post('/api/test/payment/create-intent', createTestPaymentIntent);
+        app.post('/api/test/payment/simulate-webhook', simulatePaymentWebhook);
+        log('Test payment endpoints registered (development only)', 'express');
+      }).catch(err => {
+        log(`Error loading test payment routes: ${err}`, 'express');
+      });
+    }
+
     // Use events router for all admin event operations
     app.use('/api/admin/events', isAdmin, eventsRouter);
 

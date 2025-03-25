@@ -1,35 +1,30 @@
-import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
-import { formatDate } from '@/lib/utils';
-import { AlertCircle, Check, Clock, Eye } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
+import { formatDate } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Registration {
   id: number;
   teamName: string;
   eventName: string;
+  eventId: string;
   ageGroup: string;
-  registrationDate: string;
-  status: string;
-  amountPaid: number;
-  termsAccepted: boolean;
-  termsAcceptedAt: string;
+  registeredAt: string;
+  status: 'registered' | 'paid' | 'approved' | 'rejected';
+  amount: number;
+  paymentId?: string;
 }
 
 export default function UserRegistrationsView() {
-  const { toast } = useToast();
-
-  // Fetch user registrations
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['userRegistrations'],
+  const { data: registrations, isLoading, error } = useQuery({
+    queryKey: ['user', 'registrations'],
     queryFn: async () => {
-      const response = await fetch('/api/user/registrations');
+      const response = await fetch('/api/members/my-registrations');
       if (!response.ok) {
         throw new Error('Failed to fetch registrations');
       }
@@ -37,144 +32,106 @@ export default function UserRegistrationsView() {
     }
   });
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-full" />
-        <Skeleton className="h-[300px] w-full" />
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Card className="border-red-200">
-        <CardHeader>
-          <CardTitle className="flex items-center text-red-600">
-            <AlertCircle className="mr-2 h-5 w-5" /> Error Loading Registrations
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Failed to load your registrations. Please try again later.</p>
-          <p className="text-sm text-muted-foreground mt-2">
-            {error instanceof Error ? error.message : 'Unknown error'}
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!data?.registrations || data.registrations.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Registrations</CardTitle>
-          <CardDescription>
-            You haven't registered any teams yet.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-center py-8 text-muted-foreground">
-            No registrations found. Register for an event to get started.
-          </p>
-          <div className="flex justify-center mt-4">
-            <Link href="/events">
-              <Button>Browse Events</Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Get registration status badge
   const getStatusBadge = (status: string) => {
-    switch (status.toLowerCase()) {
+    switch (status) {
+      case 'paid':
+        return <Badge className="bg-green-500"><CheckCircle className="w-3 h-3 mr-1" /> Paid</Badge>;
       case 'approved':
-        return <Badge className="bg-green-500"><Check className="mr-1 h-3 w-3" /> Approved</Badge>;
-      case 'pending':
-        return <Badge className="bg-yellow-500"><Clock className="mr-1 h-3 w-3" /> Pending</Badge>;
+        return <Badge className="bg-blue-500"><CheckCircle className="w-3 h-3 mr-1" /> Approved</Badge>;
       case 'rejected':
-        return <Badge className="bg-red-500">Rejected</Badge>;
+        return <Badge className="bg-red-500"><XCircle className="w-3 h-3 mr-1" /> Rejected</Badge>;
+      case 'registered':
       default:
-        return <Badge>{status}</Badge>;
+        return <Badge className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" /> Pending</Badge>;
     }
   };
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount / 100);
-  };
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-3/4" />
+        <Skeleton className="h-28 w-full" />
+        <Skeleton className="h-28 w-full" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          Failed to load your registrations. Please try again later.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  if (!registrations || registrations.length === 0) {
+    return (
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>No Registrations</AlertTitle>
+        <AlertDescription>
+          You haven't registered for any events yet. Browse our events and register your team today!
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Your Registrations</h2>
-        <div className="text-sm text-muted-foreground">
-          {data.playerCount} players across {data.registrations.length} teams
-        </div>
-      </div>
+    <div className="space-y-4">
+      <h2 className="text-2xl font-bold mb-4">Your Registrations</h2>
       
-      <div className="grid gap-4">
-        {data.registrations.map((registration: Registration) => (
-          <Card key={registration.id} className="overflow-hidden">
-            <CardHeader className="bg-muted/40 pb-2">
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-xl">{registration.teamName}</CardTitle>
-                  <CardDescription>{registration.eventName}</CardDescription>
-                </div>
-                <div className="flex flex-col items-end gap-2">
-                  {getStatusBadge(registration.status)}
-                  <div className="text-sm text-muted-foreground">
-                    {formatDate(registration.registrationDate)}
-                  </div>
-                </div>
+      {registrations.map((registration: Registration) => (
+        <Card key={registration.id} className="w-full">
+          <CardHeader>
+            <div className="flex justify-between items-start">
+              <div>
+                <CardTitle>{registration.teamName}</CardTitle>
+                <CardDescription>
+                  Event: {registration.eventName} | Age Group: {registration.ageGroup}
+                </CardDescription>
               </div>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <div className="flex flex-col md:flex-row justify-between gap-4">
-                <div>
-                  <p className="text-sm font-medium">Age Group</p>
-                  <p className="text-sm text-muted-foreground">{registration.ageGroup}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Amount Paid</p>
-                  <p className="text-sm text-muted-foreground">
-                    {formatCurrency(registration.amountPaid)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Terms Accepted</p>
-                  <p className="text-sm text-muted-foreground">
-                    {registration.termsAccepted ? (
-                      <span className="text-green-600 flex items-center">
-                        <Check className="mr-1 h-3 w-3" /> 
-                        {formatDate(registration.termsAcceptedAt)}
-                      </span>
-                    ) : 'Not accepted'}
-                  </p>
-                </div>
-                <div className="self-end">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => toast({
-                      title: "Coming Soon",
-                      description: "Team details view will be available soon.",
-                    })}
-                  >
-                    <Eye className="mr-2 h-4 w-4" /> View Details
-                  </Button>
-                </div>
+              <div>
+                {getStatusBadge(registration.status)}
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Registered on:</span>
+                <span className="text-sm">{formatDate(registration.registeredAt)}</span>
+              </div>
+              {registration.status === 'paid' && (
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Payment ID:</span>
+                  <span className="text-sm">{registration.paymentId || 'N/A'}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Amount:</span>
+                <span className="text-sm font-semibold">${(registration.amount / 100).toFixed(2)}</span>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <div className="flex justify-between w-full">
+              <Button variant="outline" asChild>
+                <Link href={`/events/${registration.eventId}`}>View Event</Link>
+              </Button>
+              
+              {registration.status === 'registered' && (
+                <Button variant="default" asChild>
+                  <Link href={`/events/${registration.eventId}/pay/${registration.id}`}>Complete Payment</Link>
+                </Button>
+              )}
+            </div>
+          </CardFooter>
+        </Card>
+      ))}
     </div>
   );
 }

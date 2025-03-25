@@ -1,18 +1,19 @@
-import { useState } from 'react';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import { Loader2 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 interface PaymentFormProps {
   amount: number;
-  onSuccess: (paymentId: string) => void;
+  onSuccess: (paymentIntentId: string) => void;
   isProcessing: boolean;
   setIsProcessing: (processing: boolean) => void;
-  description?: string;
-  metadata?: Record<string, string>;
+  teamId?: number;
   eventId?: string;
-  ageGroupId?: string;
+  ageGroupId?: number;
+  description?: string;
 }
 
 export default function PaymentForm({
@@ -20,88 +21,137 @@ export default function PaymentForm({
   onSuccess,
   isProcessing,
   setIsProcessing,
-  description = 'Team Registration Fee',
-  metadata = {},
+  teamId,
   eventId,
-  ageGroupId
+  ageGroupId,
+  description = 'Team Registration Fee'
 }: PaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState<string | null>(null);
-  
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
+
+  // Create a payment intent when the component loads
+  useEffect(() => {
+    const createIntent = async () => {
+      if (amount <= 0) return;
+
+      try {
+        const metadata: Record<string, string> = {};
+        
+        if (teamId) metadata.teamId = String(teamId);
+        if (eventId) metadata.eventId = String(eventId);
+        if (ageGroupId) metadata.ageGroupId = String(ageGroupId);
+        
+        const response = await fetch('/api/payments/create-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount,
+            currency: 'usd',
+            description,
+            metadata,
+            eventId,
+            ageGroupId
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create payment intent');
+        }
+
+        const data = await response.json();
+        setClientSecret(data.clientSecret);
+        setPaymentIntentId(data.paymentIntentId);
+      } catch (err) {
+        setError('Error creating payment: ' + (err instanceof Error ? err.message : 'Unknown error'));
+        toast({
+          title: 'Payment Error',
+          description: 'Could not initialize payment. Please try again later.',
+          variant: 'destructive'
+        });
+      }
+    };
+
+    createIntent();
+  }, [amount, description, teamId, eventId, ageGroupId]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!stripe || !elements) {
-      // Stripe.js has not yet loaded
-      setError('Payment system is still loading. Please try again.');
+
+    if (!stripe || !elements || !clientSecret) {
       return;
     }
-    
+
     setIsProcessing(true);
     setError(null);
-    
+
     try {
-      // Create payment intent on the server
-      const response = await fetch('/api/payments/create-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount, // amount is in cents
-          currency: 'usd',
-          description,
-          metadata,
-          eventId,
-          ageGroupId
-        }),
-      });
+      const cardElement = elements.getElement(CardElement);
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create payment intent');
+      if (!cardElement) {
+        throw new Error('Card element not found');
       }
-      
-      const { clientSecret, paymentIntentId } = await response.json();
-      
-      // Confirm the payment with the card element
-      const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
-          card: elements.getElement(CardElement)!,
-        },
+          card: cardElement,
+        }
       });
-      
-      if (stripeError) {
-        throw new Error(stripeError.message || 'Payment failed');
-      }
-      
-      if (paymentIntent.status === 'succeeded') {
-        // Payment succeeded
-        onSuccess(paymentIntentId);
+
+      if (error) {
+        setError(error.message || 'Payment failed');
+        toast({
+          title: 'Payment Failed',
+          description: error.message || 'An error occurred while processing your payment.',
+          variant: 'destructive'
+        });
+      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        toast({
+          title: 'Payment Successful',
+          description: 'Your payment has been processed successfully.',
+          variant: 'default'
+        });
+        
+        if (paymentIntentId) {
+          onSuccess(paymentIntentId);
+        }
       } else {
-        throw new Error(`Payment status: ${paymentIntent.status}`);
+        setError('Payment status: ' + (paymentIntent?.status || 'unknown'));
+        toast({
+          title: 'Payment Status',
+          description: 'Payment status: ' + (paymentIntent?.status || 'unknown'),
+          variant: 'default'
+        });
       }
     } catch (err) {
-      console.error('Payment error:', err);
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      setError('Error processing payment: ' + (err instanceof Error ? err.message : 'Unknown error'));
+      toast({
+        title: 'Payment Processing Error',
+        description: 'An unexpected error occurred. Please try again later.',
+        variant: 'destructive'
+      });
     } finally {
       setIsProcessing(false);
     }
   };
-  
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Complete Payment</CardTitle>
+        <CardTitle>Payment Details</CardTitle>
         <CardDescription>
-          Payment amount: ${(amount / 100).toFixed(2)}
+          Please enter your card information to complete your payment of ${(amount / 100).toFixed(2)}.
         </CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent>
+      <CardContent>
+        <form onSubmit={handleSubmit} id="payment-form">
           <div className="mb-4">
-            <div className="border p-3 rounded-md bg-background">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Card Information
+            </label>
+            <div className="p-3 border rounded-md bg-background">
               <CardElement 
                 options={{
                   style: {
@@ -120,24 +170,30 @@ export default function PaymentForm({
               />
             </div>
           </div>
-          
           {error && (
-            <Alert variant="destructive" className="mt-4">
-              <AlertTitle>Payment Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
+            <div className="text-red-500 text-sm mb-4">
+              {error}
+            </div>
           )}
-        </CardContent>
-        <CardFooter>
-          <Button 
-            type="submit" 
-            disabled={!stripe || isProcessing} 
-            className="w-full"
-          >
-            {isProcessing ? 'Processing...' : `Pay $${(amount / 100).toFixed(2)}`}
-          </Button>
-        </CardFooter>
-      </form>
+        </form>
+      </CardContent>
+      <CardFooter>
+        <Button 
+          type="submit" 
+          form="payment-form"
+          disabled={!stripe || !elements || isProcessing || !clientSecret}
+          className="w-full"
+        >
+          {isProcessing ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            `Pay $${(amount / 100).toFixed(2)}`
+          )}
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
