@@ -44,7 +44,10 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
 
   // Only add cookies if we have them
   if (cookies) {
-    options.headers.Cookie = cookies;
+    // Make sure to properly parse and format cookies
+    // node-fetch is strict about cookie format
+    const parsedCookies = cookies.split(';').map(c => c.trim()).join('; ');
+    options.headers.cookie = parsedCookies;
   }
 
   if (body) {
@@ -57,8 +60,18 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
   const setCookieHeader = response.headers.get('set-cookie');
   if (setCookieHeader) {
     console.log('New cookies received, saving...');
-    cookies = setCookieHeader;
-    saveCookiesToFile(cookies);
+    // Process only the session cookie
+    const sessionCookie = setCookieHeader
+      .split(',')
+      .find(cookie => cookie.trim().startsWith('connect.sid='));
+    
+    if (sessionCookie) {
+      cookies = sessionCookie.split(';')[0].trim();
+      console.log('Saved session cookie:', cookies);
+      saveCookiesToFile(cookies);
+    } else {
+      console.log('No session cookie found in response');
+    }
   }
   
   // Get both the text and status
