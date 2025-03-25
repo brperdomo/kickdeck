@@ -1,0 +1,86 @@
+/* Spotlight target highlight animation */
+.spotlight-target {
+  position: relative;
+  z-index: 60;
+  animation: spotlight-pulse 2s infinite;
+  box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.5);
+  border-radius: 4px;
+}
+
+@keyframes spotlight-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+  }
+}
+
+/* Positions for speech bubbles */
+[data-position="top"]::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid white;
+}
+
+[data-position="right"]::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid white;
+}
+
+[data-position="bottom"]::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid white;
+}
+
+[data-position="left"]::before {
+  content: '';
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid white;
+}
+
+/* Dark mode adjustments */
+.dark .spotlight-target {
+  box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.5);
+}
+
+.dark [data-position="top"]::before {
+  border-top-color: rgb(15, 23, 42); /* slate-900 */
+}
+
+.dark [data-position="right"]::before {
+  border-right-color: rgb(15, 23, 42);
+}
+
+.dark [data-position="bottom"]::before {
+  border-bottom-color: rgb(15, 23, 42);
+}
+
+.dark [data-position="left"]::before {
+  border-left-color: rgb(15, 23, 42);
+}
