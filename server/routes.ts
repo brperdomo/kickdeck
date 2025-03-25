@@ -442,40 +442,36 @@ export function registerRoutes(app: Express): Server {
               
               console.log('Player data for insertion:', JSON.stringify(playerData, null, 2));
               
-              // Execute a direct SQL query to insert player data
+              // Use Drizzle ORM to insert the player
               let insertedPlayerId = null;
               try {
                 const now = new Date().toISOString();
                 const jerseyNumberInt = player.jerseyNumber ? parseInt(player.jerseyNumber) : null;
                 
-                // Use a simpler approach by creating a record directly with manually formed object
-                await tx.execute(sql`
-                  INSERT INTO players (
-                    team_id, first_name, last_name, jersey_number, date_of_birth, 
-                    position, medical_notes, parent_guardian_name, parent_guardian_email, 
-                    parent_guardian_phone, emergency_contact_name, emergency_contact_phone, 
-                    is_active, created_at, updated_at
-                  ) VALUES (
-                    ${team.id}, 
-                    ${player.firstName}, 
-                    ${player.lastName}, 
-                    ${jerseyNumberInt}, 
-                    ${dateOfBirthValue || player.dateOfBirth || now}, 
-                    ${player.position || null}, 
-                    ${player.medicalNotes || null}, 
-                    ${player.parentGuardianName || null}, 
-                    ${player.parentGuardianEmail || null}, 
-                    ${player.parentGuardianPhone || null}, 
-                    ${player.emergencyContactName}, 
-                    ${player.emergencyContactPhone}, 
-                    ${true}, 
-                    ${now}, 
-                    ${now}
-                  )
-                `);
+                // Use Drizzle's insert method which handles the field name mapping properly
+                const [insertedPlayer] = await tx
+                  .insert(players)
+                  .values({
+                    teamId: team.id,
+                    firstName: player.firstName,
+                    lastName: player.lastName,
+                    jerseyNumber: jerseyNumberInt,
+                    dateOfBirth: dateOfBirthValue || player.dateOfBirth || now,
+                    position: player.position || null,
+                    medicalNotes: player.medicalNotes || null,
+                    parentGuardianName: player.parentGuardianName || null,
+                    parentGuardianEmail: player.parentGuardianEmail || null,
+                    parentGuardianPhone: player.parentGuardianPhone || null,
+                    emergencyContactName: player.emergencyContactName,
+                    emergencyContactPhone: player.emergencyContactPhone,
+                    isActive: true,
+                    createdAt: now,
+                    updatedAt: now
+                  })
+                  .returning();
                 
-                console.log('Player inserted successfully for team:', team.id);
-                insertedPlayerId = true; // Just mark as successful, we don't need the ID
+                console.log('Player inserted successfully with ID:', insertedPlayer?.id);
+                insertedPlayerId = insertedPlayer?.id;
               } catch (playerInsertError) {
                 console.error('Error inserting player:', playerInsertError);
                 throw playerInsertError;
