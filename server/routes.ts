@@ -446,7 +446,6 @@ export function registerRoutes(app: Express): Server {
               console.log('Player data for insertion:', JSON.stringify(playerData, null, 2));
               
               // Use Drizzle ORM to insert the player
-              let insertedPlayerId = null;
               try {
                 const now = new Date().toISOString();
                 const jerseyNumberInt = player.jerseyNumber ? parseInt(player.jerseyNumber) : null;
@@ -459,25 +458,25 @@ export function registerRoutes(app: Express): Server {
                   throw new Error("Team ID is missing for player insertion");
                 }
                 
-                // Use Drizzle's insert method which handles the field name mapping properly
+                // IMPORTANT: Use camelCase with Drizzle ORM - it maps to snake_case columns automatically
                 const insertResult = await tx
                   .insert(players)
                   .values({
-                    team_id: team.id, // Use snake_case for direct SQL insert
-                    first_name: player.firstName,
-                    last_name: player.lastName,
-                    jersey_number: jerseyNumberInt,
-                    date_of_birth: dateOfBirthValue || player.dateOfBirth || now,
+                    teamId: team.id, 
+                    firstName: player.firstName,
+                    lastName: player.lastName,
+                    jerseyNumber: jerseyNumberInt,
+                    dateOfBirth: dateOfBirthValue || player.dateOfBirth || now,
                     position: player.position || null,
-                    medical_notes: player.medicalNotes || null,
-                    parent_guardian_name: player.parentGuardianName || null,
-                    parent_guardian_email: player.parentGuardianEmail || null,
-                    parent_guardian_phone: player.parentGuardianPhone || null,
-                    emergency_contact_name: player.emergencyContactName,
-                    emergency_contact_phone: player.emergencyContactPhone,
-                    is_active: true,
-                    created_at: now,
-                    updated_at: now
+                    medicalNotes: player.medicalNotes || null,
+                    parentGuardianName: player.parentGuardianName || null,
+                    parentGuardianEmail: player.parentGuardianEmail || null,
+                    parentGuardianPhone: player.parentGuardianPhone || null,
+                    emergencyContactName: player.emergencyContactName,
+                    emergencyContactPhone: player.emergencyContactPhone,
+                    isActive: true,
+                    createdAt: now,
+                    updatedAt: now
                   })
                   .returning();
                   
@@ -485,14 +484,14 @@ export function registerRoutes(app: Express): Server {
                 const insertedPlayer = insertResult[0];
                 
                 console.log('Player inserted successfully with ID:', insertedPlayer?.id);
-                insertedPlayerId = insertedPlayer?.id;
+                console.log('Player inserted with ID:', insertedPlayer?.id || 'unknown');
+                
+                // Increment player count only after successful insertion
+                playerCount++;
               } catch (playerInsertError) {
                 console.error('Error inserting player:', playerInsertError);
                 throw playerInsertError;
               }
-              
-              console.log('Player inserted with ID:', insertedPlayerId || 'unknown');
-              playerCount++;
             }
           } catch (error) {
             console.error('Error inserting players:', error);
