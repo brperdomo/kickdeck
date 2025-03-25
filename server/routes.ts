@@ -68,6 +68,7 @@ import {
   formFieldOptions,
   formResponses,
   teams,
+  players,
   games,
   gameTimeSlots,
   eventSettings,
@@ -393,44 +394,102 @@ export function registerRoutes(app: Express): Server {
             })
             .returning();
             
-          // Insert players
-          const playerRecords = players.map(player => {
-            // Safely convert date of birth to a Date object if it exists
-            let dateOfBirthValue = null;
-            if (player.dateOfBirth) {
-              try {
-                // Create a Date object to ensure it's properly formatted
-                const dateObj = new Date(player.dateOfBirth);
-                if (!isNaN(dateObj.getTime())) {
-                  dateOfBirthValue = dateObj;
-                }
-              } catch (err) {
-                console.error('Error converting player date of birth:', err);
-              }
-            }
+          console.log('Team created with ID:', team?.id, 'Team data:', JSON.stringify(team, null, 2));
             
-            return {
-              team_id: team.id,
-              first_name: player.firstName,
-              last_name: player.lastName,
-              jersey_number: player.jerseyNumber ? parseInt(player.jerseyNumber) : null,
-              date_of_birth: dateOfBirthValue,
-              position: player.position || null,
-              medical_notes: player.medicalNotes || null,
-              parent_guardian_name: player.parentGuardianName || null,
-              parent_guardian_email: player.parentGuardianEmail || null,
-              parent_guardian_phone: player.parentGuardianPhone || null,
-              emergency_contact_name: player.emergencyContactName,
-              emergency_contact_phone: player.emergencyContactPhone,
-              is_active: true,
-              created_at: new Date(),
-              updated_at: new Date(),
-            };
-          });
+          // Track player count for the response
+          let playerCount = 0;
           
-          await tx.insert(players).values(playerRecords);
+          // Insert players using the schema's property names (camelCase)
+          try {
+            console.log('Players data to insert:', JSON.stringify(players, null, 2));
+            console.log('Players table schema:', JSON.stringify(players, null, 2));
+            
+            for (const player of players) {
+              console.log(`Processing player: ${player.firstName} ${player.lastName}`);
+              
+              // Safely convert date of birth to a Date object if it exists
+              let dateOfBirthValue = null;
+              if (player.dateOfBirth) {
+                try {
+                  // Create a Date object to ensure it's properly formatted
+                  const dateObj = new Date(player.dateOfBirth);
+                  if (!isNaN(dateObj.getTime())) {
+                    dateOfBirthValue = dateObj.toISOString();
+                  }
+                } catch (err) {
+                  console.error('Error converting player date of birth:', err);
+                }
+              }
+              
+              // Build player data
+              const playerData = {
+                teamId: team.id, 
+                firstName: player.firstName,
+                lastName: player.lastName,
+                jerseyNumber: player.jerseyNumber ? parseInt(player.jerseyNumber) : null,
+                dateOfBirth: dateOfBirthValue || player.dateOfBirth || new Date().toISOString(),
+                position: player.position || null,
+                medicalNotes: player.medicalNotes || null,
+                parentGuardianName: player.parentGuardianName || null,
+                parentGuardianEmail: player.parentGuardianEmail || null,
+                parentGuardianPhone: player.parentGuardianPhone || null,
+                emergencyContactName: player.emergencyContactName,
+                emergencyContactPhone: player.emergencyContactPhone,
+                isActive: true,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+              };
+              
+              console.log('Player data for insertion:', JSON.stringify(playerData, null, 2));
+              
+              // Execute a direct SQL query to insert player data
+              let insertedPlayerId = null;
+              try {
+                const now = new Date().toISOString();
+                const jerseyNumberInt = player.jerseyNumber ? parseInt(player.jerseyNumber) : null;
+                
+                // Use a simpler approach by creating a record directly with manually formed object
+                await tx.execute(sql`
+                  INSERT INTO players (
+                    team_id, first_name, last_name, jersey_number, date_of_birth, 
+                    position, medical_notes, parent_guardian_name, parent_guardian_email, 
+                    parent_guardian_phone, emergency_contact_name, emergency_contact_phone, 
+                    is_active, created_at, updated_at
+                  ) VALUES (
+                    ${team.id}, 
+                    ${player.firstName}, 
+                    ${player.lastName}, 
+                    ${jerseyNumberInt}, 
+                    ${dateOfBirthValue || player.dateOfBirth || now}, 
+                    ${player.position || null}, 
+                    ${player.medicalNotes || null}, 
+                    ${player.parentGuardianName || null}, 
+                    ${player.parentGuardianEmail || null}, 
+                    ${player.parentGuardianPhone || null}, 
+                    ${player.emergencyContactName}, 
+                    ${player.emergencyContactPhone}, 
+                    ${true}, 
+                    ${now}, 
+                    ${now}
+                  )
+                `);
+                
+                console.log('Player inserted successfully for team:', team.id);
+                insertedPlayerId = true; // Just mark as successful, we don't need the ID
+              } catch (playerInsertError) {
+                console.error('Error inserting player:', playerInsertError);
+                throw playerInsertError;
+              }
+              
+              console.log('Player inserted with ID:', insertedPlayerId || 'unknown');
+              playerCount++;
+            }
+          } catch (error) {
+            console.error('Error inserting players:', error);
+            throw error; // Re-throw to handle in the outer catch block
+          }
           
-          return { team, playerCount: playerRecords.length };
+          return { team, playerCount };
         });
         
         res.status(201).json({
@@ -3357,6 +3416,64 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     });
 
     // Teams management endpoints
+    
+    // Get a single team by ID with its players
+    app.get('/api/admin/teams/:id', isAdmin, async (req, res) => {
+      try {
+        const teamId = parseInt(req.params.id);
+        
+        if (isNaN(teamId)) {
+          return res.status(400).json({ error: "Invalid team ID" });
+        }
+        
+        // Fetch team with its age group and event
+        const [team] = await db
+          .select({
+            team: teams,
+            ageGroup: eventAgeGroups,
+            event: events
+          })
+          .from(teams)
+          .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
+          .leftJoin(events, eq(teams.eventId, events.id))
+          .where(eq(teams.id, teamId));
+          
+        if (!team) {
+          return res.status(404).json({ error: "Team not found" });
+        }
+        
+        // Fetch players for this team
+        const playersList = await db
+          .select()
+          .from(players)
+          .where(eq(players.teamId, teamId));
+          
+        // Parse coach JSON if it exists
+        let coachData = {};
+        if (team.team.coach) {
+          try {
+            coachData = JSON.parse(team.team.coach);
+          } catch (error) {
+            console.error('Error parsing coach JSON:', error);
+          }
+        }
+        
+        // Format response
+        const response = {
+          ...team.team,
+          ageGroup: team.ageGroup?.ageGroup || 'Unknown',
+          eventName: team.event?.name || 'Unknown Event',
+          players: playersList,
+          coachData
+        };
+        
+        res.json(response);
+      } catch (error) {
+        console.error('Error fetching team:', error);
+        res.status(500).json({ error: "Failed to fetch team details" });
+      }
+    });
+    
     app.patch('/api/admin/teams/:id', isAdmin, async (req, res) => {
       try {
         const teamId = parseInt(req.params.id);
