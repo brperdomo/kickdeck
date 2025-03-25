@@ -384,7 +384,7 @@ export function registerRoutes(app: Express): Server {
               manager_name: managerName,
               manager_email: managerEmail,
               manager_phone: managerPhone,
-              user_id: userId,  // Correct snake_case for DB columns
+              // user_id field doesn't exist in the actual database schema
               // Add new registration fields
               status: "registered", // Initial status - 'registered', 'approved', 'rejected', etc.
               registration_fee: registrationFee || null,  // Correct snake_case for DB columns

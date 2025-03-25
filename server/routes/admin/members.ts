@@ -85,7 +85,9 @@ export async function getMemberById(req: Request, res: Response) {
       return res.status(404).json({ error: 'Member not found' });
     }
     
-    // Get all team registrations submitted by this member
+    // Get all team registrations
+    // Since userId field doesn't exist in teams table, 
+    // we'll look for teams where the coach or manager email contains the member's email
     const teamRegistrations = await db
       .select({
         team: teams,
@@ -95,17 +97,26 @@ export async function getMemberById(req: Request, res: Response) {
       .from(teams)
       .leftJoin(events, eq(teams.eventId, events.id))
       .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
-      .where(eq(teams.userId, memberId))
+      // Use member's email as a filter since userId doesn't exist
+      .where(
+        or(
+          sql`${teams.coach}::text LIKE ${'%' + member.email + '%'}`,
+          eq(teams.managerEmail, member.email)
+        )
+      )
       .orderBy(desc(teams.createdAt));
     
-    // No need to map fields as headCoachName is already in the schema
-    
-    // Get count of players registered by this member
+    // Get count of players for these teams
     const [playerCount] = await db
       .select({ count: sql<number>`count(*)` })
       .from(players)
       .leftJoin(teams, eq(players.teamId, teams.id))
-      .where(eq(teams.userId, memberId));
+      .where(
+        or(
+          sql`${teams.coach}::text LIKE ${'%' + member.email + '%'}`,
+          eq(teams.managerEmail, member.email)
+        )
+      );
     
     // Transform team registrations to match the frontend's expected format
     const formattedRegistrations = teamRegistrations.map(reg => ({
@@ -164,13 +175,24 @@ export async function getTeamRegistrationDetails(req: Request, res: Response) {
       .where(eq(players.teamId, teamIdNumber))
       .orderBy(asc(players.lastName));
     
-    // Get submitter information
+    // Get submitter information by extracting email from coach JSON
     let submitter = null;
-    if (registration.team.userId) {
+    // Check if coach data exists and parse it
+    let coachEmail = null;
+    if (registration.team.coach) {
+      try {
+        const coachData = JSON.parse(registration.team.coach);
+        coachEmail = coachData.headCoachEmail;
+      } catch (error) {
+        console.error('Error parsing coach data:', error);
+      }
+    }
+    
+    if (coachEmail) {
       [submitter] = await db
         .select()
         .from(users)
-        .where(eq(users.id, registration.team.userId))
+        .where(eq(users.email, coachEmail))
         .limit(1);
     }
     
@@ -214,15 +236,35 @@ export async function resendPaymentConfirmation(req: Request, res: Response) {
     // Get submitter email
     let submitterEmail = registration.team.managerEmail; // Default to team manager email
     
-    if (registration.team.userId) {
-      const [submitter] = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, registration.team.userId))
-        .limit(1);
-      
-      if (submitter) {
-        submitterEmail = submitter.email;
+    // Try to extract email from coach JSON if manager email is not available
+    if (!submitterEmail && registration.team.coach) {
+      try {
+        const coachData = JSON.parse(registration.team.coach);
+        if (coachData.headCoachEmail) {
+          submitterEmail = coachData.headCoachEmail;
+        }
+      } catch (error) {
+        console.error('Error parsing coach data:', error);
+      }
+    }
+    
+    // If still no email, try to find a user with matching coach name in the system
+    if (!submitterEmail && registration.team.coach) {
+      try {
+        const coachData = JSON.parse(registration.team.coach);
+        if (coachData.headCoachName) {
+          const [user] = await db
+            .select()
+            .from(users)
+            .where(sql`LOWER(CONCAT(${users.firstName}, ' ', ${users.lastName})) = LOWER(${coachData.headCoachName})`)
+            .limit(1);
+          
+          if (user) {
+            submitterEmail = user.email;
+          }
+        }
+      } catch (error) {
+        console.error('Error finding coach user:', error);
       }
     }
     
@@ -269,7 +311,18 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
       return res.status(401).json({ error: 'You must be logged in to view your registrations' });
     }
     
-    // Get all team registrations submitted by this user
+    // Get user email to search teams
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+    
+    if (!user || !user.email) {
+      return res.status(404).json({ error: 'User email not found' });
+    }
+    
+    // Get all teams where the current user is listed as coach or manager
     const teamRegistrations = await db
       .select({
         team: teams,
@@ -279,15 +332,24 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
       .from(teams)
       .leftJoin(events, eq(teams.eventId, events.id))
       .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
-      .where(eq(teams.userId, userId))
+      .where(
+        or(
+          sql`${teams.coach}::text LIKE ${'%' + user.email + '%'}`,
+          eq(teams.managerEmail, user.email)
+        )
+      )
       .orderBy(desc(teams.createdAt));
     
-    // Get count of players registered by this user
-    const [playerCount] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(players)
-      .leftJoin(teams, eq(players.teamId, teams.id))
-      .where(eq(teams.userId, userId));
+    // Get count of players for these teams
+    const playerIds = teamRegistrations.map(reg => reg.team.id);
+    
+    let playerCount = { count: 0 };
+    if (playerIds.length > 0) {
+      [playerCount] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(players)
+        .where(inArray(players.teamId, playerIds));
+    }
     
     // Transform team registrations to match the frontend's expected format
     const formattedRegistrations = teamRegistrations.map(reg => ({
