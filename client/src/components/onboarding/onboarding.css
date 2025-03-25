@@ -1,86 +1,153 @@
-/* Spotlight target highlight animation */
-.spotlight-target {
-  position: relative;
-  z-index: 60;
-  animation: spotlight-pulse 2s infinite;
-  box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.5);
-  border-radius: 4px;
-}
-
-@keyframes spotlight-pulse {
+/* Animation for the mascot floating effect */
+@keyframes float {
   0% {
-    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+    transform: translateY(0px);
   }
-  70% {
-    box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+  50% {
+    transform: translateY(-10px);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+    transform: translateY(0px);
   }
 }
 
-/* Positions for speech bubbles */
-[data-position="top"]::before {
-  content: '';
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Spotlight effect for the feature tour */
+.spotlight-cutout {
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  overflow: visible;
+  z-index: 100;
+}
+
+/* Fade-in animation for speech bubbles and modals */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Pulse highlight animation for targeted elements */
+@keyframes pulseHighlight {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.animate-pulse-highlight {
+  animation: pulseHighlight 1.5s infinite;
+  position: relative;
+  z-index: 100;
+}
+
+/* Content highlight for text emphasis */
+.highlight-text {
+  background: linear-gradient(180deg, transparent 70%, rgba(34, 197, 94, 0.3) 30%);
+  display: inline;
+}
+
+/* Badge for new features */
+.new-badge {
   position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 10px solid white;
+  top: -8px;
+  right: -8px;
+  background-color: #f43f5e;
+  color: white;
+  font-size: 0.6rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-[data-position="right"]::before {
-  content: '';
-  position: absolute;
-  left: -10px;
-  top: 50%;
-  transform: translateY(-50%);
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-right: 10px solid white;
+/* Mascot bounce animation */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-15px);
+  }
+  60% {
+    transform: translateY(-7px);
+  }
 }
 
-[data-position="bottom"]::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid white;
+.animate-bounce-mascot {
+  animation: bounce 2s ease infinite;
 }
 
-[data-position="left"]::before {
-  content: '';
-  position: absolute;
-  right: -10px;
-  top: 50%;
-  transform: translateY(-50%);
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-left: 10px solid white;
+/* Wave animation for the mascot */
+@keyframes wave {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(16deg);
+  }
+  20% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(16deg);
+  }
+  40% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
-/* Dark mode adjustments */
-.dark .spotlight-target {
-  box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.5);
+.animate-wave {
+  animation: wave 2.5s ease infinite;
+  transform-origin: 70% 70%;
+  display: inline-block;
 }
 
-.dark [data-position="top"]::before {
-  border-top-color: rgb(15, 23, 42); /* slate-900 */
+/* Progress indicator for onboarding steps */
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 0;
 }
 
-.dark [data-position="right"]::before {
-  border-right-color: rgb(15, 23, 42);
+.step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
 }
 
-.dark [data-position="bottom"]::before {
-  border-bottom-color: rgb(15, 23, 42);
+.step-dot.active {
+  background-color: #22c55e;
 }
 
-.dark [data-position="left"]::before {
-  border-left-color: rgb(15, 23, 42);
+.step-dot.completed {
+  background-color: #22c55e;
 }

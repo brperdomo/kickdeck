@@ -1,217 +1,231 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { cn } from '@/lib/utils';
-import { MascotCharacter } from './MascotCharacter';
-import SpeechBubble from './SpeechBubble';
 import { Button } from '@/components/ui/button';
-import { X, ArrowRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
+import { MascotEmotion } from './MascotCharacter';
+import SpeechBubble from './SpeechBubble';
+import './onboarding.css';
 
-interface FeatureSpotlightProps {
+export interface FeatureSpotlightProps {
   targetSelector: string;
-  title: string;
-  description: string;
+  message: string;
   position?: 'top' | 'right' | 'bottom' | 'left';
-  mascotEmotion?: 'happy' | 'excited' | 'thinking' | 'pointing' | 'waving';
-  show: boolean;
-  onClose: () => void;
-  onNext?: () => void;
+  mascotEmotion?: MascotEmotion;
   showMascot?: boolean;
-  className?: string;
-  step?: number;
-  totalSteps?: number;
+  nextLabel?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onNext?: () => void;
+  onPrevious?: () => void;
 }
 
-export const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
+const FeatureSpotlight: React.FC<FeatureSpotlightProps> = ({
   targetSelector,
-  title,
-  description,
+  message,
   position = 'bottom',
   mascotEmotion = 'pointing',
-  show,
-  onClose,
-  onNext,
   showMascot = true,
-  className,
-  step,
-  totalSteps,
+  nextLabel = 'Next',
+  open = true,
+  onOpenChange,
+  onNext,
+  onPrevious,
 }) => {
-  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0, height: 0 });
-  const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
-  const spotlightRef = useRef<HTMLDivElement>(null);
-
-  // Initialize portal element
+  const [targetElement, setTargetElement] = useState<Element | null>(null);
+  const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
+  const [spotlightPosition, setSpotlightPosition] = useState({ top: 0, left: 0 });
+  const [bubblePosition, setBubblePosition] = useState({ top: 0, left: 0 });
+  const [isVisible, setIsVisible] = useState(false);
+  
+  // Initialize
   useEffect(() => {
-    let el = document.getElementById('spotlight-portal');
-    if (!el) {
-      el = document.createElement('div');
-      el.id = 'spotlight-portal';
-      el.style.position = 'fixed';
-      el.style.top = '0';
-      el.style.left = '0';
-      el.style.width = '100vw';
-      el.style.height = '100vh';
-      el.style.pointerEvents = 'none';
-      el.style.zIndex = '100';
-      document.body.appendChild(el);
-    }
-    setPortalElement(el);
-  }, []);
-
-  // Position spotlight relative to target element
-  useEffect(() => {
-    if (!show) return;
-
-    const target = document.querySelector(targetSelector) as HTMLElement;
-    if (!target) {
-      console.warn(`Target element not found: ${targetSelector}`);
+    if (!open) {
+      setIsVisible(false);
       return;
     }
-
-    const updatePosition = () => {
-      const rect = target.getBoundingClientRect();
-      setCoords({
-        top: rect.top,
-        left: rect.left,
-        width: rect.width,
-        height: rect.height,
+    
+    const element = document.querySelector(targetSelector);
+    if (element) {
+      setTargetElement(element);
+      const rect = element.getBoundingClientRect();
+      setTargetRect(rect);
+      
+      // Calculate spotlight position
+      setSpotlightPosition({
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX,
       });
-    };
-
-    updatePosition();
-    
-    // Highlight target with a pulse effect
-    target.classList.add('spotlight-target');
-    
-    // Update position on resize
-    window.addEventListener('resize', updatePosition);
-    window.addEventListener('scroll', updatePosition, true);
+      
+      // Calculate speech bubble position based on target and position prop
+      calculateBubblePosition(rect, position);
+      
+      // Add highlight to the target element
+      element.classList.add('animate-pulse-highlight');
+      
+      // Show after brief delay to ensure smooth animation
+      setTimeout(() => {
+        setIsVisible(true);
+      }, 100);
+    } else {
+      console.warn(`Target element not found: ${targetSelector}`);
+      setIsVisible(false);
+      if (onOpenChange) onOpenChange(false);
+    }
     
     return () => {
-      target.classList.remove('spotlight-target');
-      window.removeEventListener('resize', updatePosition);
-      window.removeEventListener('scroll', updatePosition, true);
+      if (element) {
+        element.classList.remove('animate-pulse-highlight');
+      }
     };
-  }, [show, targetSelector]);
-
-  // Adjust tooltip position based on target position
+  }, [targetSelector, open, position]);
+  
+  // Recalculate positions on window resize
   useEffect(() => {
-    if (!spotlightRef.current || !show) return;
+    const handleResize = () => {
+      if (targetElement) {
+        const rect = targetElement.getBoundingClientRect();
+        setTargetRect(rect);
+        
+        setSpotlightPosition({
+          top: rect.top + window.scrollY,
+          left: rect.left + window.scrollX,
+        });
+        
+        calculateBubblePosition(rect, position);
+      }
+    };
     
-    const tooltipRect = spotlightRef.current.getBoundingClientRect();
-    const tooltipWidth = tooltipRect.width;
-    const tooltipHeight = tooltipRect.height;
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', handleResize);
     
-    // Check if tooltip would go off-screen and adjust position if needed
-    let newPosition = position;
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleResize);
+    };
+  }, [targetElement, position]);
+  
+  // Handle closing
+  const handleClose = () => {
+    setIsVisible(false);
+    if (onOpenChange) onOpenChange(false);
     
-    if (position === 'bottom' && coords.top + coords.height + tooltipHeight > windowHeight) {
-      newPosition = 'top';
-    } else if (position === 'top' && coords.top - tooltipHeight < 0) {
-      newPosition = 'bottom';
-    } else if (position === 'right' && coords.left + coords.width + tooltipWidth > windowWidth) {
-      newPosition = 'left';
-    } else if (position === 'left' && coords.left - tooltipWidth < 0) {
-      newPosition = 'right';
-    }
-    
-    // Apply the position as a data attribute
-    spotlightRef.current.setAttribute('data-position', newPosition);
-  }, [coords, position, show]);
-
-  if (!show || !portalElement) return null;
-
-  // Calculate position based on target and specified position
-  const getPositionStyles = () => {
-    const margin = 12; // Distance from target element
-    
-    switch (position) {
-      case 'top':
-        return {
-          top: coords.top - margin,
-          left: coords.left + coords.width / 2,
-          transform: 'translate(-50%, -100%)',
-        };
-      case 'right':
-        return {
-          top: coords.top + coords.height / 2,
-          left: coords.left + coords.width + margin,
-          transform: 'translateY(-50%)',
-        };
-      case 'left':
-        return {
-          top: coords.top + coords.height / 2,
-          left: coords.left - margin,
-          transform: 'translate(-100%, -50%)',
-        };
-      case 'bottom':
-      default:
-        return {
-          top: coords.top + coords.height + margin,
-          left: coords.left + coords.width / 2,
-          transform: 'translateX(-50%)',
-        };
+    // Remove highlight from the target element
+    if (targetElement) {
+      targetElement.classList.remove('animate-pulse-highlight');
     }
   };
-
+  
+  // Calculate speech bubble position based on target and position prop
+  const calculateBubblePosition = (rect: DOMRect, pos: string) => {
+    const padding = 16; // space between spotlight and bubble
+    
+    let top = 0;
+    let left = 0;
+    
+    switch (pos) {
+      case 'top':
+        top = rect.top + window.scrollY - padding;
+        left = rect.left + window.scrollX + rect.width / 2;
+        break;
+      case 'right':
+        top = rect.top + window.scrollY + rect.height / 2;
+        left = rect.left + window.scrollX + rect.width + padding;
+        break;
+      case 'bottom':
+        top = rect.top + window.scrollY + rect.height + padding;
+        left = rect.left + window.scrollX + rect.width / 2;
+        break;
+      case 'left':
+        top = rect.top + window.scrollY + rect.height / 2;
+        left = rect.left + window.scrollX - padding;
+        break;
+    }
+    
+    setBubblePosition({ top, left });
+  };
+  
+  if (!isVisible || !targetRect) {
+    return null;
+  }
+  
   return createPortal(
-    <div
-      ref={spotlightRef}
-      className={cn(
-        'fixed max-w-sm z-50 animate-fade-in pointer-events-auto',
-        className
-      )}
-      style={getPositionStyles()}
-      data-position={position}
-    >
-      <div className="flex">
-        {showMascot && position === 'left' && (
-          <div className="mr-2">
-            <MascotCharacter emotion={mascotEmotion} size="sm" />
-          </div>
+    <div className="fixed inset-0 z-50 overflow-hidden">
+      {/* Overlay */}
+      <div 
+        className="absolute inset-0 bg-black/70" 
+        onClick={handleClose}
+      />
+      
+      {/* Spotlight cutout */}
+      <div
+        className="spotlight-cutout absolute"
+        style={{
+          width: `${targetRect.width + 8}px`,
+          height: `${targetRect.height + 8}px`,
+          top: `${spotlightPosition.top - 4}px`,
+          left: `${spotlightPosition.left - 4}px`,
+        }}
+      >
+        {/* Outline for visible element */}
+        <div 
+          className="absolute inset-0 border-2 border-green-400 rounded-md"
+        />
+      </div>
+      
+      {/* Speech bubble */}
+      <div
+        className="absolute"
+        style={{
+          top: bubblePosition.top,
+          left: bubblePosition.left,
+          transform: `translate(${position === 'left' ? '-100%' : position === 'right' ? '0' : '-50%'}, ${position === 'top' ? '-100%' : position === 'bottom' ? '0' : '-50%'})`,
+        }}
+      >
+        <SpeechBubble
+          message={message}
+          position={position}
+          onClose={handleClose}
+          actionLabel={nextLabel}
+          onAction={onNext}
+          mascotEmotion={mascotEmotion}
+          showMascot={showMascot}
+        />
+      </div>
+      
+      {/* Skip button */}
+      <button 
+        className="fixed top-4 right-4 text-white hover:text-gray-300 text-sm"
+        onClick={handleClose}
+      >
+        Skip
+      </button>
+      
+      {/* Navigation buttons */}
+      <div className="fixed bottom-4 right-4 flex gap-2">
+        {onPrevious && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={onPrevious}
+            className="bg-white text-gray-800"
+          >
+            Previous
+          </Button>
         )}
         
-        <SpeechBubble position={position} className="bg-white shadow-lg dark:bg-slate-900">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="font-semibold text-lg">{title}</h3>
-            <Button variant="ghost" size="sm" className="w-6 h-6 p-0" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{description}</p>
-          
-          <div className="flex justify-between items-center">
-            {step && totalSteps ? (
-              <div className="text-xs text-gray-500">
-                Step {step} of {totalSteps}
-              </div>
-            ) : (
-              <div></div>
-            )}
-            
-            {onNext && (
-              <Button 
-                variant="default" 
-                size="sm" 
-                onClick={onNext}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Next <ArrowRight className="ml-1 h-3 w-3" />
-              </Button>
-            )}
-          </div>
-        </SpeechBubble>
-        
-        {showMascot && position !== 'left' && (
-          <div className="ml-2">
-            <MascotCharacter emotion={mascotEmotion} size="sm" />
-          </div>
+        {onNext && (
+          <Button 
+            variant="default" 
+            size="sm" 
+            onClick={onNext}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            {nextLabel} <ChevronRight className="ml-1 h-4 w-4" />
+          </Button>
         )}
       </div>
     </div>,
-    portalElement
+    document.body
   );
 };
 
