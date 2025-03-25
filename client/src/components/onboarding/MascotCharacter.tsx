@@ -1,8 +1,15 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import './onboarding.css';
 
-export type MascotEmotion = 'neutral' | 'happy' | 'excited' | 'thinking' | 'confused' | 'waving';
-export type MascotSize = 'sm' | 'md' | 'lg' | 'xl';
+// Define the possible emotions for the mascot
+export type MascotEmotion = 
+  | 'neutral' 
+  | 'happy' 
+  | 'excited' 
+  | 'confused' 
+  | 'thinking'
+  | 'waving';
 
 interface MascotCharacterProps {
   /**
@@ -11,9 +18,9 @@ interface MascotCharacterProps {
   emotion?: MascotEmotion;
   
   /**
-   * Size of the mascot
+   * The size of the mascot
    */
-  size?: MascotSize;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   
   /**
    * Whether to animate the mascot
@@ -21,187 +28,190 @@ interface MascotCharacterProps {
   animate?: boolean;
   
   /**
-   * Additional class names
+   * Additional CSS class names
    */
   className?: string;
 }
 
 /**
- * The mascot character component for the app's onboarding and guidance features
- * Supports different emotional states and sizes
+ * A friendly mascot character that can display different emotions
+ * Used throughout the onboarding experience to create a friendly, personalized feel
  */
 const MascotCharacter: React.FC<MascotCharacterProps> = ({
   emotion = 'neutral',
   size = 'md',
-  animate = false,
+  animate = true,
   className = '',
 }) => {
-  // Size map (width in pixels)
+  // Map sizes to actual pixel dimensions
   const sizeMap = {
-    sm: 40,
-    md: 80,
-    lg: 120,
-    xl: 160,
+    sm: { width: 36, height: 36 },
+    md: { width: 48, height: 48 },
+    lg: { width: 64, height: 64 },
+    xl: { width: 96, height: 96 },
   };
   
-  // Get the width based on size
-  const width = sizeMap[size];
+  const dimensions = sizeMap[size];
   
-  // Build the class name with animation if needed
-  const mascotClassName = `mascot-character ${animate ? 'animate' : ''} ${className}`;
-  
-  // Return the appropriate SVG based on the emotion
-  const renderMascot = () => {
+  // Get the appropriate SVG based on emotion
+  const getMascotSvg = () => {
+    // Base shared styles and paths for the mascot character
+    const baseStyles = {
+      width: dimensions.width,
+      height: dimensions.height,
+    };
+    
+    // Bounce animation variants
+    const bounceAnimation = animate ? {
+      animate: {
+        y: [0, -5, 0],
+        transition: {
+          duration: 2,
+          repeat: Infinity,
+          repeatType: 'reverse' as const,
+          ease: 'easeInOut',
+        },
+      },
+    } : {};
+    
+    // Common SVG structure for the soccer ball mascot
+    const renderSoccerBall = (faceElements: React.ReactNode) => (
+      <motion.svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 64 64"
+        style={baseStyles}
+        className={`mascot ${className}`}
+        {...bounceAnimation}
+      >
+        {/* Soccer ball body with hexagons */}
+        <circle cx="32" cy="32" r="30" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+        
+        {/* Hexagonal pattern */}
+        <path d="M32,2 C38,8 45,10 53,8 C57,18 57,28 53,38 C45,43 38,48 32,62 C25,48 18,43 10,38 C6,28 6,18 10,8 C18,10 25,8 32,2" 
+              fill="none" stroke="#000000" strokeWidth="1.5" />
+        
+        {/* Face elements specific to emotion */}
+        {faceElements}
+      </motion.svg>
+    );
+    
+    // Render different face expressions based on emotion
     switch (emotion) {
       case 'happy':
-        return renderHappyMascot();
+        return renderSoccerBall(
+          <>
+            {/* Happy eyes (curved upward) */}
+            <path d="M24,25 Q26,22 28,25" stroke="#000" strokeWidth="2" fill="none" />
+            <path d="M36,25 Q38,22 40,25" stroke="#000" strokeWidth="2" fill="none" />
+            
+            {/* Happy smile */}
+            <path d="M25,36 Q32,42 39,36" stroke="#000" strokeWidth="2" fill="none" />
+          </>
+        );
+        
       case 'excited':
-        return renderExcitedMascot();
-      case 'thinking':
-        return renderThinkingMascot();
+        return renderSoccerBall(
+          <>
+            {/* Wide eyes with stars */}
+            <circle cx="26" cy="26" r="4" fill="#000" />
+            <circle cx="38" cy="26" r="4" fill="#000" />
+            <path d="M25,25 L27,23 M25,23 L27,25 M23,24 L29,24 M26,21 L26,27" stroke="#fff" strokeWidth="1" />
+            <path d="M37,25 L39,23 M37,23 L39,25 M35,24 L41,24 M38,21 L38,27" stroke="#fff" strokeWidth="1" />
+            
+            {/* Open excited mouth */}
+            <path d="M25,38 Q32,46 39,38" stroke="#000" strokeWidth="2" fill="#ff6b6b" />
+          </>
+        );
+        
       case 'confused':
-        return renderConfusedMascot();
+        return renderSoccerBall(
+          <>
+            {/* Asymmetrical eyes with raised eyebrow */}
+            <circle cx="26" cy="26" r="3" fill="#000" />
+            <path d="M36,24 Q38,22 40,24" stroke="#000" strokeWidth="2" fill="none" />
+            <path d="M23,20 Q26,18 29,21" stroke="#000" strokeWidth="1.5" fill="none" /> {/* Raised eyebrow */}
+            
+            {/* Unsure mouth */}
+            <path d="M28,38 Q32,36 36,39" stroke="#000" strokeWidth="2" fill="none" />
+          </>
+        );
+        
+      case 'thinking':
+        return renderSoccerBall(
+          <>
+            {/* Thoughtful eyes (one slightly closed) */}
+            <path d="M24,26 Q26,26 28,26" stroke="#000" strokeWidth="2" fill="none" />
+            <path d="M36,26 Q38,24 40,26" stroke="#000" strokeWidth="2" fill="none" />
+            
+            {/* Thinking mouth */}
+            <path d="M30,38 Q32,36 34,38" stroke="#000" strokeWidth="2" fill="none" />
+            
+            {/* Thought bubble */}
+            <circle cx="45" cy="15" r="3" fill="#fff" stroke="#000" strokeWidth="1" />
+            <circle cx="48" cy="10" r="4" fill="#fff" stroke="#000" strokeWidth="1" />
+          </>
+        );
+        
       case 'waving':
-        return renderWavingMascot();
+        return (
+          <motion.svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 64 64"
+            style={baseStyles}
+            className={`mascot ${className}`}
+            {...bounceAnimation}
+          >
+            {/* Soccer ball body */}
+            <circle cx="32" cy="32" r="30" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+            
+            {/* Hexagonal pattern */}
+            <path d="M32,2 C38,8 45,10 53,8 C57,18 57,28 53,38 C45,43 38,48 32,62 C25,48 18,43 10,38 C6,28 6,18 10,8 C18,10 25,8 32,2" 
+                  fill="none" stroke="#000000" strokeWidth="1.5" />
+            
+            {/* Happy eyes */}
+            <path d="M24,25 Q26,22 28,25" stroke="#000" strokeWidth="2" fill="none" />
+            <path d="M36,25 Q38,22 40,25" stroke="#000" strokeWidth="2" fill="none" />
+            
+            {/* Happy smile */}
+            <path d="M25,36 Q32,42 39,36" stroke="#000" strokeWidth="2" fill="none" />
+            
+            {/* Waving arm/hand */}
+            <motion.path 
+              d="M55,35 Q52,30 50,32 Q48,35 50,38" 
+              fill="#ffffff" 
+              stroke="#000000" 
+              strokeWidth="1.5"
+              animate={{ 
+                rotate: [0, 15, 0, 15, 0], 
+                x: 0,
+                y: 0,
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                repeatType: "loop",
+              }}
+              transformOrigin="50 32"
+            />
+          </motion.svg>
+        );
+        
       case 'neutral':
       default:
-        return renderNeutralMascot();
+        return renderSoccerBall(
+          <>
+            {/* Neutral eyes */}
+            <circle cx="26" cy="26" r="3" fill="#000" />
+            <circle cx="38" cy="26" r="3" fill="#000" />
+            
+            {/* Neutral mouth */}
+            <path d="M28,38 Q32,38 36,38" stroke="#000" strokeWidth="2" fill="none" />
+          </>
+        );
     }
   };
   
-  // Neutral expression mascot
-  const renderNeutralMascot = () => (
-    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
-      {/* Body */}
-      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
-      
-      {/* Eyes */}
-      <circle cx="70" cy="80" r="10" fill="white" />
-      <circle cx="130" cy="80" r="10" fill="white" />
-      
-      {/* Pupils */}
-      <circle cx="70" cy="80" r="5" fill="#111827" />
-      <circle cx="130" cy="80" r="5" fill="#111827" />
-      
-      {/* Mouth */}
-      <path d="M80 120 Q100 130 120 120" stroke="white" strokeWidth="4" fill="none" />
-    </svg>
-  );
-  
-  // Happy expression mascot
-  const renderHappyMascot = () => (
-    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
-      {/* Body */}
-      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
-      
-      {/* Eyes */}
-      <circle cx="70" cy="80" r="10" fill="white" />
-      <circle cx="130" cy="80" r="10" fill="white" />
-      
-      {/* Happy curved eyes */}
-      <path d="M65 75 Q70 70 75 75" stroke="#111827" strokeWidth="3" fill="none" />
-      <path d="M125 75 Q130 70 135 75" stroke="#111827" strokeWidth="3" fill="none" />
-      
-      {/* Big smile */}
-      <path d="M70 120 Q100 150 130 120" stroke="white" strokeWidth="4" fill="none" />
-    </svg>
-  );
-  
-  // Excited expression mascot
-  const renderExcitedMascot = () => (
-    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
-      {/* Body */}
-      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
-      
-      {/* Excited eyes with stars */}
-      <path d="M70 80 L74 76 L66 76 L70 80 L70 88 L70 72" stroke="white" strokeWidth="2" fill="white" />
-      <path d="M130 80 L134 76 L126 76 L130 80 L130 88 L130 72" stroke="white" strokeWidth="2" fill="white" />
-      
-      {/* Big open mouth */}
-      <circle cx="100" cy="120" r="15" fill="white" />
-    </svg>
-  );
-  
-  // Thinking expression mascot
-  const renderThinkingMascot = () => (
-    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
-      {/* Body */}
-      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
-      
-      {/* Eyes */}
-      <circle cx="70" cy="80" r="10" fill="white" />
-      <circle cx="130" cy="80" r="10" fill="white" />
-      
-      {/* Pupils looking up */}
-      <circle cx="70" cy="75" r="5" fill="#111827" />
-      <circle cx="130" cy="75" r="5" fill="#111827" />
-      
-      {/* Thinking mouth */}
-      <path d="M90 120 L110 120" stroke="white" strokeWidth="4" fill="none" />
-      
-      {/* Thought bubble */}
-      <circle cx="150" cy="50" r="10" fill="white" opacity="0.8" />
-      <circle cx="140" cy="40" r="6" fill="white" opacity="0.6" />
-      <circle cx="130" cy="35" r="3" fill="white" opacity="0.4" />
-    </svg>
-  );
-  
-  // Confused expression mascot
-  const renderConfusedMascot = () => (
-    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
-      {/* Body */}
-      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
-      
-      {/* Eyes with raised eyebrow */}
-      <circle cx="70" cy="80" r="10" fill="white" />
-      <circle cx="130" cy="80" r="10" fill="white" />
-      
-      {/* Pupils */}
-      <circle cx="70" cy="80" r="5" fill="#111827" />
-      <circle cx="130" cy="80" r="5" fill="#111827" />
-      
-      {/* Eyebrows */}
-      <path d="M60 70 L80 65" stroke="white" strokeWidth="3" fill="none" />
-      <path d="M120 65 L140 70" stroke="white" strokeWidth="3" fill="none" />
-      
-      {/* Confused mouth */}
-      <path d="M85 120 Q100 110 115 120" stroke="white" strokeWidth="4" fill="none" />
-      
-      {/* Question mark */}
-      <text x="140" y="65" fill="white" fontSize="24" fontWeight="bold">?</text>
-    </svg>
-  );
-  
-  // Waving mascot
-  const renderWavingMascot = () => (
-    <svg width={width} height={width} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className={mascotClassName}>
-      {/* Body */}
-      <circle cx="100" cy="100" r="80" fill="#4F46E5" />
-      
-      {/* Eyes */}
-      <circle cx="70" cy="80" r="10" fill="white" />
-      <circle cx="130" cy="80" r="10" fill="white" />
-      
-      {/* Pupils */}
-      <circle cx="70" cy="80" r="5" fill="#111827" />
-      <circle cx="130" cy="80" r="5" fill="#111827" />
-      
-      {/* Smile */}
-      <path d="M75 120 Q100 140 125 120" stroke="white" strokeWidth="4" fill="none" />
-      
-      {/* Waving arm */}
-      <g className="wave-arm">
-        <path d="M170 100 L150 70 L140 60 L130 50" stroke="white" strokeWidth="6" fill="none" />
-        <circle cx="170" cy="100" r="10" fill="white" /> {/* Hand */}
-      </g>
-    </svg>
-  );
-  
-  return (
-    <div className="mascot-character-container">
-      {renderMascot()}
-    </div>
-  );
+  return getMascotSvg();
 };
 
 export default MascotCharacter;
