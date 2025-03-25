@@ -95,14 +95,13 @@ export async function getPaymentIntentStatus(req: Request, res: Response) {
         paymentIntent.metadata.teamId) {
       
       try {
-        // Update team's payment status
+        // Update team's payment status using existing fields
         await db
           .update(teams)
           .set({
-            paymentStatus: 'paid',
-            paymentAmount: paymentIntent.amount,
-            paymentDate: new Date(), // Use Date object directly
-            paymentId: paymentIntent.id
+            status: 'paid', // Use the status field for payment status
+            registrationFee: paymentIntent.amount, // Use registrationFee for the amount
+            notes: `Payment completed. Payment ID: ${paymentIntent.id}`, // Store payment ID in notes
           })
           .where(eq(teams.id, parseInt(paymentIntent.metadata.teamId)));
           
@@ -143,7 +142,7 @@ export async function handleStripeWebhook(req: Request, res: Response) {
   
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-      apiVersion: '2023-10-16',
+      apiVersion: '2022-11-15', // Use a compatible API version
     });
     
     event = stripe.webhooks.constructEvent(
@@ -165,14 +164,15 @@ export async function handleStripeWebhook(req: Request, res: Response) {
       // If payment has team ID in metadata, update team record
       if (paymentIntent.metadata && paymentIntent.metadata.teamId) {
         try {
-          // Update team's payment status
+          // Update team's payment status using existing fields
           await db
             .update(teams)
             .set({
-              paymentStatus: 'paid',
-              paymentAmount: paymentIntent.amount,
-              paymentDate: new Date(), // Use Date object directly
-              paymentId: paymentIntent.id
+              status: 'paid', // Use the status field for payment status
+              registrationFee: paymentIntent.amount, // Use registrationFee for the amount
+              notes: `Payment completed via webhook. Payment ID: ${paymentIntent.id}`, // Store payment ID in notes
+              termsAcknowledgedAt: new Date(), // Record payment confirmation timestamp
+              termsAcknowledged: true // Mark as acknowledged
             })
             .where(eq(teams.id, parseInt(paymentIntent.metadata.teamId)));
             
