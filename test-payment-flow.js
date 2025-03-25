@@ -3,16 +3,19 @@
  * and simulating a successful payment webhook event
  */
 
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost:5000';
+let cookies = ''; // Store cookies for session
 
 async function apiRequest(endpoint, method = 'GET', body = null) {
   const options = {
     method,
     headers: {
       'Content-Type': 'application/json',
+      'Cookie': cookies,
     },
+    credentials: 'include',
   };
 
   if (body) {
@@ -20,6 +23,12 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
   }
 
   const response = await fetch(`${BASE_URL}${endpoint}`, options);
+  
+  // Save cookies from response for future requests
+  const setCookieHeader = response.headers.get('set-cookie');
+  if (setCookieHeader) {
+    cookies = setCookieHeader;
+  }
   
   // Get both the text and status
   const text = await response.text();
@@ -47,6 +56,19 @@ async function testPaymentFlow() {
   console.log('Starting payment flow test');
   
   try {
+    // Step 0: Login with admin credentials
+    console.log('Step 0: Logging in as admin');
+    const loginResponse = await apiRequest('/api/auth/login', 'POST', {
+      email: 'bperdomo@zoho.com',
+      password: 'password123'
+    });
+    
+    if (!loginResponse.user) {
+      throw new Error('Failed to login: ' + JSON.stringify(loginResponse));
+    }
+    
+    console.log('Login successful as:', loginResponse.user.email);
+    
     // Step 1: Verify that the Stripe config is available
     console.log('Step 1: Verifying Stripe configuration');
     const configResponse = await apiRequest('/api/payments/config');
