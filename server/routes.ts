@@ -397,15 +397,15 @@ export function registerRoutes(app: Express): Server {
           // Get the first team from the returned array
           const team = insertedTeam[0];
             
-          console.log('Team created with ID:', team?.id, 'Team data:', JSON.stringify(team, null, 2));
+          console.log('Team created with ID:', team?.id);
             
           // Track player count for the response
           let playerCount = 0;
           
           // Insert players using the schema's property names (camelCase)
           try {
-            console.log('Players data to insert:', JSON.stringify(players, null, 2));
-            console.log('Players table schema:', JSON.stringify(playersTable, null, 2));
+            console.log('Number of players to insert:', players.length);
+            // Don't try to stringify the players array or playersTable schema object as they may contain circular references
             
             for (const player of players) {
               console.log(`Processing player: ${player.firstName} ${player.lastName}`);
@@ -450,8 +450,8 @@ export function registerRoutes(app: Express): Server {
                 const now = new Date().toISOString();
                 const jerseyNumberInt = player.jerseyNumber ? parseInt(player.jerseyNumber) : null;
                 
-                // Debug team object
-                console.log("Team object for player insertion:", JSON.stringify(team, null, 2));
+                // Debug team object - just log the id to avoid circular references
+                console.log("Team ID for player insertion:", team?.id);
                 
                 if (!team || typeof team.id === 'undefined') {
                   console.error("Team ID is missing or undefined!");
@@ -501,9 +501,18 @@ export function registerRoutes(app: Express): Server {
           return { team, playerCount };
         });
         
+        // Extract only the necessary properties from the team to avoid circular references
+        const simplifiedTeam = result.team ? {
+          id: result.team.id,
+          name: result.team.name,
+          eventId: result.team.eventId,
+          ageGroupId: result.team.ageGroupId,
+          status: result.team.status,
+        } : null;
+        
         res.status(201).json({
           message: 'Team registered successfully',
-          team: result.team,
+          team: simplifiedTeam,
           playerCount: result.playerCount
         });
         
