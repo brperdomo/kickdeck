@@ -162,8 +162,10 @@ async function testTeamRegistration() {
       'POST',
       {
         amount: teamData.registrationFee,
-        teamId: teamId,
+        currency: 'usd',
+        metadata: { teamId: teamId },
         eventId: config.testEventId,
+        ageGroupId: config.testAgeGroupId,
         description: `Registration fee for ${teamData.name}`
       },
       cookies
@@ -179,7 +181,7 @@ async function testTeamRegistration() {
     
     // Simulate webhook for successful payment (in development only)
     const webhookResponse = await apiRequest(
-      '/api/test-payments/simulate-webhook',
+      '/api/test/payment/simulate-webhook',
       'POST',
       {
         paymentIntentId: paymentIntentId,

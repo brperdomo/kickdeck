@@ -367,13 +367,13 @@ export function registerRoutes(app: Express): Server {
         
         // Create the team in a transaction to ensure all operations succeed or fail together
         const result = await db.transaction(async (tx) => {
-          // Insert team with registration info - using proper column mapping that matches actual DB schema
+          // Insert team with registration info - using proper property names that match the schema
           const [team] = await tx
             .insert(teams)
             .values({
               name,
-              event_id: eventId,  // Correct snake_case for DB columns
-              age_group_id: ageGroupId,  // Correct snake_case for DB columns
+              eventId: eventId,  // Use camelCase as defined in the schema
+              ageGroupId: ageGroupId,  // Use camelCase as defined in the schema
               // Combine coach data into a single JSON field to match the 'coach' column in DB
               coach: JSON.stringify({
                 headCoachName,
@@ -381,16 +381,15 @@ export function registerRoutes(app: Express): Server {
                 headCoachPhone,
                 assistantCoachName
               }),
-              manager_name: managerName,
-              manager_email: managerEmail,
-              manager_phone: managerPhone,
-              // user_id field doesn't exist in the actual database schema
+              managerName: managerName,
+              managerEmail: managerEmail,
+              managerPhone: managerPhone,
               // Add new registration fields
               status: "registered", // Initial status - 'registered', 'approved', 'rejected', etc.
-              registration_fee: registrationFee || null,  // Correct snake_case for DB columns
-              terms_acknowledged: termsAcknowledged || false,  // Correct snake_case for DB columns
-              terms_acknowledged_at: termsAcknowledgedAt ? new Date(termsAcknowledgedAt) : new Date(),  // Correct snake_case for DB columns
-              created_at: new Date().toISOString(), // Use ISO string for consistency
+              registrationFee: registrationFee || null,  // Use camelCase as defined in the schema
+              termsAcknowledged: termsAcknowledged || false,  // Use camelCase as defined in the schema
+              termsAcknowledgedAt: termsAcknowledgedAt ? new Date(termsAcknowledgedAt) : new Date(),  // Use camelCase as defined in the schema
+              createdAt: new Date().toISOString() // Use camelCase as defined in the schema
             })
             .returning();
             
