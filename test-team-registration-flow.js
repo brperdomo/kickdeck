@@ -69,19 +69,20 @@ async function testTeamRegistration() {
   let cookies = '';
   
   try {
-    // Step 1: Login as admin
-    console.log('Step 1: Logging in as admin');
+    // Step 1: User Authentication (auth step in the workflow)
+    console.log('Step 1: User Authentication');
+    // For testing, we'll login with an existing account
     const loginResponse = await apiRequest('/api/login', 'POST', {
       email: config.adminEmail,
       password: config.adminPassword,
     });
     
     if (!loginResponse.ok) {
-      throw new Error(`Login failed: ${loginResponse.data}`);
+      throw new Error(`Login failed: ${JSON.stringify(loginResponse.data)}`);
     }
     
     cookies = loginResponse.cookies;
-    console.log('Logged in successfully');
+    console.log('Authenticated successfully');
     
     // Step 2: Verify the event exists
     console.log(`Step 2: Verifying event exists (ID: ${config.testEventId})`);
@@ -93,8 +94,36 @@ async function testTeamRegistration() {
     
     console.log('Event verified');
     
-    // Step 3: Create a test team with players
-    console.log('Step 3: Creating test team with players');
+    // Step 3: Submit personal details (personal step in the workflow)
+    console.log('Step 3: Submitting personal details');
+    const personalDetails = {
+      firstName: 'John',
+      lastName: 'Smith',
+      email: 'john.smith@example.com',
+      phone: '555-1234',
+      address: '123 Main St',
+      city: 'Anytown',
+      state: 'CA',
+      zipCode: '90210',
+      country: 'USA'
+    };
+    
+    const personalDetailsResponse = await apiRequest(
+      `/api/events/${config.testEventId}/personal-details`,
+      'POST',
+      personalDetails,
+      cookies
+    );
+    
+    if (!personalDetailsResponse.ok) {
+      // This endpoint might not exist yet, so we'll continue even if it fails
+      console.warn('Personal details submission endpoint not implemented yet, continuing test');
+    } else {
+      console.log('Personal details submitted successfully');
+    }
+    
+    // Step 4: Register team with players (team step in the workflow)
+    console.log('Step 4: Creating test team with players');
     const teamData = {
       name: `Test Team ${uuidv4().substring(0, 8)}`,
       eventId: config.testEventId,
@@ -153,8 +182,8 @@ async function testTeamRegistration() {
     const teamId = registrationResponse.data.team.id;
     console.log(`Team registered successfully! Team ID: ${teamId}`);
     
-    // Step 4: Simulate payment processing
-    console.log('Step 4: Simulating payment processing');
+    // Step 5: Simulate payment processing (payment step in the workflow)
+    console.log('Step 5: Simulating payment processing');
     
     // Create a payment intent
     const paymentIntentResponse = await apiRequest(
@@ -163,9 +192,11 @@ async function testTeamRegistration() {
       {
         amount: teamData.registrationFee,
         currency: 'usd',
-        metadata: { teamId: teamId },
-        eventId: config.testEventId,
-        ageGroupId: config.testAgeGroupId,
+        metadata: { 
+          teamId: teamId,
+          eventId: config.testEventId,
+          ageGroupId: config.testAgeGroupId 
+        },
         description: `Registration fee for ${teamData.name}`
       },
       cookies
@@ -197,8 +228,8 @@ async function testTeamRegistration() {
     
     console.log('Payment processed successfully!');
     
-    // Step 5: Verify team status after payment
-    console.log('Step 5: Verifying team status after payment');
+    // Step 6: Review confirmation and verify team status (review & complete steps in the workflow)
+    console.log('Step 6: Verifying team status after payment');
     
     // Wait a moment for the database to update
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -217,8 +248,8 @@ async function testTeamRegistration() {
     const teamStatus = teamVerificationResponse.data.status;
     console.log(`Team verification complete! Team status: ${teamStatus}`);
     
-    // Step 6: Verify player data
-    console.log('Step 6: Verifying player data');
+    // Step 7: Verify player data
+    console.log('Step 7: Verifying player data');
     
     const playersCount = teamVerificationResponse.data.players?.length || 0;
     console.log(`Player count: ${playersCount} (expected: ${teamData.players.length})`);

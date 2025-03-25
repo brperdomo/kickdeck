@@ -287,6 +287,39 @@ export function registerRoutes(app: Express): Server {
       }
     });
     
+    // Personal details endpoint for team registration flow
+    app.post('/api/events/:eventId/personal-details', async (req: Request, res: Response) => {
+      try {
+        // This is a stub endpoint that simply stores personal details in the session
+        // In a real implementation, this would store the data in the database
+        const { firstName, lastName, email, phone, address, city, state, zipCode, country } = req.body;
+        
+        // Store the personal details in the session for later use
+        if (req.session) {
+          req.session.personalDetails = {
+            firstName, 
+            lastName, 
+            email, 
+            phone, 
+            address, 
+            city, 
+            state, 
+            zipCode, 
+            country,
+            timestamp: new Date().toISOString()
+          };
+        }
+        
+        res.status(200).json({ 
+          success: true, 
+          message: "Personal details saved successfully"
+        });
+      } catch (error) {
+        console.error('Error saving personal details:', error);
+        res.status(500).json({ error: 'Failed to save personal details' });
+      }
+    });
+
     // Team registration endpoint for participants
     app.post('/api/events/:eventId/register-team', async (req: Request, res: Response) => {
       // TEMPORARILY bypass authentication for testing
