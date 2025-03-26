@@ -525,12 +525,8 @@ export default function EventRegistration() {
       total += fee.amount;
     });
     
-    // Add selected optional fees
-    optionalFees
-      .filter(fee => selectedAdditionalFees.includes(fee.id))
-      .forEach(fee => {
-        total += fee.amount;
-      });
+    // We don't include optional fees anymore - they're not selectable by the user
+    // All fees are automatically calculated
       
     return (total / 100).toFixed(2);
   };
@@ -666,17 +662,10 @@ export default function EventRegistration() {
         selectedFeeIds.push(selectedFee.id);
       }
       
-      // Add required fees
+      // Add required fees only (no optional fees - they are no longer selectable)
       requiredFees.forEach(fee => {
         selectedFeeIds.push(fee.id);
       });
-      
-      // Add selected optional fees
-      optionalFees
-        .filter(fee => selectedAdditionalFees.includes(fee.id))
-        .forEach(fee => {
-          selectedFeeIds.push(fee.id);
-        });
       
       // Transform dates and include terms agreement and fee in submission
       const response = await fetch(`/api/events/${eventId}/register-team`, {
@@ -1573,36 +1562,7 @@ export default function EventRegistration() {
                           </table>
                         </div>
                         
-                        {/* Optional Fees Selection */}
-                        {optionalFees.length > 0 && (
-                          <div className="mt-4 p-3 border border-amber-200 bg-amber-50 rounded-md">
-                            <h6 className="font-medium text-amber-800 mb-2">Optional Add-ons</h6>
-                            {optionalFees.map(fee => (
-                              <div key={`opt-${fee.id}`} className="flex items-center space-x-2 mb-2">
-                                <Checkbox 
-                                  id={`fee-${fee.id}`}
-                                  checked={selectedAdditionalFees.includes(fee.id)}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      setSelectedAdditionalFees([...selectedAdditionalFees, fee.id]);
-                                    } else {
-                                      setSelectedAdditionalFees(
-                                        selectedAdditionalFees.filter(id => id !== fee.id)
-                                      );
-                                    }
-                                  }}
-                                />
-                                <label 
-                                  htmlFor={`fee-${fee.id}`}
-                                  className="text-sm font-medium cursor-pointer flex justify-between flex-1"
-                                >
-                                  <span>{fee.name}</span>
-                                  <span>${(fee.amount / 100).toFixed(2)}</span>
-                                </label>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                        {/* Optional fees removed - all fees are automatically applied */}
                       </div>
                     ) : (
                       <div className="text-center py-4 text-gray-500">
@@ -1682,11 +1642,11 @@ export default function EventRegistration() {
                           // Make sure to sync the latest players array with form data
                           teamForm.setValue('players', players);
                           
-                          // Include all selected fee IDs in the submission
+                          // Include all applicable fee IDs in the submission (registration fee + required fees only)
+                          // No optional fees are allowed
                           const allSelectedFeeIds = [
                             ...(selectedFee ? [selectedFee.id] : []),
-                            ...requiredFees.map(fee => fee.id),
-                            ...selectedAdditionalFees
+                            ...requiredFees.map(fee => fee.id)
                           ];
                           
                           // Then submit the form values along with player data and selected fees
