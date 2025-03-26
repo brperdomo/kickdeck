@@ -1655,6 +1655,7 @@ function TeamsView() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
   const [isRefundDialogOpen, setIsRefundDialogOpen] = useState(false);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
   const [refundReason, setRefundReason] = useState("");
   const { toast } = useToast();
@@ -1749,6 +1750,12 @@ function TeamsView() {
       });
     }
   });
+
+  // View team details
+  const handleViewTeamDetails = (team: any) => {
+    setSelectedTeam(team);
+    setIsDetailsDialogOpen(true);
+  };
 
   // Handle team approval/rejection
   const handleApproveReject = (team: any, status: 'approved' | 'rejected') => {
@@ -1970,6 +1977,14 @@ function TeamsView() {
                                   <Button 
                                     variant="outline" 
                                     size="sm"
+                                    onClick={() => handleViewTeamDetails(team)}
+                                  >
+                                    <Eye className="h-4 w-4 mr-1" />
+                                    Details
+                                  </Button>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
                                     onClick={() => handleApproveReject(team, 'approved')}
                                   >
                                     <Check className="h-4 w-4 mr-1" />
@@ -2041,16 +2056,26 @@ function TeamsView() {
                                 </Badge>
                               </TableCell>
                               <TableCell className="text-right">
-                                {team.paymentStatus === 'paid' && (
+                                <div className="flex justify-end gap-2">
                                   <Button 
                                     variant="outline" 
                                     size="sm"
-                                    onClick={() => handleRefundRequest(team)}
+                                    onClick={() => handleViewTeamDetails(team)}
                                   >
-                                    <RefreshCcw className="h-4 w-4 mr-1" />
-                                    Refund
+                                    <Eye className="h-4 w-4 mr-1" />
+                                    Details
                                   </Button>
-                                )}
+                                  {team.paymentStatus === 'paid' && (
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      onClick={() => handleRefundRequest(team)}
+                                    >
+                                      <RefreshCcw className="h-4 w-4 mr-1" />
+                                      Refund
+                                    </Button>
+                                  )}
+                                </div>
                               </TableCell>
                             </TableRow>
                           ))
@@ -2107,25 +2132,34 @@ function TeamsView() {
                                 </Badge>
                               </TableCell>
                               <TableCell className="text-right">
-                                {team.paymentStatus === 'paid' && (
+                                <div className="flex justify-end gap-2">
                                   <Button 
                                     variant="outline" 
                                     size="sm"
-                                    onClick={() => handleRefundRequest(team)}
+                                    onClick={() => handleViewTeamDetails(team)}
                                   >
-                                    <RefreshCcw className="h-4 w-4 mr-1" />
-                                    Refund
+                                    <Eye className="h-4 w-4 mr-1" />
+                                    Details
                                   </Button>
-                                )}
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  onClick={() => handleApproveReject(team, 'approved')}
-                                  className="ml-2"
-                                >
-                                  <Check className="h-4 w-4 mr-1" />
-                                  Approve
-                                </Button>
+                                  {team.paymentStatus === 'paid' && (
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      onClick={() => handleRefundRequest(team)}
+                                    >
+                                      <RefreshCcw className="h-4 w-4 mr-1" />
+                                      Refund
+                                    </Button>
+                                  )}
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => handleApproveReject(team, 'approved')}
+                                  >
+                                    <Check className="h-4 w-4 mr-1" />
+                                    Approve
+                                  </Button>
+                                </div>
                               </TableCell>
                             </TableRow>
                           ))
