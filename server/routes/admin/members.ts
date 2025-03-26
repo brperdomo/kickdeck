@@ -328,7 +328,7 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
     
     console.log(`Fetching registrations for user: ${user.email}`);
     
-    // Get all teams where the current user is listed as coach or manager
+    // Get all teams where the current user is listed as coach, manager, or submitter
     // Use a broader search to catch more potential registrations
     const teamRegistrations = await db
       .select({
@@ -345,6 +345,8 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
           sql`${teams.coach}::text LIKE ${'%' + user.email + '%'}`,
           // Check manager email
           eq(teams.managerEmail, user.email),
+          // Check submitter email (this is new - includes teams submitted by this user)
+          eq(teams.submitterEmail, user.email),
           // For users with matching name, also try to include their teams
           sql`${teams.coach}::text LIKE ${'%' + user.firstName + '%' + user.lastName + '%'}`,
           // Handle special cases (like Team Indigo) for migration purposes 

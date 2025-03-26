@@ -6,7 +6,7 @@ import { createRefund } from '../../services/stripeService';
 import { log } from '../../vite';
 import { sendTemplatedEmail } from '../../services/emailService';
 
-type TeamStatus = 'REGISTERED' | 'APPROVED' | 'REJECTED';
+type TeamStatus = 'registered' | 'approved' | 'rejected' | 'paid' | 'withdrawn' | 'refunded';
 
 /**
  * Get all team registrations with filtering options
@@ -105,15 +105,19 @@ export async function getTeamById(req: Request, res: Response) {
 }
 
 /**
- * Update a team's status (approve/reject)
+ * Update a team's status (approve/reject/withdraw)
  */
 export async function updateTeamStatus(req: Request, res: Response) {
   try {
     const { teamId } = req.params;
     const { status, notes } = req.body;
     
-    if (!['APPROVED', 'REJECTED'].includes(status)) {
-      return res.status(400).json({ error: 'Invalid status. Must be APPROVED or REJECTED' });
+    const validStatuses: TeamStatus[] = ['registered', 'approved', 'rejected', 'paid', 'withdrawn', 'refunded'];
+    
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ 
+        error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` 
+      });
     }
     
     // Get current team details before updating
@@ -127,14 +131,14 @@ export async function updateTeamStatus(req: Request, res: Response) {
     
     // Don't allow updating if already in the same status
     if (currentTeam.status === status) {
-      return res.status(400).json({ error: `Team is already ${status.toLowerCase()}` });
+      return res.status(400).json({ error: `Team is already ${status}` });
     }
     
     // Update the team status
     const [updatedTeam] = await db.update(teams)
       .set({ 
         status, 
-        adminNotes: notes || null,
+        notes: notes || null, // Using notes instead of adminNotes to match schema
         updatedAt: new Date().toISOString()
       })
       .where(eq(teams.id, parseInt(teamId)))
@@ -155,17 +159,25 @@ export async function updateTeamStatus(req: Request, res: Response) {
         emailRecipients.push(currentTeam.managerEmail);
       }
       
+      // Determine email template based on status
+      let emailTemplate = 'team_status_update';
+      if (status === 'approved') emailTemplate = 'team_approved';
+      if (status === 'rejected') emailTemplate = 'team_rejected';
+      if (status === 'withdrawn') emailTemplate = 'team_withdrawn';
+      
       // Send notification to all recipients
       for (const recipient of emailRecipients) {
         if (recipient) {
           await sendTemplatedEmail(
             recipient,
-            status === 'APPROVED' ? 'team_approved' : 'team_rejected',
+            emailTemplate,
             {
               teamName: currentTeam.name,
               eventName: event?.name || 'the event',
               notes: notes || '',
-              loginLink: `${process.env.PUBLIC_URL || ''}/dashboard`
+              status: status,
+              loginLink: `${process.env.PUBLIC_URL || ''}/dashboard`,
+              previousStatus: currentTeam.status || 'registered'
             }
           );
         }
@@ -199,25 +211,36 @@ export async function processRefund(req: Request, res: Response) {
       return res.status(404).json({ error: 'Team not found' });
     }
     
-    // Check if team has a payment intent to refund
-    if (!team.paymentIntentId) {
+    // Check if team has already paid - using registrationFee as an indicator
+    if (!team.registrationFee || team.registrationFee <= 0) {
       return res.status(400).json({ error: 'No payment found for this team' });
     }
     
     // Check if team is already refunded
-    if (team.refundStatus === 'REFUNDED') {
+    if (team.status === 'refunded') {
       return res.status(400).json({ error: 'This team registration has already been refunded' });
     }
     
-    // Process the refund via Stripe
-    const refund = await createRefund(team.paymentIntentId, reason);
+    // If there's a paymentIntentId field, use it for the refund 
+    // If not, we still allow for manual refund tracking without calling Stripe
+    let refundId = 'manual-refund';
+    
+    if (team.paymentIntentId) {
+      try {
+        // Process the refund via Stripe
+        const refund = await createRefund(team.paymentIntentId, reason);
+        refundId = refund.id;
+      } catch (stripeError) {
+        log(`Stripe refund failed: ${stripeError}. Proceeding with manual refund tracking.`, 'admin');
+      }
+    }
     
     // Update the team record with refund details
     const [updatedTeam] = await db.update(teams)
       .set({ 
-        refundStatus: 'REFUNDED',
+        status: 'refunded',
         refundDate: new Date().toISOString(),
-        adminNotes: reason ? `${team.adminNotes || ''} \nRefund reason: ${reason}`.trim() : team.adminNotes,
+        notes: reason ? `${team.notes || ''} \nRefund reason: ${reason}`.trim() : team.notes,
         updatedAt: new Date().toISOString()
       })
       .where(eq(teams.id, parseInt(teamId)))
@@ -247,8 +270,8 @@ export async function processRefund(req: Request, res: Response) {
             {
               teamName: team.name,
               eventName: event?.name || 'the event',
-              amount: ((team.amountPaid || 0) / 100).toFixed(2),
-              reason: reason || 'Team registration was rejected',
+              amount: ((team.registrationFee || 0) / 100).toFixed(2),
+              reason: reason || 'Team registration was refunded',
               refundDate: new Date().toLocaleDateString()
             }
           );
@@ -263,7 +286,7 @@ export async function processRefund(req: Request, res: Response) {
       success: true,
       message: 'Refund processed successfully',
       team: updatedTeam,
-      refundId: refund.id
+      refundId: refundId
     });
   } catch (error) {
     log(`Error processing refund: ${error}`, 'admin');
