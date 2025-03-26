@@ -7,6 +7,7 @@ import eventsRouter from './events';
 import membersRouter from './members-router';
 import feesRouter from './fees';
 import organizationsRouter from './organizations';
+import teamsRouter from './teams-router';
 
 export {
   accountingCodesRouter,
@@ -16,5 +17,6 @@ export {
   eventsRouter,
   membersRouter,
   feesRouter,
-  organizationsRouter
+  organizationsRouter,
+  teamsRouter
 };

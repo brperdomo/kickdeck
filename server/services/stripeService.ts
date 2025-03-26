@@ -95,3 +95,24 @@ export async function createCustomer(email: string, name?: string, metadata?: Re
     throw error;
   }
 }
+
+/**
+ * Process a refund for a payment
+ */
+export async function createRefund(paymentIntentId: string, reason?: string) {
+  try {
+    const refund = await stripe.refunds.create({
+      payment_intent: paymentIntentId,
+      reason: 'requested_by_customer',
+      metadata: {
+        reason: reason || 'Requested by administrator'
+      }
+    });
+    
+    log(`Created refund for payment intent ${paymentIntentId}`, 'stripe');
+    return refund;
+  } catch (error) {
+    log(`Error processing refund: ${error}`, 'stripe');
+    throw error;
+  }
+}

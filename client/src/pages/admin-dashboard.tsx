@@ -1649,56 +1649,505 @@ function SchedulingView() {
 
 
 function TeamsView() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedEvent, setSelectedEvent] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
+  const [isRefundDialogOpen, setIsRefundDialogOpen] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<any>(null);
+  const [refundReason, setRefundReason] = useState("");
+  const { toast } = useToast();
+  
+  // Fetch events for dropdown
+  const eventsQuery = useQuery({
+    queryKey: ['admin', 'events'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) throw new Error('Failed to fetch events');
+      return response.json();
+    }
+  });
+
+  // Fetch teams with event and age group data
+  const teamsQuery = useQuery({
+    queryKey: ['admin', 'teams', selectedEvent, selectedStatus],
+    queryFn: async () => {
+      let url = '/api/admin/teams';
+      const params = new URLSearchParams();
+      
+      if (selectedEvent !== 'all') params.append('eventId', selectedEvent);
+      if (selectedStatus !== 'all') params.append('status', selectedStatus);
+      
+      if (params.toString()) url += `?${params.toString()}`;
+      
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to fetch teams');
+      return response.json();
+    }
+  });
+
+  // Mutation for approving/rejecting team registration
+  const updateTeamStatusMutation = useMutation({
+    mutationFn: async ({ teamId, status, notes }: { teamId: number, status: string, notes?: string }) => {
+      const response = await fetch(`/api/admin/teams/${teamId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, notes })
+      });
+      
+      if (!response.ok) throw new Error('Failed to update team status');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Team status updated",
+        description: `Team registration has been ${selectedTeam?.status?.toLowerCase()}`,
+      });
+      setIsApprovalDialogOpen(false);
+      teamsQuery.refetch();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error updating team status",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Mutation for processing refunds
+  const processRefundMutation = useMutation({
+    mutationFn: async ({ teamId, reason }: { teamId: number, reason: string }) => {
+      const response = await fetch(`/api/admin/teams/${teamId}/refund`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason })
+      });
+      
+      if (!response.ok) throw new Error('Failed to process refund');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Refund processed",
+        description: "The payment has been successfully refunded.",
+      });
+      setIsRefundDialogOpen(false);
+      teamsQuery.refetch();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error processing refund",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Handle team approval/rejection
+  const handleApproveReject = (team: any, status: 'approved' | 'rejected') => {
+    setSelectedTeam({ ...team, status });
+    setIsApprovalDialogOpen(true);
+  };
+
+  // Handle refund request
+  const handleRefundRequest = (team: any) => {
+    setSelectedTeam(team);
+    setIsRefundDialogOpen(true);
+  };
+
+  // Confirm team status update
+  const confirmStatusUpdate = (notes?: string) => {
+    if (!selectedTeam) return;
+    
+    updateTeamStatusMutation.mutate({
+      teamId: selectedTeam.id,
+      status: selectedTeam.status,
+      notes
+    });
+  };
+
+  // Confirm refund
+  const confirmRefund = () => {
+    if (!selectedTeam) return;
+    
+    processRefundMutation.mutate({
+      teamId: selectedTeam.id,
+      reason: refundReason
+    });
+  };
+
+  // Filter teams by search term
+  const filteredTeams = useMemo(() => {
+    if (!teamsQuery.data) return [];
+    
+    return teamsQuery.data.filter((team: any) => 
+      team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (team.managerEmail && team.managerEmail.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  }, [teamsQuery.data, searchTerm]);
+
+  // Format currency for display
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', { 
+      style: 'currency', 
+      currency: 'USD' 
+    }).format(amount / 100);
+  };
+
+  // Parse coach data from JSON
+  const getCoachName = (coachData: string | null) => {
+    if (!coachData) return "N/A";
+    
+    try {
+      const coach = JSON.parse(coachData);
+      return coach.headCoachName || "N/A";
+    } catch (e) {
+      return "N/A";
+    }
+  };
+
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Teams</h2>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Team
-        </Button>
+        <h2 className="text-2xl font-bold">Team Registrations</h2>
       </div>
       <Card>
         <CardContent className="p-6">
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <Input
-                  placeholder="Search teams..."
-                  className="w-[300px]"
-                />
-                <Select defaultValue="all">
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Division" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Divisions</SelectItem>
-                    <SelectItem value="u10">Under 10</SelectItem>
-                    <SelectItem value="u12">Under 12</SelectItem>
-                    <SelectItem value="u14">Under 14</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="flex flex-wrap gap-4 items-center">
+              <Input
+                placeholder="Search teams..."
+                className="w-[300px]"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              
+              <Select 
+                value={selectedEvent} 
+                onValueChange={setSelectedEvent}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select Event" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Events</SelectItem>
+                  {eventsQuery.data?.map((event: any) => (
+                    <SelectItem key={event.id} value={event.id.toString()}>
+                      {event.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select 
+                value={selectedStatus} 
+                onValueChange={setSelectedStatus}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Registration Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="registered">Registered (Pending)</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                  <SelectItem value="refunded">Refunded</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Team Name</TableHead>
-                  <TableHead>Division</TableHead>
-                  <TableHead>Coach</TableHead>
-                  <TableHead>Players</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {/* Team rows will be populated from the database */}
-              </TableBody>
-            </Table>
+            <Tabs defaultValue="registered">
+              <TabsList className="mb-4">
+                <TabsTrigger value="registered">Pending Review</TabsTrigger>
+                <TabsTrigger value="approved">Approved</TabsTrigger>
+                <TabsTrigger value="rejected">Rejected</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="registered">
+                <div className="border rounded-md">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Team Name</TableHead>
+                        <TableHead>Event</TableHead>
+                        <TableHead>Age Group</TableHead>
+                        <TableHead>Manager</TableHead>
+                        <TableHead>Coach</TableHead>
+                        <TableHead>Registration Fee</TableHead>
+                        <TableHead>Payment Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {teamsQuery.isLoading ? (
+                        <TableRow>
+                          <TableCell colSpan={8} className="text-center py-4">
+                            <div className="flex justify-center">
+                              <Loader2 className="h-6 w-6 animate-spin" />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : filteredTeams.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={8} className="text-center py-4">
+                            No teams found
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredTeams
+                          .filter((team: any) => team.status === 'registered')
+                          .map((team: any) => (
+                            <TableRow key={team.id}>
+                              <TableCell className="font-medium">{team.name}</TableCell>
+                              <TableCell>{team.event?.name || "N/A"}</TableCell>
+                              <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
+                              <TableCell>{team.managerEmail}</TableCell>
+                              <TableCell>{getCoachName(team.coach)}</TableCell>
+                              <TableCell>{formatCurrency(team.registrationFee || 0)}</TableCell>
+                              <TableCell>
+                                <Badge variant={team.paymentStatus === 'paid' ? 'default' : 'outline'}>
+                                  {team.paymentStatus || 'Unpaid'}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex justify-end gap-2">
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => handleApproveReject(team, 'approved')}
+                                  >
+                                    <Check className="h-4 w-4 mr-1" />
+                                    Approve
+                                  </Button>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="text-destructive"
+                                    onClick={() => handleApproveReject(team, 'rejected')}
+                                  >
+                                    <X className="h-4 w-4 mr-1" />
+                                    Reject
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="approved">
+                <div className="border rounded-md">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Team Name</TableHead>
+                        <TableHead>Event</TableHead>
+                        <TableHead>Age Group</TableHead>
+                        <TableHead>Manager</TableHead>
+                        <TableHead>Registration Fee</TableHead>
+                        <TableHead>Payment Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {teamsQuery.isLoading ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center py-4">
+                            <div className="flex justify-center">
+                              <Loader2 className="h-6 w-6 animate-spin" />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : filteredTeams.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center py-4">
+                            No approved teams found
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredTeams
+                          .filter((team: any) => team.status === 'approved' || team.status === 'paid')
+                          .map((team: any) => (
+                            <TableRow key={team.id}>
+                              <TableCell className="font-medium">{team.name}</TableCell>
+                              <TableCell>{team.event?.name || "N/A"}</TableCell>
+                              <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
+                              <TableCell>{team.managerEmail}</TableCell>
+                              <TableCell>{formatCurrency(team.registrationFee || 0)}</TableCell>
+                              <TableCell>
+                                <Badge variant={team.paymentStatus === 'paid' ? 'default' : 'outline'}>
+                                  {team.paymentStatus || 'Unpaid'}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {team.paymentStatus === 'paid' && (
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => handleRefundRequest(team)}
+                                  >
+                                    <RefreshCcw className="h-4 w-4 mr-1" />
+                                    Refund
+                                  </Button>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="rejected">
+                <div className="border rounded-md">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Team Name</TableHead>
+                        <TableHead>Event</TableHead>
+                        <TableHead>Age Group</TableHead>
+                        <TableHead>Manager</TableHead>
+                        <TableHead>Rejection Reason</TableHead>
+                        <TableHead>Payment Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {teamsQuery.isLoading ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center py-4">
+                            <div className="flex justify-center">
+                              <Loader2 className="h-6 w-6 animate-spin" />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : filteredTeams.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center py-4">
+                            No rejected teams found
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredTeams
+                          .filter((team: any) => team.status === 'rejected')
+                          .map((team: any) => (
+                            <TableRow key={team.id}>
+                              <TableCell className="font-medium">{team.name}</TableCell>
+                              <TableCell>{team.event?.name || "N/A"}</TableCell>
+                              <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
+                              <TableCell>{team.managerEmail}</TableCell>
+                              <TableCell>{team.notes || "No reason provided"}</TableCell>
+                              <TableCell>
+                                <Badge variant={team.paymentStatus === 'refunded' ? 'default' : 'outline'}>
+                                  {team.paymentStatus || 'Unpaid'}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                {team.paymentStatus === 'paid' && (
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => handleRefundRequest(team)}
+                                  >
+                                    <RefreshCcw className="h-4 w-4 mr-1" />
+                                    Refund
+                                  </Button>
+                                )}
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleApproveReject(team, 'approved')}
+                                  className="ml-2"
+                                >
+                                  <Check className="h-4 w-4 mr-1" />
+                                  Approve
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </CardContent>
       </Card>
+
+      {/* Team Status Dialog */}
+      <Dialog open={isApprovalDialogOpen} onOpenChange={setIsApprovalDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {selectedTeam?.status === 'approved' ? 'Approve Team Registration' : 'Reject Team Registration'}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedTeam?.status === 'approved' 
+                ? 'This will approve the team registration and notify the manager.'
+                : 'This will reject the team registration. Please provide a reason for rejection.'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedTeam?.status === 'rejected' && (
+            <Textarea 
+              placeholder="Reason for rejection (will be shared with the manager)"
+              value={selectedTeam?.notes || ''}
+              onChange={(e) => setSelectedTeam({ ...selectedTeam, notes: e.target.value })}
+            />
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsApprovalDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => confirmStatusUpdate(selectedTeam?.notes)}
+              disabled={updateTeamStatusMutation.isPending}
+            >
+              {updateTeamStatusMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Confirm {selectedTeam?.status === 'approved' ? 'Approval' : 'Rejection'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Refund Dialog */}
+      <Dialog open={isRefundDialogOpen} onOpenChange={setIsRefundDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Process Refund</DialogTitle>
+            <DialogDescription>
+              This will process a refund for {selectedTeam?.name}'s registration payment of {selectedTeam ? formatCurrency(selectedTeam.registrationFee || 0) : '$0.00'}.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Textarea 
+            placeholder="Reason for refund (for internal records)"
+            value={refundReason}
+            onChange={(e) => setRefundReason(e.target.value)}
+          />
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsRefundDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={confirmRefund}
+              disabled={processRefundMutation.isPending}
+            >
+              {processRefundMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Process Refund
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
