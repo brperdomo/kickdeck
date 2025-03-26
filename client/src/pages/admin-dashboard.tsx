@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation, Link } from "wouter";
-import { Link2, X, Ticket, Plus, Mail, KeyRound } from "lucide-react";
+import { Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw } from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import EmulationManager from "@/components/admin/EmulationManager";
@@ -1781,17 +1781,38 @@ function TeamsView() {
   };
 
   // Filter teams by search term
-  const filteredTeams = useMemo(() => {
+  // First, let's normalize the team data to handle the nested structure
+  const normalizedTeams = useMemo(() => {
     if (!teamsQuery.data) return [];
     
     // Add debugging log to see what's coming back from the API
     console.log('Teams data from API:', teamsQuery.data);
     
-    if (!searchTerm) return teamsQuery.data;
+    // Process the nested structure (each item has a 'team' property)
+    return teamsQuery.data.map((item: any) => {
+      // If the item has a team property, use that, otherwise use the item itself
+      const teamData = item.team || item;
+      
+      // Combine any additional data from the parent object with the team data
+      return {
+        ...teamData,
+        // Include event and ageGroup data if they exist in the parent object
+        event: item.event || teamData.event,
+        ageGroup: item.ageGroup || teamData.ageGroup
+      };
+    });
+  }, [teamsQuery.data]);
+  
+  // Now filter the normalized teams based on search criteria
+  const filteredTeams = useMemo(() => {
+    if (!normalizedTeams.length) return [];
+    console.log('Normalized teams data:', normalizedTeams);
+    
+    if (!searchTerm) return normalizedTeams;
     
     const lowercaseSearchTerm = searchTerm.toLowerCase();
     
-    return teamsQuery.data.filter((team: any) => {
+    return normalizedTeams.filter((team: any) => {
       // Skip undefined or null teams entirely
       if (!team) {
         console.log('Found invalid team entry:', team);
@@ -1813,7 +1834,7 @@ function TeamsView() {
       
       return nameMatch || managerMatch || submitterMatch;
     });
-  }, [teamsQuery.data, searchTerm]);
+  }, [normalizedTeams, searchTerm]);
 
   // Format currency for display
   const formatCurrency = (amount: number) => {
