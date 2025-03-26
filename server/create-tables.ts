@@ -134,6 +134,12 @@ export async function createTables() {
     
     console.log('Adding submitterEmail to teams table...');
     await addSubmitterEmailToTeams();
+    
+    console.log('Adding team selected fees table...');
+    await addTeamSelectedFees();
+    
+    console.log('Adding payment intent ID to teams table...');
+    await addPaymentIntentId();
 
     console.log("All tables created successfully");
     return { success: true };

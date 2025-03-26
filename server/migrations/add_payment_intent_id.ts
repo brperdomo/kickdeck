@@ -45,7 +45,7 @@ export async function addPaymentIntentId() {
 }
 
 // If this file is run directly (not imported)
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   addPaymentIntentId()
     .then(() => process.exit(0))
     .catch((error) => {
