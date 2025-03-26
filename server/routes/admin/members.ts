@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { db } from '@db/index';
 import { users, teams, events, eventAgeGroups, players } from '@db/schema';
-import { eq, like, and, or, desc, asc } from 'drizzle-orm';
+import { eq, like, and, or, desc, asc, inArray } from 'drizzle-orm';
 import { sendTemplatedEmail } from '../../services/emailService';
 import { SQL, sql } from 'drizzle-orm';
 
@@ -274,10 +274,11 @@ export async function resendPaymentConfirmation(req: Request, res: Response) {
       : 'N/A';
     
     // Send confirmation email
-    await sendTemplatedEmail(
-      submitterEmail,
-      'payment_confirmation',
-      {
+    if (submitterEmail) {
+      await sendTemplatedEmail(
+        submitterEmail,
+        'payment_confirmation',
+        {
         teamName: registration.team.name,
         eventName: registration.event?.name || 'Unknown Event',
         registrationDate: new Date(registration.team.createdAt).toLocaleDateString(),
@@ -287,12 +288,15 @@ export async function resendPaymentConfirmation(req: Request, res: Response) {
         receiptNumber: `R-${registration.team.id}-${Date.now().toString().substr(-6)}`,
         status: registration.team.status || 'pending'
       }
-    );
-    
-    res.json({ 
-      success: true, 
-      message: `Payment confirmation email sent to ${submitterEmail}` 
-    });
+      );
+      
+      res.json({ 
+        success: true, 
+        message: `Payment confirmation email sent to ${submitterEmail}` 
+      });
+    } else {
+      res.status(400).json({ error: 'No valid email found to send confirmation' });
+    }
   } catch (error) {
     console.error('Error resending payment confirmation:', error);
     res.status(500).json({ error: 'Failed to resend payment confirmation email' });
