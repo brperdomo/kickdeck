@@ -9,6 +9,7 @@ import { createRolePermissions } from "./migrations/create_role_permissions";
 import { updateDivisionCodes } from "./migrations/update_division_codes";
 import { addTeamRegistrationFields } from "./migrations/add_team_registration_fields";
 import { createPlayersTable } from "./create-players-table";
+import { addSubmitterEmailToTeams } from "./migrations/add_submitter_email_to_teams";
 
 export async function createTables() {
   try {
@@ -128,6 +129,9 @@ export async function createTables() {
     
     console.log('Creating players table...');
     await createPlayersTable();
+    
+    console.log('Adding submitterEmail to teams table...');
+    await addSubmitterEmailToTeams();
 
     console.log("All tables created successfully");
     return { success: true };
