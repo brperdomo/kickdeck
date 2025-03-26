@@ -1,0 +1,42 @@
+Uncaught ReferenceError: DialogDescription is not defined
+    at TeamsView (admin-dashboard.tsx:2091:14)
+TeamsView	@	admin-dashboard.tsx:2091
+
+admin-dashboard.tsx:2091 Uncaught ReferenceError: DialogDescription is not defined
+    at TeamsView (admin-dashboard.tsx:2091:14)
+TeamsView	@	admin-dashboard.tsx:2091
+chunk-RPCDYKBN.js?v=736f6ea7:14032 The above error occurred in the <TeamsView> component:
+
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2666:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:3743:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=736f6ea7:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=736f6ea7:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=736f6ea7:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=736f6ea7:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=736f6ea7:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=736f6ea7:2829:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError	@	chunk-RPCDYKBN.js?v=736f6ea7:14032
+update.callback	@	chunk-RPCDYKBN.js?v=736f6ea7:14052
+callCallback	@	chunk-RPCDYKBN.js?v=736f6ea7:11248
+commitUpdateQueue	@	chunk-RPCDYKBN.js?v=736f6ea7:11265
+commitLayoutEffectOnFiber	@	chunk-RPCDYKBN.js?v=736f6ea7:17093
+commitLayoutMountEffects_complete	@	chunk-RPCDYKBN.js?v=736f6ea7:17980
+commitLayoutEffects_begin	@	chunk-RPCDYKBN.js?v=736f6ea7:17969
+commitLayoutEffects	@	chunk-RPCDYKBN.js?v=736f6ea7:17920
+commitRootImpl	@	chunk-RPCDYKBN.js?v=736f6ea7:19353
+commitRoot	@	chunk-RPCDYKBN.js?v=736f6ea7:19277
+performSyncWorkOnRoot	@	chunk-RPCDYKBN.js?v=736f6ea7:18895
+flushSyncCallbacks	@	chunk-RPCDYKBN.js?v=736f6ea7:9119
+(anonymous)	@	chunk-RPCDYKBN.js?v=736f6ea7:18627
+chunk-RPCDYKBN.js?v=736f6ea7:9129 Uncaught ReferenceError: DialogDescription is not defined
+    at TeamsView (admin-dashboard.tsx:2091:14)
+TeamsView	@	admin-dashboard.tsx:2091
