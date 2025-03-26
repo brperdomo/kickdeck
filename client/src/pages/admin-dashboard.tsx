@@ -15,6 +15,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/hooks/use-user";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -61,15 +64,6 @@ import {
   Sun,
   Trash2
 } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
 import { BrandingPreview } from "@/components/BrandingPreview";
@@ -92,7 +86,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { AdminModal } from "@/components/admin/AdminModal";
 import { ComplexEditor } from "@/components/ComplexEditor";
@@ -2238,6 +2231,263 @@ function TeamsView() {
               Process Refund
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Team Details Dialog */}
+      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Team Details: {selectedTeam?.name}</DialogTitle>
+            <DialogDescription>
+              Complete registration information for {selectedTeam?.name}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedTeam && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Registration Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Status:</div>
+                      <div className="col-span-2">
+                        <Badge variant={
+                          selectedTeam.status === 'approved' ? 'success' : 
+                          selectedTeam.status === 'rejected' ? 'destructive' : 
+                          'default'
+                        }>
+                          {selectedTeam.status?.toUpperCase() || 'REGISTERED'}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Event:</div>
+                      <div className="col-span-2">{selectedTeam.event?.name || 'N/A'}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Age Group:</div>
+                      <div className="col-span-2">{selectedTeam.ageGroup?.ageGroup || 'N/A'}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Division:</div>
+                      <div className="col-span-2">{selectedTeam.ageGroup?.divisionCode || 'N/A'}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Submitted by:</div>
+                      <div className="col-span-2">{selectedTeam.submitterEmail || selectedTeam.managerEmail}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Submission Date:</div>
+                      <div className="col-span-2">{formatDate(selectedTeam.createdAt)}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Payment Status:</div>
+                      <div className="col-span-2">
+                        <Badge variant={
+                          selectedTeam.paymentStatus === 'paid' ? 'default' : 
+                          selectedTeam.paymentStatus === 'refunded' ? 'outline' : 
+                          'outline'
+                        }>
+                          {selectedTeam.paymentStatus || 'Unpaid'}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Registration Fee:</div>
+                      <div className="col-span-2">{formatCurrency(selectedTeam.registrationFee || 0)}</div>
+                    </div>
+                    {selectedTeam.status === 'rejected' && (
+                      <div className="grid grid-cols-3 gap-1">
+                        <div className="font-medium">Rejection Reason:</div>
+                        <div className="col-span-2">{selectedTeam.notes || 'No reason provided'}</div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Team Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Team Name:</div>
+                      <div className="col-span-2">{selectedTeam.name}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Manager:</div>
+                      <div className="col-span-2">{selectedTeam.managerEmail}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Manager Phone:</div>
+                      <div className="col-span-2">{selectedTeam.managerPhone || 'N/A'}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Head Coach:</div>
+                      <div className="col-span-2">{selectedTeam.headCoachName || 'N/A'}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Coach Email:</div>
+                      <div className="col-span-2">{selectedTeam.headCoachEmail || 'N/A'}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Coach Phone:</div>
+                      <div className="col-span-2">{selectedTeam.headCoachPhone || 'N/A'}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Asst. Coach:</div>
+                      <div className="col-span-2">{selectedTeam.assistantCoachName || 'N/A'}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Asst. Email:</div>
+                      <div className="col-span-2">{selectedTeam.assistantCoachEmail || 'N/A'}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Club/Org:</div>
+                      <div className="col-span-2">{selectedTeam.clubName || 'N/A'}</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              {selectedTeam.players && selectedTeam.players.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Team Roster ({selectedTeam.players.length} players)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Date of Birth</TableHead>
+                          <TableHead>Jersey #</TableHead>
+                          <TableHead>Position</TableHead>
+                          <TableHead>Contact Email</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {selectedTeam.players.map((player: any) => (
+                          <TableRow key={player.id}>
+                            <TableCell>{player.firstName} {player.lastName}</TableCell>
+                            <TableCell>{formatDate(player.dateOfBirth)}</TableCell>
+                            <TableCell>{player.jerseyNumber || 'N/A'}</TableCell>
+                            <TableCell>{player.position || 'N/A'}</TableCell>
+                            <TableCell>{player.contactEmail || 'N/A'}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              )}
+                
+              {/* Additional notes or special requirements */}
+              {selectedTeam.specialRequirements && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Special Requirements</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>{selectedTeam.specialRequirements}</p>
+                  </CardContent>
+                </Card>
+              )}
+              
+              {/* Terms acknowledgment information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Terms & Conditions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Terms Acknowledged:</div>
+                      <div className="col-span-2">
+                        <Badge variant="outline">
+                          {selectedTeam.termsAcknowledgement ? 'Yes' : 'No'}
+                        </Badge>
+                      </div>
+                    </div>
+                    {selectedTeam.termsAcknowledgementDate && (
+                      <div className="grid grid-cols-3 gap-1">
+                        <div className="font-medium">Acknowledged On:</div>
+                        <div className="col-span-2">{formatDate(selectedTeam.termsAcknowledgementDate)}</div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <DialogFooter className="gap-2">
+                {selectedTeam.status === 'registered' && (
+                  <>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setIsDetailsDialogOpen(false);
+                        handleApproveReject(selectedTeam, 'rejected');
+                      }}
+                    >
+                      <X className="h-4 w-4 mr-1" />
+                      Reject Team
+                    </Button>
+                    <Button 
+                      onClick={() => {
+                        setIsDetailsDialogOpen(false);
+                        handleApproveReject(selectedTeam, 'approved');
+                      }}
+                    >
+                      <Check className="h-4 w-4 mr-1" />
+                      Approve Team
+                    </Button>
+                  </>
+                )}
+                {selectedTeam.status === 'rejected' && (
+                  <Button 
+                    onClick={() => {
+                      setIsDetailsDialogOpen(false);
+                      handleApproveReject(selectedTeam, 'approved');
+                    }}
+                  >
+                    <Check className="h-4 w-4 mr-1" />
+                    Approve Team
+                  </Button>
+                )}
+                {selectedTeam.status === 'approved' && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setIsDetailsDialogOpen(false);
+                      handleApproveReject(selectedTeam, 'rejected');
+                    }}
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    Reject Team
+                  </Button>
+                )}
+                {selectedTeam.paymentStatus === 'paid' && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setIsDetailsDialogOpen(false);
+                      handleRefundRequest(selectedTeam);
+                    }}
+                  >
+                    <RefreshCcw className="h-4 w-4 mr-1" />
+                    Refund
+                  </Button>
+                )}
+                <Button variant="outline" onClick={() => setIsDetailsDialogOpen(false)}>
+                  Close
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </>
