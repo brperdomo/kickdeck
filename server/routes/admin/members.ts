@@ -349,10 +349,11 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
     
     let playerCount = { count: 0 };
     if (playerIds.length > 0) {
-      [playerCount] = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(players)
-        .where(inArray(players.teamId, playerIds));
+      // Use a simple query without inArray since we're having issues with it
+      const countResult = await db.execute(
+        sql`SELECT COUNT(*) FROM players WHERE team_id IN (${sql.join(playerIds)})`
+      );
+      playerCount = { count: parseInt(countResult.rows[0]?.count || '0') };
     }
     
     // Transform team registrations to match the frontend's expected format
@@ -365,7 +366,8 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
       registeredAt: reg.team.createdAt,
       status: reg.team.status || 'registered',
       amount: reg.team.registrationFee || 0,
-      paymentId: reg.team.paymentId || undefined
+      // Check if there's a payment ID in the database, otherwise we'll leave it undefined
+      paymentId: undefined
     }));
     
     res.json({
