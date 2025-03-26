@@ -1783,11 +1783,21 @@ function TeamsView() {
   // Filter teams by search term
   const filteredTeams = useMemo(() => {
     if (!teamsQuery.data) return [];
+    
+    // Add debugging log to see what's coming back from the API
+    console.log('Teams data from API:', teamsQuery.data);
+    
     if (!searchTerm) return teamsQuery.data;
     
     const lowercaseSearchTerm = searchTerm.toLowerCase();
     
     return teamsQuery.data.filter((team: any) => {
+      // Skip undefined or null teams entirely
+      if (!team) {
+        console.log('Found invalid team entry:', team);
+        return false;
+      }
+      
       // Safely access and match properties with null checks
       const nameMatch = team && team.name && typeof team.name === 'string' 
         ? team.name.toLowerCase().includes(lowercaseSearchTerm) 
@@ -1992,7 +2002,7 @@ function TeamsView() {
                         </TableRow>
                       ) : (
                         filteredTeams
-                          .filter((team: any) => team.status === 'approved' || team.status === 'paid')
+                          .filter((team: any) => team && (team.status === 'approved' || team.status === 'paid'))
                           .map((team: any) => (
                             <TableRow key={team.id}>
                               <TableCell className="font-medium">{team.name}</TableCell>
@@ -2058,7 +2068,7 @@ function TeamsView() {
                         </TableRow>
                       ) : (
                         filteredTeams
-                          .filter((team: any) => team.status === 'rejected')
+                          .filter((team: any) => team && team.status === 'rejected')
                           .map((team: any) => (
                             <TableRow key={team.id}>
                               <TableCell className="font-medium">{team.name}</TableCell>
