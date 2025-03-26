@@ -1434,7 +1434,7 @@ export default function EventRegistration() {
                 </div>
                 
                 <Button
-                  onClick={() => setLocation('/user-dashboard')}
+                  onClick={() => setLocation('/dashboard')}
                   className="bg-[#2C5282] hover:bg-[#1A365D] text-white"
                 >
                   Go to Dashboard
