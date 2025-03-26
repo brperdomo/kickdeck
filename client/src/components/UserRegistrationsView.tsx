@@ -24,7 +24,7 @@ export default function UserRegistrationsView() {
   const { data: registrations, isLoading, error } = useQuery({
     queryKey: ['user', 'registrations'],
     queryFn: async () => {
-      const response = await fetch('/api/members/my-registrations');
+      const response = await fetch('/api/user/registrations');
       if (!response.ok) {
         throw new Error('Failed to fetch registrations');
       }

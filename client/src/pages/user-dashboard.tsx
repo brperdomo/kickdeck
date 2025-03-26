@@ -71,22 +71,13 @@ export default function UserDashboard() {
               <ChevronDown className="h-4 w-4 text-gray-500" />
             </div>
             <div className="flex flex-col space-y-2">
-              <Link href="/logout">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Direct Logout
-                </Button>
-              </Link>
               <Button
                 variant="outline"
                 className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
                 onClick={handleLogout}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                Logout with Animation
+                Logout
               </Button>
             </div>
           </div>
