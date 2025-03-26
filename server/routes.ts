@@ -250,12 +250,16 @@ export function registerRoutes(app: Express): Server {
               name: eventFees.name,
               amount: eventFees.amount,
               beginDate: eventFees.beginDate,
-              endDate: eventFees.endDate
+              endDate: eventFees.endDate,
+              feeType: eventFees.feeType,
+              isRequired: eventFees.isRequired
             }
           })
           .from(eventAgeGroupFees)
           .innerJoin(eventFees, eq(eventAgeGroupFees.feeId, eventFees.id))
           .where(eq(eventAgeGroupFees.ageGroupId, parseInt(ageGroupId)));
+        
+        let allFees = [];
         
         if (feeAssignments.length === 0) {
           // Check if there are default fees for this event (use applyToAll instead of isDefault)
@@ -265,7 +269,9 @@ export function registerRoutes(app: Express): Server {
               name: eventFees.name,
               amount: eventFees.amount,
               beginDate: eventFees.beginDate,
-              endDate: eventFees.endDate
+              endDate: eventFees.endDate,
+              feeType: eventFees.feeType,
+              isRequired: eventFees.isRequired
             })
             .from(eventFees)
             .where(
@@ -276,18 +282,29 @@ export function registerRoutes(app: Express): Server {
             );
           
           if (defaultFees.length > 0) {
-            return res.json({ fees: defaultFees });
+            allFees = defaultFees;
           }
-          
+        } else {
+          // Extract fees from assignments
+          allFees = feeAssignments.map(assignment => assignment.fee);
+        }
+        
+        if (allFees.length === 0) {
           return res.json({ fees: [] });
         }
         
-        // Extract fees from assignments
-        const fees = feeAssignments.map(assignment => assignment.fee);
+        // Separate registration fees from other fees (like uniform, equipment, etc.)
+        const registrationFees = allFees.filter(fee => 
+          fee.feeType === 'registration' || fee.feeType === null || fee.feeType === undefined
+        );
         
-        // Check which fee should be active based on date ranges
+        const otherFees = allFees.filter(fee => 
+          fee.feeType !== 'registration' && fee.feeType !== null && fee.feeType !== undefined
+        );
+        
+        // Check which registration fee should be active based on date ranges
         const now = new Date();
-        const activeFees = fees.filter(fee => {
+        const activeRegistrationFees = registrationFees.filter(fee => {
           // If no begin/end dates, fee is always active
           if (!fee.beginDate && !fee.endDate) return true;
           
@@ -298,11 +315,16 @@ export function registerRoutes(app: Express): Server {
           return isAfterBegin && isBeforeEnd;
         });
         
-        // If there are active fees, return those, otherwise return all fees
+        // Use active registration fees if available, otherwise use all registration fees
+        const finalRegistrationFees = activeRegistrationFees.length > 0 ? activeRegistrationFees : registrationFees;
+        
+        // Combine registration fees with other fees (uniform, etc.)
+        const finalFees = [...finalRegistrationFees, ...otherFees];
+        
         res.json({ 
-          fees: activeFees.length > 0 ? activeFees : fees,
-          // Include the primary fee for backward compatibility
-          fee: activeFees.length > 0 ? activeFees[0] : (fees.length > 0 ? fees[0] : null)
+          fees: finalFees,
+          // For backward compatibility
+          fee: finalRegistrationFees.length > 0 ? finalRegistrationFees[0] : null
         });
       } catch (error) {
         console.error('Error fetching fees:', error);
