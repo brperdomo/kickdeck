@@ -1683,7 +1683,9 @@ function TeamsView() {
       
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch teams');
-      return response.json();
+      const data = await response.json();
+      console.log('Teams data received:', data);
+      return data;
     }
   });
 
@@ -1781,11 +1783,23 @@ function TeamsView() {
   // Filter teams by search term
   const filteredTeams = useMemo(() => {
     if (!teamsQuery.data) return [];
+    if (!searchTerm) return teamsQuery.data;
+    
+    const lowercaseSearchTerm = searchTerm.toLowerCase();
     
     return teamsQuery.data.filter((team: any) => {
-      const nameMatch = team?.name ? team.name.toLowerCase().includes(searchTerm.toLowerCase()) : false;
-      const managerMatch = team?.managerEmail ? team.managerEmail.toLowerCase().includes(searchTerm.toLowerCase()) : false;
-      const submitterMatch = team?.submitterEmail ? team.submitterEmail.toLowerCase().includes(searchTerm.toLowerCase()) : false;
+      // Safely access and match properties with null checks
+      const nameMatch = team && team.name && typeof team.name === 'string' 
+        ? team.name.toLowerCase().includes(lowercaseSearchTerm) 
+        : false;
+      
+      const managerMatch = team && team.managerEmail && typeof team.managerEmail === 'string' 
+        ? team.managerEmail.toLowerCase().includes(lowercaseSearchTerm) 
+        : false;
+      
+      const submitterMatch = team && team.submitterEmail && typeof team.submitterEmail === 'string' 
+        ? team.submitterEmail.toLowerCase().includes(lowercaseSearchTerm) 
+        : false;
       
       return nameMatch || managerMatch || submitterMatch;
     });
@@ -1902,7 +1916,7 @@ function TeamsView() {
                         </TableRow>
                       ) : (
                         filteredTeams
-                          .filter((team: any) => team.status === 'registered')
+                          .filter((team: any) => team && team.status === 'registered')
                           .map((team: any) => (
                             <TableRow key={team.id}>
                               <TableCell className="font-medium">{team.name}</TableCell>
