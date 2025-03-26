@@ -46,7 +46,8 @@ export async function getTeams(req: Request, res: Response) {
       query = query.where(
         or(
           like(teams.name, searchTerm as string),
-          like(teams.managerEmail, searchTerm as string)
+          like(teams.managerEmail, searchTerm as string),
+          like(teams.submitterEmail, searchTerm as string)
         )
       );
     }
@@ -146,16 +147,29 @@ export async function updateTeamStatus(req: Request, res: Response) {
       
     // Send email notification based on the new status
     try {
-      await sendTemplatedEmail(
-        currentTeam.managerEmail,
-        status === 'APPROVED' ? 'team_approved' : 'team_rejected',
-        {
-          teamName: currentTeam.name,
-          eventName: event?.name || 'the event',
-          notes: notes || '',
-          loginLink: `${process.env.PUBLIC_URL || ''}/dashboard`
+      // Send to both the submitter and the manager if they're different
+      const emailRecipients = [currentTeam.submitterEmail];
+      
+      // If manager email is different from submitter, add them too
+      if (currentTeam.managerEmail && currentTeam.managerEmail !== currentTeam.submitterEmail) {
+        emailRecipients.push(currentTeam.managerEmail);
+      }
+      
+      // Send notification to all recipients
+      for (const recipient of emailRecipients) {
+        if (recipient) {
+          await sendTemplatedEmail(
+            recipient,
+            status === 'APPROVED' ? 'team_approved' : 'team_rejected',
+            {
+              teamName: currentTeam.name,
+              eventName: event?.name || 'the event',
+              notes: notes || '',
+              loginLink: `${process.env.PUBLIC_URL || ''}/dashboard`
+            }
+          );
         }
-      );
+      }
     } catch (emailError) {
       // Log email error but don't fail the request
       log(`Failed to send status notification email: ${emailError}`, 'admin');
@@ -216,17 +230,30 @@ export async function processRefund(req: Request, res: Response) {
       
     // Send email notification about the refund
     try {
-      await sendTemplatedEmail(
-        team.managerEmail,
-        'payment_refunded',
-        {
-          teamName: team.name,
-          eventName: event?.name || 'the event',
-          amount: ((team.amountPaid || 0) / 100).toFixed(2),
-          reason: reason || 'Team registration was rejected',
-          refundDate: new Date().toLocaleDateString()
+      // Send to both the submitter and the manager if they're different
+      const emailRecipients = [team.submitterEmail];
+      
+      // If manager email is different from submitter, add them too
+      if (team.managerEmail && team.managerEmail !== team.submitterEmail) {
+        emailRecipients.push(team.managerEmail);
+      }
+      
+      // Send notification to all recipients
+      for (const recipient of emailRecipients) {
+        if (recipient) {
+          await sendTemplatedEmail(
+            recipient,
+            'payment_refunded',
+            {
+              teamName: team.name,
+              eventName: event?.name || 'the event',
+              amount: ((team.amountPaid || 0) / 100).toFixed(2),
+              reason: reason || 'Team registration was rejected',
+              refundDate: new Date().toLocaleDateString()
+            }
+          );
         }
-      );
+      }
     } catch (emailError) {
       // Log email error but don't fail the request
       log(`Failed to send refund notification email: ${emailError}`, 'admin');
