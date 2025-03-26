@@ -1659,6 +1659,9 @@ function TeamsView() {
   const [refundReason, setRefundReason] = useState("");
   const { toast } = useToast();
   
+  // Import DialogDescription from the outer scope to fix reference error
+  const { DialogDescription } = Dialog;
+  
   // Fetch events for dropdown
   const eventsQuery = useQuery({
     queryKey: ['admin', 'events'],
@@ -1704,7 +1707,7 @@ function TeamsView() {
     onSuccess: () => {
       toast({
         title: "Team status updated",
-        description: `Team registration has been ${selectedTeam?.status?.toLowerCase()}`,
+        description: `Team registration has been ${selectedTeam?.status ? selectedTeam.status.toLowerCase() : 'updated'}`,
       });
       setIsApprovalDialogOpen(false);
       teamsQuery.refetch();
