@@ -109,6 +109,7 @@ function Router() {
           <Route path="/household" component={HouseholdPage} />
           <Route path="/chat" component={ChatPage} />
           <Route path="/register/event/:eventId" component={EventRegistration} />
+          <Route path="/user-dashboard" component={UserDashboard} />
 
           {/* Preview routes */}
           <Route path="/admin/events/preview">
