@@ -99,7 +99,7 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing }: {
         body: JSON.stringify({
           amount, // amount is in cents
           currency: 'usd',
-          description: 'Team Registration Fee',
+          description: 'Team Registration Fee with Additional Services',
         }),
       });
       
@@ -230,6 +230,9 @@ const teamRegistrationSchema = z.object({
   managerEmail: z.string().email("Invalid email address"),
   managerPhone: z.string().min(10, "Phone number must be at least 10 digits"),
   players: z.array(playerSchema).min(1, "At least one player is required"),
+  // Add fields for fee processing
+  selectedFeeIds: z.array(z.number()).optional(),
+  totalAmount: z.number().optional(),
 });
 
 type TeamRegistrationForm = z.infer<typeof teamRegistrationSchema>;
@@ -470,6 +473,8 @@ export default function EventRegistration() {
       managerEmail: '',
       managerPhone: '',
       players: [],
+      selectedFeeIds: [],
+      totalAmount: 0
     }
   });
 
@@ -626,6 +631,26 @@ export default function EventRegistration() {
         return processedPlayer;
       });
       
+      // Collect all selected fee IDs
+      const selectedFeeIds = [];
+      
+      // Add the main registration fee
+      if (selectedFee) {
+        selectedFeeIds.push(selectedFee.id);
+      }
+      
+      // Add required fees
+      requiredFees.forEach(fee => {
+        selectedFeeIds.push(fee.id);
+      });
+      
+      // Add selected optional fees
+      optionalFees
+        .filter(fee => selectedAdditionalFees.includes(fee.id))
+        .forEach(fee => {
+          selectedFeeIds.push(fee.id);
+        });
+      
       // Transform dates and include terms agreement and fee in submission
       const response = await fetch(`/api/events/${eventId}/register-team`, {
         method: 'POST',
@@ -637,6 +662,7 @@ export default function EventRegistration() {
           players: processedPlayers,
           termsAcknowledged: termsAgreed,
           registrationFee: registrationFee,
+          selectedFeeIds: selectedFeeIds, // Include all selected fee IDs
           termsAcknowledgedAt: new Date() // Send as Date object, server will handle proper formatting
         }),
       });
