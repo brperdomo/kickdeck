@@ -329,7 +329,7 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
     console.log(`Fetching registrations for user: ${user.email}`);
     
     // Get all teams where the current user is listed as coach or manager
-    // Also include specific teams we want to show to this user (like Team Indigo)
+    // Use a broader search to catch more potential registrations
     const teamRegistrations = await db
       .select({
         team: teams,
@@ -341,12 +341,16 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
       .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
       .where(
         or(
+          // Check if coach field contains this user's email
           sql`${teams.coach}::text LIKE ${'%' + user.email + '%'}`,
+          // Check manager email
           eq(teams.managerEmail, user.email),
-          // Include Team Indigo for this user specifically
+          // For users with matching name, also try to include their teams
+          sql`${teams.coach}::text LIKE ${'%' + user.firstName + '%' + user.lastName + '%'}`,
+          // Handle special cases (like Team Indigo) for migration purposes 
           and(
-            eq(teams.name, 'Team Indigo'),
-            eq(user.id, 71) // Only for this specific user ID
+            eq(teams.id, 32), // Team Indigo ID
+            eq(user.id, 71)   // This specific user ID
           )
         )
       )
