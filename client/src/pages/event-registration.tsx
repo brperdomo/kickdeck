@@ -503,7 +503,6 @@ export default function EventRegistration() {
   const [registrationFee, setRegistrationFee] = useState<number | null>(null);
   const [availableFees, setAvailableFees] = useState<Fee[]>([]);
   const [selectedFee, setSelectedFee] = useState<Fee | null>(null);
-  const [selectedAdditionalFees, setSelectedAdditionalFees] = useState<number[]>([]);
   
   // Separate required and optional fees
   const requiredFees = useMemo(() => 
@@ -1526,10 +1525,9 @@ export default function EventRegistration() {
                                 </tr>
                               )}
                               
-                              {/* Additional Fees like Uniform */}
+                              {/* Additional Fees like Uniform (only required fees are shown) */}
                               {availableFees
-                                .filter(fee => fee.feeType !== 'registration' && 
-                                              (fee.isRequired || selectedAdditionalFees?.includes(fee.id)))
+                                .filter(fee => fee.feeType !== 'registration' && fee.isRequired)
                                 .map(fee => (
                                 <tr key={`fee-${fee.id}`}>
                                   <td className="px-4 py-3">
