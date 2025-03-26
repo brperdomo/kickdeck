@@ -1455,41 +1455,7 @@ export default function EventRegistration() {
                     
                     {availableFees.length > 0 ? (
                       <div className="space-y-3">
-                        {/* Multiple Fee Options Selector */}
-                        {availableFees.length > 1 && (
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Select Registration Fee Option:</label>
-                            <div className="grid gap-2">
-                              {availableFees.filter(fee => fee.feeType === 'registration').map((fee) => (
-                                <div 
-                                  key={fee.id}
-                                  onClick={() => {
-                                    setSelectedFee(fee);
-                                    setRegistrationFee(fee.amount);
-                                  }}
-                                  className={`
-                                    p-3 border rounded-md flex justify-between items-center cursor-pointer
-                                    ${selectedFee?.id === fee.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}
-                                  `}
-                                >
-                                  <div>
-                                    <p className="font-medium">{fee.name}</p>
-                                    {(fee.beginDate || fee.endDate) && (
-                                      <p className="text-xs text-gray-500">
-                                        {fee.beginDate && `Available from ${new Date(fee.beginDate).toLocaleDateString()}`}
-                                        {fee.beginDate && fee.endDate && ' to '}
-                                        {fee.endDate && `${new Date(fee.endDate).toLocaleDateString()}`}
-                                      </p>
-                                    )}
-                                  </div>
-                                  <div className="font-bold text-blue-800">
-                                    ${(fee.amount / 100).toFixed(2)}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
+                        {/* Registration Fee Selection removed - now automatic based on date */}
                         
                         {/* Cart Items */}
                         <div className="bg-white rounded-md overflow-hidden">
