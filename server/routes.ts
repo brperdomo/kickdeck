@@ -242,29 +242,30 @@ export function registerRoutes(app: Express): Server {
         // Import fee schemas
         const { eventFees, eventAgeGroupFees } = await import("@db/schema");
         
-        // Fetch fee assigned to this age group
-        const feeAssignment = await db
+        // Fetch all fees assigned to this age group
+        const feeAssignments = await db
           .select({
             fee: {
               id: eventFees.id,
               name: eventFees.name,
-              amount: eventFees.amount
-              // description removed - doesn't exist in schema
+              amount: eventFees.amount,
+              beginDate: eventFees.beginDate,
+              endDate: eventFees.endDate
             }
           })
           .from(eventAgeGroupFees)
           .innerJoin(eventFees, eq(eventAgeGroupFees.feeId, eventFees.id))
-          .where(eq(eventAgeGroupFees.ageGroupId, parseInt(ageGroupId)))
-          .limit(1);
+          .where(eq(eventAgeGroupFees.ageGroupId, parseInt(ageGroupId)));
         
-        if (feeAssignment.length === 0) {
-          // Check if there's a default fee for this event (use applyToAll instead of isDefault)
-          const defaultFee = await db
+        if (feeAssignments.length === 0) {
+          // Check if there are default fees for this event (use applyToAll instead of isDefault)
+          const defaultFees = await db
             .select({
               id: eventFees.id,
               name: eventFees.name,
-              amount: eventFees.amount
-              // description field doesn't exist in schema
+              amount: eventFees.amount,
+              beginDate: eventFees.beginDate,
+              endDate: eventFees.endDate
             })
             .from(eventFees)
             .where(
@@ -272,19 +273,39 @@ export function registerRoutes(app: Express): Server {
                 eq(eventFees.eventId, eventId),
                 eq(eventFees.applyToAll, true)
               )
-            )
-            .limit(1);
+            );
           
-          if (defaultFee.length > 0) {
-            return res.json({ fee: defaultFee[0] });
+          if (defaultFees.length > 0) {
+            return res.json({ fees: defaultFees });
           }
           
-          return res.json({ fee: null });
+          return res.json({ fees: [] });
         }
         
-        res.json({ fee: feeAssignment[0].fee });
+        // Extract fees from assignments
+        const fees = feeAssignments.map(assignment => assignment.fee);
+        
+        // Check which fee should be active based on date ranges
+        const now = new Date();
+        const activeFees = fees.filter(fee => {
+          // If no begin/end dates, fee is always active
+          if (!fee.beginDate && !fee.endDate) return true;
+          
+          // Check if fee is active based on date range
+          const isAfterBegin = !fee.beginDate || new Date(fee.beginDate) <= now;
+          const isBeforeEnd = !fee.endDate || new Date(fee.endDate) >= now;
+          
+          return isAfterBegin && isBeforeEnd;
+        });
+        
+        // If there are active fees, return those, otherwise return all fees
+        res.json({ 
+          fees: activeFees.length > 0 ? activeFees : fees,
+          // Include the primary fee for backward compatibility
+          fee: activeFees.length > 0 ? activeFees[0] : (fees.length > 0 ? fees[0] : null)
+        });
       } catch (error) {
-        console.error('Error fetching fee:', error);
+        console.error('Error fetching fees:', error);
         res.status(500).json({ error: 'Failed to fetch fee information' });
       }
     });
