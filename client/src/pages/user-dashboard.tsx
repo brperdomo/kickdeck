@@ -44,17 +44,13 @@ export default function UserDashboard() {
           {/* Navigation Links */}
           <nav className="flex-1 p-4">
             <div className="space-y-2">
-              <Link href="/household">
-                <a className="flex items-center gap-2 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                  <LucideHome className="h-5 w-5" />
-                  My Household
-                </a>
+              <Link href="/household" className="flex items-center gap-2 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                <LucideHome className="h-5 w-5" />
+                My Household
               </Link>
-              <Link href="/account">
-                <a className="flex items-center gap-2 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                  <User className="h-5 w-5" />
-                  My Account
-                </a>
+              <Link href="/account" className="flex items-center gap-2 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                <User className="h-5 w-5" />
+                My Account
               </Link>
             </div>
           </nav>

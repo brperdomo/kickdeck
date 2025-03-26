@@ -21,7 +21,7 @@ interface Registration {
 }
 
 export default function UserRegistrationsView() {
-  const { data: registrations, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['user', 'registrations'],
     queryFn: async () => {
       const response = await fetch('/api/user/registrations');
@@ -31,6 +31,9 @@ export default function UserRegistrationsView() {
       return response.json();
     }
   });
+  
+  // Extract registrations array from the response
+  const registrations = data?.registrations || [];
 
   const getStatusBadge = (status: string) => {
     switch (status) {

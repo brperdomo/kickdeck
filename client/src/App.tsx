@@ -77,8 +77,8 @@ function Router() {
           <Route path="/admin/events/:id/application-form">
             {user.isAdmin ? <EventApplicationForm /> : <NotFound />}
           </Route>
-          <Route path="/admin/events/:eventId/fees">
-            {(params) => user.isAdmin ? <FeeManagement eventId={params.eventId} /> : <NotFound />}
+          <Route path="/admin/events/:id/fees">
+            {user.isAdmin ? <FeeManagement /> : <NotFound />}
           </Route>
           <Route path="/admin/events/:id">
             {user.isAdmin ? <EditEvent /> : <NotFound />}
