@@ -1796,12 +1796,23 @@ function TeamsView() {
       // If the item has a team property, use that, otherwise use the item itself
       const teamData = item.team || item;
       
+      // Map the status field to a paymentStatus property
+      // This fixes the issue where the UI expects paymentStatus but DB uses status field
+      let paymentStatus = 'Unpaid';
+      if (teamData.status === 'paid') {
+        paymentStatus = 'paid';
+      } else if (teamData.status === 'refunded') {
+        paymentStatus = 'refunded';
+      }
+      
       // Combine any additional data from the parent object with the team data
       return {
         ...teamData,
         // Include event and ageGroup data if they exist in the parent object
         event: item.event || teamData.event,
-        ageGroup: item.ageGroup || teamData.ageGroup
+        ageGroup: item.ageGroup || teamData.ageGroup,
+        // Add the derived paymentStatus
+        paymentStatus
       };
     });
   }, [teamsQuery.data]);
