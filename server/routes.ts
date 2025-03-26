@@ -250,18 +250,25 @@ export function registerRoutes(app: Express): Server {
               name: eventFees.name,
               amount: eventFees.amount,
               beginDate: eventFees.beginDate,
-              endDate: eventFees.endDate,
-              feeType: eventFees.feeType,
-              isRequired: eventFees.isRequired
+              endDate: eventFees.endDate
+              // feeType and isRequired will be added from columns that exist in the database
             }
           })
           .from(eventAgeGroupFees)
           .innerJoin(eventFees, eq(eventAgeGroupFees.feeId, eventFees.id))
           .where(eq(eventAgeGroupFees.ageGroupId, parseInt(ageGroupId)));
         
-        let allFees = [];
+        // Adding feeType and isRequired properties to the results after fetching
+        // As a workaround until the schema migration completes
+        const feesWithTypes = feeAssignments.map(assignment => ({
+          ...assignment.fee,
+          feeType: 'registration', // Default to registration
+          isRequired: true // Default to required
+        }));
         
-        if (feeAssignments.length === 0) {
+        let allFees = feesWithTypes;
+        
+        if (allFees.length === 0) {
           // Check if there are default fees for this event (use applyToAll instead of isDefault)
           const defaultFees = await db
             .select({
@@ -269,9 +276,8 @@ export function registerRoutes(app: Express): Server {
               name: eventFees.name,
               amount: eventFees.amount,
               beginDate: eventFees.beginDate,
-              endDate: eventFees.endDate,
-              feeType: eventFees.feeType,
-              isRequired: eventFees.isRequired
+              endDate: eventFees.endDate
+              // feeType and isRequired will be added from columns that exist in the database
             })
             .from(eventFees)
             .where(
@@ -281,12 +287,16 @@ export function registerRoutes(app: Express): Server {
               )
             );
           
-          if (defaultFees.length > 0) {
-            allFees = defaultFees;
+          // Add feeType and isRequired properties
+          const defaultFeesWithTypes = defaultFees.map(fee => ({
+            ...fee,
+            feeType: 'registration',
+            isRequired: true
+          }));
+          
+          if (defaultFeesWithTypes.length > 0) {
+            allFees = defaultFeesWithTypes;
           }
-        } else {
-          // Extract fees from assignments
-          allFees = feeAssignments.map(assignment => assignment.fee);
         }
         
         if (allFees.length === 0) {
@@ -294,13 +304,9 @@ export function registerRoutes(app: Express): Server {
         }
         
         // Separate registration fees from other fees (like uniform, equipment, etc.)
-        const registrationFees = allFees.filter(fee => 
-          fee.feeType === 'registration' || fee.feeType === null || fee.feeType === undefined
-        );
-        
-        const otherFees = allFees.filter(fee => 
-          fee.feeType !== 'registration' && fee.feeType !== null && fee.feeType !== undefined
-        );
+        // All fees are considered registration fees for now
+        const registrationFees = allFees;
+        const otherFees = []; // No other fees until schema is updated
         
         // Check which registration fee should be active based on date ranges
         const now = new Date();

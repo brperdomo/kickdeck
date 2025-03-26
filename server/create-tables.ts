@@ -12,6 +12,7 @@ import { createPlayersTable } from "./create-players-table";
 import { addSubmitterEmailToTeams } from "./migrations/add_submitter_email_to_teams";
 import { addTeamSelectedFees } from "./migrations/add_team_selected_fees";
 import { addPaymentIntentId } from "./migrations/add_payment_intent_id";
+import { addFeeTypeColumns } from "./migrations/add_fee_type_columns";
 
 export async function createTables() {
   try {
@@ -140,6 +141,9 @@ export async function createTables() {
     
     console.log('Adding payment intent ID to teams table...');
     await addPaymentIntentId();
+    
+    console.log('Adding feeType and isRequired columns to event_fees table...');
+    await addFeeTypeColumns();
 
     console.log("All tables created successfully");
     return { success: true };

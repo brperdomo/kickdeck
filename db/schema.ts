@@ -708,6 +708,8 @@ export const eventFees = pgTable("event_fees", {
   amount: integer("amount").notNull(),  // Store amount in cents
   beginDate: timestamp("begin_date"),
   endDate: timestamp("end_date"),
+  feeType: text("fee_type"),  // 'registration', 'uniform', 'equipment', etc.
+  isRequired: boolean("is_required").default(false),
   applyToAll: boolean("apply_to_all").default(false).notNull(),
   accountingCodeId: integer("accounting_code_id").references(() => accountingCodes.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
