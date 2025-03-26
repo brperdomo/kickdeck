@@ -356,12 +356,12 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
       id: reg.team.id,
       teamName: reg.team.name,
       eventName: reg.event?.name || 'Unknown Event',
+      eventId: reg.event?.id.toString() || '',
       ageGroup: reg.ageGroup?.ageGroup || 'Unknown Age Group',
-      registrationDate: reg.team.createdAt,
-      status: reg.team.status || 'pending',
-      amountPaid: reg.team.registrationFee || 0,
-      termsAccepted: reg.team.termsAcknowledged || false,
-      termsAcceptedAt: reg.team.termsAcknowledgedAt || reg.team.createdAt
+      registeredAt: reg.team.createdAt,
+      status: reg.team.status || 'registered',
+      amount: reg.team.registrationFee || 0,
+      paymentId: reg.team.paymentId || undefined
     }));
     
     res.json({
