@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -502,12 +502,12 @@ export default function EventRegistration() {
   
   // Separate required and optional fees
   const requiredFees = useMemo(() => 
-    availableFees.filter(fee => fee.feeType !== 'registration' && fee.isRequired),
+    availableFees.filter((fee: Fee) => fee.feeType !== 'registration' && fee.isRequired),
     [availableFees]
   );
   
   const optionalFees = useMemo(() => 
-    availableFees.filter(fee => fee.feeType !== 'registration' && !fee.isRequired),
+    availableFees.filter((fee: Fee) => fee.feeType !== 'registration' && !fee.isRequired),
     [availableFees]
   );
   
