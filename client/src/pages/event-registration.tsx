@@ -555,6 +555,9 @@ export default function EventRegistration() {
               const registrationFees = data.fees.filter((fee: Fee) => fee.feeType === 'registration');
               const otherFees = data.fees.filter((fee: Fee) => fee.feeType !== 'registration');
 
+              // Get required fees (all required fees are automatically included)
+              const requiredOtherFees = otherFees.filter(fee => fee.isRequired);
+              
               // Select the current applicable registration fee (based on current date)
               const now = new Date();
               const applicableRegFee = registrationFees.find((fee: Fee) => {
@@ -579,6 +582,16 @@ export default function EventRegistration() {
                 const fallbackFee = data.fees[0];
                 setSelectedFee(fallbackFee);
                 setRegistrationFee(fallbackFee.amount);
+              }
+              
+              // Automatically add all required fees to selected additional fees
+              if (requiredOtherFees.length > 0) {
+                const requiredFeeIds = requiredOtherFees.map(fee => fee.id);
+                setSelectedAdditionalFees(prevIds => {
+                  // Only add IDs that aren't already in the array
+                  const newIds = requiredFeeIds.filter(id => !prevIds.includes(id));
+                  return [...prevIds, ...newIds];
+                });
               }
               
               // Only update if we don't already have the fee information to avoid infinite loop
@@ -1029,14 +1042,27 @@ export default function EventRegistration() {
                     />
                     
                     {/* Fee display when age group is selected */}
-                    {selectedAgeGroup && registrationFee !== null && (
+                    {selectedAgeGroup && selectedFee && (
                       <div className="mt-2 bg-blue-50 p-3 rounded-md">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium text-gray-600">Registration Fee:</span>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm font-medium text-gray-600">{selectedFee.name || "Registration Fee"}:</span>
                           <span className="text-base font-semibold text-blue-700">
-                            ${(registrationFee / 100).toFixed(2)}
+                            ${(selectedFee.amount / 100).toFixed(2)}
                           </span>
                         </div>
+                        
+                        {/* Show required fees automatically */}
+                        {requiredFees.length > 0 && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            <p className="mb-1 font-medium">Required additional fees:</p>
+                            {requiredFees.map(fee => (
+                              <div key={`req-${fee.id}`} className="flex justify-between items-center">
+                                <span>{fee.name}</span>
+                                <span>${(fee.amount / 100).toFixed(2)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
