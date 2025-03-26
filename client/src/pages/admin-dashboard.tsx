@@ -1951,6 +1951,7 @@ function TeamsView() {
                         <TableHead>Team Name</TableHead>
                         <TableHead>Event</TableHead>
                         <TableHead>Age Group</TableHead>
+                        <TableHead>Submitter</TableHead>
                         <TableHead>Manager</TableHead>
                         <TableHead>Registration Fee</TableHead>
                         <TableHead>Payment Status</TableHead>
@@ -1980,6 +1981,7 @@ function TeamsView() {
                               <TableCell className="font-medium">{team.name}</TableCell>
                               <TableCell>{team.event?.name || "N/A"}</TableCell>
                               <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
+                              <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
                               <TableCell>{team.managerEmail}</TableCell>
                               <TableCell>{formatCurrency(team.registrationFee || 0)}</TableCell>
                               <TableCell>
@@ -2015,6 +2017,7 @@ function TeamsView() {
                         <TableHead>Team Name</TableHead>
                         <TableHead>Event</TableHead>
                         <TableHead>Age Group</TableHead>
+                        <TableHead>Submitter</TableHead>
                         <TableHead>Manager</TableHead>
                         <TableHead>Rejection Reason</TableHead>
                         <TableHead>Payment Status</TableHead>
@@ -2044,6 +2047,7 @@ function TeamsView() {
                               <TableCell className="font-medium">{team.name}</TableCell>
                               <TableCell>{team.event?.name || "N/A"}</TableCell>
                               <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
+                              <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
                               <TableCell>{team.managerEmail}</TableCell>
                               <TableCell>{team.notes || "No reason provided"}</TableCell>
                               <TableCell>
