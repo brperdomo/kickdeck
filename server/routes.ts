@@ -393,7 +393,10 @@ export function registerRoutes(app: Express): Server {
           // New fields for registration status and terms
           termsAcknowledged,
           termsAcknowledgedAt,
-          registrationFee
+          // Fee-related fields
+          registrationFee,
+          selectedFeeIds,
+          totalAmount
         } = req.body;
         
         // Validate required fields
@@ -470,6 +473,9 @@ export function registerRoutes(app: Express): Server {
               // Add new registration fields
               status: "registered", // Initial status - 'registered', 'approved', 'rejected', etc.
               registrationFee: registrationFee || null,  // Use camelCase as defined in the schema
+              // Add the new multiple fee tracking fields
+              selectedFeeIds: selectedFeeIds || null, // Store as comma-separated list
+              totalAmount: totalAmount || null, // Total amount in cents including all fees
               termsAcknowledged: termsAcknowledged || false,  // Use camelCase as defined in the schema
               termsAcknowledgedAt: termsAcknowledgedAt ? new Date(termsAcknowledgedAt) : new Date(),  // Use camelCase as defined in the schema
               createdAt: new Date().toISOString() // Use camelCase as defined in the schema
@@ -590,6 +596,9 @@ export function registerRoutes(app: Express): Server {
           eventId: result.team.eventId,
           ageGroupId: result.team.ageGroupId,
           status: result.team.status,
+          registrationFee: result.team.registrationFee,
+          selectedFeeIds: result.team.selectedFeeIds,
+          totalAmount: result.team.totalAmount
         } : null;
         
         res.status(201).json({

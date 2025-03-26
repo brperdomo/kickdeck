@@ -134,7 +134,8 @@ export async function getPaymentIntentStatus(req: Request, res: Response) {
           .update(teams)
           .set({
             status: 'paid', // Use the status field for payment status
-            registrationFee: paymentIntent.amount, // Use registrationFee for the amount
+            totalAmount: paymentIntent.amount, // Store the total amount paid
+            paymentIntentId: paymentIntent.id, // Store the payment intent ID for refunds
             notes: `Payment completed. Payment ID: ${paymentIntent.id}`, // Store payment ID in notes
           })
           .where(eq(teams.id, parseInt(paymentIntent.metadata.teamId)));

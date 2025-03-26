@@ -231,6 +231,9 @@ export const teams = pgTable("teams", {
   // New fields for registration status and fee tracking
   status: text("status").notNull().default("registered"), // registered, approved, rejected, etc.
   registrationFee: integer("registration_fee"), // Store amount in cents
+  // New fields for multiple fee selection
+  selectedFeeIds: text("selected_fee_ids"), // Comma-separated list of fee IDs
+  totalAmount: integer("total_amount"), // Store total amount in cents (includes all fees)
   termsAcknowledged: boolean("terms_acknowledged").default(false),
   termsAcknowledgedAt: timestamp("terms_acknowledged_at"),
   termsAcknowledgementRecord: text("terms_acknowledgement_record"), // Path to PDF or record ID

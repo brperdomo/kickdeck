@@ -211,8 +211,9 @@ export async function processRefund(req: Request, res: Response) {
       return res.status(404).json({ error: 'Team not found' });
     }
     
-    // Check if team has already paid - using registrationFee as an indicator
-    if (!team.registrationFee || team.registrationFee <= 0) {
+    // Check if team has already paid - using totalAmount or registrationFee as an indicator
+    const paidAmount = team.totalAmount || team.registrationFee;
+    if (!paidAmount || paidAmount <= 0) {
       return res.status(400).json({ error: 'No payment found for this team' });
     }
     
@@ -270,7 +271,7 @@ export async function processRefund(req: Request, res: Response) {
             {
               teamName: team.name,
               eventName: event?.name || 'the event',
-              amount: ((team.registrationFee || 0) / 100).toFixed(2),
+              amount: (((team.totalAmount || team.registrationFee || 0) / 100).toFixed(2)),
               reason: reason || 'Team registration was refunded',
               refundDate: new Date().toLocaleDateString()
             }
