@@ -10,6 +10,8 @@ import { updateDivisionCodes } from "./migrations/update_division_codes";
 import { addTeamRegistrationFields } from "./migrations/add_team_registration_fields";
 import { createPlayersTable } from "./create-players-table";
 import { addSubmitterEmailToTeams } from "./migrations/add_submitter_email_to_teams";
+import { addTeamSelectedFees } from "./migrations/add_team_selected_fees";
+import { addPaymentIntentId } from "./migrations/add_payment_intent_id";
 
 export async function createTables() {
   try {
