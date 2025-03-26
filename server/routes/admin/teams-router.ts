@@ -1,18 +1,18 @@
-import express from 'express';
+import { Router } from 'express';
 import { getTeams, getTeamById, updateTeamStatus, processRefund } from './teams';
 
-const router = express.Router();
+const router = Router();
 
-// Get all teams with optional filtering
+// Get all teams with filtering
 router.get('/', getTeams);
 
-// Get a specific team by ID
+// Get team by ID
 router.get('/:teamId', getTeamById);
 
 // Update team status (approve/reject)
-router.put('/:teamId/status', updateTeamStatus);
+router.patch('/:teamId/status', updateTeamStatus);
 
-// Process refund for a team
+// Process refund for rejected team
 router.post('/:teamId/refund', processRefund);
 
 export default router;

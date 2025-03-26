@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { db } from '../../db';
-import { teams, events, users } from '../../db/schema';
+import { db } from '@db';
+import { teams, events, users } from '@db/schema';
 import { eq, and, or, like, asc, desc } from 'drizzle-orm';
 import { createRefund } from '../../services/stripeService';
 import { log } from '../../vite';
