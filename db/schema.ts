@@ -223,6 +223,8 @@ export const teams = pgTable("teams", {
   managerName: text("manager_name"),
   managerPhone: text("manager_phone"),
   managerEmail: text("manager_email"),
+  // Add submitterEmail to explicitly track who submitted the registration
+  submitterEmail: text("submitter_email"),
   seedRanking: integer("seed_ranking"),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   // User ID is not in the actual database schema
