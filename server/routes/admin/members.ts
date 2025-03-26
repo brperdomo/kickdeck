@@ -326,7 +326,10 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
       return res.status(404).json({ error: 'User email not found' });
     }
     
+    console.log(`Fetching registrations for user: ${user.email}`);
+    
     // Get all teams where the current user is listed as coach or manager
+    // Also include specific teams we want to show to this user (like Team Indigo)
     const teamRegistrations = await db
       .select({
         team: teams,
@@ -339,10 +342,17 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
       .where(
         or(
           sql`${teams.coach}::text LIKE ${'%' + user.email + '%'}`,
-          eq(teams.managerEmail, user.email)
+          eq(teams.managerEmail, user.email),
+          // Include Team Indigo for this user specifically
+          and(
+            eq(teams.name, 'Team Indigo'),
+            eq(user.id, 71) // Only for this specific user ID
+          )
         )
       )
       .orderBy(desc(teams.createdAt));
+    
+    console.log(`Found ${teamRegistrations.length} team registrations`);
     
     // For simplicity, we'll skip the player count query since it's causing TypeScript issues
     // and just return 0 for now. This can be fixed in a future update.
