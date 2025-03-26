@@ -24,6 +24,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
 import { SelectUser } from "@db/schema";
 import { LogoutOverlay } from "@/components/ui/logout-overlay";
+
+// Format currency values in dollars with 2 decimal places
+function formatCurrency(amount: number | null | undefined): string {
+  if (amount === null || amount === undefined) return 'N/A';
+  
+  // Convert cents to dollars and format with 2 decimal places
+  return `$${(amount / 100).toFixed(2)}`;
+}
+
 import {
   Calendar,
   Shield,
@@ -2456,6 +2465,99 @@ function TeamsView() {
                   </CardContent>
                 </Card>
               )}
+              
+              {/* Payment & Fee Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Payment Information</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Total Amount:</div>
+                      <div className="col-span-2 font-semibold text-blue-700">
+                        {selectedTeam.totalAmount 
+                          ? formatCurrency(selectedTeam.totalAmount) 
+                          : selectedTeam.registrationFee 
+                            ? formatCurrency(selectedTeam.registrationFee) 
+                            : 'Not available'}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Payment Status:</div>
+                      <div className="col-span-2">
+                        <Badge variant={selectedTeam.paymentStatus === 'paid' 
+                          ? 'success' 
+                          : selectedTeam.paymentStatus === 'refunded' 
+                            ? 'outline' 
+                            : 'secondary'}>
+                          {selectedTeam.paymentStatus || 'Unpaid'}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    {selectedTeam.paymentIntentId && (
+                      <div className="grid grid-cols-3 gap-1">
+                        <div className="font-medium">Payment ID:</div>
+                        <div className="col-span-2 font-mono text-xs bg-slate-50 p-1 rounded">
+                          {selectedTeam.paymentIntentId}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {selectedTeam.refundDate && (
+                      <div className="grid grid-cols-3 gap-1">
+                        <div className="font-medium">Refunded On:</div>
+                        <div className="col-span-2">{formatDate(selectedTeam.refundDate)}</div>
+                      </div>
+                    )}
+                    
+                    {/* Fee breakdown section */}
+                    {selectedTeam.selectedFeeIds && (
+                      <div className="mt-4 border-t pt-4">
+                        <h4 className="font-medium mb-2">Fee Breakdown</h4>
+                        <div className="bg-slate-50 rounded-md p-2">
+                          <p className="text-sm text-slate-500 mb-2">
+                            Selected fees: {selectedTeam.selectedFeeIds.split(',').length}
+                          </p>
+                          
+                          {/* This is a placeholder - in a future update, we can fetch actual fee details */}
+                          <div className="text-sm">
+                            <div className="flex justify-between py-1 border-b border-slate-200">
+                              <span>Registration Fee</span>
+                              <span className="font-medium">
+                                {selectedTeam.registrationFee ? formatCurrency(selectedTeam.registrationFee) : 'N/A'}
+                              </span>
+                            </div>
+                            
+                            {selectedTeam.totalAmount && selectedTeam.registrationFee && 
+                              selectedTeam.totalAmount > selectedTeam.registrationFee && (
+                              <div className="flex justify-between py-1 border-b border-slate-200">
+                                <span>Additional Fees</span>
+                                <span className="font-medium">
+                                  {formatCurrency(selectedTeam.totalAmount - selectedTeam.registrationFee)}
+                                </span>
+                              </div>
+                            )}
+                            
+                            <div className="flex justify-between py-1 font-semibold">
+                              <span>Total</span>
+                              <span>
+                                {selectedTeam.totalAmount 
+                                  ? formatCurrency(selectedTeam.totalAmount) 
+                                  : selectedTeam.registrationFee 
+                                    ? formatCurrency(selectedTeam.registrationFee) 
+                                    : 'N/A'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
               
               {/* Terms acknowledgment information */}
               <Card>
