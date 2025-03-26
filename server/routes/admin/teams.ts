@@ -30,7 +30,7 @@ export async function getTeams(req: Request, res: Response) {
     })
     .from(teams)
     .leftJoin(events, eq(teams.eventId, events.id))
-    .leftJoin(users, eq(teams.userId, users.id));
+    .leftJoin(users, eq(teams.managerEmail, users.email));
     
     // Add filters if provided
     if (eventId) {
@@ -46,7 +46,7 @@ export async function getTeams(req: Request, res: Response) {
       query = query.where(
         or(
           like(teams.name, searchTerm as string),
-          like(teams.contactEmail, searchTerm as string)
+          like(teams.managerEmail, searchTerm as string)
         )
       );
     }
@@ -89,7 +89,7 @@ export async function getTeamById(req: Request, res: Response) {
     })
     .from(teams)
     .leftJoin(events, eq(teams.eventId, events.id))
-    .leftJoin(users, eq(teams.userId, users.id))
+    .leftJoin(users, eq(teams.managerEmail, users.email))
     .where(eq(teams.id, parseInt(teamId)));
     
     if (result.length === 0) {
@@ -147,7 +147,7 @@ export async function updateTeamStatus(req: Request, res: Response) {
     // Send email notification based on the new status
     try {
       await sendTemplatedEmail(
-        currentTeam.contactEmail,
+        currentTeam.managerEmail,
         status === 'APPROVED' ? 'team_approved' : 'team_rejected',
         {
           teamName: currentTeam.name,
