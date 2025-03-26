@@ -1782,10 +1782,13 @@ function TeamsView() {
   const filteredTeams = useMemo(() => {
     if (!teamsQuery.data) return [];
     
-    return teamsQuery.data.filter((team: any) => 
-      team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (team.managerEmail && team.managerEmail.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    return teamsQuery.data.filter((team: any) => {
+      const nameMatch = team?.name ? team.name.toLowerCase().includes(searchTerm.toLowerCase()) : false;
+      const managerMatch = team?.managerEmail ? team.managerEmail.toLowerCase().includes(searchTerm.toLowerCase()) : false;
+      const submitterMatch = team?.submitterEmail ? team.submitterEmail.toLowerCase().includes(searchTerm.toLowerCase()) : false;
+      
+      return nameMatch || managerMatch || submitterMatch;
+    });
   }, [teamsQuery.data, searchTerm]);
 
   // Format currency for display
