@@ -551,9 +551,13 @@ export default function EventRegistration() {
             if (data.fees && data.fees.length > 0) {
               setAvailableFees(data.fees);
               
-              // Select the current applicable fee (based on current date)
+              // Find registration fees vs other types
+              const registrationFees = data.fees.filter((fee: Fee) => fee.feeType === 'registration');
+              const otherFees = data.fees.filter((fee: Fee) => fee.feeType !== 'registration');
+
+              // Select the current applicable registration fee (based on current date)
               const now = new Date();
-              const applicableFee = data.fees.find((fee: Fee) => {
+              const applicableRegFee = registrationFees.find((fee: Fee) => {
                 const beginDate = fee.beginDate ? new Date(fee.beginDate) : null;
                 const endDate = fee.endDate ? new Date(fee.endDate) : null;
                 
@@ -565,16 +569,26 @@ export default function EventRegistration() {
                 const beforeEnd = !endDate || now <= endDate;
                 
                 return afterBegin && beforeEnd;
-              }) || data.fees[0]; // Default to first fee if no applicable fee found
+              }) || (registrationFees.length > 0 ? registrationFees[0] : null); // Default to first fee if no applicable fee found
               
-              setSelectedFee(applicableFee);
-              setRegistrationFee(applicableFee.amount);
+              if (applicableRegFee) {
+                setSelectedFee(applicableRegFee);
+                setRegistrationFee(applicableRegFee.amount);
+              } else if (data.fees.length > 0) {
+                // Fallback to first fee if no registration fee is found
+                const fallbackFee = data.fees[0];
+                setSelectedFee(fallbackFee);
+                setRegistrationFee(fallbackFee.amount);
+              }
               
               // Only update if we don't already have the fee information to avoid infinite loop
               if (!selectedAgeGroup.registrationFee) {
+                const feeAmount = applicableRegFee ? applicableRegFee.amount : 
+                  (data.fees.length > 0 ? data.fees[0].amount : 0);
+                  
                 setSelectedAgeGroup(prev => prev ? { 
                   ...prev, 
-                  registrationFee: applicableFee.amount 
+                  registrationFee: feeAmount
                 } : prev);
               }
             } else if (data.fee) {
