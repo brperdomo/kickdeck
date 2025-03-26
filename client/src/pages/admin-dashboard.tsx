@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation, Link } from "wouter";
-import { Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw } from "lucide-react";
+import { Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw } from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import EmulationManager from "@/components/admin/EmulationManager";
@@ -1752,7 +1752,35 @@ function TeamsView() {
 
   // Handle team status update
   const handleStatusUpdate = (team: any, status: 'registered' | 'approved' | 'rejected' | 'withdrawn' | 'refunded') => {
-    setSelectedTeam({ ...team, status });
+    const statusDisplayMap = {
+      'registered': 'Pending Review',
+      'approved': 'Approved',
+      'rejected': 'Rejected',
+      'withdrawn': 'Withdrawn',
+      'refunded': 'Refunded'
+    };
+    
+    // Set appropriate dialog message based on status transition
+    let dialogTitle = `Update Team Status`;
+    let dialogMessage = `Are you sure you want to change the status of team "${team.name}" from "${statusDisplayMap[team.status]}" to "${statusDisplayMap[status]}"?`;
+    
+    // Special messaging for specific status transitions
+    if (team.status === 'registered' && status === 'approved') {
+      dialogMessage = `Approve team "${team.name}" for participation in the event?`;
+    } else if (team.status === 'registered' && status === 'rejected') {
+      dialogMessage = `Reject team "${team.name}" from participating in the event?`;
+    } else if (status === 'withdrawn') {
+      dialogMessage = `Mark team "${team.name}" as withdrawn from the event? This indicates the team has voluntarily withdrawn their registration.`;
+    } else if (team.status !== 'registered' && status === 'registered') {
+      dialogMessage = `Reset team "${team.name}" status to pending review? This will remove any previous approval or rejection decisions.`;
+    }
+    
+    setSelectedTeam({ 
+      ...team, 
+      status,
+      dialogTitle,
+      dialogMessage
+    });
     setIsApprovalDialogOpen(true);
   };
 
@@ -1989,7 +2017,7 @@ function TeamsView() {
                                   <Button 
                                     variant="outline" 
                                     size="sm"
-                                    onClick={() => handleApproveReject(team, 'approved')}
+                                    onClick={() => handleStatusUpdate(team, 'approved')}
                                   >
                                     <Check className="h-4 w-4 mr-1" />
                                     Approve
@@ -1998,7 +2026,7 @@ function TeamsView() {
                                     variant="outline" 
                                     size="sm" 
                                     className="text-destructive"
-                                    onClick={() => handleApproveReject(team, 'rejected')}
+                                    onClick={() => handleStatusUpdate(team, 'rejected')}
                                   >
                                     <X className="h-4 w-4 mr-1" />
                                     Reject
@@ -2158,7 +2186,7 @@ function TeamsView() {
                                   <Button 
                                     variant="outline" 
                                     size="sm"
-                                    onClick={() => handleApproveReject(team, 'approved')}
+                                    onClick={() => handleStatusUpdate(team, 'approved')}
                                   >
                                     <Check className="h-4 w-4 mr-1" />
                                     Approve
@@ -2182,21 +2210,25 @@ function TeamsView() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {selectedTeam?.status === 'approved' ? 'Approve Team Registration' : 
-               selectedTeam?.status === 'rejected' ? 'Reject Team Registration' :
-               selectedTeam?.status === 'withdrawn' ? 'Mark Team as Withdrawn' :
-               selectedTeam?.status === 'registered' ? 'Reset to Pending Status' : 'Update Team Status'}
+              {selectedTeam?.dialogTitle || (
+                selectedTeam?.status === 'approved' ? 'Approve Team Registration' : 
+                selectedTeam?.status === 'rejected' ? 'Reject Team Registration' :
+                selectedTeam?.status === 'withdrawn' ? 'Mark Team as Withdrawn' :
+                selectedTeam?.status === 'registered' ? 'Reset to Pending Status' : 'Update Team Status'
+              )}
             </DialogTitle>
             <DialogDescription>
-              {selectedTeam?.status === 'approved' 
-                ? 'This will approve the team registration and notify the manager.'
-                : selectedTeam?.status === 'rejected'
-                ? 'This will reject the team registration. Please provide a reason for rejection.'
-                : selectedTeam?.status === 'withdrawn'
-                ? 'This will mark the team as withdrawn from the event. Please provide a reason if applicable.'
-                : selectedTeam?.status === 'registered'
-                ? 'This will reset the team status to pending review.'
-                : 'This will update the team status and notify the manager.'}
+              {selectedTeam?.dialogMessage || (
+                selectedTeam?.status === 'approved' 
+                  ? 'This will approve the team registration and notify the manager.'
+                  : selectedTeam?.status === 'rejected'
+                  ? 'This will reject the team registration. Please provide a reason for rejection.'
+                  : selectedTeam?.status === 'withdrawn'
+                  ? 'This will mark the team as withdrawn from the event. Please provide a reason if applicable.'
+                  : selectedTeam?.status === 'registered'
+                  ? 'This will reset the team status to pending review.'
+                  : 'This will update the team status and notify the manager.'
+              )}
             </DialogDescription>
           </DialogHeader>
           
@@ -2449,14 +2481,15 @@ function TeamsView() {
                 </CardContent>
               </Card>
               
-              <DialogFooter className="gap-2">
+              <DialogFooter className="gap-2 flex-wrap">
+                {/* For teams in registered (pending) status */}
                 {selectedTeam.status === 'registered' && (
                   <>
                     <Button 
                       variant="outline"
                       onClick={() => {
                         setIsDetailsDialogOpen(false);
-                        handleApproveReject(selectedTeam, 'rejected');
+                        handleStatusUpdate(selectedTeam, 'rejected');
                       }}
                     >
                       <X className="h-4 w-4 mr-1" />
@@ -2465,37 +2498,127 @@ function TeamsView() {
                     <Button 
                       onClick={() => {
                         setIsDetailsDialogOpen(false);
-                        handleApproveReject(selectedTeam, 'approved');
+                        handleStatusUpdate(selectedTeam, 'approved');
                       }}
                     >
                       <Check className="h-4 w-4 mr-1" />
                       Approve Team
                     </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setIsDetailsDialogOpen(false);
+                        handleStatusUpdate(selectedTeam, 'withdrawn');
+                      }}
+                    >
+                      <UserMinus className="h-4 w-4 mr-1" />
+                      Mark Withdrawn
+                    </Button>
                   </>
                 )}
+                
+                {/* For teams in rejected status */}
                 {selectedTeam.status === 'rejected' && (
-                  <Button 
-                    onClick={() => {
-                      setIsDetailsDialogOpen(false);
-                      handleApproveReject(selectedTeam, 'approved');
-                    }}
-                  >
-                    <Check className="h-4 w-4 mr-1" />
-                    Approve Team
-                  </Button>
+                  <>
+                    <Button 
+                      onClick={() => {
+                        setIsDetailsDialogOpen(false);
+                        handleStatusUpdate(selectedTeam, 'approved');
+                      }}
+                    >
+                      <Check className="h-4 w-4 mr-1" />
+                      Approve Team
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setIsDetailsDialogOpen(false);
+                        handleStatusUpdate(selectedTeam, 'registered');
+                      }}
+                    >
+                      <RotateCcw className="h-4 w-4 mr-1" />
+                      Reset to Pending
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setIsDetailsDialogOpen(false);
+                        handleStatusUpdate(selectedTeam, 'withdrawn');
+                      }}
+                    >
+                      <UserMinus className="h-4 w-4 mr-1" />
+                      Mark Withdrawn
+                    </Button>
+                  </>
                 )}
+                
+                {/* For teams in approved status */}
                 {selectedTeam.status === 'approved' && (
+                  <>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setIsDetailsDialogOpen(false);
+                        handleStatusUpdate(selectedTeam, 'rejected');
+                      }}
+                    >
+                      <X className="h-4 w-4 mr-1" />
+                      Reject Team
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setIsDetailsDialogOpen(false);
+                        handleStatusUpdate(selectedTeam, 'registered');
+                      }}
+                    >
+                      <RotateCcw className="h-4 w-4 mr-1" />
+                      Reset to Pending
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setIsDetailsDialogOpen(false);
+                        handleStatusUpdate(selectedTeam, 'withdrawn');
+                      }}
+                    >
+                      <UserMinus className="h-4 w-4 mr-1" />
+                      Mark Withdrawn
+                    </Button>
+                  </>
+                )}
+                
+                {/* For teams in withdrawn status */}
+                {selectedTeam.status === 'withdrawn' && (
+                  <>
+                    <Button 
+                      variant="outline"
+                      onClick={() => {
+                        setIsDetailsDialogOpen(false);
+                        handleStatusUpdate(selectedTeam, 'registered');
+                      }}
+                    >
+                      <RotateCcw className="h-4 w-4 mr-1" />
+                      Reset to Pending
+                    </Button>
+                  </>
+                )}
+                
+                {/* For teams in refunded status */}
+                {selectedTeam.status === 'refunded' && (
                   <Button 
                     variant="outline"
                     onClick={() => {
                       setIsDetailsDialogOpen(false);
-                      handleApproveReject(selectedTeam, 'rejected');
+                      handleStatusUpdate(selectedTeam, 'registered');
                     }}
                   >
-                    <X className="h-4 w-4 mr-1" />
-                    Reject Team
+                    <RotateCcw className="h-4 w-4 mr-1" />
+                    Reset to Pending
                   </Button>
                 )}
+                
+                {/* For paid teams - show refund option */}
                 {selectedTeam.paymentStatus === 'paid' && (
                   <Button 
                     variant="outline"
@@ -2505,7 +2628,7 @@ function TeamsView() {
                     }}
                   >
                     <RefreshCcw className="h-4 w-4 mr-1" />
-                    Refund
+                    Process Refund
                   </Button>
                 )}
                 <Button variant="outline" onClick={() => setIsDetailsDialogOpen(false)}>
