@@ -520,7 +520,7 @@ export default function EventRegistration() {
     let total = selectedFee ? selectedFee.amount : 0;
     
     // Add required fees
-    requiredFees.forEach(fee => {
+    requiredFees.forEach((fee: Fee) => {
       total += fee.amount;
     });
     
@@ -551,7 +551,7 @@ export default function EventRegistration() {
               const otherFees = data.fees.filter((fee: Fee) => fee.feeType !== 'registration');
 
               // Get required fees (all required fees are automatically included)
-              const requiredOtherFees = otherFees.filter(fee => fee.isRequired);
+              const requiredOtherFees = otherFees.filter((fee: Fee) => fee.isRequired);
               
               // Select the current applicable registration fee (based on current date)
               const now = new Date();
@@ -579,14 +579,13 @@ export default function EventRegistration() {
                 setRegistrationFee(fallbackFee.amount);
               }
               
-              // Automatically add all required fees to selected additional fees
+              // Required fees are automatically added to the total (we don't track them separately anymore)
+              // The selectedAdditionalFees state has been removed as all fees are now handled automatically
+              
+              // Handle any types for required fees (not using setSelectedAdditionalFees anymore)
               if (requiredOtherFees.length > 0) {
-                const requiredFeeIds = requiredOtherFees.map(fee => fee.id);
-                setSelectedAdditionalFees(prevIds => {
-                  // Only add IDs that aren't already in the array
-                  const newIds = requiredFeeIds.filter(id => !prevIds.includes(id));
-                  return [...prevIds, ...newIds];
-                });
+                // We used to track these separately, but now they're automatically included in the total
+                console.log(`Adding ${requiredOtherFees.length} required fees to total automatically`);
               }
               
               // Only update if we don't already have the fee information to avoid infinite loop
@@ -662,7 +661,7 @@ export default function EventRegistration() {
       }
       
       // Add required fees only (no optional fees - they are no longer selectable)
-      requiredFees.forEach(fee => {
+      requiredFees.forEach((fee: Fee) => {
         selectedFeeIds.push(fee.id);
       });
       
