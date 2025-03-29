@@ -13,6 +13,7 @@ import {
   UserRoundPlus,
   CreditCard 
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { useAuth } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
@@ -861,34 +862,56 @@ export default function EventRegistration() {
     );
   }
 
+  // Animation variants for page transitions
+  const pageVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 }
+  };
+
+  const pageTransition = {
+    type: "tween",
+    ease: "anticipate",
+    duration: 0.5
+  };
+
   return (
-    <div className="min-h-screen relative register-event-page">
-      <SoccerFieldBackground className="opacity-50" />
+    <div className="min-h-screen relative register-event-page bg-gray-900 text-white">
+      <SoccerFieldBackground className="opacity-30" />
       <div className="container mx-auto px-4 py-8 relative z-10">
         {renderStepIndicator()}
 
-        <Card className="max-w-4xl mx-auto bg-white/95 backdrop-blur">
-          <CardHeader className="text-center border-b">
-            <CardTitle className="text-3xl font-bold text-[#2C5282]">{event.name}</CardTitle>
+        <Card className="max-w-4xl mx-auto bg-gray-800/90 backdrop-blur border-blue-500/20 border shadow-lg shadow-blue-900/20">
+          <CardHeader className="text-center border-b border-blue-500/20">
+            <CardTitle className="text-3xl font-bold text-blue-400">{event?.name}</CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
-            {currentStep === 'auth' && !user && (
-              <div className="text-center">
-                <h3 className="text-xl font-semibold mb-4">Sign In Required</h3>
-                <p className="text-gray-600 mb-6">
-                  Please sign in or create an account to register for this event.
-                </p>
-                <Button 
-                  size="lg"
-                  className="bg-[#2C5282] hover:bg-[#1A365D] text-white font-semibold px-8"
-                  onClick={handleAuthRedirect}
+            <AnimatePresence mode="wait">
+              {currentStep === 'auth' && !user && (
+                <motion.div 
+                  key="auth-step"
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  variants={pageVariants}
+                  transition={pageTransition}
+                  className="text-center"
                 >
-                  Sign In / Register
-                </Button>
-              </div>
-            )}
+                  <h3 className="text-xl font-semibold mb-4 text-blue-300">Sign In Required</h3>
+                  <p className="text-gray-300 mb-6">
+                    Please sign in or create an account to register for this event.
+                  </p>
+                  <Button 
+                    size="lg"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 shadow-md shadow-blue-900/50"
+                    onClick={handleAuthRedirect}
+                  >
+                    Sign In / Register
+                  </Button>
+                </motion.div>
+              )}
 
-            {currentStep === 'personal' && user && (
+              {currentStep === 'personal' && user && (
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmitPersonalDetails)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1791,6 +1814,7 @@ export default function EventRegistration() {
                 )}
               </>
             )}
+            </AnimatePresence>
           </CardContent>
         </Card>
       </div>
