@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { Editor } from "@tinymce/tinymce-react";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -32,8 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Editor } from "@tinymce/tinymce-react";
 import type { EmailTemplate } from "@db/schema/emailTemplates";
 import { insertEmailTemplateSchema } from "@db/schema/emailTemplates";
 
@@ -55,14 +55,29 @@ interface EmailTemplateModalProps {
   template: EmailTemplate | null;
 }
 
-// TinyMCE API key from environment variable
-const TINYMCE_API_KEY = import.meta.env.VITE_TINYMCE_API_KEY;
+// Function to fetch TinyMCE API key from server
+const useTinyMCEApiKey = () => {
+  return useQuery({
+    queryKey: ["tinymce-config"],
+    queryFn: async () => {
+      const response = await fetch("/api/config/tinymce");
+      if (!response.ok) {
+        throw new Error("Failed to fetch TinyMCE configuration");
+      }
+      const data = await response.json();
+      return data.apiKey;
+    },
+    retry: 1,
+    staleTime: Infinity // API key won't change during the session
+  });
+};
 
 export function EmailTemplateModal({ open, onOpenChange, template }: EmailTemplateModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [variables, setVariables] = useState<string[]>([]);
   const [newVariable, setNewVariable] = useState<string>("");
+  const { data: tinyMCEApiKey, isLoading: isLoadingApiKey, isError: isApiKeyError } = useTinyMCEApiKey();
 
   const { data: providers } = useQuery({
     queryKey: ["email-providers"],
@@ -310,38 +325,48 @@ export function EmailTemplateModal({ open, onOpenChange, template }: EmailTempla
                   <FormLabel>Email Body</FormLabel>
                   <FormControl>
                     <div className="border rounded-md overflow-hidden">
-                      <Editor
-                        apiKey={TINYMCE_API_KEY}
-                        value={field.value}
-                        onEditorChange={(content) => field.onChange(content)}
-                        init={{
-                          height: 500,
-                          menubar: 'file edit view insert format tools table help',
-                          plugins: [
-                            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                            'insertdatetime', 'media', 'table', 'help', 'wordcount',
-                            'codesample', 'paste', 'source'
-                          ],
-                          codesample_languages: [
-                            { text: 'HTML/XML', value: 'markup' },
-                            { text: 'JavaScript', value: 'javascript' },
-                            { text: 'CSS', value: 'css' }
-                          ],
-                          toolbar1: 'code source fullscreen | undo redo | formatselect | bold italic backcolor forecolor | alignleft aligncenter alignright alignjustify',
-                          toolbar2: 'bullist numlist outdent indent | link image media | codesample removeformat | mergefields | help',
-                          extended_valid_elements: '*[*]', // Allow all elements and attributes
-                          valid_children: '+body[style]', // Allow style tag in body
-                          schema: 'html5',
-                          entity_encoding: 'raw',
-                          verify_html: false, // Don't verify/filter HTML
-                          valid_elements: '*[*]', // Allow all elements and attributes
-                          // Add custom file browser for images and media
-                          file_picker_callback: function (callback, value, meta) {
-                            // Use prompt to allow direct URL input
-                            let url = prompt('Enter URL', 'https://');
-                            if (url) callback(url);
-                          },
+                      {isLoadingApiKey ? (
+                        <div className="flex items-center justify-center p-8 bg-gray-50 border rounded-md">
+                          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                          <span className="ml-2">Loading editor...</span>
+                        </div>
+                      ) : isApiKeyError ? (
+                        <div className="p-4 bg-destructive/10 text-destructive border border-destructive/20 rounded-md">
+                          <p>Failed to load the TinyMCE editor. Please try refreshing the page.</p>
+                        </div>
+                      ) : (
+                        <Editor
+                          apiKey={tinyMCEApiKey}
+                          value={field.value}
+                          onEditorChange={(content) => field.onChange(content)}
+                          init={{
+                            height: 500,
+                            menubar: 'file edit view insert format tools table help',
+                            plugins: [
+                              'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                              'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                              'insertdatetime', 'media', 'table', 'help', 'wordcount',
+                              'codesample', 'paste', 'source'
+                            ],
+                            codesample_languages: [
+                              { text: 'HTML/XML', value: 'markup' },
+                              { text: 'JavaScript', value: 'javascript' },
+                              { text: 'CSS', value: 'css' }
+                            ],
+                            toolbar1: 'code source fullscreen | undo redo | formatselect | bold italic backcolor forecolor | alignleft aligncenter alignright alignjustify',
+                            toolbar2: 'bullist numlist outdent indent | link image media | codesample removeformat | mergefields | help',
+                            extended_valid_elements: '*[*]', // Allow all elements and attributes
+                            valid_children: '+body[style]', // Allow style tag in body
+                            schema: 'html5',
+                            entity_encoding: 'raw',
+                            verify_html: false, // Don't verify/filter HTML
+                            valid_elements: '*[*]', // Allow all elements and attributes
+                            // Add custom file browser for images and media
+                            file_picker_callback: function (callback, value, meta) {
+                              // Use prompt to allow direct URL input
+                              let url = prompt('Enter URL', 'https://');
+                              if (url) callback(url);
+                            },
                           setup: (editor) => {
                             const openMergeFieldsDialog = () => {
                               // Create a custom DOM element for the dialog

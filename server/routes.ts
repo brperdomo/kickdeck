@@ -19,6 +19,7 @@ import teamsRouter from "./routes/admin/teams-router";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import { createStripePaymentIntent, getPaymentIntentStatus, handleStripeWebhook, getStripeConfig } from "./routes/payments";
+import { getTinyMCEConfig } from "./services/configService";
 import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
 import { getCurrentUserRegistrations } from "./routes/admin/members";
 import { 
@@ -616,6 +617,9 @@ export function registerRoutes(app: Express): Server {
     app.post('/api/payments/create-intent', createStripePaymentIntent);
     app.get('/api/payments/intent/:id', getPaymentIntentStatus);
     app.post('/api/payments/webhook', handleStripeWebhook);
+    
+    // TinyMCE configuration endpoint
+    app.get('/api/config/tinymce', getTinyMCEConfig);
 
     // Test endpoints for payment processing (only in development)
     if (process.env.NODE_ENV !== 'production') {
