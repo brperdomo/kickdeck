@@ -503,13 +503,9 @@ export default function EventRegistration() {
   const [registrationFee, setRegistrationFee] = useState<number | null>(null);
   const [availableFees, setAvailableFees] = useState<Fee[]>([]);
   const [selectedFee, setSelectedFee] = useState<Fee | null>(null);
+  const [requiredFees, setRequiredFees] = useState<Fee[]>([]);
   
-  // Separate required and optional fees
-  const requiredFees = useMemo(() => 
-    availableFees.filter((fee: Fee) => fee.feeType !== 'registration' && fee.isRequired),
-    [availableFees]
-  );
-  
+  // Optional fees are filtered via useMemo (for display only)
   const optionalFees = useMemo(() => 
     availableFees.filter((fee: Fee) => fee.feeType !== 'registration' && !fee.isRequired),
     [availableFees]
@@ -576,6 +572,9 @@ export default function EventRegistration() {
 
               // Get required fees (all required fees are automatically included)
               const requiredOtherFees = otherFees.filter((fee: Fee) => fee.isRequired);
+              
+              // Update the requiredFees state with these required fees
+              setRequiredFees(requiredOtherFees);
               
               // Select the current applicable registration fee (based on current date)
               const now = new Date();
@@ -1516,9 +1515,7 @@ export default function EventRegistration() {
                               )}
                               
                               {/* Additional Fees like Uniform (only required fees are shown) */}
-                              {availableFees
-                                .filter(fee => fee.feeType !== 'registration' && fee.isRequired)
-                                .map(fee => (
+                              {requiredFees.map(fee => (
                                 <tr key={`fee-${fee.id}`}>
                                   <td className="px-4 py-3">
                                     <div>
