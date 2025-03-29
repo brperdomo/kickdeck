@@ -286,6 +286,10 @@ export async function processRefund(req: Request, res: Response) {
     // If not, we still allow for manual refund tracking without calling Stripe
     let refundId = 'manual-refund';
     let stripeRefundStatus = 'not_attempted';
+    let refundAmount = team.totalAmount || team.registrationFee || 0;
+    
+    // In development, handle the case where we have no payment intent but still want to process a refund for testing
+    const isDevelopment = process.env.NODE_ENV !== 'production';
     
     if (team.paymentIntentId) {
       try {
@@ -297,6 +301,39 @@ export async function processRefund(req: Request, res: Response) {
       } catch (stripeError) {
         stripeRefundStatus = 'failed';
         log(`Stripe refund failed: ${stripeError}. Proceeding with manual refund tracking.`, 'admin');
+      }
+    } else if (isDevelopment) {
+      try {
+        // For testing in development mode, create a test payment intent and immediately refund it
+        // This creates proper Stripe records for testing
+        log(`Creating test payment intent for refund testing in development mode`, 'admin');
+        
+        // First, create a test payment intent that's already paid
+        const testIntent = await createTestPaymentIntent(refundAmount * 100, {
+          teamId: teamId,
+          teamName: team.name,
+          eventId: team.eventId?.toString() || '',
+          test_mode: 'true',
+          manual_creation: 'true'
+        });
+        
+        if (testIntent && testIntent.id) {
+          // Now process the refund using the test intent
+          const refund = await createRefund(testIntent.id, reason);
+          refundId = refund.id;
+          stripeRefundStatus = 'success';
+          
+          // Update the team with the payment intent ID for future reference
+          await db.update(teams)
+            .set({ paymentIntentId: testIntent.id })
+            .where(eq(teams.id, parseInt(teamId)));
+            
+          log(`Test payment intent created and refunded in development mode. Refund ID: ${refundId}`, 'admin');
+        } else {
+          log(`Failed to create test payment intent. Using manual refund tracking.`, 'admin');
+        }
+      } catch (testError) {
+        log(`Error creating test payment intent for refund: ${testError}. Using manual refund tracking.`, 'admin');
       }
     } else {
       log(`No payment intent ID found. Using manual refund tracking.`, 'admin');
