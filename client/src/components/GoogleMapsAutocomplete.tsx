@@ -1,17 +1,14 @@
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Input } from "@/components/ui/input";
-import { useLoadScript } from '@react-google-maps/api';
-import { googleMapsApiKey, debugEnvVars } from "@/lib/env";
+import { debugEnvVars } from "@/lib/env";
 
 interface GoogleMapsAutocompleteProps {
   value: string;
-  onChange: (value: string, placeDetails?: google.maps.places.PlaceResult) => void;
+  onChange: (value: string, placeDetails?: any) => void;
   placeholder?: string;
   className?: string;
-  onPlaceSelect?: (place: google.maps.places.PlaceResult) => void;
+  onPlaceSelect?: (place: any) => void;
 }
-
-const libraries = ["places"] as ["places"];
 
 export function GoogleMapsAutocomplete({
   value,
@@ -20,67 +17,38 @@ export function GoogleMapsAutocomplete({
   className = "",
   onPlaceSelect,
 }: GoogleMapsAutocompleteProps) {
+  const [inputValue, setInputValue] = useState(value);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const autocompleteContainerRef = useRef<HTMLDivElement | null>(null);
+  const placeAutocompleteRef = useRef<any>(null);
+
   // Debug environment variables when component mounts
   useEffect(() => {
     debugEnvVars();
   }, []);
-  
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: googleMapsApiKey,
-    libraries,
-  });
-
-  const [inputValue, setInputValue] = useState(value);
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setInputValue(value);
   }, [value]);
 
-  // Initialize autocomplete when the script is loaded
-  useEffect(() => {
-    if (!isLoaded || !inputRef.current) return;
+  // Handle manual input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    onChange(e.target.value);
+  };
 
-    const options = {
-      types: ['address'],
-      componentRestrictions: { country: 'us' },
-    };
-
-    autocompleteRef.current = new window.google.maps.places.Autocomplete(
-      inputRef.current,
-      options
+  // Simple manual address input if Google Maps fails to load
+  if (!isLoaded) {
+    return (
+      <Input
+        type="text"
+        value={inputValue}
+        onChange={handleInputChange}
+        placeholder={placeholder}
+        className={className}
+      />
     );
-
-    autocompleteRef.current.addListener('place_changed', () => {
-      if (!autocompleteRef.current) return;
-
-      const place = autocompleteRef.current.getPlace();
-      if (!place.geometry) {
-        // User entered the name of a Place that was not suggested
-        onChange(inputValue);
-        return;
-      }
-
-      // Get address components
-      let formattedAddress = place.formatted_address || "";
-      onChange(formattedAddress, place);
-      setInputValue(formattedAddress);
-      
-      if (onPlaceSelect && place) {
-        onPlaceSelect(place);
-      }
-    });
-
-    return () => {
-      if (autocompleteRef.current && window.google) {
-        google.maps.event.clearInstanceListeners(autocompleteRef.current);
-      }
-    };
-  }, [isLoaded, onChange, onPlaceSelect]);
-
-  if (loadError) {
-    return <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className={className} />;
   }
 
   return (
@@ -88,13 +56,9 @@ export function GoogleMapsAutocomplete({
       ref={inputRef}
       type="text"
       value={inputValue}
-      onChange={(e) => {
-        setInputValue(e.target.value);
-        onChange(e.target.value);
-      }}
+      onChange={handleInputChange}
       placeholder={placeholder}
       className={className}
-      disabled={!isLoaded}
     />
   );
 }

@@ -159,35 +159,9 @@ export function ComplexEditor({ open, onOpenChange, onSubmit, complex }: Complex
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <GoogleMapsAutocomplete 
-                      value={field.value}
-                      onChange={(value, placeDetails) => {
-                        field.onChange(value);
-                        
-                        if (placeDetails?.geometry?.location) {
-                          const lat = placeDetails.geometry.location.lat();
-                          const lng = placeDetails.geometry.location.lng();
-                          
-                          form.setValue('latitude', lat.toString());
-                          form.setValue('longitude', lng.toString());
-                          
-                          // Update city, state, country if available
-                          if (placeDetails.address_components) {
-                            placeDetails.address_components.forEach(component => {
-                              if (component.types.includes('locality')) {
-                                form.setValue('city', component.long_name);
-                              }
-                              if (component.types.includes('administrative_area_level_1')) {
-                                form.setValue('state', component.short_name);
-                              }
-                              if (component.types.includes('country')) {
-                                form.setValue('country', component.long_name);
-                              }
-                            });
-                          }
-                        }
-                      }}
-                      placeholder="Search for an address"
+                    <Input
+                      {...field}
+                      placeholder="Enter address"
                     />
                   </FormControl>
                   <FormMessage />
