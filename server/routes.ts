@@ -259,8 +259,10 @@ export function registerRoutes(app: Express): Server {
           .innerJoin(eventFees, eq(eventAgeGroupFees.feeId, eventFees.id))
           .where(eq(eventAgeGroupFees.ageGroupId, parseInt(ageGroupId)));
         
-        // Map the fees directly from database results
-        const feesWithTypes = feeAssignments.map(assignment => assignment.fee);
+        // Map the fees directly from database results, ensuring we handle null/undefined cases
+        const feesWithTypes = Array.isArray(feeAssignments) 
+          ? feeAssignments.filter(assignment => assignment && assignment.fee).map(assignment => assignment.fee)
+          : [];
         
         let allFees = feesWithTypes;
         
@@ -284,8 +286,8 @@ export function registerRoutes(app: Express): Server {
               )
             );
           
-          // Use the fees as they are returned from the database
-          const defaultFeesWithTypes = defaultFees;
+          // Use the fees as they are returned from the database, ensuring it's always an array
+          const defaultFeesWithTypes = Array.isArray(defaultFees) ? defaultFees : [];
           
           if (defaultFeesWithTypes.length > 0) {
             allFees = defaultFeesWithTypes;
@@ -297,12 +299,16 @@ export function registerRoutes(app: Express): Server {
         }
         
         // Separate registration fees from other fees (like uniform, equipment, etc.)
-        const registrationFees = allFees.filter(fee => fee.feeType === 'registration');
-        const otherFees = allFees.filter(fee => fee.feeType !== 'registration');
+        // Make sure we're handling properly when feeType might be undefined 
+        const registrationFees = allFees.filter(fee => fee && fee.feeType === 'registration');
+        const otherFees = allFees.filter(fee => fee && fee.feeType !== 'registration');
         
         // Check which registration fee should be active based on date ranges
         const now = new Date();
         const activeRegistrationFees = registrationFees.filter(fee => {
+          // Safe check for fee - make sure it exists
+          if (!fee) return false;
+          
           // If no begin/end dates, fee is always active
           if (!fee.beginDate && !fee.endDate) return true;
           
