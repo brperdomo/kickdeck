@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { useLoadScript } from '@react-google-maps/api';
+import { googleMapsApiKey, debugEnvVars } from "@/lib/env";
 
 interface GoogleMapsAutocompleteProps {
   value: string;
@@ -19,8 +20,13 @@ export function GoogleMapsAutocomplete({
   className = "",
   onPlaceSelect,
 }: GoogleMapsAutocompleteProps) {
+  // Debug environment variables when component mounts
+  useEffect(() => {
+    debugEnvVars();
+  }, []);
+  
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
+    googleMapsApiKey: googleMapsApiKey,
     libraries,
   });
 
