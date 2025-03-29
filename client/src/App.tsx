@@ -84,11 +84,17 @@ function Router() {
           <Route path="/admin/events/:id/fees">
             {user.isAdmin ? <FeeManagement /> : <NotFound />}
           </Route>
-          <Route path="/admin/events/:id">
-            {user.isAdmin ? <EditEvent /> : <NotFound />}
-          </Route>
           <Route path="/admin/events/:id/coupons">
             {user.isAdmin ? <CouponManagement /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id/preview-registration">
+            {user.isAdmin ? <RegistrationPreview /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/preview">
+            {user.isAdmin ? <EventPreviewSelector /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id">
+            {user.isAdmin ? <EditEvent /> : <NotFound />}
           </Route>
           <Route path="/admin/accounting-codes">
             {user.isAdmin ? <AccountingCodeManagement /> : <NotFound />}
@@ -121,12 +127,6 @@ function Router() {
           <Route path="/dashboard" component={UserDashboard} />
 
           {/* Preview routes */}
-          <Route path="/admin/events/preview">
-            {user.isAdmin ? <EventPreviewSelector /> : <NotFound />}
-          </Route>
-          <Route path="/admin/events/:id/preview-registration">
-            {user.isAdmin ? <RegistrationPreview /> : <NotFound />}
-          </Route>
 
           {/* Home route */}
           <Route path="/">
