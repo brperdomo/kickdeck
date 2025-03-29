@@ -1707,19 +1707,30 @@ function TeamsView() {
           body: JSON.stringify({ status, notes })
         });
         
+        // First try to get the response text to check for parsing issues
+        const responseText = await response.text();
+        console.log('Raw response text:', responseText);
+        
+        let responseData;
+        try {
+          // Try to parse the response as JSON
+          responseData = responseText ? JSON.parse(responseText) : {};
+        } catch (parseError) {
+          console.error('Error parsing JSON response:', parseError, 'Response text:', responseText);
+          throw new Error('Server returned invalid JSON response. Please try again.');
+        }
+        
         if (!response.ok) {
-          // Try to get the detailed error message from the response
-          const errorData = await response.json().catch(() => null);
-          console.error('Error response:', errorData);
+          console.error('Error response:', responseData);
           
-          if (errorData && errorData.error) {
-            throw new Error(errorData.error);
+          if (responseData && responseData.error) {
+            throw new Error(responseData.error);
           } else {
             throw new Error(`Failed to update team status. Status: ${response.status}`);
           }
         }
         
-        return response.json();
+        return responseData;
       } catch (err) {
         console.error('Error in updateTeamStatus mutation:', err);
         throw err;

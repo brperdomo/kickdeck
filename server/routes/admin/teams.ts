@@ -165,20 +165,28 @@ export async function updateTeamStatus(req: Request, res: Response) {
       if (status === 'rejected') emailTemplate = 'team_rejected';
       if (status === 'withdrawn') emailTemplate = 'team_withdrawn';
       
+      // Log template and data for debugging
+      log(`Sending email template: ${emailTemplate} with notes: ${notes}`, 'admin');
+      
       // Send notification to all recipients
       for (const recipient of emailRecipients) {
         if (recipient) {
+          const templateData = {
+            teamName: currentTeam.name,
+            eventName: event?.name || 'the event',
+            notes: notes || '',
+            status: status,
+            loginLink: `${process.env.PUBLIC_URL || ''}/dashboard`,
+            previousStatus: currentTeam.status || 'registered'
+          };
+          
+          // Log full template data
+          log(`Email template data: ${JSON.stringify(templateData)}`, 'admin');
+          
           await sendTemplatedEmail(
             recipient,
             emailTemplate,
-            {
-              teamName: currentTeam.name,
-              eventName: event?.name || 'the event',
-              notes: notes || '',
-              status: status,
-              loginLink: `${process.env.PUBLIC_URL || ''}/dashboard`,
-              previousStatus: currentTeam.status || 'registered'
-            }
+            templateData
           );
         }
       }
