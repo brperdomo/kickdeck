@@ -3087,7 +3087,116 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {
         const eventId = req.params.id;
 
-        // Get event details
+        // Handle preview event special case
+        if (eventId === 'preview') {
+          console.log('Returning mock preview event for editing');
+          
+          const previewEvent = {
+            id: 'preview',
+            name: 'Preview Event',
+            description: 'This is a preview event for testing the registration flow',
+            startDate: new Date(Date.now() + 86400000 * 7).toISOString().split('T')[0], // 7 days from now
+            endDate: new Date(Date.now() + 86400000 * 10).toISOString().split('T')[0], // 10 days from now
+            registrationOpenDate: new Date().toISOString().split('T')[0],
+            registrationCloseDate: new Date(Date.now() + 86400000 * 5).toISOString().split('T')[0], // 5 days from now
+            location: 'Preview Location',
+            logoUrl: null,
+            bannerUrl: null,
+            primaryColor: '#3498db',
+            secondaryColor: '#2ecc71',
+            termsAndConditions: 'Preview terms and conditions',
+            isPublished: true,
+            maxTeamsPerGroup: 10,
+            website: 'https://example.com',
+            requireCoachCertification: false,
+            showBrackets: true,
+            showTeamList: true,
+            createdAt: new Date().toISOString(),
+            status: 'active',
+            contactEmail: 'preview@example.com',
+            contactPhone: '123-456-7890',
+            hostingOrganization: 'Preview Organization',
+            registrationType: 'open',
+            seasonId: null
+          };
+          
+          // Get the preview age groups
+          const ageGroups = [
+            {
+              ageGroup: {
+                id: 1001,
+                eventId: 'preview',
+                ageGroup: 'U10 Boys',
+                gender: 'Boys',
+                birthYear: 2014,
+                projectedTeams: 8,
+                scoringRule: 'default',
+                fieldSize: '7v7',
+                amountDue: 250,
+                createdAt: new Date().toISOString(),
+                divisionCode: 'U10B'
+              },
+              teamCount: 0
+            },
+            {
+              ageGroup: {
+                id: 1002,
+                eventId: 'preview',
+                ageGroup: 'U12 Girls',
+                gender: 'Girls',
+                birthYear: 2012,
+                projectedTeams: 8,
+                scoringRule: 'default',
+                fieldSize: '9v9',
+                amountDue: 250,
+                createdAt: new Date().toISOString(),
+                divisionCode: 'U12G'
+              },
+              teamCount: 0
+            },
+            {
+              ageGroup: {
+                id: 1003,
+                eventId: 'preview',
+                ageGroup: 'U14 Boys',
+                gender: 'Boys',
+                birthYear: 2010,
+                projectedTeams: 8,
+                scoringRule: 'default',
+                fieldSize: '11v11',
+                amountDue: 300,
+                createdAt: new Date().toISOString(),
+                divisionCode: 'U14B'
+              },
+              teamCount: 0
+            },
+            {
+              ageGroup: {
+                id: 1004,
+                eventId: 'preview',
+                ageGroup: 'U16 Girls',
+                gender: 'Girls',
+                birthYear: 2008,
+                projectedTeams: 8,
+                scoringRule: 'default',
+                fieldSize: '11v11',
+                amountDue: 300,
+                createdAt: new Date().toISOString(),
+                divisionCode: 'U16G'
+              },
+              teamCount: 0
+            }
+          ];
+          
+          return res.json({
+            event: previewEvent,
+            ageGroups: ageGroups,
+            complexes: [],
+            administrators: []
+          });
+        }
+
+        // Normal event processing
         const [event] = await db
           .select()
           .from(events)
