@@ -5,11 +5,23 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLocation } from '@/hooks/use-location';
 
+// Define the event interface
+interface Event {
+  id: number;
+  name: string;
+  startDate: string;
+  endDate: string;
+}
+
 export default function EventPreviewSelector() {
-  const [navigate] = useLocation();
-  const eventsQuery = useQuery({
+  const [_, setLocation] = useLocation();
+  const eventsQuery = useQuery<Event[]>({
     queryKey: ['/api/admin/events'],
   });
+
+  const handleNavigate = (eventId: number) => {
+    setLocation(`/admin/events/${eventId}/preview-registration`);
+  };
 
   if (eventsQuery.isLoading) {
     return <div>Loading events...</div>;
@@ -23,7 +35,7 @@ export default function EventPreviewSelector() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            {eventsQuery.data?.map((event) => (
+            {eventsQuery.data && eventsQuery.data.map((event) => (
               <div key={event.id} className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
                   <h3 className="font-medium">{event.name}</h3>
@@ -31,7 +43,7 @@ export default function EventPreviewSelector() {
                     {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
                   </p>
                 </div>
-                <Button onClick={() => navigate(`/admin/events/${event.id}/preview-registration`)}>
+                <Button onClick={() => handleNavigate(event.id)}>
                   Preview Registration
                 </Button>
               </div>
