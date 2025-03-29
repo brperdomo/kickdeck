@@ -1,0 +1,1234 @@
+admin-dashboard.tsx:2230 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2230.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2230
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+mountIndeterminateComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14926
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15914
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2279 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2279.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2279
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+mountIndeterminateComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14926
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15914
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2310 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2310.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2310
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+mountIndeterminateComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14926
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15914
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2230 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2230.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2230
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+mountIndeterminateComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14976
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15914
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2279 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2279.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2279
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+mountIndeterminateComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14976
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15914
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2310 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2310.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2310
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+mountIndeterminateComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14976
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15914
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2230 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2230.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2230
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14582
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2279 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2279.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2279
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14582
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2310 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2310.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2310
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14582
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2230 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2230.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2230
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14587
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2279 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2279.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2279
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14587
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2310 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2310.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2310
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14587
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:1694 Teams data received: (13) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+admin-dashboard.tsx:1830 Teams data from API: (13) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+admin-dashboard.tsx:1861 Normalized teams data: (13) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+admin-dashboard.tsx:2230 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2230.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2230
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14582
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2279 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2279.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2279
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14582
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2310 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2310.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2310
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14582
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:1830 Teams data from API: (13) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+admin-dashboard.tsx:1861 Normalized teams data: (13) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+admin-dashboard.tsx:2230 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2230.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2230
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14587
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2279 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2279.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2279
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14587
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2310 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2310.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2310
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14587
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=85cdbd25:554
+flush @ @tanstack_react-query.js?v=85cdbd25:568
+batch @ @tanstack_react-query.js?v=85cdbd25:586
+dispatch_fn @ @tanstack_react-query.js?v=85cdbd25:995
+setData @ @tanstack_react-query.js?v=85cdbd25:695
+onSuccess @ @tanstack_react-query.js?v=85cdbd25:896
+resolve @ @tanstack_react-query.js?v=85cdbd25:455
+Promise.then
+run @ @tanstack_react-query.js?v=85cdbd25:497
+start @ @tanstack_react-query.js?v=85cdbd25:535
+fetch @ @tanstack_react-query.js?v=85cdbd25:925
+executeFetch_fn @ @tanstack_react-query.js?v=85cdbd25:2237
+onSubscribe @ @tanstack_react-query.js?v=85cdbd25:1924
+subscribe @ @tanstack_react-query.js?v=85cdbd25:24
+(anonymous) @ @tanstack_react-query.js?v=85cdbd25:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=85cdbd25:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=85cdbd25:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=85cdbd25:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=85cdbd25:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19416
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warningAI
+admin-dashboard.tsx:2230 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2230.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2230
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14582
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2279 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2279.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2279
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14582
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2310 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2310.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2310
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14582
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2230 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2230.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2230
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14587
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2279 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2279.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2279
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14587
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+admin-dashboard.tsx:2310 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check your code at admin-dashboard.tsx:2310.
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+printWarning @ react_jsx-dev-runtime.js?v=85cdbd25:64
+error @ react_jsx-dev-runtime.js?v=85cdbd25:48
+jsxWithValidation @ react_jsx-dev-runtime.js?v=85cdbd25:834
+TeamsView @ admin-dashboard.tsx:2310
+renderWithHooks @ chunk-RPCDYKBN.js?v=85cdbd25:11548
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14587
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+chunk-RPCDYKBN.js?v=85cdbd25:20442 Uncaught Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `TeamsView`.
+    at createFiberFromTypeAndProps (chunk-RPCDYKBN.js?v=85cdbd25:20442:23)
+    at createFiberFromElement (chunk-RPCDYKBN.js?v=85cdbd25:20463:23)
+    at createChild (chunk-RPCDYKBN.js?v=85cdbd25:10089:34)
+    at reconcileChildrenArray (chunk-RPCDYKBN.js?v=85cdbd25:10282:33)
+    at reconcileChildFibers2 (chunk-RPCDYKBN.js?v=85cdbd25:10559:24)
+    at reconcileChildren (chunk-RPCDYKBN.js?v=85cdbd25:14290:37)
+    at updateHostComponent (chunk-RPCDYKBN.js?v=85cdbd25:14807:11)
+    at beginWork (chunk-RPCDYKBN.js?v=85cdbd25:15935:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=85cdbd25:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=85cdbd25:3699:24)
+createFiberFromTypeAndProps @ chunk-RPCDYKBN.js?v=85cdbd25:20442
+createFiberFromElement @ chunk-RPCDYKBN.js?v=85cdbd25:20463
+createChild @ chunk-RPCDYKBN.js?v=85cdbd25:10089
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=85cdbd25:10282
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=85cdbd25:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=85cdbd25:14290
+updateHostComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14807
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15935
+callCallback2 @ chunk-RPCDYKBN.js?v=85cdbd25:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=85cdbd25:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=85cdbd25:3733
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19765
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+chunk-RPCDYKBN.js?v=85cdbd25:20442 Uncaught Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `TeamsView`.
+    at createFiberFromTypeAndProps (chunk-RPCDYKBN.js?v=85cdbd25:20442:23)
+    at createFiberFromElement (chunk-RPCDYKBN.js?v=85cdbd25:20463:23)
+    at createChild (chunk-RPCDYKBN.js?v=85cdbd25:10089:34)
+    at reconcileChildrenArray (chunk-RPCDYKBN.js?v=85cdbd25:10282:33)
+    at reconcileChildFibers2 (chunk-RPCDYKBN.js?v=85cdbd25:10559:24)
+    at reconcileChildren (chunk-RPCDYKBN.js?v=85cdbd25:14290:37)
+    at updateHostComponent (chunk-RPCDYKBN.js?v=85cdbd25:14807:11)
+    at beginWork (chunk-RPCDYKBN.js?v=85cdbd25:15935:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=85cdbd25:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=85cdbd25:3699:24)
+createFiberFromTypeAndProps @ chunk-RPCDYKBN.js?v=85cdbd25:20442
+createFiberFromElement @ chunk-RPCDYKBN.js?v=85cdbd25:20463
+createChild @ chunk-RPCDYKBN.js?v=85cdbd25:10089
+reconcileChildrenArray @ chunk-RPCDYKBN.js?v=85cdbd25:10282
+reconcileChildFibers2 @ chunk-RPCDYKBN.js?v=85cdbd25:10559
+reconcileChildren @ chunk-RPCDYKBN.js?v=85cdbd25:14290
+updateHostComponent @ chunk-RPCDYKBN.js?v=85cdbd25:14807
+beginWork @ chunk-RPCDYKBN.js?v=85cdbd25:15935
+callCallback2 @ chunk-RPCDYKBN.js?v=85cdbd25:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=85cdbd25:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=85cdbd25:3733
+beginWork$1 @ chunk-RPCDYKBN.js?v=85cdbd25:19765
+performUnitOfWork @ chunk-RPCDYKBN.js?v=85cdbd25:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=85cdbd25:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=85cdbd25:19116
+recoverFromConcurrentError @ chunk-RPCDYKBN.js?v=85cdbd25:18736
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18879
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+chunk-RPCDYKBN.js?v=85cdbd25:14032 The above error occurred in the <div> component:
+
+    at div
+    at DialogHeader (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/dialog.tsx:102:3)
+    at div
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VZNMAICS.js?v=85cdbd25:41:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-FMDAVVZD.js?v=85cdbd25:63:7
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=85cdbd25:52:11
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=85cdbd25:33:11
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VZNMAICS.js?v=85cdbd25:41:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6MLXIWSI.js?v=85cdbd25:34:5
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-TKFVIBLV.js?v=85cdbd25:234:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-TKFVIBLV.js?v=85cdbd25:157:58
+    at Presence (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-4K3L2YAF.js?v=85cdbd25:24:11)
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-TKFVIBLV.js?v=85cdbd25:148:64
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=85cdbd25:52:11
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=85cdbd25:33:11
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VZNMAICS.js?v=85cdbd25:41:13
+    at https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-FMDAVVZD.js?v=85cdbd25:262:22
+    at Presence (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-4K3L2YAF.js?v=85cdbd25:24:11)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at DialogPortal (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-TKFVIBLV.js?v=85cdbd25:111:11)
+    at _c3 (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/dialog.tsx:49:12)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at Dialog (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-TKFVIBLV.js?v=85cdbd25:52:5)
+    at TeamsView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2664:39)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:5001:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=85cdbd25:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=85cdbd25:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=85cdbd25:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=85cdbd25:2829:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=85cdbd25:14032
+update.callback @ chunk-RPCDYKBN.js?v=85cdbd25:14052
+callCallback @ chunk-RPCDYKBN.js?v=85cdbd25:11248
+commitUpdateQueue @ chunk-RPCDYKBN.js?v=85cdbd25:11265
+commitLayoutEffectOnFiber @ chunk-RPCDYKBN.js?v=85cdbd25:17093
+commitLayoutMountEffects_complete @ chunk-RPCDYKBN.js?v=85cdbd25:17980
+commitLayoutEffects_begin @ chunk-RPCDYKBN.js?v=85cdbd25:17969
+commitLayoutEffects @ chunk-RPCDYKBN.js?v=85cdbd25:17920
+commitRootImpl @ chunk-RPCDYKBN.js?v=85cdbd25:19353
+commitRoot @ chunk-RPCDYKBN.js?v=85cdbd25:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=85cdbd25:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=85cdbd25:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=85cdbd25:18627Understand this errorAI
+chunk-RPCDYKBN.js?v=85cdbd25:20442 Uncaught Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `TeamsView`.
+    at createFiberFromTypeAndProps (chunk-RPCDYKBN.js?v=85cdbd25:20442:23)
+    at createFiberFromElement (chunk-RPCDYKBN.js?v=85cdbd25:20463:23)
+    at createChild (chunk-RPCDYKBN.js?v=85cdbd25:10089:34)
+    at reconcileChildrenArray (chunk-RPCDYKBN.js?v=85cdbd25:10282:33)
+    at reconcileChildFibers2 (chunk-RPCDYKBN.js?v=85cdbd25:10559:24)
+    at reconcileChildren (chunk-RPCDYKBN.js?v=85cdbd25:14290:37)
+    at updateHostComponent (chunk-RPCDYKBN.js?v=85cdbd25:14807:11)
+    at beginWork (chunk-RPCDYKBN.js?v=85cdbd25:15935:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=85cdbd25:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=85cdbd25:19198:20)
