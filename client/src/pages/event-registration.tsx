@@ -543,12 +543,35 @@ export default function EventRegistration() {
             const data = await response.json();
             console.log('Fetched fees:', data);
             
-            if (data.fees && data.fees.length > 0) {
-              setAvailableFees(data.fees);
+            // Normalize the response data to handle both formats:
+            // 1. When server returns {fees: [...], fee: {...}}
+            // 2. When server returns just {fee: {...}}
+            // 3. When server returns {fees: [...]} with no fee property
+            const allFees: Fee[] = [];
+            
+            // Add all fees from the fees array if it exists
+            if (data.fees && Array.isArray(data.fees) && data.fees.length > 0) {
+              allFees.push(...data.fees);
+            }
+            
+            // If there's a single fee and it's not already in allFees, add it
+            if (data.fee && typeof data.fee === 'object') {
+              // Check if this fee is already in the array
+              const feeExists = allFees.some(f => f.id === data.fee.id);
+              if (!feeExists) {
+                allFees.push(data.fee);
+              }
+            }
+            
+            console.log('All normalized fees:', allFees);
+            
+            if (allFees.length > 0) {
+              // Update available fees state
+              setAvailableFees(allFees);
               
               // Find registration fees vs other types
-              const registrationFees = data.fees.filter((fee: Fee) => fee.feeType === 'registration');
-              const otherFees = data.fees.filter((fee: Fee) => fee.feeType !== 'registration');
+              const registrationFees = allFees.filter((fee: Fee) => fee.feeType === 'registration');
+              const otherFees = allFees.filter((fee: Fee) => fee.feeType !== 'registration');
 
               // Get required fees (all required fees are automatically included)
               const requiredOtherFees = otherFees.filter((fee: Fee) => fee.isRequired);
@@ -572,9 +595,9 @@ export default function EventRegistration() {
               if (applicableRegFee) {
                 setSelectedFee(applicableRegFee);
                 setRegistrationFee(applicableRegFee.amount);
-              } else if (data.fees.length > 0) {
+              } else if (allFees.length > 0) {
                 // Fallback to first fee if no registration fee is found
-                const fallbackFee = data.fees[0];
+                const fallbackFee = allFees[0];
                 setSelectedFee(fallbackFee);
                 setRegistrationFee(fallbackFee.amount);
               }
@@ -591,22 +614,12 @@ export default function EventRegistration() {
               // Only update if we don't already have the fee information to avoid infinite loop
               if (!selectedAgeGroup.registrationFee) {
                 const feeAmount = applicableRegFee ? applicableRegFee.amount : 
-                  (data.fees.length > 0 ? data.fees[0].amount : 0);
+                  (allFees.length > 0 ? allFees[0].amount : 0);
                   
                 setSelectedAgeGroup(prev => prev ? { 
                   ...prev, 
                   registrationFee: feeAmount
                 } : prev);
-              }
-            } else if (data.fee) {
-              // Backward compatibility with old API response format
-              const fee = data.fee;
-              setAvailableFees([fee]);
-              setSelectedFee(fee);
-              setRegistrationFee(fee.amount);
-              
-              if (!selectedAgeGroup.registrationFee) {
-                setSelectedAgeGroup(prev => prev ? { ...prev, registrationFee: fee.amount } : prev);
               }
             }
           }
