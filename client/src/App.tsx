@@ -56,7 +56,9 @@ function Router() {
           <Route path="/register" component={Register} />
           <Route path="/forgot-password" component={ForgotPassword} />
           <Route path="/reset-password" component={ResetPassword} />
-          <Route path="/register/event/:eventId" component={EventRegistration} />
+          <Route path="/register/event/:eventId">
+            {(params) => <EventRegistration eventIdOverride={params.eventId} />}
+          </Route>
           <Route path="/dashboard">
             <AuthPage />
           </Route>
@@ -72,6 +74,7 @@ function Router() {
           <Route path="/admin/events/create">
             {user.isAdmin ? <CreateEvent /> : <NotFound />}
           </Route>
+          {/* Admin routes */}
           <Route path="/admin/events/:id/edit">
             {user.isAdmin ? <EditEvent /> : <NotFound />}
           </Route>
@@ -112,7 +115,9 @@ function Router() {
           {/* User routes */}
           <Route path="/household" component={HouseholdPage} />
           <Route path="/chat" component={ChatPage} />
-          <Route path="/register/event/:eventId" component={EventRegistration} />
+          <Route path="/register/event/:eventId">
+            {(params) => <EventRegistration eventIdOverride={params.eventId} />}
+          </Route>
           <Route path="/dashboard" component={UserDashboard} />
 
           {/* Preview routes */}
