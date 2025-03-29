@@ -1698,14 +1698,32 @@ function TeamsView() {
   // Mutation for approving/rejecting team registration
   const updateTeamStatusMutation = useMutation({
     mutationFn: async ({ teamId, status, notes }: { teamId: number, status: string, notes?: string }) => {
-      const response = await fetch(`/api/admin/teams/${teamId}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, notes })
-      });
-      
-      if (!response.ok) throw new Error('Failed to update team status');
-      return response.json();
+      try {
+        console.log('Sending status update with data:', { teamId, status, notes });
+        
+        const response = await fetch(`/api/admin/teams/${teamId}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, notes })
+        });
+        
+        if (!response.ok) {
+          // Try to get the detailed error message from the response
+          const errorData = await response.json().catch(() => null);
+          console.error('Error response:', errorData);
+          
+          if (errorData && errorData.error) {
+            throw new Error(errorData.error);
+          } else {
+            throw new Error(`Failed to update team status. Status: ${response.status}`);
+          }
+        }
+        
+        return response.json();
+      } catch (err) {
+        console.error('Error in updateTeamStatus mutation:', err);
+        throw err;
+      }
     },
     onSuccess: () => {
       toast({
