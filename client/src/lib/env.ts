@@ -12,16 +12,26 @@ export function initGoogleMapsApi() {
     return false;
   }
 
+  // Check if the script tag exists
   const googleMapsScript = document.getElementById('google-maps-script');
   if (googleMapsScript) {
+    // Set the API key and load the Maps JavaScript API with the Places library
     googleMapsScript.setAttribute(
       'src',
-      `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places&callback=Function.prototype`
+      `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places&callback=Function.prototype&v=beta`
     );
+    console.log("Google Maps API script initialized with API key");
     return true;
   } else {
-    console.error("Google Maps script tag not found");
-    return false;
+    // Create a new script tag if it doesn't exist
+    console.log("Creating Google Maps script tag");
+    const script = document.createElement('script');
+    script.id = 'google-maps-script';
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places&callback=Function.prototype&v=beta`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    return true;
   }
 }
 
