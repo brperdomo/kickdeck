@@ -578,56 +578,89 @@ export default function EventRegistration() {
               // Update available fees state
               setAvailableFees(allFees);
               
-              // Find registration fees vs other types
+              // Analyze fees to determine the best classification
+              // Fees can have different feeType values (registration, uniform, etc.)
+              
+              // Find registration fees vs other fees
               const registrationFees = allFees.filter((fee: Fee) => fee.feeType === 'registration');
               const otherFees = allFees.filter((fee: Fee) => fee.feeType !== 'registration');
-
-              // Get required fees (all required fees are automatically included)
-              const requiredOtherFees = otherFees.filter((fee: Fee) => fee.isRequired);
               
-              // Select the current applicable registration fee (based on current date)
+              // Get required fees of all types
+              const requiredFeesByType: { [key: string]: Fee[] } = {};
+              allFees.forEach(fee => {
+                if (fee.isRequired) {
+                  const feeType = fee.feeType || 'other';
+                  if (!requiredFeesByType[feeType]) {
+                    requiredFeesByType[feeType] = [];
+                  }
+                  requiredFeesByType[feeType].push(fee);
+                }
+              });
+              
+              console.log('Required fees by type:', requiredFeesByType);
+              
+              // Determine which fee should be the primary registration fee
+              // 1. If we have specifically marked "registration" fees, use those
+              // 2. Otherwise, select the highest cost fee as the primary
+              
+              let primaryFee = null;
               const now = new Date();
-              const applicableRegFee = registrationFees.find((fee: Fee) => {
-                const beginDate = fee.beginDate ? new Date(fee.beginDate) : null;
-                const endDate = fee.endDate ? new Date(fee.endDate) : null;
-                
-                // If no date range is specified, the fee is always applicable
-                if (!beginDate && !endDate) return true;
-                
-                // Check if current date is within the range
-                const afterBegin = !beginDate || now >= beginDate;
-                const beforeEnd = !endDate || now <= endDate;
-                
-                return afterBegin && beforeEnd;
-              }) || (registrationFees.length > 0 ? registrationFees[0] : null); // Default to first fee if no applicable fee found
               
-              if (applicableRegFee) {
-                setSelectedFee(applicableRegFee);
-                setRegistrationFee(applicableRegFee.amount);
-              } else if (allFees.length > 0) {
-                // Fallback to first fee if no registration fee is found
-                const fallbackFee = allFees[0];
-                setSelectedFee(fallbackFee);
-                setRegistrationFee(fallbackFee.amount);
+              if (registrationFees.length > 0) {
+                // First, try to find a registration fee with current date in range
+                primaryFee = registrationFees.find((fee: Fee) => {
+                  const beginDate = fee.beginDate ? new Date(fee.beginDate) : null;
+                  const endDate = fee.endDate ? new Date(fee.endDate) : null;
+                  
+                  // If no date range is specified, the fee is always applicable
+                  if (!beginDate && !endDate) return true;
+                  
+                  // Check if current date is within the range
+                  const afterBegin = !beginDate || now >= beginDate;
+                  const beforeEnd = !endDate || now <= endDate;
+                  
+                  return afterBegin && beforeEnd;
+                });
+                
+                // If no date-appropriate fee found, default to the first registration fee
+                if (!primaryFee && registrationFees.length > 0) {
+                  primaryFee = registrationFees[0];
+                }
+              }
+              
+              // If no registration fee type found, use the highest cost required fee as primary
+              if (!primaryFee) {
+                const allRequiredFees = allFees.filter(fee => fee.isRequired);
+                if (allRequiredFees.length > 0) {
+                  // Sort by amount in descending order and take the highest
+                  primaryFee = [...allRequiredFees].sort((a, b) => b.amount - a.amount)[0];
+                } else if (allFees.length > 0) {
+                  // Last resort - take any fee
+                  primaryFee = allFees[0];
+                }
+              }
+              
+              // Update state with our primary fee
+              if (primaryFee) {
+                console.log('Selected primary fee:', primaryFee);
+                setSelectedFee(primaryFee);
+                setRegistrationFee(primaryFee.amount);
               }
               
               // Required fees are automatically added to the total (we don't track them separately anymore)
               // The selectedAdditionalFees state has been removed as all fees are now handled automatically
               
-              // Handle any types for required fees (not using setSelectedAdditionalFees anymore)
-              if (requiredOtherFees.length > 0) {
-                // We used to track these separately, but now they're automatically included in the total
-                console.log(`Adding ${requiredOtherFees.length} required fees to total automatically`);
+              // Log all required fees for debugging
+              const requiredFeeCount = allFees.filter(fee => fee.isRequired).length;
+              if (requiredFeeCount > 0) {
+                console.log(`Adding ${requiredFeeCount} required fees to total automatically`);
               }
               
               // Only update if we don't already have the fee information to avoid infinite loop
-              if (!selectedAgeGroup.registrationFee) {
-                const feeAmount = applicableRegFee ? applicableRegFee.amount : 
-                  (allFees.length > 0 ? allFees[0].amount : 0);
-                  
+              if (!selectedAgeGroup.registrationFee && primaryFee) {
                 setSelectedAgeGroup(prev => prev ? { 
                   ...prev, 
-                  registrationFee: feeAmount
+                  registrationFee: primaryFee.amount
                 } : prev);
               }
             }
@@ -1056,13 +1089,18 @@ export default function EventRegistration() {
                         <div className="space-y-2">
                           <div className="border-b pb-2 mb-1">
                             <div className="flex justify-between items-center">
-                              <span className="text-sm font-medium text-gray-600">Registration Fee:</span>
+                              <span className="text-sm font-medium text-gray-600">Primary Registration Fee:</span>
                               <span className="text-base font-semibold text-blue-700">
                                 ${(selectedFee.amount / 100).toFixed(2)}
                               </span>
                             </div>
-                            <div className="text-xs text-gray-500">
-                              {selectedFee.name}
+                            <div className="flex justify-between items-center">
+                              <div className="text-xs text-gray-500">
+                                {selectedFee.name}
+                              </div>
+                              <div className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                                {selectedFee.feeType || 'registration'}
+                              </div>
                             </div>
                           </div>
                           
@@ -1550,7 +1588,7 @@ export default function EventRegistration() {
                                   </td>
                                   <td className="px-4 py-3 text-sm">
                                     <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                                      Registration
+                                      Primary {selectedFee.feeType || 'Registration'} Fee
                                     </span>
                                   </td>
                                   <td className="px-4 py-3 text-right font-medium">
