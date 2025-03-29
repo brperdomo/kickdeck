@@ -36,7 +36,23 @@ export async function getStripeConfig(req: Request, res: Response) {
  */
 export async function createStripePaymentIntent(req: Request, res: Response) {
   try {
-    const { amount, currency, description, metadata, eventId, ageGroupId, teamId } = req.body;
+    const { amount, currency, description, metadata, eventId, ageGroupId, teamId, isPreview } = req.body;
+
+    // Handle preview mode
+    if (isPreview === true || eventId === 'preview') {
+      console.log('Preview mode: simulating payment intent creation without using Stripe');
+      
+      // Generate a fake client secret
+      const fakePaymentIntentId = `pi_preview_${Date.now()}`;
+      const fakeClientSecret = `${fakePaymentIntentId}_secret_${Math.random().toString(36).substring(2, 15)}`;
+      
+      return res.json({
+        clientSecret: fakeClientSecret,
+        paymentIntentId: fakePaymentIntentId,
+        isPreview: true,
+        message: "This is a preview payment intent. No actual payment will be processed."
+      });
+    }
 
     if (!amount || amount <= 0) {
       return res.status(400).json({ error: 'Valid amount is required' });
@@ -132,6 +148,19 @@ export async function getPaymentIntentStatus(req: Request, res: Response) {
     
     if (!id) {
       return res.status(400).json({ error: 'Payment intent ID is required' });
+    }
+    
+    // Check if this is a preview mode payment intent
+    if (id.startsWith('pi_preview_')) {
+      console.log('Preview mode: simulating successful payment status for preview intent');
+      return res.json({
+        status: 'succeeded',
+        amount: 2500,
+        currency: 'usd',
+        created: Math.floor(Date.now() / 1000),
+        isPreview: true,
+        message: "This is a preview payment status. No actual payment was processed."
+      });
     }
     
     // First check if this team has a successful test payment recorded

@@ -194,7 +194,97 @@ export function registerRoutes(app: Express): Server {
     // Public event endpoint
     app.get('/api/events/:id', async (req, res) => {
       try {
-        const eventId = parseInt(req.params.id);
+        const eventId = req.params.id;
+        
+        // Special handling for preview mode
+        if (eventId === 'preview') {
+          // Return a sample event for preview mode
+          const previewEvent = {
+            id: 'preview',
+            name: 'Preview Tournament',
+            startDate: '2025-04-15',
+            endDate: '2025-04-20',
+            location: 'Demo Soccer Complex',
+            description: 'This is a preview of the tournament registration process. No actual registrations or payments will be processed.',
+            applicationDeadline: '2025-04-10',
+            details: 'Preview mode tournament for testing the registration process.',
+            agreement: 'This is a sample agreement text for preview mode. In an actual event, this would contain the terms and conditions.',
+            refundPolicy: 'This is a sample refund policy for preview mode. In an actual event, this would contain the refund policy details.',
+            ageGroups: [
+              {
+                id: 1001,
+                eventId: 'preview',
+                ageGroup: "U10",
+                gender: "Boys",
+                divisionCode: "B10",
+                birthYear: 2015,
+                fieldSize: "9v9",
+                projectedTeams: 12,
+                scoringRule: "Standard",
+                amountDue: 15000,
+                createdAt: new Date().toISOString()
+              },
+              {
+                id: 1002,
+                eventId: 'preview',
+                ageGroup: "U12",
+                gender: "Boys",
+                divisionCode: "B12",
+                birthYear: 2013,
+                fieldSize: "11v11",
+                projectedTeams: 10,
+                scoringRule: "Standard",
+                amountDue: 15000,
+                createdAt: new Date().toISOString()
+              },
+              {
+                id: 1003,
+                eventId: 'preview',
+                ageGroup: "U14",
+                gender: "Boys", 
+                divisionCode: "B14",
+                birthYear: 2011,
+                fieldSize: "11v11",
+                projectedTeams: 8,
+                scoringRule: "Standard",
+                amountDue: 17500,
+                createdAt: new Date().toISOString()
+              },
+              {
+                id: 1004,
+                eventId: 'preview',
+                ageGroup: "U10",
+                gender: "Girls",
+                divisionCode: "G10",
+                birthYear: 2015,
+                fieldSize: "9v9",
+                projectedTeams: 8,
+                scoringRule: "Standard",
+                amountDue: 15000,
+                createdAt: new Date().toISOString()
+              },
+              {
+                id: 1005,
+                eventId: 'preview',
+                ageGroup: "U12",
+                gender: "Girls",
+                divisionCode: "G12",
+                birthYear: 2013,
+                fieldSize: "11v11",
+                projectedTeams: 6,
+                scoringRule: "Standard",
+                amountDue: 15000,
+                createdAt: new Date().toISOString()
+              }
+            ]
+          };
+          
+          console.log('Returning preview event data');
+          return res.json(previewEvent);
+        }
+        
+        // Normal processing for real events
+        const parsedEventId = parseInt(eventId);
         const [event] = await db
           .select({
             id: events.id,
@@ -207,7 +297,7 @@ export function registerRoutes(app: Express): Server {
             refundPolicy: events.refundPolicy
           })
           .from(events)
-          .where(eq(events.id, eventId));
+          .where(eq(events.id, parsedEventId));
 
         if (!event) {
           return res.status(404).send("Event not found");
@@ -217,7 +307,7 @@ export function registerRoutes(app: Express): Server {
         const ageGroups = await db
           .select()
           .from(eventAgeGroups)
-          .where(eq(eventAgeGroups.eventId, String(eventId)));
+          .where(eq(eventAgeGroups.eventId, String(parsedEventId)));
 
         // Send both event details and age groups
         res.json({
@@ -235,6 +325,45 @@ export function registerRoutes(app: Express): Server {
       try {
         const eventId = req.params.eventId;
         const ageGroupId = req.query.ageGroupId as string;
+        
+        // Special handling for preview mode
+        if (eventId === 'preview') {
+          // Return sample fees for preview mode
+          const previewFees = [
+            {
+              id: 1001,
+              name: "Registration Fee",
+              amount: 15000,
+              feeType: "registration",
+              isRequired: true,
+              beginDate: null,
+              endDate: null
+            },
+            {
+              id: 1002,
+              name: "Uniform Fee",
+              amount: 5000,
+              feeType: "uniform",
+              isRequired: false,
+              beginDate: null,
+              endDate: null
+            },
+            {
+              id: 1003,
+              name: "Early Bird Discount",
+              amount: -2000,
+              feeType: "discount",
+              isRequired: false,
+              beginDate: "2025-03-01",
+              endDate: "2025-04-01"
+            }
+          ];
+          
+          return res.json({ 
+            fees: previewFees,
+            fee: previewFees[0] // For backward compatibility
+          });
+        }
         
         if (!ageGroupId) {
           return res.status(400).json({ error: 'Age group ID is required' });
@@ -337,6 +466,17 @@ export function registerRoutes(app: Express): Server {
         // This is a stub endpoint that simply stores personal details in the session
         // In a real implementation, this would store the data in the database
         const { firstName, lastName, email, phone, address, city, state, zipCode, country } = req.body;
+        const { eventId } = req.params;
+        
+        // Special handling for preview mode
+        if (eventId === 'preview') {
+          console.log('Preview mode: simulating personal details storage without session modification');
+          return res.status(200).json({ 
+            success: true, 
+            message: "Personal details saved successfully in preview mode",
+            isPreview: true
+          });
+        }
         
         // Store the personal details in the session for later use
         if (req.session) {
@@ -377,6 +517,19 @@ export function registerRoutes(app: Express): Server {
       
       try {
         const { eventId } = req.params;
+        
+        // Special handling for preview mode
+        if (eventId === 'preview') {
+          // For preview mode, return a mock success response without actually creating a team
+          console.log('Preview mode: simulating team registration without database insertion');
+          return res.status(200).json({
+            success: true,
+            message: "Team registered successfully in preview mode",
+            teamId: "preview-" + Date.now(),
+            isPreview: true
+          });
+        }
+        
         const userId = req.user.id;
         const { 
           name, 
@@ -3258,6 +3411,81 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     app.get('/api/admin/events/:eventId/age-groups', isAdmin, async (req, res) => {
       try {
         const eventId = req.params.eventId;
+        
+        // Special handling for preview mode
+        if (eventId === 'preview') {
+          // Return sample age groups for preview
+          const previewAgeGroups = [
+            {
+              id: 1001,
+              eventId: 'preview',
+              ageGroup: "U10",
+              gender: "Boys",
+              divisionCode: "B10",
+              birthYear: 2015,
+              fieldSize: "9v9",
+              projectedTeams: 12,
+              scoringRule: "Standard",
+              amountDue: 15000,
+              createdAt: new Date().toISOString()
+            },
+            {
+              id: 1002,
+              eventId: 'preview',
+              ageGroup: "U12",
+              gender: "Boys",
+              divisionCode: "B12",
+              birthYear: 2013,
+              fieldSize: "11v11",
+              projectedTeams: 10,
+              scoringRule: "Standard",
+              amountDue: 15000,
+              createdAt: new Date().toISOString()
+            },
+            {
+              id: 1003,
+              eventId: 'preview',
+              ageGroup: "U14",
+              gender: "Boys", 
+              divisionCode: "B14",
+              birthYear: 2011,
+              fieldSize: "11v11",
+              projectedTeams: 8,
+              scoringRule: "Standard",
+              amountDue: 17500,
+              createdAt: new Date().toISOString()
+            },
+            {
+              id: 1004,
+              eventId: 'preview',
+              ageGroup: "U10",
+              gender: "Girls",
+              divisionCode: "G10",
+              birthYear: 2015,
+              fieldSize: "9v9",
+              projectedTeams: 8,
+              scoringRule: "Standard",
+              amountDue: 15000,
+              createdAt: new Date().toISOString()
+            },
+            {
+              id: 1005,
+              eventId: 'preview',
+              ageGroup: "U12",
+              gender: "Girls",
+              divisionCode: "G12",
+              birthYear: 2013,
+              fieldSize: "11v11",
+              projectedTeams: 6,
+              scoringRule: "Standard",
+              amountDue: 15000,
+              createdAt: new Date().toISOString()
+            }
+          ];
+          
+          console.log('Returning preview age groups');
+          return res.json(previewAgeGroups);
+        }
 
         let ageGroups = await db.query.eventAgeGroups.findMany({
           where: eq(eventAgeGroups.eventId, eventId),
