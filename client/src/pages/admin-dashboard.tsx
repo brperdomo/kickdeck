@@ -1663,8 +1663,7 @@ function TeamsView() {
   const [refundReason, setRefundReason] = useState("");
   const { toast } = useToast();
   
-  // Import DialogDescription from the outer scope to fix reference error
-  const { DialogDescription } = Dialog;
+  // DialogDescription is already imported at the top of the file
   
   // Fetch events for dropdown
   const eventsQuery = useQuery({
