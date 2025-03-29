@@ -20,7 +20,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { GoogleMapsAutocomplete } from "./GoogleMapsAutocomplete";
+import { Card } from "@/components/ui/card";
 
 const complexSchema = z.object({
   name: z.string().min(1, "Complex name is required"),
@@ -28,6 +30,8 @@ const complexSchema = z.object({
   city: z.string().min(1, "City is required"),
   state: z.string().min(2, "State is required").max(2),
   country: z.string().min(2, "Country is required"),
+  latitude: z.string().optional(),
+  longitude: z.string().optional(),
   openTime: z.string().min(1, "Open time is required"),
   closeTime: z.string().min(1, "Close time is required"),
   rules: z.string().optional(),
@@ -44,6 +48,8 @@ interface Complex {
   city: string;
   state: string;
   country: string;
+  latitude?: string;
+  longitude?: string;
   openTime: string;
   closeTime: string;
   rules?: string;
@@ -85,6 +91,8 @@ export function ComplexEditor({ open, onOpenChange, onSubmit, complex }: Complex
         city: complex.city,
         state: complex.state,
         country: complex.country,
+        latitude: complex.latitude || '',
+        longitude: complex.longitude || '',
         openTime: complex.openTime,
         closeTime: complex.closeTime,
         rules: complex.rules || '',
@@ -98,6 +106,8 @@ export function ComplexEditor({ open, onOpenChange, onSubmit, complex }: Complex
         city: '',
         state: '',
         country: 'USA',
+        latitude: '',
+        longitude: '',
         openTime: '06:00',
         closeTime: '22:00',
         rules: '',
@@ -149,12 +159,66 @@ export function ComplexEditor({ open, onOpenChange, onSubmit, complex }: Complex
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter street address" {...field} />
+                    <GoogleMapsAutocomplete 
+                      value={field.value}
+                      onChange={(value, placeDetails) => {
+                        field.onChange(value);
+                        
+                        if (placeDetails?.geometry?.location) {
+                          const lat = placeDetails.geometry.location.lat();
+                          const lng = placeDetails.geometry.location.lng();
+                          
+                          form.setValue('latitude', lat.toString());
+                          form.setValue('longitude', lng.toString());
+                          
+                          // Update city, state, country if available
+                          if (placeDetails.address_components) {
+                            placeDetails.address_components.forEach(component => {
+                              if (component.types.includes('locality')) {
+                                form.setValue('city', component.long_name);
+                              }
+                              if (component.types.includes('administrative_area_level_1')) {
+                                form.setValue('state', component.short_name);
+                              }
+                              if (component.types.includes('country')) {
+                                form.setValue('country', component.long_name);
+                              }
+                            });
+                          }
+                        }
+                      }}
+                      placeholder="Search for an address"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            
+            <div className="hidden">
+              <FormField
+                control={form.control}
+                name="latitude"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="longitude"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="grid grid-cols-2 gap-4">
               <FormField
