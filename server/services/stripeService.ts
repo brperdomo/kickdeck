@@ -1,10 +1,19 @@
 import Stripe from 'stripe';
 import { log } from '../vite';
 
-// Initialize Stripe with secret key from environment variables
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16', // Use the latest API version or specify one
-});
+// Check if Stripe API key is available
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+let stripe: Stripe | null = null;
+
+// Only initialize Stripe if we have an API key
+if (stripeSecretKey) {
+  stripe = new Stripe(stripeSecretKey, {
+    apiVersion: '2023-10-16', // Use the latest API version or specify one
+  });
+  log('Stripe initialized successfully', 'stripe');
+} else {
+  console.warn('STRIPE_SECRET_KEY not found in environment variables. Stripe functionality will be disabled.');
+}
 
 export interface PaymentIntentParams {
   amount: number; // Amount in cents
@@ -18,6 +27,10 @@ export interface PaymentIntentParams {
  */
 export async function createPaymentIntent(params: PaymentIntentParams) {
   try {
+    if (!stripe) {
+      throw new Error('Stripe is not initialized. Check STRIPE_SECRET_KEY environment variable.');
+    }
+
     const { amount, currency = 'usd', description, metadata = {} } = params;
     
     const paymentIntent = await stripe.paymentIntents.create({
@@ -46,6 +59,9 @@ export async function createPaymentIntent(params: PaymentIntentParams) {
  */
 export async function retrievePaymentIntent(paymentIntentId: string) {
   try {
+    if (!stripe) {
+      throw new Error('Stripe is not initialized. Check STRIPE_SECRET_KEY environment variable.');
+    }
     return await stripe.paymentIntents.retrieve(paymentIntentId);
   } catch (error) {
     log(`Error retrieving payment intent: ${error}`, 'stripe');
@@ -59,6 +75,10 @@ export async function retrievePaymentIntent(paymentIntentId: string) {
  */
 export async function updatePaymentIntentStatus(paymentIntentId: string, status: 'succeeded') {
   try {
+    if (!stripe) {
+      throw new Error('Stripe is not initialized. Check STRIPE_SECRET_KEY environment variable.');
+    }
+    
     // In real Stripe, we can't directly update status, but we can mimic it via test mode
     const updated = await stripe.paymentIntents.update(
       paymentIntentId,
@@ -85,6 +105,10 @@ export async function updatePaymentIntentStatus(paymentIntentId: string, status:
  */
 export async function createCustomer(email: string, name?: string, metadata?: Record<string, string>) {
   try {
+    if (!stripe) {
+      throw new Error('Stripe is not initialized. Check STRIPE_SECRET_KEY environment variable.');
+    }
+    
     return await stripe.customers.create({
       email,
       name,
@@ -101,6 +125,10 @@ export async function createCustomer(email: string, name?: string, metadata?: Re
  */
 export async function createRefund(paymentIntentId: string, reason?: string) {
   try {
+    if (!stripe) {
+      throw new Error('Stripe is not initialized. Check STRIPE_SECRET_KEY environment variable.');
+    }
+    
     const refund = await stripe.refunds.create({
       payment_intent: paymentIntentId,
       reason: 'requested_by_customer',
