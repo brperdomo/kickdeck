@@ -30,6 +30,7 @@ import { FloatingEmulationButton } from "@/components/admin/FloatingEmulationBut
 
 // Import fully implemented components for preview mode
 import EventPreviewSelector from '@/pages/event-preview-selector';
+import RegistrationPreview from '@/pages/registration-preview';
 
 function Router() {
   const { user, isLoading } = useUser();
