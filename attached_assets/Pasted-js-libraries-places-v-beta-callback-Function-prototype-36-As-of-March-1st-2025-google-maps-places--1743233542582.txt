@@ -1,0 +1,27 @@
+js?libraries=places&v=beta&callback=Function.prototype:36 As of March 1st, 2025, google.maps.places.Autocomplete is not available to new customers. Please use google.maps.places.PlaceAutocompleteElement instead. At this time, google.maps.places.Autocomplete is not scheduled to be discontinued, but google.maps.places.PlaceAutocompleteElement is recommended over google.maps.places.Autocomplete. While google.maps.places.Autocomplete will continue to receive bug fixes for any major regressions, existing bugs in google.maps.places.Autocomplete will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/legacy for additional details and https://developers.google.com/maps/documentation/javascript/places-migration-overview for the migration guide.
+DA @ js?libraries=places&v=beta&callback=Function.prototype:36
+(anonymous) @ GoogleMapsAutocomplete.tsx:76
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=1470426c:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=1470426c:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=1470426c:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=1470426c:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=1470426c:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=1470426c:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=1470426c:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=1470426c:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=1470426c:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=1470426c:19432
+commitRoot @ chunk-RPCDYKBN.js?v=1470426c:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=1470426c:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=1470426c:18718
+workLoop @ chunk-RPCDYKBN.js?v=1470426c:197
+flushWork @ chunk-RPCDYKBN.js?v=1470426c:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=1470426c:384Understand this warningAI
+GoogleMapsAutocomplete.tsx:92 Google Maps Autocomplete initialized successfully
+admin:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warningAI
+admin:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warningAI
+9GoogleMapsAutocomplete.tsx:46 Google Maps API is loaded
+FloatingEmulationButton.tsx:46 [Emulation] No token found, clearing state
+GoogleMapsAutocomplete.tsx:46 Google Maps API is loaded
+ComplexEditor.tsx:193 No place details or coordinates available
+js?libraries=places&v=beta&callback=Function.prototype:1085 You must use an API key to authenticate each request to Google Maps Platform APIs. For additional information, please refer to http://g.co/dev/maps-no-account For more information on authentication and Google Maps JavaScript API services please see: https://developers.google.com/maps/documentation/javascript/get-api-key
