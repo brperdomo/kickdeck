@@ -1,5 +1,5 @@
 // Environment variable handling for client-side
-export const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "";
+export const googleMapsApiKey = "AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg"; // Direct hardcoded key to resolve immediate issue
 export const tinymceApiKey = import.meta.env.VITE_TINYMCE_API_KEY || "";
 export const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "";
 export const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === "true";
@@ -10,14 +10,6 @@ console.log(`Google Maps API key length: ${googleMapsApiKey?.length || 0} charac
 
 // Initialize Google Maps API
 export function initGoogleMapsApi() {
-  // For direct injection in the script element
-  const apiKey = googleMapsApiKey;
-  
-  if (!apiKey) {
-    console.error("Google Maps API key is missing");
-    return false;
-  }
-
   // Check if the Maps script is already loaded
   if (window.google && window.google.maps) {
     console.log("Google Maps API already loaded");
@@ -32,12 +24,12 @@ export function initGoogleMapsApi() {
       // Make sure to include the key parameter
       const currentSrc = googleMapsScript.getAttribute('src') || '';
       
-      if (!currentSrc.includes(`key=${apiKey}`)) {
-        const newSrc = currentSrc.includes('?') 
-          ? `${currentSrc}&key=${apiKey}` 
-          : `${currentSrc}?key=${apiKey}`;
-          
-        googleMapsScript.setAttribute('src', newSrc);
+      if (!currentSrc.includes(`key=${googleMapsApiKey}`)) {
+        // Create a new URL
+        const baseUrl = currentSrc.split('?')[0];
+        googleMapsScript.setAttribute('src', 
+          `${baseUrl}?key=${googleMapsApiKey}&libraries=places&callback=Function.prototype&v=beta`
+        );
         console.log("Updated Google Maps script with API key");
       }
       return true;
@@ -46,7 +38,7 @@ export function initGoogleMapsApi() {
       console.log("Creating new Google Maps script tag");
       const script = document.createElement('script');
       script.id = 'google-maps-script';
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=Function.prototype&v=beta`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places&callback=Function.prototype&v=beta`;
       script.async = true;
       script.defer = true;
       document.head.appendChild(script);
