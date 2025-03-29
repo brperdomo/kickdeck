@@ -115,8 +115,8 @@ export default function RegistrationPreview() {
       
       {/* Custom wrapper around the actual registration component */}
       <div className="registration-preview-wrapper">
-        {/* Pass isPreview prop to the component */}
-        <EventRegistration isPreview={true} />
+        {/* Pass isPreview prop to the component and also the eventId */}
+        <EventRegistration isPreview={true} eventIdOverride="preview" />
       </div>
     </div>
   );

@@ -259,11 +259,15 @@ type PlayerForm = z.infer<typeof playerSchema>;
 
 interface EventRegistrationProps {
   isPreview?: boolean;
+  eventIdOverride?: string;
 }
 
-export default function EventRegistration({ isPreview = false }: EventRegistrationProps) {
-  const { eventId } = useParams();
+export default function EventRegistration({ isPreview = false, eventIdOverride }: EventRegistrationProps) {
+  const params = useParams();
   const { toast } = useToast();
+  
+  // Use the eventIdOverride prop if provided (for preview mode), otherwise use the URL parameter
+  const eventId = eventIdOverride || params.eventId;
   const [, setLocation] = useLocation();
   const { user, isLoading: authLoading } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
