@@ -504,15 +504,24 @@ export default function EventRegistration() {
   const [availableFees, setAvailableFees] = useState<Fee[]>([]);
   const [selectedFee, setSelectedFee] = useState<Fee | null>(null);
   
-  // Separate required and optional fees
+  // For UX purposes, only show one registration fee in the registration fee section 
+  // (even if multiple are marked as registration)
+  const mainRegistrationFee = useMemo(() => selectedFee, [selectedFee]);
+  
+  // All other fees, regardless of their type, are considered "additional fees" for the UI
+  // This ensures no fees are lost even if they're all marked as "registration" type in the database
   const requiredFees = useMemo(() => 
-    availableFees.filter((fee: Fee) => fee.feeType !== 'registration' && fee.isRequired),
-    [availableFees]
+    availableFees.filter((fee: Fee) => 
+      // Exclude the main registration fee to avoid duplicates in the UI
+      fee.id !== mainRegistrationFee?.id && fee.isRequired),
+    [availableFees, mainRegistrationFee]
   );
   
+  // Keep optional fees logic for possible future use
   const optionalFees = useMemo(() => 
-    availableFees.filter((fee: Fee) => fee.feeType !== 'registration' && !fee.isRequired),
-    [availableFees]
+    availableFees.filter((fee: Fee) => 
+      fee.id !== mainRegistrationFee?.id && !fee.isRequired),
+    [availableFees, mainRegistrationFee]
   );
   
   // Calculate total amount to pay based on selected fees
@@ -1044,25 +1053,38 @@ export default function EventRegistration() {
                     {/* Fee display when age group is selected */}
                     {selectedAgeGroup && selectedFee && (
                       <div className="mt-2 bg-blue-50 p-3 rounded-md">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-medium text-gray-600">{selectedFee.name || "Registration Fee"}:</span>
-                          <span className="text-base font-semibold text-blue-700">
-                            ${(selectedFee.amount / 100).toFixed(2)}
-                          </span>
-                        </div>
-                        
-                        {/* Show required fees automatically */}
-                        {requiredFees.length > 0 && (
-                          <div className="text-xs text-gray-500 mt-1">
-                            <p className="mb-1 font-medium">Required additional fees:</p>
-                            {requiredFees.map(fee => (
-                              <div key={`req-${fee.id}`} className="flex justify-between items-center">
-                                <span>{fee.name}</span>
-                                <span>${(fee.amount / 100).toFixed(2)}</span>
-                              </div>
-                            ))}
+                        <div className="space-y-2">
+                          <div className="border-b pb-2 mb-1">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm font-medium text-gray-600">Registration Fee:</span>
+                              <span className="text-base font-semibold text-blue-700">
+                                ${(selectedFee.amount / 100).toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {selectedFee.name}
+                            </div>
                           </div>
-                        )}
+                          
+                          {/* Show required fees automatically */}
+                          {requiredFees.length > 0 && (
+                            <div className="text-xs text-gray-600">
+                              <p className="font-medium text-sm">Required Additional Fees:</p>
+                              {requiredFees.map(fee => (
+                                <div key={`req-${fee.id}`} className="flex justify-between items-center mt-1">
+                                  <span className="font-medium">{fee.name}</span>
+                                  <span className="font-medium">${(fee.amount / 100).toFixed(2)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          
+                          {/* Total amount */}
+                          <div className="border-t pt-2 mt-1 flex justify-between items-center">
+                            <span className="text-sm font-semibold text-gray-700">Total:</span>
+                            <span className="text-sm font-bold text-blue-700">${calculateTotalAmount()}</span>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1538,9 +1560,7 @@ export default function EventRegistration() {
                               )}
                               
                               {/* Additional Fees like Uniform (only required fees are shown) */}
-                              {availableFees
-                                .filter(fee => fee.feeType !== 'registration' && fee.isRequired)
-                                .map(fee => (
+                              {requiredFees.map(fee => (
                                 <tr key={`fee-${fee.id}`}>
                                   <td className="px-4 py-3">
                                     <div>
@@ -1550,9 +1570,7 @@ export default function EventRegistration() {
                                   <td className="px-4 py-3 text-sm">
                                     <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs flex items-center gap-1">
                                       {fee.feeType || 'Additional'}
-                                      {fee.isRequired && (
-                                        <Badge variant="outline" className="ml-1 text-[10px] py-0 h-4">Required</Badge>
-                                      )}
+                                      <Badge variant="outline" className="ml-1 text-[10px] py-0 h-4">Required</Badge>
                                     </span>
                                   </td>
                                   <td className="px-4 py-3 text-right font-medium">
