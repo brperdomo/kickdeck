@@ -36,7 +36,7 @@ export async function getStripeConfig(req: Request, res: Response) {
  */
 export async function createStripePaymentIntent(req: Request, res: Response) {
   try {
-    const { amount, currency, description, metadata, eventId, ageGroupId } = req.body;
+    const { amount, currency, description, metadata, eventId, ageGroupId, teamId } = req.body;
 
     if (!amount || amount <= 0) {
       return res.status(400).json({ error: 'Valid amount is required' });
@@ -47,12 +47,41 @@ export async function createStripePaymentIntent(req: Request, res: Response) {
       return res.status(401).json({ error: 'You must be logged in to process payments' });
     }
     
-    // Add user ID to metadata for later reference
+    // If teamId is provided, check if this team already has a payment intent
+    if (teamId) {
+      try {
+        // Check if the team already has a payment intent registered
+        const existingTeam = await db.query.teams.findFirst({
+          where: eq(teams.id, parseInt(teamId)),
+          columns: {
+            id: true,
+            paymentIntentId: true,
+            status: true
+          }
+        });
+        
+        // If team already has a payment intent ID and status is paid, return an error
+        if (existingTeam?.paymentIntentId && existingTeam.status === 'paid') {
+          log(`Prevented duplicate payment for team ${teamId}: already has payment intent ${existingTeam.paymentIntentId}`, 'payment');
+          return res.status(400).json({ 
+            error: 'This registration has already been paid for',
+            details: 'To avoid duplicate charges, the system prevented a second payment attempt',
+            existingPaymentId: existingTeam.paymentIntentId
+          });
+        }
+      } catch (dbError) {
+        // Just log the error but continue with payment processing
+        log(`Error checking for existing payment: ${dbError}`, 'payment');
+      }
+    }
+    
+    // Add user ID and team ID to metadata for later reference
     const enhancedMetadata = {
       ...metadata,
       userId: String(req.user.id),
       eventId: String(eventId),
-      ageGroupId: String(ageGroupId)
+      ageGroupId: String(ageGroupId),
+      teamId: teamId ? String(teamId) : undefined
     };
     
     // Create the payment intent with Stripe
@@ -62,6 +91,24 @@ export async function createStripePaymentIntent(req: Request, res: Response) {
       description,
       metadata: enhancedMetadata
     });
+    
+    // If we have a teamId, immediately associate the payment intent with the team
+    // This helps prevent multiple payments even if client-side validation fails
+    if (teamId) {
+      try {
+        await db.update(teams)
+          .set({
+            paymentIntentId: paymentIntent.id,
+            updatedAt: new Date().toISOString()
+          })
+          .where(eq(teams.id, parseInt(teamId)));
+          
+        log(`Associated payment intent ${paymentIntent.id} with team ${teamId}`, 'payment');
+      } catch (dbError) {
+        // Log but continue - the payment intent was still created successfully
+        log(`Error associating payment intent with team: ${dbError}`, 'payment');
+      }
+    }
     
     return res.json({
       clientSecret: paymentIntent.clientSecret,

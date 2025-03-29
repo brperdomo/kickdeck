@@ -53,12 +53,31 @@ export default function PaymentForm({
             description,
             metadata,
             eventId,
-            ageGroupId
+            ageGroupId,
+            teamId // Include teamId directly in the request body for duplicate payment prevention
           })
         });
 
         if (!response.ok) {
-          throw new Error('Failed to create payment intent');
+          const errorData = await response.json();
+          
+          // Handle the specific case where payment was already made
+          if (errorData.error === 'This registration has already been paid for') {
+            // Show a more user-friendly message
+            toast({
+              title: 'Already Paid',
+              description: 'This registration has already been processed and paid for. You will not be charged again.',
+              variant: 'default'
+            });
+            
+            // If there's an existing payment ID, we can consider this a success
+            if (errorData.existingPaymentId && teamId) {
+              onSuccess(errorData.existingPaymentId);
+              return;
+            }
+          } else {
+            throw new Error(errorData.error || 'Failed to create payment intent');
+          }
         }
 
         const data = await response.json();
@@ -75,16 +94,22 @@ export default function PaymentForm({
     };
 
     createIntent();
-  }, [amount, description, teamId, eventId, ageGroupId]);
+  }, [amount, description, teamId, eventId, ageGroupId, onSuccess]);
+
+  // Track if the form has been submitted to prevent multiple submissions
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!stripe || !elements || !clientSecret) {
+    // Prevent duplicate form submissions
+    if (isProcessing || isSubmitted || !stripe || !elements || !clientSecret) {
       return;
     }
 
+    // Mark as processing and submitted immediately
     setIsProcessing(true);
+    setIsSubmitted(true);
     setError(null);
 
     try {
@@ -107,6 +132,8 @@ export default function PaymentForm({
           description: error.message || 'An error occurred while processing your payment.',
           variant: 'destructive'
         });
+        // Allow retrying if there's an error
+        setIsSubmitted(false);
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
         toast({
           title: 'Payment Successful',
@@ -124,6 +151,8 @@ export default function PaymentForm({
           description: 'Payment status: ' + (paymentIntent?.status || 'unknown'),
           variant: 'default'
         });
+        // Allow retrying for unclear statuses
+        setIsSubmitted(false);
       }
     } catch (err) {
       setError('Error processing payment: ' + (err instanceof Error ? err.message : 'Unknown error'));
@@ -132,6 +161,8 @@ export default function PaymentForm({
         description: 'An unexpected error occurred. Please try again later.',
         variant: 'destructive'
       });
+      // Allow retrying after errors
+      setIsSubmitted(false);
     } finally {
       setIsProcessing(false);
     }
@@ -181,7 +212,7 @@ export default function PaymentForm({
         <Button 
           type="submit" 
           form="payment-form"
-          disabled={!stripe || !elements || isProcessing || !clientSecret}
+          disabled={!stripe || !elements || isProcessing || !clientSecret || isSubmitted}
           className="w-full"
         >
           {isProcessing ? (
@@ -189,6 +220,8 @@ export default function PaymentForm({
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Processing...
             </>
+          ) : isSubmitted ? (
+            "Payment submitted"
           ) : (
             `Pay $${(amount / 100).toFixed(2)}`
           )}
