@@ -77,10 +77,12 @@ async function testDbConnection() {
   let server: any; // Fix implicit any error
   
   try {
-    // Explicitly set environment to development mode for Vite
-    process.env.NODE_ENV = 'development';
-    app.set('env', 'development');
-
+    // Use NODE_ENV from environment or default to development
+    const nodeEnv = process.env.NODE_ENV || 'development';
+    app.set('env', nodeEnv);
+    
+    log(`Server starting in ${nodeEnv} mode`);
+    
     // Test database connection first
     const dbConnected = await testDbConnection();
     if (!dbConnected) {
@@ -119,9 +121,16 @@ async function testDbConnection() {
     const routes = registerRoutes(app);
     log("API routes registered");
 
-    // Always use Vite in development mode for this project
-    await setupVite(app, server);
-    log("Vite middleware setup complete");
+    // Set up appropriate middleware based on environment
+    if (nodeEnv === 'production') {
+      // In production, serve static files
+      serveStatic(app);
+      log("Static file serving configured for production");
+    } else {
+      // In development, use Vite middleware
+      await setupVite(app, server);
+      log("Vite middleware setup complete for development");
+    }
 
     // Error handling middleware
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
