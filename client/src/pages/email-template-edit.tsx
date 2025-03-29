@@ -43,8 +43,8 @@ const templateTypes = [
 // Form values type
 type FormValues = z.infer<typeof insertEmailTemplateSchema>;
 
-// TinyMCE API key
-const TINYMCE_API_KEY = "wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8";
+// TinyMCE API key from environment variable
+const TINYMCE_API_KEY = import.meta.env.VITE_TINYMCE_API_KEY;
 
 export default function EmailTemplateEdit() {
   const { id } = useParams<{ id: string }>();

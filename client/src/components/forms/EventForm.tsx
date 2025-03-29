@@ -26,6 +26,9 @@ import {
 } from "@/components/ui/table";
 import { Editor } from "@tinymce/tinymce-react";
 
+// TinyMCE API key from environment variable
+const TINYMCE_API_KEY = import.meta.env.VITE_TINYMCE_API_KEY;
+
 import {
   PREDEFINED_AGE_GROUPS,
   EventBranding,
@@ -584,7 +587,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               <FormLabel>Details About This Event</FormLabel>
               <FormControl>
                 <Editor
-                  apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                  apiKey={TINYMCE_API_KEY}
                   value={field.value}
                   onEditorChange={(content) => field.onChange(content)}
                   init={{
@@ -609,7 +612,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               <FormLabel>Agreement</FormLabel>
               <FormControl>
                 <Editor
-                  apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                  apiKey={TINYMCE_API_KEY}
                   value={field.value}
                   onEditorChange={(content) => field.onChange(content)}
                   init={{
@@ -634,7 +637,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               <FormLabel>Refund Policy</FormLabel>
               <FormControl>
                 <Editor
-                  apiKey="wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8"
+                  apiKey={TINYMCE_API_KEY}
                   value={field.value}
                   onEditorChange={(content) => field.onChange(content)}
                   init={{
