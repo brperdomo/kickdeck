@@ -22,6 +22,7 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /**
  * Gets the configured email provider settings from the database
+ * with fallback to environment variables if no provider is configured
  */
 async function getEmailProvider() {
   try {
@@ -34,11 +35,41 @@ async function getEmailProvider() {
         eq(emailProviderSettings.isActive, true)
       ));
 
-    if (!provider) {
-      throw new Error('No default email provider configured');
+    if (provider) {
+      return provider;
     }
 
-    return provider;
+    // No provider found in database, check for environment variables as fallback
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = process.env.SMTP_PORT;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPassword = process.env.SMTP_PASSWORD;
+    const smtpSecure = process.env.SMTP_SECURE === 'true';
+
+    if (smtpHost && smtpPort && smtpUser && smtpPassword) {
+      console.log('Using SMTP settings from environment variables as fallback');
+      
+      // Create a fallback provider from environment variables
+      return {
+        id: 0,
+        providerType: 'smtp',
+        providerName: 'Fallback SMTP Provider',
+        settings: {
+          host: smtpHost,
+          port: smtpPort,
+          username: smtpUser,
+          password: smtpPassword,
+          secure: smtpSecure.toString()
+        },
+        isActive: true,
+        isDefault: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    // No fallback available either
+    throw new Error('No email provider configured in database and no valid SMTP settings in environment variables');
   } catch (error) {
     console.error('Error getting email provider:', error);
     throw error;
@@ -138,6 +169,15 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
     
     // In production, try to send the actual email
     const transporter = await getEmailTransporter();
+    
+    // Double check that we have a valid transporter before trying to send
+    if (!transporter) {
+      console.error('No email transporter available');
+      // Log the issue but don't crash the application in production
+      console.error('Email could not be sent to', options.to, 'due to missing email transporter');
+      return;
+    }
+    
     await transporter.sendMail(options);
     console.log(`Email sent to ${options.to}`);
   } catch (error) {
@@ -149,8 +189,12 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
       return;
     }
     
+    // In production, log the error but don't crash the application
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to send email: ${errorMessage}`);
+    console.error(`Failed to send email to ${options.to}: ${errorMessage}`);
+    
+    // Don't rethrow the error in production as this could interrupt important flows
+    // such as payment processing or user registration just because an email failed
   }
 }
 
@@ -162,6 +206,8 @@ export async function sendTemplatedEmail(
   templateType: string,
   context: TemplateContext
 ): Promise<void> {
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  
   try {
     const template = await getEmailTemplate(templateType);
     
@@ -178,7 +224,15 @@ export async function sendTemplatedEmail(
     console.log(`Templated email (${templateType}) sent to ${to}`);
   } catch (error) {
     console.error(`Error sending templated email (${templateType}):`, error);
-    throw error;
+    
+    if (isDevelopment) {
+      // Rethrow errors in development mode for easier debugging
+      throw error;
+    }
+    
+    // In production, log error but don't crash the application
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`Failed to send templated email to ${to}: ${errorMessage}`);
   }
 }
 
@@ -190,8 +244,10 @@ export async function sendPasswordResetEmail(
   resetToken: string,
   username: string
 ): Promise<void> {
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  
   try {
-    // Use the Replit domains environment variable to get the correct domain
+    // Use the APP_URL environment variable or the Replit domain as fallback
     const appUrl = process.env.APP_URL || `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
     const resetUrl = `${appUrl}/reset-password?token=${resetToken}`;
     
@@ -203,6 +259,14 @@ export async function sendPasswordResetEmail(
     });
   } catch (error) {
     console.error('Error sending password reset email:', error);
-    throw error;
+    
+    if (isDevelopment) {
+      // Rethrow errors in development mode for easier debugging
+      throw error;
+    }
+    
+    // In production, log error but don't crash the application
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`Failed to send password reset email to ${to}: ${errorMessage}`);
   }
 }
