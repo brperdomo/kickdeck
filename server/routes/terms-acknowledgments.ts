@@ -39,14 +39,8 @@ export async function generateTermsAcknowledgmentDocument(req: Request, res: Res
       return res.status(404).json({ error: 'Event not found' });
     }
     
-    // Get event settings for terms and refund policy text
-    const eventSettings = await db.query.eventSettings.findFirst({
-      where: eq(events.id, parseInt(team.eventId))
-    });
-    
-    if (!eventSettings) {
-      return res.status(404).json({ error: 'Event settings not found' });
-    }
+    // Instead of trying to fetch event settings which might not exist in the format we expect,
+    // use the terms and refund policy from the event record
     
     // Generate PDF
     const pdfPath = await generateTermsAcknowledgmentPDF({
@@ -57,8 +51,8 @@ export async function generateTermsAcknowledgmentDocument(req: Request, res: Res
       managerName: `${team.managerFirstName} ${team.managerLastName}`,
       managerEmail: team.managerEmail,
       timestamp: team.termsAcknowledgedAt ? new Date(team.termsAcknowledgedAt) : new Date(),
-      agreementText: eventSettings.termsAndConditions || 'No terms and conditions provided',
-      refundPolicyText: eventSettings.refundPolicy || 'No refund policy provided'
+      agreementText: event.agreement || 'No terms and conditions provided',
+      refundPolicyText: event.refundPolicy || 'No refund policy provided'
     });
     
     // Save the PDF path to the team record
