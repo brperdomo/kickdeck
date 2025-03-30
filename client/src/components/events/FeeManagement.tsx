@@ -113,7 +113,14 @@ export function FeeManagement() {
   const feesQuery = useQuery({
     queryKey: ["fees", eventIdParam],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventIdParam}/fees`);
+      const response = await fetch(`/api/admin/events/${eventIdParam}/fees`, {
+        credentials: 'include',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
       if (!response.ok) throw new Error("Failed to fetch fees");
       const fees = await response.json();
 
@@ -131,7 +138,14 @@ export function FeeManagement() {
   const accountingCodesQuery = useQuery({
     queryKey: ["accountingCodes"],
     queryFn: async () => {
-      const response = await fetch("/api/admin/accounting-codes");
+      const response = await fetch("/api/admin/accounting-codes", {
+        credentials: 'include',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
       if (!response.ok) throw new Error("Failed to fetch accounting codes");
       return response.json();
     },
@@ -144,6 +158,14 @@ export function FeeManagement() {
       console.log(`Fetching age groups for event: ${eventIdParam}`);
       const response = await fetch(
         `/api/admin/events/${eventIdParam}/age-groups`,
+        {
+          credentials: 'include',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        }
       );
       if (!response.ok) {
         const error = await response.text();
@@ -176,6 +198,7 @@ export function FeeManagement() {
           `/api/admin/events/${eventIdParam}/fee-assignments`,
           {
             // Add cache control headers to prevent browser caching
+            credentials: 'include',
             headers: {
               'Cache-Control': 'no-cache, no-store, must-revalidate',
               'Pragma': 'no-cache',
@@ -283,6 +306,7 @@ export function FeeManagement() {
       try {
         const response = await fetch(`/api/admin/events/${eventIdParam}/fees`, {
           method: "POST",
+          credentials: 'include',
           headers: {
             "Content-Type": "application/json",
           },
@@ -341,6 +365,7 @@ export function FeeManagement() {
           `/api/admin/events/${eventIdParam}/fees/${feeData.id}`,
           {
             method: "PATCH",
+            credentials: 'include',
             headers: {
               "Content-Type": "application/json",
             },
@@ -385,6 +410,7 @@ export function FeeManagement() {
         `/api/admin/events/${eventIdParam}/fees/${feeId}`,
         {
           method: "DELETE",
+          credentials: 'include',
         },
       );
 
@@ -419,6 +445,7 @@ export function FeeManagement() {
         `/api/admin/events/${eventIdParam}/fee-assignments`,
         {
           method: "POST",
+          credentials: 'include',
           headers: {
             "Content-Type": "application/json",
           },
