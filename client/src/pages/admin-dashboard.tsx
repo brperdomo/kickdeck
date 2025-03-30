@@ -71,7 +71,9 @@ import {
   Bell,
   Moon,
   Sun,
-  Trash2
+  Trash2,
+  FileText,
+  FileUp
 } from "lucide-react";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
@@ -2597,17 +2599,67 @@ function TeamsView() {
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Terms Acknowledged:</div>
                       <div className="col-span-2">
-                        <Badge variant="outline">
-                          {selectedTeam.termsAcknowledgement ? 'Yes' : 'No'}
+                        <Badge variant={selectedTeam.termsAcknowledged || selectedTeam.status === 'paid' ? 'success' : 'outline'}>
+                          {selectedTeam.termsAcknowledged || selectedTeam.status === 'paid' ? 'Yes' : 'No'}
                         </Badge>
                       </div>
                     </div>
-                    {selectedTeam.termsAcknowledgementDate && (
+                    {selectedTeam.termsAcknowledgedAt && (
                       <div className="grid grid-cols-3 gap-1">
                         <div className="font-medium">Acknowledged On:</div>
-                        <div className="col-span-2">{formatDate(selectedTeam.termsAcknowledgementDate)}</div>
+                        <div className="col-span-2">{formatDate(selectedTeam.termsAcknowledgedAt)}</div>
                       </div>
                     )}
+                    <div className="pt-2">
+                      {(selectedTeam.termsAcknowledged || selectedTeam.status === 'paid') && (
+                        <div className="flex flex-col gap-2">
+                          {selectedTeam.termsAcknowledgmentRecord ? (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="w-full"
+                              onClick={() => window.open(`/api/teams/${selectedTeam.id}/terms-acknowledgment/download`, '_blank')}
+                            >
+                              <FileText className="h-4 w-4 mr-2" />
+                              View Acknowledgment Document
+                            </Button>
+                          ) : (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="w-full"
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch(`/api/teams/${selectedTeam.id}/terms-acknowledgment/generate`, {
+                                    method: 'POST',
+                                  });
+                                  const data = await response.json();
+                                  
+                                  if (data.success && data.downloadUrl) {
+                                    window.open(data.downloadUrl, '_blank');
+                                    toast({
+                                      title: "Success",
+                                      description: "Terms acknowledgment document generated successfully",
+                                    });
+                                  } else {
+                                    throw new Error(data.error || 'Failed to generate document');
+                                  }
+                                } catch (error) {
+                                  toast({
+                                    title: "Error",
+                                    description: error instanceof Error ? error.message : "Failed to generate document",
+                                    variant: "destructive",
+                                  });
+                                }
+                              }}
+                            >
+                              <FileUp className="h-4 w-4 mr-2" />
+                              Generate Acknowledgment Document
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
