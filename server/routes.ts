@@ -21,6 +21,7 @@ import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignment
 import { createStripePaymentIntent, getPaymentIntentStatus, handleStripeWebhook, getStripeConfig } from "./routes/payments";
 import { getTinyMCEConfig } from "./services/configService";
 import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
+import { generateTermsAcknowledgmentDocument, downloadTermsAcknowledgmentDocument, downloadTermsAcknowledgmentByFilename } from "./routes/terms-acknowledgments";
 import { getCurrentUserRegistrations } from "./routes/admin/members";
 import { 
   getRolesWithPermissions, 
@@ -794,6 +795,11 @@ export function registerRoutes(app: Express): Server {
     app.post('/api/payments/create-intent', createStripePaymentIntent);
     app.get('/api/payments/intent/:id', getPaymentIntentStatus);
     app.post('/api/payments/webhook', handleStripeWebhook);
+    
+    // Terms acknowledgment endpoints
+    app.post('/api/teams/:teamId/terms-acknowledgment/generate', isAdmin, generateTermsAcknowledgmentDocument);
+    app.get('/api/teams/:teamId/terms-acknowledgment/download', downloadTermsAcknowledgmentDocument);
+    app.get('/api/download/terms-acknowledgment/:filename', isAdmin, downloadTermsAcknowledgmentByFilename);
     
     // TinyMCE configuration endpoint
     app.get('/api/config/tinymce', getTinyMCEConfig);
