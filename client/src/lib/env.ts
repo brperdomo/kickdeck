@@ -1,5 +1,5 @@
 // Environment variable handling for client-side
-export const googleMapsApiKey = "AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg"; // Direct hardcoded key to resolve immediate issue
+export const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg"; // Use API key with fallback to hardcoded value
 export const tinymceApiKey = import.meta.env.VITE_TINYMCE_API_KEY || "";
 export const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "";
 export const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === "true";
@@ -28,7 +28,7 @@ export function initGoogleMapsApi() {
         // Create a new URL
         const baseUrl = currentSrc.split('?')[0];
         googleMapsScript.setAttribute('src', 
-          `${baseUrl}?key=${googleMapsApiKey}&libraries=places&callback=Function.prototype&v=beta`
+          `${baseUrl}?key=${googleMapsApiKey}&libraries=places,marker&callback=Function.prototype&v=beta`
         );
         console.log("Updated Google Maps script with API key");
       }
@@ -38,7 +38,7 @@ export function initGoogleMapsApi() {
       console.log("Creating new Google Maps script tag");
       const script = document.createElement('script');
       script.id = 'google-maps-script';
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places&callback=Function.prototype&v=beta`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places,marker&callback=Function.prototype&v=beta`;
       script.async = true;
       script.defer = true;
       document.head.appendChild(script);

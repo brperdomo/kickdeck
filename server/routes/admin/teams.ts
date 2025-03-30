@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { db } from '@db';
 import { teams, events, users } from '@db/schema';
-import { eq, and, or, like, asc, desc } from 'drizzle-orm';
-import { createRefund } from '../../services/stripeService';
+import { eq, and, or, like, asc, desc, sql } from 'drizzle-orm';
 import { log } from '../../vite';
 import { sendTemplatedEmail } from '../../services/emailService';
+import { createRefund, createTestPaymentIntent } from '../../services/stripeService';
 
 type TeamStatus = 'registered' | 'approved' | 'rejected' | 'paid' | 'withdrawn' | 'refunded';
 
@@ -108,12 +108,23 @@ export async function getTeamById(req: Request, res: Response) {
  * Update a team's status (approve/reject/withdraw)
  */
 export async function updateTeamStatus(req: Request, res: Response) {
-  // Set JSON content type from the start to ensure HTML isn't returned
+  // Ensure we're always sending a JSON response, no matter what happens
   res.setHeader('Content-Type', 'application/json');
   
+  // Wrap everything in a try-catch to ensure we never return HTML
   try {
-    const { teamId } = req.params;
-    const { status, notes } = req.body;
+    // Extract request parameters first to avoid undefined errors
+    const teamId = req.params?.teamId;
+    const status = req.body?.status;
+    const notes = req.body?.notes;
+    
+    if (!teamId || !status) {
+      return res.status(400).json({ 
+        status: 'error',
+        error: 'Missing required parameters',
+        details: !teamId ? 'Team ID is required' : 'Status is required'
+      });
+    }
     
     log(`Processing team status update. TeamID: ${teamId}, Status: ${status}, Notes: ${notes ? 'provided' : 'none'}`, 'admin');
     
@@ -121,53 +132,112 @@ export async function updateTeamStatus(req: Request, res: Response) {
     
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ 
+        status: 'error',
         error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` 
       });
     }
     
     // Get current team details before updating
-    const [currentTeam] = await db.select()
-      .from(teams)
-      .where(eq(teams.id, parseInt(teamId)));
+    let currentTeam;
+    try {
+      const teamResult = await db
+        .select()
+        .from(teams)
+        .where(eq(teams.id, parseInt(teamId, 10)));
+      
+      if (teamResult && teamResult.length > 0) {
+        currentTeam = teamResult[0];
+      }
+    } catch (dbError) {
+      log(`Database error fetching team: ${dbError}`, 'admin');
+      return res.status(500).json({ 
+        status: 'error',
+        error: 'Database error fetching team',
+        message: 'Failed to retrieve team details'
+      });
+    }
     
     if (!currentTeam) {
-      return res.status(404).json({ error: 'Team not found' });
+      return res.status(404).json({ 
+        status: 'error',
+        error: 'Team not found' 
+      });
     }
     
     // Don't allow updating if already in the same status
     if (currentTeam.status === status) {
-      return res.status(400).json({ error: `Team is already ${status}` });
+      return res.status(400).json({ 
+        status: 'error',
+        error: `Team is already ${status}` 
+      });
     }
     
     log(`Team found. Current status: ${currentTeam.status}, Updating to: ${status}`, 'admin');
     
-    // Update the team status
-    const [updatedTeam] = await db.update(teams)
-      .set({ 
-        status, 
-        notes: notes || null, // Using notes instead of adminNotes to match schema
-        updatedAt: new Date().toISOString()
-      })
-      .where(eq(teams.id, parseInt(teamId)))
-      .returning();
+    // Update the team status with error handling
+    let updatedTeam;
+    try {
+      const now = new Date().toISOString();
+      const updateResult = await db.update(teams)
+        .set({ 
+          status, 
+          notes: notes || null, // Using notes instead of adminNotes to match schema
+          // Use the drizzle update pattern correctly to avoid TypeScript errors
+          updatedAt: sql`${now}`
+        })
+        .where(eq(teams.id, parseInt(teamId, 10)))
+        .returning();
+      
+      if (updateResult && updateResult.length > 0) {
+        updatedTeam = updateResult[0];
+      } else {
+        throw new Error('No rows updated');
+      }
+    } catch (updateError) {
+      log(`Database error updating team status: ${updateError}`, 'admin');
+      return res.status(500).json({ 
+        status: 'error',
+        error: 'Database error updating team status',
+        message: 'Failed to update team status in database'
+      });
+    }
     
     log(`Team status updated successfully to ${status}`, 'admin');
     
     // Handle email notifications in a separate try/catch to prevent errors from affecting the response
     let emailStatus = 'not_sent';
+    let emailRecipients: string[] = [];
     
     // Wrap the entire email process in a try-catch to isolate it completely
     try {
       // Get event details for email
-      const [event] = await db.select()
-        .from(events)
-        .where(eq(events.id, currentTeam.eventId));
-        
+      let event = null;
+      try {
+        // Fix TypeScript error by using string comparison instead of direct column comparison
+        const eventId = currentTeam.eventId;
+        if (eventId) {
+          const eventResult = await db
+            .select()
+            .from(events)
+            .where(eq(events.id, parseInt(eventId.toString(), 10)));
+            
+          if (eventResult && eventResult.length > 0) {
+            event = eventResult[0];
+          }
+        }
+      } catch (eventError) {
+        log(`Error fetching event for email notification: ${eventError}`, 'admin');
+        // Continue anyway - we'll use fallback values
+      }
+      
       // Send to both the submitter and the manager if they're different
-      const emailRecipients = [currentTeam.submitterEmail];
+      if (currentTeam.submitterEmail) {
+        emailRecipients = [currentTeam.submitterEmail];
+      }
       
       // If manager email is different from submitter, add them too
-      if (currentTeam.managerEmail && currentTeam.managerEmail !== currentTeam.submitterEmail) {
+      if (currentTeam.managerEmail && currentTeam.submitterEmail && 
+          currentTeam.managerEmail !== currentTeam.submitterEmail) {
         emailRecipients.push(currentTeam.managerEmail);
       }
       
@@ -183,7 +253,7 @@ export async function updateTeamStatus(req: Request, res: Response) {
       for (const recipient of emailRecipients) {
         if (recipient) {
           const templateData = {
-            teamName: currentTeam.name,
+            teamName: currentTeam.name || 'your team',
             eventName: event?.name || 'the event',
             notes: notes || '',
             status: status,
@@ -191,13 +261,17 @@ export async function updateTeamStatus(req: Request, res: Response) {
             previousStatus: currentTeam.status || 'registered'
           };
           
-          await sendTemplatedEmail(
-            recipient,
-            emailTemplate,
-            templateData
-          );
-          
-          log(`Email notification sent to ${recipient}`, 'admin');
+          try {
+            await sendTemplatedEmail(
+              recipient,
+              emailTemplate,
+              templateData
+            );
+            log(`Email notification sent to ${recipient}`, 'admin');
+          } catch (singleEmailError) {
+            log(`Failed to send email to ${recipient}: ${singleEmailError}`, 'admin');
+            // Continue with other recipients
+          }
         }
       }
       
@@ -206,30 +280,30 @@ export async function updateTeamStatus(req: Request, res: Response) {
       // Log email error but don't let it affect the response
       log(`Failed to send status notification email: ${emailError}`, 'admin');
       emailStatus = 'failed';
-    } finally {
-      // Ensure we return a JSON response with the updated team data
-      // regardless of what happened with the email notification
-      return res.json({
-        status: 'success',
-        team: updatedTeam,
-        notification: {
-          status: emailStatus,
-          message: emailStatus === 'sent' 
-            ? 'Email notification sent successfully' 
-            : emailStatus === 'failed' 
-              ? 'Status updated but email notification failed' 
-              : 'No email notification attempted'
-        }
-      });
     }
+    
+    // Ensure we return a consistent JSON response
+    return res.json({
+      status: 'success',
+      team: updatedTeam,
+      notification: {
+        status: emailStatus,
+        recipients: emailRecipients,
+        message: emailStatus === 'sent' 
+          ? 'Email notification sent successfully' 
+          : emailStatus === 'failed' 
+            ? 'Status updated but email notification failed' 
+            : 'No email notification attempted'
+      }
+    });
   } catch (error) {
     // Log the full error for debugging
-    log(`Error updating team status: ${error}`, 'admin');
+    log(`Unexpected error updating team status: ${error}`, 'admin');
     if (error instanceof Error) {
       log(`Error stack: ${error.stack}`, 'admin');
     }
     
-    // Always return a JSON response, even for errors
+    // Always return a JSON response, even for unexpected errors
     return res.status(500).json({ 
       status: 'error',
       error: 'Failed to update team status',
@@ -252,16 +326,19 @@ export async function processRefund(req: Request, res: Response) {
     log(`Processing refund for team ID: ${teamId}. Reason: ${reason || 'Not provided'}`, 'admin');
     
     // Get team details
-    const [team] = await db.select()
+    const teamResult = await db
+      .select()
       .from(teams)
-      .where(eq(teams.id, parseInt(teamId)));
+      .where(eq(teams.id, parseInt(teamId, 10)));
     
-    if (!team) {
+    if (!teamResult || teamResult.length === 0) {
       return res.status(404).json({ 
         status: 'error',
         error: 'Team not found' 
       });
     }
+    
+    const team = teamResult[0];
     
     // Check if team has already paid - using totalAmount or registrationFee as an indicator
     const paidAmount = team.totalAmount || team.registrationFee;
@@ -291,6 +368,8 @@ export async function processRefund(req: Request, res: Response) {
     // In development, handle the case where we have no payment intent but still want to process a refund for testing
     const isDevelopment = process.env.NODE_ENV !== 'production';
     
+    // Use the imported stripe service functions from the top of file
+    
     if (team.paymentIntentId) {
       try {
         // Process the refund via Stripe
@@ -304,6 +383,8 @@ export async function processRefund(req: Request, res: Response) {
       }
     } else if (isDevelopment) {
       try {
+        // Use the imported createTestPaymentIntent function from the top of file
+        
         // For testing in development mode, create a test payment intent and immediately refund it
         // This creates proper Stripe records for testing
         log(`Creating test payment intent for refund testing in development mode`, 'admin');
@@ -311,7 +392,7 @@ export async function processRefund(req: Request, res: Response) {
         // First, create a test payment intent that's already paid
         const testIntent = await createTestPaymentIntent(refundAmount * 100, {
           teamId: teamId,
-          teamName: team.name,
+          teamName: team.name || 'Test Team',
           eventId: team.eventId?.toString() || '',
           test_mode: 'true',
           manual_creation: 'true'
@@ -326,7 +407,7 @@ export async function processRefund(req: Request, res: Response) {
           // Update the team with the payment intent ID for future reference
           await db.update(teams)
             .set({ paymentIntentId: testIntent.id })
-            .where(eq(teams.id, parseInt(teamId)));
+            .where(eq(teams.id, parseInt(teamId, 10)));
             
           log(`Test payment intent created and refunded in development mode. Refund ID: ${refundId}`, 'admin');
         } else {
@@ -340,32 +421,56 @@ export async function processRefund(req: Request, res: Response) {
     }
     
     // Update the team record with refund details
-    const [updatedTeam] = await db.update(teams)
+    const now = new Date().toISOString();
+    const updatedTeamResult = await db.update(teams)
       .set({ 
         status: 'refunded',
-        refundDate: new Date().toISOString(),
+        refundDate: now,
         notes: reason ? `${team.notes || ''} \nRefund reason: ${reason}`.trim() : team.notes,
-        updatedAt: new Date().toISOString()
+        // Use SQL template for the timestamp to avoid TypeScript errors
+        updatedAt: sql`${now}`
       })
-      .where(eq(teams.id, parseInt(teamId)))
+      .where(eq(teams.id, parseInt(teamId, 10)))
       .returning();
     
+    if (!updatedTeamResult || updatedTeamResult.length === 0) {
+      throw new Error('Failed to update team record');
+    }
+    
+    const updatedTeam = updatedTeamResult[0];
     log(`Team database record updated to refunded status`, 'admin');
     
     // Handle email notifications in a separate try/catch to prevent errors from affecting the response
     let emailStatus = 'not_sent';
+    let emailRecipients: string[] = [];
     
     try {
       // Get event details for email
-      const [event] = await db.select()
-        .from(events)
-        .where(eq(events.id, team.eventId));
-        
+      let event = null;
+      
+      if (team.eventId) {
+        const eventId = typeof team.eventId === 'string' ? 
+          parseInt(team.eventId, 10) : team.eventId;
+          
+        const eventResult = await db
+          .select()
+          .from(events)
+          .where(eq(events.id, eventId));
+          
+        if (eventResult && eventResult.length > 0) {
+          event = eventResult[0];
+        }
+      }
+      
       // Send to both the submitter and the manager if they're different
-      const emailRecipients = [team.submitterEmail];
+      emailRecipients = [];
+      if (team.submitterEmail) {
+        emailRecipients.push(team.submitterEmail);
+      }
       
       // If manager email is different from submitter, add them too
-      if (team.managerEmail && team.managerEmail !== team.submitterEmail) {
+      if (team.managerEmail && team.submitterEmail && 
+          team.managerEmail !== team.submitterEmail) {
         emailRecipients.push(team.managerEmail);
       }
       
@@ -376,7 +481,7 @@ export async function processRefund(req: Request, res: Response) {
             recipient,
             'payment_refunded',
             {
-              teamName: team.name,
+              teamName: team.name || 'your team',
               eventName: event?.name || 'the event',
               amount: (((team.totalAmount || team.registrationFee || 0) / 100).toFixed(2)),
               reason: reason || 'Team registration was refunded',
@@ -408,6 +513,7 @@ export async function processRefund(req: Request, res: Response) {
       },
       notification: {
         status: emailStatus,
+        recipients: emailRecipients,
         message: emailStatus === 'sent' 
           ? 'Email notification sent successfully' 
           : emailStatus === 'failed' 
