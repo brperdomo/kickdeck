@@ -42,11 +42,14 @@ export function DetailedFeeBreakdown({ teamId, selectedFeeIds }: DetailedFeeBrea
         return [];
       }
       
+      console.log(`Fetching fees for team ${teamId} with fee IDs ${selectedFeeIds}`);
       const response = await fetch(`/api/admin/teams/${teamId}/fees?selectedFeeIds=${selectedFeeIds}`);
       if (!response.ok) {
         throw new Error('Failed to fetch fee details');
       }
-      return response.json() as Promise<Fee[]>;
+      const data = await response.json() as Fee[];
+      console.log('Received fee data from server:', data);
+      return data;
     },
     enabled: !!teamId && !!selectedFeeIds && selectedFeeIds !== ''
   });
