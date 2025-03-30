@@ -1,16 +1,20 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation, Link } from "wouter";
-import { Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw } from "lucide-react";
+import { Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, Pencil, PlusCircle, Trash, FileText, FileUp, Eye, Loader2 } from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import EmulationManager from "@/components/admin/EmulationManager";
 import { FloatingEmulationButton } from "@/components/admin/FloatingEmulationButton";
 import { useToast } from "@/hooks/use-toast";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -1662,6 +1666,10 @@ function TeamsView() {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
   const [refundReason, setRefundReason] = useState("");
+  const [isPlayerDialogOpen, setIsPlayerDialogOpen] = useState(false);
+  const [isDeletePlayerDialogOpen, setIsDeletePlayerDialogOpen] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
+  const [isAddPlayerMode, setIsAddPlayerMode] = useState(false);
   const { toast } = useToast();
   
   // DialogDescription is already imported at the top of the file
@@ -1777,6 +1785,101 @@ function TeamsView() {
     onError: (error: Error) => {
       toast({
         title: "Error processing refund",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+  
+  // Player management mutations
+  const addPlayerMutation = useMutation({
+    mutationFn: async (playerData: any) => {
+      const response = await fetch(`/api/admin/teams/${playerData.teamId}/players`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(playerData)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to add player');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Player added",
+        description: "The player has been added to the team roster.",
+      });
+      setIsPlayerDialogOpen(false);
+      teamsQuery.refetch();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error adding player",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+  
+  const updatePlayerMutation = useMutation({
+    mutationFn: async (playerData: any) => {
+      const response = await fetch(`/api/admin/teams/${playerData.teamId}/players/${playerData.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(playerData)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update player');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Player updated",
+        description: "The player information has been updated.",
+      });
+      setIsPlayerDialogOpen(false);
+      teamsQuery.refetch();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error updating player",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+  
+  const deletePlayerMutation = useMutation({
+    mutationFn: async (player: any) => {
+      const response = await fetch(`/api/admin/teams/${player.teamId}/players/${player.id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete player');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Player removed",
+        description: "The player has been removed from the team roster.",
+      });
+      setIsDeletePlayerDialogOpen(false);
+      teamsQuery.refetch();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error removing player",
         description: error.message,
         variant: "destructive"
       });
@@ -2451,12 +2554,42 @@ function TeamsView() {
                 </Card>
               </div>
               
-              {selectedTeam.players && selectedTeam.players.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Team Roster ({selectedTeam.players.length} players)</CardTitle>
-                  </CardHeader>
-                  <CardContent>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle>
+                    Team Roster ({selectedTeam.players ? selectedTeam.players.length : 0} players)
+                  </CardTitle>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      // Initialize a new blank player
+                      setSelectedPlayer({
+                        id: 0,
+                        teamId: selectedTeam.id,
+                        firstName: '',
+                        lastName: '',
+                        dateOfBirth: '',
+                        jerseyNumber: '',
+                        position: '',
+                        medicalNotes: '',
+                        parentGuardianName: '',
+                        parentGuardianEmail: '',
+                        parentGuardianPhone: '',
+                        emergencyContactName: '',
+                        emergencyContactPhone: '',
+                        isActive: true
+                      });
+                      setIsAddPlayerMode(true);
+                      setIsPlayerDialogOpen(true);
+                    }}
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Player
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  {selectedTeam.players && selectedTeam.players.length > 0 ? (
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -2464,7 +2597,8 @@ function TeamsView() {
                           <TableHead>Date of Birth</TableHead>
                           <TableHead>Jersey #</TableHead>
                           <TableHead>Position</TableHead>
-                          <TableHead>Contact Email</TableHead>
+                          <TableHead>Contact</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -2474,14 +2608,45 @@ function TeamsView() {
                             <TableCell>{formatDate(player.dateOfBirth)}</TableCell>
                             <TableCell>{player.jerseyNumber || 'N/A'}</TableCell>
                             <TableCell>{player.position || 'N/A'}</TableCell>
-                            <TableCell>{player.contactEmail || 'N/A'}</TableCell>
+                            <TableCell>{player.parentGuardianEmail || 'N/A'}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => {
+                                    setSelectedPlayer(player);
+                                    setIsAddPlayerMode(false);
+                                    setIsPlayerDialogOpen(true);
+                                  }}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                  <span className="sr-only">Edit</span>
+                                </Button>
+                                <Button
+                                  variant="ghost" 
+                                  size="icon"
+                                  onClick={() => {
+                                    setSelectedPlayer(player);
+                                    setIsDeletePlayerDialogOpen(true);
+                                  }}
+                                >
+                                  <Trash className="h-4 w-4 text-destructive" />
+                                  <span className="sr-only">Delete</span>
+                                </Button>
+                              </div>
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
                     </Table>
-                  </CardContent>
-                </Card>
-              )}
+                  ) : (
+                    <div className="text-center py-4 text-muted-foreground">
+                      No players added to this team yet.
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
                 
               {/* Additional notes or special requirements */}
               {selectedTeam.specialRequirements && (
