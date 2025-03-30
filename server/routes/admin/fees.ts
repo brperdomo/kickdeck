@@ -24,6 +24,9 @@ router.get("/:eventId/fees", authenticateAdmin, async (req, res) => {
       beginDate: eventFees.beginDate,
       endDate: eventFees.endDate,
       applyToAll: eventFees.applyToAll,
+      feeType: eventFees.feeType,
+      isRequired: eventFees.isRequired,
+      accountingCodeId: eventFees.accountingCodeId,
       createdAt: eventFees.createdAt,
       updatedAt: eventFees.updatedAt,
     }).from(eventFees)
