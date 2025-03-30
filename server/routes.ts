@@ -3744,12 +3744,71 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           return res.json(previewAgeGroups);
         }
 
+        // First, check if we have existing age groups for this event
         let ageGroups = await db.query.eventAgeGroups.findMany({
           where: eq(eventAgeGroups.eventId, eventId),
         });
 
         // Log the count for debugging
         console.log(`Fetched ${ageGroups.length} age groups for event ${eventId}`);
+
+        // If we don't have enough age groups (less than 30) and we can find the seasonal scope ID,
+        // try to load the full set from the seasonal scope
+        if (ageGroups.length < 30) {
+          // Try to find the seasonal scope ID from event settings
+          const eventSettings = await db.query.eventSettings.findMany({
+            where: and(
+              eq(eventSettings.eventId, eventId),
+              eq(eventSettings.settingKey, 'seasonalScopeId')
+            )
+          });
+
+          // If we found a seasonal scope ID setting, use it to get all age groups
+          if (eventSettings.length > 0) {
+            const seasonalScopeId = parseInt(eventSettings[0].settingValue);
+            console.log(`Found seasonal scope ID ${seasonalScopeId} for event ${eventId}, fetching all age groups`);
+            
+            // Get the complete set of age groups from the seasonal scope
+            const seasonalAgeGroups = await db.query.ageGroupSettings.findMany({
+              where: eq(ageGroupSettings.seasonalScopeId, seasonalScopeId)
+            });
+            
+            console.log(`Found ${seasonalAgeGroups.length} age groups in seasonal scope ${seasonalScopeId}`);
+            
+            // Map the seasonal scope age groups to event age groups format
+            // but only for ones that don't already exist in the event
+            const existingIds = new Set(ageGroups.map(ag => `${ag.ageGroup}-${ag.gender}`));
+            
+            for (const scopeAgeGroup of seasonalAgeGroups) {
+              const ageGroupKey = `${scopeAgeGroup.ageGroup}-${scopeAgeGroup.gender}`;
+              
+              // Only add age groups that don't already exist
+              if (!existingIds.has(ageGroupKey)) {
+                // Insert the missing age group
+                const [newAgeGroup] = await db.insert(eventAgeGroups)
+                  .values({
+                    eventId,
+                    ageGroup: scopeAgeGroup.ageGroup,
+                    gender: scopeAgeGroup.gender,
+                    birthYear: scopeAgeGroup.birthYear,
+                    divisionCode: scopeAgeGroup.divisionCode || `${scopeAgeGroup.gender[0]}${scopeAgeGroup.ageGroup.substring(1)}`,
+                    fieldSize: "11v11", // Default
+                    projectedTeams: 8, // Default
+                    scoringRule: "Standard", // Default
+                    seasonalScopeId: seasonalScopeId,
+                    createdAt: new Date().toISOString(),
+                    isEligible: true // Default to eligible
+                  })
+                  .returning();
+                  
+                // Add to our existing results
+                ageGroups.push(newAgeGroup);
+              }
+            }
+            
+            console.log(`Added missing age groups, now have ${ageGroups.length} total age groups`);
+          }
+        }
 
         // More targeted deduplication that preserves all relevant groups
         // Only deduplicate exact duplicates with the same ID
