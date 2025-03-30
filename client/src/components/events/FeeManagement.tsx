@@ -155,9 +155,9 @@ export function FeeManagement() {
         console.error("Unexpected response format:", data);
         return [];
       }
-      const uniqueAgeGroups = Array.from(
-        new Map(data.map((group) => [group.divisionCode, group])).values(),
-      );
+      // Don't filter by divisionCode, as this can cause inconsistencies with the rest of the application
+      // Use the full dataset instead to ensure all age groups are displayed correctly
+      const uniqueAgeGroups = data;
       console.log(
         `Found ${uniqueAgeGroups.length} unique age groups for event ${eventIdParam}`,
       );
