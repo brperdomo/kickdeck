@@ -4041,6 +4041,124 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
     
+    // Player management endpoints
+    
+    // Add a player to a team
+    app.post('/api/admin/teams/:id/players', isAdmin, async (req, res) => {
+      try {
+        const teamId = parseInt(req.params.id);
+        
+        if (isNaN(teamId)) {
+          return res.status(400).json({ error: "Invalid team ID" });
+        }
+        
+        // Validate the player data
+        const validation = insertPlayerSchema.safeParse({
+          ...req.body,
+          teamId
+        });
+        
+        if (!validation.success) {
+          return res.status(400).json({ 
+            error: "Invalid player data", 
+            details: validation.error.errors 
+          });
+        }
+        
+        // Insert the new player
+        const newPlayer = await db.insert(playersTable).values({
+          teamId,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          dateOfBirth: req.body.dateOfBirth,
+          jerseyNumber: req.body.jerseyNumber,
+          position: req.body.position,
+          medicalNotes: req.body.medicalNotes,
+          parentGuardianName: req.body.parentGuardianName,
+          parentGuardianEmail: req.body.parentGuardianEmail,
+          parentGuardianPhone: req.body.parentGuardianPhone,
+          emergencyContactName: req.body.emergencyContactName,
+          emergencyContactPhone: req.body.emergencyContactPhone,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }).returning();
+        
+        res.status(201).json(newPlayer[0]);
+      } catch (error) {
+        console.error('Error adding player:', error);
+        res.status(500).json({ error: "Failed to add player" });
+      }
+    });
+    
+    // Update a player
+    app.patch('/api/admin/players/:id', isAdmin, async (req, res) => {
+      try {
+        const playerId = parseInt(req.params.id);
+        
+        if (isNaN(playerId)) {
+          return res.status(400).json({ error: "Invalid player ID" });
+        }
+        
+        // Check if player exists
+        const player = await db.select().from(playersTable).where(eq(playersTable.id, playerId));
+        
+        if (!player || player.length === 0) {
+          return res.status(404).json({ error: "Player not found" });
+        }
+        
+        // Fields that can be updated
+        const updateFields = [
+          'firstName', 'lastName', 'dateOfBirth', 'jerseyNumber', 
+          'position', 'medicalNotes', 'parentGuardianName', 
+          'parentGuardianEmail', 'parentGuardianPhone', 
+          'emergencyContactName', 'emergencyContactPhone', 'isActive'
+        ];
+        
+        // Build update object with only supplied fields
+        const updateData: Record<string, any> = {};
+        
+        for (const field of updateFields) {
+          if (req.body[field] !== undefined) {
+            updateData[field] = req.body[field];
+          }
+        }
+        
+        // Add updatedAt timestamp
+        updateData.updatedAt = new Date().toISOString();
+        
+        // Update the player
+        const [updatedPlayer] = await db.update(playersTable)
+          .set(updateData)
+          .where(eq(playersTable.id, playerId))
+          .returning();
+        
+        res.json(updatedPlayer);
+      } catch (error) {
+        console.error('Error updating player:', error);
+        res.status(500).json({ error: "Failed to update player" });
+      }
+    });
+    
+    // Delete a player
+    app.delete('/api/admin/players/:id', isAdmin, async (req, res) => {
+      try {
+        const playerId = parseInt(req.params.id);
+        
+        if (isNaN(playerId)) {
+          return res.status(400).json({ error: "Invalid player ID" });
+        }
+        
+        // Delete the player
+        await db.delete(playersTable).where(eq(playersTable.id, playerId));
+        
+        res.json({ success: true, message: "Player deleted successfully" });
+      } catch (error) {
+        console.error('Error deleting player:', error);
+        res.status(500).json({ error: "Failed to delete player" });
+      }
+    });
+    
     app.patch('/api/admin/teams/:id', isAdmin, async (req, res) => {
       try {
         const teamId = parseInt(req.params.id);
