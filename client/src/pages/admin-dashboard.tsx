@@ -2612,7 +2612,7 @@ function TeamsView() {
                     <div className="pt-2">
                       {(selectedTeam.termsAcknowledged || selectedTeam.status === 'paid') && (
                         <div className="flex flex-col gap-2">
-                          {selectedTeam.termsAcknowledgmentRecord ? (
+                          {selectedTeam.termsAcknowledgementRecord ? (
                             <Button 
                               variant="outline" 
                               size="sm"
