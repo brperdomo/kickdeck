@@ -340,7 +340,7 @@ export function FeeManagement() {
         const response = await fetch(
           `/api/admin/events/${eventIdParam}/fees/${feeData.id}`,
           {
-            method: "PUT",
+            method: "PATCH",
             headers: {
               "Content-Type": "application/json",
             },
