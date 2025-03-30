@@ -30,6 +30,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PaymentElement, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import StripeProvider from "@/components/StripeProvider";
 import { Footer } from "@/components/ui/Footer";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface AgeGroup {
   id: number;
@@ -63,6 +64,14 @@ interface Fee {
 }
 
 type RegistrationStep = 'auth' | 'personal' | 'team' | 'payment' | 'review' | 'complete';
+
+// Animation variants for step transitions
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+  transition: { duration: 0.3 }
+};
 
 // Payment component for handling Stripe checkout
 function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPreview = false }: { 
@@ -936,25 +945,40 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
             <CardTitle className="text-3xl font-bold text-[#2C5282]">{event.name}</CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
-            {currentStep === 'auth' && !user && (
-              <div className="text-center">
-                <h3 className="text-xl font-semibold mb-4">Sign In Required</h3>
-                <p className="text-gray-600 mb-6">
-                  Please sign in or create an account to register for this event.
-                </p>
-                <Button 
-                  size="lg"
-                  className="bg-[#2C5282] hover:bg-[#1A365D] text-white font-semibold px-8"
-                  onClick={handleAuthRedirect}
+            <AnimatePresence mode="wait">
+              {currentStep === 'auth' && !user && (
+                <motion.div 
+                  key="auth-step"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-center"
                 >
-                  Sign In / Register
-                </Button>
-              </div>
-            )}
+                  <h3 className="text-xl font-semibold mb-4">Sign In Required</h3>
+                  <p className="text-gray-600 mb-6">
+                    Please sign in or create an account to register for this event.
+                  </p>
+                  <Button 
+                    size="lg"
+                    className="bg-[#2C5282] hover:bg-[#1A365D] text-white font-semibold px-8"
+                    onClick={handleAuthRedirect}
+                  >
+                    Sign In / Register
+                  </Button>
+                </motion.div>
+              )}
 
             {currentStep === 'personal' && user && (
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmitPersonalDetails)} className="space-y-6">
+              <motion.div
+                key="personal-step"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmitPersonalDetails)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
@@ -1089,11 +1113,19 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   </div>
                 </form>
               </Form>
+              </motion.div>
             )}
 
             {currentStep === 'team' && user && (
-              <Form {...teamForm}>
-                <form onSubmit={teamForm.handleSubmit(onSubmitTeamRegistration)} className="space-y-6">
+              <motion.div
+                key="team-step"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Form {...teamForm}>
+                  <form onSubmit={teamForm.handleSubmit(onSubmitTeamRegistration)} className="space-y-6">
                   <div className="space-y-4">
                     <h3 className="text-xl font-semibold text-[#2C5282]">Team Information</h3>
                     
@@ -1566,10 +1598,17 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   </div>
                 </form>
               </Form>
+              </motion.div>
             )}
 
             {currentStep === 'payment' && user && (
-              <div className="space-y-6">
+              <motion.div 
+                key="payment-step"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-6">
                 <h3 className="text-xl font-semibold text-[#2C5282]">Payment and Terms</h3>
                 
                 {/* Cart Summary */}
@@ -1803,11 +1842,17 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     Back
                   </Button>
                 </div>
-              </div>
+              </motion.div>
             )}
             
             {currentStep === 'review' && user && (
-              <div className="space-y-6">
+              <motion.div 
+                key="review-step"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-6">
                 <h3 className="text-xl font-semibold text-[#2C5282]">Registration Complete</h3>
                 <div className="bg-green-50 border border-green-200 rounded-md p-4">
                   <div className="flex items-center">
@@ -1822,11 +1867,16 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 >
                   Go to Dashboard
                 </Button>
-              </div>
+              </motion.div>
             )}
 
             {(currentStep === 'auth' || currentStep === 'personal') && (
-              <>
+              <motion.div
+                key="event-info"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <h3 className="font-semibold text-[#2C5282]">Event Dates</h3>
@@ -1854,8 +1904,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     />
                   </div>
                 )}
-              </>
+              </motion.div>
             )}
+            </AnimatePresence>
           </CardContent>
         </Card>
       </div>
