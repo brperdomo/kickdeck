@@ -48,8 +48,8 @@ export async function generateTermsAcknowledgmentDocument(req: Request, res: Res
       teamName: team.name,
       eventId: team.eventId,
       eventName: event.name,
-      managerName: `${team.managerFirstName} ${team.managerLastName}`,
-      managerEmail: team.managerEmail,
+      managerName: team.managerName || 'Team Manager',
+      managerEmail: team.managerEmail || 'manager@example.com',
       timestamp: team.termsAcknowledgedAt ? new Date(team.termsAcknowledgedAt) : new Date(),
       agreementText: event.agreement || 'No terms and conditions provided',
       refundPolicyText: event.refundPolicy || 'No refund policy provided'
@@ -58,7 +58,7 @@ export async function generateTermsAcknowledgmentDocument(req: Request, res: Res
     // Save the PDF path to the team record
     await db.update(teams)
       .set({ 
-        termsAcknowledgmentRecord: pdfPath,
+        termsAcknowledgementRecord: pdfPath, // Note: using correct field name with British spelling "acknowledgement"
         updatedAt: new Date().toISOString()
       })
       .where(eq(teams.id, teamId));
@@ -95,12 +95,12 @@ export async function downloadTermsAcknowledgmentDocument(req: Request, res: Res
       return res.status(404).json({ error: 'Team not found' });
     }
     
-    if (!team.termsAcknowledgmentRecord) {
+    if (!team.termsAcknowledgementRecord) {
       return res.status(404).json({ error: 'No terms acknowledgment document found for this team' });
     }
     
     // Check if file exists
-    if (!fs.existsSync(team.termsAcknowledgmentRecord)) {
+    if (!fs.existsSync(team.termsAcknowledgementRecord)) {
       return res.status(404).json({ error: 'Document file not found' });
     }
     
@@ -108,7 +108,7 @@ export async function downloadTermsAcknowledgmentDocument(req: Request, res: Res
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="terms-acknowledgment-team-${teamId}.pdf"`);
     
-    const fileStream = fs.createReadStream(team.termsAcknowledgmentRecord);
+    const fileStream = fs.createReadStream(team.termsAcknowledgementRecord);
     fileStream.pipe(res);
     
   } catch (error) {

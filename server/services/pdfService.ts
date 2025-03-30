@@ -135,13 +135,10 @@ export async function generateTermsAcknowledgmentPDF(data: TermsAcknowledgmentDa
          .text('This document serves as an electronic record of agreement. It is stored securely and may be used for legal purposes.', { align: 'center' })
          .moveDown(0.5);
       
-      // Add page numbers
-      const totalPages = doc.bufferedPageRange().count;
-      for (let i = 0; i < totalPages; i++) {
-        doc.switchToPage(i);
-        doc.fontSize(8)
-           .text(`Page ${i + 1} of ${totalPages}`, doc.page.width - 100, doc.page.height - 50);
-      }
+      // Add page number at the bottom of the current page
+      const pageNumber = doc.bufferedPageRange().start + 1;
+      doc.fontSize(8)
+         .text(`Page ${pageNumber}`, doc.page.width - 100, doc.page.height - 50, { align: 'right' });
       
       // Finalize PDF file
       doc.end();
