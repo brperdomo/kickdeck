@@ -729,7 +729,7 @@ export function FeeManagement() {
           <Tabs defaultValue="fees">
             <TabsList>
               <TabsTrigger value="fees">Fee List</TabsTrigger>
-              <TabsTrigger value="assignments">Fee Assignments</TabsTrigger>
+              <TabsTrigger value="chart">Fee Assignment Chart</TabsTrigger>
             </TabsList>
 
             <TabsContent value="fees" className="space-y-4">
@@ -829,8 +829,8 @@ export function FeeManagement() {
               </Table>
             </TabsContent>
 
-            <TabsContent value="assignments" className="space-y-4">
-              {ageGroupsQuery.isLoading ? (
+            <TabsContent value="chart" className="space-y-4">
+              {ageGroupsQuery.isLoading || feesQuery.isLoading || feeAssignmentsQuery.isLoading ? (
                 <div className="flex justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
                 </div>
@@ -838,18 +838,34 @@ export function FeeManagement() {
                 <div className="text-center py-8 text-gray-500">
                   No age groups have been added to this event yet
                 </div>
+              ) : feesQuery.data?.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  No fees have been added to this event yet
+                </div>
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="min-w-[200px]">
+                <div className="space-y-6">
+                  <div className="text-sm text-gray-600 mb-2">
+                    This chart shows which age groups have fees assigned. Click on a cell to toggle the assignment.
+                  </div>
+                  
+                  <div className="bg-white border rounded-lg overflow-hidden">
+                    <div className="grid" style={{ 
+                      gridTemplateColumns: `minmax(180px, auto) repeat(${feesQuery.data?.length || 0}, 1fr)`,
+                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)" 
+                    }}>
+                      {/* Header Row */}
+                      <div className="bg-gray-50 p-3 font-medium border-b">
                         Age Group / Division
-                      </TableHead>
+                      </div>
+                      
+                      {/* Fee Column Headers */}
                       {feesQuery.data?.map((fee) => (
-                        <TableHead key={fee.id} className="text-center">
+                        <div key={fee.id} className="bg-gray-50 p-3 text-center border-b border-l">
                           <div className="flex flex-col items-center">
-                            <span>{fee.name}</span>
-                            <span className="text-xs font-normal">
+                            <span className="font-medium truncate max-w-full" title={fee.name}>
+                              {fee.name}
+                            </span>
+                            <span className="text-xs text-gray-500">
                               {formatCurrency(fee.amount)}
                             </span>
                             <div className="mt-1 flex flex-col items-center gap-1">
@@ -866,58 +882,79 @@ export function FeeManagement() {
                               )}
                             </div>
                           </div>
-                        </TableHead>
+                        </div>
                       ))}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {ageGroupsQuery.data?.map((ageGroup) => (
-                      <TableRow key={ageGroup.id}>
-                        <TableCell className="font-medium">
-                          <div className="flex flex-col">
-                            <span className="text-sm font-semibold">
-                              {ageGroup.name}
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              {ageGroup.gender} • {ageGroup.divisionCode}
-                            </span>
+                      
+                      {/* Age Groups and Assignment Cells */}
+                      {ageGroupsQuery.data?.map((ageGroup) => (
+                        <React.Fragment key={ageGroup.id}>
+                          {/* Age Group Column */}
+                          <div className="p-3 font-medium border-b">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-semibold">
+                                {ageGroup.name}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {ageGroup.gender} • {ageGroup.divisionCode}
+                              </span>
+                            </div>
                           </div>
-                        </TableCell>
-                        {feesQuery.data?.map((fee) => (
-                          <TableCell key={fee.id}>
-                            <Checkbox
-                              checked={
-                                // More defensively check if the fee is assigned to this age group
-                                !!selectedAgeGroups[ageGroup.id]?.[fee.id] ||
-                                // Also check in the assignments data as a backup
-                                !!feeAssignmentsQuery.data?.some(
-                                  (a) => a.ageGroupId === ageGroup.id && a.feeId === fee.id
-                                )
-                              }
-                              onCheckedChange={(checked) => {
-                                console.log(`Setting age group ${ageGroup.id} fee ${fee.id} to ${checked}`);
-                                setSelectedAgeGroups((prev) => ({
-                                  ...prev,
-                                  [ageGroup.id]: {
-                                    ...(prev[ageGroup.id] || {}),
-                                    [fee.id]: !!checked,
-                                  },
-                                }));
-                              }}
-                            />
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                          
+                          {/* Fee Assignment Cells */}
+                          {feesQuery.data?.map((fee) => {
+                            const isAssigned = 
+                              selectedAgeGroups[ageGroup.id]?.[fee.id] === true || 
+                              feeAssignmentsQuery.data?.some(
+                                a => a.ageGroupId === ageGroup.id && a.feeId === fee.id
+                              ) === true;
+                            
+                            return (
+                              <div 
+                                key={`${ageGroup.id}-${fee.id}`} 
+                                className={`p-3 border-b border-l flex items-center justify-center cursor-pointer transition-colors ${
+                                  isAssigned 
+                                    ? 'bg-green-50 hover:bg-green-100' 
+                                    : 'bg-gray-50 hover:bg-gray-100'
+                                }`}
+                                onClick={() => {
+                                  setSelectedAgeGroups(prev => {
+                                    const newState = {...prev};
+                                    if (!newState[ageGroup.id]) {
+                                      newState[ageGroup.id] = {};
+                                    }
+                                    newState[ageGroup.id][fee.id] = !isAssigned;
+                                    return newState;
+                                  });
+                                }}
+                              >
+                                {isAssigned && (
+                                  <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                      <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center pt-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 rounded-full bg-green-500"></div>
+                      <span className="text-sm text-gray-700">Assigned</span>
+                      <div className="w-4 h-4 rounded-full bg-gray-200 ml-4"></div>
+                      <span className="text-sm text-gray-700">Not Assigned</span>
+                    </div>
+                    <Button onClick={handleSaveAssignments}>
+                      Save Assignments
+                    </Button>
+                  </div>
+                </div>
               )}
-
-              <div className="flex justify-end mt-4">
-                <Button onClick={handleSaveAssignments}>
-                  Save Assignments
-                </Button>
-              </div>
             </TabsContent>
           </Tabs>
         </CardContent>
@@ -1191,27 +1228,21 @@ export function FeeManagement() {
                   id={`age-group-${ageGroup.id || ageGroup.divisionCode}`}
                   className="h-5 w-5 border-2 rounded-sm data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 data-[state=checked]:text-white"
                   checked={
-                    // Handle both normal IDs and predefined IDs
-                    !!selectedAgeGroups[
-                      ageGroup.id || `predefined-${ageGroup.divisionCode}`
-                    ]?.[selectedFeeId] ||
-                    !!feeAssignmentsQuery.data?.some(
-                      (a) =>
-                        (a.ageGroupId === ageGroup.id ||
-                        a.divisionCode === ageGroup.divisionCode) &&
-                        a.feeId === selectedFeeId
-                    )
+                    selectedAgeGroups[ageGroup.id]?.[selectedFeeId] === true || 
+                    feeAssignmentsQuery.data?.some(
+                      a => (a.ageGroupId === ageGroup.id || a.divisionCode === ageGroup.divisionCode) && 
+                           a.feeId === selectedFeeId
+                    ) === true
                   }
                   onCheckedChange={(checked) => {
-                    const groupId =
-                      ageGroup.id || `predefined-${ageGroup.divisionCode}`;
-                    setSelectedAgeGroups((prev) => ({
-                      ...prev,
-                      [groupId]: {
-                        ...(prev[groupId] || {}),
-                        [selectedFeeId]: !!checked,
-                      },
-                    }));
+                    setSelectedAgeGroups(prev => {
+                      const newState = {...prev};
+                      if (!newState[ageGroup.id]) {
+                        newState[ageGroup.id] = {};
+                      }
+                      newState[ageGroup.id][selectedFeeId] = checked === true;
+                      return newState;
+                    });
                   }}
                 />
                 <div className="ml-2 flex-1">
@@ -1235,21 +1266,16 @@ export function FeeManagement() {
                 size="sm"
                 onClick={() => {
                   // Select all age groups
-                  const newSelections = { ...selectedAgeGroups };
-                  ageGroupsQuery.data?.forEach((ageGroup) => {
-                    // Get group ID - could be actual ID or a predefined code
-                    const groupId = ageGroup.id || `predefined-${ageGroup.divisionCode}`;
-                    
-                    // Initialize this group's selections if needed
-                    if (!newSelections[groupId]) {
-                      newSelections[groupId] = {};
-                    }
-                    
-                    // Mark as selected
-                    newSelections[groupId][selectedFeeId] = true;
-                    console.log(`Selected age group ${groupId} for fee ${selectedFeeId}`);
+                  setSelectedAgeGroups(prev => {
+                    const newSelections = { ...prev };
+                    ageGroupsQuery.data?.forEach((ageGroup) => {
+                      if (!newSelections[ageGroup.id]) {
+                        newSelections[ageGroup.id] = {};
+                      }
+                      newSelections[ageGroup.id][selectedFeeId] = true;
+                    });
+                    return newSelections;
                   });
-                  setSelectedAgeGroups(newSelections);
                 }}
               >
                 Select All
@@ -1259,21 +1285,16 @@ export function FeeManagement() {
                 size="sm"
                 onClick={() => {
                   // Deselect all age groups
-                  const newSelections = { ...selectedAgeGroups };
-                  ageGroupsQuery.data?.forEach((ageGroup) => {
-                    // Get group ID - could be actual ID or a predefined code
-                    const groupId = ageGroup.id || `predefined-${ageGroup.divisionCode}`;
-                    
-                    // Initialize this group's selections if needed
-                    if (!newSelections[groupId]) {
-                      newSelections[groupId] = {};
-                    }
-                    
-                    // Mark as not selected
-                    newSelections[groupId][selectedFeeId] = false;
-                    console.log(`Deselected age group ${groupId} for fee ${selectedFeeId}`);
+                  setSelectedAgeGroups(prev => {
+                    const newSelections = { ...prev };
+                    ageGroupsQuery.data?.forEach((ageGroup) => {
+                      if (!newSelections[ageGroup.id]) {
+                        newSelections[ageGroup.id] = {};
+                      }
+                      newSelections[ageGroup.id][selectedFeeId] = false;
+                    });
+                    return newSelections;
                   });
-                  setSelectedAgeGroups(newSelections);
                 }}
               >
                 Deselect All
