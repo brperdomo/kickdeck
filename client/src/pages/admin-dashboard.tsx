@@ -2559,7 +2559,11 @@ function TeamsView() {
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Manager:</div>
-                      <div className="col-span-2">{selectedTeam.managerEmail}</div>
+                      <div className="col-span-2">{selectedTeam.managerName || selectedTeam.managerEmail}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Manager Email:</div>
+                      <div className="col-span-2">{selectedTeam.managerEmail || 'N/A'}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Manager Phone:</div>
@@ -2567,23 +2571,27 @@ function TeamsView() {
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Head Coach:</div>
-                      <div className="col-span-2">{selectedTeam.headCoachName || 'N/A'}</div>
+                      <div className="col-span-2">{selectedTeam.coachData?.headCoachName || 'N/A'}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Coach Email:</div>
-                      <div className="col-span-2">{selectedTeam.headCoachEmail || 'N/A'}</div>
+                      <div className="col-span-2">{selectedTeam.coachData?.headCoachEmail || 'N/A'}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Coach Phone:</div>
-                      <div className="col-span-2">{selectedTeam.headCoachPhone || 'N/A'}</div>
+                      <div className="col-span-2">{selectedTeam.coachData?.headCoachPhone || 'N/A'}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Asst. Coach:</div>
-                      <div className="col-span-2">{selectedTeam.assistantCoachName || 'N/A'}</div>
+                      <div className="col-span-2">{selectedTeam.coachData?.assistantCoachName || 'N/A'}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Asst. Email:</div>
-                      <div className="col-span-2">{selectedTeam.assistantCoachEmail || 'N/A'}</div>
+                      <div className="col-span-2">{selectedTeam.coachData?.assistantCoachEmail || 'N/A'}</div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Asst. Phone:</div>
+                      <div className="col-span-2">{selectedTeam.coachData?.assistantCoachPhone || 'N/A'}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Club/Org:</div>
