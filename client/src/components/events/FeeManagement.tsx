@@ -879,8 +879,7 @@ export function FeeManagement() {
                               {ageGroup.name}
                             </span>
                             <span className="text-xs text-gray-500">
-                              {ageGroup.gender} • {ageGroup.divisionCode} •{" "}
-                              {ageGroup.birthYear}
+                              {ageGroup.gender} • {ageGroup.divisionCode}
                             </span>
                           </div>
                         </TableCell>
@@ -888,9 +887,15 @@ export function FeeManagement() {
                           <TableCell key={fee.id}>
                             <Checkbox
                               checked={
-                                selectedAgeGroups[ageGroup.id]?.[fee.id] === true
+                                // More defensively check if the fee is assigned to this age group
+                                !!selectedAgeGroups[ageGroup.id]?.[fee.id] ||
+                                // Also check in the assignments data as a backup
+                                !!feeAssignmentsQuery.data?.some(
+                                  (a) => a.ageGroupId === ageGroup.id && a.feeId === fee.id
+                                )
                               }
                               onCheckedChange={(checked) => {
+                                console.log(`Setting age group ${ageGroup.id} fee ${fee.id} to ${checked}`);
                                 setSelectedAgeGroups((prev) => ({
                                   ...prev,
                                   [ageGroup.id]: {
@@ -1187,16 +1192,15 @@ export function FeeManagement() {
                   className="h-5 w-5 border-2 rounded-sm data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 data-[state=checked]:text-white"
                   checked={
                     // Handle both normal IDs and predefined IDs
-                    selectedAgeGroups[
+                    !!selectedAgeGroups[
                       ageGroup.id || `predefined-${ageGroup.divisionCode}`
                     ]?.[selectedFeeId] ||
-                    feeAssignmentsQuery.data?.some(
+                    !!feeAssignmentsQuery.data?.some(
                       (a) =>
-                        a.ageGroupId === ageGroup.id ||
-                        (a.divisionCode === ageGroup.divisionCode &&
-                          a.feeId === selectedFeeId),
-                    ) ||
-                    false
+                        (a.ageGroupId === ageGroup.id ||
+                        a.divisionCode === ageGroup.divisionCode) &&
+                        a.feeId === selectedFeeId
+                    )
                   }
                   onCheckedChange={(checked) => {
                     const groupId =
@@ -1218,8 +1222,7 @@ export function FeeManagement() {
                     {ageGroup.name}
                   </Label>
                   <div className="text-xs text-gray-500">
-                    Gender: {ageGroup.gender} • Division:{" "}
-                    {ageGroup.divisionCode} • Birth Year: {ageGroup.birthYear}
+                    {ageGroup.gender} • {ageGroup.divisionCode}
                   </div>
                 </div>
               </div>
@@ -1234,10 +1237,17 @@ export function FeeManagement() {
                   // Select all age groups
                   const newSelections = { ...selectedAgeGroups };
                   ageGroupsQuery.data?.forEach((ageGroup) => {
-                    if (!newSelections[ageGroup.id]) {
-                      newSelections[ageGroup.id] = {};
+                    // Get group ID - could be actual ID or a predefined code
+                    const groupId = ageGroup.id || `predefined-${ageGroup.divisionCode}`;
+                    
+                    // Initialize this group's selections if needed
+                    if (!newSelections[groupId]) {
+                      newSelections[groupId] = {};
                     }
-                    newSelections[ageGroup.id][selectedFeeId] = true;
+                    
+                    // Mark as selected
+                    newSelections[groupId][selectedFeeId] = true;
+                    console.log(`Selected age group ${groupId} for fee ${selectedFeeId}`);
                   });
                   setSelectedAgeGroups(newSelections);
                 }}
@@ -1251,9 +1261,17 @@ export function FeeManagement() {
                   // Deselect all age groups
                   const newSelections = { ...selectedAgeGroups };
                   ageGroupsQuery.data?.forEach((ageGroup) => {
-                    if (newSelections[ageGroup.id]) {
-                      newSelections[ageGroup.id][selectedFeeId] = false;
+                    // Get group ID - could be actual ID or a predefined code
+                    const groupId = ageGroup.id || `predefined-${ageGroup.divisionCode}`;
+                    
+                    // Initialize this group's selections if needed
+                    if (!newSelections[groupId]) {
+                      newSelections[groupId] = {};
                     }
+                    
+                    // Mark as not selected
+                    newSelections[groupId][selectedFeeId] = false;
+                    console.log(`Deselected age group ${groupId} for fee ${selectedFeeId}`);
                   });
                   setSelectedAgeGroups(newSelections);
                 }}
