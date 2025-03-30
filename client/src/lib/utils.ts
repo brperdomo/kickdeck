@@ -41,13 +41,41 @@ export function formatBytes(bytes: number, decimals: number = 2): string {
 }
 
 export function formatCurrency(amount: number): string {
-  // Convert the amount to a fixed 2 decimal places to ensure proper formatting
-  // This fixes the issue where amounts like 945 are displayed as $94,500.00
-  const fixedAmount = Number(amount.toFixed(2));
+  // Check if amount is a valid number
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    console.warn("Invalid amount provided to formatCurrency:", amount);
+    return "$0.00";
+  }
+
+  // Debug log to track currency values
+  console.debug(`Formatting currency amount: ${amount} (type: ${typeof amount})`);
   
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2
-  }).format(fixedAmount);
+  try {
+    // Convert to a number explicitly to handle string inputs
+    let numericAmount = Number(amount);
+    
+    // If amount seems very large (potentially a value stored in cents)
+    // convert to dollars. This is a safeguard in case our normalization
+    // in the API didn't catch everything
+    if (numericAmount > 10000) { // Assuming normal fees don't exceed $10,000
+      console.debug(`Large amount detected (${numericAmount}), normalizing by dividing by 100`);
+      numericAmount = numericAmount / 100;
+    }
+    
+    // Ensure amount has at most 2 decimal places
+    const fixedAmount = Number(numericAmount.toFixed(2));
+    
+    // Format as currency
+    const formatted = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2
+    }).format(fixedAmount);
+    
+    console.debug(`Formatted currency result: ${formatted}`);
+    return formatted;
+  } catch (error) {
+    console.error("Error formatting currency amount:", amount, error);
+    return "$0.00";
+  }
 }
