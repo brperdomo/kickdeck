@@ -1913,6 +1913,16 @@ function TeamsView() {
   });
   
 
+  // Update selectedTeam when player data is available
+  useEffect(() => {
+    if (playersQuery.data && selectedTeam) {
+      console.log('Players data received:', playersQuery.data);
+      setSelectedTeam(prevTeam => ({
+        ...prevTeam,
+        players: playersQuery.data
+      }));
+    }
+  }, [playersQuery.data, selectedTeam?.id]);
 
   // View team details
   const handleViewTeamDetails = (team: any) => {
