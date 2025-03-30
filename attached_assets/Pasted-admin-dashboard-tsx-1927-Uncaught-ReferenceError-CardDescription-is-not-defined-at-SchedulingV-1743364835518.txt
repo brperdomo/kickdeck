@@ -1,0 +1,42 @@
+admin-dashboard.tsx:1927 Uncaught ReferenceError: CardDescription is not defined
+    at SchedulingView (admin-dashboard.tsx:1927:14)
+SchedulingView	@	admin-dashboard.tsx:1927
+
+admin-dashboard.tsx:1927 Uncaught ReferenceError: CardDescription is not defined
+    at SchedulingView (admin-dashboard.tsx:1927:14)
+SchedulingView	@	admin-dashboard.tsx:1927
+chunk-RPCDYKBN.js?v=ac0700cc:14032 The above error occurred in the <SchedulingView> component:
+
+    at SchedulingView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2662:45)
+    at div
+    at div
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:6727:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=ac0700cc:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=ac0700cc:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:51:31)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=ac0700cc:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=ac0700cc:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=ac0700cc:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=ac0700cc:2829:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError	@	chunk-RPCDYKBN.js?v=ac0700cc:14032
+update.callback	@	chunk-RPCDYKBN.js?v=ac0700cc:14052
+callCallback	@	chunk-RPCDYKBN.js?v=ac0700cc:11248
+commitUpdateQueue	@	chunk-RPCDYKBN.js?v=ac0700cc:11265
+commitLayoutEffectOnFiber	@	chunk-RPCDYKBN.js?v=ac0700cc:17093
+commitLayoutMountEffects_complete	@	chunk-RPCDYKBN.js?v=ac0700cc:17980
+commitLayoutEffects_begin	@	chunk-RPCDYKBN.js?v=ac0700cc:17969
+commitLayoutEffects	@	chunk-RPCDYKBN.js?v=ac0700cc:17920
+commitRootImpl	@	chunk-RPCDYKBN.js?v=ac0700cc:19353
+commitRoot	@	chunk-RPCDYKBN.js?v=ac0700cc:19277
+performSyncWorkOnRoot	@	chunk-RPCDYKBN.js?v=ac0700cc:18895
+flushSyncCallbacks	@	chunk-RPCDYKBN.js?v=ac0700cc:9119
+(anonymous)	@	chunk-RPCDYKBN.js?v=ac0700cc:18627
+chunk-RPCDYKBN.js?v=ac0700cc:9129 Uncaught ReferenceError: CardDescription is not defined
+    at SchedulingView (admin-dashboard.tsx:1927:14)
+SchedulingView	@	admin-dashboard.tsx:1927
