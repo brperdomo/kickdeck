@@ -726,30 +726,62 @@ export function registerRoutes(app: Express): Server {
                   throw new Error("Team ID is missing for player insertion");
                 }
                 
-                // IMPORTANT: Use camelCase with Drizzle ORM - it maps to snake_case columns automatically
-                const insertResult = await tx
-                  .insert(players)
-                  .values({
-                    teamId: team.id, 
-                    firstName: player.firstName,
-                    lastName: player.lastName,
-                    jerseyNumber: jerseyNumberInt,
-                    dateOfBirth: dateOfBirthValue || player.dateOfBirth || now,
-                    position: player.position || null,
-                    medicalNotes: player.medicalNotes || null,
-                    parentGuardianName: player.parentGuardianName || null,
-                    parentGuardianEmail: player.parentGuardianEmail || null,
-                    parentGuardianPhone: player.parentGuardianPhone || null,
-                    emergencyContactName: player.emergencyContactName,
-                    emergencyContactPhone: player.emergencyContactPhone,
-                    isActive: true,
-                    createdAt: now,
-                    updatedAt: now
-                  })
-                  .returning();
-                  
-                // Get the first player from the returned array
-                const insertedPlayer = insertResult[0];
+                // Create a new object with the exact schema properties
+                const playerValues = {
+                  teamId: team.id,
+                  firstName: player.firstName,
+                  lastName: player.lastName,
+                  jerseyNumber: jerseyNumberInt,
+                  dateOfBirth: dateOfBirthValue || player.dateOfBirth || now,
+                  position: player.position || null,
+                  medicalNotes: player.medicalNotes || null,
+                  parentGuardianName: player.parentGuardianName || null,
+                  parentGuardianEmail: player.parentGuardianEmail || null,
+                  parentGuardianPhone: player.parentGuardianPhone || null,
+                  emergencyContactName: player.emergencyContactName || '',
+                  emergencyContactPhone: player.emergencyContactPhone || '',
+                  isActive: true,
+                  createdAt: now,
+                  updatedAt: now
+                };
+                
+                // Log the exact player values we're using
+                console.log('Inserting player with values:', JSON.stringify(playerValues, null, 2));
+                
+                // Direct SQL approach without parameterized queries
+                // Build query with explicit column names and values
+                const columns = Object.keys(playerValues).map(key => {
+                  // Convert camelCase to snake_case
+                  return key.replace(/([A-Z])/g, '_$1').toLowerCase();
+                }).join(', ');
+                
+                // Format values directly in the SQL query with proper escaping
+                const valuesList = Object.values(playerValues).map(value => {
+                  if (value === null) return 'NULL';
+                  if (typeof value === 'string') return `'${value.replace(/'/g, "''")}'`;
+                  if (value instanceof Date) return `'${value.toISOString()}'`;
+                  if (typeof value === 'boolean') return value ? 'TRUE' : 'FALSE';
+                  return String(value);
+                });
+                
+                const valuesString = valuesList.join(', ');
+                
+                console.log(`SQL Insert: columns=${columns}, values=${valuesString}`);
+                
+                // Build direct SQL query without parameters
+                const directSqlQuery = `
+                  INSERT INTO players (${columns})
+                  VALUES (${valuesString})
+                  RETURNING id
+                `;
+                
+                console.log('Executing direct SQL query:', directSqlQuery);
+                const insertResult = await tx.execute(directSqlQuery);
+                
+                console.log('Player inserted successfully:', insertResult);
+                
+                // Get the returned player ID
+                const insertedPlayer = { id: insertResult.rows?.[0]?.id };
                 
                 console.log('Player inserted successfully with ID:', insertedPlayer?.id);
                 console.log('Player inserted with ID:', insertedPlayer?.id || 'unknown');
