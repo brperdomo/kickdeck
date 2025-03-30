@@ -3222,12 +3222,31 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .groupBy(eventAgeGroups.id);
 
         // Get all complexes with their fields and full metadata
-        // Using a try-catch to handle potential column mismatches
+        // Create a safer query that selects specific columns instead of the whole complexes table
         let complexData = [];
         try {
+          console.log("Fetching complex data with safe query");
+          // Only select the specific columns we need from complexes to avoid missing column errors
           complexData = await db
             .select({
-              complex: complexes,
+              complex: {
+                id: complexes.id,
+                name: complexes.name,
+                address: complexes.address,
+                city: complexes.city,
+                state: complexes.state,
+                country: complexes.country,
+                openTime: complexes.openTime,
+                closeTime: complexes.closeTime,
+                rules: complexes.rules,
+                directions: complexes.directions,
+                isOpen: complexes.isOpen,
+                createdAt: complexes.createdAt,
+                updatedAt: complexes.updatedAt,
+                // Add default values for potentially missing columns
+                latitude: sql`NULL::text`,
+                longitude: sql`NULL::text`
+              },
               fields: sql<any>`json_agg(
                 CASE WHEN ${fields.id} IS NOT NULL THEN
                   json_build_object(
@@ -3249,39 +3268,61 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             .groupBy(complexes.id)
             .orderBy(complexes.name);
         } catch (error) {
-          console.error("Error fetching complexes:", error);
-          // Get complexes with a simplified query that won't fail due to missing columns
-          const basicComplexes = await db
-            .select()
-            .from(complexes);
+          console.error("Error fetching complexes with safe query:", error);
+          
+          try {
+            // Alternative approach with even safer SQL
+            console.log("Trying alternative approach with explicit SQL query");
             
-          // Create a compatible complex data structure
-          complexData = await Promise.all(basicComplexes.map(async (complex) => {
-            // Get fields for this complex
-            const fieldsList = await db
-              .select()
-              .from(fields)
-              .where(eq(fields.complexId, complex.id));
-              
-            return {
-              complex: { 
-                ...complex,
-                // Add missing fields with default values if needed
-                latitude: complex.latitude || null,
-                longitude: complex.longitude || null
-              },
-              fields: fieldsList.map(field => ({
-                id: field.id,
-                name: field.name,
-                hasLights: field.hasLights,
-                hasParking: field.hasParking,
-                isOpen: field.isOpen,
-                specialInstructions: field.specialInstructions
-              })),
-              openFields: fieldsList.filter(f => f.isOpen).length,
-              closedFields: fieldsList.filter(f => !f.isOpen).length
-            };
-          }));
+            // Get complexes with a raw SQL query that doesn't reference latitude/longitude columns
+            const basicComplexes = await db.execute(`
+              SELECT 
+                id, name, address, city, state, country, 
+                open_time, close_time, rules, directions, is_open, 
+                created_at, updated_at
+              FROM complexes
+            `);
+            
+            // Process each complex to add its fields
+            complexData = await Promise.all(basicComplexes.map(async (complex) => {
+              // Get fields for this complex
+              const fieldsList = await db
+                .select()
+                .from(fields)
+                .where(eq(fields.complexId, complex.id));
+                
+              return {
+                complex: { 
+                  ...complex,
+                  // Add default values for latitude/longitude
+                  latitude: null,
+                  longitude: null,
+                  // Fix property names to match camelCase used elsewhere
+                  openTime: complex.open_time,
+                  closeTime: complex.close_time,
+                  isOpen: complex.is_open,
+                  createdAt: complex.created_at,
+                  updatedAt: complex.updated_at
+                },
+                fields: fieldsList.map(field => ({
+                  id: field.id,
+                  name: field.name,
+                  hasLights: field.hasLights,
+                  hasParking: field.hasParking,
+                  isOpen: field.isOpen,
+                  specialInstructions: field.specialInstructions
+                })),
+                openFields: fieldsList.filter(f => f.isOpen).length,
+                closedFields: fieldsList.filter(f => !f.isOpen).length
+              };
+            }));
+          } catch (secondError) {
+            console.error("Still failed with alternative approach:", secondError);
+            
+            // As a last resort, return an empty array
+            console.log("Using empty complexData as fallback");
+            complexData = [];
+          }
         }
 
         // Get scoring rules
