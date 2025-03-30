@@ -81,6 +81,7 @@ import {
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
 import { BrandingPreview } from "@/components/BrandingPreview";
+import { DetailedFeeBreakdown } from "@/components/teams/DetailedFeeBreakdown";
 import { useExportProcess } from "@/hooks/use-export-process";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDate } from "@/lib/utils";
@@ -2754,35 +2755,17 @@ function TeamsView() {
                             Selected fees: {selectedTeam.selectedFeeIds.split(',').length}
                           </p>
                           
-                          {/* This is a placeholder - in a future update, we can fetch actual fee details */}
-                          <div className="text-sm">
-                            <div className="flex justify-between py-1 border-b border-slate-200">
-                              <span>Registration Fee</span>
-                              <span className="font-medium">
-                                {selectedTeam.registrationFee ? formatCurrency(selectedTeam.registrationFee) : 'N/A'}
-                              </span>
-                            </div>
-                            
-                            {selectedTeam.totalAmount && selectedTeam.registrationFee && 
-                              selectedTeam.totalAmount > selectedTeam.registrationFee && (
-                              <div className="flex justify-between py-1 border-b border-slate-200">
-                                <span>Additional Fees</span>
-                                <span className="font-medium">
-                                  {formatCurrency(selectedTeam.totalAmount - selectedTeam.registrationFee)}
-                                </span>
-                              </div>
-                            )}
-                            
-                            <div className="flex justify-between py-1 font-semibold">
-                              <span>Total</span>
-                              <span>
-                                {selectedTeam.totalAmount 
-                                  ? formatCurrency(selectedTeam.totalAmount) 
-                                  : selectedTeam.registrationFee 
-                                    ? formatCurrency(selectedTeam.registrationFee) 
-                                    : 'N/A'}
-                              </span>
-                            </div>
+                          <DetailedFeeBreakdown teamId={selectedTeam.id} selectedFeeIds={selectedTeam.selectedFeeIds} />
+                          
+                          <div className="flex justify-between py-1 font-semibold mt-2 border-t border-slate-200 pt-2">
+                            <span>Total</span>
+                            <span>
+                              {selectedTeam.totalAmount 
+                                ? formatCurrency(selectedTeam.totalAmount) 
+                                : selectedTeam.registrationFee 
+                                  ? formatCurrency(selectedTeam.registrationFee) 
+                                  : 'N/A'}
+                            </span>
                           </div>
                         </div>
                       </div>
