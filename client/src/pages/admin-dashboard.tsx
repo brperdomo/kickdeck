@@ -1,6 +1,9 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
 import { useLocation, Link } from "wouter";
-import { Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, Pencil, PlusCircle, CalendarRange, UserRoundPlus } from "lucide-react";
+import { 
+  Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
+  Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX
+} from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import EmulationManager from "@/components/admin/EmulationManager";
@@ -76,8 +79,21 @@ import {
   Moon,
   Sun,
   Trash2,
-  FileUp
+  FileUp,
+  WandSparkles,
+  Sparkles,
+  Wand2,
+  CalendarIcon,
+  Map
 } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
 import { BrandingPreview } from "@/components/BrandingPreview";
@@ -119,6 +135,8 @@ import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPa
 import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
 import RolePermissionsManager from "@/components/admin/RolePermissionsManager"; // Added import
 import { Toggle } from '@/components/ui/toggle';
+import { Progress } from '@/components/ui/progress';
+import { Checkbox } from '@/components/ui/checkbox';
 
 
 function EmulationStatus() {
@@ -1643,16 +1661,427 @@ function HouseholdsView() {
 }
 
 function SchedulingView() {
+  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedAgeGroup, setSelectedAgeGroup] = useState<string>("");
+  const [aiSchedulingModalOpen, setAiSchedulingModalOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [scheduleQuality, setScheduleQuality] = useState<number | null>(null);
+  const [conflicts, setConflicts] = useState<any[]>([]);
+  
+  // Mock data until we implement the backend
+  const mockGames: any[] = [];
+  const mockAgeGroups: any[] = [];
+  
+  // Fetch events for dropdown
+  const eventsQuery = useQuery({
+    queryKey: ['admin', 'events'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/events');
+      if (!response.ok) throw new Error('Failed to fetch events');
+      return response.json();
+    }
+  });
+  
+  // This query will be implemented later to fetch actual game data
+  const gamesQuery = useQuery({
+    queryKey: ['admin', 'games', selectedEvent, format(selectedDate, 'yyyy-MM-dd'), selectedAgeGroup],
+    queryFn: async () => {
+      if (!selectedEvent) return { games: [], ageGroups: [] };
+      
+      // TODO: Implement the actual API endpoint
+      // For now, return empty arrays
+      return { games: mockGames, ageGroups: mockAgeGroups };
+    },
+    enabled: !!selectedEvent
+  });
+  
+  // Function to generate AI schedule
+  const generateSchedule = async (constraints: any) => {
+    setIsGenerating(true);
+    try {
+      // TODO: Implement the actual API call
+      // For demo purposes, we'll simulate a loading state
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setScheduleQuality(80);
+      setConflicts([
+        { type: 'coach_conflict', description: 'Coach John Smith has teams playing at the same time', severity: 'high' },
+        { type: 'field_overbooked', description: 'Field A3 has two games scheduled at 2 PM', severity: 'critical' },
+        { type: 'rest_period', description: 'Team Dragons has less than 2 hours between games', severity: 'medium' }
+      ]);
+    } catch (error) {
+      console.error("Error generating schedule:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate schedule",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+  
+  // Function to optimize existing schedule
+  const optimizeSchedule = async () => {
+    setIsOptimizing(true);
+    try {
+      // TODO: Implement the actual API call
+      // For demo purposes, we'll simulate a loading state
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      setScheduleQuality(95);
+      setConflicts([
+        { type: 'rest_period', description: 'Team Dragons has less than 2 hours between games', severity: 'medium' }
+      ]);
+      
+      toast({
+        title: "Success",
+        description: "Schedule optimized successfully",
+      });
+    } catch (error) {
+      console.error("Error optimizing schedule:", error);
+      toast({
+        title: "Error",
+        description: "Failed to optimize schedule",
+        variant: "destructive",
+      });
+    } finally {
+      setIsOptimizing(false);
+    }
+  };
+  
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Scheduling</h2>
+        <h2 className="text-2xl font-bold">AI-Powered Scheduling</h2>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline"
+            onClick={() => setAiSchedulingModalOpen(true)}
+            disabled={!selectedEvent}
+          >
+            <Wand2 className="mr-2 h-4 w-4" />
+            Generate AI Schedule
+          </Button>
+          <Button 
+            variant="default"
+            onClick={optimizeSchedule}
+            disabled={!selectedEvent || isOptimizing || mockGames.length === 0}
+          >
+            {isOptimizing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Optimizing...
+              </>
+            ) : (
+              <>
+                <Sparkles className="mr-2 h-4 w-4" />
+                Optimize Schedule
+              </>
+            )}
+          </Button>
+        </div>
       </div>
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-muted-foreground">Game scheduling interface coming soon</p>
-        </CardContent>
-      </Card>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Event</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Select value={selectedEvent || ""} onValueChange={setSelectedEvent}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select an event" />
+              </SelectTrigger>
+              <SelectContent>
+                {eventsQuery.isLoading ? (
+                  <SelectItem value="loading" disabled>Loading events...</SelectItem>
+                ) : eventsQuery.isError ? (
+                  <SelectItem value="error" disabled>Error loading events</SelectItem>
+                ) : (
+                  eventsQuery.data?.map((event: any) => (
+                    <SelectItem key={event.id} value={event.id.toString()}>
+                      {event.name}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Date</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {format(selectedDate, "PPP")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => date && setSelectedDate(date)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Schedule Quality</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {scheduleQuality ? (
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm font-medium">Quality Score:</span>
+                  <span className={cn(
+                    "text-sm font-medium",
+                    scheduleQuality >= 90 ? "text-green-600" : 
+                    scheduleQuality >= 70 ? "text-amber-600" : 
+                    "text-red-600"
+                  )}>
+                    {scheduleQuality}/100
+                  </span>
+                </div>
+                <Progress value={scheduleQuality} className={cn(
+                  scheduleQuality >= 90 ? "bg-green-100" : 
+                  scheduleQuality >= 70 ? "bg-amber-100" : 
+                  "bg-red-100"
+                )} />
+                <div className="text-xs text-muted-foreground">
+                  {conflicts.length === 0 ? (
+                    "No conflicts detected"
+                  ) : (
+                    `${conflicts.length} conflict${conflicts.length === 1 ? '' : 's'} detected`
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-2 text-muted-foreground">
+                Generate a schedule to see quality metrics
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+      
+      {conflicts.length > 0 && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg">Conflicts & Warnings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {conflicts.map((conflict, index) => (
+                <div key={index} className="flex items-start gap-2 pb-3 border-b last:border-0">
+                  <div className={cn(
+                    "p-2 rounded-full",
+                    conflict.severity === 'critical' ? "bg-red-100" :
+                    conflict.severity === 'high' ? "bg-amber-100" :
+                    "bg-blue-100"
+                  )}>
+                    <AlertTriangle className={cn(
+                      "h-5 w-5",
+                      conflict.severity === 'critical' ? "text-red-600" :
+                      conflict.severity === 'high' ? "text-amber-600" :
+                      "text-blue-600"
+                    )} />
+                  </div>
+                  <div>
+                    <h4 className="font-medium">{
+                      conflict.type === 'coach_conflict' ? "Coach Conflict" :
+                      conflict.type === 'field_overbooked' ? "Field Overbooked" :
+                      "Rest Period Violation"
+                    }</h4>
+                    <p className="text-sm text-muted-foreground">{conflict.description}</p>
+                  </div>
+                  <div className="ml-auto">
+                    <Button variant="outline" size="sm">
+                      <WandSparkles className="mr-2 h-4 w-4" />
+                      Auto Fix
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {selectedEvent ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Schedule Visualization</CardTitle>
+            <CardDescription>
+              Click and drag to move games between fields and time slots
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {gamesQuery.isLoading ? (
+              <div className="flex items-center justify-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : (
+              mockGames.length > 0 ? (
+                <ScheduleVisualization
+                  games={gamesQuery.data?.games || []}
+                  ageGroups={gamesQuery.data?.ageGroups || []}
+                  selectedAgeGroup={selectedAgeGroup}
+                  onAgeGroupChange={setSelectedAgeGroup}
+                  isLoading={gamesQuery.isLoading}
+                  date={selectedDate}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center h-64 space-y-4">
+                  <ClipboardX className="h-12 w-12 text-muted-foreground" />
+                  <div className="text-center">
+                    <h3 className="font-medium">No Games Scheduled</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Use the AI Schedule Generator to create a schedule for this event
+                    </p>
+                  </div>
+                  <Button onClick={() => setAiSchedulingModalOpen(true)}>
+                    <Wand2 className="mr-2 h-4 w-4" />
+                    Generate Schedule
+                  </Button>
+                </div>
+              )
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="p-12">
+            <div className="flex flex-col items-center justify-center text-center space-y-4">
+              <CalendarDays className="h-12 w-12 text-muted-foreground" />
+              <div>
+                <h3 className="font-medium text-lg">Select an Event to Start</h3>
+                <p className="text-muted-foreground">
+                  Choose an event from the dropdown above to view and manage its schedule
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {/* AI Schedule Generation Dialog */}
+      <Dialog open={aiSchedulingModalOpen} onOpenChange={setAiSchedulingModalOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>AI Schedule Generator</DialogTitle>
+            <DialogDescription>
+              Configure settings for the AI to generate an optimal tournament schedule.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <h4 className="font-medium">Schedule Constraints</h4>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="min-rest">Minimum Rest Period</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input id="min-rest" type="number" defaultValue="2" min="1" max="12" />
+                    <span className="text-sm text-muted-foreground">hours</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Minimum time between games for the same team</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="max-games">Max Games Per Day</Label>
+                  <Input id="max-games" type="number" defaultValue="3" min="1" max="6" />
+                  <p className="text-xs text-muted-foreground">Maximum number of games a team can play in one day</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <h4 className="font-medium">Coach Conflict Resolution</h4>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="resolve-coach-conflicts" defaultChecked />
+                <Label htmlFor="resolve-coach-conflicts">Automatically resolve coach conflicts</Label>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                The AI will ensure coaches with multiple teams don't have overlapping games
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <h4 className="font-medium">Field Utilization</h4>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="field-optimization" defaultChecked />
+                <Label htmlFor="field-optimization">Optimize field usage</Label>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Distribute games evenly across available fields to minimize downtime
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <h4 className="font-medium">Tournament Format</h4>
+              <RadioGroup defaultValue="round-robin-knockout">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="round-robin-knockout" id="round-robin-knockout" />
+                  <Label htmlFor="round-robin-knockout">Group stage + knockout</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="double-elimination" id="double-elimination" />
+                  <Label htmlFor="double-elimination">Double elimination</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="single-elimination" id="single-elimination" />
+                  <Label htmlFor="single-elimination">Single elimination</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAiSchedulingModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => {
+                setAiSchedulingModalOpen(false);
+                generateSchedule({
+                  minRest: 2,
+                  maxGamesPerDay: 3,
+                  resolveCoachConflicts: true,
+                  optimizeFieldUsage: true,
+                  tournamentFormat: 'round-robin-knockout'
+                });
+              }}
+              disabled={isGenerating}
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Wand2 className="mr-2 h-4 w-4" />
+                  Generate Schedule
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
