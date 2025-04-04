@@ -136,6 +136,7 @@ import FormTemplateCreatePage from "@/pages/form-template-create";
 import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
 import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
 import RolePermissionsManager from "@/components/admin/RolePermissionsManager"; // Added import
+import { AdminBanner } from "@/components/admin/AdminBanner"; // Import the AdminBanner component
 import { Toggle } from '@/components/ui/toggle';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -181,7 +182,7 @@ function EmulationStatus() {
   );
 }
 
-function AdminBanner() {
+function LogoBanner() {
   const { settings } = useOrganizationSettings();
 
   return (
@@ -4224,6 +4225,7 @@ function AdminDashboard() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
+        {/* Use the imported AdminBanner component that includes the ViewToggle */}
         <AdminBanner />
         <div className="p-8">
           {/* Welcome Card */}
