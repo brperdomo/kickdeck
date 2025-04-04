@@ -1,16 +1,15 @@
 import { Link } from "wouter";
-import { Home, Settings, LogOut, Moon, Sun } from "lucide-react";
+import { Home, User, LogOut, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "@/hooks/use-theme";
 import { useEffect, useState } from "react";
 import { ViewToggle } from "@/components/ViewToggle";
 import { useUser } from "@/hooks/use-user";
 
 /**
- * AdminBanner component displays a navigation bar at the top of admin pages
- * for consistent navigation and access to common admin functions
+ * UserBanner component displays a navigation bar at the top of user dashboard pages
+ * for consistent navigation and access to common functions
  */
-export function AdminBanner() {
+export function UserBanner() {
   const { user } = useUser();
   // Using local state for dark mode preference
   const [isDarkMode, setIsDarkMode] = useState(
@@ -18,7 +17,6 @@ export function AdminBanner() {
   );
   
   // Toggle function that only updates the DOM and localStorage
-  // Skip API calls completely to prevent page refresh
   const toggleDarkMode = (e: React.MouseEvent) => {
     // Prevent default button behavior
     e.preventDefault();
@@ -38,7 +36,7 @@ export function AdminBanner() {
     // Update localStorage for persistence
     localStorage.setItem('theme-appearance', newMode ? 'dark' : 'light');
     
-    // Silently update theme on the server in a delayed manner
+    // Silently update theme on the server
     setTimeout(() => {
       fetch('/api/theme', {
         method: 'POST',
@@ -54,7 +52,7 @@ export function AdminBanner() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-primary-700 to-primary-900 dark:from-gray-900 dark:to-gray-950 text-white p-3 sticky top-0 z-10 shadow-lg backdrop-blur-sm">
+    <div className="bg-gradient-to-r from-green-600 to-green-800 dark:from-gray-900 dark:to-gray-950 text-white p-3 sticky top-0 z-10 shadow-lg backdrop-blur-sm">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center gap-4">
           <Button 
@@ -62,7 +60,7 @@ export function AdminBanner() {
             asChild 
             className="text-white hover:bg-white/10 rounded-full transition-all duration-200 px-4"
           >
-            <Link href="/admin">
+            <Link href="/dashboard">
               <Home className="mr-2 h-4 w-4" />
               Dashboard
             </Link>
@@ -72,17 +70,17 @@ export function AdminBanner() {
             asChild 
             className="text-white hover:bg-white/10 rounded-full transition-all duration-200 px-4"
           >
-            <Link href="/admin/settings">
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
+            <Link href="/household">
+              <User className="mr-2 h-4 w-4" />
+              My Household
             </Link>
           </Button>
         </div>
         
         <div className="flex items-center gap-2">
-          {/* View Toggle Button - only shown for admin users */}
+          {/* View Toggle Button - only shown for admin users who have both roles */}
           {user?.isAdmin && (
-            <ViewToggle currentView="admin" />
+            <ViewToggle currentView="member" />
           )}
 
           <Button
