@@ -8,7 +8,6 @@ import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import EmulationManager from "@/components/admin/EmulationManager";
 import { FloatingEmulationButton } from "@/components/admin/FloatingEmulationButton";
-import { useToast } from "@/hooks/use-toast";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -100,8 +99,11 @@ import { BrandingPreview } from "@/components/BrandingPreview";
 import { DetailedFeeBreakdown } from "@/components/teams/DetailedFeeBreakdown";
 import ScheduleVisualization from "@/components/ScheduleVisualization";
 import { useExportProcess } from "@/hooks/use-export-process";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDate } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion } from "framer-motion";
+import { MotionCard } from "@/components/ui/motion-card";
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -131,7 +133,6 @@ import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Imp
 import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
 import FormTemplateEditPage from "@/pages/form-template-edit";
 import FormTemplateCreatePage from "@/pages/form-template-create";
-import FormTemplatesPage from "@/pages/form-templates";
 import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
 import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
 import RolePermissionsManager from "@/components/admin/RolePermissionsManager"; // Added import
