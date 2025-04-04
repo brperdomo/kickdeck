@@ -2539,11 +2539,18 @@ function TeamsView() {
       
       // Map the status field to a paymentStatus property
       // This fixes the issue where the UI expects paymentStatus but DB uses status field
-      let paymentStatus = 'Unpaid';
-      if (teamData.status === 'paid') {
-        paymentStatus = 'paid';
-      } else if (teamData.status === 'refunded') {
-        paymentStatus = 'refunded';
+      let paymentStatus = teamData.paymentStatus || 'Unpaid';
+      
+      // If there's no explicit paymentStatus field, try to infer it from other fields
+      if (!teamData.paymentStatus) {
+        if (teamData.status === 'paid') {
+          paymentStatus = 'paid';
+        } else if (teamData.status === 'refunded') {
+          paymentStatus = 'refunded';
+        } else if (teamData.paymentIntentId && teamData.paymentDate) {
+          // If the team has payment details, assume it's paid
+          paymentStatus = 'paid';
+        }
       }
       
       // Combine any additional data from the parent object with the team data
