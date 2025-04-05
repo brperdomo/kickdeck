@@ -125,15 +125,27 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
   // Check email existence
   const checkEmail = async (email: string) => {
     try {
-      if (admin && email === admin.email) return; // Skip check if email unchanged
+      // Always clear existing error first
+      form.clearErrors("email");
+      
+      // Skip check if editing and email is unchanged
+      if (admin && email === admin.email) {
+        setEmailExists(false);
+        return; 
+      }
+      
       const response = await fetch(`/api/admin/check-email?email=${encodeURIComponent(email)}`);
       const data = await response.json();
+      console.log("Email check response:", data);
+      
+      // Only set error if it's actually a duplicate
       setEmailExists(data.exists);
       if (data.exists) {
         form.setError("email", { message: "This email is already registered" });
       }
     } catch (error) {
       console.error("Error checking email:", error);
+      setEmailExists(false);
     }
   };
 
@@ -193,10 +205,16 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
 
   const onSubmit = async (data: CreateFormValues | EditFormValues) => {
     try {
-      if (emailExists && (!admin || data.email !== admin.email)) {
+      // Skip email check when simply updating the same admin with same email
+      const isUpdatingSameEmail = admin && data.email === admin.email;
+      
+      if (emailExists && !isUpdatingSameEmail) {
         form.setError("email", { message: "This email is already registered" });
         return;
       }
+      
+      // If we're here, we can proceed with the mutation
+      console.log("Submitting form with data:", data);
       await adminMutation.mutateAsync(data);
     } catch (error) {
       console.error("Form submission error:", error);
@@ -355,7 +373,10 @@ export function AdminModal({ open, onOpenChange, admin }: AdminModalProps) {
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={adminMutation.isPending || emailExists}>
+              <Button type="submit" disabled={
+                adminMutation.isPending || 
+                (emailExists && (!admin || form.getValues("email") !== admin.email))
+              }>
                 {adminMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {admin ? "Update Administrator" : "Create Administrator"}
               </Button>
