@@ -37,33 +37,33 @@ export default {
           900: '#303880',
         },
         secondary: {
-          DEFAULT: "hsl(134 59% 49%)", // #34C759
+          DEFAULT: "hsl(190 80% 50%)", // Teal/cyan color
           foreground: "hsl(var(--secondary-foreground))",
-          50: '#ebfff3',
-          100: '#d0ffe4',
-          200: '#a1fcca',
-          300: '#61f5a9',
-          400: '#34e987',
-          500: '#10c766',
-          600: '#06a052',
-          700: '#047842',
-          800: '#066037',
-          900: '#064f2f',
+          50: '#eafcff',
+          100: '#d0f7ff',
+          200: '#a1eeff',
+          300: '#61e0f5',
+          400: '#34d0e9',
+          500: '#10b6c7',
+          600: '#0695a2',
+          700: '#047884',
+          800: '#066068',
+          900: '#064f54',
         },
         success: {
-          DEFAULT: "hsl(134 59% 49%)", // #34C759
+          DEFAULT: "hsl(150 65% 45%)", // Match primary color
           foreground: "hsl(0 0% 100%)",
         },
         warning: {
-          DEFAULT: "hsl(32 100% 50%)", // #FF9500
-          foreground: "hsl(0 0% 100%)",
+          DEFAULT: "hsl(45 100% 50%)", // Bright yellow for warnings
+          foreground: "hsl(0 0% 10%)", // Dark text for better contrast on yellow
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(32 100% 50%)", // #FF9500
+          DEFAULT: "hsl(260 60% 55%)", // Purple accent
           foreground: "hsl(var(--accent-foreground))",
         },
         destructive: {
