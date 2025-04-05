@@ -560,19 +560,29 @@ function AdministratorsView() {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Administrators</h2>
-        <Button onClick={() => setIsAddModalOpen(true)}>
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add Administrator
-        </Button>
-      </div>
+      <AnimatedContainer animation="slideUp" delay={0.1}>
+        <div className="flex justify-between items-center mb-6">
+          <motion.h2 
+            className="text-2xl font-bold"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >Administrators</motion.h2>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button onClick={() => setIsAddModalOpen(true)}>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Add Administrator
+            </Button>
+          </motion.div>
+        </div>
+      </AnimatedContainer>
 
-      <Tabs
-        value={selectedTab}
-        onValueChange={setSelectedTab}
-        className="space-y-4"
-      >
+      <AnimatedContainer animation="fadeIn" delay={0.3}>
+        <Tabs
+          value={selectedTab}
+          onValueChange={setSelectedTab}
+          className="space-y-4"
+        >
         <TabsList className="grid w-full grid-cols-4 gap-4">
           <TabsTrigger
             value="super_admin"
@@ -680,6 +690,7 @@ function AdministratorsView() {
           </TabsContent>
         ))}
       </Tabs>
+      </AnimatedContainer>
 
       <AdminModal
         open={isAddModalOpen}
