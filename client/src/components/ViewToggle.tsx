@@ -65,7 +65,7 @@ export function ViewToggle() {
     <Button 
       variant="outline" 
       size="sm" 
-      className="rounded-full px-3 gap-1 h-8 text-white hover:bg-white/10 border-white"
+      className="rounded-full px-3 gap-1 h-8 text-primary-foreground bg-primary hover:bg-primary/80 border-primary"
       onClick={toggleView}
     >
       <ToggleRight className="h-4 w-4" />
