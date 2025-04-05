@@ -11,6 +11,8 @@ import { FloatingEmulationButton } from "@/components/admin/FloatingEmulationBut
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { AnimatedSidebar, AnimatedContent } from "@/components/admin/AnimatedSidebar";
+import { AnimatedNavigationButton } from "@/components/admin/AnimatedNavigationButton";
 import {
   Collapsible,
   CollapsibleContent,
@@ -101,7 +103,7 @@ import ScheduleVisualization from "@/components/ScheduleVisualization";
 import { useExportProcess } from "@/hooks/use-export-process";
 import { formatDate } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { MotionCard } from "@/components/ui/motion-card";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -3996,27 +3998,17 @@ function AdminDashboard() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar */}
-      <div className="w-64 bg-card border-r flex flex-col h-full text-foreground">
-        <div className="p-4 flex flex-col h-full">
-          {/* Header */}
-          <div className="flex items-center gap-2 mb-6">
-            <Calendar className="h-6 w-6 text-primary" />
-            <h1 className="font-semibold text-xl">MatchPro Dashboard</h1>
-          </div>
-
-          {/* Navigation */}
-          <div className="space-y-2">
-            <NavigationButton
-              view="administrators"
-              activeView={activeView}
-              onClick={() => setActiveView('administrators')}
-              icon={<Shield className="mr-2 h-4 w-4" />}
-              label="Administrators"
-              permission="view_administrators"
-            />
-            
-            <NavigationButton
+      {/* Animated Sidebar */}
+      <AnimatedSidebar>
+        {/* Navigation - using staggered animation with map and indexes */}
+        {[
+          {
+            view: "administrators",
+            onClick: () => setActiveView('administrators'),
+            icon: <Shield className="h-4 w-4" />,
+            label: "Administrators",
+            permission: "view_administrators",
+          }]}
               view="formTemplates"
               activeView={activeView}
               onClick={() => setActiveView('formTemplates')}

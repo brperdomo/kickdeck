@@ -1,99 +1,133 @@
-import { Link } from "wouter";
-import { Home, Settings, LogOut, Moon, Sun } from "lucide-react";
+import React from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "@/hooks/use-theme";
-import { useEffect, useState } from "react";
-import { ViewToggle } from "@/components/ViewToggle";
-import { useUser } from "@/hooks/use-user";
+import { Home, ArrowLeft, Bell, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 /**
  * AdminBanner component displays a navigation bar at the top of admin pages
  * for consistent navigation and access to common admin functions
  */
 export function AdminBanner() {
-  const { user } = useUser();
-  // Using local state for dark mode preference
-  const [isDarkMode, setIsDarkMode] = useState(
-    typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false
-  );
+  const [location, navigate] = useLocation();
+  const isRootAdmin = location === "/admin" || location === "/admin/events";
   
-  // Toggle function that only updates the DOM and localStorage
-  // Skip API calls completely to prevent page refresh
-  const toggleDarkMode = (e: React.MouseEvent) => {
-    // Prevent default button behavior
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Toggle the state
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
-    
-    // Update the document class directly
-    if (newMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    
-    // Update localStorage for persistence
-    localStorage.setItem('theme-appearance', newMode ? 'dark' : 'light');
-    
-    // Silently update theme on the server in a delayed manner
-    setTimeout(() => {
-      fetch('/api/theme', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          variant: 'professional',
-          primary: localStorage.getItem('theme-primary') || 'hsl(221.2 83.2% 53.3%)',
-          appearance: newMode ? 'dark' : 'light',
-          radius: 0.5
-        })
-      }).catch(err => console.error('Background theme update failed:', err));
-    }, 500);
-  };
-
   return (
-    <div className="bg-gradient-to-r from-primary-700 to-primary-900 dark:from-gray-900 dark:to-gray-950 text-white p-3 sticky top-0 z-10 shadow-lg backdrop-blur-sm">
-      <div className="container mx-auto flex justify-between items-center">
-        <div className="flex items-center">
-          <Link href="/admin" className="flex items-center">
-            <img 
-              src="/uploads/MatchProAI_Linear_BlackNOBUFFER.png" 
-              alt="MatchPro.ai Logo" 
-              className="h-8 w-auto"
-            />
-          </Link>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          {/* View Toggle Button - only shown for admin users */}
-          {user?.isAdmin && (
-            <ViewToggle />
+    <motion.div 
+      className="bg-card/50 backdrop-blur-sm p-4 border-b sticky top-0 z-10"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, type: "spring" }}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          {/* Back button - only show when not on root admin */}
+          {!isRootAdmin && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/admin")}
+                title="Back to Dashboard"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </motion.div>
           )}
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleDarkMode}
-            className="rounded-full w-9 h-9 p-0 text-white hover:bg-white/10"
-            aria-label="Toggle dark mode"
-          >
-            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
           
-          <Button 
-            variant="ghost" 
-            asChild 
-            className="text-white hover:bg-white/10 rounded-full transition-all duration-200 px-4"
+          {/* Home button - always visible */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Link href="/logout">
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Link>
-          </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/")}
+              title="Home"
+            >
+              <Home className="h-5 w-5" />
+            </Button>
+          </motion.div>
+          
+          {/* Page title - dynamically determined */}
+          <motion.h2 
+            className="text-xl font-semibold hidden md:block"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            {getBannerTitle(location)}
+          </motion.h2>
+        </div>
+
+        {/* Right-side tools */}
+        <div className="flex items-center space-x-3">
+          {/* Search - hidden on mobile */}
+          <motion.div 
+            className="relative hidden md:block"
+            initial={{ opacity: 0, width: 0 }}
+            animate={{ opacity: 1, width: "auto" }}
+            transition={{ delay: 0.3 }}
+          >
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search..."
+              className="pl-8 w-[200px] lg:w-[300px] h-9"
+            />
+          </motion.div>
+          
+          {/* Notifications */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative"
+          >
+            <Button variant="ghost" size="icon" title="Notifications">
+              <Bell className="h-5 w-5" />
+              <motion.span 
+                className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.5 }}
+              />
+            </Button>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
+}
+
+// Helper function to get the banner title based on current location
+function getBannerTitle(path: string): string {
+  // Extract the main section from the path
+  const pathParts = path.split('/').filter(Boolean);
+  
+  if (pathParts.length < 2) return "Dashboard";
+  
+  // Handle special cases
+  if (pathParts[1] === 'events') {
+    if (pathParts.length === 2) return "Events";
+    if (pathParts[2] === 'create') return "Create Event";
+    if (pathParts[2] === 'edit') return "Edit Event";
+    if (pathParts[3] === 'fees') return "Event Fees";
+    if (pathParts[3] === 'coupons') return "Event Coupons";
+  }
+  
+  // Default transformations for other sections
+  const section = pathParts[1]
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase());
+  
+  return section;
 }

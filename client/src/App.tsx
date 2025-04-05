@@ -9,7 +9,7 @@ import AuthPage from "@/pages/auth-page";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
-import AdminDashboard from "@/pages/admin-dashboard";
+import { AdminDashboard } from "@/pages/fixed-admin-dashboard";
 import CreateEvent from "@/pages/create-event";
 import CouponManagement from "@/pages/coupon-management";
 import AccountingCodeManagement from "@/pages/accounting-code-management";
