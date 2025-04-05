@@ -21,6 +21,9 @@ import EventApplicationForm from "@/pages/event-application-form";
 import EmailTemplatesPage from "@/pages/email-templates";
 import EmailTemplateEdit from "@/pages/email-template-edit";
 import TeamStatusTest from "@/pages/team-status-test";
+import FormTemplatesPage from "@/pages/form-templates";
+import FormTemplateCreatePage from "@/pages/form-template-create";
+import FormTemplateEditPage from "@/pages/form-template-edit";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import { FeeManagement } from "@/components/events/FeeManagement";
@@ -107,6 +110,15 @@ function Router() {
           </Route>
           <Route path="/admin/email-templates">
             {user.isAdmin ? <EmailTemplatesPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/form-templates/create">
+            {user.isAdmin ? <FormTemplateCreatePage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/form-templates/:id/edit">
+            {user.isAdmin ? <FormTemplateEditPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/form-templates">
+            {user.isAdmin ? <FormTemplatesPage /> : <NotFound />}
           </Route>
           <Route path="/admin/team-status-test">
             {user.isAdmin ? <TeamStatusTest /> : <NotFound />}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import Link from 'next/link'; // Assuming Next.js is used for routing
+import { Link } from 'wouter';
 
 // Add CSS to use admin dashboard variables
 const sidebarStyles = {
@@ -77,19 +77,16 @@ export function AdminSidebar({ children, styles }) {
   );
 }
 
-export function AdminSidebarItem({ active, activePath, item, styles, ...props }) { // Added activePath and item props
+export function AdminSidebarItem({ activePath, item, styles, ...props }) { // Removed active prop
   return (
     <Link
-      href={item.path} // Use href for Link component
+      href={item.path} // Use href for Link component (proper for wouter)
       key={item.path}
       className={`flex items-center space-x-2 px-4 py-3 rounded-md transition-colors`}
       style={{
         backgroundColor: activePath === item.path ? (styles?.adminNavActive || '#E6F7FF') : 'transparent',
         color: activePath === item.path ? (styles?.adminNavText || '#000000') : (styles?.adminNavText || '#666666'),
         fontWeight: activePath === item.path ? 'medium' : 'normal',
-        ':hover': {
-          backgroundColor: styles?.adminNavHover || '#f3f4f6'
-        }
       }}
       onMouseOver={(e) => {
         if (activePath !== item.path) {
@@ -103,6 +100,7 @@ export function AdminSidebarItem({ active, activePath, item, styles, ...props })
       }}
       {...props}
     >
+      {item.icon && <span className="mr-2">{item.icon}</span>}
       {item.label} {/* Added item.label to display link text */}
     </Link>
   );

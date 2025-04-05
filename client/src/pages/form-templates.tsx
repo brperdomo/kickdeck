@@ -1,11 +1,9 @@
-
-import { FormTemplateEditor } from "@/components/admin/FormTemplateEditor";
+import { FormTemplatesView } from "@/components/admin/FormTemplatesView";
 import { AdminLayout, AdminSidebar, AdminSidebarItem } from "@/components/layouts/AdminLayout.tsx";
 import { useLocation } from "wouter";
-import { Users, Settings, FileText, LayoutTemplate, ArrowLeft } from "lucide-react";
-import { Link } from "wouter";
+import { Users, Settings, FileText, LayoutTemplate } from "lucide-react";
 
-export default function FormTemplateCreatePage() {
+export default function FormTemplatesPage() {
   const [location] = useLocation();
   
   // Default admin styling
@@ -46,13 +44,8 @@ export default function FormTemplateCreatePage() {
   return (
     <AdminLayout sidebar={sidebar} styles={adminStyles}>
       <div className="p-6">
-        <div className="flex items-center mb-6">
-          <Link href="/admin/form-templates" className="mr-4 text-blue-600 hover:text-blue-800">
-            <ArrowLeft size={16} className="inline mr-1" /> Back to Templates
-          </Link>
-          <h1 className="text-2xl font-bold">Create Form Template</h1>
-        </div>
-        <FormTemplateEditor />
+        <h1 className="text-2xl font-bold mb-6">Form Templates</h1>
+        <FormTemplatesView />
       </div>
     </AdminLayout>
   );
