@@ -1921,11 +1921,20 @@ function SchedulingView() {
                 ) : eventsQuery.isError ? (
                   <SelectItem value="error" disabled>Error loading events</SelectItem>
                 ) : (
-                  eventsQuery.data?.map((event: any) => (
-                    <SelectItem key={event.id} value={event.id.toString()}>
-                      {event.name}
-                    </SelectItem>
-                  ))
+                  Array.isArray(eventsQuery.data) 
+                    ? eventsQuery.data.map((event: any) => (
+                      <SelectItem key={event.id} value={event.id.toString()}>
+                        {event.name}
+                      </SelectItem>
+                    ))
+                    : Array.isArray(eventsQuery.data?.events)
+                      ? eventsQuery.data.events.map((event: any) => (
+                        <SelectItem key={event.id} value={event.id.toString()}>
+                          {event.name}
+                        </SelectItem>
+                      ))
+                      : (<SelectItem value="none" disabled>No events available</SelectItem>)
+                  
                 )}
               </SelectContent>
             </Select>
@@ -2681,11 +2690,20 @@ function TeamsView() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Events</SelectItem>
-                      {eventsQuery.data?.map((event: any) => (
-                        <SelectItem key={event.id} value={event.id.toString()}>
-                          {event.name}
-                        </SelectItem>
-                      ))}
+                      {Array.isArray(eventsQuery.data) 
+                        ? eventsQuery.data.map((event: any) => (
+                          <SelectItem key={event.id} value={event.id.toString()}>
+                            {event.name}
+                          </SelectItem>
+                        ))
+                        : Array.isArray(eventsQuery.data?.events)
+                          ? eventsQuery.data.events.map((event: any) => (
+                            <SelectItem key={event.id} value={event.id.toString()}>
+                              {event.name}
+                            </SelectItem>
+                          ))
+                          : (<SelectItem value="none" disabled>No events available</SelectItem>)
+                      }
                     </SelectContent>
                   </Select>
                 </motion.div>
