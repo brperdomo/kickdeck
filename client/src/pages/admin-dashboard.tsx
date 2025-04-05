@@ -4200,8 +4200,16 @@ function AdminDashboard() {
                 <CollapsibleContent className="space-y-2 pl-4">
                   {hasPermission('edit_organization_settings') && (
                     <Button
-                      variant={activeSettingsView === 'branding' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
+                      variant="ghost"
+                      className="w-full justify-start relative overflow-hidden group"
+                      style={{
+                        backgroundColor: activeSettingsView === 'branding' 
+                          ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
+                          : 'transparent',
+                        color: activeSettingsView === 'branding'
+                          ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
+                          : 'var(--admin-nav-text, inherit)',
+                      }}
                       onClick={() => {
                         setActiveView('settings');
                         setActiveSettingsView('branding');
@@ -4214,8 +4222,16 @@ function AdminDashboard() {
                   
                   {hasPermission('process_payments') && (
                     <Button
-                      variant={activeSettingsView === 'payments' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
+                      variant="ghost"
+                      className="w-full justify-start relative overflow-hidden group"
+                      style={{
+                        backgroundColor: activeSettingsView === 'payments' 
+                          ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
+                          : 'transparent',
+                        color: activeSettingsView === 'payments'
+                          ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
+                          : 'var(--admin-nav-text, inherit)',
+                      }}
                       onClick={() => {
                         setActiveView('settings');
                         setActiveSettingsView('payments');
@@ -4228,8 +4244,16 @@ function AdminDashboard() {
                   
                   {hasPermission('view_organization_settings') && (
                     <Button
-                      variant={activeSettingsView === 'general' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
+                      variant="ghost"
+                      className="w-full justify-start relative overflow-hidden group"
+                      style={{
+                        backgroundColor: activeSettingsView === 'general' 
+                          ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
+                          : 'transparent',
+                        color: activeSettingsView === 'general'
+                          ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
+                          : 'var(--admin-nav-text, inherit)',
+                      }}
                       onClick={() => {
                         setActiveView('settings');
                         setActiveSettingsView('general');
@@ -4242,8 +4266,16 @@ function AdminDashboard() {
                   
                   {hasPermission('edit_organization_settings') && (
                     <Button
-                      variant={activeSettingsView === 'styling' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
+                      variant="ghost"
+                      className="w-full justify-start relative overflow-hidden group"
+                      style={{
+                        backgroundColor: activeSettingsView === 'styling' 
+                          ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
+                          : 'transparent',
+                        color: activeSettingsView === 'styling'
+                          ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
+                          : 'var(--admin-nav-text, inherit)',
+                      }}
                       onClick={() => {
                         setActiveView('settings');
                         setActiveSettingsView('styling');
@@ -4259,8 +4291,16 @@ function AdminDashboard() {
 
             {/* Account */}
             <Button
-              variant={activeView === 'account' ? 'secondary' : 'ghost'}
-              className="w-full justify-start"
+              variant="ghost"
+              className="w-full justify-start relative overflow-hidden group"
+              style={{
+                backgroundColor: activeView === 'account' 
+                  ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
+                  : 'transparent',
+                color: activeView === 'account'
+                  ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
+                  : 'var(--admin-nav-text, inherit)',
+              }}
               onClick={() => setActiveView('account')}
             >
               <User className="mr-2 h-4 w-4" />
