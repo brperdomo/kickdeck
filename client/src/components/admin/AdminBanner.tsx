@@ -82,7 +82,7 @@ export function AdminBanner() {
         <div className="flex items-center gap-2">
           {/* View Toggle Button - only shown for admin users */}
           {user?.isAdmin && (
-            <ViewToggle currentView="admin" />
+            <ViewToggle />
           )}
 
           <Button

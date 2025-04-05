@@ -1,44 +1,77 @@
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { LayoutDashboard, User } from "lucide-react";
-
-type ViewToggleProps = {
-  currentView: 'admin' | 'member';
-};
+import { ToggleRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/hooks/use-user";
 
 /**
- * ViewToggle component allows users to switch between admin and member dashboards
- * if they have permission to access both views
+ * ViewToggle Component
+ * 
+ * Allows users with admin privileges to toggle between admin and member views.
+ * This enables admin users to see their own team registrations in the member dashboard
+ * and switch back to full admin view when needed.
  */
-export function ViewToggle({ currentView }: ViewToggleProps) {
-  const [, navigate] = useLocation();
-
-  const handleToggleView = () => {
-    if (currentView === 'admin') {
-      navigate('/dashboard');
+export function ViewToggle() {
+  const { user, isLoading: userLoading } = useUser();
+  const [currentLocation, navigate] = useLocation();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  // Local state to track view mode
+  const [isAdminView, setIsAdminView] = useState(true);
+  
+  // Set initial state based on URL path
+  useEffect(() => {
+    // If on admin route, set to admin view
+    const isCurrentlyAdminView = currentLocation.startsWith("/admin");
+    setIsAdminView(isCurrentlyAdminView);
+  }, [currentLocation]);
+  
+  // Toggle view function
+  const toggleView = useCallback(() => {
+    // Toggle state
+    const newValue = !isAdminView;
+    setIsAdminView(newValue);
+    
+    // Navigate to appropriate dashboard
+    if (newValue) {
+      // Switching to admin view
+      navigate("/admin/dashboard");
+      toast({
+        title: "Admin View",
+        description: "You're now viewing the admin dashboard"
+      });
     } else {
-      navigate('/admin');
+      // Switching to member view
+      navigate("/dashboard");
+      toast({
+        title: "Member View",
+        description: "You're now viewing your member dashboard"
+      });
     }
-  };
-
+    
+    // Invalidate relevant queries to refresh data
+    queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+  }, [isAdminView, navigate, toast, queryClient]);
+  
+  // Only render for users with admin privileges
+  if (userLoading || !user || !user.isAdmin) {
+    return null;
+  }
+  
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={handleToggleView}
-      className="flex items-center gap-2 bg-white/10 text-white hover:bg-white/20 border-white/20"
+    <Button 
+      variant="outline" 
+      size="sm" 
+      className="rounded-full px-3 gap-1 h-8 border-primary"
+      onClick={toggleView}
     >
-      {currentView === 'admin' ? (
-        <>
-          <User className="h-4 w-4" />
-          <span>Switch to Member View</span>
-        </>
-      ) : (
-        <>
-          <LayoutDashboard className="h-4 w-4" />
-          <span>Switch to Admin View</span>
-        </>
-      )}
+      <ToggleRight className="h-4 w-4" />
+      <span className="text-xs">
+        {isAdminView ? "Switch to Member View" : "Switch to Admin View"}
+      </span>
     </Button>
   );
 }

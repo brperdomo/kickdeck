@@ -6,19 +6,48 @@ import { z } from 'zod';
 
 const router = Router();
 
-// Get all events with optimization and caching
+// Get all events with optimization, pagination, and caching
 router.get('/', async (req, res) => {
   try {
-    const eventsList = await db
+    // Parse pagination parameters
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
+    const showArchived = req.query.showArchived === 'true';
+    
+    // Calculate offset for pagination
+    const offset = (page - 1) * pageSize;
+    
+    // Build the base query
+    let eventsQuery = db
       .select({
         event: events,
         applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
         teamCount: sql<number>`count(${teams.id})`.mapWith(Number),
       })
       .from(events)
-      .leftJoin(teams, eq(events.id, teams.eventId))
+      .leftJoin(teams, eq(events.id, teams.eventId));
+      
+    // Apply archive filter unless showArchived is true
+    if (!showArchived) {
+      eventsQuery = eventsQuery.where(eq(events.isArchived, false));
+    }
+    
+    // First get the total count for pagination
+    const countResult = await db
+      .select({
+        count: sql<number>`count(distinct ${events.id})`.mapWith(Number),
+      })
+      .from(events)
+      .where(showArchived ? sql`1=1` : eq(events.isArchived, false));
+    
+    const totalEvents = countResult[0]?.count || 0;
+    
+    // Execute the main query with pagination
+    const eventsList = await eventsQuery
       .groupBy(events.id)
-      .orderBy(events.startDate);
+      .orderBy(events.startDate)
+      .limit(pageSize)
+      .offset(offset);
 
     // Format the response
     const formattedEvents = eventsList.map(({ event, applicationCount, teamCount }) => ({
@@ -30,7 +59,17 @@ router.get('/', async (req, res) => {
     // Add caching to improve dashboard load times
     // Cache for 5 minutes, must revalidate if stale
     res.set('Cache-Control', 'private, max-age=300, must-revalidate');
-    res.json(formattedEvents);
+    
+    // Return with pagination metadata
+    res.json({
+      events: formattedEvents,
+      pagination: {
+        page,
+        pageSize,
+        totalEvents,
+        totalPages: Math.ceil(totalEvents / pageSize)
+      }
+    });
   } catch (error) {
     console.error('Error fetching events:', error);
     res.status(500).json({ 
@@ -200,6 +239,51 @@ router.delete('/:id', async (req, res) => {
     console.error('Error deleting event:', error);
     res.status(500).json({ 
       error: error instanceof Error ? error.message : "Failed to delete event",
+      details: error instanceof Error ? error.stack : undefined
+    });
+  }
+});
+
+// Toggle event archive status endpoint
+router.patch('/:id/toggle-archive', async (req, res) => {
+  try {
+    const eventId = BigInt(req.params.id);
+    
+    // Get the current event to check its isArchived status
+    const [currentEvent] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId));
+    
+    if (!currentEvent) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+    
+    // Toggle the isArchived status
+    const isArchived = !currentEvent.isArchived;
+    
+    // Update the event
+    const [updatedEvent] = await db
+      .update(events)
+      .set({ 
+        isArchived,
+        updatedAt: new Date().toISOString()
+      })
+      .where(eq(events.id, eventId))
+      .returning();
+    
+    if (!updatedEvent) {
+      return res.status(404).json({ error: "Failed to update event" });
+    }
+    
+    res.json({
+      message: isArchived ? "Event archived successfully" : "Event unarchived successfully",
+      event: updatedEvent
+    });
+  } catch (error) {
+    console.error('Error toggling event archive status:', error);
+    res.status(500).json({ 
+      error: error instanceof Error ? error.message : "Failed to toggle event archive status",
       details: error instanceof Error ? error.stack : undefined
     });
   }

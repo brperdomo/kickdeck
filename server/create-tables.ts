@@ -14,6 +14,7 @@ import { addSubmitterNameToTeams } from "./migrations/add_submitter_name_to_team
 import { addTeamSelectedFees } from "./migrations/add_team_selected_fees";
 import { addPaymentIntentId } from "./migrations/add_payment_intent_id";
 import { addFeeTypeColumns } from "./migrations/add_fee_type_columns";
+import { addIsArchivedToEvents } from "./migrations/add-is-archived-to-events";
 
 export async function createTables() {
   try {
@@ -148,6 +149,9 @@ export async function createTables() {
     
     console.log('Adding feeType and isRequired columns to event_fees table...');
     await addFeeTypeColumns();
+    
+    console.log('Adding isArchived column to events table...');
+    await addIsArchivedToEvents();
 
     console.log("All tables created successfully");
     return { success: true };

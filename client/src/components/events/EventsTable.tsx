@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash } from "lucide-react";
+import { Link2, Edit, FileQuestion, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash, Archive, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -39,6 +39,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationEllipsis, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
+import { Switch } from "@/components/ui/switch";
 import { formatDate } from "@/lib/utils";
 
 interface Event {
@@ -49,6 +59,19 @@ interface Event {
   applicationsReceived: number;
   teamsAccepted: number;
   applicationDeadline: string;
+  isArchived?: boolean;
+}
+
+interface PaginationData {
+  page: number;
+  pageSize: number;
+  totalEvents: number;
+  totalPages: number;
+}
+
+interface EventsResponse {
+  events: Event[];
+  pagination: PaginationData;
 }
 
 type SortField = "name" | "date" | "applications" | "status";
@@ -64,18 +87,20 @@ export function EventsTable() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [showArchived, setShowArchived] = useState(false);
 
   const queryClient = useQueryClient();
 
-  const eventsQuery = useQuery<Event[]>({
-    queryKey: ["/api/admin/events"],
+  const eventsQuery = useQuery<EventsResponse>({
+    queryKey: ["/api/admin/events", currentPage, pageSize, showArchived],
     queryFn: async () => {
-      const response = await fetch("/api/admin/events");
+      const response = await fetch(`/api/admin/events?page=${currentPage}&pageSize=${pageSize}&showArchived=${showArchived}`);
       if (!response.ok) {
         throw new Error("Failed to fetch events");
       }
-      const events = await response.json();
-      return events;
+      return response.json();
     },
     staleTime: 5 * 60 * 1000, // 5 minute cache
     retry: 2,
@@ -133,16 +158,54 @@ export function EventsTable() {
     return { ...event, status };
   }, [calculateEventStatus]);
 
+  // Create toggle archive mutation
+  const toggleArchiveMutation = useMutation({
+    mutationFn: async (eventId: number | bigint) => {
+      const response = await fetch(`/api/admin/events/${eventId.toString()}/toggle-archive`, {
+        method: 'PATCH',
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || error.error || 'Failed to toggle archive status');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      const action = data.event.isArchived ? "archived" : "unarchived";
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/events"] });
+      toast({
+        title: "Success",
+        description: `Event ${action} successfully`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update event archive status",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Memoize all events with their statuses calculated once
   const eventsWithStatus = useMemo(() => {
-    if (!eventsQuery.data) return [];
-    return eventsQuery.data.map(getEventWithStatus);
+    if (!eventsQuery.data || !eventsQuery.data.events) return [];
+    return eventsQuery.data.events.map(getEventWithStatus);
   }, [eventsQuery.data, getEventWithStatus]);
+
+  // Get pagination data
+  const paginationData = useMemo(() => {
+    if (!eventsQuery.data || !eventsQuery.data.pagination) {
+      return { page: 1, pageSize: 10, totalEvents: 0, totalPages: 1 };
+    }
+    return eventsQuery.data.pagination;
+  }, [eventsQuery.data]);
 
   // Memoize filtered events based on search and status filter
   const filteredEvents = useMemo(() => {
+    if (!eventsWithStatus || eventsWithStatus.length === 0) return [];
     const lowercaseQuery = searchQuery.toLowerCase();
-    return eventsWithStatus.filter((event) => {
+    return eventsWithStatus.filter((event: Event & { status: string }) => {
       const matchesSearch = event.name.toLowerCase().includes(lowercaseQuery);
       const matchesStatus = statusFilter === "all" || event.status === statusFilter;
       return matchesSearch && matchesStatus;
@@ -227,8 +290,7 @@ export function EventsTable() {
 
       toast({
         title: "Event deleted",
-        description: "The event was successfully deleted",
-        variant: "success",
+        description: "The event was successfully deleted"
       });
 
       queryClient.invalidateQueries({ queryKey: ["/api/admin/events"] });
@@ -372,6 +434,21 @@ export function EventsTable() {
                           Create Coupons
                         </DropdownMenuItem>
                         <DropdownMenuItem
+                          onClick={() => toggleArchiveMutation.mutate(event.id)}
+                        >
+                          {event.isArchived ? (
+                            <>
+                              <RotateCcw className="mr-2 h-4 w-4" />
+                              Unarchive
+                            </>
+                          ) : (
+                            <>
+                              <Archive className="mr-2 h-4 w-4" />
+                              Archive
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
                           className="text-red-600"
                           onClick={() => openDeleteDialog(event)}
                         >
@@ -424,6 +501,94 @@ export function EventsTable() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      {/* Pagination and Archive Toggle */}
+      <div className="p-4 flex items-center justify-between border-t">
+        <div className="flex items-center gap-2">
+          <Switch 
+            id="show-archived" 
+            checked={showArchived}
+            onCheckedChange={setShowArchived}
+          />
+          <label htmlFor="show-archived">Show archived events</label>
+        </div>
+        
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <Button 
+                variant="outline"
+                size="sm"
+                className="gap-1 h-8"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage <= 1 || eventsQuery.isLoading}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span>Previous</span>
+              </Button>
+            </PaginationItem>
+            
+            {paginationData.totalPages > 0 && Array.from({ length: Math.min(paginationData.totalPages, 5) }).map((_, i) => {
+              // Show pages around current page
+              let pageToShow;
+              
+              if (paginationData.totalPages <= 5) {
+                // If we have 5 or fewer pages, show all pages
+                pageToShow = i + 1;
+              } else if (currentPage <= 3) {
+                // If we're near the start, show first 5 pages
+                pageToShow = i + 1;
+              } else if (currentPage >= paginationData.totalPages - 2) {
+                // If we're near the end, show last 5 pages
+                pageToShow = paginationData.totalPages - 4 + i;
+              } else {
+                // Otherwise show 2 pages before and after current page
+                pageToShow = currentPage - 2 + i;
+              }
+              
+              return (
+                <PaginationItem key={pageToShow}>
+                  <PaginationLink 
+                    onClick={() => setCurrentPage(pageToShow)}
+                    isActive={currentPage === pageToShow}
+                  >
+                    {pageToShow}
+                  </PaginationLink>
+                </PaginationItem>
+              );
+            })}
+            
+            {paginationData.totalPages > 5 && currentPage < paginationData.totalPages - 2 && (
+              <>
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink 
+                    onClick={() => setCurrentPage(paginationData.totalPages)}
+                    isActive={currentPage === paginationData.totalPages}
+                  >
+                    {paginationData.totalPages}
+                  </PaginationLink>
+                </PaginationItem>
+              </>
+            )}
+            
+            <PaginationItem>
+              <Button 
+                variant="outline"
+                size="sm"
+                className="gap-1 h-8"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, paginationData.totalPages))}
+                disabled={currentPage >= paginationData.totalPages || eventsQuery.isLoading}
+              >
+                <span>Next</span>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
     </Card>
   );
 }
