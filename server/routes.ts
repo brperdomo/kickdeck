@@ -4403,6 +4403,42 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     app.get('/api/admin/form-templates/:id', isAdmin, async (req, res) => {
       try {
         const templateId = parseInt(req.params.id);
+        console.log(`Fetching form template with ID: ${templateId}`);
+
+        // First, check if the template exists
+        const templateExists = await db
+          .select({ 
+            id: eventFormTemplates.id,
+            name: eventFormTemplates.name,
+            eventId: eventFormTemplates.eventId
+          })
+          .from(eventFormTemplates)
+          .where(eq(eventFormTemplates.id, templateId))
+          .limit(1);
+
+        if (templateExists.length === 0) {
+          console.log(`Template with ID ${templateId} not found`);
+          return res.status(404).json({ error: "Template not found" });
+        }
+        
+        console.log(`Found template: ${JSON.stringify(templateExists[0])}`);
+
+        // Then check if there are any fields for this template
+        const fieldCount = await db
+          .select({ count: sql<number>`count(*)`.mapWith(Number) })
+          .from(formFields)
+          .where(eq(formFields.templateId, templateId));
+        
+        console.log(`Found ${fieldCount[0].count} fields for template ${templateId}`);
+        
+        // Log raw field data for debugging
+        if (fieldCount[0].count > 0) {
+          const rawFields = await db
+            .select()
+            .from(formFields)
+            .where(eq(formFields.templateId, templateId));
+          console.log(`Raw fields: ${JSON.stringify(rawFields)}`);
+        }
 
         const [template] = await db
           .select({
@@ -4440,9 +4476,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .groupBy(eventFormTemplates.id);
 
         if (!template) {
+          console.log(`Template result was null for ID ${templateId}`);
           return res.status(404).json({ error: "Template not found" });
         }
 
+        console.log(`Returning template with ID ${templateId} and ${template.fields.length} fields`);
+        
         res.json({
           ...template.template,
           fields: template.fields

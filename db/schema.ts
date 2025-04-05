@@ -824,7 +824,7 @@ export type SelectCoupon = typeof coupons.$inferSelect;
 
 export const eventFormTemplates = pgTable("event_form_templates", {
   id: serial("id").primaryKey(),
-  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).references(() => events.id, { onDelete: 'cascade' }),
   name: text("name").notNull(),
   description: text("description"),
   isPublished: boolean("is_published").default(false).notNull(),

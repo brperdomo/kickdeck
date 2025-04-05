@@ -17,6 +17,9 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
   const [, navigate] = useLocation();
   const { toast } = useToast();
   
+  console.log("FormTemplateEditor received existing template:", existingTemplate);
+  console.log("Existing template fields:", existingTemplate?.fields);
+  
   const [template, setTemplate] = useState({
     id: existingTemplate?.id || null,
     name: existingTemplate?.name || "",
@@ -24,6 +27,8 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
     isPublished: existingTemplate?.isPublished || false,
     fields: existingTemplate?.fields || []
   });
+  
+  console.log("Template state initialized with fields:", template.fields);
 
   const createTemplateMutation = useMutation({
     mutationFn: async () => {
