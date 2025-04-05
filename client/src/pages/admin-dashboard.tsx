@@ -1927,7 +1927,7 @@ function SchedulingView() {
                         {event.name}
                       </SelectItem>
                     ))
-                    : Array.isArray(eventsQuery.data?.events)
+                    : eventsQuery.data?.events && Array.isArray(eventsQuery.data.events)
                       ? eventsQuery.data.events.map((event: any) => (
                         <SelectItem key={event.id} value={event.id.toString()}>
                           {event.name}
