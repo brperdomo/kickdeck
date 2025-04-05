@@ -1932,14 +1932,14 @@ function SchedulingView() {
                   <SelectItem value="error" disabled>Error loading events</SelectItem>
                 ) : (
                   eventsQuery.data ? (
-                    // Check if data is an array or if it has an events property that's an array
+                    // Handle different possible response formats
                     Array.isArray(eventsQuery.data) 
                       ? eventsQuery.data.map((event: any) => (
                         <SelectItem key={event.id} value={event.id.toString()}>
                           {event.name}
                         </SelectItem>
                       ))
-                      : eventsQuery.data.events && Array.isArray(eventsQuery.data.events)
+                      : eventsQuery.data && typeof eventsQuery.data === 'object' && eventsQuery.data.events && Array.isArray(eventsQuery.data.events)
                         ? eventsQuery.data.events.map((event: any) => (
                           <SelectItem key={event.id} value={event.id.toString()}>
                             {event.name}

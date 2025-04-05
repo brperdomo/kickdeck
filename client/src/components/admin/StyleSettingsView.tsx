@@ -2,12 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
+import { Label } from "@/components/ui/label"; 
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/hooks/use-theme";
 import { Toggle } from "@/components/ui/toggle";
-import { Moon, Sun } from "lucide-react";
+import { 
+  Loader2, 
+  Moon, 
+  Sun, 
+  Save, 
+  Layers, 
+  Settings, 
+  Users 
+} from "lucide-react";
 
 export function StyleSettingsView() {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,16 +32,16 @@ export function StyleSettingsView() {
   };
 
   const defaultStyles = {
-    primary: '#0052CC',
-    secondary: '#344563',
-    accent: '#00B8D9',
+    primary: 'hsl(150 65% 45%)', // Green primary
+    secondary: 'hsl(190 80% 50%)', // Teal/cyan secondary
+    accent: 'hsl(260 60% 55%)', // Purple accent
     background: '#FAFBFC',
     adminNavBackground: '#FFFFFF',
     adminNavText: '#42526E',
-    adminNavActive: '#DEEBFF',
-    adminNavHover: '#F4F5F7',
+    adminNavActive: 'hsl(150 65% 45%)', // Same as primary - green
+    adminNavHover: 'hsl(150 65% 10%)', // Darker green
     tableHeaderBg: '#F4F5F7',
-    tableRowHoverBg: '#F4F5F7',
+    tableRowHoverBg: 'hsl(150 30% 95%)', // Very light green
     cardBg: '#FFFFFF',
     textColor: '#172B4D',
     cardHeaderBg: '#f9fafb',
@@ -42,12 +49,15 @@ export function StyleSettingsView() {
     inputBorder: '#d1d5db',
     darkBackground: '#1D2330',
     darkText: '#E2E8F0',
-    darkAccent: '#2C3E50',
-    darkPrimary: '#4C9AFF',
-    darkSecondary: '#A2B0C3',
+    darkAccent: 'hsl(260 50% 40%)', // Dark purple accent
+    darkPrimary: 'hsl(150 65% 40%)', // Dark green primary
+    darkSecondary: 'hsl(190 70% 40%)', // Dark teal/cyan
     darkCardBg: '#2D3748',
     darkInputBg: '#1D2330',
-    darkInputBorder: '#4A5568'
+    darkInputBorder: '#4A5568',
+    warning: 'hsl(45 100% 50%)', // Bright yellow for warnings
+    success: 'hsl(150 65% 45%)', // Match primary green
+    adminSectionBg: '#FFFFFF' // Section backgrounds
   };
   const [previewStyles, setPreviewStyles] = useState(defaultStyles);
 
@@ -105,7 +115,7 @@ export function StyleSettingsView() {
     fetchStylingSettings();
   }, []);
 
-  const handleStyleChange = (key, value) => {
+  const handleStyleChange = (key: string, value: string) => {
     setPreviewStyles(prev => ({
       ...prev,
       [key]: value
@@ -127,6 +137,7 @@ export function StyleSettingsView() {
         cardHeaderBg: previewStyles.cardHeaderBg || "#f9fafb",
         inputBg: previewStyles.inputBg || "#FFFFFF",
         inputBorder: previewStyles.inputBorder || "#d1d5db",
+        adminSectionBg: previewStyles.adminSectionBg || "#FFFFFF",
       };
 
       const response = await fetch('/api/admin/styling', {
@@ -174,22 +185,100 @@ export function StyleSettingsView() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">UI Colors</h3>
-        <Toggle
-          pressed={currentAppearance === 'dark'}
-          onPressedChange={(pressed) => {
-            const newTheme = pressed ? 'dark' : 'light';
-            setAppearance(newTheme);
-          }}
-          aria-label="Toggle dark mode"
-          className="p-2"
-        >
-          {currentAppearance === 'dark' ? (
-            <Moon className="h-5 w-5" />
-          ) : (
-            <Sun className="h-5 w-5" />
-          )}
-        </Toggle>
+        <div className="flex items-center space-x-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleSaveStyles}
+            disabled={isSaving}>
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Save Changes
+              </>
+            )}
+          </Button>
+          <Toggle
+            pressed={currentAppearance === 'dark'}
+            onPressedChange={(pressed) => {
+              const newTheme = pressed ? 'dark' : 'light';
+              setAppearance(newTheme);
+            }}
+            aria-label="Toggle dark mode"
+            className="p-2"
+          >
+            {currentAppearance === 'dark' ? (
+              <Moon className="h-5 w-5" />
+            ) : (
+              <Sun className="h-5 w-5" />
+            )}
+          </Toggle>
+        </div>
       </div>
+      
+      {/* Color scheme preview */}
+      <Card className="mb-6 overflow-hidden">
+        <CardContent className="p-0">
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            <div className="p-6 border-r border-b">
+              <h4 className="font-medium mb-3">Button Preview</h4>
+              <div className="flex flex-wrap gap-2">
+                <Button style={{backgroundColor: previewStyles.primary, color: "#fff"}}>
+                  Primary
+                </Button>
+                <Button variant="outline" style={{borderColor: previewStyles.primary, color: previewStyles.primary}}>
+                  Outline
+                </Button>
+                <Button style={{backgroundColor: previewStyles.secondary, color: "#fff"}}>
+                  Secondary
+                </Button>
+                <Button style={{backgroundColor: previewStyles.accent, color: "#fff"}}>
+                  Accent
+                </Button>
+              </div>
+            </div>
+            
+            <div className="p-6 border-b" style={{backgroundColor: previewStyles.adminNavBackground}}>
+              <h4 className="font-medium mb-3">Navigation Preview</h4>
+              <div className="flex flex-col space-y-1">
+                <div className="flex items-center px-3 py-2 rounded-md" style={{backgroundColor: previewStyles.adminNavActive, color: previewStyles.adminNavText}}>
+                  <Layers className="h-4 w-4 mr-2" />
+                  <span className="text-sm font-medium">Active Item</span>
+                </div>
+                <div className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100" style={{color: previewStyles.adminNavText}}>
+                  <Settings className="h-4 w-4 mr-2" />
+                  <span className="text-sm">Normal Item</span>
+                </div>
+                <div className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100" style={{color: previewStyles.adminNavText}}>
+                  <Users className="h-4 w-4 mr-2" />
+                  <span className="text-sm">Another Item</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-6 border-r" style={{backgroundColor: previewStyles.tableHeaderBg}}>
+              <h4 className="font-medium mb-3">Table Header</h4>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="text-sm font-medium">ID</div>
+                <div className="text-sm font-medium">Name</div>
+                <div className="text-sm font-medium">Status</div>
+              </div>
+            </div>
+            
+            <div className="p-6" style={{backgroundColor: previewStyles.cardBg}}>
+              <h4 className="font-medium mb-3">Card Preview</h4>
+              <div className="p-3 rounded-md border" style={{backgroundColor: previewStyles.cardHeaderBg}}>
+                <p className="text-sm">Card with header style</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       <div 
         className="p-4 rounded-md shadow mb-6" 
         style={{ backgroundColor: previewStyles.adminSectionBg || "#FFFFFF" }}
