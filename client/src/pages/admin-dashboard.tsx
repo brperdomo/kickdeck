@@ -1929,20 +1929,22 @@ function SchedulingView() {
                 ) : eventsQuery.isError ? (
                   <SelectItem value="error" disabled>Error loading events</SelectItem>
                 ) : (
-                  Array.isArray(eventsQuery.data) 
-                    ? eventsQuery.data.map((event: any) => (
-                      <SelectItem key={event.id} value={event.id.toString()}>
-                        {event.name}
-                      </SelectItem>
-                    ))
-                    : eventsQuery.data?.events && Array.isArray(eventsQuery.data.events)
-                      ? eventsQuery.data.events.map((event: any) => (
+                  eventsQuery.data ? (
+                    // Check if data is an array or if it has an events property that's an array
+                    Array.isArray(eventsQuery.data) 
+                      ? eventsQuery.data.map((event: any) => (
                         <SelectItem key={event.id} value={event.id.toString()}>
                           {event.name}
                         </SelectItem>
                       ))
-                      : (<SelectItem value="none" disabled>No events available</SelectItem>)
-                  
+                      : eventsQuery.data.events && Array.isArray(eventsQuery.data.events)
+                        ? eventsQuery.data.events.map((event: any) => (
+                          <SelectItem key={event.id} value={event.id.toString()}>
+                            {event.name}
+                          </SelectItem>
+                        ))
+                        : (<SelectItem value="none" disabled>No events available</SelectItem>)
+                  ) : (<SelectItem value="none" disabled>No events available</SelectItem>)
                 )}
               </SelectContent>
             </Select>
@@ -4093,6 +4095,16 @@ function AdminDashboard() {
               label="Teams"
               permission="view_teams"
               index={2}
+            />
+
+            <AnimatedNavigationButton
+              view="administrators"
+              activeView={activeView}
+              onClick={() => setActiveView('administrators')}
+              icon={<Shield className="mr-2 h-4 w-4" />}
+              label="Administrators"
+              permission="view_administrators"
+              index={3}
             />
             
             <AnimatedNavigationButton
