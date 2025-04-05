@@ -5,6 +5,8 @@ import { Home, ArrowLeft, Bell, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useOrganizationSettings } from "@/hooks/use-organization-settings";
+import { ViewToggle } from "@/components/ViewToggle";
 
 /**
  * AdminBanner component displays a navigation bar at the top of admin pages
@@ -13,6 +15,7 @@ import { cn } from "@/lib/utils";
 export function AdminBanner() {
   const [location, navigate] = useLocation();
   const isRootAdmin = location === "/admin" || location === "/admin/events";
+  const { settings } = useOrganizationSettings();
   
   return (
     <motion.div 
@@ -58,19 +61,41 @@ export function AdminBanner() {
             </Button>
           </motion.div>
           
-          {/* Page title - dynamically determined */}
-          <motion.h2 
-            className="text-xl font-semibold hidden md:block"
+          {/* MatchPro Logo */}
+          <motion.div
+            className="flex items-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.15 }}
           >
-            {getBannerTitle(location)}
-          </motion.h2>
+            <img 
+              src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"} 
+              alt="MatchPro" 
+              className="h-8 mr-2"
+            />
+            {/* Page title - dynamically determined */}
+            <motion.h2 
+              className="text-xl font-semibold hidden md:block"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              Admin {getBannerTitle(location)}
+            </motion.h2>
+          </motion.div>
         </div>
 
         {/* Right-side tools */}
         <div className="flex items-center space-x-3">
+          {/* View Toggle - Switch between Admin/Member views */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <ViewToggle />
+          </motion.div>
+          
           {/* Search - hidden on mobile */}
           <motion.div 
             className="relative hidden md:block"
