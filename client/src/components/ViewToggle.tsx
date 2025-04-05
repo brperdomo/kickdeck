@@ -38,7 +38,7 @@ export function ViewToggle() {
     // Navigate to appropriate dashboard
     if (newValue) {
       // Switching to admin view
-      navigate("/admin/dashboard");
+      navigate("/admin");
       toast({
         title: "Admin View",
         description: "You're now viewing the admin dashboard"
@@ -65,7 +65,7 @@ export function ViewToggle() {
     <Button 
       variant="outline" 
       size="sm" 
-      className="rounded-full px-3 gap-1 h-8 border-primary"
+      className="rounded-full px-3 gap-1 h-8 text-white hover:bg-white/10 border-white"
       onClick={toggleView}
     >
       <ToggleRight className="h-4 w-4" />
