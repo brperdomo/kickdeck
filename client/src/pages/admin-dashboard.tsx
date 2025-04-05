@@ -632,54 +632,56 @@ function AdministratorsView() {
                           <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
-                      <AnimatedList>
-                        {admins?.map((admin: any) => (
-                          <TableRow key={admin.id}>
-                            <TableCell className="font-medium">
-                              {admin.firstName} {admin.lastName}
-                            </TableCell>
-                            <TableCell>{admin.email}</TableCell>
-                            <TableCell>
-                              {admin.roles?.map((role: string) => (
-                                <Badge key={role} variant="outline" className="mr-1">
-                                  {role}
+                      <TableBody>
+                        <AnimatedList>
+                          {admins?.map((admin: any) => (
+                            <TableRow key={admin.id}>
+                              <TableCell className="font-medium">
+                                {admin.firstName} {admin.lastName}
+                              </TableCell>
+                              <TableCell>{admin.email}</TableCell>
+                              <TableCell>
+                                {admin.roles?.map((role: string) => (
+                                  <Badge key={role} variant="outline" className="mr-1">
+                                    {role}
+                                  </Badge>
+                                ))}
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="secondary" className="bg-green-50 text-green-700">
+                                  Active
                                 </Badge>
-                              ))}
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="secondary" className="bg-green-50 text-green-700">
-                                Active
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex justify-end gap-2">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="h-8 w-8 p-0">
-                                      <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuItem onClick={() => handleEditAdmin(admin)}>
-                                      <Edit className="mr-2 h-4 w-4" />
-                                      Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem
-                                      onClick={() => deleteAdminMutation.mutate(admin.id)}
-                                      disabled={deleteAdminMutation.isPending}
-                                      className="text-red-600"
-                                    >
-                                      <Trash className="mr-2 h-4 w-4" />
-                                      Remove
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </AnimatedList>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex justify-end gap-2">
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" className="h-8 w-8 p-0">
+                                        <MoreHorizontal className="h-4 w-4" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                      <DropdownMenuItem onClick={() => handleEditAdmin(admin)}>
+                                        <Edit className="mr-2 h-4 w-4" />
+                                        Edit
+                                      </DropdownMenuItem>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuItem
+                                        onClick={() => deleteAdminMutation.mutate(admin.id)}
+                                        disabled={deleteAdminMutation.isPending}
+                                        className="text-red-600"
+                                      >
+                                        <Trash className="mr-2 h-4 w-4" />
+                                        Remove
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </AnimatedList>
+                      </TableBody>
                     </Table>
                   </CardContent>
                 </Card>
