@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { AnimatedContainer, AnimatedList, AnimatedItem } from "@/components/ui/animated-container";
 import { 
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
-  Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX
+  Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft
 } from "lucide-react";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
@@ -2809,6 +2809,166 @@ function TeamsView() {
                                     >
                                       <X className="h-4 w-4 mr-1" />
                                       Reject
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="approved">
+                  <div className="border rounded-md">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Team Name</TableHead>
+                          <TableHead>Event</TableHead>
+                          <TableHead>Age Group</TableHead>
+                          <TableHead>Submitter</TableHead>
+                          <TableHead>Manager</TableHead>
+                          <TableHead>Coach</TableHead>
+                          <TableHead>Registration Fee</TableHead>
+                          <TableHead>Payment Status</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {teamsQuery.isLoading ? (
+                          <TableRow>
+                            <TableCell colSpan={8} className="text-center py-4">
+                              <div className="flex justify-center">
+                                <Loader2 className="h-6 w-6 animate-spin" />
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ) : filteredTeams.filter((team: any) => team && team.status === 'approved').length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={8} className="text-center py-4">
+                              No approved teams found
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          filteredTeams
+                            .filter((team: any) => team && team.status === 'approved')
+                            .map((team: any) => (
+                              <TableRow key={team.id}>
+                                <TableCell className="font-medium">{team.name}</TableCell>
+                                <TableCell>{team.event?.name || "N/A"}</TableCell>
+                                <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
+                                <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
+                                <TableCell>{team.managerEmail}</TableCell>
+                                <TableCell>{getCoachName(team.coach)}</TableCell>
+                                <TableCell>{formatCurrency(team.registrationFee || 0)}</TableCell>
+                                <TableCell>
+                                  <Badge variant={team.paymentStatus === 'paid' ? 'default' : 'outline'}>
+                                    {team.paymentStatus || 'Unpaid'}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <div className="flex justify-end gap-2">
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      onClick={() => handleViewTeamDetails(team)}
+                                    >
+                                      <Eye className="h-4 w-4 mr-1" />
+                                      Details
+                                    </Button>
+                                    {team.paymentStatus === 'paid' && (
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm"
+                                        onClick={() => handleRefundRequest(team)}
+                                      >
+                                        <RefreshCcw className="h-4 w-4 mr-1" />
+                                        Refund
+                                      </Button>
+                                    )}
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      onClick={() => handleStatusUpdate(team, 'registered')}
+                                    >
+                                      <ArrowLeft className="h-4 w-4 mr-1" />
+                                      Reset
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="rejected">
+                  <div className="border rounded-md">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Team Name</TableHead>
+                          <TableHead>Event</TableHead>
+                          <TableHead>Age Group</TableHead>
+                          <TableHead>Submitter</TableHead>
+                          <TableHead>Manager</TableHead>
+                          <TableHead>Coach</TableHead>
+                          <TableHead>Rejection Reason</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {teamsQuery.isLoading ? (
+                          <TableRow>
+                            <TableCell colSpan={8} className="text-center py-4">
+                              <div className="flex justify-center">
+                                <Loader2 className="h-6 w-6 animate-spin" />
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ) : filteredTeams.filter((team: any) => team && team.status === 'rejected').length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={8} className="text-center py-4">
+                              No rejected teams found
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          filteredTeams
+                            .filter((team: any) => team && team.status === 'rejected')
+                            .map((team: any) => (
+                              <TableRow key={team.id}>
+                                <TableCell className="font-medium">{team.name}</TableCell>
+                                <TableCell>{team.event?.name || "N/A"}</TableCell>
+                                <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
+                                <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
+                                <TableCell>{team.managerEmail}</TableCell>
+                                <TableCell>{getCoachName(team.coach)}</TableCell>
+                                <TableCell>
+                                  <span className="text-muted-foreground">
+                                    {team.notes || 'No reason provided'}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <div className="flex justify-end gap-2">
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      onClick={() => handleViewTeamDetails(team)}
+                                    >
+                                      <Eye className="h-4 w-4 mr-1" />
+                                      Details
+                                    </Button>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      onClick={() => handleStatusUpdate(team, 'registered')}
+                                    >
+                                      <ArrowLeft className="h-4 w-4 mr-1" />
+                                      Reset
                                     </Button>
                                   </div>
                                 </TableCell>
