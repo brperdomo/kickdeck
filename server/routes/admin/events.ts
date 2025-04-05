@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
   try {
     // Parse pagination parameters
     const page = parseInt(req.query.page as string) || 1;
-    const pageSize = parseInt(req.query.pageSize as string) || 10;
+    const pageSize = parseInt(req.query.pageSize as string) || 5;
     const showArchived = req.query.showArchived === 'true';
     
     // Calculate offset for pagination
