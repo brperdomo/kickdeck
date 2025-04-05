@@ -4453,6 +4453,81 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
+    app.put('/api/admin/form-templates/:id', isAdmin, async (req, res) => {
+      try {
+        const templateId = parseInt(req.params.id);
+        const { name, description, isPublished, fields } = req.body;
+        
+        await db.transaction(async (tx) => {
+          // Update template
+          await tx
+            .update(eventFormTemplates)
+            .set({
+              name,
+              description,
+              isPublished,
+              updatedAt: new Date()
+            })
+            .where(eq(eventFormTemplates.id, templateId));
+            
+          // Delete existing fields and options
+          const existingFields = await tx
+            .select()
+            .from(formFields)
+            .where(eq(formFields.templateId, templateId));
+
+          for (const field of existingFields) {
+            await tx
+              .delete(formFieldOptions)
+              .where(eq(formFieldOptions.fieldId, field.id));
+          }
+
+          await tx
+            .delete(formFields)
+            .where(eq(formFields.templateId, templateId));
+            
+          // Create new fields
+          for (const [index, field] of fields.entries()) {
+            const [newField] = await tx
+              .insert(formFields)
+              .values({
+                templateId: templateId,
+                label: field.label,
+                type: field.type,
+                required: field.required || false,
+                order: index,
+                placeholder: field.placeholder,
+                helpText: field.helpText,
+                validation: field.validation,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              })
+              .returning();
+              
+            // Create options for dropdown fields
+            if (field.type === 'dropdown' && field.options?.length > 0) {
+              await tx
+                .insert(formFieldOptions)
+                .values(
+                  field.options.map((option, optionIndex) => ({
+                    fieldId: newField.id,
+                    label: option.label,
+                    value: option.value,
+                    order: optionIndex,
+                    createdAt: new Date()
+                  }))
+                );
+            }
+          }
+        });
+        
+        res.json({ message: "Form template updated successfully" });
+      } catch (error) {
+        console.error('Error updating form template:', error);
+        res.status(500).json({ error: "Failed to update form template" });
+      }
+    });
+    
     app.post('/api/admin/form-templates', isAdmin, async (req, res) => {
       try {
         const { name, description, isPublished, fields, eventId } = req.body;

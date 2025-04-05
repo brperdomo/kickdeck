@@ -58,7 +58,8 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
 
   const updateTemplateMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/admin/events/${template.eventId || 0}/form-template`, {
+      // Use the proper endpoint for standalone form templates
+      const response = await fetch(`/api/admin/form-templates/${template.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(template)
