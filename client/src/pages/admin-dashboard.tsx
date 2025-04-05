@@ -3998,17 +3998,11 @@ function AdminDashboard() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      {/* Animated Sidebar */}
-      <AnimatedSidebar>
-        {/* Navigation - using staggered animation with map and indexes */}
-        {[
-          {
-            view: "administrators",
-            onClick: () => setActiveView('administrators'),
-            icon: <Shield className="h-4 w-4" />,
-            label: "Administrators",
-            permission: "view_administrators",
-          }]}
+      {/* Sidebar */}
+      <div className="w-64 bg-card border-r flex flex-col h-full">
+        <div className="p-4 flex flex-col h-full">
+          <div className="space-y-1">
+            <NavigationButton
               view="formTemplates"
               activeView={activeView}
               onClick={() => setActiveView('formTemplates')}
@@ -4220,6 +4214,24 @@ function AdminDashboard() {
         {/* Use the imported AdminBanner component that includes the ViewToggle */}
         <AdminBanner />
         <div className="p-8">
+          {/* Animation Dashboard Link */}
+          <div className="mb-6 flex">
+            <a 
+              href="/admin/animated" 
+              className="ml-auto inline-flex items-center rounded-md border border-primary/50 bg-primary/5 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 transition-colors"
+            >
+              <motion.span
+                initial={{ x: 0 }}
+                animate={{ x: [0, 3, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                className="mr-2"
+              >
+                ✨
+              </motion.span>
+              Try Animated Dashboard
+            </a>
+          </div>
+
           {/* Welcome Card */}
           {showWelcome && (
             <Card className="mb-6 relative">

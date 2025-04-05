@@ -1,137 +1,211 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { ReactNode } from "react";
+import { motion, Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface AnimatedContainerProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   delay?: number;
+  duration?: number;
+  animation?: "fadeIn" | "slideUp" | "slideRight" | "scale" | "none";
+  once?: boolean;
 }
 
+// Animation variants for different animation types
+const variants: Record<string, Variants> = {
+  fadeIn: {
+    hidden: { opacity: 0 },
+    visible: (delay = 0) => ({
+      opacity: 1,
+      transition: { 
+        delay, 
+        duration: 0.5 
+      }
+    })
+  },
+  slideUp: {
+    hidden: { opacity: 0, y: 20 },
+    visible: (delay = 0) => ({
+      opacity: 1,
+      y: 0,
+      transition: { 
+        delay, 
+        duration: 0.5,
+        type: "spring",
+        stiffness: 100
+      }
+    })
+  },
+  slideRight: {
+    hidden: { opacity: 0, x: -20 },
+    visible: (delay = 0) => ({
+      opacity: 1,
+      x: 0,
+      transition: { 
+        delay, 
+        duration: 0.5,
+        type: "spring",
+        stiffness: 100
+      }
+    })
+  },
+  scale: {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: (delay = 0) => ({
+      opacity: 1,
+      scale: 1,
+      transition: { 
+        delay, 
+        duration: 0.5,
+        type: "spring",
+        stiffness: 100
+      }
+    })
+  },
+  none: {
+    hidden: {},
+    visible: {}
+  }
+};
+
+/**
+ * AnimatedContainer - A wrapper component that adds animations to its children
+ * 
+ * @example
+ * <AnimatedContainer animation="fadeIn" delay={0.2}>
+ *   <p>This content will fade in with a 0.2 second delay</p>
+ * </AnimatedContainer>
+ */
 export function AnimatedContainer({
   children,
   className,
   delay = 0,
+  duration = 0.5,
+  animation = "fadeIn",
+  once = true
 }: AnimatedContainerProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.4,
-        ease: "easeOut",
-        delay: delay,
-      }}
       className={cn(className)}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once }}
+      custom={delay}
+      variants={variants[animation]}
     >
       {children}
     </motion.div>
   );
 }
 
-export function AnimatedCard({
+/**
+ * AnimatedItem - A component for list items that stagger their appearance
+ * 
+ * @example
+ * <div>
+ *   {items.map((item, index) => (
+ *     <AnimatedItem key={item.id} index={index}>
+ *       <div>{item.name}</div>
+ *     </AnimatedItem>
+ *   ))}
+ * </div>
+ */
+export function AnimatedItem({
   children,
   className,
-  delay = 0,
-}: AnimatedContainerProps) {
+  index = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  index?: number;
+}) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      whileHover={{ scale: 1.01 }}
-      transition={{
-        duration: 0.3,
-        ease: "easeOut",
-        delay: delay,
+      className={cn(className)}
+      variants={{
+        hidden: { opacity: 0, y: 10 },
+        visible: { 
+          opacity: 1, 
+          y: 0, 
+          transition: { 
+            delay: 0.05 * index,
+            duration: 0.4,
+            type: "spring",
+            stiffness: 100
+          }
+        }
       }}
-      className={cn(
-        "bg-card border rounded-lg shadow-sm hover:shadow-md transition-shadow",
-        className
-      )}
     >
       {children}
     </motion.div>
   );
 }
 
-export function FadeInList({ children }: { children: React.ReactNode[] }) {
-  return (
-    <>
-      {React.Children.map(children, (child, i) => (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 0.3,
-            delay: i * 0.05, // stagger the animations
-          }}
-        >
-          {child}
-        </motion.div>
-      ))}
-    </>
-  );
-}
-
-export function StaggeredList({ 
+/**
+ * AnimatedList - A wrapper for lists where children should animate in a staggered sequence
+ * 
+ * @example
+ * <AnimatedList>
+ *   {items.map((item) => (
+ *     <li key={item.id}>{item.name}</li>
+ *   ))}
+ * </AnimatedList>
+ */
+export function AnimatedList({
   children,
-  as = "div" 
-}: { 
-  children: React.ReactNode[];
-  as?: React.ElementType;
+  className,
+  staggerDelay = 0.05,
+  duration = 0.4
+}: {
+  children: ReactNode;
+  className?: string;
+  staggerDelay?: number;
+  duration?: number;
 }) {
-  const MotionComponent = motion.div;
-  
-  return (
-    <>
-      {React.Children.map(children, (child, i) => (
-        <MotionComponent
-          initial={{ opacity: 0, x: -5 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{
-            duration: 0.2,
-            delay: i * 0.05,
-          }}
-        >
-          {child}
-        </MotionComponent>
-      ))}
-    </>
-  );
-}
-
-// For page transitions
-export const pageVariants = {
-  initial: {
-    opacity: 0,
-    y: 10,
-  },
-  in: {
-    opacity: 1,
-    y: 0,
-  },
-  out: {
-    opacity: 0,
-    y: -10,
-  },
-};
-
-export const pageTransition = {
-  type: "tween",
-  ease: "anticipate",
-  duration: 0.4,
-};
-
-export function PageTransition({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
-      initial="initial"
-      animate="in"
-      exit="out"
-      variants={pageVariants}
-      transition={pageTransition}
+      className={cn(className)}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      variants={{
+        visible: {
+          opacity: 1,
+          transition: {
+            when: "beforeChildren",
+            staggerChildren: staggerDelay,
+          },
+        },
+        hidden: {
+          opacity: 0,
+          transition: {
+            when: "afterChildren",
+          },
+        },
+      }}
     >
-      {children}
+      {React.Children.map(children, (child, index) => {
+        if (!React.isValidElement(child)) return child;
+        
+        return (
+          <motion.div
+            variants={{
+              visible: { 
+                opacity: 1, 
+                y: 0, 
+                transition: { duration } 
+              },
+              hidden: { 
+                opacity: 0, 
+                y: 20, 
+                transition: { duration } 
+              },
+            }}
+          >
+            {child}
+          </motion.div>
+        );
+      })}
     </motion.div>
   );
 }
