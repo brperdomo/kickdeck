@@ -622,37 +622,37 @@ function AdministratorsView() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Email</TableHead>
-                          <TableHead>Roles</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <AnimatedList>
-                          {admins?.map((admin: any) => (
-                            <TableRow key={admin.id}>
-                              <TableCell className="font-medium">
+                    <div className="overflow-hidden border rounded-md">
+                      <Table className="border-collapse">
+                        <TableHeader className="bg-muted/50">
+                          <TableRow className="border-b">
+                            <TableHead className="py-3 px-4">Name</TableHead>
+                            <TableHead className="py-3 px-4">Email</TableHead>
+                            <TableHead className="py-3 px-4">Roles</TableHead>
+                            <TableHead className="py-3 px-4">Status</TableHead>
+                            <TableHead className="py-3 px-4 text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {admins?.map((admin: any, index: number) => (
+                            <TableRow key={admin.id} className="border-b hover:bg-muted/50 transition-colors">
+                              <TableCell className="font-medium p-4">
                                 {admin.firstName} {admin.lastName}
                               </TableCell>
-                              <TableCell>{admin.email}</TableCell>
-                              <TableCell>
+                              <TableCell className="p-4">{admin.email}</TableCell>
+                              <TableCell className="p-4">
                                 {admin.roles?.map((role: string) => (
                                   <Badge key={role} variant="outline" className="mr-1">
                                     {role}
                                   </Badge>
                                 ))}
                               </TableCell>
-                              <TableCell>
+                              <TableCell className="p-4">
                                 <Badge variant="secondary" className="bg-green-50 text-green-700">
                                   Active
                                 </Badge>
                               </TableCell>
-                              <TableCell className="text-right">
+                              <TableCell className="p-4 text-right">
                                 <div className="flex justify-end gap-2">
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
@@ -680,9 +680,9 @@ function AdministratorsView() {
                               </TableCell>
                             </TableRow>
                           ))}
-                        </AnimatedList>
-                      </TableBody>
-                    </Table>
+                        </TableBody>
+                      </Table>
+                    </div>
                   </CardContent>
                 </Card>
               </AnimatedContainer>
