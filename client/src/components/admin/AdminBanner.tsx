@@ -59,7 +59,7 @@ export function AdminBanner() {
         <div className="flex items-center">
           <Link href="/admin" className="flex items-center">
             <img 
-              src="/MatchPro.ai_Stacked_Color.png" 
+              src="/uploads/MatchProAI_Linear_Black.png" 
               alt="MatchPro.ai Logo" 
               className="h-8 w-auto"
             />
