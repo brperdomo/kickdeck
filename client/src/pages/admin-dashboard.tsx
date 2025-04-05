@@ -562,12 +562,7 @@ function AdministratorsView() {
     <>
       <AnimatedContainer animation="slideUp" delay={0.1}>
         <div className="flex justify-between items-center mb-6">
-          <motion.h2 
-            className="text-2xl font-bold"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >Administrators</motion.h2>
+          <h2 className="text-2xl font-bold">Administrators</h2>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button onClick={() => setIsAddModalOpen(true)}>
               <UserPlus className="mr-2 h-4 w-4" />
@@ -583,113 +578,115 @@ function AdministratorsView() {
           onValueChange={setSelectedTab}
           className="space-y-4"
         >
-        <TabsList className="grid w-full grid-cols-4 gap-4">
-          <TabsTrigger
-            value="super_admin"
-            className="data-[state=active]:bg-red-100 data-[state=active]:text-red-900"
-          >
-            <Shield className="mr-2 h-4 w-4" />
-            Super Admins
-          </TabsTrigger>
-          <TabsTrigger
-            value="tournament_admin"
-            className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900"
-          >
-            <Trophy className="mr-2 h-4 w-4" />
-            Tournament Admins
-          </TabsTrigger>
-          <TabsTrigger
-            value="score_admin"
-            className="data-[state=active]:bg-green-100 data-[state=active]:text-green-900"
-          >
-            <ClipboardList className="mr-2 h-4 w-4" />
-            Score Admins
-          </TabsTrigger>
-          <TabsTrigger
-            value="finance_admin"
-            className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-900"
-          >
-            <DollarSign className="mr-2 h-4 w-4" />
-            Finance Admins
-          </TabsTrigger>
-        </TabsList>
+          <TabsList className="grid w-full grid-cols-4 gap-4">
+            <TabsTrigger
+              value="super_admin"
+              className="data-[state=active]:bg-red-100 data-[state=active]:text-red-900"
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Super Admins
+            </TabsTrigger>
+            <TabsTrigger
+              value="tournament_admin"
+              className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900"
+            >
+              <Trophy className="mr-2 h-4 w-4" />
+              Tournament Admins
+            </TabsTrigger>
+            <TabsTrigger
+              value="score_admin"
+              className="data-[state=active]:bg-green-100 data-[state=active]:text-green-900"
+            >
+              <ClipboardList className="mr-2 h-4 w-4" />
+              Score Admins
+            </TabsTrigger>
+            <TabsTrigger
+              value="finance_admin"
+              className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-900"
+            >
+              <DollarSign className="mr-2 h-4 w-4" />
+              Finance Admins
+            </TabsTrigger>
+          </TabsList>
 
-        {Object.entries(administrators).map(([type, admins]) => (
-          <TabsContent key={type} value={type} className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  {getTypeLabel(type)}
-                  <Badge className={`ml-2 ${getBadgeColor(type)}`}>
-                    {admins?.length || 0} Members
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Roles</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {admins?.map((admin: any) => (
-                      <TableRow key={admin.id}>
-                        <TableCell className="font-medium">
-                          {admin.firstName} {admin.lastName}
-                        </TableCell>
-                        <TableCell>{admin.email}</TableCell>
-                        <TableCell>
-                          {admin.roles?.map((role: string) => (
-                            <Badge key={role} variant="outline" className="mr-1">
-                              {role}
-                            </Badge>
-                          ))}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="secondary" className="bg-green-50 text-green-700">
-                            Active
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleEditAdmin(admin)}>
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  Edit
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                  onClick={() => deleteAdminMutation.mutate(admin.id)}
-                                  disabled={deleteAdminMutation.isPending}
-                                  className="text-red-600"
-                                >
-                                  <Trash className="mr-2 h-4 w-4" />
-                                  Remove
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        ))}
-      </Tabs>
+          {Object.entries(administrators).map(([type, admins]) => (
+            <TabsContent key={type} value={type} className="space-y-4">
+              <AnimatedContainer animation="fadeIn" delay={0.2}>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      {getTypeLabel(type)}
+                      <Badge className={`ml-2 ${getBadgeColor(type)}`}>
+                        {admins?.length || 0} Members
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Roles</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <AnimatedList>
+                        {admins?.map((admin: any) => (
+                          <TableRow key={admin.id}>
+                            <TableCell className="font-medium">
+                              {admin.firstName} {admin.lastName}
+                            </TableCell>
+                            <TableCell>{admin.email}</TableCell>
+                            <TableCell>
+                              {admin.roles?.map((role: string) => (
+                                <Badge key={role} variant="outline" className="mr-1">
+                                  {role}
+                                </Badge>
+                              ))}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="secondary" className="bg-green-50 text-green-700">
+                                Active
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="h-8 w-8 p-0">
+                                      <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => handleEditAdmin(admin)}>
+                                      <Edit className="mr-2 h-4 w-4" />
+                                      Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                      onClick={() => deleteAdminMutation.mutate(admin.id)}
+                                      disabled={deleteAdminMutation.isPending}
+                                      className="text-red-600"
+                                    >
+                                      <Trash className="mr-2 h-4 w-4" />
+                                      Remove
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </AnimatedList>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </AnimatedContainer>
+            </TabsContent>
+          ))}
+        </Tabs>
       </AnimatedContainer>
 
       <AdminModal
