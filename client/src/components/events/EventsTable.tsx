@@ -88,7 +88,7 @@ export function EventsTable() {
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [eventToDelete, setEventToDelete] = useState<Event | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(5);
   const [showArchived, setShowArchived] = useState(false);
 
   const queryClient = useQueryClient();
@@ -196,7 +196,7 @@ export function EventsTable() {
   // Get pagination data
   const paginationData = useMemo(() => {
     if (!eventsQuery.data || !eventsQuery.data.pagination) {
-      return { page: 1, pageSize: 10, totalEvents: 0, totalPages: 1 };
+      return { page: 1, pageSize: 5, totalEvents: 0, totalPages: 1 };
     }
     return eventsQuery.data.pagination;
   }, [eventsQuery.data]);
@@ -504,13 +504,35 @@ export function EventsTable() {
       
       {/* Pagination and Archive Toggle */}
       <div className="p-4 flex items-center justify-between border-t">
-        <div className="flex items-center gap-2">
-          <Switch 
-            id="show-archived" 
-            checked={showArchived}
-            onCheckedChange={setShowArchived}
-          />
-          <label htmlFor="show-archived">Show archived events</label>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <Switch 
+              id="show-archived" 
+              checked={showArchived}
+              onCheckedChange={setShowArchived}
+            />
+            <label htmlFor="show-archived">Show archived events</label>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <label htmlFor="page-size">Show</label>
+            <Select value={pageSize.toString()} onValueChange={(value) => {
+              setPageSize(parseInt(value));
+              setCurrentPage(1); // Reset to page 1 when changing page size
+            }}>
+              <SelectTrigger className="w-[80px]" id="page-size">
+                <SelectValue placeholder="5" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectContent>
+            </Select>
+            <span>events per page</span>
+          </div>
         </div>
         
         <Pagination>
