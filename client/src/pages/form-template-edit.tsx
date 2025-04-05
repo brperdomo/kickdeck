@@ -49,15 +49,25 @@ export default function FormTemplateEditPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["form-template", params?.id],
     queryFn: async () => {
+      console.log(`Fetching template with ID: ${params?.id}`);
       const response = await fetch(`/api/admin/form-templates/${params?.id}`);
-      if (!response.ok) throw new Error("Failed to fetch template");
-      return response.json();
+      if (!response.ok) {
+        console.error(`Error fetching template: ${response.status} ${response.statusText}`);
+        throw new Error("Failed to fetch template");
+      }
+      const data = await response.json();
+      console.log("Template data received:", data);
+      console.log("Template fields:", data.fields);
+      return data;
     },
-    enabled: !!params?.id
+    enabled: !!params?.id,
+    staleTime: 0 // Always fetch fresh data
   });
 
   useEffect(() => {
     if (data) {
+      console.log("Setting template from data:", data);
+      console.log("Template fields count:", data.fields?.length || 0);
       setTemplate(data);
     }
   }, [data]);
