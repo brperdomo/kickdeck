@@ -131,7 +131,11 @@ export function StyleSettingsView() {
     }));
   };
 
-  const handleSaveStyles = async () => {
+  const handleSaveStyles = async (e?: React.MouseEvent<HTMLButtonElement>, sectionName: string = "All") => {
+    // If called directly as event handler
+    if (e) {
+      e.preventDefault();
+    }
     setIsSaving(true);
     try {
       const completeStyles = {
@@ -163,9 +167,14 @@ export function StyleSettingsView() {
       });
 
       if (response.ok) {
+        let successMessage = "Style settings saved successfully";
+        if (sectionName) {
+          successMessage = `${sectionName} settings saved successfully`;
+        }
+        
         toast({
           title: "Success",
-          description: "Style settings saved successfully",
+          description: successMessage,
         });
       } else {
         toast({
@@ -203,7 +212,7 @@ export function StyleSettingsView() {
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={handleSaveStyles}
+            onClick={(e) => handleSaveStyles(e, "UI")}
             disabled={isSaving}>
             {isSaving ? (
               <>
@@ -331,7 +340,26 @@ export function StyleSettingsView() {
         className="p-4 rounded-md shadow mb-6" 
         style={{ backgroundColor: previewStyles.adminSectionBg || "#FFFFFF" }}
       >
-        <h3 className="text-lg font-medium mb-4">Color Settings</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-medium">Color Settings</h3>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={(e) => handleSaveStyles(e, "Color")}
+            disabled={isSaving}>
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Save Colors
+              </>
+            )}
+          </Button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -490,8 +518,29 @@ export function StyleSettingsView() {
         className="p-4 rounded-md shadow mb-6" 
         style={{ backgroundColor: previewStyles.adminSectionBg || "#FFFFFF" }}
       >
-        <h3 className="text-lg font-medium mb-4">Admin Dashboard Colors</h3>
-        <p className="text-sm text-gray-500 mb-4">These colors control the appearance of the admin dashboard navigation.</p>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h3 className="text-lg font-medium">Admin Dashboard Colors</h3>
+            <p className="text-sm text-gray-500">These colors control the appearance of the admin dashboard navigation.</p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={(e) => handleSaveStyles(e, "Navigation")}
+            disabled={isSaving}>
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Save Navigation
+              </>
+            )}
+          </Button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -720,8 +769,29 @@ export function StyleSettingsView() {
         className="p-4 rounded-md shadow mb-6" 
         style={{ backgroundColor: previewStyles.adminSectionBg || "#FFFFFF" }}
       >
-        <h3 className="text-lg font-medium mb-4">Table & Card Styling</h3>
-        <p className="text-sm text-gray-500 mb-4">Customize the appearance of tables, cards and form elements.</p>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h3 className="text-lg font-medium">Table & Card Styling</h3>
+            <p className="text-sm text-gray-500">Customize the appearance of tables, cards and form elements.</p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={(e) => handleSaveStyles(e, "Components")}
+            disabled={isSaving}>
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Save Components
+              </>
+            )}
+          </Button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -859,15 +929,18 @@ export function StyleSettingsView() {
       </div>
 
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Style Settings</h2>
-        <Button onClick={handleSaveStyles} disabled={isSaving}>
+        <h2 className="text-2xl font-bold">Theme Preview</h2>
+        <Button onClick={(e) => handleSaveStyles(e, "All")} disabled={isSaving}>
           {isSaving ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Saving...
             </>
           ) : (
-            "Save Changes"
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              Save All Settings
+            </>
           )}
         </Button>
       </div>
