@@ -40,6 +40,11 @@ export function StyleSettingsView() {
     adminNavText: '#42526E',
     adminNavActive: 'hsl(150 65% 45%)', // Same as primary - green
     adminNavHover: 'hsl(150 65% 10%)', // Darker green
+    adminNavActiveText: '#FFFFFF', // Text color for active items
+    adminNavSelectedBg: 'hsl(150 65% 45%)', // Background for selected items
+    adminNavSelectedText: '#FFFFFF', // Text for selected items
+    adminNavIconColor: '#566A7F', // Icon color for nav items
+    adminNavActiveIconColor: '#FFFFFF', // Icon color for active items
     tableHeaderBg: '#F4F5F7',
     tableRowHoverBg: 'hsl(150 30% 95%)', // Very light green
     cardBg: '#FFFFFF',
@@ -83,13 +88,17 @@ export function StyleSettingsView() {
         --admin-nav-text: ${previewStyles.adminNavText || '#000000'};
         --admin-nav-active: ${previewStyles.adminNavActive || previewStyles.primary || '#000000'};
         --admin-nav-hover: ${previewStyles.adminNavHover || '#f3f4f6'};
+        --admin-nav-selected-bg: ${previewStyles.adminNavSelectedBg || previewStyles.primary || '#000000'};
+        --admin-nav-selected-text: ${previewStyles.adminNavSelectedText || '#FFFFFF'};
+        --admin-nav-active-text: ${previewStyles.adminNavActiveText || '#FFFFFF'};
+        --admin-nav-icon-color: ${previewStyles.adminNavIconColor || '#566A7F'};
+        --admin-nav-active-icon-color: ${previewStyles.adminNavActiveIconColor || '#FFFFFF'};
         --table-header-bg: ${previewStyles.tableHeaderBg || "#f9fafb"};
         --table-row-hover-bg: ${previewStyles.tableRowHoverBg || "#f3f4f6"};
         --card-bg: ${previewStyles.cardBg || "#FFFFFF"};
         --card-header-bg: ${previewStyles.cardHeaderBg || "#f9fafb"};
         --input-bg: ${previewStyles.inputBg || "#FFFFFF"};
         --input-border: ${previewStyles.inputBorder || "#d1d5db"};
-
       }
     `;
   }, [previewStyles]);
@@ -131,6 +140,11 @@ export function StyleSettingsView() {
         adminNavText: previewStyles.adminNavText || '#000000',
         adminNavActive: previewStyles.adminNavActive || previewStyles.primary || '#000000',
         adminNavHover: previewStyles.adminNavHover || '#f3f4f6',
+        adminNavSelectedBg: previewStyles.adminNavSelectedBg || previewStyles.primary || '#000000',
+        adminNavSelectedText: previewStyles.adminNavSelectedText || '#FFFFFF',
+        adminNavActiveText: previewStyles.adminNavActiveText || '#FFFFFF',
+        adminNavIconColor: previewStyles.adminNavIconColor || '#566A7F',
+        adminNavActiveIconColor: previewStyles.adminNavActiveIconColor || '#FFFFFF',
         tableHeaderBg: previewStyles.tableHeaderBg || "#f9fafb",
         tableRowHoverBg: previewStyles.tableRowHoverBg || "#f3f4f6",
         cardBg: previewStyles.cardBg || "#FFFFFF",
@@ -246,17 +260,51 @@ export function StyleSettingsView() {
             <div className="p-6 border-b" style={{backgroundColor: previewStyles.adminNavBackground}}>
               <h4 className="font-medium mb-3">Navigation Preview</h4>
               <div className="flex flex-col space-y-1">
-                <div className="flex items-center px-3 py-2 rounded-md" style={{backgroundColor: previewStyles.adminNavActive, color: previewStyles.adminNavText}}>
-                  <Layers className="h-4 w-4 mr-2" />
+                {/* Selected/Active Item */}
+                <div 
+                  className="flex items-center px-3 py-2 rounded-md" 
+                  style={{
+                    backgroundColor: previewStyles.adminNavSelectedBg, 
+                    color: previewStyles.adminNavSelectedText
+                  }}
+                >
+                  <Layers className="h-4 w-4 mr-2" style={{color: previewStyles.adminNavActiveIconColor}} />
+                  <span className="text-sm font-medium">Selected Item</span>
+                </div>
+                
+                {/* Active Hover Item */}
+                <div 
+                  className="flex items-center px-3 py-2 rounded-md" 
+                  style={{
+                    backgroundColor: previewStyles.adminNavActive, 
+                    color: previewStyles.adminNavActiveText
+                  }}
+                >
+                  <Settings className="h-4 w-4 mr-2" style={{color: previewStyles.adminNavActiveIconColor}} />
                   <span className="text-sm font-medium">Active Item</span>
                 </div>
-                <div className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100" style={{color: previewStyles.adminNavText}}>
-                  <Settings className="h-4 w-4 mr-2" />
-                  <span className="text-sm">Normal Item</span>
+                
+                {/* Hover State (simulated) */}
+                <div 
+                  className="flex items-center px-3 py-2 rounded-md" 
+                  style={{
+                    backgroundColor: previewStyles.adminNavHover, 
+                    color: previewStyles.adminNavText
+                  }}
+                >
+                  <Settings className="h-4 w-4 mr-2" style={{color: previewStyles.adminNavIconColor}} />
+                  <span className="text-sm">Hover Item</span>
                 </div>
-                <div className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100" style={{color: previewStyles.adminNavText}}>
-                  <Users className="h-4 w-4 mr-2" />
-                  <span className="text-sm">Another Item</span>
+                
+                {/* Normal Item */}
+                <div 
+                  className="flex items-center px-3 py-2 rounded-md" 
+                  style={{
+                    color: previewStyles.adminNavText
+                  }}
+                >
+                  <Users className="h-4 w-4 mr-2" style={{color: previewStyles.adminNavIconColor}} />
+                  <span className="text-sm">Normal Item</span>
                 </div>
               </div>
             </div>
@@ -557,25 +605,113 @@ export function StyleSettingsView() {
           </div>
 
           <div>
-            <Label htmlFor="adminNavHoverColor">Navigation Hover</Label>
+            <Label htmlFor="adminNavSelectedBg">Selected Item Background</Label>
             <div className="flex items-center gap-2 mt-1.5">
               <div className="w-12 h-12 rounded-md border overflow-hidden">
                 <Input
-                  id="adminNavHoverColor"
+                  id="adminNavSelectedBg"
                   type="color"
-                  value={previewStyles.adminNavHover || "#F5F5F5"}
-                  onChange={(e) => handleStyleChange('adminNavHover', e.target.value)}
+                  value={previewStyles.adminNavSelectedBg || previewStyles.primary || "#0d365e"}
+                  onChange={(e) => handleStyleChange('adminNavSelectedBg', e.target.value)}
                   className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
                 />
               </div>
               <Input
-                value={previewStyles.adminNavHover || "#F5F5F5"}
-                onChange={(e) => handleStyleChange('adminNavHover', e.target.value)}
+                value={previewStyles.adminNavSelectedBg || previewStyles.primary || "#0d365e"}
+                onChange={(e) => handleStyleChange('adminNavSelectedBg', e.target.value)}
                 className="font-mono"
-                placeholder="#F5F5F5"
+                placeholder="#0d365e"
               />
             </div>
-            <p className="text-sm text-gray-500 mt-1">Background color when hovering over navigation items</p>
+            <p className="text-sm text-gray-500 mt-1">Background color for selected navigation items</p>
+          </div>
+
+          <div>
+            <Label htmlFor="adminNavSelectedText">Selected Item Text</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="adminNavSelectedText"
+                  type="color"
+                  value={previewStyles.adminNavSelectedText || "#FFFFFF"}
+                  onChange={(e) => handleStyleChange('adminNavSelectedText', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.adminNavSelectedText || "#FFFFFF"}
+                onChange={(e) => handleStyleChange('adminNavSelectedText', e.target.value)}
+                className="font-mono"
+                placeholder="#FFFFFF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Text color for selected navigation items</p>
+          </div>
+
+          <div>
+            <Label htmlFor="adminNavActiveText">Active Item Text</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="adminNavActiveText"
+                  type="color"
+                  value={previewStyles.adminNavActiveText || "#FFFFFF"}
+                  onChange={(e) => handleStyleChange('adminNavActiveText', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.adminNavActiveText || "#FFFFFF"}
+                onChange={(e) => handleStyleChange('adminNavActiveText', e.target.value)}
+                className="font-mono"
+                placeholder="#FFFFFF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Text color for active navigation items</p>
+          </div>
+
+          <div>
+            <Label htmlFor="adminNavIconColor">Navigation Icon Color</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="adminNavIconColor"
+                  type="color"
+                  value={previewStyles.adminNavIconColor || "#566A7F"}
+                  onChange={(e) => handleStyleChange('adminNavIconColor', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.adminNavIconColor || "#566A7F"}
+                onChange={(e) => handleStyleChange('adminNavIconColor', e.target.value)}
+                className="font-mono"
+                placeholder="#566A7F"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Color for icons in navigation items</p>
+          </div>
+
+          <div>
+            <Label htmlFor="adminNavActiveIconColor">Active Icon Color</Label>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-12 h-12 rounded-md border overflow-hidden">
+                <Input
+                  id="adminNavActiveIconColor"
+                  type="color"
+                  value={previewStyles.adminNavActiveIconColor || "#FFFFFF"}
+                  onChange={(e) => handleStyleChange('adminNavActiveIconColor', e.target.value)}
+                  className="w-16 h-16 transform scale-150 -translate-x-2 -translate-y-2 cursor-pointer"
+                />
+              </div>
+              <Input
+                value={previewStyles.adminNavActiveIconColor || "#FFFFFF"}
+                onChange={(e) => handleStyleChange('adminNavActiveIconColor', e.target.value)}
+                className="font-mono"
+                placeholder="#FFFFFF"
+              />
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Color for icons in active/selected navigation items</p>
           </div>
         </div>
       </div>
