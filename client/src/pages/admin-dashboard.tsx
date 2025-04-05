@@ -4075,7 +4075,7 @@ function AdminDashboard() {
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar */}
-      <AnimatedSidebar>
+      <AnimatedSidebar title="Admin Dashboard" icon={<Calendar className="h-5 w-5 text-primary" />}>
         <div className="space-y-1">
             <AnimatedNavigationButton
               view="formTemplates"

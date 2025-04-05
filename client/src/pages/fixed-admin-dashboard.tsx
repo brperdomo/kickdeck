@@ -76,7 +76,7 @@ export function AdminDashboard() {
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Animated Sidebar */}
-      <AnimatedSidebar>
+      <AnimatedSidebar title="Admin Dashboard" icon={<Calendar className="h-5 w-5 text-primary" />}>
         {/* Navigation - using staggered animation with map and indexes */}
         {[
           {

@@ -73,14 +73,14 @@ export function AdminBanner() {
               alt="MatchPro" 
               className="h-8 mr-2"
             />
-            {/* Page title - dynamically determined */}
+            {/* Just show the page section title without "Admin" prefix */}
             <motion.h2 
               className="text-xl font-semibold hidden md:block"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
-              Admin {getBannerTitle(location)}
+              {getBannerTitle(location)}
             </motion.h2>
           </motion.div>
         </div>
