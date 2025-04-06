@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { AnimatedSidebar } from "@/components/admin/AnimatedSidebar";
 import { AnimatedNavigationButton } from "@/components/admin/AnimatedNavigationButton";
-import { AnimatedContainer, AnimatedList, AnimatedItem, AnimatedContent } from "@/components/ui/animation";
+import { AnimatedContainer, AnimatedList, AnimatedItem, AnimatedContent } from "@/components/ui/animated-container";
 import {
   Collapsible,
   CollapsibleContent,
@@ -106,7 +106,7 @@ import { useExportProcess } from "@/hooks/use-export-process";
 import { formatDate } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnimatePresence } from "framer-motion";
-import { MotionCard } from "@/components/ui/motion-card";
+import MotionCard from "@/components/ui/motion-card";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
