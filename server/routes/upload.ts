@@ -20,13 +20,10 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const baseName = path.parse(file.originalname).name;
     const ext = path.extname(file.originalname);
-    const safeFileName = `${baseName}${ext}`.replace(/[^a-zA-Z0-9-_.]/g, '_');
-    
-    // Check if file exists
-    if (fs.existsSync(path.join(uploadsDir, safeFileName))) {
-      cb(new Error('File already exists'), '');
-      return;
-    }
+    // Add timestamp and random string to ensure uniqueness
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2, 8);
+    const safeFileName = `${baseName}_${timestamp}_${randomString}${ext}`.replace(/[^a-zA-Z0-9-_.]/g, '_');
     
     cb(null, safeFileName);
   }
@@ -59,9 +56,6 @@ const upload = multer({
 router.post('/upload', (req, res) => {
   upload.single('file')(req, res, (err) => {
     if (err) {
-      if (err.message === 'File already exists') {
-        return res.status(409).json({ error: 'A file with this name already exists' });
-      }
       return res.status(400).json({ error: err.message });
     }
 
