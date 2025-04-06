@@ -6,6 +6,7 @@ import { log } from "./vite";
 import { db } from "@db";
 import seasonalScopesRouter from "./routes/seasonal-scopes";
 import uploadRouter from "./routes/upload";
+import csvUploadRouter from "./routes/csv-upload";
 import accountingCodesRouter from "./routes/admin/accounting-codes";
 import feesRouter from "./routes/admin/fees";
 import eventsRouter from "./routes/admin/events";
@@ -2437,6 +2438,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     // File management routes
     app.use('/api/admin/files', isAdmin, uploadRouter);
     app.use('/api/folders', foldersRouter);
+    
+    // CSV upload helper for team registrations
+    app.use('/api/upload', csvUploadRouter);
 
     // Add bulk action endpoint after the upload router registration
     app.post('/api/files/bulk', isAdmin, async (req, res) => {

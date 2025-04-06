@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,12 @@ import {
   Plus, 
   PlusCircle, 
   UserRoundPlus,
-  CreditCard 
+  CreditCard,
+  Upload,
+  FileUp,
+  Download,
+  AlertCircle,
+  FileText
 } from "lucide-react";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { useAuth } from "@/hooks/use-auth";
@@ -31,6 +36,193 @@ import { PaymentElement, CardElement, useStripe, useElements } from "@stripe/rea
 import StripeProvider from "@/components/StripeProvider";
 import { Footer } from "@/components/ui/Footer";
 import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose
+} from "@/components/ui/dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+// CSV Uploader Component
+function CsvUploader({ onUploadSuccess }: { onUploadSuccess: (players: PlayerForm[]) => void }) {
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles && acceptedFiles.length > 0) {
+      const file = acceptedFiles[0];
+      if (file.type !== "text/csv" && !file.name.endsWith('.csv')) {
+        setError("Please upload a CSV file.");
+        return;
+      }
+      setFile(file);
+      setError(null);
+    }
+  }, []);
+
+  const handleBrowseClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      if (selectedFile.type !== "text/csv" && !selectedFile.name.endsWith('.csv')) {
+        setError("Please upload a CSV file.");
+        return;
+      }
+      setFile(selectedFile);
+      setError(null);
+    }
+  };
+
+  const uploadFile = async () => {
+    if (!file) {
+      setError("Please select a file to upload.");
+      return;
+    }
+
+    setIsUploading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload/players', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to upload file');
+      }
+
+      const data = await response.json();
+      onUploadSuccess(data.players);
+      
+      // Reset form after successful upload
+      setFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred during file upload');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    if (droppedFiles.length > 0) {
+      onDrop(droppedFiles);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
+      <div 
+        className="border-2 border-dashed rounded-md p-6 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+        onClick={handleBrowseClick}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept=".csv"
+          className="hidden"
+        />
+        <FileText className="w-12 h-12 mx-auto text-gray-400 mb-2" />
+        <p className="text-sm text-gray-600 mb-1">
+          Drag and drop your CSV file here, or <span className="text-[#2C5282] font-medium">browse</span>
+        </p>
+        <p className="text-xs text-gray-500">
+          CSV files only (.csv)
+        </p>
+      </div>
+      
+      {file && (
+        <div className="bg-gray-50 p-3 rounded-md flex items-center justify-between">
+          <div className="flex items-center">
+            <FileText className="w-4 h-4 mr-2 text-gray-500" />
+            <span className="text-sm font-medium truncate max-w-[200px]">
+              {file.name}
+            </span>
+          </div>
+          <Button 
+            type="button" 
+            variant="ghost" 
+            size="sm"
+            onClick={() => {
+              setFile(null);
+              if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+              }
+            }}
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
+      
+      <div className="flex justify-end space-x-2 pt-4">
+        <DialogClose asChild>
+          <Button type="button" variant="outline">
+            Cancel
+          </Button>
+        </DialogClose>
+        <Button
+          type="button"
+          onClick={uploadFile}
+          disabled={!file || isUploading}
+          className="bg-[#2C5282] hover:bg-[#1A365D] text-white"
+        >
+          {isUploading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Uploading...
+            </>
+          ) : (
+            <>
+              <Upload className="mr-2 h-4 w-4" />
+              Upload
+            </>
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 interface AgeGroup {
   id: number;
@@ -1374,22 +1566,69 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   <div className="space-y-4 border-t pt-4">
                     <div className="flex justify-between items-center">
                       <h3 className="text-xl font-semibold text-[#2C5282]">Player Roster</h3>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={addPlayer}
-                        className="flex items-center"
-                      >
-                        <PlusCircle className="w-4 h-4 mr-2" />
-                        Add Player
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={addPlayer}
+                          className="flex items-center"
+                        >
+                          <PlusCircle className="w-4 h-4 mr-2" />
+                          Add Player
+                        </Button>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="flex items-center"
+                            >
+                              <Upload className="w-4 h-4 mr-2" />
+                              CSV Upload
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[500px]">
+                            <DialogHeader>
+                              <DialogTitle>Upload Player Roster CSV</DialogTitle>
+                              <DialogDescription>
+                                Upload a CSV file with your player roster information.
+                                All required fields must be included.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <CsvUploader
+                              onUploadSuccess={(players) => {
+                                setPlayers((prev) => [...prev, ...players]);
+                                toast({
+                                  title: "Upload Successful",
+                                  description: `Added ${players.length} players to your roster.`,
+                                });
+                              }}
+                            />
+                            <div className="border-t pt-4 mt-4">
+                              <h4 className="font-medium mb-2">Need a template?</h4>
+                              <p className="text-sm text-gray-500 mb-4">
+                                Download our CSV template with all the required fields:
+                              </p>
+                              <a
+                                href="/player-roster-template.csv"
+                                download
+                                className="flex items-center text-[#2C5282] hover:underline"
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Download Template
+                              </a>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
                     </div>
                     
                     {players.length === 0 ? (
                       <div className="text-center p-8 border border-dashed rounded-md">
                         <UserRoundPlus className="w-12 h-12 mx-auto text-gray-300 mb-2" />
-                        <p className="text-gray-500">No players added yet. Click "Add Player" to begin building your roster.</p>
+                        <p className="text-gray-500">No players added yet. Click "Add Player" or "CSV Upload" to begin building your roster.</p>
                       </div>
                     ) : (
                       <div className="space-y-6">
