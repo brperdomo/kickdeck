@@ -903,6 +903,161 @@ export function registerRoutes(app: Express): Server {
     // Use events router for all admin event operations
     app.use('/api/admin/events', isAdmin, eventsRouter);
 
+    // Endpoint to clone an event
+    app.post('/api/admin/events/:id/clone', isAdmin, async (req, res) => {
+      try {
+        const sourceEventId = req.params.id;
+        console.log(`Cloning event with ID: ${sourceEventId}`);
+        
+        // Get the original event data
+        const [sourceEvent] = await db
+          .select()
+          .from(events)
+          .where(eq(events.id, sourceEventId));
+          
+        if (!sourceEvent) {
+          return res.status(404).json({ error: "Source event not found" });
+        }
+        
+        // Generate a new ID for the cloned event
+        const newEventId = Date.now() + Math.floor(Math.random() * 1000);
+        
+        // Create a clone of the event with a new ID and adding "Copy of" to the name
+        const [newEvent] = await db
+          .insert(events)
+          .values({
+            id: newEventId,
+            name: `Copy of ${sourceEvent.name}`,
+            startDate: sourceEvent.startDate,
+            endDate: sourceEvent.endDate,
+            timezone: sourceEvent.timezone,
+            applicationDeadline: sourceEvent.applicationDeadline,
+            details: sourceEvent.details,
+            agreement: sourceEvent.agreement,
+            refundPolicy: sourceEvent.refundPolicy,
+            isArchived: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          })
+          .returning();
+        
+        // Clone the age groups
+        const sourceAgeGroups = await db
+          .select()
+          .from(eventAgeGroups)
+          .where(eq(eventAgeGroups.eventId, sourceEventId));
+        
+        for (const ageGroup of sourceAgeGroups) {
+          await db
+            .insert(eventAgeGroups)
+            .values({
+              ...ageGroup,
+              id: undefined, // Let the database generate a new ID
+              eventId: String(newEventId),
+              createdAt: new Date().toISOString()
+            });
+        }
+        
+        // Clone the scoring rules
+        const sourceScoringRules = await db
+          .select()
+          .from(eventScoringRules)
+          .where(eq(eventScoringRules.eventId, sourceEventId));
+        
+        for (const rule of sourceScoringRules) {
+          await db
+            .insert(eventScoringRules)
+            .values({
+              ...rule,
+              id: undefined, // Let the database generate a new ID
+              eventId: String(newEventId),
+              createdAt: new Date().toISOString()
+            });
+        }
+        
+        // Clone the complexes
+        const sourceComplexes = await db
+          .select()
+          .from(eventComplexes)
+          .where(eq(eventComplexes.eventId, sourceEventId));
+        
+        for (const complex of sourceComplexes) {
+          await db
+            .insert(eventComplexes)
+            .values({
+              ...complex,
+              id: undefined, // Let the database generate a new ID
+              eventId: String(newEventId),
+              createdAt: new Date().toISOString()
+            });
+        }
+        
+        // Clone the field sizes
+        const sourceFieldSizes = await db
+          .select()
+          .from(eventFieldSizes)
+          .where(eq(eventFieldSizes.eventId, sourceEventId));
+        
+        for (const fieldSize of sourceFieldSizes) {
+          await db
+            .insert(eventFieldSizes)
+            .values({
+              ...fieldSize,
+              id: undefined, // Let the database generate a new ID
+              eventId: String(newEventId),
+              createdAt: new Date().toISOString()
+            });
+        }
+        
+        // Clone the settings
+        const sourceSettings = await db
+          .select()
+          .from(eventSettings)
+          .where(eq(eventSettings.eventId, sourceEventId));
+        
+        for (const setting of sourceSettings) {
+          await db
+            .insert(eventSettings)
+            .values({
+              ...setting,
+              id: undefined, // Let the database generate a new ID
+              eventId: String(newEventId),
+              createdAt: new Date().toISOString()
+            });
+        }
+        
+        // Clone the event administrators
+        const sourceAdmins = await db
+          .select()
+          .from(eventAdministrators)
+          .where(eq(eventAdministrators.eventId, sourceEventId));
+        
+        for (const admin of sourceAdmins) {
+          await db
+            .insert(eventAdministrators)
+            .values({
+              ...admin,
+              id: undefined, // Let the database generate a new ID
+              eventId: String(newEventId),
+              createdAt: new Date().toISOString()
+            });
+        }
+        
+        res.status(201).json({ 
+          message: "Event cloned successfully", 
+          event: newEvent,
+          id: newEventId
+        });
+        
+      } catch (error) {
+        console.error('Error cloning event:', error);
+        res.status(500).json({ 
+          error: error instanceof Error ? error.message : "Failed to clone event",
+          details: error instanceof Error ? error.stack : undefined
+        });
+      }
+    });
+
     // Add admin event deletion endpoint
     app.delete('/api/admin/events/:id', isAdmin, async (req, res) => {
       try {
