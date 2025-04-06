@@ -358,7 +358,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         const formData = new FormData();
         formData.append('file', file);
         
-        const response = await fetch('/api/upload', {
+        const response = await fetch('/api/files/upload', {
           method: 'POST',
           body: formData,
         });

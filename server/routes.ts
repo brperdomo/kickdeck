@@ -311,11 +311,31 @@ export function registerRoutes(app: Express): Server {
           .select()
           .from(eventAgeGroups)
           .where(eq(eventAgeGroups.eventId, String(parsedEventId)));
+          
+        // Get event settings
+        const settings = await db
+          .select()
+          .from(eventSettings)
+          .where(eq(eventSettings.eventId, String(parsedEventId)));
+          
+        // Process branding settings if they exist
+        const brandingSettings = settings.filter(setting => 
+          setting.settingKey.startsWith('branding.'));
+          
+        let branding = {};
+        
+        if (brandingSettings.length > 0) {
+          brandingSettings.forEach(setting => {
+            const key = setting.settingKey.replace('branding.', '');
+            branding[key] = setting.settingValue;
+          });
+        }
 
-        // Send both event details and age groups
+        // Send event details, age groups, and branding
         res.json({
           ...event,
-          ageGroups
+          ageGroups,
+          branding: Object.keys(branding).length > 0 ? branding : undefined
         });
       } catch (error) {
         console.error('Error fetching event:', error);
