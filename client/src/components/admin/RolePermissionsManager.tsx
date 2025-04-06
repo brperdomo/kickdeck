@@ -180,6 +180,21 @@ const permissionComponentMap: Record<string, string> = {
   'members.view': '.members-section, .membership-details'
 };
 
+// Create mapping between permission groups and UI component selectors
+const permissionGroupComponentMap: Record<string, string> = {
+  'USERS': '.user-list, .admin-user-section, .user-create-button, .add-user-form, .user-edit-button, .user-profile-edit, .user-delete-button',
+  'EVENTS': '.event-list, .event-details, .event-create-button, .add-event-form, .event-edit-button, .edit-event-modal, .event-delete-button',
+  'TEAMS': '.team-list, .team-details, .team-roster, .team-create-button, .add-team-form, .team-edit-button, .edit-team-modal, .team-status-button, .team-delete-button',
+  'GAMES': '.game-list, .schedule-view, .game-create-button, .schedule-create, .game-edit-button, .edit-game-modal, .game-delete-button',
+  'SCORES': '.scores-section, .score-details, .score-create-button, .add-score-form, .score-edit-button, .edit-score-modal, .score-delete-button',
+  'FINANCES': '.finances-section, .payment-history, .payment-create-button, .add-payment-form, .finance-edit-button, .edit-payment-modal, .finance-delete-button, .payment-approve-button, .refund-approve-button',
+  'SETTINGS': '.settings-section, .app-settings, .settings-edit-button, .edit-settings-form',
+  'REPORTS': '.reports-section, .analytics-dashboard, .export-button, .download-report-button',
+  'ADMINISTRATORS': '.admin-list, .admin-details, .admin-create-button, .add-admin-form, .admin-edit-button, .edit-admin-modal, .admin-delete-button',
+  'COUPONS': '.coupon-list, .coupon-details, .coupon-create-button, .add-coupon-form, .coupon-edit-button, .edit-coupon-modal, .coupon-delete-button',
+  'MEMBERS': '.members-section, .membership-details'
+};
+
 // Custom CSS class for highlighted elements
 const highlightClass = 'permission-highlight';
 
@@ -493,6 +508,22 @@ const RolePermissionsManager = () => {
     }
   };
   
+  // Handle highlighting UI elements when hovering on a permission group
+  const handlePermissionGroupMouseEnter = (group: string) => {
+    setHoveredPermission(group);
+    
+    // Find the UI elements that match this permission group and add the highlight class
+    const selector = permissionGroupComponentMap[group];
+    if (selector) {
+      console.log(`Highlighting permission group ${group} with selector: ${selector}`);
+      const elements = document.querySelectorAll(selector);
+      console.log(`Found ${elements.length} elements to highlight`);
+      elements.forEach(element => {
+        element.classList.add(highlightClass);
+      });
+    }
+  };
+  
   // Remove highlighting when mouse leaves
   const handlePermissionMouseLeave = () => {
     setHoveredPermission(null);
@@ -635,6 +666,8 @@ const RolePermissionsManager = () => {
                             e.preventDefault();
                             toggleAccordion(group);
                           }}
+                          onMouseEnter={() => handlePermissionGroupMouseEnter(group)}
+                          onMouseLeave={handlePermissionMouseLeave}
                         >
                           <div className="flex items-center space-x-3 w-full">
                             <Checkbox 
@@ -699,7 +732,11 @@ const RolePermissionsManager = () => {
                   <div className="space-y-6">
                     {roleDetail && Object.entries(roleDetail.permissionGroups).map(([group, permissions]) => (
                       <div key={group} className="space-y-2">
-                        <div className="flex items-center space-x-2 mb-2">
+                        <div 
+                          className="flex items-center space-x-2 mb-2"
+                          onMouseEnter={() => handlePermissionGroupMouseEnter(group)}
+                          onMouseLeave={handlePermissionMouseLeave}
+                        >
                           <span className="p-1 bg-muted rounded-md">
                             {groupIcons[group] || <Shield size={18} />}
                           </span>
