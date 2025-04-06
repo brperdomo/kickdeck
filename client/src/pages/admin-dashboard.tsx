@@ -2757,7 +2757,7 @@ function TeamsView() {
                 
                 <TabsContent value="registered">
                   <div className="border rounded-md">
-                    <Table>
+                    <Table className="team-list">
                       <TableHeader>
                         <TableRow>
                           <TableHead>Team Name</TableHead>
@@ -2842,7 +2842,7 @@ function TeamsView() {
                 
                 <TabsContent value="approved">
                   <div className="border rounded-md">
-                    <Table>
+                    <Table className="team-list">
                       <TableHeader>
                         <TableRow>
                           <TableHead>Team Name</TableHead>
@@ -2928,7 +2928,7 @@ function TeamsView() {
                 
                 <TabsContent value="rejected">
                   <div className="border rounded-md">
-                    <Table>
+                    <Table className="team-list">
                       <TableHeader>
                         <TableRow>
                           <TableHead>Team Name</TableHead>

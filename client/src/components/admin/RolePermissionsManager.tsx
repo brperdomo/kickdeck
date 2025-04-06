@@ -183,28 +183,6 @@ const permissionComponentMap: Record<string, string> = {
 // Custom CSS class for highlighted elements
 const highlightClass = 'permission-highlight';
 
-// Add CSS for highlighting
-useEffect(() => {
-  document.head.insertAdjacentHTML('beforeend', `
-    <style>
-      .permission-highlight {
-        box-shadow: 0 0 0 2px #3b82f6, 0 0 20px rgba(59, 130, 246, 0.5) !important;
-        position: relative;
-        z-index: 10;
-        transition: all 0.3s ease;
-      }
-    </style>
-  `);
-  
-  return () => {
-    // Cleanup function to remove style when component unmounts
-    const styleElement = document.head.querySelector('style:last-child');
-    if (styleElement && styleElement.textContent?.includes('permission-highlight')) {
-      styleElement.remove();
-    }
-  };
-}, []);
-
 const RolePermissionsManager = () => {
   const [activeRole, setActiveRole] = useState<number | null>(null);
   const [selectedPermissions, setSelectedPermissions] = useState<{[key: number]: string[]}>({});
@@ -212,6 +190,28 @@ const RolePermissionsManager = () => {
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'detailed' | 'simplified'>('detailed');
   const [hoveredPermission, setHoveredPermission] = useState<string | null>(null);
+  
+  // Add CSS for highlighting
+  useEffect(() => {
+    document.head.insertAdjacentHTML('beforeend', `
+      <style>
+        .permission-highlight {
+          box-shadow: 0 0 0 2px #3b82f6, 0 0 20px rgba(59, 130, 246, 0.5) !important;
+          position: relative;
+          z-index: 10;
+          transition: all 0.3s ease;
+        }
+      </style>
+    `);
+    
+    return () => {
+      // Cleanup function to remove style when component unmounts
+      const styleElement = document.head.querySelector('style:last-child');
+      if (styleElement && styleElement.textContent?.includes('permission-highlight')) {
+        styleElement.remove();
+      }
+    };
+  }, []);
   
   const queryClient = useQueryClient();
   
