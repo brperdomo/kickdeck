@@ -305,6 +305,8 @@ export function registerRoutes(app: Express): Server {
         if (!event) {
           return res.status(404).send("Event not found");
         }
+        
+        // We'll get branding settings along with other settings below
 
         // Also get the age groups for this event
         const ageGroups = await db
@@ -322,12 +324,12 @@ export function registerRoutes(app: Express): Server {
         const brandingSettings = settings.filter(setting => 
           setting.settingKey.startsWith('branding.'));
           
-        let branding = {};
+        let brandingData = {};
         
         if (brandingSettings.length > 0) {
           brandingSettings.forEach(setting => {
             const key = setting.settingKey.replace('branding.', '');
-            branding[key] = setting.settingValue;
+            brandingData[key] = setting.settingValue;
           });
         }
 
@@ -335,7 +337,9 @@ export function registerRoutes(app: Express): Server {
         res.json({
           ...event,
           ageGroups,
-          branding: Object.keys(branding).length > 0 ? branding : undefined
+          branding: Object.keys(brandingData).length > 0 
+            ? brandingData 
+            : { logoUrl: null, primaryColor: null, secondaryColor: null }
         });
       } catch (error) {
         console.error('Error fetching event:', error);
