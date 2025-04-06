@@ -12,6 +12,8 @@ import { useUser } from "@/hooks/use-user";
  * Allows users with admin privileges to toggle between admin and member views.
  * This enables admin users to see their own team registrations in the member dashboard
  * and switch back to full admin view when needed.
+ * 
+ * The button is hidden when emulation is active to prevent confusion.
  */
 export function ViewToggle() {
   const { user, isLoading: userLoading } = useUser();
@@ -21,6 +23,9 @@ export function ViewToggle() {
   
   // Local state to track view mode
   const [isAdminView, setIsAdminView] = useState(true);
+  
+  // Check for emulation mode
+  const isEmulating = typeof window !== 'undefined' && !!localStorage.getItem('emulationToken');
   
   // Set initial state based on URL path
   useEffect(() => {
@@ -56,8 +61,8 @@ export function ViewToggle() {
     queryClient.invalidateQueries({ queryKey: ["/api/user"] });
   }, [isAdminView, navigate, toast, queryClient]);
   
-  // Only render for users with admin privileges
-  if (userLoading || !user || !user.isAdmin) {
+  // Don't render if user is not an admin or if emulation is active
+  if (userLoading || !user || !user.isAdmin || isEmulating) {
     return null;
   }
   
