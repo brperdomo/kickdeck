@@ -420,7 +420,10 @@ export function EventsTable() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Event Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/edit`)}>
+                        <DropdownMenuItem 
+                          onClick={() => navigate(`/admin/events/${event.id}/edit`)}
+                          className="event-edit-button"
+                        >
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
@@ -456,7 +459,7 @@ export function EventsTable() {
                           )}
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          className="text-red-600"
+                          className="text-red-600 event-delete-button"
                           onClick={() => openDeleteDialog(event)}
                         >
                           <Trash className="mr-2 h-4 w-4" />
@@ -500,6 +503,7 @@ export function EventsTable() {
             </Button>
             <Button
               variant="destructive"
+              className="event-delete-button"
               onClick={handleDeleteEvent}
               disabled={deleteConfirmText.toUpperCase() !== "REMOVE"}
             >

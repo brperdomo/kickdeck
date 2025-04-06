@@ -2816,7 +2816,7 @@ function TeamsView() {
                                     <Button 
                                       variant="outline" 
                                       size="sm"
-                                      className="team-edit-button"
+                                      className="team-edit-button team-status-button"
                                       onClick={() => handleStatusUpdate(team, 'approved')}
                                     >
                                       <Check className="h-4 w-4 mr-1" />
@@ -2825,7 +2825,7 @@ function TeamsView() {
                                     <Button 
                                       variant="outline" 
                                       size="sm" 
-                                      className="text-destructive team-edit-button"
+                                      className="text-destructive team-edit-button team-status-button"
                                       onClick={() => handleStatusUpdate(team, 'rejected')}
                                     >
                                       <X className="h-4 w-4 mr-1" />
@@ -2913,7 +2913,7 @@ function TeamsView() {
                                     <Button 
                                       variant="outline" 
                                       size="sm"
-                                      onClick={() => handleStatusUpdate(team, 'registered')}
+                                      className="team-status-button" onClick={() => handleStatusUpdate(team, 'registered')}
                                     >
                                       <ArrowLeft className="h-4 w-4 mr-1" />
                                       Reset
@@ -2987,7 +2987,7 @@ function TeamsView() {
                                     <Button 
                                       variant="outline" 
                                       size="sm"
-                                      onClick={() => handleStatusUpdate(team, 'registered')}
+                                      className="team-status-button" onClick={() => handleStatusUpdate(team, 'registered')}
                                     >
                                       <ArrowLeft className="h-4 w-4 mr-1" />
                                       Reset

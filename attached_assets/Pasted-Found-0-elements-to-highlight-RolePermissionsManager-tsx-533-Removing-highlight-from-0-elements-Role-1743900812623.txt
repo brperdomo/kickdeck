@@ -1,0 +1,62 @@
+Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group GAMES with selector: .game-list, .schedule-view, .game-create-button, .schedule-create, .game-edit-button, .edit-game-modal, .game-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group SCORES with selector: .scores-section, .score-details, .score-create-button, .add-score-form, .score-edit-button, .edit-score-modal, .score-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group FINANCES with selector: .finances-section, .payment-history, .payment-create-button, .add-payment-form, .finance-edit-button, .edit-payment-modal, .finance-delete-button, .payment-approve-button, .refund-approve-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group ADMINISTRATORS with selector: .admin-list, .admin-details, .admin-create-button, .add-admin-form, .admin-edit-button, .edit-admin-modal, .admin-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group REPORTS with selector: .reports-section, .analytics-dashboard, .export-button, .download-report-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group SETTINGS with selector: .settings-section, .app-settings, .settings-edit-button, .edit-settings-form
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group FINANCES with selector: .finances-section, .payment-history, .payment-create-button, .add-payment-form, .finance-edit-button, .edit-payment-modal, .finance-delete-button, .payment-approve-button, .refund-approve-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group SCORES with selector: .scores-section, .score-details, .score-create-button, .add-score-form, .score-edit-button, .edit-score-modal, .score-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group GAMES with selector: .game-list, .schedule-view, .game-create-button, .schedule-create, .game-edit-button, .edit-game-modal, .game-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group TEAMS with selector: .team-list, .team-details, .team-roster, .team-create-button, .add-team-form, .team-edit-button, .edit-team-modal, .team-status-button, .team-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group GAMES with selector: .game-list, .schedule-view, .game-create-button, .schedule-create, .game-edit-button, .edit-game-modal, .game-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group SCORES with selector: .scores-section, .score-details, .score-create-button, .add-score-form, .score-edit-button, .edit-score-modal, .score-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group FINANCES with selector: .finances-section, .payment-history, .payment-create-button, .add-payment-form, .finance-edit-button, .edit-payment-modal, .finance-delete-button, .payment-approve-button, .refund-approve-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group SETTINGS with selector: .settings-section, .app-settings, .settings-edit-button, .edit-settings-form
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group REPORTS with selector: .reports-section, .analytics-dashboard, .export-button, .download-report-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group ADMINISTRATORS with selector: .admin-list, .admin-details, .admin-create-button, .add-admin-form, .admin-edit-button, .edit-admin-modal, .admin-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group COUPONS with selector: .coupon-list, .coupon-details, .coupon-create-button, .add-coupon-form, .coupon-edit-button, .edit-coupon-modal, .coupon-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group TEAMS with selector: .team-list, .team-details, .team-roster, .team-create-button, .add-team-form, .team-edit-button, .edit-team-modal, .team-status-button, .team-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group EVENTS with selector: .event-list, .event-details, .event-create-button, .add-event-form, .event-edit-button, .edit-event-modal, .event-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
+RolePermissionsManager.tsx:518 Highlighting permission group USERS with selector: .user-list, .admin-user-section, .user-create-button, .add-user-form, .user-edit-button, .user-profile-edit, .user-delete-button
+RolePermissionsManager.tsx:520 Found 0 elements to highlight
+RolePermissionsManager.tsx:533 Removing highlight from 0 elements
