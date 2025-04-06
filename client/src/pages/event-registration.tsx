@@ -48,6 +48,11 @@ interface Event {
   endDate: string;
   applicationDeadline: string;
   details: string;
+  branding?: {
+    logoUrl?: string;
+    primaryColor?: string;
+    secondaryColor?: string;
+  };
   agreement?: string; // Terms and conditions text
   refundPolicy?: string; // Refund policy text
   ageGroups: AgeGroup[];
@@ -966,6 +971,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
 
         <Card className="max-w-4xl mx-auto bg-white/95 backdrop-blur">
           <CardHeader className="text-center border-b">
+            {event.branding?.logoUrl && (
+              <div className="mx-auto mb-4">
+                <img 
+                  src={event.branding.logoUrl} 
+                  alt={`${event.name} logo`} 
+                  className="max-h-32 object-contain mx-auto"
+                />
+              </div>
+            )}
             <CardTitle className="text-3xl font-bold text-[#2C5282]">{event.name}</CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-6">

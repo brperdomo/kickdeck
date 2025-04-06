@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ArrowLeft, Plus, Edit, Trash, CheckCircle } from "lucide-react";
+import { Loader2, ArrowLeft, Plus, Edit, Trash, CheckCircle, Upload, ImageIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -344,12 +344,52 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   });
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: acceptedFiles => {
-      setLogo(acceptedFiles[0]);
-      const reader = new FileReader();
-      reader.onload = (e) => setPreviewUrl(e.target?.result as string);
-      reader.readAsDataURL(acceptedFiles[0]);
+    onDrop: async (acceptedFiles) => {
+      try {
+        const file = acceptedFiles[0];
+        setLogo(file);
+        
+        // Show local preview immediately for better UX
+        const reader = new FileReader();
+        reader.onload = (e) => setPreviewUrl(e.target?.result as string);
+        reader.readAsDataURL(file);
+
+        // Upload the file to the server
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to upload logo');
+        }
+
+        const uploadResult = await response.json();
+        
+        // Update the preview URL with the server URL (which will be persisted)
+        setPreviewUrl(uploadResult.url);
+        
+        toast({
+          title: "Success",
+          description: "Logo uploaded successfully",
+        });
+      } catch (error) {
+        console.error('Logo upload error:', error);
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to upload logo",
+          variant: "destructive",
+        });
+      }
     },
+    accept: {
+      'image/*': ['.png', '.jpg', '.jpeg', '.svg']
+    },
+    maxFiles: 1,
+    multiple: false
   });
 
   const renderAgeGroupsContent = (mode: 'create' | 'edit', ageGroups: AgeGroup[], seasonalScopesQuery: any, selectedSeasonalScopeId: number | null, handleSeasonalScopeChange: (id: number) => void) => (
@@ -927,7 +967,63 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           Add Setting
         </Button>
       </div>
+      
+      {/* Event Logo Upload Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Event Logo</CardTitle>
+          <CardDescription>
+            Upload a logo for your event. This will be displayed during the team registration process.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <div
+                {...getRootProps()}
+                className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${
+                  isDragActive ? 'border-primary bg-primary/5' : 'border-border'
+                }`}
+              >
+                <input {...getInputProps()} />
+                <div className="flex flex-col items-center justify-center gap-2">
+                  <div className="p-2 rounded-full bg-muted">
+                    <Upload className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground text-center">
+                    {isDragActive
+                      ? "Drop the logo here"
+                      : "Drag & drop your event logo here, or click to select"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Supported formats: PNG, JPG, SVG
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col items-center justify-center p-4 bg-muted rounded-lg">
+              {previewUrl ? (
+                <div className="flex flex-col items-center gap-4">
+                  <img
+                    src={previewUrl}
+                    alt="Event logo preview"
+                    className="max-h-32 object-contain"
+                  />
+                  <p className="text-sm text-center">Logo Preview</p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                  <ImageIcon className="h-10 w-10" />
+                  <p className="text-sm">No logo uploaded</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
+      {/* Event Settings List */}
       <div className="grid gap-4">
         {settings.map((setting) => (
           <Card key={setting.id}>
@@ -964,21 +1060,6 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
             </CardContent>
           </Card>
         ))}
-      </div>
-
-      <div className="mt-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Logo
-        </label>
-        <div {...getRootProps({ className: 'dropzone' })}>
-          <input {...getInputProps()} />
-          {
-            isDragActive ?
-              <p>Drop the files here ...</p> :
-              <p>Drag 'n' drop some files here, or click to select files</p>
-          }
-          {previewUrl && <img src={previewUrl} alt="Preview" width={100} />}
-        </div>
       </div>
 
       <Dialog open={isSettingDialogOpen} onOpenChange={setIsSettingDialogOpen}>
