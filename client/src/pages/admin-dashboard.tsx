@@ -564,7 +564,7 @@ function AdministratorsView() {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Administrators</h2>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button onClick={() => setIsAddModalOpen(true)}>
+            <Button onClick={() => setIsAddModalOpen(true)} className="admin-create-button">
               <UserPlus className="mr-2 h-4 w-4" />
               Add Administrator
             </Button>
@@ -661,7 +661,7 @@ function AdministratorsView() {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                      <DropdownMenuItem onClick={() => handleEditAdmin(admin)}>
+                                      <DropdownMenuItem onClick={() => handleEditAdmin(admin)} className="admin-edit-button">
                                         <Edit className="mr-2 h-4 w-4" />
                                         Edit
                                       </DropdownMenuItem>
@@ -669,7 +669,7 @@ function AdministratorsView() {
                                       <DropdownMenuItem
                                         onClick={() => deleteAdminMutation.mutate(admin.id)}
                                         disabled={deleteAdminMutation.isPending}
-                                        className="text-red-600"
+                                        className="text-red-600 admin-delete-button"
                                       >
                                         <Trash className="mr-2 h-4 w-4" />
                                         Remove
@@ -2684,7 +2684,7 @@ function TeamsView() {
       <AnimatedContainer animation="fadeIn" delay={0.2}>
         <Card>
           <CardContent className="p-6">
-            <div className="space-y-4">
+            <div className="space-y-4 team-list">
               <motion.div 
                 className="flex flex-wrap gap-4 items-center"
                 initial={{ opacity: 0, y: 10 }}
@@ -2816,6 +2816,7 @@ function TeamsView() {
                                     <Button 
                                       variant="outline" 
                                       size="sm"
+                                      className="team-edit-button"
                                       onClick={() => handleStatusUpdate(team, 'approved')}
                                     >
                                       <Check className="h-4 w-4 mr-1" />
@@ -2824,7 +2825,7 @@ function TeamsView() {
                                     <Button 
                                       variant="outline" 
                                       size="sm" 
-                                      className="text-destructive"
+                                      className="text-destructive team-edit-button"
                                       onClick={() => handleStatusUpdate(team, 'rejected')}
                                     >
                                       <X className="h-4 w-4 mr-1" />
@@ -2902,6 +2903,7 @@ function TeamsView() {
                                       <Button 
                                         variant="outline" 
                                         size="sm"
+                                        className="team-status-button team-edit-button"
                                         onClick={() => handleRefundRequest(team)}
                                       >
                                         <RefreshCcw className="h-4 w-4 mr-1" />
@@ -3048,6 +3050,7 @@ function TeamsView() {
             <Button 
               onClick={() => confirmStatusUpdate(selectedTeam?.notes)}
               disabled={updateTeamStatusMutation.isPending}
+              className="team-status-button team-edit-button"
               variant={selectedTeam?.status === 'rejected' || selectedTeam?.status === 'withdrawn' ? 'destructive' : 
                        selectedTeam?.status === 'approved' ? 'default' : 'outline'}
             >
@@ -3084,6 +3087,7 @@ function TeamsView() {
             <Button 
               onClick={confirmRefund}
               disabled={processRefundMutation.isPending}
+              className="team-status-button team-edit-button"
             >
               {processRefundMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Process Refund
@@ -3228,6 +3232,7 @@ function TeamsView() {
                   <Button 
                     variant="outline" 
                     size="sm"
+                    className="team-edit-button"
                     onClick={() => {
                       // Initialize a new blank player
                       setSelectedPlayer({
@@ -3280,6 +3285,7 @@ function TeamsView() {
                                 <Button
                                   variant="ghost"
                                   size="icon"
+                                  className="team-edit-button"
                                   onClick={() => {
                                     setSelectedPlayer(player);
                                     setIsAddPlayerMode(false);
@@ -3292,6 +3298,7 @@ function TeamsView() {
                                 <Button
                                   variant="ghost" 
                                   size="icon"
+                                  className="team-edit-button"
                                   onClick={() => {
                                     setSelectedPlayer(player);
                                     setIsDeletePlayerDialogOpen(true);
@@ -3482,6 +3489,7 @@ function TeamsView() {
                   <>
                     <Button 
                       variant="outline"
+                      className="team-status-button"
                       onClick={() => {
                         setIsDetailsDialogOpen(false);
                         handleStatusUpdate(selectedTeam, 'rejected');
@@ -3490,7 +3498,8 @@ function TeamsView() {
                       <X className="h-4 w-4 mr-1" />
                       Reject Team
                     </Button>
-                    <Button 
+                    <Button
+                      className="team-status-button"
                       onClick={() => {
                         setIsDetailsDialogOpen(false);
                         handleStatusUpdate(selectedTeam, 'approved');
@@ -3501,6 +3510,7 @@ function TeamsView() {
                     </Button>
                     <Button 
                       variant="outline"
+                      className="team-status-button"
                       onClick={() => {
                         setIsDetailsDialogOpen(false);
                         handleStatusUpdate(selectedTeam, 'withdrawn');

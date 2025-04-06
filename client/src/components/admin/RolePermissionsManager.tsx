@@ -142,7 +142,7 @@ const permissionComponentMap: Record<string, string> = {
   
   'teams.view': '.team-list, .team-details, .team-roster',
   'teams.create': '.team-create-button, .add-team-form',
-  'teams.edit': '.team-edit-button, .edit-team-modal',
+  'teams.edit': '.team-edit-button, .edit-team-modal, .team-status-button',
   'teams.delete': '.team-delete-button',
   
   'games.view': '.game-list, .schedule-view',
