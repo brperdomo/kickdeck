@@ -9,7 +9,7 @@ import { StripeSettingsView } from "./StripeSettingsView";
 
 export function GeneralSettingsView() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 settings-section app-settings">
       <h2 className="text-2xl font-bold">General Settings</h2>
 
       <Tabs defaultValue="organization" className="space-y-4">

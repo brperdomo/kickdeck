@@ -1,0 +1,61 @@
+RolePermissionsManager.tsx:487 Highlighting permission users.create with selector: .user-create-button, .add-user-form
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission users.view with selector: .user-list, .admin-user-section
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission users.view with selector: .user-list, .admin-user-section
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission users.create with selector: .user-create-button, .add-user-form
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission users.create with selector: .user-create-button, .add-user-form
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission users.view with selector: .user-list, .admin-user-section
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission events.view with selector: .event-list, .event-details
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission events.create with selector: .event-create-button, .add-event-form
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission events.view with selector: .event-list, .event-details
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission scores.view with selector: .scores-section, .score-details
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission scores.create with selector: .score-create-button, .add-score-form
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission scores.create with selector: .score-create-button, .add-score-form
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission scores.view with selector: .scores-section, .score-details
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission scores.view with selector: .scores-section, .score-details
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission settings.view with selector: .settings-section, .app-settings
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission settings.edit with selector: .settings-edit-button, .edit-settings-form
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission settings.view with selector: .settings-section, .app-settings
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+2FloatingEmulationButton.tsx:46 [Emulation] No token found, clearing state
+RolePermissionsManager.tsx:487 Highlighting permission administrators.view with selector: .admin-list, .admin-details
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission administrators.create with selector: .admin-create-button, .add-admin-form
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
+RolePermissionsManager.tsx:487 Highlighting permission administrators.view with selector: .admin-list, .admin-details
+RolePermissionsManager.tsx:489 Found 0 elements to highlight
+RolePermissionsManager.tsx:502 Removing highlight from 0 elements
