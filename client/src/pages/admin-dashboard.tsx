@@ -5,6 +5,8 @@ import {
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft
 } from "lucide-react";
+import { ComplexCard } from "@/components/admin/ComplexCard";
+import { formatAddress } from "@/lib/format-address";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import EmulationManager from "@/components/admin/EmulationManager";
@@ -1564,101 +1566,17 @@ function ComplexesView() {
 
       <div className="grid gap-6">
         {complexesQuery.data?.map((complex: Complex) => (
-          <Card key={complex.id}>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle>{complex.name}</CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {complex.address}, {complex.city}, {complex.state}
-                  </p>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => handleEditComplex(complex)}>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleViewFields(complex.id)}>
-                      <Eye className="mr-2 h-4 w-4" />
-                      View Fields
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Operating Hours</Label>
-                  <p className="text-sm">
-                    {complex.openTime} - {complex.closeTime}
-                  </p>
-                </div>
-                <div>
-                  <Label>Status</Label>
-                  <Badge variant={complex.isOpen ? "success" : "destructive"}>
-                    {complex.isOpen ? "Open" : "Closed"}
-                  </Badge>
-                </div>
-              </div>
-
-              {viewingComplexId === complex.id && (
-                <div className="mt-4 border-t pt-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold">Fields</h3>
-                    <Button onClick={handleAddField} size="sm">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Field
-                    </Button>
-                  </div>
-                  {fieldsQuery.isLoading ? (
-                    <div className="flex items-center justify-center p-4">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    </div>
-                  ) : fieldsQuery.data?.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No fields available</p>
-                  ) : (
-                    <div className="grid gap-2">
-                      {fieldsQuery.data?.map((field: Field) => (
-                        <div key={field.id} className="flex justify-between items-center p-2 bg-muted rounded-lg">
-                          <div>
-                            <p className="font-medium">{field.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {field.hasLights ? "Has lights" : "No lights"} •
-                              {field.hasParking ? "Parking available" : "No parking"}
-                            </p>
-                            {field.specialInstructions && (
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Note: {field.specialInstructions}
-                              </p>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant={field.isOpen ? "success" : "destructive"}>
-                              {field.isOpen ? "Open" : "Closed"}
-                            </Badge>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditField(field)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <ComplexCard 
+            key={complex.id} 
+            complex={complex} 
+            onEditComplex={handleEditComplex} 
+            onViewFields={handleViewFields}
+            isViewingFields={viewingComplexId === complex.id}
+            onAddField={viewingComplexId === complex.id ? handleAddField : undefined}
+            fields={viewingComplexId === complex.id ? fieldsQuery.data || [] : []}
+            fieldsLoading={fieldsQuery.isLoading && viewingComplexId === complex.id}
+            onEditField={handleEditField}
+          />
         ))}
       </div>
 
