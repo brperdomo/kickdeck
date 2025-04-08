@@ -1,96 +1,76 @@
+/**
+ * Custom hook for loading Google Maps JavaScript API
+ */
+
 import { useState, useEffect } from 'react';
 
-// Extend window with Google Maps API
-declare global {
-  interface Window {
-    google?: any;
-  }
+// Add Google type to window object
+interface CustomWindow extends Window {
+  google?: any;
+  initGoogleMapsCallback?: () => void;
 }
 
-/**
- * Options for loading the Google Maps JavaScript API
- */
-interface UseGoogleMapsScriptOptions {
-  apiKey?: string;
-  libraries?: string[];
-  version?: string;
-  language?: string;
-  region?: string;
-}
+declare const window: CustomWindow;
 
 /**
- * Result of the useGoogleMapsScript hook
+ * API key management for Google Maps integration
+ * Note: In production, this should be loaded from environment variables
  */
-interface UseGoogleMapsScriptResult {
-  loaded: boolean;
-  error: Error | null;
-}
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 /**
- * A hook to dynamically load the Google Maps JavaScript API
+ * Hook for dynamically loading the Google Maps JavaScript API
+ * @param libraries Array of Google Maps libraries to load (e.g., 'places', 'geometry')
+ * @returns Object containing loading status and error if any occurred
  */
-export function useGoogleMapsScript(options: UseGoogleMapsScriptOptions = {}): UseGoogleMapsScriptResult {
-  const [loaded, setLoaded] = useState(!!window.google?.maps);
-  const [error, setError] = useState<Error | null>(null);
+export function useGoogleMapsScript(libraries: string[] = []): {
+  isLoaded: boolean;
+  loadError: Error | null;
+} {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // If the API is already loaded, don't reload it
-    if (window.google?.maps) {
-      setLoaded(true);
+    // Skip if Google Maps API is already loaded
+    if (window.google) {
+      setIsLoaded(true);
       return;
     }
 
-    // Create a unique callback name to avoid conflicts
-    const callbackName = `googleMapsCallback_${Math.round(Math.random() * 1000000)}`;
-    window[callbackName] = () => {
-      setLoaded(true);
-      delete window[callbackName];
+    // Generate a unique callback name
+    const callbackName = `initGoogleMapsCallback_${Math.random().toString(36).substring(2, 9)}`;
+    
+    // Create a promise that resolves when the Google Maps API is loaded
+    window.initGoogleMapsCallback = () => {
+      setIsLoaded(true);
     };
 
     // Create the script element
     const script = document.createElement('script');
-    script.src = createScriptUrl({
-      ...options,
-      callback: callbackName
-    });
+    
+    // Construct the URL with API key and libraries
+    const librariesParam = libraries.length > 0 ? `&libraries=${libraries.join(',')}` : '';
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}${librariesParam}&callback=initGoogleMapsCallback`;
     script.async = true;
     script.defer = true;
-
-    // Handle errors
+    
+    // Handle script loading errors
     script.onerror = (error) => {
-      setError(new Error(`Failed to load Google Maps API: ${error.toString()}`));
-      document.head.removeChild(script);
+      setLoadError(new Error('Failed to load Google Maps API script'));
+      document.body.removeChild(script);
     };
-
+    
     // Append the script to the document
-    document.head.appendChild(script);
-
-    // Cleanup on unmount
+    document.body.appendChild(script);
+    
+    // Cleanup
     return () => {
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
+      window.initGoogleMapsCallback = undefined;
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
       }
-      delete window[callbackName];
     };
-  }, [options.apiKey, options.libraries?.toString(), options.version, options.language, options.region]);
-
-  return { loaded, error };
-}
-
-/**
- * Helper function to create the Google Maps script URL
- */
-function createScriptUrl(
-  { apiKey, libraries = [], version = 'weekly', language, region, callback }: UseGoogleMapsScriptOptions & { callback?: string }
-): string {
-  const params = new URLSearchParams({
-    v: version,
-    ...(apiKey && { key: apiKey }),
-    ...(libraries.length > 0 && { libraries: libraries.join(',') }),
-    ...(language && { language }),
-    ...(region && { region }),
-    ...(callback && { callback })
-  });
-
-  return `https://maps.googleapis.com/maps/api/js?${params.toString()}`;
+  }, [libraries.join(',')]);  // Only reload if the libraries change
+  
+  return { isLoaded, loadError };
 }
