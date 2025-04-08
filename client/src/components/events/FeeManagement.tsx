@@ -238,11 +238,11 @@ export function FeeManagement() {
       }
     },
     enabled: !!eventIdParam,
-    staleTime: 0, // Don't cache - always fetch fresh data
-    cacheTime: 0, // Don't keep data in cache
-    refetchOnWindowFocus: true, // Refresh when window regains focus
-    refetchOnMount: true, // Always refetch when component mounts
-    retry: 3, // Retry failed requests three times
+    staleTime: 300000, // Cache for 5 minutes to prevent disruption during demos
+    gcTime: 600000, // Keep in cache for 10 minutes
+    refetchOnWindowFocus: false, // Don't refresh when window regains focus to prevent demo disruption
+    refetchOnMount: true, // Still refetch when component mounts
+    retry: 1 // Only retry once to avoid too many failed requests
   });
 
   // Initialize selected age groups when fee assignments load

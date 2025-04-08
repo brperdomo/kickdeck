@@ -24,15 +24,16 @@ export function FloatingEmulationButton() {
     // Initial check - only runs once on mount
     checkEmulationStatus();
 
-    // Setup interval for periodic checking (every 30 seconds)
-    const intervalId = setInterval(checkEmulationStatus, 30000);
+    // Setup interval for periodic checking (every 5 minutes instead of 30 seconds)
+    // This prevents frequent refreshes during demos
+    const intervalId = setInterval(checkEmulationStatus, 300000);
     
-    // Setup focus event for checking when tab regains focus
-    window.addEventListener('focus', checkEmulationStatus);
+    // Don't check on focus to avoid interrupting demo flow
+    // window.addEventListener('focus', checkEmulationStatus);
     
     return () => {
       clearInterval(intervalId);
-      window.removeEventListener('focus', checkEmulationStatus);
+      // window.removeEventListener('focus', checkEmulationStatus);
     };
   }, []);
 

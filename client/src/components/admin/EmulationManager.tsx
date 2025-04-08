@@ -65,8 +65,8 @@ export default function EmulationManager() {
       
       return response.json() as Promise<EmulationStatus>;
     },
-    refetchInterval: 15000, // Refresh more frequently (every 15 seconds)
-    refetchOnWindowFocus: true
+    refetchInterval: 300000, // Reduced to 5 minutes (was 15 seconds) to prevent disruptions during demos
+    refetchOnWindowFocus: false // Disabled to prevent disruptions when window regains focus
   });
 
   // Start emulation mutation

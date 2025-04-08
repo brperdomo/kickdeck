@@ -91,11 +91,13 @@ export function useUser() {
     // Include emulation token in query key to ensure proper cache invalidation
     queryKey: ['user', emulationToken],
     queryFn: fetchUser,
-    staleTime: 10000, // Reduced stale time to ensure more frequent refreshes during emulation
-    gcTime: 300000, // Keep unused data for 5 minutes (reduced from 1 hour)
+    staleTime: 300000, // Increased to 5 minutes to prevent frequent refreshes during demos
+    gcTime: 600000, // Keep unused data for 10 minutes
     retry: 1, // Only retry once to avoid infinite loops with bad credentials
-    refetchOnWindowFocus: true, // Make sure we refresh on window focus
-    refetchOnMount: true // Make sure we refresh when components mount
+    refetchOnWindowFocus: false, // Disabled to prevent refresh when window regains focus
+    refetchOnMount: true, // Still refresh when components mount
+    // Prevent actual refetches from causing UI refreshes if the data hasn't changed
+    structuralSharing: true
   });
 
   const loginMutation = useMutation<RequestResult, Error, InsertUser>({
