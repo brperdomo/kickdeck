@@ -4243,24 +4243,42 @@ function AdminDashboard() {
               My Account
             </Button>
 
-            <div className="flex flex-col space-y-2 mb-2">
-              <Button onClick={handleLogout} className="w-full" variant="outline">
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
+            <div className="flex flex-col space-y-3 mt-auto mb-4 px-2">
+              <div className="border-t border-gray-700 my-2 pt-4"></div>
+              <Button 
+                onClick={handleAppearanceToggle} 
+                className="w-full bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors border-0 shadow-sm" 
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center">
+                    {theme === 'dark' ? (
+                      <Sun className="mr-2 h-4 w-4" />
+                    ) : (
+                      <Moon className="mr-2 h-4 w-4" />
+                    )}
+                    <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                  </div>
+                  <div className="bg-indigo-600 rounded-full p-1 h-5 w-5 flex items-center justify-center">
+                    <ChevronRight className="h-3 w-3" />
+                  </div>
+                </div>
+              </Button>
+              
+              <Button 
+                onClick={handleLogout} 
+                className="w-full bg-gray-800 text-gray-300 hover:bg-red-900 hover:text-white transition-colors border-0 shadow-sm"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Logout</span>
+                  </div>
+                  <div className="bg-red-800 rounded-full p-1 h-5 w-5 flex items-center justify-center">
+                    <ChevronRight className="h-3 w-3" />
+                  </div>
+                </div>
               </Button>
             </div>
-            <Button 
-              onClick={handleAppearanceToggle} 
-              className="w-full" 
-              variant="outline"
-            >
-              {theme === 'dark' ? (
-                <Sun className="mr-2 h-4 w-4" />
-              ) : (
-                <Moon className="mr-2 h-4 w-4" />
-              )}
-              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-            </Button>
           </div>
       </AnimatedSidebar>
 

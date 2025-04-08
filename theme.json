@@ -1,6 +1,48 @@
 {
   "variant": "professional",
-  "primary": "hsl(222.2 47.4% 11.2%)",
-  "appearance": "light",
-  "radius": 0.5
+  "primary": "hsl(240 70% 58%)",
+  "appearance": "dark",
+  "radius": 0.5,
+  "colors": {
+    "background": "hsl(240 20% 9%)",
+    "foreground": "hsl(0 0% 95%)",
+    "card": "hsl(240 25% 12%)",
+    "card-foreground": "hsl(0 0% 90%)",
+    "popover": "hsl(240 25% 12%)",
+    "popover-foreground": "hsl(0 0% 90%)",
+    "primary": "hsl(240 70% 58%)",
+    "primary-foreground": "hsl(0 0% 100%)",
+    "secondary": "hsl(240 30% 18%)",
+    "secondary-foreground": "hsl(0 0% 95%)",
+    "muted": "hsl(240 25% 16%)",
+    "muted-foreground": "hsl(0 0% 65%)",
+    "accent": "hsl(243 50% 65%)",
+    "accent-foreground": "hsl(0 0% 95%)",
+    "destructive": "hsl(0 60% 55%)",
+    "destructive-foreground": "hsl(0 0% 100%)",
+    "border": "hsl(240 20% 25%)",
+    "input": "hsl(240 20% 20%)",
+    "ring": "hsl(240 70% 65%)",
+    "success": "hsl(145 65% 45%)",
+    "warning": "hsl(38 80% 60%)",
+    "info": "hsl(210 90% 65%)"
+  },
+  "custom": {
+    "adminNav": {
+      "background": "hsl(240 25% 10%)",
+      "text": "hsl(0 0% 80%)",
+      "active": "hsl(240 70% 58%)",
+      "hover": "hsl(240 30% 18%)"
+    },
+    "gradients": {
+      "primary": "linear-gradient(to right, hsl(240 70% 58%), hsl(260 60% 60%))",
+      "sidebar": "linear-gradient(180deg, hsl(240 35% 8%) 0%, hsl(240 35% 12%) 100%)",
+      "card": "linear-gradient(to bottom right, hsl(240 25% 15%) 0%, hsl(240 25% 10%) 100%)"
+    },
+    "shadows": {
+      "card": "0 4px 20px rgba(0, 0, 0, 0.35)",
+      "button": "0 2px 8px rgba(79, 70, 229, 0.25)",
+      "navbar": "0 4px 12px rgba(0, 0, 0, 0.3)"
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { ReactNode } from "react";
+import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { AnimatedContent, AnimatedItem, ANIMATION_CONFIG } from "@/components/ui/animation";
 
@@ -19,11 +19,12 @@ const sidebarVariants = {
     opacity: 1,
     x: 0,
     transition: { 
-      duration: 0.5,
+      duration: 0.6,
       type: "spring",
-      stiffness: 100,
+      stiffness: 80,
+      damping: 15,
       when: "beforeChildren",
-      staggerChildren: 0.05
+      staggerChildren: 0.07
     }
   },
   exit: {
@@ -35,60 +36,149 @@ const sidebarVariants = {
   }
 };
 
+// Subtle particle animation for sidebar background
+const Particles = () => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 rounded-full bg-indigo-500/20"
+          initial={{ 
+            x: Math.random() * 100 + 50, 
+            y: Math.random() * 300 + 100,
+            opacity: 0.1 + Math.random() * 0.2
+          }}
+          animate={{ 
+            y: [null, Math.random() * 400 + 100],
+            opacity: [null, 0]
+          }}
+          transition={{ 
+            duration: 10 + Math.random() * 20, 
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          style={{ 
+            filter: `blur(${Math.random() * 2}px)`,
+            scale: 0.5 + Math.random() * 1.5
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 export function AnimatedSidebar({ 
   children, 
   title = "Dashboard", 
   icon, 
   className 
 }: AnimatedSidebarProps) {
+  // Extra visual effect - time-based gradient shift
+  const [gradientOffset, setGradientOffset] = useState(0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGradientOffset(prev => (prev + 1) % 100);
+    }, 30000); // Subtle movement every 30 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
+  
   return (
     <motion.div
       className={cn(
-        "w-64 flex flex-col h-full text-white",
+        "w-64 flex flex-col h-full text-white relative",
         className
       )}
       style={{ 
-        background: "#0B0F1E",  // Deep navy background like the reference design
-        borderRight: "1px solid rgba(255,255,255,0.1)" 
+        background: `linear-gradient(180deg, rgba(9, 9, 26, 0.97) ${gradientOffset}%, rgba(16, 15, 41, 0.98) ${50 + gradientOffset}%, rgba(26, 24, 64, 0.95) 100%)`,
+        borderRight: "1px solid rgba(78, 75, 128, 0.3)",
+        boxShadow: "0 0 30px rgba(0, 0, 0, 0.5) inset"
       }}
       variants={sidebarVariants}
       initial="hidden"
       animate="visible"
       exit="exit"
     >
-      {/* Stylish sidebar header */}
+      {/* Background subtle animated particles */}
+      <Particles />
+      
+      {/* Glowing edges */}
+      <div className="absolute top-0 bottom-0 right-0 w-[1px] bg-gradient-to-b from-indigo-500/0 via-indigo-500/20 to-indigo-500/0 pointer-events-none" />
+      
+      {/* Enhanced stylish sidebar header with animation */}
       {title && (
         <motion.div 
-          className="p-6 border-b border-opacity-10 border-white"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
+          className="px-6 py-7 border-b border-gray-800/50 relative"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
         >
-          <div className="flex items-center gap-3">
+          {/* Header backdrop glow */}
+          <div className="absolute top-0 left-0 right-0 h-20 bg-indigo-600/5 blur-xl rounded-full pointer-events-none"></div>
+          
+          <div className="flex items-center gap-3 relative">
             {icon && (
               <motion.div
-                className="p-2 rounded-md bg-indigo-600 bg-opacity-30"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.3, type: "spring" }}
+                className="p-2.5 rounded-md bg-gradient-to-br from-indigo-900/80 to-indigo-800/80 shadow-lg shadow-indigo-900/30 border border-indigo-700/30"
+                initial={{ scale: 0.8, opacity: 0, rotate: -10 }}
+                animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                transition={{ 
+                  delay: 0.4, 
+                  type: "spring",
+                  stiffness: 200 
+                }}
               >
                 {icon}
               </motion.div>
             )}
-            <div>
-              <h1 className="font-bold text-xl bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                {title}
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5, duration: 0.4 }}
+            >
+              <h1 className="font-bold text-xl tracking-tight">
+                <span className="relative">
+                  {/* Text with fancy gradient */}
+                  <span className="bg-gradient-to-r from-indigo-300 via-purple-200 to-indigo-300 bg-clip-text text-transparent">
+                    {title}
+                  </span>
+                  
+                  {/* Subtle highlight under text */}
+                  <motion.span 
+                    className="absolute -bottom-1 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-500/0 via-indigo-500/50 to-indigo-500/0"
+                    initial={{ scaleX: 0, opacity: 0 }}
+                    animate={{ scaleX: 1, opacity: 1 }}
+                    transition={{ delay: 0.8, duration: 0.6 }}
+                  ></motion.span>
+                </span>
               </h1>
-              <p className="text-xs text-gray-400 mt-1">Management Portal</p>
-            </div>
+              <motion.p 
+                className="text-xs text-indigo-300/70 mt-1.5"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+              >
+                Management Portal
+              </motion.p>
+            </motion.div>
           </div>
         </motion.div>
       )}
       
-      {/* Content wrapper */}
-      <div className="p-4 flex-1 overflow-y-auto">
-        <div className="space-y-2">
-          {children}
+      {/* Enhanced content wrapper with decorative elements */}
+      <div className="relative flex-1 overflow-y-auto">
+        {/* Multiple decorative sidebar elements for enhanced visual depth */}
+        <div className="absolute top-10 right-0 w-full h-40 bg-indigo-600/5 blur-[100px] rounded-full pointer-events-none"></div>
+        <div className="absolute top-1/2 left-10 w-20 h-20 bg-purple-600/5 blur-[70px] rounded-full pointer-events-none"></div>
+        <div className="absolute bottom-20 right-0 w-full h-40 bg-indigo-600/5 blur-[100px] rounded-full pointer-events-none"></div>
+        
+        {/* Content with improved spacing */}
+        <div className="p-5 pt-6">
+          <div className="space-y-2.5 relative">
+            {children}
+          </div>
         </div>
       </div>
     </motion.div>

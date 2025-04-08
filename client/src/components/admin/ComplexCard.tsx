@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { formatAddress } from "@/lib/format-address";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface Complex {
   id: number;
@@ -58,21 +59,33 @@ export function ComplexCard({
   const fieldCount = complex.fields?.length || 0;
   
   return (
-    <Card className="overflow-hidden transition-all duration-200 hover:shadow-md border-l-4 border-l-primary">
-      <CardHeader className="p-4 pb-3">
+    <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg dark:bg-gray-900/60 border-l-4 border-l-primary relative">
+      {/* Subtle gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none rounded-r-lg"></div>
+      
+      <CardHeader className="p-4 pb-3 relative z-10">
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center">
-              <h3 className="text-xl font-bold">{complex.name}</h3>
+              <motion.h3 
+                className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300 dark:from-white dark:to-gray-400"
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {complex.name}
+              </motion.h3>
               <Badge 
-                variant={complex.isOpen ? "default" : "destructive"}
-                className={cn("ml-3", complex.isOpen ? "bg-green-100 text-green-800 hover:bg-green-100" : "")}
+                variant={complex.isOpen ? "outline" : "destructive"}
+                className={cn("ml-3", complex.isOpen 
+                  ? "bg-green-950/40 text-green-400 hover:bg-green-950/60 border-green-800" 
+                  : "bg-red-950/40 border-red-800")}
               >
                 {complex.isOpen ? "Open" : "Closed"}
               </Badge>
             </div>
             <div className="flex items-center text-muted-foreground text-sm mt-1">
-              <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+              <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0 text-indigo-400" />
               <span className="truncate">{formatAddress(complex)}</span>
             </div>
           </div>
@@ -81,7 +94,7 @@ export function ComplexCard({
             <Button
               variant="ghost"
               size="sm"
-              className="flex items-center text-muted-foreground hover:text-foreground"
+              className="flex items-center text-muted-foreground hover:text-foreground hover:bg-gray-800/50"
               onClick={() => setShowDetails(!showDetails)}
             >
               {showDetails ? (
@@ -99,22 +112,22 @@ export function ComplexCard({
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-gray-800/50">
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="dark:bg-gray-800 border-gray-700">
                 <DropdownMenuItem onClick={() => onEditComplex(complex)}>
-                  <Edit className="mr-2 h-4 w-4" />
+                  <Edit className="mr-2 h-4 w-4 text-indigo-400" />
                   Edit Complex
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onViewFields(complex.id)}>
-                  <Eye className="mr-2 h-4 w-4" />
+                  <Eye className="mr-2 h-4 w-4 text-indigo-400" />
                   {isViewingFields ? 'Hide Fields' : 'View Fields'}
                 </DropdownMenuItem>
                 {hasCoordinates && (
                   <DropdownMenuItem onClick={() => setShowMap(!showMap)}>
-                    <MapIcon className="mr-2 h-4 w-4" />
+                    <MapIcon className="mr-2 h-4 w-4 text-indigo-400" />
                     {showMap ? 'Hide Map' : 'Show Map'}
                   </DropdownMenuItem>
                 )}
@@ -124,83 +137,102 @@ export function ComplexCard({
         </div>
       </CardHeader>
       
-      <CardContent className="p-4 pt-0">
+      <CardContent className="p-4 pt-0 relative z-10">
         <div className="grid grid-cols-2 gap-4 mt-2">
-          <div className="flex items-center p-2 bg-muted/50 rounded-md">
-            <Clock className="h-5 w-5 mr-2 text-primary" />
+          <motion.div 
+            className="flex items-center p-3 rounded-md bg-gradient-to-br from-gray-800/80 to-gray-900/80 border border-gray-700/50 shadow-md"
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Clock className="h-5 w-5 mr-2 text-indigo-400" />
             <div>
-              <span className="text-sm font-medium">Operating Hours</span>
-              <p className="text-sm text-muted-foreground">{complex.openTime} - {complex.closeTime}</p>
+              <span className="text-sm font-medium text-gray-100">Operating Hours</span>
+              <p className="text-sm text-gray-400">{complex.openTime} - {complex.closeTime}</p>
             </div>
-          </div>
+          </motion.div>
           
-          <div className="flex items-center p-2 bg-muted/50 rounded-md">
-            <Users className="h-5 w-5 mr-2 text-primary" />
+          <motion.div 
+            className="flex items-center p-3 rounded-md bg-gradient-to-br from-gray-800/80 to-gray-900/80 border border-gray-700/50 shadow-md"
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Users className="h-5 w-5 mr-2 text-indigo-400" />
             <div>
-              <span className="text-sm font-medium">Fields Available</span>
-              <p className="text-sm text-muted-foreground">{fieldCount} total fields</p>
+              <span className="text-sm font-medium text-gray-100">Fields Available</span>
+              <p className="text-sm text-gray-400">{fieldCount} total fields</p>
             </div>
-          </div>
+          </motion.div>
         </div>
         
         {/* Expanded details section */}
-        {showDetails && (
-          <div className={cn("mt-4 space-y-4 transition-all", 
-            showDetails ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0 overflow-hidden"
-          )}>
-            {/* Conditionally rendered map */}
-            {hasCoordinates && (
-              <div className={cn("bg-muted rounded-md overflow-hidden transition-all duration-300",
-                showMap ? "h-60" : "h-0"
-              )}>
-                {showMap && (
-                  <iframe
-                    title={`Map for ${complex.name}`}
-                    className="w-full h-full rounded-md"
-                    src={`https://www.google.com/maps/embed/v1/place?key=${process.env.GOOGLE_MAPS_API_KEY || ''}&q=${complex.latitude},${complex.longitude}&zoom=15`}
-                    allowFullScreen
-                  />
-                )}
-              </div>
-            )}
-            
-            {/* Directions section */}
-            {complex.directions && (
-              <div className="p-3 border rounded-md">
-                <h4 className="text-sm font-medium mb-1 flex items-center">
-                  <MapPin className="h-4 w-4 mr-1 text-primary" />
-                  Directions
-                </h4>
-                <p className="text-sm text-muted-foreground">{complex.directions}</p>
-              </div>
-            )}
-            
-            {/* Rules section */}
-            {complex.rules && (
-              <div className="p-3 border rounded-md">
-                <h4 className="text-sm font-medium mb-1 flex items-center">
-                  <MapPin className="h-4 w-4 mr-1 text-primary" />
-                  Complex Rules
-                </h4>
-                <p className="text-sm text-muted-foreground">{complex.rules}</p>
-              </div>
-            )}
-          </div>
-        )}
+        <motion.div 
+          className="mt-4 space-y-4"
+          initial={false}
+          animate={{ 
+            height: showDetails ? 'auto' : 0,
+            opacity: showDetails ? 1 : 0,
+            marginTop: showDetails ? 16 : 0
+          }}
+          transition={{ duration: 0.3 }}
+          style={{ overflow: 'hidden' }}
+        >
+          {/* Conditionally rendered map */}
+          {hasCoordinates && (
+            <motion.div 
+              className="bg-gray-800 rounded-md overflow-hidden shadow-lg border border-gray-700/50"
+              initial={false}
+              animate={{ 
+                height: showMap ? 240 : 0
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              {showMap && (
+                <iframe
+                  title={`Map for ${complex.name}`}
+                  className="w-full h-full rounded-md"
+                  src={`https://www.google.com/maps/embed/v1/place?key=${process.env.GOOGLE_MAPS_API_KEY || ''}&q=${complex.latitude},${complex.longitude}&zoom=15`}
+                  allowFullScreen
+                />
+              )}
+            </motion.div>
+          )}
+          
+          {/* Directions section */}
+          {complex.directions && (
+            <div className="p-4 border border-gray-700/50 rounded-md bg-gray-800/80">
+              <h4 className="text-sm font-semibold mb-2 flex items-center text-indigo-300">
+                <MapPin className="h-4 w-4 mr-1 text-indigo-400" />
+                Directions
+              </h4>
+              <p className="text-sm text-gray-400">{complex.directions}</p>
+            </div>
+          )}
+          
+          {/* Rules section */}
+          {complex.rules && (
+            <div className="p-4 border border-gray-700/50 rounded-md bg-gray-800/80">
+              <h4 className="text-sm font-semibold mb-2 flex items-center text-indigo-300">
+                <MapPin className="h-4 w-4 mr-1 text-indigo-400" />
+                Complex Rules
+              </h4>
+              <p className="text-sm text-gray-400">{complex.rules}</p>
+            </div>
+          )}
+        </motion.div>
         
         {/* Fields section */}
         {isViewingFields && (
-          <div className="mt-4 border-t pt-4">
+          <div className="mt-4 border-t border-gray-700/50 pt-4">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-base font-medium">Fields ({fields.length})</h3>
+              <h3 className="text-base font-medium text-indigo-300">Fields ({fields.length})</h3>
               {onAddField && (
                 <Button 
                   onClick={onAddField} 
                   size="sm" 
                   variant="outline"
-                  className="h-8"
+                  className="h-8 border-indigo-500/50 hover:border-indigo-400 bg-gray-800/80 hover:bg-gray-700/80"
                 >
-                  <PlusCircle className="mr-1.5 h-3.5 w-3.5" />
+                  <PlusCircle className="mr-1.5 h-3.5 w-3.5 text-indigo-400" />
                   Add Field
                 </Button>
               )}
@@ -208,17 +240,17 @@ export function ComplexCard({
             
             {fieldsLoading ? (
               <div className="flex items-center justify-center p-8">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <Loader2 className="h-5 w-5 animate-spin text-indigo-400" />
               </div>
             ) : fields.length === 0 ? (
-              <div className="text-center py-6 bg-muted/30 rounded-md">
-                <p className="text-sm text-muted-foreground">No fields available for this complex</p>
+              <div className="text-center py-6 bg-gray-800/50 rounded-md border border-gray-700/50">
+                <p className="text-sm text-gray-400">No fields available for this complex</p>
                 {onAddField && (
                   <Button 
                     onClick={onAddField} 
                     size="sm" 
                     variant="link"
-                    className="mt-1 h-auto p-0"
+                    className="mt-1 h-auto p-0 text-indigo-400 hover:text-indigo-300"
                   >
                     Add your first field
                   </Button>
@@ -227,21 +259,25 @@ export function ComplexCard({
             ) : (
               <div className="grid gap-2">
                 {fields.map((field) => (
-                  <div 
+                  <motion.div 
                     key={field.id} 
-                    className="flex justify-between items-center p-3 border rounded-md hover:border-primary/30 transition-colors"
+                    className="flex justify-between items-center p-3 border border-gray-700/50 rounded-md bg-gray-800/60 hover:bg-gray-800/90 hover:border-indigo-500/30 transition-colors"
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 500 }}
                   >
                     <div>
                       <div className="flex items-center">
-                        <p className="font-medium">{field.name}</p>
+                        <p className="font-medium text-gray-200">{field.name}</p>
                         <Badge 
-                          variant={field.isOpen ? "default" : "destructive"} 
-                          className={cn("ml-2", field.isOpen ? "bg-green-100 text-green-800 hover:bg-green-100" : "")}
+                          variant={field.isOpen ? "outline" : "destructive"} 
+                          className={cn("ml-2", field.isOpen 
+                            ? "bg-green-950/40 text-green-400 hover:bg-green-950/60 border-green-800" 
+                            : "bg-red-950/40 border-red-800")}
                         >
                           {field.isOpen ? "Open" : "Closed"}
                         </Badge>
                       </div>
-                      <div className="flex flex-wrap gap-x-3 text-xs text-muted-foreground mt-1">
+                      <div className="flex flex-wrap gap-x-3 text-xs text-gray-400 mt-1">
                         <span className="flex items-center">
                           {field.hasLights 
                             ? <span className="flex items-center">
@@ -249,7 +285,7 @@ export function ComplexCard({
                                 Has lights
                               </span>
                             : <span className="flex items-center">
-                                <span className="inline-block h-1.5 w-1.5 rounded-full bg-gray-300 mr-1"></span>
+                                <span className="inline-block h-1.5 w-1.5 rounded-full bg-gray-500 mr-1"></span>
                                 No lights
                               </span>
                           }
@@ -261,15 +297,15 @@ export function ComplexCard({
                                 Parking available
                               </span>
                             : <span className="flex items-center">
-                                <span className="inline-block h-1.5 w-1.5 rounded-full bg-gray-300 mr-1"></span>
+                                <span className="inline-block h-1.5 w-1.5 rounded-full bg-gray-500 mr-1"></span>
                                 No parking
                               </span>
                           }
                         </span>
                       </div>
                       {field.specialInstructions && (
-                        <p className="text-xs text-muted-foreground mt-1.5 italic">
-                          <span className="font-medium not-italic">Note:</span> {field.specialInstructions}
+                        <p className="text-xs text-gray-400 mt-1.5 italic">
+                          <span className="font-medium not-italic text-indigo-400">Note:</span> {field.specialInstructions}
                         </p>
                       )}
                     </div>
@@ -278,13 +314,13 @@ export function ComplexCard({
                         variant="ghost"
                         size="sm"
                         onClick={() => onEditField(field)}
-                        className="ml-2 text-muted-foreground hover:text-foreground"
+                        className="ml-2 text-gray-400 hover:text-white hover:bg-gray-700/50"
                       >
-                        <Edit className="h-3.5 w-3.5 mr-1" />
+                        <Edit className="h-3.5 w-3.5 mr-1 text-indigo-400" />
                         Edit
                       </Button>
                     )}
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             )}
@@ -293,22 +329,22 @@ export function ComplexCard({
       </CardContent>
       
       {!isViewingFields && (
-        <CardFooter className="p-4 pt-0 flex justify-end">
+        <CardFooter className="p-4 pt-0 flex justify-end relative z-10">
           <div className="flex gap-2">
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => onEditComplex(complex)}
-              className="h-9"
+              className="h-9 border-gray-700 hover:border-gray-600 bg-gray-800/60 hover:bg-gray-800/90"
             >
-              <Edit className="mr-1.5 h-3.5 w-3.5" />
+              <Edit className="mr-1.5 h-3.5 w-3.5 text-indigo-400" />
               Edit
             </Button>
             <Button 
               variant="default" 
               size="sm"
               onClick={() => onViewFields(complex.id)}
-              className="h-9"
+              className="h-9 bg-indigo-600/80 hover:bg-indigo-600"
             >
               <Eye className="mr-1.5 h-3.5 w-3.5" />
               View Fields
