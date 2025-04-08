@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -77,7 +77,33 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
   
   console.log("Initial template state:", JSON.stringify(initialTemplate, null, 2));
   
-  const [template, setTemplate] = useState(initialTemplate);
+  // Force direct initialization of the state rather than lazy initialization 
+  // to ensure the fields are included
+  const [template, setTemplate] = useState(() => {
+    console.log("Creating template state with fields:", initialTemplate.fields);
+    return initialTemplate;
+  });
+  
+  // Mount effect to ensure template state is updated when props change
+  // This is critical for when the component receives props after initial mount
+  useEffect(() => {
+    if (existingTemplate && existingTemplate.fields) {
+      console.log("Updating template state from props change");
+      const updatedMappedFields = existingTemplate.fields.map(field => ({
+        ...field,
+        type: field.type === "input" ? "text" : field.type,
+        options: field.options || []
+      }));
+      
+      setTemplate({
+        id: existingTemplate.id || null,
+        name: existingTemplate.name || "",
+        description: existingTemplate.description || "",
+        isPublished: existingTemplate.isPublished || false,
+        fields: updatedMappedFields
+      });
+    }
+  }, [existingTemplate]);
   
   console.log("Template state initialized with fields:", template.fields);
 

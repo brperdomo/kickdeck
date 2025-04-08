@@ -1,0 +1,282 @@
+Template data received: {
+  "id": 21,
+  "eventId": null,
+  "name": "Demo Template",
+  "description": "This template is for demo purposes",
+  "isPublished": false,
+  "createdAt": "2025-04-08T02:46:36.544Z",
+  "updatedAt": "2025-04-08T02:46:36.544Z",
+  "fields": [
+    {
+      "id": 10,
+      "label": "What are your team colors?",
+      "type": "input",
+      "required": true,
+      "order": 0,
+      "placeholder": "Green with yellow, etc.",
+      "helpText": "",
+      "validation": null,
+      "options": null
+    }
+  ]
+}
+form-template-edit.tsx:60 Template fields: [
+  {
+    "id": 10,
+    "label": "What are your team colors?",
+    "type": "input",
+    "required": true,
+    "order": 0,
+    "placeholder": "Green with yellow, etc.",
+    "helpText": "",
+    "validation": null,
+    "options": null
+  }
+]
+FormTemplateEditor.tsx:20 FormTemplateEditor received existing template: null
+FormTemplateEditor.tsx:40 NO TEMPLATE DATA PROVIDED!
+FormTemplateEditor.tsx:57 Mapped fields for template: []
+FormTemplateEditor.tsx:78 Initial template state: {
+  "id": null,
+  "name": "",
+  "description": "",
+  "isPublished": false,
+  "fields": []
+}
+FormTemplateEditor.tsx:82 Template state initialized with fields: []
+FormTemplateEditor.tsx:20 FormTemplateEditor received existing template: null
+FormTemplateEditor.tsx:40 NO TEMPLATE DATA PROVIDED!
+FormTemplateEditor.tsx:57 Mapped fields for template: []
+FormTemplateEditor.tsx:78 Initial template state: {
+  "id": null,
+  "name": "",
+  "description": "",
+  "isPublished": false,
+  "fields": []
+}
+FormTemplateEditor.tsx:82 Template state initialized with fields: []
+form-template-edit.tsx:69 Setting template from data: {
+  "id": 21,
+  "eventId": null,
+  "name": "Demo Template",
+  "description": "This template is for demo purposes",
+  "isPublished": false,
+  "createdAt": "2025-04-08T02:46:36.544Z",
+  "updatedAt": "2025-04-08T02:46:36.544Z",
+  "fields": [
+    {
+      "id": 10,
+      "label": "What are your team colors?",
+      "type": "input",
+      "required": true,
+      "order": 0,
+      "placeholder": "Green with yellow, etc.",
+      "helpText": "",
+      "validation": null,
+      "options": null
+    }
+  ]
+}
+form-template-edit.tsx:70 Template fields count: 1
+form-template-edit.tsx:71 Template first field: {
+  "id": 10,
+  "label": "What are your team colors?",
+  "type": "input",
+  "required": true,
+  "order": 0,
+  "placeholder": "Green with yellow, etc.",
+  "helpText": "",
+  "validation": null,
+  "options": null
+}
+form-template-edit.tsx:75 Cloned data for template: {
+  "id": 21,
+  "eventId": null,
+  "name": "Demo Template",
+  "description": "This template is for demo purposes",
+  "isPublished": false,
+  "createdAt": "2025-04-08T02:46:36.544Z",
+  "updatedAt": "2025-04-08T02:46:36.544Z",
+  "fields": [
+    {
+      "id": 10,
+      "label": "What are your team colors?",
+      "type": "input",
+      "required": true,
+      "order": 0,
+      "placeholder": "Green with yellow, etc.",
+      "helpText": "",
+      "validation": null,
+      "options": null
+    }
+  ]
+}
+FormTemplateEditor.tsx:20 FormTemplateEditor received existing template: {
+  "id": 21,
+  "eventId": null,
+  "name": "Demo Template",
+  "description": "This template is for demo purposes",
+  "isPublished": false,
+  "createdAt": "2025-04-08T02:46:36.544Z",
+  "updatedAt": "2025-04-08T02:46:36.544Z",
+  "fields": [
+    {
+      "id": 10,
+      "label": "What are your team colors?",
+      "type": "input",
+      "required": true,
+      "order": 0,
+      "placeholder": "Green with yellow, etc.",
+      "helpText": "",
+      "validation": null,
+      "options": null
+    }
+  ]
+}
+FormTemplateEditor.tsx:24 Template ID: 21, Name: Demo Template
+FormTemplateEditor.tsx:25 Existing template fields: [
+  {
+    "id": 10,
+    "label": "What are your team colors?",
+    "type": "input",
+    "required": true,
+    "order": 0,
+    "placeholder": "Green with yellow, etc.",
+    "helpText": "",
+    "validation": null,
+    "options": null
+  }
+]
+FormTemplateEditor.tsx:27 Existing template fields type: object
+FormTemplateEditor.tsx:29 Is fields array? true
+FormTemplateEditor.tsx:33 Fields length: 1
+FormTemplateEditor.tsx:34 First field: {
+  "id": 10,
+  "label": "What are your team colors?",
+  "type": "input",
+  "required": true,
+  "order": 0,
+  "placeholder": "Green with yellow, etc.",
+  "helpText": "",
+  "validation": null,
+  "options": null
+}
+FormTemplateEditor.tsx:35 First field type: input
+FormTemplateEditor.tsx:47 Mapping field: What are your team colors?, type: input
+FormTemplateEditor.tsx:57 Mapped fields for template: [
+  {
+    "id": 10,
+    "label": "What are your team colors?",
+    "type": "text",
+    "required": true,
+    "order": 0,
+    "placeholder": "Green with yellow, etc.",
+    "helpText": "",
+    "validation": null,
+    "options": []
+  }
+]
+FormTemplateEditor.tsx:78 Initial template state: {
+  "id": 21,
+  "name": "Demo Template",
+  "description": "This template is for demo purposes",
+  "isPublished": false,
+  "fields": [
+    {
+      "id": 10,
+      "label": "What are your team colors?",
+      "type": "text",
+      "required": true,
+      "order": 0,
+      "placeholder": "Green with yellow, etc.",
+      "helpText": "",
+      "validation": null,
+      "options": []
+    }
+  ]
+}
+FormTemplateEditor.tsx:82 Template state initialized with fields: []
+FormTemplateEditor.tsx:20 FormTemplateEditor received existing template: {
+  "id": 21,
+  "eventId": null,
+  "name": "Demo Template",
+  "description": "This template is for demo purposes",
+  "isPublished": false,
+  "createdAt": "2025-04-08T02:46:36.544Z",
+  "updatedAt": "2025-04-08T02:46:36.544Z",
+  "fields": [
+    {
+      "id": 10,
+      "label": "What are your team colors?",
+      "type": "input",
+      "required": true,
+      "order": 0,
+      "placeholder": "Green with yellow, etc.",
+      "helpText": "",
+      "validation": null,
+      "options": null
+    }
+  ]
+}
+FormTemplateEditor.tsx:24 Template ID: 21, Name: Demo Template
+FormTemplateEditor.tsx:25 Existing template fields: [
+  {
+    "id": 10,
+    "label": "What are your team colors?",
+    "type": "input",
+    "required": true,
+    "order": 0,
+    "placeholder": "Green with yellow, etc.",
+    "helpText": "",
+    "validation": null,
+    "options": null
+  }
+]
+FormTemplateEditor.tsx:27 Existing template fields type: object
+FormTemplateEditor.tsx:29 Is fields array? true
+FormTemplateEditor.tsx:33 Fields length: 1
+FormTemplateEditor.tsx:34 First field: {
+  "id": 10,
+  "label": "What are your team colors?",
+  "type": "input",
+  "required": true,
+  "order": 0,
+  "placeholder": "Green with yellow, etc.",
+  "helpText": "",
+  "validation": null,
+  "options": null
+}
+FormTemplateEditor.tsx:35 First field type: input
+FormTemplateEditor.tsx:47 Mapping field: What are your team colors?, type: input
+FormTemplateEditor.tsx:57 Mapped fields for template: [
+  {
+    "id": 10,
+    "label": "What are your team colors?",
+    "type": "text",
+    "required": true,
+    "order": 0,
+    "placeholder": "Green with yellow, etc.",
+    "helpText": "",
+    "validation": null,
+    "options": []
+  }
+]
+FormTemplateEditor.tsx:78 Initial template state: {
+  "id": 21,
+  "name": "Demo Template",
+  "description": "This template is for demo purposes",
+  "isPublished": false,
+  "fields": [
+    {
+      "id": 10,
+      "label": "What are your team colors?",
+      "type": "text",
+      "required": true,
+      "order": 0,
+      "placeholder": "Green with yellow, etc.",
+      "helpText": "",
+      "validation": null,
+      "options": []
+    }
+  ]
+}

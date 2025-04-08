@@ -70,10 +70,31 @@ export default function FormTemplateEditPage() {
       console.log("Template fields count:", data.fields?.length || 0);
       console.log("Template first field:", data.fields?.[0] ? JSON.stringify(data.fields[0], null, 2) : "No fields");
       
-      // Force a re-render of the template with a deep clone to ensure reactivity
-      const clonedData = JSON.parse(JSON.stringify(data));
-      console.log("Cloned data for template:", JSON.stringify(clonedData, null, 2));
-      setTemplate(clonedData);
+      // Use a key-by-key approach to ensure all data is properly transferred
+      // This helps avoid any reference issues that might be causing the problem
+      const sanitizedTemplate = {
+        id: data.id,
+        eventId: data.eventId,
+        name: data.name || "",
+        description: data.description || "",
+        isPublished: Boolean(data.isPublished),
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+        fields: Array.isArray(data.fields) ? data.fields.map(field => ({
+          id: field.id,
+          label: field.label || "",
+          type: field.type || "text",  // Map input to text type here
+          required: Boolean(field.required),
+          order: field.order || 0,
+          placeholder: field.placeholder || "",
+          helpText: field.helpText || "",
+          validation: field.validation,
+          options: field.options || []
+        })) : []
+      };
+      
+      console.log("Sanitized template for FormTemplateEditor:", JSON.stringify(sanitizedTemplate, null, 2));
+      setTemplate(sanitizedTemplate);
     }
   }, [data]);
 
