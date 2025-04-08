@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { usePermissions } from "@/hooks/use-permissions";
 import { cn } from "@/lib/utils";
@@ -86,47 +86,64 @@ const pulseVariants = {
   }
 };
 
-export function AnimatedNavigationButton({ 
+// Wrapper component to handle the permission check
+function NavigationButtonWrapper(props: AnimatedNavigationButtonProps) {
+  const { hasPermission } = usePermissions();
+  
+  // If no permission needed or user has permission, render the button
+  if (!props.permission || hasPermission(props.permission as any)) {
+    return <NavigationButtonContent {...props} />;
+  }
+  
+  // Otherwise, render nothing
+  return null;
+}
+
+// Actual button component - only rendered if permission check passes
+function NavigationButtonContent({ 
   view, 
   activeView, 
   onClick, 
   icon, 
   label, 
-  permission,
   index = 0
 }: AnimatedNavigationButtonProps) {
-  const { hasPermission } = usePermissions();
-  
-  // Check permission first - before using any other hooks
-  if (permission && !hasPermission(permission as any)) {
-    return null;
-  }
-  
-  // Only declare additional hooks after the early return above
+  // Declare all hooks unconditionally
   const shineControls = useAnimation();
   const [hasShined, setHasShined] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isActive = activeView === view;
   
-  // Start the shine effect when button becomes active
+  // Handle shine effect when button becomes active
   useEffect(() => {
-    if (!isActive) return;
-    
-    // Immediately shine for the first time
-    shineControls.start("animate").then(() => {
-      shineControls.set("initial");
-      setHasShined(true);
-    });
-    
-    // Periodically shine the button every 8 seconds
-    let interval: ReturnType<typeof setInterval>;
-    if (hasShined) {
-      interval = setInterval(() => {
-        shineControls.set("initial");
-        shineControls.start("animate");
-      }, 8000);
+    // Clean up any existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
     
-    return () => interval && clearInterval(interval);
+    if (isActive) {
+      // Immediately shine for the first time
+      shineControls.start("animate").then(() => {
+        shineControls.set("initial");
+        setHasShined(true);
+      });
+      
+      // Set up shine interval (only if already shined once)
+      if (hasShined) {
+        intervalRef.current = setInterval(() => {
+          shineControls.set("initial");
+          shineControls.start("animate");
+        }, 8000);
+      }
+    }
+    
+    // Cleanup function
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [isActive, shineControls, hasShined]);
 
   return (
@@ -159,48 +176,42 @@ export function AnimatedNavigationButton({
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
       >
-        {/* Enhanced active indicator with gradient, glow and pulse effect */}
-        {isActive && (
-          <>
-            {/* Main indicator bar with gradient */}
-            <motion.div 
-              className="absolute left-0 top-[15%] bottom-[15%] w-1.5 rounded-full shadow-lg shadow-indigo-500/40"
-              style={{ 
-                background: 'linear-gradient(to bottom, #4f46e5, #a78bfa)'
-              }}
-              initial={{ scaleY: 0, opacity: 0 }}
-              animate={{ scaleY: 1, opacity: 1 }}
-              transition={{ duration: 0.4 }}
-            />
-            
-            {/* Glowing dot at the top of the indicator */}
-            <motion.div 
-              className="absolute left-0 top-[12%] w-3 h-3 rounded-full bg-indigo-400 shadow-lg shadow-indigo-500/50 -translate-x-1"
-              initial="initial"
-              animate="pulse"
-              variants={pulseVariants}
-              style={{
-                filter: "blur(1px)",
-                background: "radial-gradient(circle, rgba(129,140,248,1) 0%, rgba(99,102,241,1) 100%)"
-              }}
-            />
-          </>
-        )}
-        
-        {/* Subtle background glow for active button */}
-        {isActive && (
+        {/* Active indicator elements (always rendered but conditionally visible) */}
+        <div className={isActive ? "block" : "hidden"}>
+          {/* Main indicator bar with gradient */}
+          <motion.div 
+            className="absolute left-0 top-[15%] bottom-[15%] w-1.5 rounded-full shadow-lg shadow-indigo-500/40"
+            style={{ 
+              background: 'linear-gradient(to bottom, #4f46e5, #a78bfa)'
+            }}
+            initial={{ scaleY: 0, opacity: 0 }}
+            animate={{ scaleY: 1, opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          />
+          
+          {/* Glowing dot at the top of the indicator */}
+          <motion.div 
+            className="absolute left-0 top-[12%] w-3 h-3 rounded-full bg-indigo-400 shadow-lg shadow-indigo-500/50 -translate-x-1"
+            initial="initial"
+            animate="pulse"
+            variants={pulseVariants}
+            style={{
+              filter: "blur(1px)",
+              background: "radial-gradient(circle, rgba(129,140,248,1) 0%, rgba(99,102,241,1) 100%)"
+            }}
+          />
+          
+          {/* Subtle background glow for active button */}
           <div className="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-r from-indigo-600/0 via-indigo-600/30 to-indigo-600/0 rounded-md" />
-        )}
-        
-        {/* Animated shine effect */}
-        {isActive && (
+          
+          {/* Animated shine effect */}
           <motion.div 
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none"
             variants={shineVariants}
             initial="initial"
             animate={shineControls}
           />
-        )}
+        </div>
         
         {/* Button content */}
         <div className="flex items-center justify-between w-full">
@@ -224,9 +235,7 @@ export function AnimatedNavigationButton({
               }}
             >
               {/* Subtle background glow for active icon */}
-              {isActive && (
-                <div className="absolute inset-0 rounded-md bg-indigo-500/20 filter blur-sm" />
-              )}
+              <div className={isActive ? "absolute inset-0 rounded-md bg-indigo-500/20 filter blur-sm" : "hidden"} />
               
               {/* Icon */}
               <motion.div
@@ -263,45 +272,46 @@ export function AnimatedNavigationButton({
               >
                 {label}
                 
-                {/* Subtle underline for active state */}
-                {isActive && (
-                  <motion.div 
-                    className="h-[2px] mt-1 bg-gradient-to-r from-indigo-500/0 via-indigo-500/60 to-indigo-500/0"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 0.3, delay: 0.15 }}
-                  />
-                )}
+                {/* Subtle underline for active state - always rendered but conditionally visible */}
+                <motion.div 
+                  className={`h-[2px] mt-1 bg-gradient-to-r from-indigo-500/0 via-indigo-500/60 to-indigo-500/0 ${isActive ? 'block' : 'hidden'}`}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: isActive ? 1 : 0 }}
+                  transition={{ duration: 0.3, delay: 0.15 }}
+                />
               </motion.span>
               
-              {/* Optional micro-label that could show additional info */}
-              {isActive && (
-                <motion.span 
-                  className="text-[10px] text-indigo-300/70 mt-0.5 tracking-wider hidden"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, delay: 0.2 }}
-                >
-                  {/* Uncomment to add a micro-label */}
-                  {/* ACTIVE */}
-                </motion.span>
-              )}
+              {/* Optional micro-label that could show additional info - always in DOM but conditionally visible */}
+              <motion.span 
+                className={`text-[10px] text-indigo-300/70 mt-0.5 tracking-wider ${isActive ? '' : 'hidden'}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isActive ? 1 : 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+              >
+                {/* Uncomment to add a micro-label */}
+                {/* ACTIVE */}
+              </motion.span>
             </div>
           </div>
           
-          {/* Chevron indicator for active state */}
-          {isActive && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5, x: -10 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{ duration: 0.3, type: "spring" }}
-              className="h-5 w-5 rounded-full bg-indigo-600/40 flex items-center justify-center"
-            >
-              <ChevronRight className="h-3 w-3 text-indigo-200" />
-            </motion.div>
-          )}
+          {/* Chevron indicator for active state - always rendered but conditionally visible */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5, x: -10 }}
+            animate={{ 
+              opacity: isActive ? 1 : 0, 
+              scale: isActive ? 1 : 0.5, 
+              x: isActive ? 0 : -10 
+            }}
+            transition={{ duration: 0.3, type: "spring" }}
+            className={`h-5 w-5 rounded-full bg-indigo-600/40 flex items-center justify-center ${isActive ? 'block' : 'hidden'}`}
+          >
+            <ChevronRight className="h-3 w-3 text-indigo-200" />
+          </motion.div>
         </div>
       </Button>
     </motion.div>
   );
 }
+
+// Export the wrapped component as the main component
+export const AnimatedNavigationButton = NavigationButtonWrapper;
