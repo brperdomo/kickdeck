@@ -70,19 +70,7 @@ export function AnimatedNavigationButton({
       animate="visible"
       whileHover="hover"
       whileTap="tap"
-      className="w-full"
-      onMouseEnter={(e) => {
-        const button = e.currentTarget.querySelector('button');
-        if (button && !isActive) {
-          button.style.backgroundColor = 'var(--admin-nav-hover, #f3f4f6)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        const button = e.currentTarget.querySelector('button');
-        if (button && !isActive) {
-          button.style.backgroundColor = 'transparent';
-        }
-      }}
+      className="w-full mb-1"
     >
       <Button
         variant="ghost"
@@ -93,51 +81,54 @@ export function AnimatedNavigationButton({
         onClick={onClick}
         style={{
           backgroundColor: isActive 
-            ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
+            ? 'rgba(79, 70, 229, 0.2)' // indigo with transparency 
             : 'transparent',
           color: isActive 
-            ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
-            : 'var(--admin-nav-text, inherit)',
+            ? '#ffffff' 
+            : 'rgba(255, 255, 255, 0.6)',
           boxShadow: 'none',
-          borderRadius: '0.375rem',
+          borderRadius: '0.5rem',
+          padding: '0.625rem 1rem',
+          transition: 'all 0.2s ease'
         }}
       >
-        {/* Active indicator - animated bar */}
+        {/* Active indicator - animated pill */}
         {isActive && (
           <motion.div 
-            className="absolute left-0 top-0 bottom-0 w-1"
+            className="absolute left-0 top-[15%] bottom-[15%] w-1 rounded-full"
             style={{ 
-              backgroundColor: 'var(--admin-nav-selected-text, var(--admin-nav-active-text))'
+              background: 'linear-gradient(to bottom, #4f46e5, #8b5cf6)'
             }}
-            initial={{ height: 0 }}
-            animate={{ height: '100%' }}
-            transition={{ duration: 0.3 }}
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ duration: 0.2 }}
           />
         )}
         
-        {/* Icon with subtle animation */}
-        <motion.span 
-          className="mr-2 relative transition-transform duration-300 group-hover:scale-110"
-          style={{ 
-            color: isActive 
-              ? 'var(--admin-nav-active-icon-color, #FFFFFF)' 
-              : 'var(--admin-nav-icon-color, #566A7F)'
-          }}
-          animate={{ 
-            rotate: isActive ? [0, 5, 0] : 0
-          }}
-          transition={{ 
-            duration: 0.3,
-            type: "spring"
-          }}
-        >
-          {icon}
-        </motion.span>
-        
-        {/* Label text */}
-        <span>
-          {label}
-        </span>
+        <div className="flex items-center">
+          {/* Icon wrapper */}
+          <motion.div 
+            className={cn(
+              "w-8 h-8 flex items-center justify-center rounded-md mr-3",
+              isActive ? "bg-indigo-600 bg-opacity-30" : ""
+            )}
+            whileHover={{ scale: 1.05 }}
+            animate={{ 
+              rotate: isActive ? [0, 5, 0] : 0
+            }}
+            transition={{ 
+              duration: 0.3,
+              type: "spring"
+            }}
+          >
+            {icon}
+          </motion.div>
+          
+          {/* Label text */}
+          <span className="text-sm">
+            {label}
+          </span>
+        </div>
       </Button>
     </motion.div>
   );

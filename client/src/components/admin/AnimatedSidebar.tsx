@@ -44,25 +44,30 @@ export function AnimatedSidebar({
   return (
     <motion.div
       className={cn(
-        "w-64 bg-card border-r flex flex-col h-full text-foreground",
+        "w-64 flex flex-col h-full text-white",
         className
       )}
+      style={{ 
+        background: "#0B0F1E",  // Deep navy background like the reference design
+        borderRight: "1px solid rgba(255,255,255,0.1)" 
+      }}
       variants={sidebarVariants}
       initial="hidden"
       animate="visible"
       exit="exit"
     >
-      <div className="p-4 flex flex-col h-full">
-        {/* Sidebar Header */}
-        {title && (
-          <motion.div 
-            className="flex items-center gap-2 mb-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
+      {/* Stylish sidebar header */}
+      {title && (
+        <motion.div 
+          className="p-6 border-b border-opacity-10 border-white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className="flex items-center gap-3">
             {icon && (
               <motion.div
+                className="p-2 rounded-md bg-indigo-600 bg-opacity-30"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.3, type: "spring" }}
@@ -70,11 +75,18 @@ export function AnimatedSidebar({
                 {icon}
               </motion.div>
             )}
-            <h1 className="font-semibold text-xl">{title}</h1>
-          </motion.div>
-        )}
-        
-        {/* Content wrapper */}
+            <div>
+              <h1 className="font-bold text-xl bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                {title}
+              </h1>
+              <p className="text-xs text-gray-400 mt-1">Management Portal</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+      
+      {/* Content wrapper */}
+      <div className="p-4 flex-1 overflow-y-auto">
         <div className="space-y-2">
           {children}
         </div>
