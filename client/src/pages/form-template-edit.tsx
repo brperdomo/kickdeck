@@ -1,50 +1,43 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FormTemplateEditor } from "@/components/admin/FormTemplateEditor";
-import { AdminLayout, AdminSidebar, AdminSidebarItem } from "@/components/layouts/AdminLayout.tsx";
-import { useLocation, useRoute, Link } from "wouter";
-import { Users, Settings, FileText, LayoutTemplate, ArrowLeft } from "lucide-react";
+import { useLocation, useRoute } from "wouter";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+// Import the types from the FormTemplateEditor component
+interface FormFieldOption {
+  label: string;
+  value: string;
+}
+
+interface FormFieldType {
+  id?: string | number;
+  type: string;
+  label: string;
+  required: boolean;
+  order: number;
+  placeholder: string;
+  helpText: string;
+  options: FormFieldOption[];
+  validation?: any;
+}
+
+interface FormTemplateType {
+  id: string | number | null;
+  eventId?: string | number | null;
+  name: string;
+  description: string;
+  isPublished: boolean;
+  fields: FormFieldType[];
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
 
 export default function FormTemplateEditPage() {
   const [, params] = useRoute("/admin/form-templates/:id/edit");
-  const [location, navigate] = useLocation();
-  const [template, setTemplate] = useState(null);
-
-  // Default admin styling
-  const adminStyles = {
-    adminNavBackground: '#f8f9fa',
-    adminNavText: '#333333',
-    adminNavActive: '#e6f7ff',
-    adminNavHover: '#f0f0f0'
-  };
-  
-  // Sidebar navigation items
-  const sidebarItems = [
-    { path: '/admin/dashboard', label: 'Dashboard', icon: <LayoutTemplate size={18} /> },
-    { path: '/admin/users', label: 'Users', icon: <Users size={18} /> },
-    { path: '/admin/form-templates', label: 'Form Templates', icon: <FileText size={18} /> },
-    { path: '/admin/settings', label: 'Settings', icon: <Settings size={18} /> },
-  ];
-  
-  // Create sidebar
-  const sidebar = (
-    <AdminSidebar styles={adminStyles}>
-      <div className="mb-6 px-4">
-        <h2 className="text-xl font-bold">Admin Panel</h2>
-      </div>
-      <nav className="space-y-1">
-        {sidebarItems.map(item => (
-          <AdminSidebarItem 
-            key={item.path}
-            item={item}
-            activePath={location}
-            styles={adminStyles}
-          />
-        ))}
-      </nav>
-    </AdminSidebar>
-  );
+  const [, navigate] = useLocation();
+  const [template, setTemplate] = useState<FormTemplateType | null>(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["form-template", params?.id],
@@ -80,7 +73,7 @@ export default function FormTemplateEditPage() {
         isPublished: Boolean(data.isPublished),
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
-        fields: Array.isArray(data.fields) ? data.fields.map(field => ({
+        fields: Array.isArray(data.fields) ? data.fields.map((field: any) => ({
           id: field.id,
           label: field.label || "",
           type: field.type || "text",  // Map input to text type here
@@ -106,39 +99,35 @@ export default function FormTemplateEditPage() {
 
   if (isLoading) {
     return (
-      <AdminLayout sidebar={sidebar} styles={adminStyles}>
-        <div className="p-6">
-          <div className="flex items-center mb-6">
-            <Link href="/admin/form-templates" className="mr-4 text-blue-600 hover:text-blue-800">
-              <ArrowLeft size={16} className="inline mr-1" /> Back to Templates
-            </Link>
-            <h1 className="text-2xl font-bold">Loading Template...</h1>
-          </div>
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded mb-4 w-1/4"></div>
-            <div className="h-12 bg-gray-200 rounded mb-6 w-3/4"></div>
-            <div className="space-y-3">
-              <div className="h-6 bg-gray-200 rounded w-full"></div>
-              <div className="h-6 bg-gray-200 rounded w-full"></div>
-              <div className="h-6 bg-gray-200 rounded w-5/6"></div>
-            </div>
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="flex items-center mb-6">
+          <Button variant="outline" className="mr-4" onClick={() => navigate("/admin/form-templates")}>
+            <ArrowLeft size={16} className="mr-1" /> Back to Templates
+          </Button>
+          <h1 className="text-2xl font-bold">Loading Template...</h1>
+        </div>
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded mb-4 w-1/4"></div>
+          <div className="h-12 bg-gray-200 rounded mb-6 w-3/4"></div>
+          <div className="space-y-3">
+            <div className="h-6 bg-gray-200 rounded w-full"></div>
+            <div className="h-6 bg-gray-200 rounded w-full"></div>
+            <div className="h-6 bg-gray-200 rounded w-5/6"></div>
           </div>
         </div>
-      </AdminLayout>
+      </div>
     );
   }
 
   return (
-    <AdminLayout sidebar={sidebar} styles={adminStyles}>
-      <div className="p-6">
-        <div className="flex items-center mb-6">
-          <Link href="/admin/form-templates" className="mr-4 text-blue-600 hover:text-blue-800">
-            <ArrowLeft size={16} className="inline mr-1" /> Back to Templates
-          </Link>
-          <h1 className="text-2xl font-bold">Edit Form Template</h1>
-        </div>
-        <FormTemplateEditor editMode={true} existingTemplate={template} />
+    <div className="p-6 max-w-4xl mx-auto">
+      <div className="flex items-center mb-6">
+        <Button variant="outline" className="mr-4" onClick={() => navigate("/admin/form-templates")}>
+          <ArrowLeft className="mr-1 h-4 w-4" /> Back to Templates
+        </Button>
+        <h1 className="text-2xl font-bold">Edit Form Template</h1>
       </div>
-    </AdminLayout>
+      <FormTemplateEditor editMode={true} existingTemplate={template} />
+    </div>
   );
 }

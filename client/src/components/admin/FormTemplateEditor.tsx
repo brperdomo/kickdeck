@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useMutation } from "@tanstack/react-query";
@@ -13,7 +12,41 @@ import { FormField, FormItem, FormLabel, FormControl, FormDescription } from "@/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, ArrowLeft, Save, Trash } from "lucide-react";
 
-export function FormTemplateEditor({ editMode = false, existingTemplate = null }) {
+// Define TypeScript interfaces for our data
+interface FormFieldOption {
+  label: string;
+  value: string;
+}
+
+interface FormFieldType {
+  id?: string | number;
+  type: string;
+  label: string;
+  required: boolean;
+  order: number;
+  placeholder: string;
+  helpText: string;
+  options: FormFieldOption[];
+  validation?: any;
+}
+
+interface FormTemplateType {
+  id: string | number | null;
+  eventId?: string | number | null;
+  name: string;
+  description: string;
+  isPublished: boolean;
+  fields: FormFieldType[];
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+
+interface FormTemplateEditorProps {
+  editMode?: boolean;
+  existingTemplate?: FormTemplateType | null;
+}
+
+export function FormTemplateEditor({ editMode = false, existingTemplate = null }: FormTemplateEditorProps) {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   
@@ -43,7 +76,7 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
   // The issue seems to be with how fields are handled in the form template
   // For input fields, we need to ensure we're mapping the API field type "input" to "text"
   // which is what the form editor expects
-  const mappedFields = existingTemplate?.fields ? existingTemplate.fields.map(field => {
+  const mappedFields = existingTemplate?.fields ? existingTemplate.fields.map((field: FormFieldType) => {
     console.log(`Mapping field: ${field.label}, type: ${field.type}`);
     return {
       ...field,
@@ -57,7 +90,7 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
   console.log("Mapped fields for template:", JSON.stringify(mappedFields, null, 2));
   
   // Create a fresh template object from the existingTemplate
-  let initialTemplate = {
+  const initialTemplate: FormTemplateType = {
     id: null,
     name: "",
     description: "",
@@ -65,31 +98,30 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
     fields: []
   };
   
-  if (existingTemplate) {
-    initialTemplate = {
-      id: existingTemplate.id || null,
-      name: existingTemplate.name || "",
-      description: existingTemplate.description || "",
-      isPublished: existingTemplate.isPublished || false,
-      fields: mappedFields
-    };
-  }
+  // Initialize with existing data if available
+  const startingTemplate: FormTemplateType = existingTemplate ? {
+    id: existingTemplate.id || null,
+    eventId: existingTemplate.eventId || null,
+    name: existingTemplate.name || "",
+    description: existingTemplate.description || "",
+    isPublished: existingTemplate.isPublished || false,
+    fields: mappedFields,
+    createdAt: existingTemplate.createdAt,
+    updatedAt: existingTemplate.updatedAt
+  } : initialTemplate;
   
-  console.log("Initial template state:", JSON.stringify(initialTemplate, null, 2));
+  console.log("Initial template state:", JSON.stringify(startingTemplate, null, 2));
   
   // Force direct initialization of the state rather than lazy initialization 
   // to ensure the fields are included
-  const [template, setTemplate] = useState(() => {
-    console.log("Creating template state with fields:", initialTemplate.fields);
-    return initialTemplate;
-  });
+  const [template, setTemplate] = useState<FormTemplateType>(startingTemplate);
   
   // Mount effect to ensure template state is updated when props change
   // This is critical for when the component receives props after initial mount
   useEffect(() => {
     if (existingTemplate && existingTemplate.fields) {
       console.log("Updating template state from props change");
-      const updatedMappedFields = existingTemplate.fields.map(field => ({
+      const updatedMappedFields = existingTemplate.fields.map((field: FormFieldType) => ({
         ...field,
         type: field.type === "input" ? "text" : field.type,
         options: field.options || []
@@ -97,10 +129,13 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
       
       setTemplate({
         id: existingTemplate.id || null,
+        eventId: existingTemplate.eventId || null,
         name: existingTemplate.name || "",
         description: existingTemplate.description || "",
         isPublished: existingTemplate.isPublished || false,
-        fields: updatedMappedFields
+        fields: updatedMappedFields,
+        createdAt: existingTemplate.createdAt,
+        updatedAt: existingTemplate.updatedAt
       });
     }
   }, [existingTemplate]);
@@ -187,7 +222,7 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
     }
   };
 
-  const addField = (type) => {
+  const addField = (type: string) => {
     setTemplate(prev => ({
       ...prev,
       fields: [
@@ -205,7 +240,7 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
     }));
   };
 
-  const updateField = (index, updates) => {
+  const updateField = (index: number, updates: Partial<FormFieldType>) => {
     setTemplate(prev => ({
       ...prev,
       fields: prev.fields.map((field, i) => 
@@ -214,14 +249,14 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
     }));
   };
 
-  const removeField = (index) => {
+  const removeField = (index: number) => {
     setTemplate(prev => ({
       ...prev,
       fields: prev.fields.filter((_, i) => i !== index)
     }));
   };
 
-  const addOption = (fieldIndex) => {
+  const addOption = (fieldIndex: number) => {
     setTemplate(prev => ({
       ...prev,
       fields: prev.fields.map((field, i) => 
@@ -235,7 +270,7 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
     }));
   };
 
-  const updateOption = (fieldIndex, optionIndex, updates) => {
+  const updateOption = (fieldIndex: number, optionIndex: number, updates: Partial<FormFieldOption>) => {
     setTemplate(prev => ({
       ...prev,
       fields: prev.fields.map((field, i) => 
@@ -251,7 +286,7 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
     }));
   };
 
-  const removeOption = (fieldIndex, optionIndex) => {
+  const removeOption = (fieldIndex: number, optionIndex: number) => {
     setTemplate(prev => ({
       ...prev,
       fields: prev.fields.map((field, i) => 
