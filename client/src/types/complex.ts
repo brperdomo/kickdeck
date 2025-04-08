@@ -1,5 +1,5 @@
 /**
- * Represents a sports complex or facility
+ * Represents a sports field complex
  */
 export interface Complex {
   id: number;
@@ -17,10 +17,9 @@ export interface Complex {
   longitude: number;
   openTime?: string | null;
   closeTime?: string | null;
-  shared: boolean;      // Flag to indicate if this complex can be shared across event instances
-  sharedId?: string | null; // UUID used to identify the same physical complex across system instances
-  notes?: string | null;
+  shared: boolean;      // Whether the complex is shared across instances
+  sharedId?: string;    // Unique identifier for cross-instance sharing
   createdAt: string;
   updatedAt: string;
-  directions?: string | null; // Custom directions to the complex
+  directions?: string | null; // Additional directions to find the complex
 }
