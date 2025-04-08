@@ -74,7 +74,7 @@ interface EventsResponse {
   pagination: PaginationData;
 }
 
-type SortField = "name" | "date" | "applications" | "status";
+type SortField = "name" | "date" | "applications" | "status" | "deadline";
 type SortDirection = "asc" | "desc";
 
 export function EventsTable() {
@@ -266,6 +266,14 @@ export function EventsTable() {
           return multiplier * (a.applicationsReceived - b.applicationsReceived);
         case "status":
           return multiplier * a.status.localeCompare(b.status);
+        case "deadline":
+          // First prioritize UPCOMING events if requested in descending order
+          if (sortDirection === "desc") {
+            if (a.status === "upcoming" && b.status !== "upcoming") return -1;
+            if (a.status !== "upcoming" && b.status === "upcoming") return 1;
+          }
+          // Then sort by deadline date
+          return multiplier * (new Date(a.applicationDeadline).getTime() - new Date(b.applicationDeadline).getTime());
         default:
           return 0;
       }
@@ -421,7 +429,12 @@ export function EventsTable() {
                     <SortIcon field="status" />
                   </div>
                 </TableHead>
-                <TableHead>Registration Deadline</TableHead>
+                <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("deadline")}>
+                  <div className="flex items-center">
+                    Registration Deadline
+                    <SortIcon field="deadline" />
+                  </div>
+                </TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
