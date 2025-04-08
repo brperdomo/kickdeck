@@ -1,5 +1,5 @@
 /**
- * Represents a field complex with its full information
+ * Represents a sports complex or facility
  */
 export interface Complex {
   id: number;
@@ -13,20 +13,14 @@ export interface Complex {
   phoneNumber?: string | null;
   email?: string | null;
   website?: string | null;
-  
-  // Location data (latitude and longitude are required for sharing/geolocation)
   latitude: number;
   longitude: number;
-  
-  // Operating hours
   openTime?: string | null;
   closeTime?: string | null;
-  
-  // Sharing fields
-  shared: boolean;  // Is this complex shared with other instances?
-  sharedId?: string | null;  // Unique ID used for cross-instance identification
-  
-  // Metadata
+  shared: boolean;      // Flag to indicate if this complex can be shared across event instances
+  sharedId?: string | null; // UUID used to identify the same physical complex across system instances
+  notes?: string | null;
   createdAt: string;
   updatedAt: string;
+  directions?: string | null; // Custom directions to the complex
 }

@@ -1,83 +1,104 @@
-import { Complex } from "@/types/complex";
+import { Complex } from '@/types';
 
 /**
- * Formats the complex address in a consistent way
+ * Formats a complex address into a single string, handling null/undefined values
+ * @param complex - The complex object
+ * @returns Formatted address string
  */
 export function formatAddress(complex: Complex): string {
-  const addressParts = [
+  const parts = [
     complex.address,
     complex.city,
     complex.state,
     complex.zipCode,
-    complex.country !== "USA" && complex.country !== "United States" ? complex.country : ""
+    complex.country
   ].filter(Boolean);
-  
-  return addressParts.join(", ");
+
+  return parts.join(', ');
 }
 
 /**
- * Generates a Google Maps URL for the given complex
- */
-export function getGoogleMapsUrl(complex: Complex): string {
-  // If we have coordinates, use them for precise location
-  if (complex.latitude && complex.longitude) {
-    return `https://www.google.com/maps/search/?api=1&query=${complex.latitude},${complex.longitude}`;
-  }
-  
-  // Otherwise fall back to address search
-  const addressQuery = encodeURIComponent(formatAddress(complex));
-  return `https://www.google.com/maps/search/?api=1&query=${addressQuery}`;
-}
-
-/**
- * Generates a Google Maps directions URL for the given complex
- */
-export function getDirectionsUrl(complex: Complex): string {
-  // If we have coordinates, use them for precise location
-  if (complex.latitude && complex.longitude) {
-    return `https://www.google.com/maps/dir/?api=1&destination=${complex.latitude},${complex.longitude}`;
-  }
-  
-  // Otherwise fall back to address search
-  const addressQuery = encodeURIComponent(formatAddress(complex));
-  return `https://www.google.com/maps/dir/?api=1&destination=${addressQuery}`;
-}
-
-/**
- * Formats operating hours in a consistent way
+ * Formats the opening hours of a complex, handling null/undefined values
+ * @param complex - The complex object
+ * @returns Formatted opening hours string
  */
 export function formatHours(complex: Complex): string {
-  if (complex.openTime && complex.closeTime) {
-    return `${formatTime(complex.openTime)} - ${formatTime(complex.closeTime)}`;
-  } else if (complex.openTime) {
-    return `Opens at ${formatTime(complex.openTime)}`;
-  } else if (complex.closeTime) {
-    return `Closes at ${formatTime(complex.closeTime)}`;
+  if (!complex.openTime && !complex.closeTime) {
+    return 'Hours not specified';
   }
-  
-  return "Hours not specified";
+
+  if (complex.openTime && complex.closeTime) {
+    return `Open: ${formatTime(complex.openTime)} - ${formatTime(complex.closeTime)}`;
+  }
+
+  if (complex.openTime) {
+    return `Opens at ${formatTime(complex.openTime)}`;
+  }
+
+  return `Closes at ${formatTime(complex.closeTime)}`;
 }
 
 /**
- * Helper function to format time strings
+ * Formats a time string for display
+ * @param timeString - Time string in format 'HH:MM:SS' or 'HH:MM'
+ * @returns Formatted time string
  */
-function formatTime(timeString: string): string {
-  try {
-    // Check if timeString is already in 12-hour format
-    if (timeString.includes("AM") || timeString.includes("PM")) {
-      return timeString;
-    }
+function formatTime(timeString: string | null): string {
+  if (!timeString) return '';
+
+  // If time is in format 'HH:MM:SS', convert to 'HH:MM'
+  const timeParts = timeString.split(':');
+  if (timeParts.length >= 2) {
+    // Convert 24-hour format to 12-hour format with AM/PM
+    let hours = parseInt(timeParts[0], 10);
+    const minutes = timeParts[1];
+    const ampm = hours >= 12 ? 'PM' : 'AM';
     
-    // Parse time string (expected format: "HH:MM:SS" or "HH:MM")
-    const [hours, minutes] = timeString.split(":").map(Number);
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
     
-    // Convert to 12-hour format
-    const period = hours >= 12 ? "PM" : "AM";
-    const hours12 = hours % 12 || 12; // Convert 0 to 12 for 12 AM
-    
-    return `${hours12}:${minutes.toString().padStart(2, "0")} ${period}`;
-  } catch (error) {
-    // In case of parsing errors, return the original string
-    return timeString;
+    return `${hours}:${minutes} ${ampm}`;
   }
+  
+  return timeString;
+}
+
+/**
+ * Generates a Google Maps URL for the complex
+ * @param complex - The complex object 
+ * @returns Google Maps URL for the complex location
+ */
+export function getGoogleMapsUrl(complex: Complex): string {
+  if (!hasValidCoordinates(complex)) {
+    // Fallback to address if coordinates not available
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formatAddress(complex))}`;
+  }
+  
+  return `https://www.google.com/maps/search/?api=1&query=${complex.latitude},${complex.longitude}`;
+}
+
+/**
+ * Generates a Google Maps directions URL for the complex
+ * @param complex - The complex object
+ * @returns Google Maps directions URL
+ */
+export function getDirectionsUrl(complex: Complex): string {
+  if (!hasValidCoordinates(complex)) {
+    // Fallback to address if coordinates not available
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(formatAddress(complex))}`;
+  }
+  
+  return `https://www.google.com/maps/dir/?api=1&destination=${complex.latitude},${complex.longitude}`;
+}
+
+/**
+ * Checks if the complex has valid coordinates
+ * @param complex - The complex object
+ * @returns Whether the complex has valid coordinates
+ */
+export function hasValidCoordinates(complex: Complex): boolean {
+  return typeof complex.latitude === 'number' && 
+         typeof complex.longitude === 'number' && 
+         !isNaN(complex.latitude) && 
+         !isNaN(complex.longitude);
 }

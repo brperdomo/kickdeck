@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Globe, Clock, ChevronDown, ChevronUp, ExternalLink, X, Edit, Trash } from 'lucide-react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Complex, Field } from '@/types/index';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
+import { formatAddress, formatHours, getGoogleMapsUrl, getDirectionsUrl, hasValidCoordinates } from '@/lib/format-address';
 import { useGoogleMapsScript } from '@/hooks/use-google-maps-script';
-import { formatAddress, formatHours, getDirectionsUrl, getGoogleMapsUrl } from '@/lib/format-address';
-import { Complex } from '@/types/complex';
-import { Field } from '@/types/field';
+import { MapPin, Clock, Globe, Mail, Phone, Edit, Trash, ChevronDown, ChevronUp, Map, Navigation } from 'lucide-react';
 
 interface ComplexCardProps {
   complex: Complex;
   fields?: Field[];
-  onEdit?: () => void;
-  onDelete?: () => void;
-  showMapByDefault?: boolean;
+  onEdit?: (complex: Complex) => void;
+  onDelete?: (complex: Complex) => void;
+  showActions?: boolean;
+  expandedByDefault?: boolean;
+  showMap?: boolean;
 }
 
 export default function ComplexCard({
@@ -21,252 +23,235 @@ export default function ComplexCard({
   fields = [],
   onEdit,
   onDelete,
-  showMapByDefault = false,
+  showActions = true,
+  expandedByDefault = false,
+  showMap = true
 }: ComplexCardProps) {
-  const [showMap, setShowMap] = useState<boolean>(showMapByDefault);
-  const [mapExpanded, setMapExpanded] = useState<boolean>(false);
-  const { loaded } = useGoogleMapsScript();
-  
-  // Sort fields by whether they're open or not
-  const openFields = fields.filter(field => field.isOpen);
-  const closedFields = fields.filter(field => !field.isOpen);
-  
-  // Initialize map once script is loaded and container is ready
-  const initializeMap = (container: HTMLDivElement) => {
-    if (!loaded || !container) return;
-    
-    const mapOptions: google.maps.MapOptions = {
-      center: { lat: complex.latitude, lng: complex.longitude },
-      zoom: 15,
-      mapTypeControl: false,
-      fullscreenControl: false,
-      streetViewControl: false,
-      zoomControl: true,
-    };
-    
-    const map = new google.maps.Map(container, mapOptions);
-    
-    // Add marker for the complex
-    new google.maps.Marker({
-      position: { lat: complex.latitude, lng: complex.longitude },
-      map,
-      title: complex.name,
-      animation: google.maps.Animation.DROP,
-    });
-    
-    // Add info window with complex info
-    const infoWindow = new google.maps.InfoWindow({
-      content: `
-        <div style="max-width: 200px;">
-          <h3 style="margin: 0; font-weight: bold;">${complex.name}</h3>
-          <p style="margin: 5px 0;">${formatAddress(complex)}</p>
-          <a href="${getDirectionsUrl(complex)}" target="_blank" rel="noopener noreferrer" style="color: #0077CC;">Get Directions</a>
-        </div>
-      `,
-    });
-    
-    // Open info window by default
-    infoWindow.open(map, map.markers?.[0]);
+  const [expanded, setExpanded] = useState(expandedByDefault);
+  const { loaded: mapsLoaded } = useGoogleMapsScript({
+    apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+  });
+
+  const handleEdit = () => {
+    if (onEdit) onEdit(complex);
   };
-  
-  return (
-    <Card className="w-full max-w-2xl shadow-md hover:shadow-lg transition-shadow">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="text-xl font-bold">{complex.name}</CardTitle>
-            <div className="flex items-center text-sm text-muted-foreground mt-1">
-              <MapPin size={16} className="mr-1" />
-              <span>{formatAddress(complex)}</span>
+
+  const handleDelete = () => {
+    if (onDelete) onDelete(complex);
+  };
+
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
+  };
+
+  const renderContactInfo = () => (
+    <div className="mt-4 space-y-2 text-sm">
+      {complex.phoneNumber && (
+        <div className="flex items-center">
+          <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+          <a href={`tel:${complex.phoneNumber}`} className="hover:underline">
+            {complex.phoneNumber}
+          </a>
+        </div>
+      )}
+      {complex.email && (
+        <div className="flex items-center">
+          <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
+          <a href={`mailto:${complex.email}`} className="hover:underline">
+            {complex.email}
+          </a>
+        </div>
+      )}
+      {complex.website && (
+        <div className="flex items-center">
+          <Globe className="h-4 w-4 mr-2 text-muted-foreground" />
+          <a 
+            href={complex.website.startsWith('http') ? complex.website : `https://${complex.website}`} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="hover:underline"
+          >
+            {complex.website}
+          </a>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderFieldList = () => {
+    if (fields.length === 0) return null;
+    
+    return (
+      <Accordion type="single" collapsible className="mt-4">
+        <AccordionItem value="fields">
+          <AccordionTrigger>
+            <span className="text-sm font-medium">Fields ({fields.length})</span>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-3">
+              {fields.map(field => (
+                <div key={field.id} className="p-3 bg-muted rounded-md">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="font-medium">{field.name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {field.fieldType} • {field.fieldSize} • {field.surfaceType}
+                      </div>
+                      {(field.length || field.width) && (
+                        <div className="text-sm mt-1">
+                          Dimensions: {field.length || '?'} x {field.width || '?'}
+                        </div>
+                      )}
+                      {field.notes && <div className="text-sm mt-1">{field.notes}</div>}
+                    </div>
+                    <div>
+                      <Badge variant={field.isActive ? "default" : "outline"}>
+                        {field.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                      {field.lighting && (
+                        <Badge variant="outline" className="ml-2">
+                          Lighting
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    );
+  };
+
+  const renderMap = () => {
+    if (!showMap || !hasValidCoordinates(complex)) return null;
+
+    // Static map fallback if Google Maps API is not loaded
+    return (
+      <div className="mt-4 rounded-md overflow-hidden h-48 relative border">
+        {mapsLoaded ? (
+          <iframe
+            title={`Map of ${complex.name}`}
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            src={`https://www.google.com/maps/embed/v1/place?key=${
+              import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+            }&q=${complex.latitude},${complex.longitude}&zoom=14`}
+            allowFullScreen
+          ></iframe>
+        ) : (
+          <div className="flex items-center justify-center h-full bg-muted">
+            <div className="text-center p-4">
+              <Map className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">Map loading...</p>
             </div>
           </div>
-          
-          {complex.shared && (
-            <Badge variant="secondary" className="ml-2">
-              Shared
-            </Badge>
-          )}
+        )}
+        <div className="absolute bottom-2 right-2 flex gap-2">
+          <a
+            href={getGoogleMapsUrl(complex)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-primary text-primary-foreground p-2 rounded-full hover:bg-primary/90"
+            title="View on Google Maps"
+          >
+            <Map className="h-4 w-4" />
+          </a>
+          <a
+            href={getDirectionsUrl(complex)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-primary text-primary-foreground p-2 rounded-full hover:bg-primary/90"
+            title="Get Directions"
+          >
+            <Navigation className="h-4 w-4" />
+          </a>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <Card className="w-full">
+      <CardHeader className="pb-2">
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle>{complex.name}</CardTitle>
+            <CardDescription>
+              <div className="flex items-center mt-1">
+                <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
+                <span>{formatAddress(complex)}</span>
+              </div>
+              <div className="flex items-center mt-1">
+                <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
+                <span>{formatHours(complex)}</span>
+              </div>
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            {complex.shared && (
+              <Badge variant="secondary" className="ml-auto">
+                Shared
+              </Badge>
+            )}
+            {showActions && (
+              <>
+                {onEdit && (
+                  <Button variant="ghost" size="icon" onClick={handleEdit} title="Edit">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                )}
+                {onDelete && (
+                  <Button variant="ghost" size="icon" onClick={handleDelete} title="Delete">
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </CardHeader>
       
-      <CardContent className="pt-2 pb-2">
-        {/* Contact Information */}
-        <div className="grid grid-cols-1 gap-2 mb-4">
-          {complex.phoneNumber && (
-            <div className="flex items-center text-sm">
-              <Phone size={16} className="mr-2 text-muted-foreground" />
-              <a href={`tel:${complex.phoneNumber}`} className="hover:underline">
-                {complex.phoneNumber}
-              </a>
-            </div>
-          )}
-          
-          {complex.email && (
-            <div className="flex items-center text-sm">
-              <Mail size={16} className="mr-2 text-muted-foreground" />
-              <a href={`mailto:${complex.email}`} className="hover:underline">
-                {complex.email}
-              </a>
-            </div>
-          )}
-          
-          {complex.website && (
-            <div className="flex items-center text-sm">
-              <Globe size={16} className="mr-2 text-muted-foreground" />
-              <a 
-                href={complex.website.startsWith('http') ? complex.website : `https://${complex.website}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:underline flex items-center"
-              >
-                {complex.website.replace(/^https?:\/\//, '')}
-                <ExternalLink size={12} className="ml-1" />
-              </a>
-            </div>
-          )}
-          
-          {(complex.openTime || complex.closeTime) && (
-            <div className="flex items-center text-sm">
-              <Clock size={16} className="mr-2 text-muted-foreground" />
-              <span>{formatHours(complex)}</span>
-            </div>
-          )}
-        </div>
+      <CardContent>
+        {/* Show basic info */}
+        {complex.description && <p className="text-sm mb-4">{complex.description}</p>}
         
-        {/* Description */}
-        {complex.description && (
-          <div className="mb-4 text-sm">
-            <p>{complex.description}</p>
+        {/* Display directions if available */}
+        {complex.directions && (
+          <div className="mt-2 mb-4">
+            <h4 className="text-sm font-medium mb-1">Directions:</h4>
+            <p className="text-sm">{complex.directions}</p>
           </div>
         )}
         
-        {/* Fields Section */}
-        {fields.length > 0 && (
-          <div className="mb-4">
-            <h3 className="text-sm font-medium mb-2">Fields ({fields.length})</h3>
-            
-            {openFields.length > 0 && (
-              <div className="mb-2">
-                <h4 className="text-xs font-medium text-green-600 mb-1">Open ({openFields.length})</h4>
-                <div className="flex flex-wrap gap-1">
-                  {openFields.map(field => (
-                    <Badge key={field.id} variant="outline" className="bg-green-50">
-                      {field.name}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {closedFields.length > 0 && (
-              <div>
-                <h4 className="text-xs font-medium text-red-600 mb-1">Closed ({closedFields.length})</h4>
-                <div className="flex flex-wrap gap-1">
-                  {closedFields.map(field => (
-                    <Badge key={field.id} variant="outline" className="bg-red-50">
-                      {field.name}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-        
-        {/* Map Section */}
-        {showMap && (
-          <div className={`mt-4 border rounded-md overflow-hidden transition-all ${mapExpanded ? 'h-96' : 'h-48'}`}>
-            {loaded ? (
-              <div 
-                ref={initializeMap}
-                className="w-full h-full"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-muted">
-                <p className="text-sm text-muted-foreground">Loading map...</p>
-              </div>
-            )}
-            
-            <div className="absolute bottom-2 right-2">
-              <Button 
-                variant="secondary" 
-                size="sm" 
-                className="h-8 px-2 bg-white shadow"
-                onClick={() => setMapExpanded(!mapExpanded)}
-              >
-                {mapExpanded ? (
-                  <>
-                    <ChevronDown size={16} className="mr-1" />
-                    <span>Collapse</span>
-                  </>
-                ) : (
-                  <>
-                    <ChevronUp size={16} className="mr-1" />
-                    <span>Expand</span>
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
+        {/* Show map only if expanded or expandedByDefault */}
+        {expanded && (
+          <>
+            {renderContactInfo()}
+            {renderMap()}
+            {renderFieldList()}
+          </>
         )}
       </CardContent>
       
-      <CardFooter className="flex justify-between pt-2">
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setShowMap(!showMap)}
-          >
-            {showMap ? (
-              <>
-                <X size={16} className="mr-1" />
-                <span>Hide Map</span>
-              </>
-            ) : (
-              <>
-                <MapPin size={16} className="mr-1" />
-                <span>Show Map</span>
-              </>
-            )}
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => window.open(getGoogleMapsUrl(complex), '_blank')}
-          >
-            <ExternalLink size={16} className="mr-1" />
-            <span>View in Maps</span>
-          </Button>
-        </div>
-        
-        {(onEdit || onDelete) && (
-          <div className="flex gap-2">
-            {onEdit && (
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={onEdit}
-              >
-                <Edit size={16} className="mr-1" />
-                <span>Edit</span>
-              </Button>
-            )}
-            
-            {onDelete && (
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                onClick={onDelete}
-              >
-                <Trash size={16} className="mr-1" />
-                <span>Delete</span>
-              </Button>
-            )}
-          </div>
-        )}
+      <CardFooter className="pt-0">
+        <Button 
+          variant="ghost" 
+          className="w-full flex items-center justify-center text-sm" 
+          onClick={toggleExpanded}
+        >
+          {expanded ? (
+            <>
+              <ChevronUp className="h-4 w-4 mr-1" /> Show Less
+            </>
+          ) : (
+            <>
+              <ChevronDown className="h-4 w-4 mr-1" /> Show More
+            </>
+          )}
+        </Button>
       </CardFooter>
     </Card>
   );
