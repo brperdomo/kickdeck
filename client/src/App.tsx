@@ -34,7 +34,6 @@ import { FloatingEmulationButton } from "@/components/admin/FloatingEmulationBut
 // Import fully implemented components for preview mode
 import EventPreviewSelector from '@/pages/event-preview-selector';
 import RegistrationPreview from '@/pages/registration-preview';
-import ComplexExample from '@/pages/ComplexExample';
 
 function Router() {
   const { user, isLoading } = useUser();
@@ -123,9 +122,6 @@ function Router() {
           </Route>
           <Route path="/admin/team-status-test">
             {user.isAdmin ? <TeamStatusTest /> : <NotFound />}
-          </Route>
-          <Route path="/admin/complex-example">
-            {user.isAdmin ? <ComplexExample /> : <NotFound />}
           </Route>
           <Route path="/admin/events">
             {user.isAdmin ? <AdminDashboard /> : <NotFound />}

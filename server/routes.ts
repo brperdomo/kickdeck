@@ -1988,59 +1988,6 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
-    // Add complex sharing endpoint
-    app.patch('/api/admin/complexes/:id/shared', isAdmin, async (req, res) => {
-      try {
-        const complexId = parseInt(req.params.id);
-        const { isShared } = req.body;
-        
-        let sharedId = null;
-        
-        // If we're setting to shared and there's no shared ID, create one
-        if (isShared) {
-          // Get the current complex to check if it already has a shared ID
-          const [currentComplex] = await db
-            .select()
-            .from(complexes)
-            .where(eq(complexes.id, complexId));
-            
-          if (!currentComplex) {
-            return res.status(404).send("Complex not found");
-          }
-          
-          // If no shared ID exists, generate one using UUID
-          if (!currentComplex.sharedId) {
-            // Use last part of UUID as shared ID
-            sharedId = Math.random().toString(36).substring(2, 10) + 
-                       Date.now().toString(36);
-          } else {
-            // Keep existing shared ID
-            sharedId = currentComplex.sharedId;
-          }
-        }
-        
-        // Update the complex
-        const [updatedComplex] = await db
-          .update(complexes)
-          .set({
-            isShared: isShared,
-            sharedId: isShared ? sharedId : null,
-            updatedAt: new Date().toISOString(),
-          })
-          .where(eq(complexes.id, complexId))
-          .returning();
-          
-        if (!updatedComplex) {
-          return res.status(404).send("Complex not found");
-        }
-        
-        res.json(updatedComplex);
-      } catch (error) {
-        console.error('Error updating complex sharing status:', error);
-        res.status(500).send("Failed to update complex sharing status");
-      }
-    });
-    
     // Add complex deletion endpoint
 app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {

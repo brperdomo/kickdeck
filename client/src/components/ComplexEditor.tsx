@@ -1,223 +1,239 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { toast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
-import { Complex } from '@/types/complex';
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useEffect, useState } from "react";
+import { GoogleMapsAutocomplete } from "./GoogleMapsAutocomplete";
+import { Card } from "@/components/ui/card";
 
-// Form validation schema
-const complexFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  address: z.string().min(1, 'Address is required'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  country: z.string().min(1, 'Country is required'),
-  latitude: z.string().min(1, 'Latitude is required'),
-  longitude: z.string().min(1, 'Longitude is required'),
-  openTime: z.string().min(1, 'Opening time is required'),
-  closeTime: z.string().min(1, 'Closing time is required'),
+const complexSchema = z.object({
+  name: z.string().min(1, "Complex name is required"),
+  address: z.string().min(1, "Address is required"),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(2, "State is required").max(2),
+  country: z.string().min(2, "Country is required"),
+  latitude: z.string().optional(),
+  longitude: z.string().optional(),
+  openTime: z.string().min(1, "Open time is required"),
+  closeTime: z.string().min(1, "Close time is required"),
+  rules: z.string().optional(),
+  directions: z.string().optional(),
   isOpen: z.boolean().default(true),
-  isShared: z.boolean().default(false),
-  rules: z.string().nullable().optional(),
-  directions: z.string().nullable().optional()
 });
 
-type ComplexFormValues = z.infer<typeof complexFormSchema>;
+type ComplexFormValues = z.infer<typeof complexSchema>;
 
-interface ComplexEditorProps {
+interface Complex {
+  id: number;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  latitude?: string;
+  longitude?: string;
+  openTime: string;
+  closeTime: string;
+  rules?: string;
+  directions?: string;
   isOpen: boolean;
-  onClose: () => void;
-  onSave: (complex: Partial<Complex>) => Promise<void>;
-  complex?: Complex;
-  isEdit?: boolean;
 }
 
-export function ComplexEditor({
-  isOpen,
-  onClose,
-  onSave,
-  complex,
-  isEdit = false
-}: ComplexEditorProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  // Default form values
-  const defaultValues: ComplexFormValues = {
-    name: '',
-    address: '',
-    city: '',
-    state: '',
-    country: '',
-    latitude: '',
-    longitude: '',
-    openTime: '08:00',
-    closeTime: '20:00',
-    isOpen: true,
-    isShared: false,
-    rules: '',
-    directions: ''
-  };
+interface ComplexEditorProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (data: ComplexFormValues) => Promise<void>;
+  complex?: Complex | null;
+}
 
-  // Initialize the form
+export function ComplexEditor({ open, onOpenChange, onSubmit, complex }: ComplexEditorProps) {
+  const { toast } = useToast();
+
   const form = useForm<ComplexFormValues>({
-    resolver: zodResolver(complexFormSchema),
-    defaultValues: complex ? { 
-      ...defaultValues, 
-      ...complex
-    } : defaultValues
+    resolver: zodResolver(complexSchema),
+    defaultValues: {
+      name: '',
+      address: '',
+      city: '',
+      state: '',
+      country: 'USA',
+      openTime: '06:00',
+      closeTime: '22:00',
+      rules: '',
+      directions: '',
+      isOpen: true,
+    },
   });
 
-  // Update form values when complex changes
   useEffect(() => {
     if (complex) {
-      form.reset({ 
+      form.reset({
         name: complex.name,
         address: complex.address,
         city: complex.city,
         state: complex.state,
-        country: complex.country, 
+        country: complex.country,
         latitude: complex.latitude || '',
         longitude: complex.longitude || '',
         openTime: complex.openTime,
         closeTime: complex.closeTime,
-        isOpen: complex.isOpen,
-        isShared: complex.isShared,
         rules: complex.rules || '',
-        directions: complex.directions || ''
+        directions: complex.directions || '',
+        isOpen: complex.isOpen,
       });
     } else {
-      form.reset(defaultValues);
+      form.reset({
+        name: '',
+        address: '',
+        city: '',
+        state: '',
+        country: 'USA',
+        latitude: '',
+        longitude: '',
+        openTime: '06:00',
+        closeTime: '22:00',
+        rules: '',
+        directions: '',
+        isOpen: true,
+      });
     }
   }, [complex, form]);
 
-  // Form submission handler
-  const onSubmit = async (data: ComplexFormValues) => {
-    setIsSubmitting(true);
-    
+  const handleSubmit = async (data: ComplexFormValues) => {
     try {
-      // Convert form data to Complex data structure
-      const complexData: Partial<Complex> = {
-        name: data.name,
-        address: data.address,
-        city: data.city,
-        state: data.state,
-        country: data.country,
-        latitude: data.latitude,
-        longitude: data.longitude,
-        openTime: data.openTime,
-        closeTime: data.closeTime,
-        isOpen: data.isOpen,
-        isShared: data.isShared,
-        rules: data.rules,
-        directions: data.directions
-      };
-      
-      // If editing, make sure to include the ID
-      if (isEdit && complex) {
-        complexData.id = complex.id;
-      }
-      
-      await onSave(complexData);
-      
-      toast({
-        title: `Complex ${isEdit ? 'Updated' : 'Created'} Successfully`,
-        description: `${data.name} has been ${isEdit ? 'updated' : 'created'}.`,
-      });
-      
-      form.reset(defaultValues);
-      onClose();
+      await onSubmit(data);
     } catch (error) {
-      console.error('Error saving complex:', error);
+      console.error('Form submission error:', error);
       toast({
-        title: 'Error',
-        description: `Failed to ${isEdit ? 'update' : 'create'} complex. Please try again.`,
-        variant: 'destructive',
+        title: "Error",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
-  };
-
-  // Helper function to get current location
-  const getCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      toast({
-        title: 'Geolocation Not Supported',
-        description: 'Your browser does not support geolocation.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        form.setValue('latitude', position.coords.latitude.toString());
-        form.setValue('longitude', position.coords.longitude.toString());
-      },
-      (error) => {
-        toast({
-          title: 'Geolocation Error',
-          description: `Failed to get location: ${error.message}`,
-          variant: 'destructive',
-        });
-      }
-    );
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit' : 'Add'} Complex</DialogTitle>
+          <DialogTitle>{complex ? 'Edit Complex' : 'Add New Complex'}</DialogTitle>
         </DialogHeader>
-        
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Name */}
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Complex Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter complex name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Address</FormLabel>
+                  <FormControl>
+                    <GoogleMapsAutocomplete
+                      value={field.value}
+                      onChange={(value, placeDetails) => {
+                        // Update the address field
+                        field.onChange(value);
+                        
+                        // If Google Maps returned place details with coordinates
+                        if (placeDetails && placeDetails.geometry && placeDetails.geometry.location) {
+                          // Update latitude and longitude fields
+                          form.setValue('latitude', placeDetails.geometry.location.lat().toString());
+                          form.setValue('longitude', placeDetails.geometry.location.lng().toString());
+                          
+                          // If extractedData is available, update city, state, country fields
+                          if (placeDetails.extractedData) {
+                            if (placeDetails.extractedData.city) {
+                              form.setValue('city', placeDetails.extractedData.city);
+                            }
+                            if (placeDetails.extractedData.state) {
+                              form.setValue('state', placeDetails.extractedData.state);
+                            }
+                            if (placeDetails.extractedData.country) {
+                              form.setValue('country', placeDetails.extractedData.country);
+                            }
+                          }
+                          
+                          console.log("Updated form with Google Maps data:", {
+                            lat: placeDetails.geometry.location.lat(),
+                            lng: placeDetails.geometry.location.lng(),
+                            extractedData: placeDetails.extractedData
+                          });
+                        } else {
+                          console.log("No place details or coordinates available");
+                        }
+                      }}
+                      placeholder="Search for an address"
+                      className="w-full"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <div className="hidden">
               <FormField
                 control={form.control}
-                name="name"
+                name="latitude"
                 render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel>Complex Name *</FormLabel>
+                  <FormItem>
                     <FormControl>
-                      <Input placeholder="Enter complex name" {...field} />
+                      <Input {...field} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
-              
-              {/* Address */}
               <FormField
                 control={form.control}
-                name="address"
+                name="longitude"
                 render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel>Address *</FormLabel>
+                  <FormItem>
                     <FormControl>
-                      <Input placeholder="Enter street address" {...field} />
+                      <Input {...field} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
-              
-              {/* City */}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City *</FormLabel>
+                    <FormLabel>City</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter city" {...field} />
                     </FormControl>
@@ -225,187 +241,23 @@ export function ComplexEditor({
                   </FormItem>
                 )}
               />
-              
-              {/* State */}
               <FormField
                 control={form.control}
                 name="state"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>State/Province *</FormLabel>
+                    <FormLabel>State</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter state or province" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              {/* Country */}
-              <FormField
-                control={form.control}
-                name="country"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter country" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              {/* Map Location */}
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-2">
-                  {/* Latitude */}
-                  <FormField
-                    control={form.control}
-                    name="latitude"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Latitude *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g. 40.7128" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  {/* Longitude */}
-                  <FormField
-                    control={form.control}
-                    name="longitude"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Longitude *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g. -74.0060" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={getCurrentLocation}
-                >
-                  Use Current Location
-                </Button>
-              </div>
-              
-              {/* Opening Hours */}
-              <FormField
-                control={form.control}
-                name="openTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Opening Time *</FormLabel>
-                    <FormControl>
-                      <Input type="time" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              {/* Closing Hours */}
-              <FormField
-                control={form.control}
-                name="closeTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Closing Time *</FormLabel>
-                    <FormControl>
-                      <Input type="time" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              {/* Is Open */}
-              <FormField
-                control={form.control}
-                name="isOpen"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                    <div className="space-y-0.5">
-                      <FormLabel>Complex is Open</FormLabel>
-                      <FormDescription>
-                        Whether the complex is currently open for games
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              
-              {/* Is Shared */}
-              <FormField
-                control={form.control}
-                name="isShared"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                    <div className="space-y-0.5">
-                      <FormLabel>Share Across Instances</FormLabel>
-                      <FormDescription>
-                        Allow this complex to be shared with other system instances
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              
-              {/* Directions */}
-              <FormField
-                control={form.control}
-                name="directions"
-                render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel>Directions</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Enter special directions to the complex (optional)" 
-                        className="min-h-[80px]"
-                        {...field} 
-                        value={field.value || ''}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              {/* Rules */}
-              <FormField
-                control={form.control}
-                name="rules"
-                render={({ field }) => (
-                  <FormItem className="md:col-span-2">
-                    <FormLabel>Rules</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Enter complex rules (optional)" 
-                        className="min-h-[80px]"
-                        {...field} 
-                        value={field.value || ''}
+                      <Input
+                        placeholder="CA"
+                        maxLength={2}
+                        {...field}
+                        onChange={e => {
+                          const value = e.target.value.toUpperCase();
+                          if (value.length <= 2) {
+                            field.onChange(value);
+                          }
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -413,16 +265,105 @@ export function ComplexEditor({
                 )}
               />
             </div>
-            
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Country</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter country" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="openTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Open Time</FormLabel>
+                    <FormControl>
+                      <Input type="time" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="closeTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Close Time</FormLabel>
+                    <FormControl>
+                      <Input type="time" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="rules"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Rules (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Enter complex rules" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="directions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Directions (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Enter directions to complex" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="isOpen"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Complex Status</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isEdit ? 'Update' : 'Create'} Complex
+              <Button type="submit">
+                {complex ? 'Save Changes' : 'Create Complex'}
               </Button>
-            </DialogFooter>
+            </div>
           </form>
         </Form>
       </DialogContent>
