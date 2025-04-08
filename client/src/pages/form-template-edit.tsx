@@ -56,8 +56,8 @@ export default function FormTemplateEditPage() {
         throw new Error("Failed to fetch template");
       }
       const data = await response.json();
-      console.log("Template data received:", data);
-      console.log("Template fields:", data.fields);
+      console.log("Template data received:", JSON.stringify(data, null, 2));
+      console.log("Template fields:", JSON.stringify(data.fields, null, 2));
       return data;
     },
     enabled: !!params?.id,
@@ -66,9 +66,14 @@ export default function FormTemplateEditPage() {
 
   useEffect(() => {
     if (data) {
-      console.log("Setting template from data:", data);
+      console.log("Setting template from data:", JSON.stringify(data, null, 2));
       console.log("Template fields count:", data.fields?.length || 0);
-      setTemplate(data);
+      console.log("Template first field:", data.fields?.[0] ? JSON.stringify(data.fields[0], null, 2) : "No fields");
+      
+      // Force a re-render of the template with a deep clone to ensure reactivity
+      const clonedData = JSON.parse(JSON.stringify(data));
+      console.log("Cloned data for template:", JSON.stringify(clonedData, null, 2));
+      setTemplate(clonedData);
     }
   }, [data]);
 

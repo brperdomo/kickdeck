@@ -17,36 +17,67 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
   const [, navigate] = useLocation();
   const { toast } = useToast();
   
-  console.log("FormTemplateEditor received existing template:", existingTemplate);
-  console.log("Existing template fields:", existingTemplate?.fields);
-  console.log("Existing template fields type:", existingTemplate?.fields ? typeof existingTemplate.fields : "no fields");
-  console.log("Is fields array?", existingTemplate?.fields ? Array.isArray(existingTemplate.fields) : "no fields");
+  console.log("FormTemplateEditor received existing template:", 
+    existingTemplate ? JSON.stringify(existingTemplate, null, 2) : "null");
   
-  if (existingTemplate?.fields) {
-    console.log("Fields length:", existingTemplate.fields.length);
-    console.log("First field:", existingTemplate.fields[0]);
+  if (existingTemplate) {
+    console.log(`Template ID: ${existingTemplate.id}, Name: ${existingTemplate.name}`);
+    console.log("Existing template fields:", 
+      existingTemplate.fields ? JSON.stringify(existingTemplate.fields, null, 2) : "no fields");
+    console.log("Existing template fields type:", 
+      existingTemplate.fields ? typeof existingTemplate.fields : "no fields");
+    console.log("Is fields array?", 
+      existingTemplate.fields ? Array.isArray(existingTemplate.fields) : "no fields");
+    
+    if (existingTemplate.fields && existingTemplate.fields.length > 0) {
+      console.log("Fields length:", existingTemplate.fields.length);
+      console.log("First field:", JSON.stringify(existingTemplate.fields[0], null, 2));
+      console.log("First field type:", existingTemplate.fields[0].type);
+    } else {
+      console.log("NO FIELDS IN TEMPLATE DATA!");
+    }
+  } else {
+    console.log("NO TEMPLATE DATA PROVIDED!");
   }
   
   // The issue seems to be with how fields are handled in the form template
   // For input fields, we need to ensure we're mapping the API field type "input" to "text"
   // which is what the form editor expects
-  const mappedFields = existingTemplate?.fields ? existingTemplate.fields.map(field => ({
-    ...field,
-    // Map API field types to editor field types
-    type: field.type === "input" ? "text" : field.type,
-    // Ensure options is an array even if it comes as null from the API
-    options: field.options || []
-  })) : [];
+  const mappedFields = existingTemplate?.fields ? existingTemplate.fields.map(field => {
+    console.log(`Mapping field: ${field.label}, type: ${field.type}`);
+    return {
+      ...field,
+      // Map API field types to editor field types
+      type: field.type === "input" ? "text" : field.type,
+      // Ensure options is an array even if it comes as null from the API
+      options: field.options || []
+    };
+  }) : [];
   
-  console.log("Mapped fields for template:", mappedFields);
+  console.log("Mapped fields for template:", JSON.stringify(mappedFields, null, 2));
   
-  const [template, setTemplate] = useState({
-    id: existingTemplate?.id || null,
-    name: existingTemplate?.name || "",
-    description: existingTemplate?.description || "",
-    isPublished: existingTemplate?.isPublished || false,
-    fields: mappedFields
-  });
+  // Create a fresh template object from the existingTemplate
+  let initialTemplate = {
+    id: null,
+    name: "",
+    description: "",
+    isPublished: false,
+    fields: []
+  };
+  
+  if (existingTemplate) {
+    initialTemplate = {
+      id: existingTemplate.id || null,
+      name: existingTemplate.name || "",
+      description: existingTemplate.description || "",
+      isPublished: existingTemplate.isPublished || false,
+      fields: mappedFields
+    };
+  }
+  
+  console.log("Initial template state:", JSON.stringify(initialTemplate, null, 2));
+  
+  const [template, setTemplate] = useState(initialTemplate);
   
   console.log("Template state initialized with fields:", template.fields);
 
