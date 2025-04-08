@@ -162,7 +162,7 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
         title: "Success",
         description: "Form template created successfully"
       });
-      navigate("/admin/form-templates");
+      navigate("/admin");
     },
     onError: (error) => {
       toast({
@@ -194,7 +194,7 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
         title: "Success",
         description: "Form template updated successfully"
       });
-      navigate("/admin/form-templates");
+      navigate("/admin");
     },
     onError: (error) => {
       toast({
@@ -303,10 +303,6 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Button variant="outline" onClick={() => navigate("/admin/form-templates")}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Templates
-        </Button>
         <Button onClick={handleSave}>
           <Save className="mr-2 h-4 w-4" />
           {editMode ? "Update Template" : "Save Template"}

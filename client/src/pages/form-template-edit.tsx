@@ -4,6 +4,7 @@ import { FormTemplateEditor } from "@/components/admin/FormTemplateEditor";
 import { useLocation, useRoute } from "wouter";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 // Import the types from the FormTemplateEditor component
 interface FormFieldOption {
@@ -37,6 +38,7 @@ interface FormTemplateType {
 export default function FormTemplateEditPage() {
   const [, params] = useRoute("/admin/form-templates/:id/edit");
   const [, navigate] = useLocation();
+  const { toast } = useToast();
   const [template, setTemplate] = useState<FormTemplateType | null>(null);
 
   const { data, isLoading, error } = useQuery({
@@ -93,16 +95,21 @@ export default function FormTemplateEditPage() {
 
   useEffect(() => {
     if (error) {
-      navigate("/admin/form-templates");
+      toast({
+        title: "Error",
+        description: "Failed to load template. Redirecting to dashboard.",
+        variant: "destructive"
+      });
+      navigate("/admin");
     }
-  }, [error, navigate]);
+  }, [error, navigate, toast]);
 
   if (isLoading) {
     return (
       <div className="p-6 max-w-4xl mx-auto">
         <div className="flex items-center mb-6">
-          <Button variant="outline" className="mr-4" onClick={() => navigate("/admin/form-templates")}>
-            <ArrowLeft size={16} className="mr-1" /> Back to Templates
+          <Button variant="outline" className="mr-4" onClick={() => navigate("/admin")}>
+            <ArrowLeft size={16} className="mr-1" /> Back to Admin Dashboard
           </Button>
           <h1 className="text-2xl font-bold">Loading Template...</h1>
         </div>
@@ -122,8 +129,8 @@ export default function FormTemplateEditPage() {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center mb-6">
-        <Button variant="outline" className="mr-4" onClick={() => navigate("/admin/form-templates")}>
-          <ArrowLeft className="mr-1 h-4 w-4" /> Back to Templates
+        <Button variant="outline" className="mr-4" onClick={() => navigate("/admin")}>
+          <ArrowLeft className="mr-1 h-4 w-4" /> Back to Admin Dashboard
         </Button>
         <h1 className="text-2xl font-bold">Edit Form Template</h1>
       </div>
