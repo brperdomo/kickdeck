@@ -19,6 +19,13 @@ export function FormTemplateEditor({ editMode = false, existingTemplate = null }
   
   console.log("FormTemplateEditor received existing template:", existingTemplate);
   console.log("Existing template fields:", existingTemplate?.fields);
+  console.log("Existing template fields type:", existingTemplate?.fields ? typeof existingTemplate.fields : "no fields");
+  console.log("Is fields array?", existingTemplate?.fields ? Array.isArray(existingTemplate.fields) : "no fields");
+  
+  if (existingTemplate?.fields) {
+    console.log("Fields length:", existingTemplate.fields.length);
+    console.log("First field:", existingTemplate.fields[0]);
+  }
   
   const [template, setTemplate] = useState({
     id: existingTemplate?.id || null,
