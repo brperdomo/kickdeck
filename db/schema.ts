@@ -46,8 +46,10 @@ export const complexes = pgTable("complexes", {
   city: text("city").notNull(),
   state: text("state").notNull(),
   country: text("country").notNull(),
-  latitude: text("latitude"),
-  longitude: text("longitude"),
+  latitude: text("latitude"),  // Will be required for new entries
+  longitude: text("longitude"), // Will be required for new entries
+  sharedId: text("shared_id"), // Unique identifier for syncing across instances
+  isShared: boolean("is_shared").default(false), // Indicates if this complex can be synced with other instances
   openTime: text("open_time").notNull(),
   closeTime: text("close_time").notNull(),
   rules: text("rules"),
@@ -111,8 +113,10 @@ export const insertComplexSchema = createInsertSchema(complexes, {
   city: z.string().min(1, "City is required"),
   state: z.string().min(2, "State is required"),
   country: z.string().min(2, "Country is required"),
-  latitude: z.string().optional(),
-  longitude: z.string().optional(),
+  latitude: z.string().min(1, "Latitude is required for location mapping"),
+  longitude: z.string().min(1, "Longitude is required for location mapping"),
+  sharedId: z.string().optional(),
+  isShared: z.boolean().optional(),
   openTime: z.string().min(1, "Open time is required"),
   closeTime: z.string().min(1, "Close time is required"),
   rules: z.string().optional(),
@@ -170,7 +174,7 @@ export const eventAgeGroups = pgTable("event_age_groups", {
 export const insertEventAgeGroupSchema = createInsertSchema(eventAgeGroups, {
   ageGroup: z.string().min(1, "Age group is required"),
   birthYear: z.number().int("Birth year must be a valid year"),
-  gender: z.enum(["Boys", "Girls"], "Gender must be either Boys or Girls"),
+  gender: z.enum(["Boys", "Girls"], { errorMap: () => ({ message: "Gender must be either Boys or Girls" }) }),
   divisionCode: z.string().min(1, "Division code is required"),
   projectedTeams: z.number().int().min(0, "Projected teams must be 0 or greater").optional(),
   fieldSize: z.string().min(1, "Field size is required"),
@@ -808,7 +812,7 @@ export const coupons = pgTable("coupons", {
 
 export const insertCouponSchema = createInsertSchema(coupons, {
   code: z.string().min(1, "Coupon code is required"),
-  discountType: z.enum(['fixed', 'percentage'], "Invalid discount type"),
+  discountType: z.enum(['fixed', 'percentage'], { errorMap: () => ({ message: "Invalid discount type" }) }),
   amount: z.number().positive("Amount must be positive"),
   expirationDate: z.string().min(1, "Expiration date is required"),
   description: z.string().optional(),
