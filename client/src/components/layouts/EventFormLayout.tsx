@@ -125,7 +125,7 @@ export const EventFormLayout = ({
             variants={sidebarVariants}
             initial="hidden"
             animate="visible"
-            className="w-full md:w-64 bg-card border rounded-xl p-3 shadow-sm flex-shrink-0"
+            className="w-full md:w-64 bg-card border rounded-xl p-3 shadow-sm flex-shrink-0 self-start sticky top-24"
           >
             <div className="flex flex-col gap-2">
               {TAB_ORDER.map((tab, index) => (
