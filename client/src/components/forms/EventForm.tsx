@@ -63,13 +63,14 @@ interface EventFormValues extends EventInformationValues {
 interface EventFormProps {
   mode: 'create' | 'edit';
   defaultValues?: EventFormValues;
-  onSubmit: (data: EventFormValues) => Promise<void>;
+  onSubmit?: (data: EventFormValues) => Promise<void>;
   isSubmitting?: boolean;
   activeTab: EventTab;
-  onTabChange: (tab: EventTab) => void;
-  completedTabs: EventTab[];
-  onCompletedTabsChange: (tabs: EventTab[]) => void;
+  onTabChange?: (tab: EventTab) => void;
+  completedTabs?: EventTab[];
+  onCompletedTabsChange?: (tabs: EventTab[]) => void;
   navigateTab: (direction: 'next' | 'prev') => void;
+  form?: any; // Allow passing in external form
 }
 
 export const EventForm = ({ 
@@ -79,9 +80,10 @@ export const EventForm = ({
   isSubmitting = false, 
   activeTab, 
   onTabChange, 
-  completedTabs, 
-  onCompletedTabsChange, 
-  navigateTab 
+  completedTabs = [], 
+  onCompletedTabsChange = () => {}, 
+  navigateTab,
+  form: externalForm
 }: EventFormProps) => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -104,7 +106,8 @@ export const EventForm = ({
     defaultValues?.seasonalScopeId
   );
 
-  const form = useForm<EventFormValues>({
+  // Use external form if provided, or create a local one
+  const form = externalForm || useForm<EventFormValues>({
     resolver: zodResolver(eventInformationSchema),
     defaultValues: defaultValues || {
       name: '',

@@ -6,6 +6,9 @@ import { Loader2 } from "lucide-react";
 import { EventForm } from "@/components/forms/EventForm";
 import { type EventTab } from "@/components/forms/event-form-types";
 import { EventFormLayout } from "@/components/layouts/EventFormLayout";
+import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
 
 export default function EditEvent() {
   const { id } = useParams();
@@ -173,6 +176,55 @@ export default function EditEvent() {
 
   console.log('Prepared event data:', eventData);
 
+  // Create a form context outside of the EventFormLayout
+  const form = useForm({
+    defaultValues: eventData
+  });
+  
+  // Function to handle navigation between tabs
+  const navigateTab = (direction: 'next' | 'prev') => {
+    const steps = ['information', 'age-groups', 'scoring', 'complexes', 'settings', 'administrators'];
+    const currentIndex = steps.indexOf(activeTab);
+    const newIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
+    if (newIndex >= 0 && newIndex < steps.length) {
+      setActiveTab(steps[newIndex] as EventTab);
+    }
+  };
+  
+  // Prepare event content based on the active tab
+  const renderEventContent = () => {
+    return (
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <EventForm
+            mode="edit"
+            defaultValues={eventData}
+            form={form}
+            isSubmitting={updateEventMutation.isPending}
+            activeTab={activeTab}
+            navigateTab={navigateTab}
+          />
+          
+          <div className="flex justify-end space-x-2 mt-6">
+            <Button variant="outline" onClick={() => navigate("/admin/events")}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={updateEventMutation.isPending}>
+              {updateEventMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save Changes"
+              )}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    );
+  };
+
   return (
     <EventFormLayout
       activeTab={activeTab}
@@ -180,24 +232,7 @@ export default function EditEvent() {
       completedTabs={completedTabs}
       isEdit={true}
     >
-      <EventForm
-        mode="edit"
-        defaultValues={eventData}
-        onSubmit={handleSubmit}
-        isSubmitting={updateEventMutation.isPending}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        completedTabs={completedTabs}
-        onCompletedTabsChange={setCompletedTabs}
-        navigateTab={(direction) => {
-          const steps = ['information', 'age-groups', 'scoring', 'complexes', 'settings', 'administrators'];
-          const currentIndex = steps.indexOf(activeTab);
-          const newIndex = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
-          if (newIndex >= 0 && newIndex < steps.length) {
-            setActiveTab(steps[newIndex] as EventTab);
-          }
-        }}
-      />
+      {renderEventContent()}
     </EventFormLayout>
   );
 }
