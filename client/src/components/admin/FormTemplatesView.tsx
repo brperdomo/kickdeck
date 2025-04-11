@@ -100,64 +100,82 @@ export function FormTemplatesView() {
 
       <Card>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Fields</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="w-[80px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {templatesQuery.data.length === 0 ? (
+          <div className="overflow-hidden rounded-md border border-gray-200">
+            <Table>
+              <TableHeader style={{ 
+                backgroundColor: 'var(--admin-nav-bg, #FFFFFF)',
+                color: 'var(--admin-nav-text, #42526E)',
+                borderBottom: '1px solid var(--admin-nav-border, #E5E7EB)'
+              }}>
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8">
-                    No templates found. Create your first template.
-                  </TableCell>
+                  <TableHead style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Name</TableHead>
+                  <TableHead style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Description</TableHead>
+                  <TableHead style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Status</TableHead>
+                  <TableHead style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Fields</TableHead>
+                  <TableHead style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Created</TableHead>
+                  <TableHead className="w-[80px]" style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Actions</TableHead>
                 </TableRow>
-              ) : (
-                templatesQuery.data.map((template: FormTemplate) => (
-                  <TableRow key={template.id}>
-                    <TableCell className="font-medium">{template.name}</TableCell>
-                    <TableCell>{template.description || "-"}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs ${template.isPublished ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
-                        {template.isPublished ? "Published" : "Draft"}
-                      </span>
-                    </TableCell>
-                    <TableCell>{template.fields?.length || 0} fields</TableCell>
-                    <TableCell>{new Date(template.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleEditTemplate(template.id)}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleDeleteTemplate(template.id)}
-                            className="text-red-600"
-                          >
-                            <Trash className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+              </TableHeader>
+              <TableBody>
+                {templatesQuery.data.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8">
+                      No templates found. Create your first template.
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  templatesQuery.data.map((template: FormTemplate) => (
+                    <TableRow 
+                      key={template.id}
+                      className="transition-colors"
+                      style={{ 
+                        borderBottom: '1px solid var(--admin-nav-border, #E5E7EB)'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.backgroundColor = 'var(--admin-nav-hover, #f3f4f6)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.backgroundColor = '';
+                      }}
+                    >
+                      <TableCell className="font-medium">{template.name}</TableCell>
+                      <TableCell>{template.description || "-"}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${template.isPublished ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
+                          {template.isPublished ? "Published" : "Draft"}
+                        </span>
+                      </TableCell>
+                      <TableCell>{template.fields?.length || 0} fields</TableCell>
+                      <TableCell>{new Date(template.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEditTemplate(template.id)}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleDeleteTemplate(template.id)}
+                              className="text-red-600"
+                            >
+                              <Trash className="mr-2 h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
