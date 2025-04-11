@@ -3763,6 +3763,21 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         
         console.log('Found event settings for event:', eventId, settings);
 
+        // Process branding settings for the event
+        const brandingSettings = settingsData.filter(setting => 
+          setting.settingKey.startsWith('branding.'));
+          
+        let brandingData = {};
+        
+        if (brandingSettings.length > 0) {
+          brandingSettings.forEach(setting => {
+            const key = setting.settingKey.replace('branding.', '');
+            brandingData[key] = setting.settingValue;
+          });
+        }
+        
+        console.log('Processed branding data:', brandingData);
+
         // Format response to match create event view structure exactly
         const response = {
           ...event,
@@ -3789,6 +3804,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           selectedAgeGroupIds: ageGroups.map(({ ageGroup }) => ageGroup.id),
           // Include event settings
           settings: settings || [],
+          // Include branding data
+          branding: Object.keys(brandingData).length > 0 
+            ? brandingData 
+            : { logoUrl: null, primaryColor: null, secondaryColor: null },
           // Additional metadata needed by create view
           availableAgeGroups: ageGroups.map(({ ageGroup }) => ageGroup.ageGroup),
           availableFieldSizes: [...new Set(fieldSizes.map(f => f.fieldSize))].filter(Boolean),
