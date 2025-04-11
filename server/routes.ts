@@ -4532,7 +4532,18 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     app.patch('/api/admin/teams/:id', isAdmin, async (req, res) => {
       try {
         const teamId = parseInt(req.params.id);
-        const { name, coach, managerName, managerPhone, managerEmail } = req.body;
+        const { name, coach, managerName, managerPhone, managerEmail, clubName } = req.body;
+
+        // Log the received data for debugging
+        console.log('Updating team with data:', { 
+          id: teamId, 
+          name, 
+          coachData: typeof coach === 'string' ? 'JSON string' : coach,
+          managerName, 
+          managerPhone, 
+          managerEmail,
+          clubName
+        });
 
         const [updatedTeam] = await db
           .update(teams)
@@ -4542,6 +4553,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             managerName,
             managerPhone,
             managerEmail,
+            clubName,
             updatedAt: new Date().toISOString(),
           })
           .where(eq(teams.id, teamId))
@@ -4551,7 +4563,21 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           return res.status(404).send("Team not found");
         }
 
-        res.json(updatedTeam);
+        // Process the coach data for the response
+        let coachData = {};
+        if (updatedTeam.coach) {
+          try {
+            coachData = JSON.parse(updatedTeam.coach);
+          } catch (error) {
+            console.error('Error parsing coach JSON in response:', error);
+          }
+        }
+
+        // Return the updated team with parsed coach data
+        res.json({
+          ...updatedTeam,
+          coachData
+        });
       } catch (error) {
         console.error('Error updating team:', error);
         // Added basic error logging for white screen debugging.
