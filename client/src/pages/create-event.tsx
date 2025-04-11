@@ -41,7 +41,6 @@ import { ComplexSelector } from "@/components/events/ComplexSelector";
 import { useDropzone } from 'react-dropzone';
 import { QueryClient } from '@tanstack/react-query';
 import { BrandingPreview } from '@/components/BrandingPreview';
-import { EventFormLayout } from "@/components/layouts/EventFormLayout";
 
 interface Complex {
   id: number;
@@ -1241,58 +1240,103 @@ render={({ field }) => (
     </div>
   );
 
-  // Track the completed tabs based on tab errors
-  const completedTabs = TAB_ORDER.filter(tab => !tabErrors[tab]);
-
-  // Create custom content for the EventFormLayout
-  const renderEventContent = () => {
-    switch (activeTab) {
-      case 'information':
-        return renderInformationTab();
-      case 'age-groups':
-        return renderAgeGroupsTab();
-      case 'scoring':
-        return renderScoringTab();
-      case 'complexes':
-        return renderComplexesTab();
-      case 'settings':
-        return renderSettingsTab();
-      case 'administrators':
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={() => navigateTab('prev')}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
-                </Button>
-                <h3 className="text-lg font-semibold">Event Administrators</h3>
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => navigate("/admin/events")}>
-                Cancel
-              </Button>
-              <Button onClick={handleCreateEvent}>
-                Finish & Create Event
-              </Button>
-            </div>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
-    <EventFormLayout
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-      completedTabs={completedTabs}
-      isEdit={false}
-    >
-      {renderEventContent()}
-    </EventFormLayout>
+    <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <div className="flex items-center gap-4 mb-6">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/admin")}
+        >
+          <ArrowLeft className="h4 w-4" />
+        </Button>
+        <h2 className="text-2xl font-bold">Create Event</h2>
+      </div>
+
+      <Card className="mx-auto bg-white shadow-lg rounded-lg">
+        <CardContent className="p-6">
+          <ProgressIndicator
+            tabs={TAB_ORDER}
+            completedTabs={TAB_ORDER.filter(tab => !tabErrors[tab])}
+          />
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) => setActiveTab(value as EventTab)}
+            className="space-y-6"
+          >
+            <TabsList className="grid grid-cols-6 gap-4">
+              {TAB_ORDER.map((tab, index) => {
+                const isComplete = !tabErrors[tab];
+                return (
+                  <TabsTrigger
+                    key={tab}
+                    value={tab}
+                    className={`relative flex items-center justify-center gap-2 ${
+                      isComplete ? 'text-[#43A047]' : ''
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className={`w-6 h-6 flex items-center justify-center rounded-full text-sm
+                        ${isComplete ? 'bg-[#43A047] text-white' : 'bg-gray-200'}`}>
+                        {index + 1}
+                      </span>
+                      {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
+                    </span>
+                    {isComplete && (
+                      <svg className="w-4 h-4 text-[#43A047]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+
+            <TabsContent value="information">
+              {renderInformationTab()}
+            </TabsContent>
+
+            <TabsContent value="age-groups">
+              {renderAgeGroupsTab()}
+            </TabsContent>
+
+            <TabsContent value="scoring">
+              {renderScoringTab()}
+            </TabsContent>
+
+            <TabsContent value="complexes">
+              {renderComplexesTab()}
+            </TabsContent>
+
+            <TabsContent value="settings">
+              {renderSettingsTab()}
+            </TabsContent>
+
+            <TabsContent value="administrators">
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" onClick={() => navigateTab('prev')}>
+                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      Back
+                    </Button>
+                    <h3 className="text-lg font-semibold">Event Administrators</h3>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => navigate("/admin/events")}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleCreateEvent}>
+                    Finish & Create Event
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
