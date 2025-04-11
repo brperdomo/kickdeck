@@ -123,11 +123,16 @@ function NavigationButtonContent({
     }
     
     if (isActive) {
-      // Immediately shine for the first time
-      shineControls.start("animate").then(() => {
-        shineControls.set("initial");
-        setHasShined(true);
-      });
+      // Use a safer approach with a small delay to ensure component is mounted
+      const timer = setTimeout(() => {
+        // Immediately shine for the first time
+        shineControls.start("animate").then(() => {
+          // Only set the "initial" state when the animation completes
+          // and component is still mounted
+          shineControls.set("initial");
+          setHasShined(true);
+        });
+      }, 50);
       
       // Set up shine interval (only if already shined once)
       if (hasShined) {
@@ -136,6 +141,10 @@ function NavigationButtonContent({
           shineControls.start("animate");
         }, 8000);
       }
+      
+      return () => {
+        clearTimeout(timer);
+      };
     }
     
     // Cleanup function
