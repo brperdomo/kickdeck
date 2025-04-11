@@ -109,10 +109,21 @@ function NavigationButtonContent({
   index = 0
 }: AnimatedNavigationButtonProps) {
   // Declare all hooks unconditionally
-  const shineControls = useAnimation();
   const [hasShined, setHasShined] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isActive = activeView === view;
+  
+  // Track animation state
+  const [animationState, setAnimationState] = useState("initial");
+  
+  // Handle animation completion effect
+  useEffect(() => {
+    if (animationState === "completed") {
+      // Reset to initial state after animation completes
+      setAnimationState("initial");
+      setHasShined(true);
+    }
+  }, [animationState]);
   
   // Handle shine effect when button becomes active
   useEffect(() => {
@@ -125,20 +136,14 @@ function NavigationButtonContent({
     if (isActive) {
       // Use a safer approach with a small delay to ensure component is mounted
       const timer = setTimeout(() => {
-        // Immediately shine for the first time
-        shineControls.start("animate").then(() => {
-          // Only set the "initial" state when the animation completes
-          // and component is still mounted
-          shineControls.set("initial");
-          setHasShined(true);
-        });
-      }, 50);
+        // Start animation
+        setAnimationState("animate");
+      }, 100);
       
       // Set up shine interval (only if already shined once)
       if (hasShined) {
         intervalRef.current = setInterval(() => {
-          shineControls.set("initial");
-          shineControls.start("animate");
+          setAnimationState("animate");
         }, 8000);
       }
       
@@ -153,7 +158,7 @@ function NavigationButtonContent({
         clearInterval(intervalRef.current);
       }
     };
-  }, [isActive, shineControls, hasShined]);
+  }, [isActive, hasShined]);
 
   return (
     <motion.div
@@ -218,7 +223,12 @@ function NavigationButtonContent({
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none"
             variants={shineVariants}
             initial="initial"
-            animate={shineControls}
+            animate={animationState}
+            onAnimationComplete={() => {
+              if (animationState === "animate") {
+                setAnimationState("completed");
+              }
+            }}
           />
         </div>
         
