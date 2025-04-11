@@ -4545,16 +4545,26 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           clubName
         });
 
+        // Log the SQL conversion for debugging
+        console.log('Updating team with SQL-mapped fields:', {
+          name,
+          coach,
+          manager_name: managerName,
+          manager_phone: managerPhone,
+          manager_email: managerEmail,
+          club_name: clubName
+        });
+
         const [updatedTeam] = await db
           .update(teams)
           .set({
             name,
             coach,
-            managerName,
-            managerPhone,
-            managerEmail,
-            clubName,
-            updatedAt: new Date().toISOString(),
+            manager_name: managerName,
+            manager_phone: managerPhone,
+            manager_email: managerEmail,
+            club_name: clubName,
+            updated_at: new Date().toISOString(),
           })
           .where(eq(teams.id, teamId))
           .returning();
