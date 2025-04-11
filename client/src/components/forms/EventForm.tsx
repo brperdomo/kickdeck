@@ -1125,80 +1125,81 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   const isEditMode = mode === "edit";
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-6">
+    <div className="w-full max-w-7xl mx-auto">
       <Card className="bg-white shadow-sm border border-gray-200">
         <CardContent className="p-6">
-          <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as EventTab)}>
-            <TabsList className="w-full grid grid-cols-6 gap-4 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
-              {TAB_ORDER.map((tab) => (
-                <TabsTrigger
-                  key={tab}
-                  value={tab}
-                  className={`wfullpx-4 py-2 rounded-md text-sm font-medium transition-colors
-                    data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm
-                    text-[#1C1C1E] hover:text-[#007AFF]`}
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as EventTab)}>
+              <TabsList className="w-full grid grid-cols-6 gap-4 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
+                {TAB_ORDER.map((tab) => (
+                  <TabsTrigger
+                    key={tab}
+                    value={tab}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors
+                      text-[#1C1C1E] hover:text-[#007AFF] data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm`}
+                  >
+                    {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              <div className="mt-6">
+                <TabsContent value="information">
+                  {renderInformationContent()}
+                </TabsContent>
+
+                <TabsContent value="age-groups">
+                  {renderAgeGroupsContent(
+                    mode,
+                    ageGroups,
+                    seasonalScopesQuery,
+                    selectedSeasonalScopeId,
+                    handleSeasonalScopeChange
+                  )}
+                </TabsContent>
+
+                <TabsContent value="scoring">
+                  {renderScoringContent()}
+                </TabsContent>
+
+                <TabsContent value="complexes">
+                  {renderComplexesContent()}
+                </TabsContent>
+
+                <TabsContent value="settings">
+                  {renderSettingsContent()}
+                </TabsContent>
+
+                <TabsContent value="administrators">
+                  {renderAdministratorsContent()}
+                </TabsContent>
+              </div>
+            </Tabs>
+
+            <div className="mt-6 flex justify-end space-x-4">
+              {activeTab !== TAB_ORDER[0] && (
+                <Button
+                  variant="outline"
+                  onClick={() => navigateTab('prev')}
+                  disabled={isSubmitting}
                 >
-                  {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+              )}
 
-            <div className="mt-6">
-              <TabsContent value="information">
-                {renderInformationContent()}
-              </TabsContent>
-
-              <TabsContent value="age-groups">
-                {renderAgeGroupsContent(
-                  mode,
-                  ageGroups,
-                  seasonalScopesQuery,
-                  selectedSeasonalScopeId,
-                  handleSeasonalScopeChange
-                )}
-              </TabsContent>
-
-              <TabsContent value="scoring">
-                {renderScoringContent()}
-              </TabsContent>
-
-              <TabsContent value="complexes">
-                {renderComplexesContent()}
-              </TabsContent>
-
-              <TabsContent value="settings">
-                {renderSettingsContent()}
-              </TabsContent>
-
-              <TabsContent value="administrators">
-                {renderAdministratorsContent()}
-              </TabsContent>
-            </div>
-          </Tabs>
-
-          <div className="mt-6 flex justify-end space-x-4">
-            {activeTab !== TAB_ORDER[0] && (
               <Button
-                variant="outline"
-                onClick={() => navigateTab('prev')}
-                disabled={isSubmitting}
+                type="submit"
+                disabled={isSubmitting || isSaving}
               >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
+                {isSubmitting || isSaving ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : mode === 'edit' ? 'Save Changes' : 'Continue'}
               </Button>
-            )}
-
-            <Button
-              onClick={form.handleSubmit(handleSubmit)}
-              disabled={isSubmitting || isSaving}
-            >
-              {isSubmitting || isSaving ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : mode === 'edit' ? 'Save Changes' : 'Continue'}
-            </Button>
-          </div>
+            </div>
+          </form>
         </CardContent>
       </Card>
       <EventAdminModal
