@@ -1,171 +1,166 @@
 import { z } from "zod";
 
-export interface EventBranding {
-  logoUrl?: string;
-  primaryColor?: string;
-  secondaryColor?: string;
-  logo?: File;
-}
-
-export const PREDEFINED_AGE_GROUPS = [
-  { ageGroup: 'U4', birthYear: 2021, gender: 'Boys', divisionCode: 'B2021' },
-  { ageGroup: 'U4', birthYear: 2021, gender: 'Girls', divisionCode: 'G2021' },
-  { ageGroup: 'U5', birthYear: 2020, gender: 'Boys', divisionCode: 'B2020' },
-  { ageGroup: 'U5', birthYear: 2020, gender: 'Girls', divisionCode: 'G2020' },
-  { ageGroup: 'U6', birthYear: 2019, gender: 'Boys', divisionCode: 'B2019' },
-  { ageGroup: 'U6', birthYear: 2019, gender: 'Girls', divisionCode: 'G2019' },
-  { ageGroup: 'U7', birthYear: 2018, gender: 'Boys', divisionCode: 'B2018' },
-  { ageGroup: 'U7', birthYear: 2018, gender: 'Girls', divisionCode: 'G2018' },
-  { ageGroup: 'U8', birthYear: 2017, gender: 'Boys', divisionCode: 'B2017' },
-  { ageGroup: 'U8', birthYear: 2017, gender: 'Girls', divisionCode: 'G2017' },
-  { ageGroup: 'U9', birthYear: 2016, gender: 'Boys', divisionCode: 'B2016' },
-  { ageGroup: 'U9', birthYear: 2016, gender: 'Girls', divisionCode: 'G2016' },
-  { ageGroup: 'U10', birthYear: 2015, gender: 'Boys', divisionCode: 'B2015' },
-  { ageGroup: 'U10', birthYear: 2015, gender: 'Girls', divisionCode: 'G2015' },
-  { ageGroup: 'U11', birthYear: 2014, gender: 'Boys', divisionCode: 'B2014' },
-  { ageGroup: 'U11', birthYear: 2014, gender: 'Girls', divisionCode: 'G2014' },
-  { ageGroup: 'U12', birthYear: 2013, gender: 'Boys', divisionCode: 'B2013' },
-  { ageGroup: 'U12', birthYear: 2013, gender: 'Girls', divisionCode: 'G2013' },
-  { ageGroup: 'U13', birthYear: 2012, gender: 'Boys', divisionCode: 'B2012' },
-  { ageGroup: 'U13', birthYear: 2012, gender: 'Girls', divisionCode: 'G2012' },
-  { ageGroup: 'U14', birthYear: 2011, gender: 'Boys', divisionCode: 'B2011' },
-  { ageGroup: 'U14', birthYear: 2011, gender: 'Girls', divisionCode: 'G2011' },
-  { ageGroup: 'U15', birthYear: 2010, gender: 'Boys', divisionCode: 'B2010' },
-  { ageGroup: 'U15', birthYear: 2010, gender: 'Girls', divisionCode: 'G2010' },
-  { ageGroup: 'U16', birthYear: 2009, gender: 'Boys', divisionCode: 'B2009' },
-  { ageGroup: 'U16', birthYear: 2009, gender: 'Girls', divisionCode: 'G2009' },
-  { ageGroup: 'U17', birthYear: 2008, gender: 'Boys', divisionCode: 'B2008' },
-  { ageGroup: 'U17', birthYear: 2008, gender: 'Girls', divisionCode: 'G2008' },
-  { ageGroup: 'U18', birthYear: 2007, gender: 'Boys', divisionCode: 'B2007' },
-  { ageGroup: 'U18', birthYear: 2007, gender: 'Girls', divisionCode: 'G2007' },
-] as const;
-
-export interface AgeGroup {
-  id: string;
-  ageGroup: string;
-  birthYear: number;
-  gender: string;
-  divisionCode: string;
-  projectedTeams: number;
-  fieldSize: FieldSize;
-  amountDue?: number | null;
-  selected?: boolean;
-}
-
-export interface Complex {
-  id: number;
-  name: string;
-  fields: Field[];
-}
-
-export interface Field {
-  id: number;
-  name: string;
-  complexId: number;
-  hasLights: boolean;
-  hasParking: boolean;
-  isOpen: boolean;
-}
-
-export interface EventSetting {
-  id: string;
-  key: string;
-  value: string;
-}
-
-export type FieldSize = '3v3' | '4v4' | '5v5' | '6v6' | '7v7' | '8v8' | '9v9' | '10v10' | '11v11' | 'N/A';
+// Define types for the event form
 export type EventTab = 'information' | 'age-groups' | 'scoring' | 'complexes' | 'settings' | 'administrators';
 
-export interface EventData {
-  name: string;
-  startDate: string;
-  endDate: string;
-  timezone: string;
-  applicationDeadline: string;
-  details?: string;
-  agreement?: string;
-  refundPolicy?: string;
-  ageGroups: AgeGroup[];
-  complexFieldSizes: Record<number, FieldSize>;
-  selectedComplexIds: number[];
-  scoringRules: ScoringRule[];
-  settings: EventSetting[];
-  administrators: EventAdministrator[];
-  branding?: EventBranding;
-}
-
-export interface ScoringRule {
-  id: string;
-  name: string;
-  points: number;
-}
-
-export const TAB_ORDER: EventTab[] = ['information', 'age-groups', 'scoring', 'complexes', 'settings', 'administrators'];
+export const TAB_ORDER: EventTab[] = [
+  'information',
+  'age-groups',
+  'scoring',
+  'complexes',
+  'settings',
+  'administrators'
+];
 
 export const USA_TIMEZONES = [
   { value: 'America/New_York', label: 'Eastern Time (ET)' },
   { value: 'America/Chicago', label: 'Central Time (CT)' },
   { value: 'America/Denver', label: 'Mountain Time (MT)' },
-  { value: 'America/Phoenix', label: 'Mountain Time - Arizona (MT)' },
   { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
   { value: 'America/Anchorage', label: 'Alaska Time (AKT)' },
-  { value: 'Pacific/Honolulu', label: 'Hawaii Time (HT)' },
+  { value: 'Pacific/Honolulu', label: 'Hawaii Time (HT)' }
 ];
 
-// Form schemas
-export const eventInformationSchema = z.object({
-  name: z.string().min(1, "Event name is required"),
-  startDate: z.string().min(1, "Start date is required"),
-  endDate: z.string().min(1, "End date is required"),
-  timezone: z.string().min(1, "Timezone is required"),
-  applicationDeadline: z.string().min(1, "Registration deadline is required"),
-  details: z.string().optional().nullable(),
-  agreement: z.string().optional().nullable(),
-  refundPolicy: z.string().optional().nullable(),
-});
+export type FieldSize = 'small' | 'medium' | 'large' | 'full' | '4v4' | '7v7' | '9v9' | '11v11';
 
-export const scoringRuleSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  win: z.number().min(0, "Win points must be positive"),
-  loss: z.number().min(0, "Loss points must be positive"),
-  tie: z.number().min(0, "Tie points must be positive"),
-  goalCapped: z.number().min(0, "Goal cap must be positive"),
-  shutout: z.number().min(0, "Shutout points must be positive"),
-  redCard: z.number().min(-10, "Red card points must be greater than -10"),
-  tieBreaker: z.string().min(1, "Tie breaker is required"),
-});
+export interface AgeGroup {
+  id?: number;
+  name: string;
+  birthYearStart: number;
+  birthYearEnd: number;
+  fieldSize: FieldSize;
+  maxTeams?: number;
+}
 
-export const eventSettingSchema = z.object({
-  key: z.string().min(1, "Key is required"),
-  value: z.string().min(1, "Value is required"),
-});
+export const PREDEFINED_AGE_GROUPS: AgeGroup[] = [
+  { name: 'U8 Boys', birthYearStart: 2017, birthYearEnd: 2017, fieldSize: '4v4' },
+  { name: 'U8 Girls', birthYearStart: 2017, birthYearEnd: 2017, fieldSize: '4v4' },
+  { name: 'U9 Boys', birthYearStart: 2016, birthYearEnd: 2016, fieldSize: '7v7' },
+  { name: 'U9 Girls', birthYearStart: 2016, birthYearEnd: 2016, fieldSize: '7v7' },
+  { name: 'U10 Boys', birthYearStart: 2015, birthYearEnd: 2015, fieldSize: '7v7' },
+  { name: 'U10 Girls', birthYearStart: 2015, birthYearEnd: 2015, fieldSize: '7v7' },
+  { name: 'U11 Boys', birthYearStart: 2014, birthYearEnd: 2014, fieldSize: '9v9' },
+  { name: 'U11 Girls', birthYearStart: 2014, birthYearEnd: 2014, fieldSize: '9v9' },
+  { name: 'U12 Boys', birthYearStart: 2013, birthYearEnd: 2013, fieldSize: '9v9' },
+  { name: 'U12 Girls', birthYearStart: 2013, birthYearEnd: 2013, fieldSize: '9v9' },
+  { name: 'U13 Boys', birthYearStart: 2012, birthYearEnd: 2012, fieldSize: '11v11' },
+  { name: 'U13 Girls', birthYearStart: 2012, birthYearEnd: 2012, fieldSize: '11v11' },
+  { name: 'U14 Boys', birthYearStart: 2011, birthYearEnd: 2011, fieldSize: '11v11' },
+  { name: 'U14 Girls', birthYearStart: 2011, birthYearEnd: 2011, fieldSize: '11v11' },
+  { name: 'U15 Boys', birthYearStart: 2010, birthYearEnd: 2010, fieldSize: '11v11' },
+  { name: 'U15 Girls', birthYearStart: 2010, birthYearEnd: 2010, fieldSize: '11v11' },
+  { name: 'U16 Boys', birthYearStart: 2009, birthYearEnd: 2009, fieldSize: '11v11' },
+  { name: 'U16 Girls', birthYearStart: 2009, birthYearEnd: 2009, fieldSize: '11v11' },
+  { name: 'U17 Boys', birthYearStart: 2008, birthYearEnd: 2008, fieldSize: '11v11' },
+  { name: 'U17 Girls', birthYearStart: 2008, birthYearEnd: 2008, fieldSize: '11v11' },
+  { name: 'U18 Boys', birthYearStart: 2007, birthYearEnd: 2007, fieldSize: '11v11' },
+  { name: 'U18 Girls', birthYearStart: 2007, birthYearEnd: 2007, fieldSize: '11v11' },
+  { name: 'U19 Boys', birthYearStart: 2006, birthYearEnd: 2006, fieldSize: '11v11' },
+  { name: 'U19 Girls', birthYearStart: 2006, birthYearEnd: 2006, fieldSize: '11v11' },
+];
 
-export type EventInformationValues = z.infer<typeof eventInformationSchema>;
-export type ScoringRuleValues = z.infer<typeof scoringRuleSchema>;
-export type EventSettingValues = z.infer<typeof eventSettingSchema>;
+export interface EventBranding {
+  logo: File | null;
+  logoPreview?: string;
+  sponsors: {
+    name: string;
+    url?: string;
+    logo: File | null;
+    logoPreview?: string;
+  }[];
+  primaryColor: string;
+  secondaryColor: string;
+}
 
-export interface EventFormProps {
-  initialData?: EventData;
-  onSubmit: (data: EventData) => Promise<void>;
-  isEdit?: boolean;
+export interface ScoringRule {
+  name: string;
+  points: number;
+  description: string;
+  index?: number;
+}
+
+export interface EventSetting {
+  name: string;
+  value: string;
+  index?: number;
 }
 
 export interface EventAdministrator {
-  id: string;
+  id?: number;
+  userId: number;
+  eventId: number;
+  name: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  roles: string[];
+  role: string;
 }
 
-export interface AdminModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  adminToEdit?: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    roles: string[];
-  } | null;
+export interface EventInformationValues {
+  id?: number;
+  name: string;
+  description: string;
+  location: string;
+  timezone: string;
+  startDate: string;
+  endDate: string;
+  applicationDeadline: string;
+  registrationEnabled: boolean;
+  allowTeamRegistration: boolean;
+}
+
+export const eventInformationSchema = z.object({
+  name: z.string().min(1, { message: "Event name is required" }),
+  description: z.string(),
+  location: z.string().min(1, { message: "Location is required" }),
+  timezone: z.string().min(1, { message: "Timezone is required" }),
+  startDate: z.string().min(1, { message: "Start date is required" }),
+  endDate: z.string().min(1, { message: "End date is required" }),
+  applicationDeadline: z.string().min(1, { message: "Application deadline is required" }),
+  registrationEnabled: z.boolean(),
+  allowTeamRegistration: z.boolean(),
+  ageGroups: z.array(z.any()).optional(),
+  selectedComplexIds: z.array(z.number()).optional(),
+  complexFieldSizes: z.record(z.string(), z.string()).optional(),
+  scoringRules: z.array(z.any()).optional(),
+  settings: z.array(z.any()).optional(),
+  administrators: z.array(z.any()).optional(),
+  branding: z.any().optional(),
+  seasonalScopeId: z.number().optional(),
+});
+
+export const scoringRuleSchema = z.object({
+  name: z.string().min(1, { message: "Rule name is required" }),
+  points: z.number().int(),
+  description: z.string().optional(),
+});
+
+export const eventSettingSchema = z.object({
+  name: z.string().min(1, { message: "Setting name is required" }),
+  value: z.string().min(1, { message: "Value is required" }),
+});
+
+export interface Field {
+  id: number;
+  complexId: number;
+  name: string;
+  size: FieldSize;
+}
+
+export interface Complex {
+  id: number;
+  name: string;
+  address: string;
+  fields: Field[];
+  fieldCount: number;
+}
+
+export interface EventData extends EventInformationValues {
+  id: number;
+  ageGroups: AgeGroup[];
+  settings: EventSetting[];
+  administrators: EventAdministrator[];
+  branding: EventBranding;
+  scoringRules: ScoringRule[];
+  selectedComplexIds: number[];
+  complexFieldSizes: Record<number, FieldSize>;
+  seasonalScopeId?: number;
 }

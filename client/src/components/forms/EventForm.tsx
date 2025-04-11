@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, ArrowLeft, Plus, Edit, Trash, CheckCircle, Upload, ImageIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,13 +16,13 @@ import { Switch } from "@/components/ui/switch";
 import { useQuery } from "@tanstack/react-query";
 import { useDropzone } from 'react-dropzone';
 import EventAdminModal from "@/components/events/EventAdminModal";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
 } from "@/components/ui/table";
 import { Editor } from "@tinymce/tinymce-react";
 
@@ -48,13 +47,7 @@ import {
   scoringRuleSchema,
   eventSettingSchema,
   EventInformationValues,
-  ScoringRuleValues,
-  EventSettingValues,
-  AdminModalProps,
 } from "./event-form-types";
-import { ComplexSelector } from "@/components/events/ComplexSelector";
-import { InfoPopover } from "@/components/ui/InfoPopover";
-import { Textarea } from "@/components/ui/textarea";
 
 interface EventFormValues extends EventInformationValues {
   ageGroups: AgeGroup[];
@@ -64,7 +57,7 @@ interface EventFormValues extends EventInformationValues {
   settings: EventSetting[];
   administrators: EventAdministrator[];
   branding: EventBranding;
-  seasonalScopeId?: number; 
+  seasonalScopeId?: number;
 }
 
 interface EventFormProps {
@@ -79,232 +72,66 @@ interface EventFormProps {
   navigateTab: (direction: 'next' | 'prev') => void;
 }
 
-export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false, activeTab, onTabChange, completedTabs, onCompletedTabsChange, navigateTab }: EventFormProps) => {
+export const EventForm = ({ 
+  mode, 
+  defaultValues, 
+  onSubmit, 
+  isSubmitting = false, 
+  activeTab, 
+  onTabChange, 
+  completedTabs, 
+  onCompletedTabsChange, 
+  navigateTab 
+}: EventFormProps) => {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const form = useForm<EventFormValues>({
-    resolver: zodResolver(eventInformationSchema),
-    defaultValues
-  });
-
-  const [selectedSeasonalScopeId, setSelectedSeasonalScopeId] = useState<number | null>(
-    defaultValues?.seasonalScopeId || null
-  );
-  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(defaultValues?.ageGroups || []);
-  const [scoringRules, setScoringRules] = useState<ScoringRule[]>(defaultValues?.scoringRules || []);
-  const [settings, setSettings] = useState<EventSetting[]>(defaultValues?.settings || []);
-  const [isScoringDialogOpen, setIsScoringDialogOpen] = useState(false);
-  const [editingScoringRule, setEditingScoringRule] = useState<ScoringRule | null>(null);
+  const [isLogoDialogOpen, setIsLogoDialogOpen] = useState(false);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
+  const [isSponsorDialogOpen, setIsSponsorDialogOpen] = useState(false);
+  const [sponsorName, setSponsorName] = useState('');
+  const [sponsorUrl, setSponsorUrl] = useState('');
+  const [sponsorLogo, setSponsorLogo] = useState<File | null>(null);
+  const [sponsorPreview, setSponsorPreview] = useState<string | null>(null);
+  const [isRuleDialogOpen, setIsRuleDialogOpen] = useState(false);
+  const [editingRule, setEditingRule] = useState<ScoringRule | null>(null);
   const [isSettingDialogOpen, setIsSettingDialogOpen] = useState(false);
   const [editingSetting, setEditingSetting] = useState<EventSetting | null>(null);
-  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
-  const [editingAdmin, setEditingAdmin] = useState<AdminModalProps['adminToEdit']>(null);
-  const [logo, setLogo] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(defaultValues?.branding?.logoUrl || null);
-  const [primaryColor, setPrimaryColor] = useState(defaultValues?.branding?.primaryColor || '#007AFF');
-  const [secondaryColor, setSecondaryColor] = useState(defaultValues?.branding?.secondaryColor || '#34C759');
-  const [isExtracting, setIsExtracting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(defaultValues?.selectedComplexIds || []);
-  const [complexFieldSizes, setComplexFieldSizes] = useState<Record<number, FieldSize>>(defaultValues?.complexFieldSizes || {});
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [editingAdmin, setEditingAdmin] = useState<EventAdministrator | null>(null);
+  const [selectedSeasonalScopeId, setSelectedSeasonalScopeId] = useState<number | undefined>(
+    defaultValues?.seasonalScopeId
+  );
 
-
-  const seasonalScopesQuery = useQuery({
-    queryKey: ['/api/admin/seasonal-scopes'],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/seasonal-scopes');
-      if (!response.ok) throw new Error('Failed to fetch seasonal scopes');
-      return response.json();
-    }
-  });
-
-  const ageGroupsQuery = useQuery({
-    queryKey: ['/api/admin/seasonal-scopes/age-groups', selectedSeasonalScopeId],
-    queryFn: async () => {
-      if (!selectedSeasonalScopeId) return [];
-      const response = await fetch(`/api/admin/seasonal-scopes/${selectedSeasonalScopeId}/age-groups`);
-      if (!response.ok) throw new Error('Failed to fetch age groups');
-      return response.json();
+  const form = useForm<EventFormValues>({
+    resolver: zodResolver(eventInformationSchema),
+    defaultValues: defaultValues || {
+      name: '',
+      description: '',
+      location: '',
+      timezone: 'America/New_York',
+      startDate: '',
+      endDate: '',
+      applicationDeadline: '',
+      registrationEnabled: true,
+      allowTeamRegistration: true,
+      ageGroups: [],
+      selectedComplexIds: [],
+      complexFieldSizes: {},
+      scoringRules: [],
+      settings: [],
+      administrators: [],
+      branding: {
+        logo: null,
+        sponsors: [],
+        primaryColor: '#3b82f6',
+        secondaryColor: '#1e3a8a',
+      },
     },
-    enabled: !!selectedSeasonalScopeId
   });
 
-  // Effect for initializing seasonal scope ID from defaultValues
-  useEffect(() => {
-    if (defaultValues?.seasonalScopeId) {
-      console.log('Setting initial seasonal scope ID from defaultValues:', defaultValues.seasonalScopeId);
-      // Convert to number to ensure proper type for the select component
-      const scopeId = typeof defaultValues.seasonalScopeId === 'string' 
-        ? parseInt(defaultValues.seasonalScopeId) 
-        : defaultValues.seasonalScopeId;
-        
-      setSelectedSeasonalScopeId(scopeId);
-      
-      // Also set the seasonalScopeId in the form
-      form.setValue('seasonalScopeId', scopeId);
-
-      // If in edit mode and we have a scope ID, also immediately fetch its age groups
-      if (mode === 'edit' && scopeId) {
-        const fetchAgeGroups = async () => {
-          try {
-            const response = await fetch(`/api/admin/seasonal-scopes/${scopeId}/age-groups`);
-            if (response.ok) {
-              const ageGroupsData = await response.json();
-              console.log('Fetched age groups from scope on initial load:', ageGroupsData);
-              
-              // Format age groups for the form
-              const formattedAgeGroups = ageGroupsData.map((group: any) => ({
-                id: `${group.gender}-${group.birthYear}-${group.ageGroup}`,
-                ageGroup: group.ageGroup,
-                birthYear: group.birthYear,
-                gender: group.gender,
-                divisionCode: group.divisionCode,
-                fieldSize: group.ageGroup.startsWith('U') ?
-                  (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
-                    parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
-                      parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
-                selected: true
-              }));
-              
-              // Update age groups state and form value
-              setAgeGroups(formattedAgeGroups);
-              form.setValue('ageGroups', formattedAgeGroups);
-            }
-          } catch (error) {
-            console.error('Error fetching age groups for initial scope:', error);
-          }
-        };
-        fetchAgeGroups();
-      }
-    }
-  }, [defaultValues?.seasonalScopeId, form, mode]);
-
-  useEffect(() => {
-    if (ageGroupsQuery.data) {
-      setAgeGroups(ageGroupsQuery.data);
-      form.setValue('ageGroups', ageGroupsQuery.data);
-    }
-  }, [ageGroupsQuery.data, form.setValue]);
-
-  const handleSeasonalScopeChange = async (scopeId: number) => {
-    setSelectedSeasonalScopeId(scopeId);
-    form.setValue('seasonalScopeId', scopeId);
-    
-    // Immediately fetch age groups when seasonal scope changes
-    try {
-      const response = await fetch(`/api/admin/seasonal-scopes/${scopeId}/age-groups`);
-      if (response.ok) {
-        const ageGroupsData = await response.json();
-        
-        // Convert to the expected age group format with proper field sizes
-        const formattedAgeGroups = ageGroupsData.map((group: any) => ({
-          id: `${group.gender}-${group.birthYear}-${group.ageGroup}`,
-          ageGroup: group.ageGroup,
-          birthYear: group.birthYear,
-          gender: group.gender,
-          divisionCode: group.divisionCode,
-          fieldSize: group.ageGroup.startsWith('U') ?
-            (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
-              parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
-                parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
-          selected: true
-        }));
-        
-        // Update age groups state and form value
-        setAgeGroups(formattedAgeGroups);
-        form.setValue('ageGroups', formattedAgeGroups);
-        
-        console.log(`Loaded ${formattedAgeGroups.length} age groups for scope ${scopeId}`);
-      }
-    } catch (error) {
-      console.error('Error fetching age groups for scope:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load age groups for the selected seasonal scope",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleSubmit = async (data: EventFormValues) => {
-    try {
-      // Check if age groups already exist, we don't need to validate the seasonal scope
-      // as the age groups are already associated with the event
-      const hasExistingAgeGroups = ageGroups && ageGroups.length > 0;
-      
-      // Only validate the seasonal scope if no age groups exist yet
-      if (!hasExistingAgeGroups) {
-        // Get seasonalScopeId from selectedSeasonalScopeId or from form data (which may have been set from defaultValues)
-        const effectiveScopeId = selectedSeasonalScopeId || data.seasonalScopeId || defaultValues?.seasonalScopeId;
-        
-        if (!effectiveScopeId) {
-          toast({
-            title: "Error",
-            description: "Please select a seasonal scope",
-            variant: "destructive"
-          });
-          return;
-        }
-      }
-
-      // Determine the scope ID to use:
-      // 1. Use the original scope ID from defaultValues if we have age groups already 
-      // 2. Otherwise use the selected scope ID or form value
-      const scopeIdToSubmit = hasExistingAgeGroups && defaultValues?.seasonalScopeId
-        ? defaultValues.seasonalScopeId
-        : selectedSeasonalScopeId || data.seasonalScopeId || defaultValues?.seasonalScopeId;
-      
-      const submitData = {
-        ...data,
-        seasonalScopeId: scopeIdToSubmit,
-        // Ensure each age group includes the isEligible property
-        ageGroups: ageGroups.map(group => ({
-          ...group,
-          isEligible: group.isEligible !== false // defaults to true if not explicitly set to false
-        })),
-        scoringRules,
-        settings,
-        complexFieldSizes,
-        selectedComplexIds,
-        administrators: defaultValues?.administrators || [],
-        branding: {
-          primaryColor,
-          secondaryColor,
-          logoUrl: previewUrl || undefined,
-        },
-      };
-
-      await onSubmit(submitData);
-      toast({
-        title: "Success",
-        description: mode === 'edit' ? "Event updated successfully" : "Event created successfully",
-      });
-      setLocation("/admin");
-    } catch (error) {
-      console.error('Submit error:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save event",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleComplexSelection = (complexId: number) => {
-    setSelectedComplexIds(prev =>
-      prev.includes(complexId)
-        ? prev.filter(id => id !== complexId)
-        : [...prev, complexId]
-    );
-  };
-
-  const handleFieldSizeChange = (complexId: number, size: FieldSize) => {
-    setComplexFieldSizes(prev => ({
-      ...prev,
-      [complexId]: size
-    }));
-  };
-
+  // Query to fetch complexes for the Complexes tab
   const complexesQuery = useQuery({
     queryKey: ['complexes'],
     queryFn: async () => {
@@ -312,313 +139,330 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       if (!response.ok) {
         throw new Error('Failed to fetch complexes');
       }
-      return response.json() as Promise<Complex[]>;
+      return response.json();
     },
-    enabled: activeTab === 'complexes',
   });
 
-  const feesQuery = useQuery({
-    queryKey: ['eventFees', defaultValues?.id],
+  // Query to fetch users for the Administrators tab
+  const usersQuery = useQuery({
+    queryKey: ['users'],
     queryFn: async () => {
-      if (!defaultValues?.id) return [];
-      const response = await fetch(`/api/admin/events/${defaultValues.id}/fees`);
+      const response = await fetch('/api/admin/users');
       if (!response.ok) {
-        throw new Error("Failed to fetch fees");
+        throw new Error('Failed to fetch users');
       }
       return response.json();
     },
-    enabled: !!defaultValues?.id
   });
-  
-  const feeAssignmentsQuery = useQuery({
-    queryKey: ['eventFeeAssignments', defaultValues?.id],
+
+  // Query to fetch event administrators
+  const adminsQuery = useQuery({
+    queryKey: ['event-admins', defaultValues?.id],
     queryFn: async () => {
       if (!defaultValues?.id) return [];
-      const response = await fetch(`/api/admin/events/${defaultValues.id}/fee-assignments`);
+      const response = await fetch(`/api/admin/events/${defaultValues.id}/administrators`);
       if (!response.ok) {
-        throw new Error("Failed to fetch fee assignments");
+        throw new Error('Failed to fetch administrators');
       }
       return response.json();
     },
-    enabled: !!defaultValues?.id
+    enabled: !!defaultValues?.id,
   });
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: async (acceptedFiles) => {
-      try {
-        const file = acceptedFiles[0];
-        setLogo(file);
-        
-        // Show local preview immediately for better UX
-        const reader = new FileReader();
-        reader.onload = (e) => setPreviewUrl(e.target?.result as string);
-        reader.readAsDataURL(file);
-
-        // Upload the file to the server
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        const response = await fetch('/api/files/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to upload logo');
-        }
-
-        const uploadResult = await response.json();
-        
-        // Update the preview URL with the server URL (which will be persisted)
-        setPreviewUrl(uploadResult.url);
-        
-        toast({
-          title: "Success",
-          description: "Logo uploaded successfully",
-        });
-      } catch (error) {
-        console.error('Logo upload error:', error);
-        toast({
-          title: "Error",
-          description: error instanceof Error ? error.message : "Failed to upload logo",
-          variant: "destructive",
-        });
+  // Query to fetch seasonal scopes
+  const seasonalScopesQuery = useQuery({
+    queryKey: ['seasonal-scopes'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/seasonal-scopes');
+      if (!response.ok) {
+        throw new Error('Failed to fetch seasonal scopes');
       }
+      return response.json();
     },
+  });
+
+  const refetchAdmins = () => {
+    if (defaultValues?.id) {
+      adminsQuery.refetch();
+    }
+  };
+
+  useEffect(() => {
+    if (adminsQuery.data) {
+      form.setValue('administrators', adminsQuery.data);
+    }
+  }, [adminsQuery.data, form]);
+
+  // Setup form handlers for logo and sponsor uploads
+  const { getRootProps: getLogoRootProps, getInputProps: getLogoInputProps } = useDropzone({
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.svg']
+      'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
     },
     maxFiles: 1,
-    multiple: false
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles.length > 0) {
+        const file = acceptedFiles[0];
+        setSelectedLogo(file);
+        const previewUrl = URL.createObjectURL(file);
+        setLogoPreview(previewUrl);
+      }
+    },
   });
 
-  const renderAgeGroupsContent = (mode: 'create' | 'edit', ageGroups: AgeGroup[], seasonalScopesQuery: any, selectedSeasonalScopeId: number | null, handleSeasonalScopeChange: (id: number) => void) => (
-    <div className="space-y-6">
-      {/* Only show seasonal scope selector in create mode or if no age groups exist */}
-      {(mode === 'create' || (mode === 'edit' && (!ageGroups || ageGroups.length === 0))) && (
-        <div className="mb-6">
-          <Label htmlFor="seasonalScope">Seasonal Scope</Label>
-          <Select 
-            onValueChange={(value) => handleSeasonalScopeChange(Number(value))}
-            value={selectedSeasonalScopeId ? selectedSeasonalScopeId.toString() : undefined}
-            defaultValue={selectedSeasonalScopeId ? selectedSeasonalScopeId.toString() : undefined}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select a seasonal scope" />
-            </SelectTrigger>
-            <SelectContent>
-              {seasonalScopesQuery.data?.map((scope) => (
-                <SelectItem key={scope.id} value={scope.id.toString()}>
-                  {scope.name} ({scope.startYear}-{scope.endYear})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
-      
-      {/* Display the selected scope information when scope is selected or age groups exist */}
-      {((mode === 'edit' && ageGroups && ageGroups.length > 0) || selectedSeasonalScopeId || defaultValues?.seasonalScopeId) && seasonalScopesQuery.data && (
-        <div className="mb-6">
-          <div className="font-medium text-sm mb-2">Selected Seasonal Scope</div>
-          <div className="bg-muted p-3 rounded-md">
-            {(() => {
-              // Get the effective scope ID from any available source
-              const effectiveScopeId = selectedSeasonalScopeId || 
-                (typeof defaultValues?.seasonalScopeId === 'string' 
-                  ? parseInt(defaultValues.seasonalScopeId) 
-                  : defaultValues?.seasonalScopeId);
-              
-              const scope = seasonalScopesQuery.data.find((s: any) => s.id === effectiveScopeId);
-              
-              if (scope) {
-                return `${scope.name} (${scope.startYear}-${scope.endYear})`;
-              } else {
-                return 'Scope ID: ' + (effectiveScopeId || 'Unknown');
-              }
-            })()}
-          </div>
-        </div>
-      )}
+  const { getRootProps: getSponsorRootProps, getInputProps: getSponsorInputProps } = useDropzone({
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
+    },
+    maxFiles: 1,
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles.length > 0) {
+        const file = acceptedFiles[0];
+        setSponsorLogo(file);
+        const previewUrl = URL.createObjectURL(file);
+        setSponsorPreview(previewUrl);
+      }
+    },
+  });
 
-      {(selectedSeasonalScopeId || (ageGroups && ageGroups.length > 0)) && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Age Groups</CardTitle>
-            <CardDescription>
-              {mode === 'create' 
-                ? "All age groups from this seasonal scope will be automatically included in the event."
-                : "Age groups included in this event"
-              }
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-4">
-              <div className="flex items-start">
-                <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-green-800">
-                    Age groups configured automatically
-                  </h3>
-                  <p className="mt-2 text-sm text-green-700">
-                    All {ageGroups.length} age groups {mode === 'create' ? 'will be' : 'are'} included in your event.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Age Group</TableHead>
-                  <TableHead>Gender</TableHead>
-                  <TableHead>Birth Year</TableHead>
-                  <TableHead>Division Code</TableHead>
-                  <TableHead>Assigned Fees</TableHead>
-                  <TableHead>Total Fee</TableHead>
-                  <TableHead className="text-center">
-                    <div>Eligible for Registration</div>
-                    <div className="text-xs font-normal text-muted-foreground mt-1">Toggle to enable/disable registration for this age group</div>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {ageGroups.map((group) => {
-                  // Find fee assignments for this age group
-                  const groupAssignments = feeAssignmentsQuery.data?.filter(
-                    (assignment: any) => assignment.ageGroupId === group.id
-                  ) || [];
-                  
-                  // Calculate total fee amount
-                  // Format currency to display dollars instead of cents
-                  const formatCurrency = (amount: number) => `$${(amount / 100).toFixed(2)}`;
-                  
-                  const totalFee = groupAssignments.reduce((sum: number, assignment: any) => {
-                    const fee = feesQuery.data?.find((f: any) => f.id === assignment.feeId);
-                    return sum + (fee?.amount || 0);
-                  }, 0);
-                  
-                  // Get fee names
-                  const feeNames = groupAssignments.map((assignment: any) => {
-                    const fee = feesQuery.data?.find((f: any) => f.id === assignment.feeId);
-                    return fee?.name || 'Unknown Fee';
-                  });
-                  
-                  return (
-                    <TableRow key={`${group.gender}-${group.birthYear}-${group.ageGroup}`}>
-                      <TableCell>{group.ageGroup}</TableCell>
-                      <TableCell>{group.gender}</TableCell>
-                      <TableCell>{group.birthYear}</TableCell>
-                      <TableCell>{group.divisionCode}</TableCell>
-                      <TableCell>
-                        {feeNames.length > 0 
-                          ? feeNames.join(', ') 
-                          : <span className="text-muted-foreground">No fees assigned</span>}
-                      </TableCell>
-                      <TableCell>
-                        {totalFee > 0 
-                          ? formatCurrency(totalFee) 
-                          : <span className="text-muted-foreground">$0.00</span>}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Switch
-                          checked={group.isEligible !== false}
-                          onCheckedChange={(checked) => {
-                            const updatedAgeGroups = ageGroups.map(ag => 
-                              ag.id === group.id 
-                                ? { ...ag, isEligible: checked } 
-                                : ag
-                            );
-                            setAgeGroups(updatedAgeGroups);
-                          }}
-                          aria-label={`Age group ${group.ageGroup} eligibility toggle`}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-                {ageGroups.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center text-muted-foreground">
-                      No age groups found
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+  // Setup submit handler
+  const handleSubmit = async (data: EventFormValues) => {
+    try {
+      setIsSaving(true);
+      await onSubmit(data);
+      setIsSaving(false);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setIsSaving(false);
+      toast({
+        title: "Error",
+        description: "There was an error saving the event. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Age groups management
+  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(
+    defaultValues?.ageGroups || []
   );
 
-  const renderInformationContent = () => {
-    return (
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+  const handleAddAgeGroup = (predefinedGroup: AgeGroup) => {
+    const newAgeGroups = [...ageGroups, { ...predefinedGroup }];
+    setAgeGroups(newAgeGroups);
+    form.setValue('ageGroups', newAgeGroups);
+  };
+
+  const handleRemoveAgeGroup = (index: number) => {
+    const newAgeGroups = ageGroups.filter((_, i) => i !== index);
+    setAgeGroups(newAgeGroups);
+    form.setValue('ageGroups', newAgeGroups);
+  };
+
+  const handleFieldSizeChange = (ageGroupIndex: number, size: FieldSize) => {
+    const newAgeGroups = [...ageGroups];
+    newAgeGroups[ageGroupIndex].fieldSize = size;
+    setAgeGroups(newAgeGroups);
+    form.setValue('ageGroups', newAgeGroups);
+  };
+
+  const handleAgeGroupChange = (index: number, field: keyof AgeGroup, value: any) => {
+    const newAgeGroups = [...ageGroups];
+    newAgeGroups[index] = { ...newAgeGroups[index], [field]: value };
+    setAgeGroups(newAgeGroups);
+    form.setValue('ageGroups', newAgeGroups);
+  };
+
+  // Scoring rules management
+  const handleAddScoringRule = () => {
+    setEditingRule(null);
+    setIsRuleDialogOpen(true);
+  };
+
+  const handleEditScoringRule = (rule: ScoringRule, index: number) => {
+    setEditingRule({ ...rule, index });
+    setIsRuleDialogOpen(true);
+  };
+
+  const handleSaveScoringRule = (rule: ScoringRule) => {
+    const currentRules = form.getValues('scoringRules') || [];
+    let newRules: ScoringRule[];
+
+    if (editingRule && typeof editingRule.index === 'number') {
+      newRules = [...currentRules];
+      newRules[editingRule.index] = { ...rule };
+    } else {
+      newRules = [...currentRules, rule];
+    }
+
+    form.setValue('scoringRules', newRules);
+    setIsRuleDialogOpen(false);
+    setEditingRule(null);
+  };
+
+  const handleRemoveScoringRule = (index: number) => {
+    const currentRules = form.getValues('scoringRules') || [];
+    const newRules = currentRules.filter((_, i) => i !== index);
+    form.setValue('scoringRules', newRules);
+  };
+
+  // Event settings management
+  const handleAddSetting = () => {
+    setEditingSetting(null);
+    setIsSettingDialogOpen(true);
+  };
+
+  const handleEditSetting = (setting: EventSetting, index: number) => {
+    setEditingSetting({ ...setting, index });
+    setIsSettingDialogOpen(true);
+  };
+
+  const handleSaveSetting = (setting: EventSetting) => {
+    const currentSettings = form.getValues('settings') || [];
+    let newSettings: EventSetting[];
+
+    if (editingSetting && typeof editingSetting.index === 'number') {
+      newSettings = [...currentSettings];
+      newSettings[editingSetting.index] = { ...setting };
+    } else {
+      newSettings = [...currentSettings, setting];
+    }
+
+    form.setValue('settings', newSettings);
+    setIsSettingDialogOpen(false);
+    setEditingSetting(null);
+  };
+
+  const handleRemoveSetting = (index: number) => {
+    const currentSettings = form.getValues('settings') || [];
+    const newSettings = currentSettings.filter((_, i) => i !== index);
+    form.setValue('settings', newSettings);
+  };
+
+  const handleAddSponsor = () => {
+    if (!sponsorName || !sponsorLogo) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide a sponsor name and logo.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const branding = form.getValues('branding') || { sponsors: [] };
+    const newSponsor = {
+      name: sponsorName,
+      url: sponsorUrl,
+      logo: sponsorLogo,
+      logoPreview: sponsorPreview,
+    };
+
+    const newBranding = {
+      ...branding,
+      sponsors: [...(branding.sponsors || []), newSponsor],
+    };
+
+    form.setValue('branding', newBranding);
+    setSponsorName('');
+    setSponsorUrl('');
+    setSponsorLogo(null);
+    setSponsorPreview(null);
+    setIsSponsorDialogOpen(false);
+  };
+
+  const handleRemoveSponsor = (index: number) => {
+    const branding = form.getValues('branding');
+    if (!branding || !branding.sponsors) return;
+
+    const newSponsors = branding.sponsors.filter((_, i) => i !== index);
+    form.setValue('branding', { ...branding, sponsors: newSponsors });
+  };
+
+  const handleSaveLogo = () => {
+    if (!selectedLogo) {
+      toast({
+        title: "No Logo Selected",
+        description: "Please select a logo image.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const branding = form.getValues('branding') || {};
+    form.setValue('branding', {
+      ...branding,
+      logo: selectedLogo,
+      logoPreview: logoPreview,
+    });
+
+    setIsLogoDialogOpen(false);
+  };
+
+  const handleColorChange = (colorType: 'primaryColor' | 'secondaryColor', color: string) => {
+    const branding = form.getValues('branding') || {};
+    form.setValue('branding', { ...branding, [colorType]: color });
+  };
+
+  const handleSeasonalScopeChange = (scopeId: number) => {
+    setSelectedSeasonalScopeId(scopeId);
+    form.setValue('seasonalScopeId', scopeId);
+  };
+
+  const renderInformationContent = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Event Name *</FormLabel>
+              <FormLabel>Event Name*</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Enter event name" />
+                <Input placeholder="Enter event name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <div className="grid grid-cols-2 gap-6">
-          <FormField
-            control={form.control}
-            name="startDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Start Date *</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Location*</FormLabel>
+              <FormControl>
+                <Input placeholder="City, State" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
 
-          <FormField
-            control={form.control}
-            name="endDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>End Date *</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <FormField
+          control={form.control}
+          name="startDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Start Date*</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
-          name="timezone"
+          name="endDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Time Zone *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select time zone" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {USA_TIMEZONES.map((timezone) => (
-                    <SelectItem key={timezone.value} value={timezone.value}>
-                      {timezone.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormLabel>End Date*</FormLabel>
+              <FormControl>
+                <Input type="date" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -629,565 +473,1027 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           name="applicationDeadline"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Registration Deadline *</FormLabel>
+              <FormLabel>Application Deadline*</FormLabel>
               <FormControl>
-                <Input 
-                  type="date" 
-                  {...field} 
-                  value={field.value ? (field.value.includes('T') ? field.value.split('T')[0] : field.value) : ''} 
-                />
+                <Input type="date" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+      </div>
 
-        <FormField
-          control={form.control}
-          name="details"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Details About This Event</FormLabel>
+      <FormField
+        control={form.control}
+        name="timezone"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Timezone*</FormLabel>
+            <Select 
+              value={field.value} 
+              onValueChange={field.onChange}
+            >
               <FormControl>
-                <Editor
-                  apiKey={TINYMCE_API_KEY}
-                  value={field.value}
-                  onEditorChange={(content) => field.onChange(content)}
-                  init={{
-                    height: 300,
-                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3',
-                    suffix: '.min'
-                  }}
-                />
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a timezone" />
+                </SelectTrigger>
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="agreement"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Agreement</FormLabel>
-              <FormControl>
-                <Editor
-                  apiKey={TINYMCE_API_KEY}
-                  value={field.value}
-                  onEditorChange={(content) => field.onChange(content)}
-                  init={{
-                    height: 300,
-                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3',
-                    suffix: '.min'
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="refundPolicy"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Refund Policy</FormLabel>
-              <FormControl>
-                <Editor
-                  apiKey={TINYMCE_API_KEY}
-                  value={field.value}
-                  onEditorChange={(content) => field.onChange(content)}
-                  init={{
-                    height: 300,
-                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3',
-                    suffix: '.min'
-                  }}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        </form>
-      </Form>
-    );
-  };
-
-  const renderComplexesContent = () => {
-    if (complexesQuery.isLoading) {
-      return (
-        <div className="flex justify-center items-center h-[200px]">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
-      );
-    }
-
-    if (complexesQuery.isError) {
-      return (
-        <div className="text-center text-destructive">
-          Failed to load complexes. Please try again.
-        </div>
-      );
-    }
-
-    return (
-      <ComplexSelector
-        selectedComplexIds={selectedComplexIds}
-        complexFieldSizes={complexFieldSizes}
-        onComplexSelect={handleComplexSelection}
-        onFieldSizeChange={handleFieldSizeChange}
+              <SelectContent>
+                {USA_TIMEZONES.map((tz) => (
+                  <SelectItem key={tz.value} value={tz.value}>
+                    {tz.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
       />
-    );
-  };
+
+      <FormField
+        control={form.control}
+        name="description"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Description</FormLabel>
+            <FormControl>
+              <Editor
+                apiKey={TINYMCE_API_KEY}
+                value={field.value}
+                onEditorChange={(content) => field.onChange(content)}
+                init={{
+                  height: 300,
+                  menubar: false,
+                  plugins: 'lists link image table code help wordcount',
+                  toolbar:
+                    'undo redo | formatselect | bold italic | \
+                    alignleft aligncenter alignright | \
+                    bullist numlist outdent indent | link image | code',
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FormField
+          control={form.control}
+          name="registrationEnabled"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">Registration Enabled</FormLabel>
+                <FormDescription>
+                  Allow teams to register for this event
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="allowTeamRegistration"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">Allow Team Registration</FormLabel>
+                <FormDescription>
+                  Enable team self-registration for this event
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </div>
+    </div>
+  );
+
+  const renderAgeGroupsContent = (
+    mode: 'create' | 'edit',
+    selectedGroups: AgeGroup[],
+    seasonalScopesQuery: any,
+    selectedSeasonalScopeId?: number,
+    onScopeSelect?: (id: number) => void
+  ) => (
+    <div className="space-y-6">
+      <div className="flex flex-col space-y-4">
+        <h3 className="text-lg font-medium">Seasonal Scope</h3>
+        <div className="mb-4">
+          <Label>Select Seasonal Scope</Label>
+          <Select
+            value={selectedSeasonalScopeId?.toString() || ""}
+            onValueChange={(value) => {
+              if (onScopeSelect) {
+                onScopeSelect(parseInt(value));
+              }
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a seasonal scope" />
+            </SelectTrigger>
+            <SelectContent>
+              {seasonalScopesQuery.isLoading ? (
+                <SelectItem value="loading" disabled>
+                  Loading...
+                </SelectItem>
+              ) : seasonalScopesQuery.isError ? (
+                <SelectItem value="error" disabled>
+                  Error loading scopes
+                </SelectItem>
+              ) : (
+                seasonalScopesQuery.data?.map((scope: any) => (
+                  <SelectItem key={scope.id} value={scope.id.toString()}>
+                    {scope.name} ({scope.startYear}-{scope.endYear})
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+          {!selectedSeasonalScopeId && (
+            <p className="text-sm text-amber-600 mt-2">
+              Without a seasonal scope, teams won't be able to register for this event.
+            </p>
+          )}
+        </div>
+
+        <h3 className="text-lg font-medium">Age Groups</h3>
+        <p className="text-sm text-muted-foreground">
+          Select the age groups that will participate in this event.
+        </p>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+          {PREDEFINED_AGE_GROUPS.map((group) => {
+            const isSelected = selectedGroups.some(
+              (g) => g.name === group.name && g.birthYearStart === group.birthYearStart && g.birthYearEnd === group.birthYearEnd
+            );
+            return (
+              <Card
+                key={`${group.name}-${group.birthYearStart}-${group.birthYearEnd}`}
+                className={`cursor-pointer transition-all ${
+                  isSelected
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border hover:border-primary/50'
+                }`}
+                onClick={() => {
+                  if (!isSelected) {
+                    handleAddAgeGroup(group);
+                  }
+                }}
+              >
+                <CardContent className="p-4">
+                  <div className="font-medium">{group.name}</div>
+                  <div className="text-sm text-muted-foreground">
+                    Birth Years: {group.birthYearStart} - {group.birthYearEnd}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {selectedGroups.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-lg font-medium mb-4">Selected Age Groups</h3>
+            <div className="space-y-4">
+              {selectedGroups.map((group, index) => (
+                <Card key={index} className="border-border">
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h4 className="font-medium">{group.name}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Birth Years: {group.birthYearStart} - {group.birthYearEnd}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveAgeGroup(index)}
+                      >
+                        <Trash className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+
+                    <div className="mt-4">
+                      <Label htmlFor={`fieldSize-${index}`}>Field Size</Label>
+                      <Select
+                        value={group.fieldSize || ''}
+                        onValueChange={(value) => handleFieldSizeChange(index, value as FieldSize)}
+                      >
+                        <SelectTrigger id={`fieldSize-${index}`}>
+                          <SelectValue placeholder="Select field size" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="small">Small</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="large">Large</SelectItem>
+                          <SelectItem value="full">Full</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="mt-4">
+                      <Label htmlFor={`maxTeams-${index}`}>Max Teams</Label>
+                      <Input
+                        id={`maxTeams-${index}`}
+                        type="number"
+                        value={group.maxTeams || ''}
+                        onChange={(e) => handleAgeGroupChange(index, 'maxTeams', parseInt(e.target.value) || undefined)}
+                        placeholder="Enter maximum number of teams"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   const renderScoringContent = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Scoring Rules</h3>
-        <Button onClick={() => {
-          setEditingScoringRule(null);
-          setIsScoringDialogOpen(true);
-        }}>
+        <h3 className="text-lg font-medium">Scoring Rules</h3>
+        <Button onClick={handleAddScoringRule} variant="outline" size="sm">
           <Plus className="h-4 w-4 mr-2" />
           Add Rule
         </Button>
       </div>
 
-      <div className="grid gap-4">
-        {scoringRules.map((rule) => (
-          <Card key={rule.id}>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-center">
-                <div className="space-y-1">
-                  <h4 className="font-semibold">{rule.name}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Points: {rule.points}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setEditingScoringRule(rule);
-                      setIsScoringDialogOpen(true);
-                    }}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setScoringRules(scoringRules.filter(r => r.id !== rule.id));
-                    }}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {(form.getValues('scoringRules')?.length || 0) > 0 ? (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Points</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {form.getValues('scoringRules')?.map((rule, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium">{rule.name}</TableCell>
+                <TableCell>{rule.points}</TableCell>
+                <TableCell>{rule.description}</TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEditScoringRule(rule, index)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleRemoveScoringRule(index)}
+                    >
+                      <Trash className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <div className="text-center py-4 border rounded-md bg-muted/20">
+          <p className="text-muted-foreground">No scoring rules added yet.</p>
+        </div>
+      )}
 
-      <Dialog open={isScoringDialogOpen} onOpenChange={setIsScoringDialogOpen}>
+      <Dialog open={isRuleDialogOpen} onOpenChange={setIsRuleDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingScoringRule ? 'Edit Scoring Rule' : 'Add Scoring Rule'}
+              {editingRule ? 'Edit Scoring Rule' : 'Add Scoring Rule'}
             </DialogTitle>
           </DialogHeader>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const newRule = {
-                id: editingScoringRule?.id || Date.now().toString(),
-                name: formData.get('name') as string,
-                points: parseInt(formData.get('points') as string),
-              };
+          <Form {...form}>
+            <div className="space-y-4 py-4">
+              <FormField
+                control={form.control}
+                name="tempRule.name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Rule Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g., Win, Loss, Tie"
+                        value={editingRule?.name || ''}
+                        onChange={(e) => setEditingRule({ ...editingRule || {}, name: e.target.value })}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              if (editingScoringRule) {
-                setScoringRules(scoringRules.map(r =>
-                  r.id === editingScoringRule.id ? newRule : r
-                ));
-              } else {
-                setScoringRules([...scoringRules, newRule]);
-              }
+              <FormField
+                control={form.control}
+                name="tempRule.points"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Points</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="e.g., 3, 0, 1"
+                        value={editingRule?.points || ''}
+                        onChange={(e) => setEditingRule({
+                          ...editingRule || {},
+                          points: parseInt(e.target.value) || 0
+                        })}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              setIsScoringDialogOpen(false);
-            }}
-            className="space-y-4"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="name">Rule Name</Label>
-              <Input
-                id="name"
-                name="name"
-                defaultValue={editingScoringRule?.name}
-                required
+              <FormField
+                control={form.control}
+                name="tempRule.description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description (Optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Short rule description"
+                        value={editingRule?.description || ''}
+                        onChange={(e) => setEditingRule({
+                          ...editingRule || {},
+                          description: e.target.value
+                        })}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="points">Points</Label>
-              <Input
-                id="points"
-                name="points"
-                type="number"
-                defaultValue={editingScoringRule?.points}
-                required
-              />
+
+            <div className="flex justify-end space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsRuleDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  if (editingRule && editingRule.name && (typeof editingRule.points === 'number')) {
+                    handleSaveScoringRule({
+                      name: editingRule.name,
+                      points: editingRule.points,
+                      description: editingRule.description || '',
+                    });
+                  } else {
+                    toast({
+                      title: "Missing Information",
+                      description: "Please provide a rule name and points value.",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+              >
+                Save
+              </Button>
             </div>
-            <Button type="submit">
-              {editingScoringRule ? 'Update Rule' : 'Add Rule'}
-            </Button>
-          </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </div>
   );
 
-  // Query to get event administrators
-  const { data: eventAdmins, isLoading: isLoadingAdmins, refetch: refetchAdmins } = useQuery({
-    queryKey: ['event-admins', defaultValues?.id],
-    queryFn: async () => {
-      if (!defaultValues?.id) return [];
-      const response = await fetch(`/api/admin/events/${defaultValues.id}/administrators`);
-      if (!response.ok) throw new Error('Failed to fetch event administrators');
-      return response.json();
-    },
-    enabled: !!defaultValues?.id
-  });
+  const renderComplexesContent = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-medium">Playing Complexes</h3>
+      <p className="text-sm text-muted-foreground">
+        Select the complexes where games for this event will be played.
+      </p>
 
-  const renderAdministratorsContent = () => {
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Event Administrators</h3>
-          <Button onClick={() => setIsAdminModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Administrator
-          </Button>
+      {complexesQuery.isLoading ? (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-        
-        {isLoadingAdmins ? (
-          <div className="py-8 text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto" />
-            <p className="mt-2">Loading administrators...</p>
-          </div>
-        ) : eventAdmins && eventAdmins.length > 0 ? (
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {eventAdmins.map((admin: any) => (
-                  <TableRow key={admin.id}>
-                    <TableCell>
-                      {admin.user.firstName} {admin.user.lastName}
-                    </TableCell>
-                    <TableCell>{admin.user.email}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {admin.role.charAt(0).toUpperCase() + admin.role.slice(1)}
+      ) : complexesQuery.isError ? (
+        <div className="text-center py-4 border rounded-md bg-destructive/10">
+          <p className="text-destructive">Failed to load complexes. Please try again.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          {complexesQuery.data?.map((complex: Complex) => {
+            const isSelected = form.getValues('selectedComplexIds')?.includes(complex.id) || false;
+            return (
+              <Card
+                key={complex.id}
+                className={`cursor-pointer transition-all ${
+                  isSelected
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border hover:border-primary/50'
+                }`}
+                onClick={() => {
+                  const currentIds = form.getValues('selectedComplexIds') || [];
+                  if (isSelected) {
+                    form.setValue(
+                      'selectedComplexIds',
+                      currentIds.filter((id) => id !== complex.id)
+                    );
+                  } else {
+                    form.setValue('selectedComplexIds', [...currentIds, complex.id]);
+                  }
+                }}
+              >
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-medium">{complex.name}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {complex.address}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        {complex.fields?.length || 0} Fields • {complex.fieldCount || 0} Total
+                      </p>
+                    </div>
+                    {isSelected && (
+                      <Badge variant="outline" className="bg-primary text-primary-foreground">
+                        Selected
                       </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setEditingAdmin({
-                            id: admin.id,
-                            userId: admin.userId,
-                            role: admin.role,
-                            permissions: admin.permissions || {}
-                          });
-                          setIsAdminModalOpen(true);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        ) : (
-          <div className="p-4 bg-muted rounded-md">
-            <p className="text-sm text-muted-foreground">
-              No administrators have been assigned to this event yet.
-              Click the "Add Administrator" button to assign administrators with specific roles and permissions.
-            </p>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const getTabValidationState = () => {
-    const errors: Record<EventTab, boolean> = {
-      'information': false,
-      'age-groups': false,
-      'scoring': scoringRules.length === 0,
-      'complexes': selectedComplexIds.length === 0,
-      'settings': false,
-      'administrators': false,
-    };
-    return errors;
-  };
-
-  const tabErrors = getTabValidationState();
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 
   const renderSettingsContent = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Event Settings</h3>
-        <Button onClick={() => {
-          setEditingSetting(null);
-          setIsSettingDialogOpen(true);
-        }}>
+        <h3 className="text-lg font-medium">Event Settings</h3>
+        <Button onClick={handleAddSetting} variant="outline" size="sm">
           <Plus className="h-4 w-4 mr-2" />
           Add Setting
         </Button>
       </div>
-      
-      {/* Event Logo Upload Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Event Logo</CardTitle>
-          <CardDescription>
-            Upload a logo for your event. This will be displayed during the team registration process.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <div
-                {...getRootProps()}
-                className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${
-                  isDragActive ? 'border-primary bg-primary/5' : 'border-border'
-                }`}
-              >
-                <input {...getInputProps()} />
-                <div className="flex flex-col items-center justify-center gap-2">
-                  <div className="p-2 rounded-full bg-muted">
-                    <Upload className="h-6 w-6 text-muted-foreground" />
-                  </div>
-                  <p className="text-sm text-muted-foreground text-center">
-                    {isDragActive
-                      ? "Drop the logo here"
-                      : "Drag & drop your event logo here, or click to select"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Supported formats: PNG, JPG, SVG
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col items-center justify-center p-4 bg-muted rounded-lg">
-              {previewUrl ? (
-                <div className="flex flex-col items-center gap-4">
-                  <img
-                    src={previewUrl}
-                    alt="Event logo preview"
-                    className="max-h-32 object-contain"
-                  />
-                  <p className="text-sm text-center">Logo Preview</p>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                  <ImageIcon className="h-10 w-10" />
-                  <p className="text-sm">No logo uploaded</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Event Settings List */}
-      <div className="grid gap-4">
-        {settings.map((setting) => (
-          <Card key={setting.id}>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-center">
-                <div className="space-y-1">
-                  <h4 className="font-semibold">{setting.key}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Value: {setting.value}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setEditingSetting(setting);
-                      setIsSettingDialogOpen(true);
-                    }}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setSettings(settings.filter(s => s.id !== setting.id));
-                    }}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {(form.getValues('settings')?.length || 0) > 0 ? (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Setting</TableHead>
+              <TableHead>Value</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {form.getValues('settings')?.map((setting, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-medium">{setting.name}</TableCell>
+                <TableCell>{setting.value}</TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEditSetting(setting, index)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleRemoveSetting(index)}
+                    >
+                      <Trash className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <div className="text-center py-4 border rounded-md bg-muted/20">
+          <p className="text-muted-foreground">No event settings added yet.</p>
+        </div>
+      )}
 
       <Dialog open={isSettingDialogOpen} onOpenChange={setIsSettingDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingSetting ? 'Edit Setting' : 'Add Setting'}
+              {editingSetting ? 'Edit Event Setting' : 'Add Event Setting'}
             </DialogTitle>
           </DialogHeader>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const newSetting = {
-                id: editingSetting?.id || Date.now().toString(),
-                key: formData.get('key') as string,
-                value: formData.get('value') as string,
-              };
+          <Form {...form}>
+            <div className="space-y-4 py-4">
+              <FormField
+                control={form.control}
+                name="tempSetting.name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Setting Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g., Game Duration, Roster Size"
+                        value={editingSetting?.name || ''}
+                        onChange={(e) =>
+                          setEditingSetting({ ...editingSetting || {}, name: e.target.value })
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              if (editingSetting) {
-                setSettings(settings.map(s =>
-                  s.id === editingSetting.id ? newSetting : s
-                ));
-              } else {
-                setSettings([...settings, newSetting]);
-              }
-
-              setIsSettingDialogOpen(false);
-            }}
-            className="space-y-4"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="key">Setting Key</Label>
-              <Input
-                id="key"
-                name="key"
-                defaultValue={editingSetting?.key}
-                required
+              <FormField
+                control={form.control}
+                name="tempSetting.value"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Value</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g., 30 minutes, 18 players"
+                        value={editingSetting?.value || ''}
+                        onChange={(e) =>
+                          setEditingSetting({ ...editingSetting || {}, value: e.target.value })
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="value">Setting Value</Label>
+
+            <div className="flex justify-end space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsSettingDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  if (editingSetting && editingSetting.name && editingSetting.value) {
+                    handleSaveSetting({
+                      name: editingSetting.name,
+                      value: editingSetting.value,
+                    });
+                  } else {
+                    toast({
+                      title: "Missing Information",
+                      description: "Please provide a setting name and value.",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <div className="mt-8">
+        <h3 className="text-lg font-medium mb-4">Event Branding</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label className="mb-2 block">Logo</Label>
+            <div
+              className="border rounded-md p-4 cursor-pointer flex flex-col items-center justify-center"
+              onClick={() => setIsLogoDialogOpen(true)}
+            >
+              {form.getValues('branding')?.logoPreview ? (
+                <div className="relative w-full h-28 bg-gray-100 rounded-md overflow-hidden">
+                  <img
+                    src={form.getValues('branding')?.logoPreview}
+                    alt="Event Logo"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="py-10 flex flex-col items-center">
+                  <ImageIcon className="h-10 w-10 text-muted-foreground mb-2" />
+                  <span className="text-sm text-muted-foreground">
+                    Click to add an event logo
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <Label className="mb-2 block">Sponsors</Label>
+            <div
+              className="border rounded-md p-4 cursor-pointer flex flex-col items-center justify-center"
+              onClick={() => setIsSponsorDialogOpen(true)}
+            >
+              {(form.getValues('branding')?.sponsors?.length || 0) > 0 ? (
+                <div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {form.getValues('branding')?.sponsors.map((sponsor, index) => (
+                      <div key={index} className="relative flex flex-col items-center p-2 border rounded">
+                        {sponsor.logoPreview && (
+                          <img
+                            src={sponsor.logoPreview}
+                            alt={sponsor.name}
+                            className="w-16 h-16 object-contain mb-1"
+                          />
+                        )}
+                        <span className="text-xs font-medium truncate max-w-full">
+                          {sponsor.name}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-1 right-1 h-5 w-5"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveSponsor(index);
+                          }}
+                        >
+                          <Trash className="h-3 w-3 text-destructive" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full mt-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsSponsorDialogOpen(true);
+                    }}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Sponsor
+                  </Button>
+                </div>
+              ) : (
+                <div className="py-10 flex flex-col items-center">
+                  <ImageIcon className="h-10 w-10 text-muted-foreground mb-2" />
+                  <span className="text-sm text-muted-foreground">
+                    Click to add sponsors
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div>
+            <Label htmlFor="primaryColor">Primary Color</Label>
+            <div className="flex mt-2">
+              <div
+                className="w-10 h-10 rounded-md mr-2"
+                style={{
+                  backgroundColor: form.getValues('branding')?.primaryColor || '#3b82f6',
+                }}
+              ></div>
               <Input
-                id="value"
-                name="value"
-                defaultValue={editingSetting?.value}
-                required
+                id="primaryColor"
+                type="color"
+                value={form.getValues('branding')?.primaryColor || '#3b82f6'}
+                onChange={(e) => handleColorChange('primaryColor', e.target.value)}
               />
             </div>
-            <Button type="submit">
-              {editingSetting ? 'Update Setting' : 'Add Setting'}
-            </Button>
-          </form>
+          </div>
+
+          <div>
+            <Label htmlFor="secondaryColor">Secondary Color</Label>
+            <div className="flex mt-2">
+              <div
+                className="w-10 h-10 rounded-md mr-2"
+                style={{
+                  backgroundColor: form.getValues('branding')?.secondaryColor || '#1e3a8a',
+                }}
+              ></div>
+              <Input
+                id="secondaryColor"
+                type="color"
+                value={form.getValues('branding')?.secondaryColor || '#1e3a8a'}
+                onChange={(e) => handleColorChange('secondaryColor', e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Dialog open={isLogoDialogOpen} onOpenChange={setIsLogoDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Upload Event Logo</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div
+              {...getLogoRootProps()}
+              className="border-2 border-dashed border-gray-300 rounded-md p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+            >
+              <input {...getLogoInputProps()} />
+              {logoPreview ? (
+                <div className="relative w-full h-32 bg-gray-100 rounded-md overflow-hidden">
+                  <img
+                    src={logoPreview}
+                    alt="Logo Preview"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-4">
+                  <Upload className="h-10 w-10 text-muted-foreground mb-2" />
+                  <p className="text-sm text-center text-muted-foreground">
+                    Drag & drop a logo image here, or click to select one
+                  </p>
+                  <p className="text-xs text-center text-muted-foreground mt-1">
+                    Recommended: PNG or JPG, 1:1 aspect ratio
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsLogoDialogOpen(false);
+                  setLogoPreview(null);
+                  setSelectedLogo(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSaveLogo}
+                disabled={!selectedLogo}
+              >
+                Save Logo
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isSponsorDialogOpen} onOpenChange={setIsSponsorDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Sponsor</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="sponsorName">Sponsor Name*</Label>
+              <Input
+                id="sponsorName"
+                value={sponsorName}
+                onChange={(e) => setSponsorName(e.target.value)}
+                placeholder="Enter sponsor name"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="sponsorUrl">Website URL (optional)</Label>
+              <Input
+                id="sponsorUrl"
+                value={sponsorUrl}
+                onChange={(e) => setSponsorUrl(e.target.value)}
+                placeholder="https://example.com"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Sponsor Logo*</Label>
+              <div
+                {...getSponsorRootProps()}
+                className="border-2 border-dashed border-gray-300 rounded-md p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+              >
+                <input {...getSponsorInputProps()} />
+                {sponsorPreview ? (
+                  <div className="relative w-full h-32 bg-gray-100 rounded-md overflow-hidden">
+                    <img
+                      src={sponsorPreview}
+                      alt="Sponsor Logo Preview"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-4">
+                    <Upload className="h-10 w-10 text-muted-foreground mb-2" />
+                    <p className="text-sm text-center text-muted-foreground">
+                      Drag & drop a logo image here, or click to select one
+                    </p>
+                    <p className="text-xs text-center text-muted-foreground mt-1">
+                      Recommended: PNG or JPG, transparent background
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setIsSponsorDialogOpen(false);
+                  setSponsorName('');
+                  setSponsorUrl('');
+                  setSponsorLogo(null);
+                  setSponsorPreview(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={handleAddSponsor}
+                disabled={!sponsorName || !sponsorLogo}
+              >
+                Add Sponsor
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
   );
 
-  const handleTabChange = (tab: EventTab) => {
-    onTabChange(tab);
+  const renderAdministratorsContent = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium">Event Administrators</h3>
+        <Button 
+          onClick={() => {
+            setEditingAdmin(null);
+            setIsAdminModalOpen(true);
+          }} 
+          variant="outline" 
+          size="sm"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Administrator
+        </Button>
+      </div>
+
+      {adminsQuery.isLoading ? (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : adminsQuery.isError || !adminsQuery.data ? (
+        <div className="text-center py-4 border rounded-md bg-muted/20">
+          <p className="text-muted-foreground">
+            {mode === 'create' 
+              ? 'You can add administrators after creating the event.' 
+              : 'Failed to load administrators. Please try again.'}
+          </p>
+        </div>
+      ) : adminsQuery.data.length === 0 ? (
+        <div className="text-center py-4 border rounded-md bg-muted/20">
+          <p className="text-muted-foreground">No administrators added yet.</p>
+        </div>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {adminsQuery.data.map((admin: EventAdministrator) => (
+              <TableRow key={admin.id}>
+                <TableCell className="font-medium">{admin.name}</TableCell>
+                <TableCell>{admin.email}</TableCell>
+                <TableCell>{admin.role}</TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setEditingAdmin(admin);
+                        setIsAdminModalOpen(true);
+                      }}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+    </div>
+  );
+
+  // Render the currently active tab content
+  const renderActiveTabContent = () => {
+    switch (activeTab) {
+      case 'information':
+        return renderInformationContent();
+      case 'age-groups':
+        return renderAgeGroupsContent(
+          mode,
+          ageGroups,
+          seasonalScopesQuery,
+          selectedSeasonalScopeId,
+          handleSeasonalScopeChange
+        );
+      case 'scoring':
+        return renderScoringContent();
+      case 'complexes':
+        return renderComplexesContent();
+      case 'settings':
+        return renderSettingsContent();
+      case 'administrators':
+        return renderAdministratorsContent();
+      default:
+        return null;
+    }
   };
 
-  const isEditMode = mode === "edit";
+  // Update completed tabs when fields are valid
+  useEffect(() => {
+    // You can add validation logic here to automatically mark tabs as completed
+    // For now, we'll rely on the parent component to manage this
+  }, [activeTab, form.formState.isDirty]);
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <Card className="bg-white shadow-sm border border-gray-200">
-        <CardContent className="p-6">
-          <form onSubmit={form.handleSubmit(handleSubmit)}>
-            <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as EventTab)}>
-              <TabsList className="w-full grid grid-cols-6 gap-4 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
-                {TAB_ORDER.map((tab) => (
-                  <TabsTrigger
-                    key={tab}
-                    value={tab}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors
-                      text-[#1C1C1E] hover:text-[#007AFF] data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm`}
-                  >
-                    {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+    <div>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        {renderActiveTabContent()}
 
-              <div className="mt-6">
-                <TabsContent value="information">
-                  {renderInformationContent()}
-                </TabsContent>
-
-                <TabsContent value="age-groups">
-                  {renderAgeGroupsContent(
-                    mode,
-                    ageGroups,
-                    seasonalScopesQuery,
-                    selectedSeasonalScopeId,
-                    handleSeasonalScopeChange
-                  )}
-                </TabsContent>
-
-                <TabsContent value="scoring">
-                  {renderScoringContent()}
-                </TabsContent>
-
-                <TabsContent value="complexes">
-                  {renderComplexesContent()}
-                </TabsContent>
-
-                <TabsContent value="settings">
-                  {renderSettingsContent()}
-                </TabsContent>
-
-                <TabsContent value="administrators">
-                  {renderAdministratorsContent()}
-                </TabsContent>
-              </div>
-            </Tabs>
-
-            <div className="mt-6 flex justify-end space-x-4">
-              {activeTab !== TAB_ORDER[0] && (
-                <Button
-                  variant="outline"
-                  onClick={() => navigateTab('prev')}
-                  disabled={isSubmitting}
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
-                </Button>
-              )}
-
+        <div className="mt-6 flex justify-between">
+          <div>
+            {activeTab !== TAB_ORDER[0] && (
+              <Button
+                variant="outline"
+                onClick={() => navigateTab('prev')}
+                disabled={isSubmitting}
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
+            )}
+          </div>
+          
+          <div className="flex space-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setLocation('/admin')}
+            >
+              Cancel
+            </Button>
+            
+            {activeTab !== TAB_ORDER[TAB_ORDER.length - 1] ? (
+              <Button
+                type="button"
+                onClick={() => navigateTab('next')}
+                disabled={isSubmitting || isSaving}
+              >
+                Continue
+              </Button>
+            ) : (
               <Button
                 type="submit"
                 disabled={isSubmitting || isSaving}
@@ -1196,12 +1502,13 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   <><Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Saving...
                   </>
-                ) : mode === 'edit' ? 'Save Changes' : 'Continue'}
+                ) : mode === 'edit' ? 'Save Changes' : 'Finish & Create Event'}
               </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+            )}
+          </div>
+        </div>
+      </form>
+      
       <EventAdminModal
         open={isAdminModalOpen}
         onOpenChange={setIsAdminModalOpen}
