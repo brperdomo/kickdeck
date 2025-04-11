@@ -99,6 +99,15 @@ body {
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
+    
+    /* Table styling variables that match the sidebar theme */
+    --table-header-bg: var(--admin-nav-bg, #FFFFFF);
+    --table-header-text: var(--admin-nav-text, #000000);
+    --table-header-border: var(--admin-nav-border, #E5E7EB);
+    --table-row-hover: var(--admin-nav-hover, #f3f4f6);
+    --table-row-selected: var(--admin-nav-active, #E6F7FF);
+    --table-row-selected-text: var(--admin-nav-selected-text, #000000);
+    --table-border: var(--border, #E5E7EB);
   }
 
   /* DARK MODE DISABLED - Use light mode variables for dark theme */
@@ -127,6 +136,15 @@ body {
     --chart-3: 0 84.2% 60.2%;
     --chart-4: 262.1 83.3% 57.8%;
     --chart-5: 170.3 76.9% 42.5%;
+    
+    /* Table styling variables that match the sidebar theme */
+    --table-header-bg: var(--admin-nav-bg, #FFFFFF);
+    --table-header-text: var(--admin-nav-text, #000000);
+    --table-header-border: var(--admin-nav-border, #E5E7EB);
+    --table-row-hover: var(--admin-nav-hover, #f3f4f6);
+    --table-row-selected: var(--admin-nav-active, #E6F7FF);
+    --table-row-selected-text: var(--admin-nav-selected-text, #000000);
+    --table-border: var(--border, #E5E7EB);
   }
 
   * {
@@ -170,16 +188,22 @@ body {
 
   /* Force light mode for tables */
   .dark table tbody tr {
-    border-color: #E5E7EB !important;
+    border-color: var(--table-border, #E5E7EB) !important;
   }
 
   .dark table thead th {
-    background-color: white !important;
-    color: #1F2937 !important;
+    background-color: var(--table-header-bg, #FFFFFF) !important;
+    color: var(--table-header-text, #1F2937) !important;
   }
 
   .dark table tbody tr:hover {
-    background-color: #F9FAFB !important;
+    background-color: var(--table-row-hover, #f3f4f6) !important;
+  }
+  
+  /* Selected row in tables */
+  table tbody tr[data-state=selected] {
+    background-color: var(--table-row-selected, var(--admin-nav-active, #E6F7FF)) !important;
+    color: var(--table-row-selected-text, var(--admin-nav-selected-text, #000000)) !important;
   }
 
   /* Force light mode for inputs and form elements */

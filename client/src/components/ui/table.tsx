@@ -6,10 +6,15 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
+  <div className="relative w-full overflow-auto rounded-md">
     <table
       ref={ref}
       className={cn("w-full caption-bottom text-sm", className)}
+      style={{
+        borderCollapse: 'separate',
+        borderSpacing: 0,
+        overflow: 'hidden'
+      }}
       {...props}
     />
   </div>
@@ -20,7 +25,16 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  <thead 
+    ref={ref} 
+    className={cn("[&_tr]:border-b", className)} 
+    style={{
+      backgroundColor: 'var(--table-header-bg, var(--admin-nav-bg, #FFFFFF))',
+      color: 'var(--table-header-text, var(--admin-nav-text, #000000))',
+      borderBottom: '1px solid var(--table-header-border, var(--border, #E5E7EB))'
+    }}
+    {...props} 
+  />
 ))
 TableHeader.displayName = "TableHeader"
 
@@ -43,9 +57,14 @@ const TableFooter = React.forwardRef<
   <tfoot
     ref={ref}
     className={cn(
-      "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+      "border-t font-medium [&>tr]:last:border-b-0",
       className
     )}
+    style={{
+      backgroundColor: 'var(--table-header-bg, var(--admin-nav-bg, #FFFFFF))',
+      color: 'var(--table-header-text, var(--admin-nav-text, #000000))',
+      borderTop: '1px solid var(--table-header-border, var(--border, #E5E7EB))'
+    }}
     {...props}
   />
 ))
@@ -58,9 +77,20 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+      "border-b transition-colors",
       className
     )}
+    style={{
+      borderColor: 'var(--table-border, #E5E7EB)',
+    }}
+    onMouseOver={(e) => {
+      e.currentTarget.style.backgroundColor = 'var(--table-row-hover, var(--admin-nav-hover, #f3f4f6))';
+    }}
+    onMouseOut={(e) => {
+      if (e.currentTarget.getAttribute('data-state') !== 'selected') {
+        e.currentTarget.style.backgroundColor = '';
+      }
+    }}
     {...props}
   />
 ))
@@ -73,9 +103,12 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+      "h-12 px-4 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0",
       className
     )}
+    style={{
+      color: 'var(--table-header-text, var(--admin-nav-text, #000000))',
+    }}
     {...props}
   />
 ))
@@ -99,7 +132,10 @@ const TableCaption = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={cn("mt-4 text-sm text-muted-foreground", className)}
+    className={cn("mt-4 text-sm", className)}
+    style={{
+      color: 'var(--table-header-text, var(--admin-nav-text, #000000))'
+    }}
     {...props}
   />
 ))
