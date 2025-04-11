@@ -3081,6 +3081,46 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               }
             }
           }
+          
+          // Handle general event settings
+          if (eventData.settings && Array.isArray(eventData.settings)) {
+            console.log('Processing event settings:', eventData.settings);
+            
+            for (const setting of eventData.settings) {
+              if (setting.key && setting.value !== undefined) {
+                // Check if this setting already exists
+                const existingSetting = await tx
+                  .select()
+                  .from(eventSettings)
+                  .where(and(
+                    eq(eventSettings.eventId, eventId),
+                    eq(eventSettings.settingKey, setting.key)
+                  ));
+                
+                if (existingSetting.length > 0) {
+                  // Update existing setting
+                  await tx
+                    .update(eventSettings)
+                    .set({
+                      settingValue: setting.value,
+                      updatedAt: new Date().toISOString()
+                    })
+                    .where(eq(eventSettings.id, existingSetting[0].id));
+                } else {
+                  // Insert new setting
+                  await tx
+                    .insert(eventSettings)
+                    .values({
+                      eventId,
+                      settingKey: setting.key,
+                      settingValue: setting.value,
+                      createdAt: new Date().toISOString(),
+                      updatedAt: new Date().toISOString()
+                    });
+                }
+              }
+            }
+          }
 
           if (!updatedEvent) {
             throw new Error("Event not found");
