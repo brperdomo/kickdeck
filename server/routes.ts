@@ -3749,10 +3749,17 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .then(rows => rows[0]);
 
         // Get event settings
-        const settings = await db
+        const settingsData = await db
           .select()
           .from(eventSettings)
           .where(eq(eventSettings.eventId, eventId));
+        
+        // Map the settings to the format expected by the client
+        const settings = settingsData.map(setting => ({
+          id: setting.id,
+          key: setting.settingKey,
+          value: setting.settingValue
+        }));
         
         console.log('Found event settings for event:', eventId, settings);
 
