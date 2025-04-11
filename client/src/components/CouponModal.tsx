@@ -61,7 +61,8 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
     queryFn: async () => {
       const response = await fetch('/api/admin/events');
       if (!response.ok) throw new Error('Failed to fetch events');
-      return response.json();
+      const data = await response.json();
+      return data;
     }
   });
 
@@ -214,11 +215,27 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {eventsQuery.data?.map((event: any) => (
-                        <SelectItem key={event.id} value={event.id.toString()}>
-                          {event.name}
-                        </SelectItem>
-                      ))}
+                      {eventsQuery.data ? (
+                        Array.isArray(eventsQuery.data) ? (
+                          // Handle case when data is an array
+                          eventsQuery.data.map((event: any) => (
+                            <SelectItem key={event.id} value={event.id.toString()}>
+                              {event.name}
+                            </SelectItem>
+                          ))
+                        ) : eventsQuery.data.events ? (
+                          // Handle case when data has events property
+                          eventsQuery.data.events.map((event: any) => (
+                            <SelectItem key={event.id} value={event.id.toString()}>
+                              {event.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="" disabled>No events available</SelectItem>
+                        )
+                      ) : (
+                        <SelectItem value="" disabled>Loading events...</SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
