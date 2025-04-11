@@ -3748,6 +3748,14 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .limit(1)
           .then(rows => rows[0]);
 
+        // Get event settings
+        const settings = await db
+          .select()
+          .from(eventSettings)
+          .where(eq(eventSettings.eventId, eventId));
+        
+        console.log('Found event settings for event:', eventId, settings);
+
         // Format response to match create event view structure exactly
         const response = {
           ...event,
@@ -3772,6 +3780,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           // Add selected scope and age group IDs
           selectedScopeId: seasonalScope?.id || null,
           selectedAgeGroupIds: ageGroups.map(({ ageGroup }) => ageGroup.id),
+          // Include event settings
+          settings: settings || [],
           // Additional metadata needed by create view
           availableAgeGroups: ageGroups.map(({ ageGroup }) => ageGroup.ageGroup),
           availableFieldSizes: [...new Set(fieldSizes.map(f => f.fieldSize))].filter(Boolean),
