@@ -1242,24 +1242,14 @@ render={({ field }) => (
   );
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
-      <div className="flex items-center gap-4 mb-6">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate("/admin")}
-        >
-          <ArrowLeft className="h4 w-4" />
-        </Button>
-        <h2 className="text-2xl font-bold">Create Event</h2>
-      </div>
-
-      <Card className="mx-auto bg-white shadow-lg rounded-lg">
+    <EventFormLayout 
+      title="Create Event" 
+      activeTab={activeTab} 
+      onTabChange={(tab) => setActiveTab(tab)}
+      tabs={TAB_ORDER}
+    >
+      <Card className="bg-white shadow-lg border border-gray-100">
         <CardContent className="p-6">
-          <ProgressIndicator
-            tabs={TAB_ORDER}
-            completedTabs={TAB_ORDER.filter(tab => !tabErrors[tab])}
-          />
           <Tabs
             value={activeTab}
             onValueChange={(value) => setActiveTab(value as EventTab)}
@@ -1338,6 +1328,6 @@ render={({ field }) => (
           </Tabs>
         </CardContent>
       </Card>
-    </div>
+    </EventFormLayout>
   );
 }
