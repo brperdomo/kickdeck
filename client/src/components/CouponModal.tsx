@@ -77,6 +77,7 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
       expirationDate: couponToEdit?.expiration_date ? new Date(couponToEdit.expiration_date).toISOString().slice(0, 16) : "",
       description: couponToEdit?.description || "",
       eventId: couponToEdit?.event_id?.toString() || eventId?.toString() || "",
+      isActive: couponToEdit?.is_active !== undefined ? couponToEdit.is_active : true,
     },
   });
 
@@ -174,15 +175,16 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
 
   const onSubmit = async (data: CouponFormValues) => {
     try {
+      // Create a submission-ready version of the data with properly typed event ID
       const submissionData = {
         ...data,
-        eventId: eventId ? Number(eventId) : null
+        eventId: data.eventId ? Number(data.eventId) : null
       };
 
       if (couponToEdit) {
-        await updateCouponMutation.mutateAsync(submissionData);
+        await updateCouponMutation.mutateAsync(submissionData as any);
       } else {
-        await createCouponMutation.mutateAsync(submissionData);
+        await createCouponMutation.mutateAsync(submissionData as any);
       }
     } catch (error) {
       console.error('Form submission error:', error);
