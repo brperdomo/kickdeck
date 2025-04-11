@@ -955,6 +955,35 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
   const tabErrors = getTabValidationState();
 
+  // Get the "allowPayLater" setting value
+  const getAllowPayLaterSetting = () => {
+    const payLaterSetting = settings.find(s => s.key === 'allowPayLater');
+    return payLaterSetting ? payLaterSetting.value === 'true' : false;
+  };
+  
+  // Function to toggle the "allowPayLater" setting
+  const toggleAllowPayLater = (value: boolean) => {
+    const updatedSettings = [...settings];
+    const existingIndex = updatedSettings.findIndex(s => s.key === 'allowPayLater');
+    
+    if (existingIndex >= 0) {
+      // Update existing setting
+      updatedSettings[existingIndex] = {
+        ...updatedSettings[existingIndex],
+        value: value.toString()
+      };
+    } else {
+      // Add new setting
+      updatedSettings.push({
+        id: Date.now(), // Temporary ID until saved
+        key: 'allowPayLater',
+        value: value.toString()
+      });
+    }
+    
+    setSettings(updatedSettings);
+  };
+
   const renderSettingsContent = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -967,6 +996,30 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           Add Setting
         </Button>
       </div>
+      
+      {/* Payment Options Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Payment Options</CardTitle>
+          <CardDescription>
+            Configure payment settings for this event
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <Label className="text-base">Allow Pay Later</Label>
+              <p className="text-sm text-muted-foreground">
+                When enabled, teams can register without immediate payment
+              </p>
+            </div>
+            <Switch
+              checked={getAllowPayLaterSetting()}
+              onCheckedChange={toggleAllowPayLater}
+            />
+          </div>
+        </CardContent>
+      </Card>
       
       {/* Event Logo Upload Section */}
       <Card>
