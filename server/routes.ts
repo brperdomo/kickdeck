@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { setupWebSocketServer } from "./websocket";
 import { log } from "./vite";
+import { crypto } from "./crypto";
 import { db } from "@db";
 import seasonalScopesRouter from "./routes/seasonal-scopes";
 import uploadRouter from "./routes/upload";
@@ -82,7 +83,6 @@ import {
 } from "@db/schema";
 import fs from "fs/promises";
 import path from "path";
-import { crypto } from "./crypto";
 import session from "express-session";
 import passport from "passport";
 import { randomBytes } from "crypto";
