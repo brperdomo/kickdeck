@@ -248,7 +248,9 @@ export const teams = pgTable("teams", {
   // Payment tracking fields
   paymentIntentId: text("payment_intent_id"), // Stripe payment intent ID
   refundDate: text("refund_date"),  // Date when refund was processed
-  notes: text("notes") // General notes field for admin comments
+  notes: text("notes"), // General notes field for admin comments
+  // Club/Organization name
+  clubName: text("club_name")
 });
 
 export const games = pgTable("games", {

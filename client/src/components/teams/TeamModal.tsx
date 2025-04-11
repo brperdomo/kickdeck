@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -10,12 +10,19 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
+// Define a proper schema to handle coach data structure
 const teamSchema = z.object({
   name: z.string().min(1, "Team name is required"),
-  coach: z.string().optional(),
+  headCoachName: z.string().optional(),
+  headCoachEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
+  headCoachPhone: z.string().optional(),
+  assistantCoachName: z.string().optional(),
+  assistantCoachEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
+  assistantCoachPhone: z.string().optional(),
+  clubName: z.string().optional(),
   managerName: z.string().optional(),
   managerPhone: z.string().optional(),
-  managerEmail: z.string().email("Invalid email address").optional(),
+  managerEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
 });
 
 type TeamFormValues = z.infer<typeof teamSchema>;
@@ -30,31 +37,107 @@ interface TeamModalProps {
     managerName?: string;
     managerPhone?: string;
     managerEmail?: string;
+    coachData?: {
+      headCoachName?: string;
+      headCoachEmail?: string;
+      headCoachPhone?: string;
+      assistantCoachName?: string;
+      assistantCoachEmail?: string;
+      assistantCoachPhone?: string;
+    };
+    clubName?: string;
   };
 }
 
 export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Parse coach data if it's a string
+  const parseCoachData = () => {
+    if (!team?.coach) return {};
+    
+    try {
+      if (typeof team.coach === 'string') {
+        return JSON.parse(team.coach);
+      }
+      return team.coach;
+    } catch (e) {
+      console.error("Error parsing coach data:", e);
+      return {};
+    }
+  };
+  
+  const coachData = team?.coachData || parseCoachData();
+  
   const form = useForm<TeamFormValues>({
     resolver: zodResolver(teamSchema),
     defaultValues: {
       name: team?.name || "",
-      coach: team?.coach || "",
       managerName: team?.managerName || "",
       managerPhone: team?.managerPhone || "",
       managerEmail: team?.managerEmail || "",
+      headCoachName: coachData.headCoachName || "",
+      headCoachEmail: coachData.headCoachEmail || "",
+      headCoachPhone: coachData.headCoachPhone || "",
+      assistantCoachName: coachData.assistantCoachName || "",
+      assistantCoachEmail: coachData.assistantCoachEmail || "",
+      assistantCoachPhone: coachData.assistantCoachPhone || "",
+      clubName: team?.clubName || "",
     },
   });
 
+  // Reset form when team changes
+  useEffect(() => {
+    if (team) {
+      const coachData = team.coachData || parseCoachData();
+      form.reset({
+        name: team.name || "",
+        managerName: team.managerName || "",
+        managerPhone: team.managerPhone || "",
+        managerEmail: team.managerEmail || "",
+        headCoachName: coachData.headCoachName || "",
+        headCoachEmail: coachData.headCoachEmail || "",
+        headCoachPhone: coachData.headCoachPhone || "",
+        assistantCoachName: coachData.assistantCoachName || "",
+        assistantCoachEmail: coachData.assistantCoachEmail || "",
+        assistantCoachPhone: coachData.assistantCoachPhone || "",
+        clubName: team.clubName || "",
+      });
+    }
+  }, [team, form]);
+
   const updateTeamMutation = useMutation({
     mutationFn: async (data: TeamFormValues) => {
+      // Create the coach data object
+      const coachData = {
+        headCoachName: data.headCoachName,
+        headCoachEmail: data.headCoachEmail,
+        headCoachPhone: data.headCoachPhone,
+        assistantCoachName: data.assistantCoachName,
+        assistantCoachEmail: data.assistantCoachEmail,
+        assistantCoachPhone: data.assistantCoachPhone,
+      };
+      
+      // Convert coach data to JSON string
+      const coach = JSON.stringify(coachData);
+      
+      // Prepare the payload with the correct structure
+      const payload = {
+        name: data.name,
+        coach: coach,
+        managerName: data.managerName,
+        managerPhone: data.managerPhone,
+        managerEmail: data.managerEmail,
+        clubName: data.clubName,
+      };
+      
       const response = await fetch(`/api/admin/teams/${team?.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -66,6 +149,10 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/teams"] });
+      // Also invalidate the specific team query
+      if (team?.id) {
+        queryClient.invalidateQueries({ queryKey: [`/api/admin/teams/${team.id}`] });
+      }
       toast({
         title: "Success",
         description: "Team updated successfully",
@@ -88,9 +175,9 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Team</DialogTitle>
+          <DialogTitle>Edit Team Details</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -107,59 +194,158 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="coach"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Coach</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="managerName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Manager Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="managerPhone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Manager Phone</FormLabel>
-                  <FormControl>
-                    <Input {...field} type="tel" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="managerEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Manager Email</FormLabel>
-                  <FormControl>
-                    <Input {...field} type="email" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end gap-2">
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Manager Information</h3>
+                <FormField
+                  control={form.control}
+                  name="managerName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Manager Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="managerPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Manager Phone</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="tel" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="managerEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Manager Email</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="email" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Head Coach Information</h3>
+                <FormField
+                  control={form.control}
+                  name="headCoachName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Head Coach Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="headCoachPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Head Coach Phone</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="tel" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="headCoachEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Head Coach Email</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="email" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Assistant Coach Information</h3>
+                <FormField
+                  control={form.control}
+                  name="assistantCoachName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Assistant Coach Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="assistantCoachPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Assistant Coach Phone</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="tel" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="assistantCoachEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Assistant Coach Email</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="email" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Team Organization</h3>
+                <FormField
+                  control={form.control}
+                  name="clubName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Club/Organization Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
