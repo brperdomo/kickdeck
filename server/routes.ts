@@ -938,17 +938,16 @@ export function registerRoutes(app: Express): Server {
           return res.status(404).json({ error: "Source event not found" });
         }
         
-        // Let the database auto-generate the event ID using the sequence
-        // The events table has an auto-incrementing integer ID
-        // We'll just omit the ID to let PostgreSQL handle it automatically
+        // Generate a new event ID using the crypto utility
+        // This ensures we use the same ID format as regular event creation
+        const newEventId = crypto.generateEventId();
+        console.log(`Creating cloned event with ID: ${newEventId}`);
         
-        console.log(`Creating cloned event with auto-generated ID`);
-        
-        // Create a clone of the event with an auto-generated ID and adding "Copy of" to the name
+        // Create a clone of the event with a random ID and adding "Copy of" to the name
         const [newEvent] = await db
           .insert(events)
           .values({
-            // id is omitted to let PostgreSQL auto-generate it using the sequence
+            id: newEventId, // Use the randomly generated ID
             name: `Copy of ${sourceEvent.name}`,
             startDate: sourceEvent.startDate,
             endDate: sourceEvent.endDate,
