@@ -4555,17 +4555,21 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           club_name: clubName
         });
 
+        // Create an update object with only defined fields
+        const updateObject: any = {};
+        
+        if (name !== undefined) updateObject.name = name;
+        if (coach !== undefined) updateObject.coach = coach;
+        if (managerName !== undefined) updateObject.manager_name = managerName;
+        if (managerPhone !== undefined) updateObject.manager_phone = managerPhone;
+        if (managerEmail !== undefined) updateObject.manager_email = managerEmail;
+        if (clubName !== undefined) updateObject.club_name = clubName;
+        
+        console.log('Final SQL update object:', updateObject);
+        
         const [updatedTeam] = await db
           .update(teams)
-          .set({
-            name,
-            coach,
-            manager_name: managerName,
-            manager_phone: managerPhone,
-            manager_email: managerEmail,
-            club_name: clubName,
-            updated_at: new Date().toISOString(),
-          })
+          .set(updateObject)
           .where(eq(teams.id, teamId))
           .returning();
 

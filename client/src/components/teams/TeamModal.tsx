@@ -132,6 +132,8 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
         clubName: data.clubName,
       };
       
+      console.log("Sending PATCH request to /api/admin/teams/" + team?.id, payload);
+      
       const response = await fetch(`/api/admin/teams/${team?.id}`, {
         method: "PATCH",
         headers: {
@@ -141,11 +143,25 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
       });
 
       if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error);
+        let errorText = "Failed to update team: " + response.status;
+        try {
+          const errorData = await response.json();
+          errorText = errorData.error || errorData.message || errorText;
+        } catch (parseError) {
+          // If the response isn't JSON, use response.text() instead
+          try {
+            errorText = await response.text();
+          } catch (textError) {
+            console.error("Error parsing error response:", textError);
+          }
+        }
+        console.error("Error updating team:", errorText);
+        throw new Error(errorText);
       }
 
-      return response.json();
+      const responseData = await response.json();
+      console.log("Update succeeded, response:", responseData);
+      return responseData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/teams"] });
@@ -170,6 +186,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
   });
 
   const onSubmit = (data: TeamFormValues) => {
+    console.log("Submitting form with data:", data);
     updateTeamMutation.mutate(data);
   };
 
