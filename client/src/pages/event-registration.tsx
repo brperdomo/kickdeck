@@ -608,6 +608,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   };
   
   const [payLaterOption, setPayLaterOption] = useState<boolean>(false);
+  const [isPayLaterShown, setIsPayLaterShown] = useState<boolean>(false);
   
   useEffect(() => {
     const fetchEvent = async () => {
@@ -631,11 +632,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         const payLaterEnabled = data.settings.some(s => s.key === 'allowPayLater' && s.value === 'true');
         console.log('Pay Later Feature enabled:', payLaterEnabled);
         
-        // We don't set the payment option to true by default, but we make sure the options display is enabled
+        // We need to ensure the isPayLaterEnabled function will return the correct value 
+        // when the payment components are rendered
         if (payLaterEnabled) {
-          // We don't need to set the actual payment method choice yet (payLaterOption), 
-          // just enabling the display of the radio buttons
-          console.log('Enabling Pay Later option in UI');
+          console.log('Pay Later feature is enabled for this event');
+          // Store the value in event state for isPayLaterEnabled() to detect correctly
+          if (!data.settings.some(s => s.key === 'allowPayLater')) {
+            data.settings.push({ key: 'allowPayLater', value: 'true' });
+          }
+          
+          // We don't set payLaterOption to true by default, as it's a user choice,
+          // but we need to make sure the UI displays the payment method options
+          setIsPayLaterShown(true);
+        } else {
+          setIsPayLaterShown(false);
         }
       } catch (error) {
         console.error('Error fetching event:', error);
