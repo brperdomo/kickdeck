@@ -1,8 +1,7 @@
 import React from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Home, ArrowLeft, Bell, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Home, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
@@ -94,38 +93,6 @@ export function AdminBanner() {
             transition={{ delay: 0.3 }}
           >
             <ViewToggle />
-          </motion.div>
-          
-          {/* Search - hidden on mobile */}
-          <motion.div 
-            className="relative hidden md:block"
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: "auto" }}
-            transition={{ delay: 0.3 }}
-          >
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="pl-8 w-[200px] lg:w-[300px] h-9"
-            />
-          </motion.div>
-          
-          {/* Notifications */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative"
-          >
-            <Button variant="ghost" size="icon" title="Notifications">
-              <Bell className="h-5 w-5" />
-              <motion.span 
-                className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.5 }}
-              />
-            </Button>
           </motion.div>
         </div>
       </div>
