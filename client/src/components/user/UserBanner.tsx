@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { ViewToggle } from "@/components/ViewToggle";
 import { useUser } from "@/hooks/use-user";
 import { motion } from "framer-motion";
+import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 
 /**
  * UserBanner component displays a navigation bar at the top of user dashboard pages
@@ -12,6 +13,7 @@ import { motion } from "framer-motion";
  */
 export function UserBanner() {
   const { user } = useUser();
+  const { settings } = useOrganizationSettings();
   // Using local state for dark mode preference
   const [isDarkMode, setIsDarkMode] = useState(
     typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false
@@ -85,8 +87,8 @@ export function UserBanner() {
             transition={{ delay: 0.15 }}
           >
             <img 
-              src="/attached_assets/MatchPro.ai_Stacked_Color.png" 
-              alt="MatchPro" 
+              src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"} 
+              alt={settings?.name || "MatchPro"} 
               className="h-8 mr-2"
             />
             <motion.h2 
