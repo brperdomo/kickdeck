@@ -147,6 +147,7 @@ function Router() {
               {React.createElement(lazy(() => import('./pages/my-account')))}
             </Suspense>
           </Route>
+          <Route path="/dashboard/registrations" component={lazy(() => import('./pages/registrations'))} />
           <Route path="/chat" component={ChatPage} />
           <Route path="/register/event/:eventId">
             {(params) => <EventRegistration eventIdOverride={params.eventId} />}

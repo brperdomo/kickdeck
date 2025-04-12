@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { LogOut, User, Home, ChevronDown, Calendar, FileText, Settings, Menu, X } from "lucide-react";
+import { LogOut, User, Home, ChevronDown, Calendar, CreditCard, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
@@ -41,16 +41,6 @@ export function MemberSidebar() {
       href: "/dashboard/registrations",
       icon: <Calendar className="h-5 w-5" />,
       label: "My Registrations",
-    },
-    {
-      href: "/dashboard/forms",
-      icon: <FileText className="h-5 w-5" />,
-      label: "Forms",
-    },
-    {
-      href: "/dashboard/settings",
-      icon: <Settings className="h-5 w-5" />,
-      label: "Settings",
     },
   ];
 
