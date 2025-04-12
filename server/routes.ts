@@ -1919,10 +1919,12 @@ export function registerRoutes(app: Express): Server {
       }
 
       try {
-        const householdId = req.user.householdId;
-
+        // Check if user has a household
+        let householdId = req.user.householdId;
+        
         if (!householdId) {
-          return res.status(400).send("You must be part of a household to view invitations");
+          // Return empty array instead of error if user doesn't have a household yet
+          return res.json([]);
         }
 
         const invitations = await db
@@ -3113,6 +3115,102 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         console.error('Error updating password:', error);
         // Added basic error logging for white screen debugging.
         console.error("Error details:", error);
+        res.status(500).send("Failed to update password");
+      }
+    });
+
+    // User account management endpoints
+    app.put('/api/user/account', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const userId = req.user.id;
+        const { firstName, lastName, phone } = req.body;
+
+        // Validate input
+        if (!firstName || !lastName) {
+          return res.status(400).send("First name and last name are required");
+        }
+
+        // Update user data
+        await db
+          .update(users)
+          .set({
+            firstName,
+            lastName,
+            phone: phone || null,
+            // Explicitly cast to partial user to help TypeScript
+          } as Partial<typeof users.$inferInsert>)
+          .where(eq(users.id, userId));
+
+        // Get updated user
+        const [updatedUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, userId))
+          .limit(1);
+
+        // Remove sensitive data before returning
+        const { password, ...userData } = updatedUser;
+        
+        res.json({
+          message: "Account updated successfully",
+          user: userData
+        });
+      } catch (error) {
+        console.error('Error updating account:', error);
+        res.status(500).send("Failed to update account information");
+      }
+    });
+
+    // Password update endpoint
+    app.put('/api/user/password', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const userId = req.user.id;
+        const { currentPassword, newPassword } = req.body;
+
+        // Validate input
+        if (!currentPassword || !newPassword) {
+          return res.status(400).send("Current password and new password are required");
+        }
+
+        // Get user with current password
+        const [user] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, userId))
+          .limit(1);
+
+        if (!user) {
+          return res.status(404).send("User not found");
+        }
+
+        // Verify current password
+        const isMatch = await crypto.compare(currentPassword, user.password);
+        if (!isMatch) {
+          return res.status(400).send("Current password is incorrect");
+        }
+
+        // Hash new password
+        const hashedPassword = await crypto.hash(newPassword);
+
+        // Update password
+        await db
+          .update(users)
+          .set({
+            password: hashedPassword,
+          } as Partial<typeof users.$inferInsert>)
+          .where(eq(users.id, userId));
+
+        res.json({ message: "Password updated successfully" });
+      } catch (error) {
+        console.error('Error updating password:', error);
         res.status(500).send("Failed to update password");
       }
     });

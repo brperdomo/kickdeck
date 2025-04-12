@@ -82,7 +82,7 @@ export default function MyAccount() {
     setIsUpdating(true);
 
     try {
-      const response = await fetch('/api/user/profile', {
+      const response = await fetch('/api/user/account', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
