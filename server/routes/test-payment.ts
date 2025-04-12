@@ -71,6 +71,11 @@ export async function simulatePaymentWebhook(req: Request, res: Response) {
       .set({
         status: 'paid',
         registrationFee: 2500, // $25.00 in cents
+        paymentIntentId: paymentIntentId, // Store the payment intent ID
+        cardBrand: 'visa', // Mock card brand (typically visa for test cards)
+        cardLastFour: '4242', // Mock last 4 digits for test card 4242424242424242
+        paymentMethodType: 'card', // Set payment method type
+        paymentDate: new Date(), // Record payment date
         notes: `Test payment completed. Payment ID: ${paymentIntentId}`,
         termsAcknowledged: true,
         termsAcknowledgedAt: new Date()

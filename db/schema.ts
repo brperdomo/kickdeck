@@ -250,7 +250,14 @@ export const teams = pgTable("teams", {
   refundDate: text("refund_date"),  // Date when refund was processed
   notes: text("notes"), // General notes field for admin comments
   // Club/Organization name
-  clubName: text("club_name")
+  clubName: text("club_name"),
+  // Payment method and card details
+  cardLastFour: text("card_last_four"), // Last 4 digits of credit card
+  cardBrand: text("card_brand"), // Visa, Mastercard, etc.
+  paymentMethodType: text("payment_method_type"), // card, bank_transfer, etc.
+  paymentErrorCode: text("payment_error_code"), // Error code if payment failed
+  paymentErrorMessage: text("payment_error_message"), // Error message if payment failed
+  paymentDate: timestamp("payment_date") // When payment was processed
 });
 
 export const games = pgTable("games", {

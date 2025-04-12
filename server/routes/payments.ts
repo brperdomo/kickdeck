@@ -275,6 +275,25 @@ export async function handleStripeWebhook(req: Request, res: Response) {
       // If payment has team ID in metadata, update team record
       if (paymentIntent.metadata && paymentIntent.metadata.teamId) {
         try {
+          // Get payment method details if available
+          let cardBrand = null;
+          let cardLastFour = null;
+          let paymentMethodType = null;
+          
+          // Check if we have payment method details
+          if (paymentIntent.charges && paymentIntent.charges.data && paymentIntent.charges.data.length > 0) {
+            const charge = paymentIntent.charges.data[0];
+            if (charge.payment_method_details) {
+              paymentMethodType = charge.payment_method_details.type || null;
+              
+              // If it's a card payment, get card details
+              if (charge.payment_method_details.card) {
+                cardBrand = charge.payment_method_details.card.brand || null;
+                cardLastFour = charge.payment_method_details.card.last4 || null;
+              }
+            }
+          }
+          
           // Update team's payment status using existing fields
           await db
             .update(teams)
@@ -282,13 +301,17 @@ export async function handleStripeWebhook(req: Request, res: Response) {
               status: 'paid', // Use the status field for payment status
               totalAmount: paymentIntent.amount, // Store the total amount paid
               paymentIntentId: paymentIntent.id, // Store the payment intent ID for refunds
+              cardBrand: cardBrand, // Store the card brand
+              cardLastFour: cardLastFour, // Store the last 4 digits of the card
+              paymentMethodType: paymentMethodType, // Store the payment method type
+              paymentDate: new Date(), // Record payment date
               notes: `Payment completed via webhook. Payment ID: ${paymentIntent.id}`, // Store payment ID in notes
               termsAcknowledgedAt: new Date(), // Record payment confirmation timestamp
               termsAcknowledged: true // Mark as acknowledged
             })
             .where(eq(teams.id, parseInt(paymentIntent.metadata.teamId)));
             
-          log(`Updated team ${paymentIntent.metadata.teamId} payment status to paid from webhook`, 'payment');
+          log(`Updated team ${paymentIntent.metadata.teamId} payment status to paid from webhook with card details ${cardBrand} ${cardLastFour}`, 'payment');
         } catch (dbError) {
           log(`Error updating team payment status from webhook: ${dbError}`, 'payment');
         }
@@ -298,7 +321,37 @@ export async function handleStripeWebhook(req: Request, res: Response) {
     case 'payment_intent.payment_failed':
       const failedPaymentIntent = event.data.object as Stripe.PaymentIntent;
       log(`Payment failed: ${failedPaymentIntent.id}`, 'stripe-webhook');
-      // Optional: Update team status to payment_failed
+      
+      // If there's a teamId in the metadata, update the team with failure details
+      if (failedPaymentIntent.metadata && failedPaymentIntent.metadata.teamId) {
+        try {
+          // Get error details if available
+          let errorCode = null;
+          let errorMessage = null;
+          
+          // Check for the last_payment_error which contains details about the failure
+          if (failedPaymentIntent.last_payment_error) {
+            errorCode = failedPaymentIntent.last_payment_error.code || null;
+            errorMessage = failedPaymentIntent.last_payment_error.message || 'Payment failed';
+          }
+          
+          // Update team to indicate payment failure and capture error details
+          await db
+            .update(teams)
+            .set({
+              status: 'payment_failed', // Set status to payment_failed
+              paymentIntentId: failedPaymentIntent.id, // Store the failed payment intent ID
+              paymentErrorCode: errorCode, // Store the error code
+              paymentErrorMessage: errorMessage, // Store the error message
+              notes: `Payment failed. Payment ID: ${failedPaymentIntent.id}. Error: ${errorMessage}`, // Store details in notes
+            })
+            .where(eq(teams.id, parseInt(failedPaymentIntent.metadata.teamId)));
+            
+          log(`Updated team ${failedPaymentIntent.metadata.teamId} payment status to failed`, 'payment');
+        } catch (dbError) {
+          log(`Error updating team payment failure status: ${dbError}`, 'payment');
+        }
+      }
       break;
       
     // Add more event handlers as needed
