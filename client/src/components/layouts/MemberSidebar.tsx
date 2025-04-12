@@ -143,18 +143,17 @@ export function MemberSidebar() {
           <div className="space-y-1">
             {navLinks.map((link) => (
               <div key={link.href}>
-                <Link href={link.href}>
-                  <a
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
-                      location === link.href
-                        ? "bg-primary/10 text-primary font-medium"
-                        : "text-muted-foreground hover:bg-muted"
-                    )}
-                  >
-                    {link.icon}
-                    <span>{link.label}</span>
-                  </a>
+                <Link 
+                  href={link.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+                    location === link.href
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-muted-foreground hover:bg-muted"
+                  )}
+                >
+                  {link.icon}
+                  <span>{link.label}</span>
                 </Link>
               </div>
             ))}
