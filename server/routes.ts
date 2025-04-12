@@ -47,6 +47,7 @@ import {
   updateEventAdministrator,
   removeEventAdministrator
 } from "./routes/admin/event-administrators";
+import userRouter from "./routes/user";
 import { sql, eq, and, or, inArray, notInArray } from "drizzle-orm";
 import {
   users,

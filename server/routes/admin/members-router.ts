@@ -21,4 +21,7 @@ membersRouter.get('/:id', getMemberById);
 // Resend payment confirmation email
 membersRouter.post('/registrations/:teamId/resend-payment-confirmation', resendPaymentConfirmation);
 
+// Get current user's registrations
+membersRouter.get('/me/registrations', getCurrentUserRegistrations);
+
 export default membersRouter;
