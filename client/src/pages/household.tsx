@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { useUser } from "@/hooks/use-user";
 import { useHouseholdInvitations } from "@/hooks/use-household-invitations";
+import { useHouseholdDetails } from "@/hooks/use-household-details";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
@@ -23,8 +28,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Send, Clock } from "lucide-react";
+import { Users, Send, Clock, HomeIcon, MapPin, Loader2, Save } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
+import { UserBanner } from "@/components/user/UserBanner";
 
 export default function HouseholdPage() {
   const { user } = useUser();

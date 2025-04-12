@@ -1602,6 +1602,188 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // API endpoint to update user account information
+    app.put('/api/user/account', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const { firstName, lastName, phone } = req.body;
+        const userId = req.user.id;
+
+        // Validate required fields
+        if (!firstName || !lastName) {
+          return res.status(400).send("First name and last name are required");
+        }
+
+        // Update user
+        await db
+          .update(users)
+          .set({
+            firstName,
+            lastName,
+            phone: phone || null,
+            updatedAt: new Date().toISOString()
+          })
+          .where(eq(users.id, userId));
+
+        // Get updated user
+        const [updatedUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, userId))
+          .limit(1);
+
+        res.json({
+          message: "Account updated successfully",
+          user: {
+            id: updatedUser.id,
+            email: updatedUser.email,
+            firstName: updatedUser.firstName,
+            lastName: updatedUser.lastName,
+            phone: updatedUser.phone,
+            isAdmin: updatedUser.isAdmin,
+            isParent: updatedUser.isParent,
+            householdId: updatedUser.householdId
+          }
+        });
+      } catch (error) {
+        console.error('Error updating user account:', error);
+        res.status(500).send("Failed to update account information");
+      }
+    });
+
+    // API endpoint to update user password
+    app.put('/api/user/password', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user.id;
+
+        // Validate required fields
+        if (!currentPassword || !newPassword) {
+          return res.status(400).send("Current password and new password are required");
+        }
+
+        // Validate password length
+        if (newPassword.length < 8) {
+          return res.status(400).send("Password must be at least 8 characters long");
+        }
+
+        // Get user with password
+        const [user] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, userId))
+          .limit(1);
+
+        // Check current password
+        const isCurrentPasswordValid = await crypto.verify(currentPassword, user.password);
+        if (!isCurrentPasswordValid) {
+          return res.status(400).send("Current password is incorrect");
+        }
+
+        // Hash new password
+        const hashedPassword = await crypto.hash(newPassword);
+
+        // Update password
+        await db
+          .update(users)
+          .set({
+            password: hashedPassword,
+            updatedAt: new Date().toISOString()
+          })
+          .where(eq(users.id, userId));
+
+        res.json({ message: "Password updated successfully" });
+      } catch (error) {
+        console.error('Error updating user password:', error);
+        res.status(500).send("Failed to update password");
+      }
+    });
+
+    // API endpoint to update household information
+    app.put('/api/household', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const { address, city, state, zipCode } = req.body;
+        const householdId = req.user.householdId;
+
+        if (!householdId) {
+          return res.status(400).send("You must be part of a household to update it");
+        }
+
+        // Validate required fields
+        if (!address || !city || !state || !zipCode) {
+          return res.status(400).send("Address, city, state, and ZIP code are required");
+        }
+
+        // Update household
+        await db
+          .update(households)
+          .set({
+            address,
+            city,
+            state,
+            zipCode
+          })
+          .where(eq(households.id, householdId));
+
+        // Get updated household
+        const [updatedHousehold] = await db
+          .select()
+          .from(households)
+          .where(eq(households.id, householdId))
+          .limit(1);
+
+        res.json({
+          message: "Household information updated successfully",
+          household: updatedHousehold
+        });
+      } catch (error) {
+        console.error('Error updating household:', error);
+        res.status(500).send("Failed to update household information");
+      }
+    });
+
+    // API endpoint to get household details
+    app.get('/api/household/details', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+
+      try {
+        const householdId = req.user.householdId;
+
+        if (!householdId) {
+          return res.status(400).send("You must be part of a household to view details");
+        }
+
+        // Get household details
+        const [household] = await db
+          .select()
+          .from(households)
+          .where(eq(households.id, householdId))
+          .limit(1);
+
+        if (!household) {
+          return res.status(404).send("Household not found");
+        }
+
+        res.json(household);
+      } catch (error) {
+        console.error('Error fetching household details:', error);
+        res.status(500).send("Failed to fetch household details");
+      }
+    });
+
     // Email availability check endpoint
     app.get('/api/check-email', async (req, res) => {
       try {
