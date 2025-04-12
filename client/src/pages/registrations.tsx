@@ -383,7 +383,7 @@ function RegistrationsList({ registrations }: { registrations: Registration[] })
             
             <AccordionContent className="px-4 pb-4">
               <div className="bg-muted/30 p-4 rounded-lg space-y-6">
-                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                   <div>
                     <h4 className="text-sm font-semibold mb-1">Registration Details</h4>
                     <p className="text-sm text-muted-foreground">

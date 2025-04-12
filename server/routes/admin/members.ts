@@ -364,18 +364,60 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
     // and just return 0 for now. This can be fixed in a future update.
     const playerCount = { count: 0 };
     
-    // Transform team registrations to match the frontend's expected format
-    const formattedRegistrations = teamRegistrations.map(reg => ({
-      id: reg.team.id,
-      teamName: reg.team.name,
-      eventName: reg.event?.name || 'Unknown Event',
-      eventId: reg.event?.id.toString() || '',
-      ageGroup: reg.ageGroup?.ageGroup || 'Unknown Age Group',
-      registeredAt: reg.team.createdAt,
-      status: reg.team.status || 'registered',
-      amount: reg.team.registrationFee || 0,
-      // Check if there's a payment ID in the database, otherwise we'll leave it undefined
-      paymentId: undefined
+    // Enhanced version of formattedRegistrations with payment details
+    const formattedRegistrations = await Promise.all(teamRegistrations.map(async reg => {
+      // Default registration object
+      const registration = {
+        id: reg.team.id,
+        teamName: reg.team.name,
+        eventName: reg.event?.name || 'Unknown Event',
+        eventId: reg.event?.id.toString() || '',
+        ageGroup: reg.ageGroup?.ageGroup || 'Unknown Age Group',
+        registeredAt: reg.team.createdAt,
+        status: reg.team.status || 'registered',
+        amount: reg.team.registrationFee || 0,
+        paymentId: reg.team.paymentIntentId || undefined,
+        
+        // Additional payment details
+        paymentDate: reg.team.paidAt || undefined,
+        cardLastFour: reg.team.cardLastFour || undefined,
+        paymentStatus: reg.team.paymentStatus || undefined,
+        errorCode: reg.team.paymentErrorCode || undefined,
+        errorMessage: reg.team.paymentErrorMessage || undefined
+      };
+
+      // Try to extract submitter information
+      try {
+        if (reg.team.coach) {
+          let coachData = {};
+          try {
+            coachData = JSON.parse(reg.team.coach);
+          } catch (e) {
+            console.log('Could not parse coach data');
+          }
+          
+          if (coachData && typeof coachData === 'object') {
+            registration.submitter = {
+              name: coachData.headCoachName || 'Unknown',
+              email: coachData.headCoachEmail || reg.team.managerEmail || reg.team.submitterEmail || 'Unknown'
+            };
+          }
+        } else if (reg.team.managerEmail) {
+          registration.submitter = {
+            name: reg.team.managerName || 'Team Manager',
+            email: reg.team.managerEmail
+          };
+        } else if (reg.team.submitterEmail) {
+          registration.submitter = {
+            name: reg.team.submitterName || 'Submitter',
+            email: reg.team.submitterEmail
+          };
+        }
+      } catch (e) {
+        console.log('Error extracting submitter info', e);
+      }
+
+      return registration;
     }));
     
     res.json({

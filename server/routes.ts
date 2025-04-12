@@ -2873,6 +2873,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     
     // CSV upload helper for team registrations
     app.use('/api/upload', csvUploadRouter);
+    
+    // User routes
+    app.use('/api/user', userRouter);
 
     // Add bulk action endpoint after the upload router registration
     app.post('/api/files/bulk', isAdmin, async (req, res) => {
