@@ -2164,6 +2164,7 @@ function TeamsView() {
   const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
   const [isRefundDialogOpen, setIsRefundDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
   const [refundReason, setRefundReason] = useState("");
   const [isPlayerDialogOpen, setIsPlayerDialogOpen] = useState(false);
@@ -2486,6 +2487,12 @@ function TeamsView() {
   const handleRefundRequest = (team: any) => {
     setSelectedTeam(team);
     setIsRefundDialogOpen(true);
+  };
+  
+  // Handle opening the edit team modal
+  const handleEditTeam = () => {
+    // The selectedTeam is already set from handleViewTeamDetails
+    setIsEditModalOpen(true);
   };
 
   // Confirm team status update
@@ -3575,6 +3582,13 @@ function TeamsView() {
                     Process Refund
                   </Button>
                 )}
+                <Button 
+                  variant="outline" 
+                  onClick={handleEditTeam}
+                >
+                  <Edit className="h-4 w-4 mr-1" />
+                  Edit Team
+                </Button>
                 <Button variant="outline" onClick={() => setIsDetailsDialogOpen(false)}>
                   Close
                 </Button>
@@ -3583,6 +3597,21 @@ function TeamsView() {
           )}
         </DialogContent>
       </Dialog>
+      
+      {/* Team Edit Modal */}
+      {selectedTeam && (
+        <TeamModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            // Refresh the team data after edit
+            if (selectedTeam?.id) {
+              teamsQuery.refetch();
+            }
+          }}
+          team={selectedTeam}
+        />
+      )}
 
       {/* Add/Edit Player Dialog */}
       <Dialog open={isPlayerDialogOpen} onOpenChange={setIsPlayerDialogOpen}>
