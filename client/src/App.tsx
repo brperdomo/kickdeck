@@ -147,7 +147,13 @@ function Router() {
               {React.createElement(lazy(() => import('./pages/my-account')))}
             </Suspense>
           </Route>
-          <Route path="/dashboard/registrations" component={lazy(() => import('./pages/registrations'))} />
+          <Route path="/dashboard/registrations">
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>}>
+              {React.createElement(lazy(() => import('./pages/registrations')))}
+            </Suspense>
+          </Route>
           <Route path="/chat" component={ChatPage} />
           <Route path="/register/event/:eventId">
             {(params) => <EventRegistration eventIdOverride={params.eventId} />}
