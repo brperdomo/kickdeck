@@ -15,7 +15,6 @@ import CouponManagement from "@/pages/coupon-management";
 import AccountingCodeManagement from "@/pages/accounting-code-management";
 import UserDashboard from "@/pages/user-dashboard";
 import HouseholdPage from "@/pages/household";
-import AccountPage from "@/pages/account";
 import ChatPage from "@/pages/chat";
 import EditEvent from "@/pages/edit-event";
 import EventApplicationForm from "@/pages/event-application-form";
@@ -33,6 +32,8 @@ import FeeManagementPage from "@/pages/fee-management";
 import FormEditorPage from "@/pages/form-editor";
 import CouponManagerPage from "@/pages/coupon-manager";
 import { AuthProvider } from "@/hooks/use-auth";
+// Account page import
+import AccountPage from "./pages/account";
 import { LogoutHandler } from "@/components/LogoutHandler";
 
 // Import fully implemented components for preview mode
