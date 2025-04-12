@@ -192,25 +192,27 @@ export function MemberSidebar() {
       >
         {/* Logo Section */}
         <div className="p-4 border-b flex items-center justify-center">
-          <Link href="/dashboard">
-            <a className="flex items-center gap-2">
-              <img
-                src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"}
-                alt={settings?.name || "MatchPro"}
-                className="h-10"
-              />
-              {!collapsed && (
-                <motion.span
-                  className="font-semibold text-xl"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  Member
-                </motion.span>
-              )}
-            </a>
-          </Link>
+          <div>
+            <Link href="/dashboard">
+              <a className="flex items-center gap-2">
+                <img
+                  src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"}
+                  alt={settings?.name || "MatchPro"}
+                  className="h-10"
+                />
+                {!collapsed && (
+                  <motion.span
+                    className="font-semibold text-xl"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    Member
+                  </motion.span>
+                )}
+              </a>
+            </Link>
+          </div>
         </div>
 
         {/* Navigation Section */}
