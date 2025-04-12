@@ -15,6 +15,7 @@ import CouponManagement from "@/pages/coupon-management";
 import AccountingCodeManagement from "@/pages/accounting-code-management";
 import UserDashboard from "@/pages/user-dashboard";
 import HouseholdPage from "@/pages/household";
+import AccountPage from "@/pages/account";
 import ChatPage from "@/pages/chat";
 import EditEvent from "@/pages/edit-event";
 import EventApplicationForm from "@/pages/event-application-form";
@@ -136,6 +137,8 @@ function Router() {
 
           {/* User routes */}
           <Route path="/household" component={HouseholdPage} />
+          <Route path="/dashboard/my-household" component={HouseholdPage} />
+          <Route path="/dashboard/my-account" component={AccountPage} />
           <Route path="/chat" component={ChatPage} />
           <Route path="/register/event/:eventId">
             {(params) => <EventRegistration eventIdOverride={params.eventId} />}
