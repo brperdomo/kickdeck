@@ -10,6 +10,8 @@ import * as z from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import fs from 'fs';
+import { db } from '../../db';
+import { players } from '../../db/schema';
 
 // Set up multer for file uploads
 const storage = multer.memoryStorage();
@@ -179,34 +181,44 @@ router.post('/csv-admin', upload.single('file'), async (req: Request, res: Respo
       return res.status(400).json({ error: 'CSV file is empty or has invalid format' });
     }
 
-    // Transform records to player objects
-    const players = records.map((record, index) => ({
-      id: Math.floor(Math.random() * -1000000) - 1, // Temporary negative ID
-      teamId: parseInt(teamId),
-      firstName: record.firstName || record['First Name'] || '',
-      lastName: record.lastName || record['Last Name'] || '',
-      dateOfBirth: record.dateOfBirth || record['Date of Birth'] || '',
-      jerseyNumber: record.jerseyNumber || record['Jersey Number'] || '',
-      position: record.position || record['Position'] || '',
-      email: record.email || record['Email'] || '',
-      phone: record.phone || record['Phone'] || '',
-      address: record.address || record['Address'] || '',
-      city: record.city || record['City'] || '',
-      state: record.state || record['State'] || '',
-      zipCode: record.zipCode || record['Zip Code'] || '',
-      country: record.country || record['Country'] || '',
-      notes: record.notes || record['Notes'] || '',
-      active: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }));
+    // Transform records to player objects for database insert
+    const playersToInsert = records.map((record) => {
+      // Map CSV fields to database fields
+      return {
+        teamId: parseInt(teamId),
+        firstName: record.firstName || record['First Name'] || '',
+        lastName: record.lastName || record['Last Name'] || '',
+        dateOfBirth: record.dateOfBirth || record['Date of Birth'] || '',
+        jerseyNumber: record.jerseyNumber || record['Jersey Number'] 
+          ? parseInt(record.jerseyNumber || record['Jersey Number']) 
+          : null,
+        position: record.position || record['Position'] || '',
+        medicalNotes: record.notes || record['Notes'] || '',
+        emergencyContactName: record.emergencyContactName || record['Emergency Contact Name'] || 'Not Provided',
+        emergencyContactPhone: record.emergencyContactPhone || record['Emergency Contact Phone'] || 'Not Provided',
+        parentGuardianName: record.parentGuardianName || record['Parent/Guardian Name'] || '',
+        parentGuardianEmail: record.parentGuardianEmail || record['Parent/Guardian Email'] || '',
+        parentGuardianPhone: record.parentGuardianPhone || record['Parent/Guardian Phone'] || '',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+    });
 
-    // In a real implementation, we would save these to the database here
-    // For now, we'll just return the parsed players
+    // Delete any existing players for this team first to avoid duplicates
+    await db.delete(players).where(players.teamId.equals(parseInt(teamId)));
+    
+    console.log(`Deleted existing players for team ${teamId}`);
+    
+    // Insert the new players into the database
+    const insertedPlayers = await db.insert(players).values(playersToInsert).returning();
+    
+    console.log(`Inserted ${insertedPlayers.length} players for team ${teamId}`);
+
     return res.status(200).json({
       message: 'CSV file processed successfully',
-      players: players,
-      count: players.length,
+      players: insertedPlayers,
+      count: insertedPlayers.length,
     });
   } catch (error: any) {
     console.error('Error processing admin CSV upload:', error);
