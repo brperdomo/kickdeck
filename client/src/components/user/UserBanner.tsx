@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { ViewToggle } from "@/components/ViewToggle";
 import { useUser } from "@/hooks/use-user";
+import { motion } from "framer-motion";
 
 /**
  * UserBanner component displays a navigation bar at the top of user dashboard pages
@@ -52,35 +53,81 @@ export function UserBanner() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-green-600 to-green-800 dark:from-gray-900 dark:to-gray-950 text-white p-3 sticky top-0 z-10 shadow-lg backdrop-blur-sm">
+    <motion.div 
+      className="bg-card/50 backdrop-blur-sm p-4 border-b sticky top-0 z-10"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, type: "spring" }}
+    >
       <div className="container mx-auto flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            asChild 
-            className="text-white hover:bg-white/10 rounded-full transition-all duration-200 px-4"
+        <div className="flex items-center space-x-4">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Link href="/dashboard">
-              <Home className="mr-2 h-4 w-4" />
-              Dashboard
-            </Link>
-          </Button>
-          <Button 
-            variant="ghost" 
-            asChild 
-            className="text-white hover:bg-white/10 rounded-full transition-all duration-200 px-4"
+            <Button
+              variant="ghost"
+              size="icon"
+              title="Home"
+              asChild
+            >
+              <Link href="/">
+                <Home className="h-5 w-5" />
+              </Link>
+            </Button>
+          </motion.div>
+          
+          {/* Logo */}
+          <motion.div
+            className="flex items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
           >
-            <Link href="/household">
-              <User className="mr-2 h-4 w-4" />
-              My Household
-            </Link>
-          </Button>
+            <img 
+              src="/attached_assets/MatchPro.ai_Stacked_Color.png" 
+              alt="MatchPro" 
+              className="h-8 mr-2"
+            />
+            <motion.h2 
+              className="text-xl font-semibold hidden md:block"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              Member Dashboard
+            </motion.h2>
+          </motion.div>
+          
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center space-x-2">
+            <Button 
+              variant="ghost" 
+              asChild 
+              className="rounded-full transition-all duration-200 px-4"
+            >
+              <Link href="/dashboard">
+                <Home className="mr-2 h-4 w-4" />
+                Dashboard
+              </Link>
+            </Button>
+            <Button 
+              variant="ghost" 
+              asChild 
+              className="rounded-full transition-all duration-200 px-4"
+            >
+              <Link href="/household">
+                <User className="mr-2 h-4 w-4" />
+                My Household
+              </Link>
+            </Button>
+          </div>
         </div>
         
         <div className="flex items-center gap-2">
           {/* View Toggle Button - only shown for admin users who have both roles */}
           {user?.isAdmin && (
-            <ViewToggle currentView="member" />
+            <ViewToggle />
           )}
 
           <Button
@@ -105,6 +152,6 @@ export function UserBanner() {
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
