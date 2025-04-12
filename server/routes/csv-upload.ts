@@ -12,6 +12,7 @@ import path from 'path';
 import fs from 'fs';
 import { db } from '../../db';
 import { players } from '../../db/schema';
+import { eq } from 'drizzle-orm';
 
 // Set up multer for file uploads
 const storage = multer.memoryStorage();
@@ -202,14 +203,11 @@ router.post('/csv-admin', upload.single('file'), async (req: Request, res: Respo
       };
     });
 
-    // Delete any existing players for this team first to avoid duplicates
+    // We want to add to the existing roster, not replace it
     const teamIdInt = parseInt(teamId);
     
-    // Use Drizzle ORM delete method instead of raw SQL
-    await db.delete(players)
-      .where(eq(players.teamId, teamIdInt));
-    
-    console.log(`Deleted existing players for team ${teamId}`);
+    // Instead of deleting existing players, we'll keep them and add new ones
+    console.log(`Adding ${playersToInsert.length} new players to team ${teamId}`);
     
     // Insert the new players into the database
     const insertedPlayers = await db.insert(players).values(playersToInsert).returning();
