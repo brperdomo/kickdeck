@@ -1760,21 +1760,48 @@ export function registerRoutes(app: Express): Server {
       }
 
       try {
-        const householdId = req.user.householdId;
-
+        // Create or get household for the user
+        let householdId = req.user.householdId;
+        let household;
+        
         if (!householdId) {
-          return res.status(400).send("You must be part of a household to view details");
-        }
+          // If user doesn't have a household, create one
+          const [newHousehold] = await db
+            .insert(households)
+            .values({
+              lastName: req.user.lastName,
+              address: "", // Default empty values
+              city: "",
+              state: "",
+              zipCode: "",
+              primaryEmail: req.user.email,
+              createdAt: new Date().toISOString(),
+            })
+            .returning();
+            
+          // Update user with new household ID
+          await db
+            .update(users)
+            .set({ householdId: newHousehold.id })
+            .where(eq(users.id, req.user.id));
+            
+          household = newHousehold;
+          
+          // Update the session user object
+          if (req.user) {
+            req.user.householdId = newHousehold.id;
+          }
+        } else {
+          // Get existing household details
+          [household] = await db
+            .select()
+            .from(households)
+            .where(eq(households.id, householdId))
+            .limit(1);
 
-        // Get household details
-        const [household] = await db
-          .select()
-          .from(households)
-          .where(eq(households.id, householdId))
-          .limit(1);
-
-        if (!household) {
-          return res.status(404).send("Household not found");
+          if (!household) {
+            return res.status(404).send("Household not found");
+          }
         }
 
         res.json(household);
