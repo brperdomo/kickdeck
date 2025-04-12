@@ -1810,6 +1810,44 @@ export function registerRoutes(app: Express): Server {
         res.status(500).send("Failed to fetch household details");
       }
     });
+    
+    // Endpoint to update household information
+    app.put('/api/household', async (req, res) => {
+      if (!req.isAuthenticated()) {
+        return res.status(401).send("Not authenticated");
+      }
+      
+      try {
+        const householdId = req.user.householdId;
+        
+        if (!householdId) {
+          return res.status(400).send("User does not have a household");
+        }
+        
+        const { address, city, state, zipCode } = req.body;
+        
+        // Update household details
+        const [updatedHousehold] = await db
+          .update(households)
+          .set({
+            address,
+            city,
+            state,
+            zipCode,
+          })
+          .where(eq(households.id, householdId))
+          .returning();
+        
+        if (!updatedHousehold) {
+          return res.status(404).send("Household not found");
+        }
+        
+        res.json(updatedHousehold);
+      } catch (error) {
+        console.error('Error updating household:', error);
+        res.status(500).send("Failed to update household information");
+      }
+    });
 
     // Email availability check endpoint
     app.get('/api/check-email', async (req, res) => {
