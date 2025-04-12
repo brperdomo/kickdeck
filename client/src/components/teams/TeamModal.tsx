@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Define a proper schema to handle coach data structure
 const teamSchema = z.object({
@@ -23,6 +24,7 @@ const teamSchema = z.object({
   managerName: z.string().optional(),
   managerPhone: z.string().optional(),
   managerEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
+  ageGroupId: z.string().optional(),
 });
 
 type TeamFormValues = z.infer<typeof teamSchema>;
@@ -46,12 +48,33 @@ interface TeamModalProps {
       assistantCoachPhone?: string;
     };
     clubName?: string;
+    eventId?: string;
+    ageGroupId?: number;
+    ageGroup?: string;
   };
 }
 
 export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Fetch age groups for this event if we have an eventId
+  const ageGroupsQuery = useQuery({
+    queryKey: ['/api/admin/events/age-groups', team?.eventId],
+    queryFn: async () => {
+      if (!team?.eventId) return [];
+      
+      console.log(`Fetched age groups for event: ${team.eventId}`);
+      const response = await fetch(`/api/admin/events/${team.eventId}/age-groups`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch age groups');
+      }
+      
+      return response.json();
+    },
+    enabled: !!team?.eventId,
+  });
   
   // Parse coach data if it's a string
   const parseCoachData = () => {
@@ -70,6 +93,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
   
   const coachData = team?.coachData || parseCoachData();
   
+  // Initialize the form with the team schema and default values
   const form = useForm<TeamFormValues>({
     resolver: zodResolver(teamSchema),
     defaultValues: {
@@ -84,6 +108,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
       assistantCoachEmail: coachData.assistantCoachEmail || "",
       assistantCoachPhone: coachData.assistantCoachPhone || "",
       clubName: team?.clubName || "",
+      ageGroupId: team?.ageGroupId ? String(team.ageGroupId) : "",
     },
   });
 
@@ -103,6 +128,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
         assistantCoachEmail: coachData.assistantCoachEmail || "",
         assistantCoachPhone: coachData.assistantCoachPhone || "",
         clubName: team.clubName || "",
+        ageGroupId: team.ageGroupId ? String(team.ageGroupId) : "",
       });
     }
   }, [team, form]);
@@ -130,6 +156,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
         managerPhone: data.managerPhone,
         managerEmail: data.managerEmail,
         clubName: data.clubName,
+        ageGroupId: data.ageGroupId ? parseInt(data.ageGroupId) : undefined,
       };
       
       console.log("Sending PATCH request to /api/admin/teams/" + team?.id, payload);
@@ -355,6 +382,49 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="ageGroupId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Age Group</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={ageGroupsQuery.isLoading || !team?.eventId}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select age group" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {ageGroupsQuery.isLoading ? (
+                            <SelectItem value="loading" disabled>
+                              Loading age groups...
+                            </SelectItem>
+                          ) : ageGroupsQuery.isError ? (
+                            <SelectItem value="error" disabled>
+                              Error loading age groups
+                            </SelectItem>
+                          ) : ageGroupsQuery.data?.length === 0 ? (
+                            <SelectItem value="none" disabled>
+                              No age groups available
+                            </SelectItem>
+                          ) : (
+                            ageGroupsQuery.data?.map((ageGroup: any) => (
+                              <SelectItem key={ageGroup.id} value={String(ageGroup.id)}>
+                                {ageGroup.ageGroup}
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
