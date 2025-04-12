@@ -43,7 +43,7 @@ export default function UserDashboard() {
         <div className="w-64 bg-white shadow-lg">
           <div className="flex flex-col h-full">
             <div className="p-4 border-b">
-              <h2 className="text-xl font-bold text-green-600">MatchPro</h2>
+              {/* Logo space - removed text */}
             </div>
 
             {/* Navigation Links */}
