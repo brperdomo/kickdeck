@@ -58,7 +58,6 @@ import {
   UserRound,
   Palette,
   ChevronRight,
-  Loader2,
   CreditCard,
   Search,
   ClipboardList,
@@ -71,7 +70,6 @@ import {
   Users,
   ChevronDown,
   Edit,
-  Trash,
   Eye,
   UserCircle,
   Percent,
@@ -84,14 +82,16 @@ import {
   Moon,
   Sun,
   Trash2,
-  FileUp,
   WandSparkles,
   Sparkles,
   Wand2,
   CalendarIcon,
   Map,
+  Download,
+  FileUp,
   FileText,
-  Download
+  Trash,
+  Loader2
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
