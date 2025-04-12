@@ -1,9 +1,10 @@
-import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from "react";
+import { useState, useMemo, useEffect, lazy, Suspense, useCallback, useRef } from "react";
 import { useLocation, Link } from "wouter";
 import { motion } from "framer-motion";
 import { 
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
-  Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft
+  Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
+  Upload, AlertCircle
 } from "lucide-react";
 import { ComplexCard } from "@/components/admin/ComplexCard";
 import { formatAddress } from "@/lib/format-address";
@@ -52,7 +53,6 @@ import {
   UserPlus,
   Home,
   LogOut,
-  FileText,
   AlertTriangle,
   User,
   UserRound,
@@ -73,7 +73,6 @@ import {
   Edit,
   Trash,
   Eye,
-  Download,
   UserCircle,
   Percent,
   Printer,
@@ -90,7 +89,9 @@ import {
   Sparkles,
   Wand2,
   CalendarIcon,
-  Map
+  Map,
+  FileText,
+  Download
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
