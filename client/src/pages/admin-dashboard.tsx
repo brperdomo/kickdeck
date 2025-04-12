@@ -11,7 +11,6 @@ import { formatAddress } from "@/lib/format-address";
 import { EventsTable } from "@/components/events/EventsTable";
 import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
 import EmulationManager from "@/components/admin/EmulationManager";
-import { FloatingEmulationButton } from "@/components/admin/FloatingEmulationButton";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -4656,9 +4655,7 @@ function AdminDashboard() {
             </Button>
           </div>
           
-          {/* Floating exit emulation button */}
-          <FloatingEmulationButton />
-          
+
           {/* Emulation Manager Dialog */}
           <Dialog open={showEmulationModal} onOpenChange={setShowEmulationModal}>
             <DialogContent className="max-w-4xl">
