@@ -28,6 +28,9 @@ import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import MainLayout from "@/components/layouts/MainLayout";
 import { FeeManagement } from "@/components/events/FeeManagement";
+import FeeManagementPage from "@/pages/fee-management";
+import FormEditorPage from "@/pages/form-editor";
+import CouponManagerPage from "@/pages/coupon-manager";
 import { AuthProvider } from "@/hooks/use-auth";
 import { LogoutHandler } from "@/components/LogoutHandler";
 import { FloatingEmulationButton } from "@/components/admin/FloatingEmulationButton";
@@ -83,13 +86,13 @@ function Router() {
             {user.isAdmin ? <EditEvent /> : <NotFound />}
           </Route>
           <Route path="/admin/events/:id/application-form">
-            {user.isAdmin ? <EventApplicationForm /> : <NotFound />}
+            {(params) => user.isAdmin ? <FormEditorPage /> : <NotFound />}
           </Route>
           <Route path="/admin/events/:id/fees">
-            {user.isAdmin ? <FeeManagement /> : <NotFound />}
+            {(params) => user.isAdmin ? <FeeManagementPage /> : <NotFound />}
           </Route>
           <Route path="/admin/events/:id/coupons">
-            {user.isAdmin ? <CouponManagement /> : <NotFound />}
+            {(params) => user.isAdmin ? <CouponManagerPage /> : <NotFound />}
           </Route>
           <Route path="/admin/events/:id/preview-registration">
             {user.isAdmin ? <RegistrationPreview /> : <NotFound />}
