@@ -114,10 +114,7 @@ router.post('/players', upload.single('file'), async (req: Request, res: Respons
     mappedRecords.forEach((record, index) => {
       const result = playerSchema.safeParse(record);
       if (result.success) {
-        validPlayers.push({ 
-          ...result.data,
-          id: record.id // Keep the UUID we generated
-        });
+        validPlayers.push(result.data);
       } else {
         invalidRecords.push({
           index,
@@ -207,10 +204,10 @@ router.post('/csv-admin', upload.single('file'), async (req: Request, res: Respo
 
     // Delete any existing players for this team first to avoid duplicates
     const teamIdInt = parseInt(teamId);
-    await db.execute(
-      `DELETE FROM players WHERE team_id = $1`,
-      [teamIdInt]
-    );
+    
+    // Use Drizzle ORM delete method instead of raw SQL
+    await db.delete(players)
+      .where(eq(players.teamId, teamIdInt));
     
     console.log(`Deleted existing players for team ${teamId}`);
     

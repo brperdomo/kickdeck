@@ -4611,7 +4611,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     app.patch('/api/admin/teams/:id', isAdmin, async (req, res) => {
       try {
         const teamId = parseInt(req.params.id);
-        const { name, coach, managerName, managerPhone, managerEmail, clubName } = req.body;
+        const { name, coach, managerName, managerPhone, managerEmail, clubName, ageGroupId } = req.body;
 
         // Log the received data for debugging
         console.log('Updating team with data:', { 
@@ -4621,7 +4621,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           managerName, 
           managerPhone, 
           managerEmail,
-          clubName
+          clubName,
+          ageGroupId
         });
 
         // Log the SQL conversion for debugging
@@ -4631,7 +4632,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           manager_name: managerName,
           manager_phone: managerPhone,
           manager_email: managerEmail,
-          club_name: clubName
+          club_name: clubName,
+          age_group_id: ageGroupId
         });
 
         // Create an update object with only defined fields
@@ -4643,6 +4645,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         if (managerPhone !== undefined) updateObject.manager_phone = managerPhone;
         if (managerEmail !== undefined) updateObject.manager_email = managerEmail;
         if (clubName !== undefined) updateObject.club_name = clubName;
+        if (ageGroupId !== undefined) updateObject.age_group_id = parseInt(ageGroupId);
         
         console.log('Final SQL update object:', updateObject);
         
