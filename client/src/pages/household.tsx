@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Send, Clock, Home, HomeIcon, MapPin, Loader2, Save } from "lucide-react";
+import { Users, Send, Clock, Home, HomeIcon, MapPin, Loader2, Save, Mail } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { UserBanner } from "@/components/user/UserBanner";
