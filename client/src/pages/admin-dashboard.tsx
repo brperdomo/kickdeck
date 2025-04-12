@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { 
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
-  Upload, AlertCircle
+  Upload
 } from "lucide-react";
 import { ComplexCard } from "@/components/admin/ComplexCard";
 import { formatAddress } from "@/lib/format-address";
@@ -148,6 +148,179 @@ import { AdminBanner } from "@/components/admin/AdminBanner"; // Import the Admi
 import { Toggle } from '@/components/ui/toggle';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+// CSV Uploader Component
+function CsvUploader({ onUploadSuccess, teamId }: { onUploadSuccess: (players: any[]) => void, teamId: number }) {
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles && acceptedFiles.length > 0) {
+      const file = acceptedFiles[0];
+      if (file.type !== "text/csv" && !file.name.endsWith('.csv')) {
+        setError("Please upload a CSV file.");
+        return;
+      }
+      setFile(file);
+      setError(null);
+    }
+  }, []);
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    onDrop(files);
+  };
+
+  const handleBrowseClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      if (selectedFile.type !== "text/csv" && !selectedFile.name.endsWith('.csv')) {
+        setError("Please upload a CSV file.");
+        return;
+      }
+      setFile(selectedFile);
+      setError(null);
+    }
+  };
+
+  const uploadFile = async () => {
+    if (!file) {
+      setError("Please select a file to upload.");
+      return;
+    }
+
+    setIsUploading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('teamId', teamId.toString());
+
+      const response = await fetch('/api/upload/csv-admin', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to upload file');
+      }
+
+      const data = await response.json();
+      
+      onUploadSuccess(data.players);
+      setFile(null);
+      
+      toast({
+        title: "Upload Successful",
+        description: `Added ${data.players.length} players to the team.`,
+      });
+    } catch (error: any) {
+      setError(error.message || 'An error occurred during upload.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      {error && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
+      <div 
+        className="border-2 border-dashed rounded-md p-6 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+        onClick={handleBrowseClick}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept=".csv"
+          className="hidden"
+        />
+        <FileText className="w-12 h-12 mx-auto text-gray-400 mb-2" />
+        <p className="text-sm text-gray-600 mb-1">
+          Drag and drop your CSV file here, or <span className="text-[#2C5282] font-medium">browse</span>
+        </p>
+        <p className="text-xs text-gray-500">
+          CSV files only (.csv)
+        </p>
+      </div>
+      
+      {file && (
+        <div className="bg-gray-50 p-3 rounded-md flex items-center justify-between">
+          <div className="flex items-center">
+            <FileText className="w-4 h-4 mr-2 text-gray-500" />
+            <span className="text-sm font-medium truncate max-w-[200px]">
+              {file.name}
+            </span>
+          </div>
+          <Button 
+            type="button" 
+            variant="ghost" 
+            size="sm"
+            onClick={() => setFile(null)}
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
+      
+      <div className="flex justify-end gap-2">
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={() => {
+            setFile(null);
+            setError(null);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button 
+          type="button" 
+          disabled={!file || isUploading} 
+          onClick={uploadFile}
+        >
+          {isUploading ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Uploading...
+            </>
+          ) : (
+            <>
+              <Upload className="w-4 h-4 mr-2" />
+              Upload
+            </>
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 
 function EmulationStatus() {
