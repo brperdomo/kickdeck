@@ -31,7 +31,7 @@ import {
 import { Users, Send, Clock, Home, HomeIcon, MapPin, Loader2, Save, Mail } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { UserBanner } from "@/components/user/UserBanner";
+import { MemberLayout } from "@/components/layouts/MemberLayout";
 
 // Schema for the address form
 const addressSchema = z.object({
@@ -128,12 +128,13 @@ export default function HouseholdPage() {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ duration: 0.5 }}
-      className="flex-1 space-y-8 max-w-6xl mx-auto p-6"
-    >
+    <MemberLayout>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.5 }}
+        className="flex-1 space-y-8 max-w-6xl mx-auto p-6"
+      >
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center space-x-4">
           <div className="p-3 rounded-full bg-primary/10">
@@ -483,5 +484,6 @@ export default function HouseholdPage() {
         </motion.div>
       )}
     </motion.div>
+    </MemberLayout>
   );
 }
