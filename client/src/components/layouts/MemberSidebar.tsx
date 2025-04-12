@@ -142,19 +142,21 @@ export function MemberSidebar() {
         <nav className="flex-1 p-4 overflow-y-auto">
           <div className="space-y-1">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
-                    location === link.href
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:bg-muted"
-                  )}
-                >
-                  {link.icon}
-                  <span>{link.label}</span>
-                </a>
-              </Link>
+              <div key={link.href}>
+                <Link href={link.href}>
+                  <a
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+                      location === link.href
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    {link.icon}
+                    <span>{link.label}</span>
+                  </a>
+                </Link>
+              </div>
             ))}
           </div>
         </nav>
@@ -215,27 +217,29 @@ export function MemberSidebar() {
         <nav className="flex-1 py-6 px-3 overflow-y-auto">
           <motion.div className="space-y-1">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
-                    location === link.href
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:bg-muted"
-                  )}
-                >
-                  {link.icon}
-                  {!collapsed && (
-                    <motion.span
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      {link.label}
-                    </motion.span>
-                  )}
-                </a>
-              </Link>
+              <div key={link.href}>
+                <Link href={link.href}>
+                  <a
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+                      location === link.href
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    {link.icon}
+                    {!collapsed && (
+                      <motion.span
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                      >
+                        {link.label}
+                      </motion.span>
+                    )}
+                  </a>
+                </Link>
+              </div>
             ))}
           </motion.div>
         </nav>
