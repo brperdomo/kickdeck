@@ -4641,31 +4641,16 @@ function AdminDashboard() {
         }} />
       )}
       
-      {/* Emulation Buttons for Super Admins */}
+      {/* Emulation Dialog for Super Admins */}
       {user && user.isAdmin && hasPermission('emulate_users') && (
-        <>
-          {/* Button to access emulation manager */}
-          <div className="fixed bottom-6 left-6 z-50">
-            <Button 
-              onClick={() => setShowEmulationModal(true)}
-              size="lg"
-              className="shadow-lg bg-purple-600 hover:bg-purple-700 text-white"
-            >
-              Emulate User
-            </Button>
-          </div>
-          
-
-          {/* Emulation Manager Dialog */}
-          <Dialog open={showEmulationModal} onOpenChange={setShowEmulationModal}>
-            <DialogContent className="max-w-4xl">
-              <DialogHeader>
-                <DialogTitle>User Emulation</DialogTitle>
-              </DialogHeader>
-              <EmulationManager />
-            </DialogContent>
-          </Dialog>
-        </>
+        <Dialog open={showEmulationModal} onOpenChange={setShowEmulationModal}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>User Emulation</DialogTitle>
+            </DialogHeader>
+            <EmulationManager />
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
