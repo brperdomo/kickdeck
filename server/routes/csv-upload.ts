@@ -150,4 +150,71 @@ router.post('/players', upload.single('file'), async (req: Request, res: Respons
   }
 });
 
+// Route for admin CSV upload (for team player import)
+router.post('/csv-admin', upload.single('file'), async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const { teamId } = req.body;
+    
+    if (!teamId) {
+      return res.status(400).json({ error: 'Team ID is required' });
+    }
+
+    // Parse the CSV file
+    const records: any[] = [];
+    const parser = parse(req.file.buffer.toString('utf-8'), {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+    });
+
+    for await (const record of parser) {
+      records.push(record);
+    }
+
+    if (records.length === 0) {
+      return res.status(400).json({ error: 'CSV file is empty or has invalid format' });
+    }
+
+    // Transform records to player objects
+    const players = records.map((record, index) => ({
+      id: Math.floor(Math.random() * -1000000) - 1, // Temporary negative ID
+      teamId: parseInt(teamId),
+      firstName: record.firstName || record['First Name'] || '',
+      lastName: record.lastName || record['Last Name'] || '',
+      dateOfBirth: record.dateOfBirth || record['Date of Birth'] || '',
+      jerseyNumber: record.jerseyNumber || record['Jersey Number'] || '',
+      position: record.position || record['Position'] || '',
+      email: record.email || record['Email'] || '',
+      phone: record.phone || record['Phone'] || '',
+      address: record.address || record['Address'] || '',
+      city: record.city || record['City'] || '',
+      state: record.state || record['State'] || '',
+      zipCode: record.zipCode || record['Zip Code'] || '',
+      country: record.country || record['Country'] || '',
+      notes: record.notes || record['Notes'] || '',
+      active: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }));
+
+    // In a real implementation, we would save these to the database here
+    // For now, we'll just return the parsed players
+    return res.status(200).json({
+      message: 'CSV file processed successfully',
+      players: players,
+      count: players.length,
+    });
+  } catch (error: any) {
+    console.error('Error processing admin CSV upload:', error);
+    return res.status(500).json({
+      error: 'Failed to process CSV file',
+      details: error.message,
+    });
+  }
+});
+
 export default router;

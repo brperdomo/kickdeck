@@ -1,3 +1,3 @@
-First Name,Last Name,Date of Birth,Jersey Number,Position,Medical Notes,Parent/Guardian Name,Parent/Guardian Email,Parent/Guardian Phone,Emergency Contact Name,Emergency Contact Phone
-John,Doe,2010-01-15,10,Forward,None,Jane Doe,jane.doe@example.com,5551234567,Jane Doe,5551234567
-Jane,Smith,2010-02-20,7,Midfielder,Asthma,John Smith,john.smith@example.com,5559876543,John Smith,5559876543
+First Name,Last Name,Date of Birth,Jersey Number,Position,Email,Phone,Address,City,State,Zip Code,Country,Notes
+John,Doe,2005-01-15,10,Forward,john.doe@example.com,555-123-4567,123 Main St,Anytown,CA,12345,USA,Team captain
+Jane,Smith,2005-03-22,7,Midfielder,jane.smith@example.com,555-987-6543,456 Oak Ave,Somewhere,CA,12345,USA,Vice captain
