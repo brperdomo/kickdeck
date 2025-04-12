@@ -88,9 +88,9 @@ import {
   CalendarIcon,
   Map,
   Download,
+  Trash,
   FileUp,
   FileText,
-  Trash,
   Loader2
 } from "lucide-react";
 import { format } from "date-fns";
