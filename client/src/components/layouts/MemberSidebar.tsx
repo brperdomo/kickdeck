@@ -192,24 +192,25 @@ export function MemberSidebar() {
         {/* Logo Section */}
         <div className="p-4 border-b flex items-center justify-center">
           <div>
-            <Link href="/dashboard">
-              <a className="flex items-center gap-2">
-                <img
-                  src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"}
-                  alt={settings?.name || "MatchPro"}
-                  className="h-10"
-                />
-                {!collapsed && (
-                  <motion.span
-                    className="font-semibold text-xl"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    Member
-                  </motion.span>
-                )}
-              </a>
+            <Link 
+              href="/dashboard" 
+              className="flex items-center gap-2"
+            >
+              <img
+                src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"}
+                alt={settings?.name || "MatchPro"}
+                className="h-10"
+              />
+              {!collapsed && (
+                <motion.span
+                  className="font-semibold text-xl"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  Member
+                </motion.span>
+              )}
             </Link>
           </div>
         </div>
@@ -219,26 +220,25 @@ export function MemberSidebar() {
           <motion.div className="space-y-1">
             {navLinks.map((link) => (
               <div key={link.href}>
-                <Link href={link.href}>
-                  <a
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
-                      location === link.href
-                        ? "bg-primary/10 text-primary font-medium"
-                        : "text-muted-foreground hover:bg-muted"
-                    )}
-                  >
-                    {link.icon}
-                    {!collapsed && (
-                      <motion.span
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        {link.label}
-                      </motion.span>
-                    )}
-                  </a>
+                <Link 
+                  href={link.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+                    location === link.href
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-muted-foreground hover:bg-muted"
+                  )}
+                >
+                  {link.icon}
+                  {!collapsed && (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      {link.label}
+                    </motion.span>
+                  )}
                 </Link>
               </div>
             ))}
