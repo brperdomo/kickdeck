@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Loader2 } from "lucide-react";
+import React, { lazy, Suspense } from 'react';
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
 import Register from "@/pages/register";
@@ -139,7 +140,13 @@ function Router() {
           {/* User routes */}
           <Route path="/household" component={HouseholdPage} />
           <Route path="/dashboard/my-household" component={HouseholdPage} />
-          <Route path="/dashboard/my-account" component={AccountPage} />
+          <Route path="/dashboard/my-account">
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>}>
+              {React.createElement(lazy(() => import('./pages/my-account')))}
+            </Suspense>
+          </Route>
           <Route path="/chat" component={ChatPage} />
           <Route path="/register/event/:eventId">
             {(params) => <EventRegistration eventIdOverride={params.eventId} />}

@@ -116,7 +116,7 @@ export function UserBanner() {
               asChild 
               className="rounded-full transition-all duration-200 px-4"
             >
-              <Link href="/household">
+              <Link href="/dashboard/my-household">
                 <User className="mr-2 h-4 w-4" />
                 My Household
               </Link>
