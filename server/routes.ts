@@ -3979,7 +3979,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           }
           
           // Modify the query to only include events the user has access to
-          eventsQuery = eventsQuery.where(inArray(events.id, userEventIds));
+          eventsQuery = eventsQuery.where(
+            sql`${events.id} IN (${sql.join(userEventIds.map(id => sql`${id}`), sql`, `)})`
+          );
         }
         
         // Execute the query
