@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { db } from "@db";
-import { eventAdministrators } from "@db/schema";
+import { eventAdministrators, adminRoles, roles } from "@db/schema";
 import { eq, and } from "drizzle-orm";
 
 /**
@@ -26,14 +26,24 @@ export const hasEventAccess = async (req: Request, res: Response, next: NextFunc
       return res.status(400).send("Event ID is required");
     }
     
+    // Get the user's roles
+    const userId = req.user.id;
+    const userRoles = await db
+      .select({
+        roleName: roles.name
+      })
+      .from(adminRoles)
+      .innerJoin(roles, eq(adminRoles.roleId, roles.id))
+      .where(eq(adminRoles.userId, userId));
+    
+    const roleNames = userRoles.map(r => r.roleName);
+    
     // Super admins have access to all events
-    const isSuperAdmin = req.user.roles?.includes("super_admin");
-    if (isSuperAdmin) {
+    if (roleNames.includes("super_admin")) {
       return next();
     }
     
     // Check if user is an event administrator for this event
-    const userId = req.user.id;
     const eventAdmin = await db
       .select()
       .from(eventAdministrators)
@@ -51,8 +61,7 @@ export const hasEventAccess = async (req: Request, res: Response, next: NextFunc
     }
     
     // Check if user is a tournament admin (has general access to events)
-    const isTournamentAdmin = req.user.roles?.includes("tournament_admin");
-    if (isTournamentAdmin) {
+    if (roleNames.includes("tournament_admin")) {
       return next();
     }
     
