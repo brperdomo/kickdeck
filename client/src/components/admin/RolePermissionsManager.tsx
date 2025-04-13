@@ -250,7 +250,19 @@ const RolePermissionsManager = () => {
       if (!response.ok) {
         throw new Error('Failed to fetch roles');
       }
-      return response.json();
+      const data = await response.json();
+      console.log('Fetched roles data:', data);
+      
+      // Initialize selectedPermissions with the roles data
+      if (data && data.roles) {
+        const initialPermissions: {[key: number]: string[]} = {};
+        data.roles.forEach((role: Role) => {
+          initialPermissions[role.id] = [...role.permissions];
+        });
+        setSelectedPermissions(initialPermissions);
+      }
+      
+      return data;
     }
   });
   
@@ -386,6 +398,17 @@ const RolePermissionsManager = () => {
   });
   
   const handleRoleSelect = (roleId: number) => {
+    // Find the selected role's permissions in the rolesData
+    const selectedRole = rolesData?.roles?.find(r => r.id === roleId);
+    
+    if (selectedRole && selectedRole.permissions && !selectedPermissions[roleId]) {
+      console.log(`Setting initial permissions for role ${roleId}:`, selectedRole.permissions);
+      setSelectedPermissions(prev => ({
+        ...prev,
+        [roleId]: [...selectedRole.permissions]
+      }));
+    }
+    
     setActiveRole(roleId);
     setExpandedGroups([]); // Collapse all groups when switching roles
   };
