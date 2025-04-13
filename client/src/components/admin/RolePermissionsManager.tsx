@@ -268,10 +268,11 @@ const RolePermissionsManager = () => {
     },
     enabled: !!activeRole,
     onSuccess: (data) => {
-      if (data && !selectedPermissions[data.id]) {
+      console.log('Role detail fetched:', data);
+      if (data && data.id) {
         setSelectedPermissions((prev) => ({
           ...prev,
-          [data.id]: [...data.permissions]
+          [data.id]: [...(data.permissions || [])]
         }));
       }
     }
