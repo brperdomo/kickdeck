@@ -184,18 +184,19 @@ export function usePermissions() {
         // Convert from any format to our standard format
         let normalizedPerm = perm.toLowerCase();
         
-        // Convert from events.view to view_events
+        // Convert from events.view to view_events format (dot notation from server)
         if (normalizedPerm.includes('.')) {
           const [category, action] = normalizedPerm.split('.');
           normalizedPerm = `${action}_${category}`;
-        }
-        
-        // Convert from EVENTS_VIEW to view_events
-        if (normalizedPerm.includes('_')) {
+          console.log(`Normalized dot permission "${perm}" to "${normalizedPerm}"`);
+        } 
+        // Convert from EVENTS_VIEW to view_events format (uppercase constant format)
+        else if (normalizedPerm.includes('_')) {
           const parts = normalizedPerm.split('_');
           if (parts.length === 2) {
             const [category, action] = parts;
             normalizedPerm = `${action.toLowerCase()}_${category.toLowerCase()}`;
+            console.log(`Normalized underscore permission "${perm}" to "${normalizedPerm}"`);
           }
         }
         
@@ -204,6 +205,8 @@ export function usePermissions() {
           normalizedPermissions.push(normalizedPerm as Permission);
         }
       });
+      
+      console.log('Final normalized permissions:', normalizedPermissions);
       
       return {
         permissions: normalizedPermissions,
@@ -221,16 +224,25 @@ export function usePermissions() {
   const hasPermission = (permission: Permission): boolean => {
     // If permissions are still loading, be conservative and deny access
     if (isLoading || !userPermissions) {
+      console.log('Permission check failed - permissions still loading or null:', permission);
       return false;
     }
     
     // Super admins always have all permissions
     if (userPermissions.roles.includes('super_admin')) {
+      console.log('Permission granted (super_admin):', permission);
       return true;
     }
     
+    // Debug: Log permissions for debugging
+    console.log('Checking permission:', permission);
+    console.log('User roles:', userPermissions.roles);
+    console.log('User permissions:', userPermissions.permissions);
+    
     // Check if the user has the specified permission
-    return userPermissions.permissions.includes(permission);
+    const hasAccess = userPermissions.permissions.includes(permission);
+    console.log('Permission check result for', permission, ':', hasAccess);
+    return hasAccess;
   };
 
   /**
