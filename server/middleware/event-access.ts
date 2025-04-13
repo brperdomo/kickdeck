@@ -22,8 +22,24 @@ export const hasEventAccess = async (req: Request, res: Response, next: NextFunc
       return res.status(403).send("Not authorized");
     }
 
+    // Check if user is a super_admin by querying the roles table
+    const { db } = await import('@db');
+    const { rolePermissions } = await import('@db/schema');
+    const { eq, and } = await import('drizzle-orm');
+    
+    // Check if user has super_admin role
+    const userRoles = await db
+      .select()
+      .from(rolePermissions)
+      .where(
+        and(
+          eq(rolePermissions.userId, req.user.id),
+          eq(rolePermissions.role, 'super_admin')
+        )
+      );
+    
     // Super admins always have access to all events
-    if (req.user.roles && req.user.roles.includes('super_admin')) {
+    if (userRoles.length > 0) {
       return next();
     }
 
