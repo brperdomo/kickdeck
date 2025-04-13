@@ -337,8 +337,31 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
     
     console.log(`Fetching registrations for user: ${user.email}`);
     
+    // When in emulation mode or for regular users, we need to be more strict about which registrations to show
+    // Only show registrations that are directly associated with this specific user
+    const whereConditions = [
+      // Check if coach field contains this user's email exactly (not partial match)
+      sql`${teams.coach}::text LIKE ${'%"headCoachEmail":"' + user.email + '"%'}`,
+      // Check manager email for exact match
+      eq(teams.managerEmail, user.email),
+      // Check submitter email for exact match
+      eq(teams.submitterEmail, user.email)
+    ];
+    
+    // For the actual real user (not emulated), we can be more flexible and include teams by name match
+    if (!req.emulatedUserId && req.user?.id === userId) {
+      whereConditions.push(
+        // For users with matching name, also try to include their teams (only for non-emulated sessions)
+        sql`${teams.coach}::text LIKE ${'%' + user.firstName + '%' + user.lastName + '%'}`,
+        // Handle special cases (like Team Indigo) for migration purposes (only for non-emulated sessions)
+        and(
+          eq(teams.id, 32), // Team Indigo ID
+          eq(user.id, 71)   // This specific user ID
+        )
+      );
+    }
+    
     // Get all teams where the current user is listed as coach, manager, or submitter
-    // Use a broader search to catch more potential registrations
     const teamRegistrations = await db
       .select({
         team: teams,
@@ -348,23 +371,7 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
       .from(teams)
       .leftJoin(events, eq(teams.eventId, events.id))
       .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
-      .where(
-        or(
-          // Check if coach field contains this user's email
-          sql`${teams.coach}::text LIKE ${'%' + user.email + '%'}`,
-          // Check manager email
-          eq(teams.managerEmail, user.email),
-          // Check submitter email (this is new - includes teams submitted by this user)
-          eq(teams.submitterEmail, user.email),
-          // For users with matching name, also try to include their teams
-          sql`${teams.coach}::text LIKE ${'%' + user.firstName + '%' + user.lastName + '%'}`,
-          // Handle special cases (like Team Indigo) for migration purposes 
-          and(
-            eq(teams.id, 32), // Team Indigo ID
-            eq(user.id, 71)   // This specific user ID
-          )
-        )
-      )
+      .where(or(...whereConditions))
       .orderBy(desc(teams.createdAt));
     
     console.log(`Found ${teamRegistrations.length} team registrations`);
