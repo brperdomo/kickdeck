@@ -308,8 +308,17 @@ export async function resendPaymentConfirmation(req: Request, res: Response) {
  */
 export async function getCurrentUserRegistrations(req: Request, res: Response) {
   try {
-    // Get user ID from session
-    const userId = req.user?.id;
+    // Check for emulation first - if emulating, use the emulated user ID instead
+    let userId: number;
+    
+    // If we're in emulation mode, use the emulated user ID
+    if (req.emulatedUserId) {
+      userId = req.emulatedUserId;
+      console.log(`Emulation detected: Using emulated user ID ${req.emulatedUserId} instead of actual user ID ${req.user?.id}`);
+    } else {
+      // Otherwise use the authenticated user's ID
+      userId = req.user?.id as number;
+    }
     
     if (!userId) {
       return res.status(401).json({ error: 'You must be logged in to view your registrations' });
