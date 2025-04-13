@@ -6,7 +6,7 @@ import {
 } from '../../services/emulationService';
 import { db } from '@db/index';
 import { users, adminRoles, roles } from '@db/schema';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, and, sql, or } from 'drizzle-orm';
 
 /**
  * Get all administrators that can be emulated (non-super admins)
@@ -55,7 +55,10 @@ export async function getEmulatableAdmins(req: Request, res: Response) {
     // Handle empty case separately to avoid SQL syntax errors
     let adminRolesData = [];
     if (adminUsers.length > 0) {
-      // Instead of using IN clause with join, use multiple OR conditions which is safer
+      // Create conditions for each user ID separately
+      const userIdConditions = adminUsers.map(admin => eq(adminRoles.userId, admin.id));
+      
+      // Use an OR of individual equality conditions to avoid ANY() issues
       adminRolesData = await db.select({
         userId: adminRoles.userId,
         roleName: roles.name
@@ -63,9 +66,9 @@ export async function getEmulatableAdmins(req: Request, res: Response) {
       .from(adminRoles)
       .innerJoin(roles, eq(adminRoles.roleId, roles.id))
       .where(
-        adminUsers.length === 1
-          ? eq(adminRoles.userId, adminUsers[0].id)
-          : sql`${adminRoles.userId} = ANY(ARRAY[${adminUsers.map(admin => admin.id)}])`
+        userIdConditions.length === 1 
+          ? userIdConditions[0] 
+          : or(...userIdConditions)
       );
     }
 
