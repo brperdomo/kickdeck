@@ -192,11 +192,105 @@ export function registerRoutes(app: Express): Server {
     app.get('/api/admin/events/:eventId/fee-assignments', isAdmin, hasEventAccess, getFeeAssignments);
     app.post('/api/admin/events/:eventId/fee-assignments', isAdmin, hasEventAccess, updateFeeAssignments);
 
-    // Register coupon routes
-    app.post('/api/admin/coupons', isAdmin, createCoupon);
+    // Register coupon routes with event-specific access control
+    app.post('/api/admin/coupons', isAdmin, async (req, res, next) => {
+      try {
+        // If eventId is provided in the body, check if admin has access to this event
+        const { eventId } = req.body;
+        
+        if (eventId) {
+          req.params.eventId = eventId.toString();
+          return next();
+        }
+        // If no eventId (global coupon), skip the event access check
+        res.locals.skipEventAccessCheck = true;
+        return next();
+      } catch (error) {
+        console.error('Error in coupon create middleware:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    }, (req, res, next) => {
+      // Skip the event access check for global coupons
+      if (res.locals.skipEventAccessCheck) {
+        return next('route');
+      }
+      hasEventAccess(req, res, next);
+    }, createCoupon);
+    
     app.get('/api/admin/coupons', isAdmin, getCoupons);
-    app.patch('/api/admin/coupons/:id', isAdmin, updateCoupon);
-    app.delete('/api/admin/coupons/:id', isAdmin, deleteCoupon);
+    
+    // For updating and deleting coupons, we need to check if the admin has access to the event
+    app.patch('/api/admin/coupons/:id', isAdmin, async (req, res, next) => {
+      try {
+        // Get the coupon to extract its eventId
+        const couponId = parseInt(req.params.id);
+        const coupon = await db
+          .select({ eventId: coupons.eventId })
+          .from(coupons)
+          .where(eq(coupons.id, couponId))
+          .limit(1);
+        
+        if (!coupon || coupon.length === 0) {
+          return res.status(404).json({ error: 'Coupon not found' });
+        }
+        
+        // Only apply event access check if coupon is associated with an event
+        if (coupon[0].eventId) {
+          // Add eventId to request params for the hasEventAccess middleware
+          req.params.eventId = coupon[0].eventId.toString();
+          return next();
+        }
+        
+        // Skip check for global coupons
+        res.locals.skipEventAccessCheck = true;
+        return next();
+      } catch (error) {
+        console.error('Error fetching coupon for access control:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    }, (req, res, next) => {
+      // Skip the event access check for global coupons
+      if (res.locals.skipEventAccessCheck) {
+        return next('route');
+      }
+      hasEventAccess(req, res, next);
+    }, updateCoupon);
+    
+    app.delete('/api/admin/coupons/:id', isAdmin, async (req, res, next) => {
+      try {
+        // Get the coupon to extract its eventId
+        const couponId = parseInt(req.params.id);
+        const coupon = await db
+          .select({ eventId: coupons.eventId })
+          .from(coupons)
+          .where(eq(coupons.id, couponId))
+          .limit(1);
+        
+        if (!coupon || coupon.length === 0) {
+          return res.status(404).json({ error: 'Coupon not found' });
+        }
+        
+        // Only apply event access check if coupon is associated with an event
+        if (coupon[0].eventId) {
+          // Add eventId to request params for the hasEventAccess middleware
+          req.params.eventId = coupon[0].eventId.toString();
+          return next();
+        }
+        
+        // Skip check for global coupons
+        res.locals.skipEventAccessCheck = true;
+        return next();
+      } catch (error) {
+        console.error('Error fetching coupon for access control:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    }, (req, res, next) => {
+      // Skip the event access check for global coupons
+      if (res.locals.skipEventAccessCheck) {
+        return next('route');
+      }
+      hasEventAccess(req, res, next);
+    }, deleteCoupon);
 
     // Public event endpoint
     app.get('/api/events/:id', async (req, res) => {
