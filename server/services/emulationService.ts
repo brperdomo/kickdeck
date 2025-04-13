@@ -131,14 +131,8 @@ export function emulationMiddleware(req: Request, res: Response, next: NextFunct
       (req as any).actualUserId = session.actualUserId;
       (req as any).emulatedUserId = session.emulatedUserId;
       
-      // IMPORTANT: Modify the req.user object to use the emulated user's ID
-      // This ensures that any business logic that uses req.user will use the emulated identity
-      if (req.user && typeof req.user === 'object') {
-        req.user.id = session.emulatedUserId;
-      }
-      
       // Log detailed emulation status (only on authorization routes to avoid log spam)
-      if (req.path.includes('/api/user') || req.path.includes('/api/admin/permissions') || req.path.includes('/api/admin/events')) {
+      if (req.path.includes('/api/user') || req.path.includes('/api/admin/permissions')) {
         console.log(`Emulating user ID ${session.emulatedUserId} from actual user ${session.actualUserId} on path ${req.path}`);
       }
     }
