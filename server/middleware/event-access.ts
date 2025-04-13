@@ -1,74 +1,59 @@
-import { Request, Response, NextFunction } from "express";
-import { db } from "@db";
-import { eventAdministrators, adminRoles, roles } from "@db/schema";
-import { eq, and } from "drizzle-orm";
+import { Request, Response, NextFunction } from 'express';
+import { db } from '@db';
+import { eventAdministrators } from '@db/schema';
+import { eq, and } from 'drizzle-orm';
 
 /**
  * Middleware to check if a user has access to a specific event
- * This middleware should be used after isAdmin middleware
+ * This enforces event-specific permissions for admins who are not super admins
+ * 
+ * Usage:
+ * - Use on routes with eventId or id parameter to restrict access to authorized admins
+ * - Super admins always have access to all events
+ * - Tournament admins only have access to events they are assigned to
  */
 export const hasEventAccess = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // If not authenticated, deny access
     if (!req.isAuthenticated()) {
       return res.status(401).send("Not authenticated");
     }
-    
-    // If not an admin, deny access
+
     if (!req.user?.isAdmin) {
       return res.status(403).send("Not authorized");
     }
-    
-    // Extract event ID from request
+
+    // Super admins always have access to all events
+    if (req.user.roles && req.user.roles.includes('super_admin')) {
+      return next();
+    }
+
+    // Extract event ID from params (could be either 'id' or 'eventId')
     const eventId = req.params.eventId || req.params.id;
     
     if (!eventId) {
       return res.status(400).send("Event ID is required");
     }
-    
-    // Get the user's roles
-    const userId = req.user.id;
-    const userRoles = await db
-      .select({
-        roleName: roles.name
-      })
-      .from(adminRoles)
-      .innerJoin(roles, eq(adminRoles.roleId, roles.id))
-      .where(eq(adminRoles.userId, userId));
-    
-    const roleNames = userRoles.map(r => r.roleName);
-    
-    // Super admins have access to all events
-    if (roleNames.includes("super_admin")) {
-      return next();
-    }
-    
-    // Check if user is an event administrator for this event
-    const eventAdmin = await db
+
+    // Check if user is an administrator for this event
+    const userEventAdmins = await db
       .select()
       .from(eventAdministrators)
       .where(
         and(
-          eq(eventAdministrators.eventId, eventId),
-          eq(eventAdministrators.userId, userId)
+          eq(eventAdministrators.userId, req.user.id),
+          eq(eventAdministrators.eventId, eventId)
         )
-      )
-      .limit(1);
-    
-    // If user is an event administrator, allow access
-    if (eventAdmin && eventAdmin.length > 0) {
-      return next();
+      );
+
+    if (userEventAdmins.length === 0) {
+      console.log(`User ${req.user.id} attempted to access event ${eventId} without permission`);
+      return res.status(403).send("You do not have permission to access this event");
     }
-    
-    // Check if user is a tournament admin (has general access to events)
-    if (roleNames.includes("tournament_admin")) {
-      return next();
-    }
-    
-    // Deny access if none of the above conditions are met
-    return res.status(403).send("Not authorized to access this event");
+
+    // If we get here, the user has permission
+    next();
   } catch (error) {
-    console.error("Error checking event access:", error);
-    return res.status(500).send("Internal server error");
+    console.error('Error in hasEventAccess middleware:', error);
+    res.status(500).send("Internal server error");
   }
 };

@@ -4175,7 +4175,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     });
 
     // Add this new endpoint after the existing event endpoints
-    app.get('/api/admin/events/:id', isAdmin, async (req, res) => {
+    app.get('/api/admin/events/:id', hasEventAccess, async (req, res) => {
       try {
         const eventId = req.params.id;
 
@@ -4234,7 +4234,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     });
 
     // Add these new endpoints for scheduling functionality
-    app.get('/api/admin/events/:id/schedule', isAdmin, async (req, res) => {
+    app.get('/api/admin/events/:id/schedule', hasEventAccess, async (req, res) => {
       try {
         const eventId = parseInt(req.params.id);
 
@@ -4280,7 +4280,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    app.post('/api/admin/events/:id/generate-schedule', isAdmin, async (req, res) => {
+    app.post('/api/admin/events/:id/generate-schedule', hasEventAccess, async (req, res) => {
       try {
         const eventId = parseInt(req.params.id);
         const { gamesPerDay, minutesPerGame, breakBetweenGames } = req.body;
