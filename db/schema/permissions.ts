@@ -87,6 +87,12 @@ export const PERMISSIONS = {
   
   // Member management
   MEMBERS_VIEW: "members.view",
+  
+  // Scheduling management
+  SCHEDULING_VIEW: "scheduling.view",
+  SCHEDULING_CREATE: "scheduling.create",
+  SCHEDULING_EDIT: "scheduling.edit",
+  SCHEDULING_DELETE: "scheduling.delete",
 };
 
 /**
