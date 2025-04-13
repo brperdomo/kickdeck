@@ -193,6 +193,57 @@ export function registerRoutes(app: Express): Server {
     app.post('/api/admin/events/:eventId/fee-assignments', isAdmin, hasEventAccess, updateFeeAssignments);
 
     // Register coupon routes with event-specific access control
+    // Define the coupon create handler function that includes eventId access control
+    const createCouponWithAccessControl = async (req, res) => {
+      try {
+        const {
+          code,
+          discountType,
+          amount,
+          expirationDate,
+          description,
+          eventId,
+          maxUses,
+        } = req.body;
+
+        // Verify if coupon code already exists
+        const [existingCoupon] = await db
+          .select()
+          .from(coupons)
+          .where(eq(coupons.code, code))
+          .limit(1);
+
+        if (existingCoupon) {
+          return res.status(400).json({ message: "Coupon code already exists" });
+        }
+
+        // Convert eventId to number or null
+        const parsedEventId = eventId ? parseInt(eventId) : null;
+
+        // Create coupon record
+        const [newCoupon] = await db
+          .insert(coupons)
+          .values({
+            code,
+            discountType,
+            amount: parseFloat(amount),
+            expirationDate: expirationDate ? new Date(expirationDate) : null,
+            description,
+            eventId: parsedEventId,
+            maxUses: maxUses ? parseInt(maxUses) : null,
+            usedCount: 0,
+            createdAt: new Date().toISOString(),
+          })
+          .returning();
+
+        res.status(201).json(newCoupon);
+      } catch (error) {
+        console.error('Error creating coupon:', error);
+        res.status(500).json({ message: "Failed to create coupon" });
+      }
+    };
+    
+    // Apply middleware chain for coupon creation with event access checks
     app.post('/api/admin/coupons', isAdmin, async (req, res, next) => {
       try {
         // If eventId is provided in the body, check if admin has access to this event
@@ -212,10 +263,10 @@ export function registerRoutes(app: Express): Server {
     }, (req, res, next) => {
       // Skip the event access check for global coupons
       if (res.locals.skipEventAccessCheck) {
-        return next('route');
+        return createCouponWithAccessControl(req, res);
       }
       hasEventAccess(req, res, next);
-    }, createCoupon);
+    }, createCouponWithAccessControl);
     
     app.get('/api/admin/coupons', isAdmin, getCoupons);
     
@@ -2579,55 +2630,55 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    app.post('/api/admin/coupons', isAdmin, async (req, res) => {
-      try {
-        const {
-          code,
-          discountType,
-          amount,
-          expirationDate,
-          description,
-          eventId,
-          maxUses,
-        } = req.body;
-
-        // Verify if coupon code already exists
-        const [existingCoupon] = await db
-          .select()
-          .from(coupons)
-          .where(eq(coupons.code, code))
-          .limit(1);
-
-        if (existingCoupon) {
-          return res.status(400).json({ message: "Coupon code already exists" });
-        }
-
-        // Convert eventId to number or null
-        const numericEventId = eventId ? Number(eventId) : null;
-
-        const [newCoupon] = await db
-          .insert(coupons)
-          .values({
-            code,
-            discountType,
-            amount: Number(amount),
-            expirationDate: expirationDate ? new Date(expirationDate) : null,
-            description: description || null,
-            eventId: numericEventId,
-            maxUses: maxUses ? Number(maxUses) : null,
-            usageCount: 0,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          })
-          .returning();
-
-        res.json(newCoupon);
-      } catch (error) {
-        console.error('Error creating coupon:', error);
-        res.status(500).json({ message: "Failed to create coupon" });
-      }
-    });
+// DISABLED:     app.post('/api/admin/coupons', isAdmin, async (req, res) => {
+// DISABLED:       try {
+// DISABLED:         const {
+// DISABLED:           code,
+// DISABLED:           discountType,
+// DISABLED:           amount,
+// DISABLED:           expirationDate,
+// DISABLED:           description,
+// DISABLED:           eventId,
+// DISABLED:           maxUses,
+// DISABLED:         } = req.body;
+// DISABLED: 
+// DISABLED:         // Verify if coupon code already exists
+// DISABLED:         const [existingCoupon] = await db
+// DISABLED:           .select()
+// DISABLED:           .from(coupons)
+// DISABLED:           .where(eq(coupons.code, code))
+// DISABLED:           .limit(1);
+// DISABLED: 
+// DISABLED:         if (existingCoupon) {
+// DISABLED:           return res.status(400).json({ message: "Coupon code already exists" });
+// DISABLED:         }
+// DISABLED: 
+// DISABLED:         // Convert eventId to number or null
+// DISABLED:         const numericEventId = eventId ? Number(eventId) : null;
+// DISABLED: 
+// DISABLED:         const [newCoupon] = await db
+// DISABLED:           .insert(coupons)
+// DISABLED:           .values({
+// DISABLED:             code,
+// DISABLED:             discountType,
+// DISABLED:             amount: Number(amount),
+// DISABLED:             expirationDate: expirationDate ? new Date(expirationDate) : null,
+// DISABLED:             description: description || null,
+// DISABLED:             eventId: numericEventId,
+// DISABLED:             maxUses: maxUses ? Number(maxUses) : null,
+// DISABLED:             usageCount: 0,
+// DISABLED:             isActive: true,
+// DISABLED:             createdAt: new Date(),
+// DISABLED:             updatedAt: new Date(),
+// DISABLED:           })
+// DISABLED:           .returning();
+// DISABLED: 
+// DISABLED:         res.json(newCoupon);
+// DISABLED:       } catch (error) {
+// DISABLED:         console.error('Error creating coupon:', error);
+// DISABLED:         res.status(500).json({ message: "Failed to create coupon" });
+// DISABLED:       }
+// DISABLED:     });
 
     app.patch('/api/admin/coupons/:id', isAdmin, async (req, res) => {
       try {
@@ -2711,55 +2762,55 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    app.post('/api/admin/coupons', isAdmin, async (req, res) => {
-      try {
-        const {
-          code,
-          discountType,
-          amount,
-          expirationDate,
-          description,
-          eventId,
-          maxUses,
-        } = req.body;
-
-        // Verify if coupon code already exists
-        const [existingCoupon] = await db
-          .select()
-          .from(coupons)
-          .where(eq(coupons.code, code))
-          .limit(1);
-
-        if (existingCoupon) {
-          return res.status(400).json({ message: "Coupon code already exists" });
-        }
-
-        // Convert eventId to number or null
-        const numericEventId = eventId ? Number(eventId) : null;
-
-        const [newCoupon] = await db
-          .insert(coupons)
-          .values({
-            code,
-            discountType,
-            amount: Number(amount),
-            expirationDate: expirationDate ? new Date(expirationDate) : null,
-            description: description || null,
-            eventId: numericEventId,
-            maxUses: maxUses ? Number(maxUses) : null,
-            usageCount: 0,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          })
-          .returning();
-
-        res.json(newCoupon);
-      } catch (error) {
-        console.error('Error creating coupon:', error);
-        res.status(500).json({ message: "Failed to create coupon" });
-      }
-    });
+// DISABLED:     app.post('/api/admin/coupons', isAdmin, async (req, res) => {
+// DISABLED:       try {
+// DISABLED:         const {
+// DISABLED:           code,
+// DISABLED:           discountType,
+// DISABLED:           amount,
+// DISABLED:           expirationDate,
+// DISABLED:           description,
+// DISABLED:           eventId,
+// DISABLED:           maxUses,
+// DISABLED:         } = req.body;
+// DISABLED: 
+// DISABLED:         // Verify if coupon code already exists
+// DISABLED:         const [existingCoupon] = await db
+// DISABLED:           .select()
+// DISABLED:           .from(coupons)
+// DISABLED:           .where(eq(coupons.code, code))
+// DISABLED:           .limit(1);
+// DISABLED: 
+// DISABLED:         if (existingCoupon) {
+// DISABLED:           return res.status(400).json({ message: "Coupon code already exists" });
+// DISABLED:         }
+// DISABLED: 
+// DISABLED:         // Convert eventId to number or null
+// DISABLED:         const numericEventId = eventId ? Number(eventId) : null;
+// DISABLED: 
+// DISABLED:         const [newCoupon] = await db
+// DISABLED:           .insert(coupons)
+// DISABLED:           .values({
+// DISABLED:             code,
+// DISABLED:             discountType,
+// DISABLED:             amount: Number(amount),
+// DISABLED:             expirationDate: expirationDate ? new Date(expirationDate) : null,
+// DISABLED:             description: description || null,
+// DISABLED:             eventId: numericEventId,
+// DISABLED:             maxUses: maxUses ? Number(maxUses) : null,
+// DISABLED:             usageCount: 0,
+// DISABLED:             isActive: true,
+// DISABLED:             createdAt: new Date(),
+// DISABLED:             updatedAt: new Date(),
+// DISABLED:           })
+// DISABLED:           .returning();
+// DISABLED: 
+// DISABLED:         res.json(newCoupon);
+// DISABLED:       } catch (error) {
+// DISABLED:         console.error('Error creating coupon:', error);
+// DISABLED:         res.status(500).json({ message: "Failed to create coupon" });
+// DISABLED:       }
+// DISABLED:     });
 
     app.patch('/api/admin/coupons/:id', isAdmin, async (req, res) => {
       try {
