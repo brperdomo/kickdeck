@@ -17,6 +17,7 @@ import { addFeeTypeColumns } from "./migrations/add_fee_type_columns";
 import { addIsArchivedToEvents } from "./migrations/add-is-archived-to-events";
 import { addClubNameToTeams } from "./migrations/add_club_name";
 import { addCardDetailsToTeams } from "./migrations/add_card_details_to_teams";
+import { addSchedulingPermissions } from "./migrations/add_scheduling_permissions";
 
 export async function createTables() {
   try {
@@ -160,6 +161,9 @@ export async function createTables() {
     
     console.log('Adding card details columns to teams table...');
     await addCardDetailsToTeams();
+    
+    console.log('Adding scheduling permissions to tournament admins...');
+    await addSchedulingPermissions();
 
     console.log("All tables created successfully");
     return { success: true };
