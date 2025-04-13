@@ -4,8 +4,8 @@
  * This script validates that non-super-admin users only see events they're assigned to
  */
 
-const fetch = require('node-fetch');
-const fs = require('fs');
+import fetch from 'node-fetch';
+import fs from 'fs';
 
 // Cookie management functions
 function loadCookiesFromFile() {
