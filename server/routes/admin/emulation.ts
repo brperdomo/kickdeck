@@ -52,6 +52,7 @@ export async function getEmulatableAdmins(req: Request, res: Response) {
     );
     
     // Now get all the roles for these users in a separate query
+    // Use parameterized query to avoid SQL injection and syntax errors
     const adminRolesData = await db.select({
       userId: adminRoles.userId,
       roleName: roles.name
@@ -59,7 +60,9 @@ export async function getEmulatableAdmins(req: Request, res: Response) {
     .from(adminRoles)
     .innerJoin(roles, eq(adminRoles.roleId, roles.id))
     .where(
-      sql`${adminRoles.userId} IN (${adminUsers.map(admin => admin.id).join(', ')})`
+      adminUsers.length > 0 
+        ? sql`${adminRoles.userId} IN (${sql.join(adminUsers.map(admin => admin.id))})`
+        : sql`1=0` // If no admin users, return empty set
     );
 
     // Create a map of admin users with their roles
