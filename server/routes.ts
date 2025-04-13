@@ -5603,40 +5603,67 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    app.delete('/api/admin/teams/:id', isAdmin, async (req, res) => {
+    app.delete('/api/admin/teams/:id', async (req, res) => {
       try {
         const teamId = parseInt(req.params.id);
-
-        // Check if team has any associated games
-        const [gameCount] = await db
-          .select({
-            count: sql<number>`count(*)`.mapWith(Number)
-          })
-          .from(games)
-          .where(
-            or(
-              eq(games.homeTeamId, teamId),
-              eq(games.awayTeamId, teamId)
-            )
-          );
-
-        if (gameCount.count > 0) {
-          return res.status(400).send("Cannot delete team with associated games");
+        if (isNaN(teamId)) {
+          return res.status(400).json({ error: "Invalid team ID" });
         }
-
-        const [deletedTeam] = await db
-          .delete(teams)
-          .where(eq(teams.id, teamId))
-          .returning();
-
-        if (!deletedTeam) {
-          return res.status(404).send("Team notfound");
+        
+        // First, get the team to find its eventId
+        const [teamData] = await db
+          .select()
+          .from(teams)
+          .where(eq(teams.id, teamId));
+          
+        if (!teamData) {
+          return res.status(404).json({ error: "Team not found" });
         }
+        
+        // Set the eventId in request params for the hasEventAccess middleware
+        req.params.eventId = teamData.eventId;
+        
+        // Now check event access using the middleware
+        await hasEventAccess(req, res, async () => {
+          // Check if team has any associated games
+          const [gameCount] = await db
+            .select({
+              count: sql<number>`count(*)`.mapWith(Number)
+            })
+            .from(games)
+            .where(
+              or(
+                eq(games.homeTeamId, teamId),
+                eq(games.awayTeamId, teamId)
+              )
+            );
 
-        res.json(deletedTeam);
+          if (gameCount.count > 0) {
+            return res.status(400).send("Cannot delete team with associated games");
+          }
+
+          const [deletedTeam] = await db
+            .delete(teams)
+            .where(eq(teams.id, teamId))
+            .returning();
+
+          if (!deletedTeam) {
+            return res.status(404).send("Team not found");
+          }
+          
+          // Also delete any players associated with this team
+          await db
+            .delete(players)
+            .where(eq(players.teamId, teamId));
+
+          res.json({ 
+            success: true, 
+            message: "Team deleted successfully", 
+            team: deletedTeam 
+          });
+        });
       } catch (error) {
         console.error('Error deleting team:', error);
-        // Added basic error logging for white screen debugging.
         console.error("Error details:", error);
         res.status(500).send("Failed to delete team");
       }
@@ -5709,10 +5736,13 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    app.delete('/api/admin/events/:id', isAdmin, async (req, res) => {
+    app.delete('/api/admin/events/:id', async (req, res) => {
       try {
         const eventId = req.params.id;
         console.log('Starting event deletion for ID:', eventId);
+        
+        // Check event access using the middleware
+        await hasEventAccess(req, res, async () => {
 
         // Validate event ID
         if (!eventId) {
@@ -5914,6 +5944,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         }
 
         res.json({ message: "Event deleted successfully" });
+        });
       } catch (error) {
         console.error('Error deleting event:', error);
         console.error("Error details:", error);
