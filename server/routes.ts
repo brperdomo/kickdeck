@@ -5,6 +5,7 @@ import { setupWebSocketServer } from "./websocket";
 import { log } from "./vite";
 import { crypto } from "./crypto";
 import { db } from "@db";
+import { isAdmin, hasEventAccess } from "./middleware";
 import seasonalScopesRouter from "./routes/seasonal-scopes";
 import uploadRouter from "./routes/upload";
 import csvUploadRouter from "./routes/csv-upload";
