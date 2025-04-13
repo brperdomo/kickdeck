@@ -54,13 +54,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useQuery<User | null>({
     queryKey: ["/api/user"],
     queryFn: async () => {
+      // Check for emulation token
+      const emulationToken = typeof window !== 'undefined' ? localStorage.getItem('emulationToken') : null;
+      
+      // Prepare headers
+      const headers: HeadersInit = {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      };
+      
+      // Add emulation token if present
+      if (emulationToken) {
+        console.log('Fetching user with emulation token:', emulationToken);
+        headers['x-emulation-token'] = emulationToken;
+      } else {
+        console.log('Fetching user with emulation token: not present');
+      }
+      
       const res = await fetch("/api/user", {
         credentials: "include", // Add this to ensure cookies are sent
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
+        headers
       });
       if (res.status === 401) return null;
       if (!res.ok) throw new Error("Failed to fetch user");
@@ -221,13 +235,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Trigger an immediate user fetch after registration to ensure session is active
       try {
+        // Check for emulation token
+        const emulationToken = typeof window !== 'undefined' ? localStorage.getItem('emulationToken') : null;
+        
+        // Prepare headers
+        const headers: HeadersInit = {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'X-Cache-Bust': (timestamp + 1).toString()
+        };
+        
+        // Add emulation token if present
+        if (emulationToken) {
+          console.log('Fetching user with emulation token:', emulationToken);
+          headers['x-emulation-token'] = emulationToken;
+        }
+        
         const userRes = await fetch('/api/user', {
           credentials: 'include',
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'X-Cache-Bust': (timestamp + 1).toString()
-          },
+          headers,
         });
         
         if (userRes.ok) {
