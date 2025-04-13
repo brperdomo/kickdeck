@@ -100,7 +100,12 @@ const permissionDescriptions: Record<string, string> = {
   'coupons.edit': 'Edit existing coupons',
   'coupons.delete': 'Delete coupons from the system',
   
-  'members.view': 'View membership information'
+  'members.view': 'View membership information',
+  
+  'scheduling.view': 'View tournament scheduling information',
+  'scheduling.create': 'Create new tournament schedules',
+  'scheduling.edit': 'Edit tournament scheduling information',
+  'scheduling.delete': 'Delete tournament schedules'
 };
 
 // Icons for permission groups
@@ -115,7 +120,8 @@ const groupIcons: Record<string, React.ReactNode> = {
   'REPORTS': <FileText size={18} />,
   'ADMINISTRATORS': <Shield size={18} />,
   'COUPONS': <DollarSign size={18} />,
-  'MEMBERS': <Users size={18} />
+  'MEMBERS': <Users size={18} />,
+  'SCHEDULING': <Calendar size={18} />
 };
 
 // Action icons for permissions
@@ -177,7 +183,12 @@ const permissionComponentMap: Record<string, string> = {
   'coupons.edit': '.coupon-edit-button, .edit-coupon-modal',
   'coupons.delete': '.coupon-delete-button',
   
-  'members.view': '.members-section, .membership-details'
+  'members.view': '.members-section, .membership-details',
+  
+  'scheduling.view': '.scheduling-section, .schedule-calendar',
+  'scheduling.create': '.scheduling-create-button, .add-schedule-form',
+  'scheduling.edit': '.scheduling-edit-button, .edit-schedule-modal',
+  'scheduling.delete': '.scheduling-delete-button'
 };
 
 // Create mapping between permission groups and UI component selectors
@@ -192,7 +203,8 @@ const permissionGroupComponentMap: Record<string, string> = {
   'REPORTS': '.reports-section, .analytics-dashboard, .export-button, .download-report-button',
   'ADMINISTRATORS': '.admin-list, .admin-details, .admin-create-button, .add-admin-form, .admin-edit-button, .edit-admin-modal, .admin-delete-button',
   'COUPONS': '.coupon-list, .coupon-details, .coupon-create-button, .add-coupon-form, .coupon-edit-button, .edit-coupon-modal, .coupon-delete-button',
-  'MEMBERS': '.members-section, .membership-details'
+  'MEMBERS': '.members-section, .membership-details',
+  'SCHEDULING': '.scheduling-section, .schedule-calendar, .scheduling-create-button, .add-schedule-form, .scheduling-edit-button, .edit-schedule-modal, .scheduling-delete-button'
 };
 
 // Custom CSS class for highlighted elements
