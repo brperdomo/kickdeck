@@ -2,8 +2,7 @@
  * Simple test script to directly check database filtering for the finance admin user
  */
 
-import pkg from 'pg';
-const { Pool } = pkg;
+const { Pool } = require('pg');
 
 // Create a connection to the database
 const pool = new Pool({
