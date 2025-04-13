@@ -3822,7 +3822,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     });
 
     // Add this new endpoint to get event details for editing
-    app.get('/api/admin/events/:id/edit', async (req, res) => {
+    app.get('/api/admin/events/:id/edit', isAdmin, hasEventAccess, async (req, res) => {
       try {
         const eventId = req.params.id;
 
