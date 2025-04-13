@@ -30,41 +30,56 @@ export async function getEmulatableAdmins(req: Request, res: Response) {
       return res.status(403).json({ error: 'Only super admins can view emulatable administrators' });
     }
 
-    // Get all administrators who are not super admins
-    const admins = await db.select({
+    // First, get all admin users excluding those who are super admins
+    // This gets us distinct users who don't have the super_admin role
+    const adminUsers = await db.select({
       id: users.id,
       email: users.email,
       firstName: users.firstName,
-      lastName: users.lastName,
-      roles: roles.name
+      lastName: users.lastName
     })
     .from(users)
-    .leftJoin(adminRoles, eq(users.id, adminRoles.userId))
-    .leftJoin(roles, eq(adminRoles.roleId, roles.id))
     .where(
       and(
         eq(users.isAdmin, true),
-        // Exclude super admins - use not equal for SQL comparison
-        sql`${roles.name} != 'super_admin'`
+        // Exclude users who have super_admin role (using NOT EXISTS subquery)
+        sql`NOT EXISTS (
+          SELECT 1 FROM ${adminRoles} ar 
+          JOIN ${roles} r ON ar.role_id = r.id 
+          WHERE ar.user_id = ${users.id} AND r.name = 'super_admin'
+        )`
       )
     );
+    
+    // Now get all the roles for these users in a separate query
+    const adminRolesData = await db.select({
+      userId: adminRoles.userId,
+      roleName: roles.name
+    })
+    .from(adminRoles)
+    .innerJoin(roles, eq(adminRoles.roleId, roles.id))
+    .where(
+      sql`${adminRoles.userId} IN (${adminUsers.map(admin => admin.id).join(', ')})`
+    );
 
-    // Group administrators by ID to collect all roles
+    // Create a map of admin users with their roles
     const adminMap = new Map();
     
-    admins.forEach(admin => {
-      if (!adminMap.has(admin.id)) {
-        adminMap.set(admin.id, {
-          id: admin.id,
-          email: admin.email,
-          firstName: admin.firstName,
-          lastName: admin.lastName,
-          roles: []
-        });
-      }
-      
-      if (admin.roles) {
-        adminMap.get(admin.id).roles.push(admin.roles);
+    // First add all admin users to the map
+    adminUsers.forEach((admin) => {
+      adminMap.set(admin.id, {
+        id: admin.id,
+        email: admin.email,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        roles: []
+      });
+    });
+    
+    // Then add all their roles
+    adminRolesData.forEach((roleData) => {
+      if (adminMap.has(roleData.userId)) {
+        adminMap.get(roleData.userId).roles.push(roleData.roleName);
       }
     });
 
@@ -112,7 +127,7 @@ export async function startEmulatingAdmin(req: Request, res: Response) {
     .innerJoin(roles, eq(adminRoles.roleId, roles.id))
     .where(eq(adminRoles.userId, parseInt(adminId)));
 
-    const roleNames = userRoles.map(r => r.roleName);
+    const roleNames = userRoles.map((r) => r.roleName);
 
     return res.json({ 
       token: emulationToken,
@@ -184,7 +199,7 @@ export async function getEmulationStatus(req: Request, res: Response) {
     .innerJoin(roles, eq(adminRoles.roleId, roles.id))
     .where(eq(adminRoles.userId, emulatedUserId));
 
-    const roleNames = userRoles.map(r => r.roleName);
+    const roleNames = userRoles.map((r) => r.roleName);
 
     return res.json({
       emulating: true,
