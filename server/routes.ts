@@ -3939,14 +3939,51 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     // Add this new endpoint after the existing event creation endpoint
     app.get('/api/admin/events', isAdmin, async (req, res) => {
       try {
-        const eventsList = await db
+        // First check if the user is a super admin
+        const userRoles = await db
+          .select({
+            roleName: roles.name
+          })
+          .from(adminRoles)
+          .innerJoin(roles, eq(adminRoles.roleId, roles.id))
+          .where(eq(adminRoles.userId, req.user.id));
+        
+        const isSuperAdmin = userRoles.some(role => role.roleName === 'super_admin');
+        
+        // Base query setup
+        let eventsQuery = db
           .select({
             event: events,
             applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
             teamCount: sql<number>`count(${teams.id})`.mapWith(Number),
           })
           .from(events)
-          .leftJoin(teams, eq(events.id, teams.eventId))
+          .leftJoin(teams, eq(events.id, teams.eventId));
+        
+        // For non-super-admin users, restrict events to those they are administrators for
+        if (!isSuperAdmin) {
+          // Get list of events where the user is an administrator
+          const userEventIds = await db
+            .select({
+              eventId: eventAdministrators.eventId
+            })
+            .from(eventAdministrators)
+            .where(eq(eventAdministrators.userId, req.user.id))
+            .then(results => results.map(r => r.eventId));
+          
+          console.log(`User ${req.user.id} has access to ${userEventIds.length} events:`, userEventIds);
+          
+          // If there are no events assigned to the user, return an empty array
+          if (userEventIds.length === 0) {
+            return res.json([]);
+          }
+          
+          // Modify the query to only include events the user has access to
+          eventsQuery = eventsQuery.where(inArray(events.id, userEventIds));
+        }
+        
+        // Execute the query
+        const eventsList = await eventsQuery
           .groupBy(events.id)
           .orderBy(events.startDate);
 
