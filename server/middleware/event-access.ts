@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { db } from '@db';
-import { eventAdministrators } from '@db/schema';
-import { roles } from '@db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eventAdministrators, adminRoles, roles } from '@db/schema';
+import { eq, and, inArray } from 'drizzle-orm';
 
 /**
  * Middleware to check if a user has access to a specific event
@@ -23,21 +22,17 @@ export const hasEventAccess = async (req: Request, res: Response, next: NextFunc
       return res.status(403).send("Not authorized");
     }
 
-    // Check if user is a super_admin by querying the roles table
-    
-    // Check if user has super_admin role
+    // Check if user is a super_admin
     const userRoles = await db
-      .select()
-      .from(rolePermissions)
-      .where(
-        and(
-          eq(rolePermissions.userId, req.user.id),
-          eq(rolePermissions.role, 'super_admin')
-        )
-      );
+      .select({
+        roleName: roles.name
+      })
+      .from(adminRoles)
+      .innerJoin(roles, eq(adminRoles.roleId, roles.id))
+      .where(eq(adminRoles.userId, req.user.id));
     
     // Super admins always have access to all events
-    if (userRoles.length > 0) {
+    if (userRoles.some(role => role.roleName === 'super_admin')) {
       return next();
     }
 

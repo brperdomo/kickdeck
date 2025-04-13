@@ -1,19 +1,50 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { getTeams, getTeamById, updateTeamStatus, processRefund } from './teams';
 import { db } from '@db';
 import { eventFees, teams } from '@db/schema';
 import { eq, inArray } from 'drizzle-orm';
+import { hasEventAccess } from '../../middleware/event-access';
+
+// Middleware to extract eventId from team and add it to request params
+// This allows hasEventAccess middleware to work with team routes
+const extractEventIdFromTeam = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { teamId } = req.params;
+    
+    if (!teamId) {
+      return res.status(400).json({ error: 'Team ID is required' });
+    }
+    
+    // Get the team's eventId
+    const teamResult = await db
+      .select({ eventId: teams.eventId })
+      .from(teams)
+      .where(eq(teams.id, parseInt(teamId)))
+      .limit(1);
+    
+    if (teamResult.length === 0) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+    
+    // Add eventId to request params so hasEventAccess can check it
+    req.params.eventId = teamResult[0].eventId;
+    next();
+  } catch (error) {
+    console.error('Error extracting eventId from team:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
 const router = Router();
 
-// Get all teams with filtering
+// Get all teams with filtering - no specific event check needed as filtering is handled in the controller
 router.get('/', getTeams);
 
-// Get team by ID
-router.get('/:teamId', getTeamById);
+// Get team by ID - needs eventId extraction for permission check
+router.get('/:teamId', extractEventIdFromTeam, hasEventAccess, getTeamById);
 
-// Get fee details for a team
-router.get('/:teamId/fees', async (req, res) => {
+// Get fee details for a team - needs eventId extraction for permission check
+router.get('/:teamId/fees', extractEventIdFromTeam, hasEventAccess, async (req, res) => {
   try {
     const { teamId } = req.params;
     const { selectedFeeIds } = req.query;
@@ -99,11 +130,11 @@ router.get('/:teamId/fees', async (req, res) => {
 });
 
 // Update team status (approve/reject)
-router.put('/:teamId/status', updateTeamStatus);
+router.put('/:teamId/status', extractEventIdFromTeam, hasEventAccess, updateTeamStatus);
 // Keep backward compatibility with PATCH as well
-router.patch('/:teamId/status', updateTeamStatus);
+router.patch('/:teamId/status', extractEventIdFromTeam, hasEventAccess, updateTeamStatus);
 
 // Process refund for rejected team
-router.post('/:teamId/refund', processRefund);
+router.post('/:teamId/refund', extractEventIdFromTeam, hasEventAccess, processRefund);
 
 export default router;
