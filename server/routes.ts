@@ -5853,35 +5853,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    // Add these new endpoints for event management
-    app.get('/api/admin/events', isAdmin, async (req, res) => {
-      try {
-        const eventsList = await db
-          .select({
-            event: events,
-            applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
-            teamCount: sql<number>`count(${teams.id})`.mapWith(Number),
-          })
-          .from(events)
-          .leftJoin(teams, eq(events.id, teams.eventId))
-          .groupBy(events.id)
-          .orderBy(events.startDate);
-
-        // Format the response
-        const formattedEvents = eventsList.map(({ event, applicationCount, teamCount }) => ({
-          ...event,
-          applicationCount,
-          teamCount
-        }));
-
-        res.json(formattedEvents);
-      } catch (error) {
-        console.error('Error fetching events:', error);
-        // Added basic error logging for white screen debugging.
-        console.error("Error details:", error);
-        res.status(500).send("Failed to fetch events");
-      }
-    });
+    // Events management endpoints are already defined above
 
     // Bulk delete events endpoint
     app.delete('/api/admin/events/bulk', isAdmin, async (req, res) => {
