@@ -59,50 +59,81 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
     const [{ isDragging }, dragRef, dragPreview] = useDrag({
       type: 'file',
       item: (): DragItem => {
-        console.log('Starting drag for file:', file.name);
+        console.log('Starting drag for file:', file.name, 'File ID:', file.id);
         // If this file is not in the selected items and it's being dragged,
-        // select it first
+        // select it first (but don't clear other selections if using Ctrl/Cmd key)
         if (!isSelected) {
-          // Select only this file (clear other selections)
-          const hasSelection = selectedItems.length > 0;
-          if (hasSelection) {
-            toggleFileSelection(file);
-          } else {
-            toggleFileSelection(file);
-          }
+          console.log('File not selected, selecting it now');
+          toggleFileSelection(file);
+        } else {
+          console.log('File already selected, proceeding with drag');
         }
         
         // Return the file data for the drag preview
         return { 
           type: 'file',
           id: file.id,
-          name: file.name
+          name: file.name,
+          size: file.size
         };
+      },
+      options: {
+        // This makes it easier to start dragging the file
+        // by reducing the distance needed to move before dragging starts
+        dropEffect: 'move',
       },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
+      canDrag: () => {
+        // Files can always be dragged
+        return true;
+      },
+      isDragging: (monitor) => {
+        // Custom check to determine if we're dragging this specific item
+        // This is needed because we might be dragging multiple items at once
+        const item = monitor.getItem();
+        const isThisItemDragging = item.id === file.id;
+        
+        // Also check if this item is part of the multiple selected items being dragged
+        const isPartOfMultipleDrag = selectedItems.some(selectedItem => 
+          'url' in selectedItem && selectedItem.id === file.id);
+        
+        return isThisItemDragging || isPartOfMultipleDrag;
+      },
       end: (item, monitor) => {
+        console.log('Drag ended for file', file.name);
         if (setIsDraggingOver) {
           setIsDraggingOver(false);
         }
         
         // Show a success indicator if the drop was successful
-        if (monitor.didDrop()) {
-          console.log('File dropped successfully:', file.name);
-          setDidJustMove(true);
-          setMoveCount(prev => prev + 1);
+        const dropResult = monitor.getDropResult();
+        if (monitor.didDrop() && dropResult) {
+          console.log('File dropped successfully:', file.name, 'Drop result:', dropResult);
           
-          // Clear any existing timer
-          if (timerRef.current) {
-            clearTimeout(timerRef.current);
+          // Check if the drop result contains information indicating this file was moved
+          const wasItemMoved = dropResult.itemsMoved && 
+            Array.isArray(dropResult.itemsMoved) && 
+            dropResult.itemsMoved.includes(file.id);
+            
+          if (dropResult.moved === true || wasItemMoved) {
+            setDidJustMove(true);
+            setMoveCount(prev => prev + 1);
+            
+            // Clear any existing timer
+            if (timerRef.current) {
+              clearTimeout(timerRef.current);
+            }
+            
+            // Set a new timer
+            timerRef.current = setTimeout(() => {
+              setDidJustMove(false);
+              timerRef.current = null;
+            }, 2000);
           }
-          
-          // Set a new timer
-          timerRef.current = setTimeout(() => {
-            setDidJustMove(false);
-            timerRef.current = null;
-          }, 2000);
+        } else {
+          console.log('Drop was not successful or drop result is missing');
         }
       }
     });

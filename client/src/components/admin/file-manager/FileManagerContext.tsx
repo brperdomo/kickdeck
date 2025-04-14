@@ -276,23 +276,47 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
 
   const moveItems = async (itemIds: string[], targetFolderId: string | null) => {
     try {
-      // Separate file IDs and folder IDs
-      const fileItems = selectedItems.filter(item => 'url' in item) as File[];
-      const folderItems = selectedItems.filter(item => !('url' in item)) as Folder[];
+      console.log('Moving items with IDs:', itemIds, 'to folder:', targetFolderId);
+      
+      // Check if target folder is same as current folder - no need to move in that case
+      if (targetFolderId === currentFolder?.id) {
+        console.log('Target folder is the same as current folder - no need to move');
+        return;
+      }
+      
+      // Find the items to move by their IDs
+      const itemsToMove = [...selectedItems, ...files, ...folders].filter(item => 
+        itemIds.includes(item.id));
+        
+      console.log('Found items to move:', itemsToMove);
+      
+      // Separate file IDs and folder IDs - this handles both selected items and passed itemIds
+      const fileItems = itemsToMove.filter(item => 'url' in item) as File[];
+      const folderItems = itemsToMove.filter(item => !('url' in item)) as Folder[];
       
       const fileIds = fileItems.map(file => file.id);
       const folderIds = folderItems.map(folder => folder.id);
       
+      console.log('Files to move:', fileIds);
+      console.log('Folders to move:', folderIds);
+      
       // Move files
       if (fileIds.length > 0) {
         await api.moveFiles(fileIds, targetFolderId);
+        console.log('Files moved successfully');
         // Remove moved files from current view
         setFiles(files.filter(file => !fileIds.includes(file.id)));
       }
       
       // Move folders (one by one)
       for (const folderId of folderIds) {
+        // Don't move a folder into itself or its descendants
+        if (folderId === targetFolderId) {
+          console.log('Skipping folder that would move into itself:', folderId);
+          continue;
+        }
         await api.updateFolder(folderId, { parentId: targetFolderId });
+        console.log('Folder moved successfully:', folderId);
       }
       
       // Remove moved folders from current view
@@ -305,6 +329,9 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
         title: 'Success',
         description: 'Items moved successfully',
       });
+      
+      // Return the updated items list for the UI to reflect changes
+      return { movedFileIds: fileIds, movedFolderIds: folderIds };
     } catch (error) {
       console.error('Error moving items:', error);
       toast({

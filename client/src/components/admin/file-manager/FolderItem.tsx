@@ -102,70 +102,109 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
     const [{ isOver, canDrop }, dropRef] = useDrop({
       accept: ['file', 'folder'],
       canDrop: (item: DragItem) => {
+        console.log('Checking if can drop:', item, 'onto folder:', folder.id);
+        
         // Prevent dropping a folder into itself
         if (item.type === 'folder' && item.id === folder.id) {
+          console.log('Cannot drop folder onto itself');
           return false;
         }
         
         // Prevent dropping a folder into itself if it's part of the selected items
-        if (selectedItems.some(selectedItem => 
-            !('url' in selectedItem) && selectedItem.id === folder.id)) {
+        const isCurrentFolderSelected = selectedItems.some(selectedItem => 
+            !('url' in selectedItem) && selectedItem.id === folder.id);
+            
+        if (isCurrentFolderSelected) {
+          console.log('Target folder is in selected items, cannot drop');
           return false;
         }
         
-        // Prevent dropping a parent folder into its own child
-        // This would require knowledge of folder hierarchy, which we
-        // might need to add to the context if this becomes important.
+        // Always allow dropping files
+        if (item.type === 'file') {
+          console.log('Can drop file onto folder');
+          return true;
+        }
+        
+        // Allow dropping folders as long as they're not the current folder
+        console.log('Can drop folder onto target folder');
         return true;
       },
-      drop: (item: DragItem, monitor) => {
+      hover: (item, monitor) => {
+        // This triggers when dragging over the folder
+        if (monitor.isOver({ shallow: true })) {
+          console.log('Hovering over folder:', folder.name);
+        }
+      },
+      drop: async (item: DragItem, monitor) => {
+        console.log('Drop detected on folder:', folder.name, 'Item:', item);
+        
         // Only handle if this is the drop target (not a child component)
         if (!monitor.didDrop()) {
-          console.log('Dropping on folder:', folder.name);
+          console.log('Processing drop on folder:', folder.name);
           try {
-            // When items are dropped on this folder, move them into it
-            if (selectedItems.length > 0) {
-              const itemIds = selectedItems.map(item => item.id);
-              moveItems(itemIds, folder.id);
-              
-              // Show success feedback
-              setDidJustDrop(true);
-              setDropCount(prev => prev + 1);
-              
-              // Clear any existing timer
-              if (timerRef.current) {
-                clearTimeout(timerRef.current);
-              }
-              
-              // Set a new timer
-              timerRef.current = setTimeout(() => {
-                setDidJustDrop(false);
-                timerRef.current = null;
-              }, 2000);
+            // Determine which items to move
+            let itemsToMove: string[] = [];
+            
+            // If there are selected items and the dragged item is one of them,
+            // move all selected items
+            if (selectedItems.length > 0 && 
+                selectedItems.some(selected => selected.id === item.id)) {
+              itemsToMove = selectedItems.map(item => item.id);
+              console.log('Moving selected items:', itemsToMove, 'to folder:', folder.id);
             } else {
-              // Fallback for single item if somehow no selection
-              moveItems([item.id], folder.id);
-              
-              // Show success feedback
-              setDidJustDrop(true);
-              setDropCount(prev => prev + 1);
-              
-              // Clear any existing timer
-              if (timerRef.current) {
-                clearTimeout(timerRef.current);
-              }
-              
-              // Set a new timer
-              timerRef.current = setTimeout(() => {
-                setDidJustDrop(false);
-                timerRef.current = null;
-              }, 2000);
+              // Otherwise just move the dragged item
+              itemsToMove = [item.id];
+              console.log('Moving single item:', item.id, 'to folder:', folder.id);
             }
+            
+            // Filter out items that shouldn't be moved
+            // 1. Prevent moving a folder into itself
+            if (item.type === 'folder') {
+              const previousItemsCount = itemsToMove.length;
+              itemsToMove = itemsToMove.filter(id => id !== folder.id);
+              
+              if (previousItemsCount !== itemsToMove.length) {
+                console.log('Removed target folder from items to move');
+              }
+            }
+            
+            if (itemsToMove.length === 0) {
+              console.log('No valid items to move');
+              return { moved: false, targetFolder: folder.id };
+            }
+            
+            // Perform the move operation
+            const result = await moveItems(itemsToMove, folder.id);
+            console.log('Move operation result:', result);
+            
+            // Show success feedback
+            setDidJustDrop(true);
+            setDropCount(prev => prev + 1);
+            
+            // Clear any existing timer
+            if (timerRef.current) {
+              clearTimeout(timerRef.current);
+            }
+            
+            // Set a new timer
+            timerRef.current = setTimeout(() => {
+              setDidJustDrop(false);
+              timerRef.current = null;
+            }, 2000);
+            
+            console.log('Items moved successfully to folder:', folder.name);
+            
+            // Return the drop result
+            return { moved: true, targetFolder: folder.id, itemsMoved: itemsToMove };
           } catch (error) {
             console.error('Error moving items:', error);
             setDropError(true);
             setTimeout(() => setDropError(false), 2000);
+            return { moved: false, error: true };
           }
+        } else {
+          console.log('Drop already handled by a child component');
+          return { moved: false, handled: true };
         }
       },
       collect: monitor => ({
