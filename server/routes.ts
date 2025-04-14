@@ -164,6 +164,8 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/email-template-routings', isAdmin, emailTemplateRoutingsRouter); // Add email template routings router
     app.use('/api/admin/members', isAdmin, membersRouter); // Member management router
     app.use('/api/admin/teams', isAdmin, teamsRouter); // Team management router
+    app.use('/api/admin/files', isAdmin, filesRouter); // File management router
+    app.use('/api/admin/folders', isAdmin, foldersRouter); // Folder management router
     app.use('/api/admin/teams', isAdmin, playersRouter); // Player management router
     
     // Role permissions management endpoints
