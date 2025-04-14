@@ -284,6 +284,7 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
           // Apply the drag ref for making this folder draggable
           console.log(`Applying drag ref to folder ${folder.name} (id: ${folder.id})`);
           dragRef(element);
+          dragPreview(element);
           
           // Apply the drop ref for dropping files/folders into this folder
           console.log(`Applying drop ref to folder ${folder.name} (id: ${folder.id})`);
@@ -309,6 +310,14 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
           
           // Set explicit cursor styles to help users understand draggability
           element.style.cursor = 'grab';
+          
+          // Add draggable attribute explicitly
+          element.setAttribute('draggable', 'true');
+          
+          // Add user-select property to prevent text selection during drag
+          element.style.userSelect = 'none';
+          element.style.WebkitUserSelect = 'none';
+          element.style.MozUserSelect = 'none';
         } else {
           console.warn(`Failed to apply drag/drop refs to folder element - element is null for folder ${folder.name}`);
         }

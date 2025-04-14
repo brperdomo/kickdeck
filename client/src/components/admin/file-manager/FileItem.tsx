@@ -280,6 +280,7 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
           // Apply the drag reference first - this enables the file to be draggable
           console.log(`Applying drag ref to file ${file.name} (id: ${file.id})`);
           dragRef(element);
+          dragPreview(element);
           
           // Apply the forwarded ref if provided
           if (ref) {
@@ -300,6 +301,14 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
           
           // Set explicit cursor styles to help users understand draggability
           element.style.cursor = 'grab';
+          
+          // Add draggable attribute explicitly
+          element.setAttribute('draggable', 'true');
+          
+          // Add user-select property to prevent text selection during drag
+          element.style.userSelect = 'none';
+          element.style.WebkitUserSelect = 'none';
+          element.style.MozUserSelect = 'none';
         } else {
           console.warn(`Failed to apply drag ref to file element - element is null for file ${file.name}`);
         }
