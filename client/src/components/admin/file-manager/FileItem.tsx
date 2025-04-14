@@ -79,10 +79,15 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
         };
       },
       options: {
-        // This makes it easier to start dragging the file
-        // by reducing the distance needed to move before dragging starts
-        delayTouchStart: 0,
-        touchStartThreshold: 0
+        // These settings make dragging more responsive
+        // Lower delay/threshold makes it easier to start dragging
+        dragPreviewOptions: {
+          offsetX: 10,
+          offsetY: 10,
+        },
+        // NOTE: These are custom options not in the type definition but supported by react-dnd
+        // @ts-ignore - touchStartThreshold is supported but not in TypeScript defs
+        touchStartThreshold: 5,
       },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),

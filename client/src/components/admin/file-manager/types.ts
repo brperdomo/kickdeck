@@ -98,7 +98,15 @@ export interface FileManagerContextType {
   toggleFolderSelection: (folder: Folder) => void;
   toggleItemSelection: (item: File | Folder) => void;
   clearSelection: () => void;
-  moveItems: (itemIds: string[], targetFolderId: string | null) => Promise<{ movedFileIds: string[]; movedFolderIds: string[]; } | undefined>;
+  moveItems: (itemIds: string[], targetFolderId: string | null) => Promise<{ 
+    moved: boolean;
+    targetFolder: string | null;
+    movedFileIds: string[];
+    movedFolderIds: string[];
+    itemsMoved: string[];
+    error?: boolean;
+    errorMessage?: string;
+  }>;
   toggleFavorite: (fileId: string) => Promise<void>;
   setViewMode: (mode: ViewMode) => void;
   refreshCurrentFolder: () => void;
