@@ -88,6 +88,12 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
           name: folder.name
         };
       },
+      options: {
+        // This makes it easier to start dragging the folder
+        // by reducing the distance needed to move before dragging starts
+        delayTouchStart: 0,
+        touchStartThreshold: 0
+      },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
