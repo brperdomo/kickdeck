@@ -1,5 +1,5 @@
-import React, { useState, forwardRef } from 'react';
-import { File } from './types';
+import React, { useState, forwardRef, useEffect } from 'react';
+import { File, DragItem } from './types';
 import { useFileManager } from './FileManagerContext';
 import { 
   ContextMenu, 
@@ -23,6 +23,7 @@ import {
   Music, Video, Image, FileText, File as FileIconGeneric, FileCode, ArrowUpDown, 
   Star as StarIcon
 } from 'lucide-react';
+import { useDrag } from 'react-dnd';
 
 interface FileItemProps {
   file: File;
@@ -30,14 +31,15 @@ interface FileItemProps {
 }
 
 const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
-  ({ file, isDragging }, ref) => {
+  ({ file, isDragging: externalIsDragging }, ref) => {
     const { 
       downloadFile, 
       renameFile, 
       deleteFile, 
       toggleFileSelection, 
       toggleFavorite,
-      selectedItems 
+      selectedItems,
+      setIsDraggingOver
     } = useFileManager();
     
     const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
@@ -46,20 +48,60 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
     
     const isSelected = selectedItems.some(item => 'url' in item && item.id === file.id);
     
+    // Set up drag and drop
+    const [{ isDragging }, dragRef, dragPreview] = useDrag({
+      type: 'file',
+      item: (): DragItem => {
+        // If this file is not in the selected items and it's being dragged,
+        // select it first
+        if (!isSelected) {
+          // Select only this file (clear other selections)
+          const hasSelection = selectedItems.length > 0;
+          if (hasSelection) {
+            toggleFileSelection(file);
+          } else {
+            toggleFileSelection(file);
+          }
+        }
+        
+        // Return the file data for the drag preview
+        return { 
+          type: 'file',
+          id: file.id,
+          name: file.name
+        };
+      },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+      end: (item, monitor) => {
+        if (setIsDraggingOver) {
+          setIsDraggingOver(false);
+        }
+      }
+    });
+    
+    // Update external dragging state
+    useEffect(() => {
+      if (isDragging && setIsDraggingOver) {
+        setIsDraggingOver(true);
+      }
+    }, [isDragging, setIsDraggingOver]);
+    
     const getFileIcon = () => {
       const extension = file.name.split('.').pop()?.toLowerCase();
       
-      if (file.type.startsWith('image/')) {
+      if (file.type?.startsWith('image/')) {
         return file.thumbnailUrl ? (
           <div className="h-16 w-16 bg-cover bg-center rounded" style={{ backgroundImage: `url(${file.thumbnailUrl})` }} />
         ) : <Image className="h-16 w-16 text-blue-500" />;
       }
       
-      if (file.type.startsWith('audio/')) {
+      if (file.type?.startsWith('audio/')) {
         return <Music className="h-16 w-16 text-purple-500" />;
       }
       
-      if (file.type.startsWith('video/')) {
+      if (file.type?.startsWith('video/')) {
         return <Video className="h-16 w-16 text-red-500" />;
       }
       
@@ -92,9 +134,12 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
     const handleClick = (e: React.MouseEvent) => {
       if (e.ctrlKey || e.metaKey) {
         toggleFileSelection(file);
-      } else {
+      } else if (!isSelected) {
         // Single click behavior - select only this item
         toggleFileSelection(file);
+      } else {
+        // File is already selected, don't deselect on single click
+        // allowing multi-drag operations to work smoothly
       }
     };
     
@@ -113,18 +158,33 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
     const handleToggleFavorite = async () => {
       await toggleFavorite(file.id);
     };
+
+    // Combine refs
+    const combinedRef = (element: HTMLDivElement) => {
+      // Apply the dragRef
+      dragRef(element);
+      
+      // Apply the forwarded ref
+      if (ref) {
+        if (typeof ref === 'function') {
+          ref(element);
+        } else {
+          (ref as React.MutableRefObject<HTMLDivElement | null>).current = element;
+        }
+      }
+    };
     
     return (
       <>
         <ContextMenu>
           <ContextMenuTrigger>
             <div 
-              ref={ref}
+              ref={combinedRef}
               className={`
                 relative flex flex-col items-center p-3 rounded-md cursor-pointer
                 transition-all duration-200 group
                 ${isSelected ? 'bg-primary/10 ring-2 ring-primary' : 'hover:bg-muted'}
-                ${isDragging ? 'opacity-50' : 'opacity-100'}
+                ${isDragging || externalIsDragging ? 'opacity-50 scale-95' : 'opacity-100'}
               `}
               onClick={handleClick}
               onDoubleClick={handleDoubleClick}
@@ -137,6 +197,11 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
                     <StarIcon className="h-5 w-5 fill-current" />
                   </div>
                 )}
+                
+                {/* Drag handle indicator - visible on hover or when selected */}
+                <div className={`absolute -top-2 -left-2 bg-primary/20 rounded-full p-0.5 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                  <ArrowUpDown className="h-3.5 w-3.5" />
+                </div>
               </div>
               <span className="mt-2 text-sm font-medium text-center truncate w-full">
                 {file.name}
@@ -180,6 +245,14 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
             </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
+        
+        {/* Drag Preview - Hidden by default, used for custom drag preview */}
+        <div ref={dragPreview} className="hidden">
+          <div className="flex items-center bg-background border rounded-md shadow-md p-2">
+            {getFileIcon()}
+            <span className="ml-2 text-sm font-medium">{file.name}</span>
+          </div>
+        </div>
         
         {/* Rename Dialog */}
         <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useFileManager } from './FileManagerContext';
 import FileItem from './FileItem';
 import FolderItem from './FolderItem';
@@ -6,104 +6,87 @@ import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { File, Folder, DragItem } from './types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Upload, FolderOpen } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const DraggableFileItem = ({ file }: { file: File }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'file',
-    item: { id: file.id, type: 'file', name: file.name } as DragItem,
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
-
-  return (
-    <div ref={drag}>
-      <FileItem file={file} isDragging={isDragging} />
-    </div>
-  );
+// We don't need the DraggableFileItem anymore since we've moved drag functionality to FileItem component
+const FileItemWrapper = ({ file }: { file: File }) => {
+  return <FileItem file={file} />;
 };
 
-const DraggableFolderItem = ({ folder }: { folder: Folder }) => {
-  const { moveItems } = useFileManager();
-  
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'folder',
-    item: { id: folder.id, type: 'folder', name: folder.name } as DragItem,
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
-  
-  const [{ isOver, canDrop }, drop] = useDrop(() => ({
-    accept: ['file', 'folder'],
-    drop: (item: DragItem) => {
-      if (item.type === 'file') {
-        moveItems([item.id], folder.id);
-      } else if (item.type === 'folder' && item.id !== folder.id) {
-        // Prevent dropping a folder into itself
-        moveItems([item.id], folder.id);
-      }
-    },
-    canDrop: (item) => {
-      // Prevent dropping a folder into itself or its own children
-      if (item.type === 'folder' && item.id === folder.id) {
-        return false;
-      }
-      return true;
-    },
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-      canDrop: !!monitor.canDrop(),
-    }),
-  }));
-  
-  return (
-    <div 
-      ref={(node) => drag(drop(node))}
-      className={`
-        ${(isOver && canDrop) ? 'ring-2 ring-primary bg-primary/5' : ''}
-        ${(!canDrop && isOver) ? 'ring-2 ring-destructive bg-destructive/5' : ''}
-        rounded-md
-      `}
-    >
-      <FolderItem folder={folder} isDragging={isDragging} />
-    </div>
-  );
+// We don't need the DraggableFolderItem anymore since we've moved drag functionality to FolderItem component
+const FolderItemWrapper = ({ folder }: { folder: Folder }) => {
+  return <FolderItem folder={folder} />;
 };
 
 const DroppableArea = ({ children }: { children: React.ReactNode }) => {
-  const { currentFolder, moveItems } = useFileManager();
+  const { currentFolder, moveItems, selectedItems, isDraggingOver, setIsDraggingOver } = useFileManager();
   
-  const [{ isOver, canDrop }, drop] = useDrop(() => ({
+  const [{ isOver, canDrop }, drop] = useDrop({
     accept: ['file', 'folder'],
     drop: (item: DragItem, monitor) => {
       // Only handle the drop if it wasn't dropped on a folder
       if (!monitor.didDrop()) {
-        moveItems([item.id], currentFolder?.id || null);
+        // Use the selected items for multi-drag operations
+        if (selectedItems.length > 0) {
+          const itemIds = selectedItems.map(item => item.id);
+          moveItems(itemIds, currentFolder?.id || null);
+        } else {
+          // Fallback to single item if somehow no selection
+          moveItems([item.id], currentFolder?.id || null);
+        }
       }
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver({ shallow: true }),
       canDrop: !!monitor.canDrop(),
     }),
-  }));
+  });
+  
+  // Update the dragging state for the whole app
+  useEffect(() => {
+    if (setIsDraggingOver) {
+      setIsDraggingOver(isOver && canDrop);
+    }
+  }, [isOver, canDrop, setIsDraggingOver]);
   
   return (
     <div 
       ref={drop} 
-      className={`
-        h-full min-h-[300px] w-full
-        ${(isOver && canDrop) ? 'bg-primary/5 ring-2 ring-primary ring-inset' : ''}
-        rounded-md
-      `}
+      className={cn(
+        "h-full min-h-[300px] w-full transition-all duration-200 relative rounded-md",
+        (isOver && canDrop) && "bg-primary/5 ring-2 ring-primary ring-inset"
+      )}
     >
+      {/* Drop indicator overlay that appears when items are being dragged over the area */}
+      {(isOver && canDrop) && (
+        <div className="absolute inset-0 bg-primary/5 backdrop-blur-[1px] flex items-center justify-center rounded-md z-10 pointer-events-none">
+          <div className="bg-card p-4 rounded-lg shadow-lg text-center">
+            <FolderOpen className="h-10 w-10 mx-auto mb-2 text-primary" />
+            <h3 className="text-lg font-semibold">Drop here</h3>
+            <p className="text-muted-foreground text-sm">Release to move items to this folder</p>
+          </div>
+        </div>
+      )}
+      
       {children}
     </div>
   );
 };
 
+// Enhanced empty state component
+const EmptyState = () => (
+  <div className="flex flex-col items-center justify-center h-64 text-center p-4 border-2 border-dashed border-muted-foreground/20 rounded-md">
+    <Upload className="h-12 w-12 text-muted-foreground/50 mb-2" />
+    <h3 className="text-lg font-medium mt-2">This folder is empty</h3>
+    <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+      Drag and drop files here or use the Upload button in the toolbar to add content
+    </p>
+  </div>
+);
+
 const FileManagerContent: React.FC = () => {
-  const { files, folders, isLoading, viewMode } = useFileManager();
+  const { files, folders, isLoading, viewMode, isDraggingOver } = useFileManager();
 
   if (isLoading) {
     return (
@@ -124,18 +107,18 @@ const FileManagerContent: React.FC = () => {
       <DndProvider backend={HTML5Backend}>
         <DroppableArea>
           {folders.length === 0 && files.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground py-12">
-              <p>This folder is empty</p>
-              <p className="text-sm">Drag and drop files or use the toolbar to add content</p>
-            </div>
+            <EmptyState />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className={cn(
+              "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-2 transition-opacity duration-200",
+              isDraggingOver && "opacity-70"
+            )}>
               {folders.map((folder) => (
-                <DraggableFolderItem key={folder.id} folder={folder} />
+                <FolderItemWrapper key={folder.id} folder={folder} />
               ))}
               
               {files.map((file) => (
-                <DraggableFileItem key={file.id} file={file} />
+                <FileItemWrapper key={file.id} file={file} />
               ))}
             </div>
           )}
@@ -149,13 +132,13 @@ const FileManagerContent: React.FC = () => {
     <DndProvider backend={HTML5Backend}>
       <DroppableArea>
         {folders.length === 0 && files.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground py-12">
-            <p>This folder is empty</p>
-            <p className="text-sm">Drag and drop files or use the toolbar to add content</p>
-          </div>
+          <EmptyState />
         ) : (
-          <div className="space-y-1">
-            <div className="grid grid-cols-12 gap-4 p-2 text-sm font-medium text-muted-foreground">
+          <div className={cn(
+            "space-y-1 transition-opacity duration-200",
+            isDraggingOver && "opacity-70"
+          )}>
+            <div className="grid grid-cols-12 gap-4 p-2 text-sm font-medium text-muted-foreground border-b">
               <div className="col-span-6">Name</div>
               <div className="col-span-2">Size</div>
               <div className="col-span-2">Type</div>
@@ -163,12 +146,12 @@ const FileManagerContent: React.FC = () => {
             </div>
             
             {folders.map((folder) => (
-              <div key={folder.id} className="grid grid-cols-12 items-center p-2 hover:bg-muted rounded-md">
+              <div key={folder.id} className="grid grid-cols-12 items-center rounded-md">
                 <div className="col-span-6">
-                  <DraggableFolderItem folder={folder} />
+                  <FolderItemWrapper folder={folder} />
                 </div>
-                <div className="col-span-2">—</div>
-                <div className="col-span-2">Folder</div>
+                <div className="col-span-2 text-sm text-muted-foreground">—</div>
+                <div className="col-span-2 text-sm text-muted-foreground">Folder</div>
                 <div className="col-span-2 text-sm text-muted-foreground">
                   {new Date(folder.updatedAt).toLocaleDateString()}
                 </div>
@@ -176,9 +159,9 @@ const FileManagerContent: React.FC = () => {
             ))}
             
             {files.map((file) => (
-              <div key={file.id} className="grid grid-cols-12 items-center p-2 hover:bg-muted rounded-md">
+              <div key={file.id} className="grid grid-cols-12 items-center rounded-md">
                 <div className="col-span-6">
-                  <DraggableFileItem file={file} />
+                  <FileItemWrapper file={file} />
                 </div>
                 <div className="col-span-2 text-sm text-muted-foreground">
                   {formatFileSize(file.size)}
@@ -206,7 +189,7 @@ const formatFileSize = (bytes: number) => {
   else return (bytes / 1073741824).toFixed(1) + ' GB';
 };
 
-const getFileTypeLabel = (mimeType: string) => {
+const getFileTypeLabel = (mimeType: string = '') => {
   const types: Record<string, string> = {
     'image/': 'Image',
     'audio/': 'Audio',

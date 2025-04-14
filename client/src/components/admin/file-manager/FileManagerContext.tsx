@@ -35,6 +35,7 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<FileUploadProgress[]>([]);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   // Fetch folder contents when currentFolder changes
   useEffect(() => {
@@ -260,6 +261,15 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
     });
   };
 
+  // Generic function to toggle selection of any item type
+  const toggleItemSelection = (item: File | Folder) => {
+    if ('url' in item) {
+      toggleFileSelection(item);
+    } else {
+      toggleFolderSelection(item);
+    }
+  };
+
   const clearSelection = () => {
     setSelectedItems([]);
   };
@@ -339,6 +349,8 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
     viewMode,
     isLoading,
     uploadProgress,
+    isDraggingOver,
+    setUploadProgress,
     navigateToFolder,
     createFolder,
     uploadFiles,
@@ -349,11 +361,13 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
     deleteFolder,
     toggleFileSelection,
     toggleFolderSelection,
+    toggleItemSelection,
     clearSelection,
     moveItems,
     toggleFavorite,
     setViewMode,
     refreshCurrentFolder,
+    setIsDraggingOver,
   };
 
   return (
