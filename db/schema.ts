@@ -209,6 +209,18 @@ export const gameTimeSlots = pgTable("game_time_slots", {
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
 });
 
+// Brackets for event age groups - allows teams to select their competitive level
+export const eventBrackets = pgTable("event_brackets", {
+  id: serial("id").primaryKey(),
+  eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
+  ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
+  name: text("name").notNull(), // e.g., "Elite", "Premier", "Select", "Classic", "Recreational"
+  description: text("description"), // More info about the bracket
+  sortOrder: integer("sort_order").notNull().default(0), // For ordering brackets in the UI
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
+});
+
 export const tournamentGroups = pgTable("tournament_groups", {
   id: serial("id").primaryKey(),
   eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
@@ -224,6 +236,7 @@ export const teams = pgTable("teams", {
   eventId: text("event_id").notNull().references(() => events.id, { onDelete: 'cascade' }),
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   groupId: integer("group_id").references(() => tournamentGroups.id),
+  bracketId: integer("bracket_id").references(() => eventBrackets.id), // Reference to selected bracket
   name: text("name").notNull(),
   // Use a single coach JSON field to match the actual database structure
   coach: text("coach"),
@@ -326,6 +339,10 @@ export const teamsRelations = relations(teams, ({ many, one }) => ({
   ageGroup: one(eventAgeGroups, {
     fields: [teams.ageGroupId],
     references: [eventAgeGroups.id]
+  }),
+  bracket: one(eventBrackets, {
+    fields: [teams.bracketId],
+    references: [eventBrackets.id]
   }),
 }));
 
