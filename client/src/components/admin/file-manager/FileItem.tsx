@@ -331,7 +331,7 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
             <motion.div 
               ref={combinedRef}
               className={cn(
-                "relative flex flex-col items-center p-3 rounded-md cursor-pointer border",
+                "relative flex flex-col items-center p-3 rounded-md cursor-pointer border select-none",
                 "transition-all duration-300 group",
                 isSelected ? 'bg-primary/10 ring-2 ring-primary border-transparent' : 'hover:bg-muted border-transparent',
                 isDragging || externalIsDragging ? 'opacity-50 scale-95 border-dashed border-primary/50' : 'opacity-100',
