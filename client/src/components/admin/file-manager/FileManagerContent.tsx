@@ -41,10 +41,18 @@ const DroppableArea = ({ children }: { children: React.ReactNode }) => {
         console.log('Dropping in main area', { item, selectedItems });
         try {
           // Use the selected items for multi-drag operations
-          if (selectedItems.length > 0) {
-            const itemIds = selectedItems.map(item => item.id);
-            moveItems(itemIds, currentFolder?.id || null);
+          const itemIds = selectedItems.length > 0 
+            ? selectedItems.map(item => item.id) 
+            : [item.id]; // Fallback to single item if somehow no selection
             
+          console.log('Moving items to', currentFolder?.id || 'root folder', ':', itemIds);
+          
+          // Use the improved moveItems function
+          const moveResult = await moveItems(itemIds, currentFolder?.id || null);
+          console.log('Move result:', moveResult);
+          
+          // Check if the move was successful
+          if (moveResult && moveResult.moved) {
             // Show success feedback
             setDidJustDrop(true);
             setDropCount(prev => prev + 1);
@@ -59,24 +67,11 @@ const DroppableArea = ({ children }: { children: React.ReactNode }) => {
               setDidJustDrop(false);
               timerRef.current = null;
             }, 2000);
+            
+            return moveResult; // Return the result for the FileItem component to check
           } else {
-            // Fallback to single item if somehow no selection
-            moveItems([item.id], currentFolder?.id || null);
-            
-            // Show success feedback
-            setDidJustDrop(true);
-            setDropCount(prev => prev + 1);
-            
-            // Clear any existing timer
-            if (timerRef.current) {
-              clearTimeout(timerRef.current);
-            }
-            
-            // Set a new timer
-            timerRef.current = setTimeout(() => {
-              setDidJustDrop(false);
-              timerRef.current = null;
-            }, 2000);
+            console.error('Move operation failed:', moveResult);
+            return { moved: false, error: true };
           }
         } catch (error) {
           console.error('Error moving items:', error);

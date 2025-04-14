@@ -177,25 +177,34 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
             const result = await moveItems(itemsToMove, folder.id);
             console.log('Move operation result:', result);
             
-            // Show success feedback
-            setDidJustDrop(true);
-            setDropCount(prev => prev + 1);
-            
-            // Clear any existing timer
-            if (timerRef.current) {
-              clearTimeout(timerRef.current);
+            // Enhanced result checking - the moveItems function now returns detailed information
+            if (result && result.moved) {
+              // Show success feedback
+              setDidJustDrop(true);
+              setDropCount(prev => prev + 1);
+              
+              // Clear any existing timer
+              if (timerRef.current) {
+                clearTimeout(timerRef.current);
+              }
+              
+              // Set a new timer
+              timerRef.current = setTimeout(() => {
+                setDidJustDrop(false);
+                timerRef.current = null;
+              }, 2000);
+              
+              console.log('Items moved successfully to folder:', folder.name);
+              
+              // Return the enhanced result with target folder info
+              return { 
+                ...result, 
+                targetFolder: folder.id 
+              };
+            } else {
+              console.log('Move operation returned non-success result:', result);
+              return result; // Return the original result with error info if present
             }
-            
-            // Set a new timer
-            timerRef.current = setTimeout(() => {
-              setDidJustDrop(false);
-              timerRef.current = null;
-            }, 2000);
-            
-            console.log('Items moved successfully to folder:', folder.name);
-            
-            // Return the drop result
-            return { moved: true, targetFolder: folder.id, itemsMoved: itemsToMove };
           } catch (error) {
             console.error('Error moving items:', error);
             setDropError(true);
