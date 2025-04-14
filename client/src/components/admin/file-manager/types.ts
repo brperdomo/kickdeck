@@ -81,6 +81,8 @@ export interface FileManagerContextType {
   viewMode: ViewMode;
   isLoading: boolean;
   uploadProgress: FileUploadProgress[];
+  isDraggingOver?: boolean;
+  setUploadProgress?: (updater: ((prev: FileUploadProgress[]) => FileUploadProgress[])) => void;
   navigateToFolder: (folderId: string | null) => void;
   createFolder: (name: string) => Promise<Folder>;
   uploadFiles: (files: FileList, folderId: string | null) => void;
@@ -91,9 +93,11 @@ export interface FileManagerContextType {
   deleteFolder: (folderId: string) => Promise<void>;
   toggleFileSelection: (file: File) => void;
   toggleFolderSelection: (folder: Folder) => void;
+  toggleItemSelection: (item: File | Folder) => void;
   clearSelection: () => void;
   moveItems: (itemIds: string[], targetFolderId: string | null) => Promise<void>;
   toggleFavorite: (fileId: string) => Promise<void>;
   setViewMode: (mode: ViewMode) => void;
   refreshCurrentFolder: () => void;
+  setIsDraggingOver?: (isDragging: boolean) => void;
 }
