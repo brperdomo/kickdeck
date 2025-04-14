@@ -314,10 +314,29 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
           // Add draggable attribute explicitly
           element.setAttribute('draggable', 'true');
           
+          // Add event listeners to prevent text selection during drag operation
+          element.addEventListener('dragstart', (e) => {
+            // Prevent text selection during drag
+            e.stopPropagation();
+            document.body.style.userSelect = 'none';
+            document.body.style.webkitUserSelect = 'none';
+            document.body.style.msUserSelect = 'none';
+            document.body.style.MozUserSelect = 'none';
+          });
+          
+          element.addEventListener('dragend', () => {
+            // Restore normal text selection after drag ends
+            document.body.style.userSelect = '';
+            document.body.style.webkitUserSelect = '';
+            document.body.style.msUserSelect = '';
+            document.body.style.MozUserSelect = '';
+          });
+          
           // Add user-select property to prevent text selection during drag
           element.style.userSelect = 'none';
           element.style.webkitUserSelect = 'none';
           element.style.msUserSelect = 'none';
+          element.style.MozUserSelect = 'none';
           
           // Add pointerEvents style to ensure the event propagation works correctly
           if (isDragging) {
