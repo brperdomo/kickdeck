@@ -129,6 +129,9 @@ function Router() {
           <Route path="/admin/team-status-test">
             {user.isAdmin ? <TeamStatusTest /> : <NotFound />}
           </Route>
+          <Route path="/admin/file-manager">
+            {user.isAdmin ? React.createElement(lazy(() => import('./pages/file-manager'))) : <NotFound />}
+          </Route>
           <Route path="/admin/events">
             {user.isAdmin ? <AdminDashboard /> : <NotFound />}
           </Route>
