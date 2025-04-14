@@ -11,6 +11,7 @@ import { createEmailTemplateRoutingTable } from './migrations/create_email_templ
 import { createTables } from './create-tables';
 import { setupAuth } from './auth';
 import { emulationMiddleware } from './services/emulationService';
+import { initializeStandardFolders } from './utils/initStandardFolders';
 
 const app = express();
 
@@ -103,6 +104,9 @@ async function testDbConnection() {
     // Create admin user if it doesn't exist
     await createAdmin();
     log("Admin user setup completed");
+    
+    // Initialize standard folder structure
+    await initializeStandardFolders();
 
     // Create the server object first
     const PORT = Number(process.env.PORT) || 5000; // Ensure PORT is a number

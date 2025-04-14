@@ -8,6 +8,7 @@ import { db } from "@db";
 import { isAdmin, hasEventAccess } from "./middleware";
 import seasonalScopesRouter from "./routes/seasonal-scopes";
 import uploadRouter from "./routes/upload";
+import filesRouter from "./routes/files";
 import csvUploadRouter from "./routes/csv-upload";
 import accountingCodesRouter from "./routes/admin/accounting-codes";
 import feesRouter from "./routes/admin/fees";
@@ -3037,6 +3038,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
     // File management routes
     app.use('/api/admin/files', isAdmin, uploadRouter);
+    app.use('/api/files', filesRouter);
     app.use('/api/folders', foldersRouter);
     
     // CSV upload helper for team registrations
