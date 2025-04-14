@@ -1,76 +1,91 @@
 import { Router } from 'express';
-import { db } from '@db';
-import { files, folders } from '@db/schema';
-import { eq, isNull, and, like, desc, asc, or } from 'drizzle-orm';
 import { validateAuth, isAdmin } from '../middleware/auth';
 import * as fileService from '../services/fileService';
-import * as folderService from '../services/folderService';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs/promises';
-import { existsSync, mkdirSync } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = Router();
 
 // Configure multer storage
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadsDir = path.join(process.cwd(), 'uploads');
-    
-    // Create uploads directory if it doesn't exist
-    if (!existsSync(uploadsDir)) {
-      mkdirSync(uploadsDir, { recursive: true });
+  destination: async function(req, file, cb) {
+    const uploadsDir = './uploads';
+    try {
+      await fs.access(uploadsDir);
+    } catch (error) {
+      await fs.mkdir(uploadsDir, { recursive: true });
     }
-    
     cb(null, uploadsDir);
   },
-  filename: (req, file, cb) => {
-    // Create unique filename with original extension
-    const extension = path.extname(file.originalname);
-    const filename = `${uuidv4()}${extension}`;
-    cb(null, filename);
-  },
+  filename: function(req, file, cb) {
+    // Generate a unique filename with the original extension
+    const fileExt = path.extname(file.originalname);
+    const fileName = `${uuidv4()}${fileExt}`;
+    cb(null, fileName);
+  }
 });
 
-// Create multer upload instance
+// File filter function
+const fileFilter = (req, file, cb) => {
+  // Allow all file types for now, but we could restrict here if needed
+  cb(null, true);
+};
+
+// Initialize multer with configured storage
 const upload = multer({
   storage,
+  fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-  },
-  fileFilter: (req, file, cb) => {
-    // Allow all file types for now, but can be customized later
-    cb(null, true);
-  },
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
 });
 
 // Get all files with optional filtering
 router.get('/', async (req, res) => {
   try {
-    const {
+    const { 
       folderId,
-      search,
       type,
-      sortBy,
-      sortOrder,
-      page,
+      relatedEntityId,
+      relatedEntityType,
+      query,
+      tags,
       limit,
+      offset 
     } = req.query;
     
     const files = await fileService.getFiles({
       folderId: folderId ? String(folderId) : undefined,
-      search: search ? String(search) : undefined,
       type: type ? String(type) : undefined,
-      sortBy: sortBy ? String(sortBy) : undefined,
-      sortOrder: sortOrder === 'asc' ? 'asc' : 'desc',
-      page: page ? parseInt(String(page)) : 1,
-      limit: limit ? parseInt(String(limit)) : 50,
+      relatedEntityId: relatedEntityId ? String(relatedEntityId) : undefined,
+      relatedEntityType: relatedEntityType ? String(relatedEntityType) : undefined,
+      query: query ? String(query) : undefined,
+      tags: tags ? String(tags).split(',') : undefined,
+      limit: limit ? parseInt(String(limit)) : undefined,
+      offset: offset ? parseInt(String(offset)) : undefined
     });
     
     res.json(files);
   } catch (error) {
     console.error('Error fetching files:', error);
+    res.status(500).json({ error: 'Failed to fetch files' });
+  }
+});
+
+// Get files by folder ID
+router.get('/folder/:folderId', async (req, res) => {
+  try {
+    const { folderId } = req.params;
+    
+    const files = await fileService.getFilesByFolder(
+      folderId === 'null' ? null : folderId
+    );
+    
+    res.json(files);
+  } catch (error) {
+    console.error(`Error fetching files for folder ${req.params.folderId}:`, error);
     res.status(500).json({ error: 'Failed to fetch files' });
   }
 });
@@ -98,20 +113,32 @@ router.get('/:id/download', async (req, res) => {
   try {
     const { id } = req.params;
     
-    const result = await fileService.getFilePath(id);
+    const file = await fileService.getFile(id);
     
-    if (!result) {
+    if (!file) {
       return res.status(404).json({ error: 'File not found' });
     }
     
-    const { filePath, file } = result;
-    
-    // Set the appropriate content type header
-    res.setHeader('Content-Type', file.type);
+    // Set appropriate content type for the file
+    res.setHeader('Content-Type', file.mimeType);
     res.setHeader('Content-Disposition', `attachment; filename="${file.name}"`);
     
     // Stream the file to the response
-    res.sendFile(filePath);
+    const filePath = await fileService.getFilePath(id);
+    if (!filePath) {
+      return res.status(404).json({ error: 'File path not found' });
+    }
+    
+    // Check if file exists in the filesystem
+    try {
+      await fs.access(filePath);
+    } catch (error) {
+      return res.status(404).json({ error: 'File not found on disk' });
+    }
+    
+    // Stream the file
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
   } catch (error) {
     console.error(`Error downloading file ${req.params.id}:`, error);
     res.status(500).json({ error: 'Failed to download file' });
@@ -125,83 +152,112 @@ router.post('/upload', validateAuth, upload.single('file'), async (req, res) => 
       return res.status(400).json({ error: 'No file uploaded' });
     }
     
-    const { 
+    const file = req.file;
+    const {
+      name,
       folderId,
       description,
       tags,
+      type,
       relatedEntityId,
-      relatedEntityType
+      relatedEntityType,
+      metadata
     } = req.body;
     
-    // If folder ID is provided, verify it exists
-    if (folderId && folderId !== 'null') {
-      const folder = await folderService.getFolder(folderId);
-      
-      if (!folder) {
-        return res.status(404).json({ error: 'Folder not found' });
+    // Determine file type if not provided
+    const fileExt = path.extname(file.originalname).replace('.', '');
+    const fileType = type || fileService.getFileTypeFromExtension(fileExt);
+    
+    // Process tags if provided
+    let tagArray = [];
+    if (tags) {
+      try {
+        // Try parsing as JSON
+        tagArray = JSON.parse(tags);
+      } catch (error) {
+        // Fall back to comma-separated string
+        tagArray = tags.split(',').map(tag => tag.trim());
       }
     }
     
-    // Get file details
-    const { filename, originalname, size, mimetype } = req.file;
-    const extension = path.extname(originalname).slice(1).toLowerCase(); // Remove leading dot
+    // Process metadata if provided
+    let metadataObj = {};
+    if (metadata) {
+      try {
+        metadataObj = JSON.parse(metadata);
+      } catch (error) {
+        console.warn('Invalid metadata JSON, using empty object', error);
+      }
+    }
     
-    // Get file type from extension
-    const fileType = fileService.getFileTypeFromExtension(extension);
-    
-    // Create file URL
-    const fileUrl = `/uploads/${filename}`;
-    
-    // Get user ID if available
-    const userId = req.user ? req.user.id : null;
-    
-    // Save file record to database
+    // Create file record
     const newFile = await fileService.createFile({
-      name: originalname,
-      url: fileUrl,
-      size,
+      name: name || file.originalname,
+      path: file.path,
+      mimeType: file.mimetype,
+      size: file.size,
       type: fileType,
-      extension,
-      folderId: folderId === 'null' ? null : folderId,
+      folderId: folderId || null,
       description: description || null,
-      tags: tags || null,
-      uploadedById: userId,
-      uploadedByName: req.user ? req.user.username || `${req.user.firstName} ${req.user.lastName}` : null,
-      uploadedByEmail: req.user ? req.user.email : null,
+      tags: tagArray,
       relatedEntityId: relatedEntityId || null,
       relatedEntityType: relatedEntityType || null,
+      metadata: metadataObj
     });
     
     res.status(201).json(newFile);
   } catch (error) {
-    console.error('Error uploading file:', error);
-    
-    // Clean up uploaded file if database insertion fails
-    if (req.file) {
-      const filePath = req.file.path;
-      try {
-        await fs.unlink(filePath);
-      } catch (unlinkError) {
-        console.error('Error cleaning up file after failed upload:', unlinkError);
-      }
+    // If error is about folder not found, send a specific message
+    if (error.message === 'Folder not found') {
+      return res.status(400).json({ error: error.message });
     }
     
+    console.error('Error uploading file:', error);
     res.status(500).json({ error: 'Failed to upload file' });
   }
 });
 
-// Update file metadata
+// Update a file's metadata
 router.patch('/:id', validateAuth, async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, folderId, description, tags } = req.body;
+    const {
+      name,
+      folderId,
+      description,
+      tags,
+      relatedEntityId,
+      relatedEntityType,
+      metadata
+    } = req.body;
     
-    // Validate folder ID if provided
-    if (folderId && folderId !== 'null') {
-      const folder = await folderService.getFolder(folderId);
-      
-      if (!folder) {
-        return res.status(404).json({ error: 'Folder not found' });
+    // Process tags if provided
+    let tagArray;
+    if (tags) {
+      if (Array.isArray(tags)) {
+        tagArray = tags;
+      } else {
+        try {
+          // Try parsing as JSON
+          tagArray = JSON.parse(tags);
+        } catch (error) {
+          // Fall back to comma-separated string
+          tagArray = tags.split(',').map(tag => tag.trim());
+        }
+      }
+    }
+    
+    // Process metadata if provided
+    let metadataObj;
+    if (metadata) {
+      if (typeof metadata === 'object') {
+        metadataObj = metadata;
+      } else {
+        try {
+          metadataObj = JSON.parse(metadata);
+        } catch (error) {
+          console.warn('Invalid metadata JSON, not updating metadata', error);
+        }
       }
     }
     
@@ -210,7 +266,10 @@ router.patch('/:id', validateAuth, async (req, res) => {
       name,
       folderId,
       description,
-      tags,
+      tags: tagArray,
+      relatedEntityId,
+      relatedEntityType,
+      metadata: metadataObj
     });
     
     if (!updatedFile) {
@@ -219,6 +278,11 @@ router.patch('/:id', validateAuth, async (req, res) => {
     
     res.json(updatedFile);
   } catch (error) {
+    // If error is about folder not found, send a specific message
+    if (error.message === 'Folder not found') {
+      return res.status(400).json({ error: error.message });
+    }
+    
     console.error(`Error updating file ${req.params.id}:`, error);
     res.status(500).json({ error: 'Failed to update file' });
   }
@@ -229,10 +293,9 @@ router.delete('/:id', validateAuth, async (req, res) => {
   try {
     const { id } = req.params;
     
-    // Attempt to delete the file
-    const deleted = await fileService.deleteFile(id);
+    const result = await fileService.deleteFile(id);
     
-    if (!deleted) {
+    if (!result) {
       return res.status(404).json({ error: 'File not found' });
     }
     
@@ -240,32 +303,6 @@ router.delete('/:id', validateAuth, async (req, res) => {
   } catch (error) {
     console.error(`Error deleting file ${req.params.id}:`, error);
     res.status(500).json({ error: 'Failed to delete file' });
-  }
-});
-
-// Get files by folder
-router.get('/folder/:folderId', async (req, res) => {
-  try {
-    const { folderId } = req.params;
-    
-    // Validate folder exists (except for root)
-    if (folderId !== 'null' && folderId !== 'root') {
-      const folder = await folderService.getFolder(folderId);
-      
-      if (!folder) {
-        return res.status(404).json({ error: 'Folder not found' });
-      }
-    }
-    
-    // Get files
-    const folderFiles = await fileService.getFilesByFolder(
-      folderId === 'null' || folderId === 'root' ? null : folderId
-    );
-    
-    res.json(folderFiles);
-  } catch (error) {
-    console.error(`Error fetching files for folder ${req.params.folderId}:`, error);
-    res.status(500).json({ error: 'Failed to fetch folder files' });
   }
 });
 

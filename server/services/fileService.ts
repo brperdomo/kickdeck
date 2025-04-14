@@ -1,10 +1,27 @@
 import { db } from '@db';
-import { files, folders, users } from '@db/schema';
-import { eq, isNull, and, like, desc, asc, or, sql } from 'drizzle-orm';
+import { files, folders } from '@db/schema';
+import { eq, isNull, and, desc, sql, like, asc, or, inArray } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid';
-import * as path from 'path';
-import * as fs from 'fs/promises';
-import { existsSync } from 'fs';
+import path from 'path';
+import fs from 'fs/promises';
+
+/**
+ * Ensure the uploads directory exists
+ */
+async function ensureUploadDirectory() {
+  const uploadsDir = './uploads';
+  try {
+    await fs.access(uploadsDir);
+  } catch (error) {
+    await fs.mkdir(uploadsDir, { recursive: true });
+  }
+  return uploadsDir;
+}
+
+// Ensure uploads directory exists at startup
+ensureUploadDirectory().catch(err => {
+  console.error('Failed to create uploads directory:', err);
+});
 
 /**
  * Get all files with optional filtering
@@ -13,113 +30,89 @@ import { existsSync } from 'fs';
  */
 export async function getFiles(options: {
   folderId?: string | null;
-  search?: string;
   type?: string;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-  page?: number;
+  relatedEntityId?: string;
+  relatedEntityType?: string;
+  query?: string;
+  tags?: string[] | string;
   limit?: number;
+  offset?: number;
 }) {
-  const {
-    folderId,
-    search,
-    type,
-    sortBy = 'createdAt',
-    sortOrder = 'desc',
-    page = 1,
-    limit = 50,
-  } = options;
+  // Start building the query
+  let query = db.select({
+    ...files,
+    folderName: folders.name
+  })
+  .from(files)
+  .leftJoin(folders, eq(files.folderId, folders.id));
   
-  // Build query with filters
-  let query = db.select().from(files);
+  // Add filter conditions
+  const conditions = [];
   
-  // Apply folder filter
-  if (folderId === null || folderId === 'null' || folderId === 'root') {
-    query = query.where(isNull(files.folderId));
-  } else if (folderId) {
-    query = query.where(eq(files.folderId, folderId));
-  }
-  
-  // Apply search filter
-  if (search) {
-    query = query.where(
-      like(files.name, `%${search}%`)
+  if (options.folderId !== undefined) {
+    conditions.push(
+      options.folderId === null
+        ? isNull(files.folderId)
+        : eq(files.folderId, options.folderId)
     );
   }
   
-  // Apply type filter
-  if (type) {
-    query = query.where(eq(files.type, type));
+  if (options.type) {
+    conditions.push(eq(files.type, options.type));
   }
   
-  // Apply sorting
-  if (sortBy && sortOrder) {
-    const orderFunc = sortOrder === 'asc' ? asc : desc;
-    
-    // Handle different sort fields
-    if (sortBy === 'name') {
-      query = query.orderBy(orderFunc(files.name));
-    } else if (sortBy === 'size') {
-      query = query.orderBy(orderFunc(files.size));
-    } else if (sortBy === 'type') {
-      query = query.orderBy(orderFunc(files.type));
-    } else if (sortBy === 'updatedAt') {
-      query = query.orderBy(orderFunc(files.updatedAt));
+  if (options.relatedEntityId) {
+    conditions.push(eq(files.relatedEntityId, options.relatedEntityId));
+  }
+  
+  if (options.relatedEntityType) {
+    conditions.push(eq(files.relatedEntityType, options.relatedEntityType));
+  }
+  
+  if (options.query) {
+    conditions.push(
+      or(
+        like(files.name, `%${options.query}%`),
+        like(files.description, `%${options.query}%`)
+      )
+    );
+  }
+  
+  if (options.tags) {
+    let tagsArray: string[];
+    if (Array.isArray(options.tags)) {
+      tagsArray = options.tags;
     } else {
-      // Default to createdAt
-      query = query.orderBy(orderFunc(files.createdAt));
+      tagsArray = options.tags.split(',').map(tag => tag.trim());
     }
-  } else {
-    // Default sort by createdAt desc
-    query = query.orderBy(desc(files.createdAt));
+    
+    if (tagsArray.length > 0) {
+      // This is a simplified approach - in a real-world application with a jsonb/array column,
+      // you would use a more sophisticated query to check array containment
+      conditions.push(sql`${files.tags} && ${JSON.stringify(tagsArray)}`);
+    }
   }
   
-  // Apply pagination
-  const offset = (page - 1) * limit;
-  query = query.limit(limit).offset(offset);
+  // Apply all conditions if there are any
+  if (conditions.length > 0) {
+    query = query.where(and(...conditions));
+  }
   
-  const result = await query;
+  // Order by creation date (newest first)
+  query = query.orderBy(desc(files.createdAt));
   
-  // Enhance file data with folder name if exists
-  const enhancedFiles = await Promise.all(result.map(async (file) => {
-    let folderName = null;
-    
-    if (file.folderId) {
-      const [folder] = await db
-        .select()
-        .from(folders)
-        .where(eq(folders.id, file.folderId));
-      
-      if (folder) {
-        folderName = folder.name;
-      }
-    }
-    
-    // Get uploader name if exists
-    let uploaderName = null;
-    let uploaderEmail = null;
-    
-    if (file.uploadedById) {
-      const [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, file.uploadedById));
-      
-      if (user) {
-        uploaderName = user.username || `${user.firstName} ${user.lastName}`;
-        uploaderEmail = user.email;
-      }
-    }
-    
-    return {
-      ...file,
-      folderName,
-      uploaderName,
-      uploaderEmail,
-    };
-  }));
+  // Apply pagination if specified
+  if (options.limit) {
+    query = query.limit(options.limit);
+  }
   
-  return enhancedFiles;
+  if (options.offset) {
+    query = query.offset(options.offset);
+  }
+  
+  const result = await db.execute(query);
+  
+  return result.rows;
 }
 
 /**
@@ -128,51 +121,16 @@ export async function getFiles(options: {
  * @returns The file with folder name or null if not found
  */
 export async function getFile(fileId: string) {
-  if (!fileId) return null;
-  
   const [file] = await db
-    .select()
+    .select({
+      ...files,
+      folderName: folders.name
+    })
     .from(files)
+    .leftJoin(folders, eq(files.folderId, folders.id))
     .where(eq(files.id, fileId));
   
-  if (!file) return null;
-  
-  // Enhance file data with folder name if exists
-  let folderName = null;
-  
-  if (file.folderId) {
-    const [folder] = await db
-      .select()
-      .from(folders)
-      .where(eq(folders.id, file.folderId));
-    
-    if (folder) {
-      folderName = folder.name;
-    }
-  }
-  
-  // Get uploader name if exists
-  let uploaderName = null;
-  let uploaderEmail = null;
-  
-  if (file.uploadedById) {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, file.uploadedById));
-    
-    if (user) {
-      uploaderName = user.username || `${user.firstName} ${user.lastName}`;
-      uploaderEmail = user.email;
-    }
-  }
-  
-  return {
-    ...file,
-    folderName,
-    uploaderName,
-    uploaderEmail,
-  };
+  return file || null;
 }
 
 /**
@@ -182,76 +140,51 @@ export async function getFile(fileId: string) {
  */
 export async function createFile(fileData: {
   name: string;
-  url: string;
+  path: string;
+  mimeType: string;
   size: number;
   type: string;
-  extension: string;
   folderId?: string | null;
   description?: string | null;
-  tags?: string | null;
-  uploadedById?: number | null;
-  uploadedByName?: string | null;
-  uploadedByEmail?: string | null;
-  uploadedByAvatar?: string | null;
+  tags?: string[];
   relatedEntityId?: string | null;
   relatedEntityType?: string | null;
+  metadata?: Record<string, any>;
 }) {
-  // Generate a unique ID for the file
-  const fileId = uuidv4();
-  
-  // Format tags if they're provided
-  let formattedTags = fileData.tags;
-  if (fileData.tags && typeof fileData.tags === 'string') {
-    // Remove extra spaces and split by commas if it's a CSV string
-    formattedTags = fileData.tags
-      .split(',')
-      .map(tag => tag.trim())
-      .filter(Boolean)
-      .join(',');
-  }
-  
-  // Create file record
-  const [newFile] = await db.insert(files)
-    .values({
-      id: fileId,
-      name: fileData.name,
-      url: fileData.url,
-      size: fileData.size,
-      type: fileData.type,
-      extension: fileData.extension,
-      folderId: fileData.folderId || null,
-      description: fileData.description || null,
-      tags: formattedTags,
-      uploadedById: fileData.uploadedById || null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      metadata: {},
-      thumbnailUrl: null,
-      relatedEntityId: fileData.relatedEntityId || null,
-      relatedEntityType: fileData.relatedEntityType || null,
-    })
-    .returning();
-  
-  // Enhance with folder name if exists
-  let folderName = null;
-  
-  if (newFile.folderId) {
+  // Validate folder if provided
+  if (fileData.folderId) {
     const [folder] = await db
       .select()
       .from(folders)
-      .where(eq(folders.id, newFile.folderId));
+      .where(eq(folders.id, fileData.folderId));
     
-    if (folder) {
-      folderName = folder.name;
+    if (!folder) {
+      throw new Error('Folder not found');
     }
   }
   
-  return {
-    ...newFile,
-    folderName,
-    uploaderName: fileData.uploadedByName,
-    uploaderEmail: fileData.uploadedByEmail,
-  };
+  // Create the file record
+  const [file] = await db
+    .insert(files)
+    .values({
+      id: uuidv4(),
+      name: fileData.name,
+      type: fileData.type,
+      size: fileData.size,
+      mimeType: fileData.mimeType,
+      url: fileData.path,
+      folderId: fileData.folderId || null,
+      description: fileData.description || null,
+      tags: fileData.tags || null,
+      relatedEntityId: fileData.relatedEntityId || null,
+      relatedEntityType: fileData.relatedEntityType || null,
+      metadata: fileData.metadata || {},
+      createdAt: new Date(),
+      updatedAt: new Date()
+    })
+    .returning();
+  
+  return file;
 }
 
 /**
@@ -264,60 +197,75 @@ export async function updateFile(fileId: string, fileData: {
   name?: string;
   folderId?: string | null;
   description?: string | null;
-  tags?: string | null;
+  tags?: string[];
+  relatedEntityId?: string | null;
+  relatedEntityType?: string | null;
+  metadata?: Record<string, any>;
 }) {
-  // Find the file
-  const [file] = await db
-    .select()
-    .from(files)
-    .where(eq(files.id, fileId));
+  // Get the current file data
+  const file = await getFile(fileId);
   
   if (!file) {
     return null;
   }
   
-  // Format tags if they're provided
-  let formattedTags = fileData.tags;
-  if (fileData.tags && typeof fileData.tags === 'string') {
-    // Remove extra spaces and split by commas if it's a CSV string
-    formattedTags = fileData.tags
-      .split(',')
-      .map(tag => tag.trim())
-      .filter(Boolean)
-      .join(',');
-  }
-  
-  // Update file
-  const [updatedFile] = await db
-    .update(files)
-    .set({
-      name: fileData.name || file.name,
-      folderId: fileData.folderId === 'null' ? null : (fileData.folderId ?? file.folderId),
-      description: fileData.description ?? file.description,
-      tags: formattedTags ?? file.tags,
-      updatedAt: new Date(),
-    })
-    .where(eq(files.id, fileId))
-    .returning();
-  
-  // Enhance with folder name if exists
-  let folderName = null;
-  
-  if (updatedFile.folderId) {
+  // Validate folder if provided
+  if (fileData.folderId && fileData.folderId !== file.folderId) {
     const [folder] = await db
       .select()
       .from(folders)
-      .where(eq(folders.id, updatedFile.folderId));
+      .where(eq(folders.id, fileData.folderId));
     
-    if (folder) {
-      folderName = folder.name;
+    if (!folder) {
+      throw new Error('Folder not found');
     }
   }
   
-  return {
-    ...updatedFile,
-    folderName,
+  // Prepare update data
+  const updateData: any = {
+    updatedAt: new Date()
   };
+  
+  if (fileData.name !== undefined) {
+    updateData.name = fileData.name;
+  }
+  
+  if (fileData.folderId !== undefined) {
+    updateData.folderId = fileData.folderId;
+  }
+  
+  if (fileData.description !== undefined) {
+    updateData.description = fileData.description;
+  }
+  
+  if (fileData.tags !== undefined) {
+    updateData.tags = fileData.tags;
+  }
+  
+  if (fileData.relatedEntityId !== undefined) {
+    updateData.relatedEntityId = fileData.relatedEntityId;
+  }
+  
+  if (fileData.relatedEntityType !== undefined) {
+    updateData.relatedEntityType = fileData.relatedEntityType;
+  }
+  
+  if (fileData.metadata !== undefined) {
+    // Merge with existing metadata
+    updateData.metadata = {
+      ...(file.metadata || {}),
+      ...(fileData.metadata || {})
+    };
+  }
+  
+  // Update the file record
+  const [updatedFile] = await db
+    .update(files)
+    .set(updateData)
+    .where(eq(files.id, fileId))
+    .returning();
+  
+  return updatedFile;
 }
 
 /**
@@ -326,35 +274,22 @@ export async function updateFile(fileId: string, fileData: {
  * @returns True if deleted successfully, false if file not found
  */
 export async function deleteFile(fileId: string) {
-  // Find the file
-  const [file] = await db
-    .select()
-    .from(files)
-    .where(eq(files.id, fileId));
+  // Get the file data to delete the physical file
+  const file = await getFile(fileId);
   
   if (!file) {
     return false;
   }
   
-  // Delete file from disk
-  if (file.url) {
-    try {
-      const uploadsDir = path.join(process.cwd(), 'uploads');
-      // Extract file path from URL
-      const relativeFilePath = file.url.replace('/uploads', '');
-      const filePath = path.join(uploadsDir, relativeFilePath);
-      
-      // Check if file exists before attempting to delete
-      if (existsSync(filePath)) {
-        await fs.unlink(filePath);
-      }
-    } catch (error) {
-      console.error(`Error deleting file from disk: ${error}`);
-      // Continue with database deletion even if file deletion fails
-    }
+  try {
+    // Delete the file from the filesystem
+    await fs.unlink(file.url);
+  } catch (error) {
+    console.warn(`Could not delete physical file at ${file.url}:`, error);
+    // Continue with database deletion even if physical file deletion fails
   }
   
-  // Delete file record
+  // Delete from database
   await db
     .delete(files)
     .where(eq(files.id, fileId));
@@ -368,20 +303,13 @@ export async function deleteFile(fileId: string) {
  * @returns The filesystem path if found, null if file not found
  */
 export async function getFilePath(fileId: string) {
-  const [file] = await db
-    .select()
-    .from(files)
-    .where(eq(files.id, fileId));
+  const file = await getFile(fileId);
   
-  if (!file || !file.url) {
+  if (!file) {
     return null;
   }
   
-  const uploadsDir = path.join(process.cwd(), 'uploads');
-  const relativeFilePath = file.url.replace('/uploads', '');
-  const filePath = path.join(uploadsDir, relativeFilePath);
-  
-  return { filePath, file };
+  return file.url;
 }
 
 /**
@@ -390,7 +318,6 @@ export async function getFilePath(fileId: string) {
  * @returns Array of files
  */
 export async function getFilesByFolder(folderId: string | null) {
-  // Build query with filters
   let query;
   
   if (folderId === null) {
@@ -407,7 +334,9 @@ export async function getFilesByFolder(folderId: string | null) {
       .orderBy(desc(files.createdAt));
   }
   
-  return await query;
+  const result = await db.execute(query);
+  
+  return result.rows;
 }
 
 /**
@@ -416,38 +345,38 @@ export async function getFilesByFolder(folderId: string | null) {
  * @returns The file type
  */
 export function getFileTypeFromExtension(extension: string): string {
-  extension = extension.toLowerCase();
+  const ext = extension.toLowerCase();
   
-  // Images
-  if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(extension)) {
+  // Image types
+  if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) {
     return 'image';
   }
   
-  // Documents
-  if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf', 'odt', 'ods', 'odp'].includes(extension)) {
+  // Document types
+  if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf', 'odt', 'ods', 'odp'].includes(ext)) {
     return 'document';
   }
   
-  // Videos
-  if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'].includes(extension)) {
+  // Video types
+  if (['mp4', 'mov', 'avi', 'wmv', 'flv', 'webm', 'mkv'].includes(ext)) {
     return 'video';
   }
   
-  // Audio
-  if (['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a'].includes(extension)) {
+  // Audio types
+  if (['mp3', 'wav', 'ogg', 'aac', 'flac', 'm4a', 'wma'].includes(ext)) {
     return 'audio';
   }
   
-  // Archives
-  if (['zip', 'rar', '7z', 'tar', 'gz'].includes(extension)) {
+  // Archive types
+  if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2', 'tar.gz', 'tgz'].includes(ext)) {
     return 'archive';
   }
   
-  // Code
-  if (['js', 'ts', 'html', 'css', 'php', 'py', 'java', 'jsx', 'tsx', 'json', 'xml'].includes(extension)) {
+  // Code types
+  if (['js', 'ts', 'jsx', 'tsx', 'py', 'rb', 'php', 'html', 'css', 'cpp', 'c', 'java', 'go', 'rust', 'sql'].includes(ext)) {
     return 'code';
   }
   
-  // Default
+  // Default type for unknown extensions
   return 'other';
 }
