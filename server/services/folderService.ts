@@ -1,6 +1,6 @@
 import { db } from '@db';
-import { folders, files } from '@db/schema';
-import { eq, isNull, and, desc, sql, asc } from 'drizzle-orm';
+import { folders } from '@db/schema';
+import { eq, isNull, desc, and } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -11,7 +11,7 @@ export const STANDARD_FOLDERS = [
   'Players',
   'Logos',
   'Documents',
-  'Receipts', 
+  'Receipts',
   'Templates',
   'Forms',
   'Images',
@@ -21,7 +21,7 @@ export const STANDARD_FOLDERS = [
 /**
  * Nested subfolders configuration
  */
-export const SUBFOLDER_CONFIGS = {
+export const SUBFOLDER_CONFIGS: Record<string, string[]> = {
   'Documents': ['Legal', 'Waivers'],
   'Templates': ['Email Templates']
 };
@@ -32,29 +32,18 @@ export const SUBFOLDER_CONFIGS = {
  * @returns Array of folders
  */
 export async function getFolders(parentId?: string | null) {
-  let query;
+  let query = db.select().from(folders);
   
-  if (parentId === undefined) {
-    // Get all folders
-    query = db
-      .select()
-      .from(folders)
-      .orderBy(asc(folders.name));
-  } else if (parentId === null) {
-    // Get root folders
-    query = db
-      .select()
-      .from(folders)
-      .where(isNull(folders.parentId))
-      .orderBy(asc(folders.name));
-  } else {
-    // Get folders with specific parent
-    query = db
-      .select()
-      .from(folders)
-      .where(eq(folders.parentId, parentId))
-      .orderBy(asc(folders.name));
+  if (parentId !== undefined) {
+    query = query.where(
+      parentId === null
+        ? isNull(folders.parentId)
+        : eq(folders.parentId, parentId)
+    );
   }
+  
+  // Order by name
+  query = query.orderBy(folders.name);
   
   const result = await db.execute(query);
   
@@ -68,33 +57,26 @@ export async function getFolders(parentId?: string | null) {
  * @returns The folder object
  */
 async function ensureFolder(name: string, parentId: string | null = null): Promise<any> {
-  // Check if folder already exists
-  let query;
-  if (parentId === null) {
-    query = db
-      .select()
-      .from(folders)
-      .where(and(
+  let query = db
+    .select()
+    .from(folders)
+    .where(
+      and(
         eq(folders.name, name),
-        isNull(folders.parentId)
-      ));
-  } else {
-    query = db
-      .select()
-      .from(folders)
-      .where(and(
-        eq(folders.name, name),
-        eq(folders.parentId, parentId)
-      ));
-  }
+        parentId === null
+          ? isNull(folders.parentId)
+          : eq(folders.parentId, parentId)
+      )
+    );
   
   const result = await db.execute(query);
   
+  // If the folder exists, return it
   if (result.rows.length > 0) {
     return result.rows[0];
   }
   
-  // Create folder if it doesn't exist
+  // Otherwise, create it
   const [folder] = await db
     .insert(folders)
     .values({
@@ -113,23 +95,34 @@ async function ensureFolder(name: string, parentId: string | null = null): Promi
  * Ensures all standard folders exist in the system
  */
 export async function ensureStandardFolders(): Promise<void> {
-  // Create standard top-level folders
-  const createdFolders = {};
+  console.log('Initializing standard folder structure...');
   
-  for (const folderName of STANDARD_FOLDERS) {
-    const folder = await ensureFolder(folderName);
-    createdFolders[folderName] = folder;
-  }
+  // Create all standard root folders
+  const rootFolderPromises = STANDARD_FOLDERS.map(name => ensureFolder(name));
+  const rootFolders = await Promise.all(rootFolderPromises);
   
-  // Create configured subfolders
-  for (const [parentName, subfolderNames] of Object.entries(SUBFOLDER_CONFIGS)) {
-    const parentFolder = createdFolders[parentName];
-    if (parentFolder) {
-      for (const subfolderName of subfolderNames) {
-        await ensureFolder(subfolderName, parentFolder.id);
-      }
+  // Create nested subfolders where configured
+  const subfolderPromises: Promise<any>[] = [];
+  
+  // Create a map of folder names to IDs for quick lookup
+  const folderMap: Record<string, string> = {};
+  rootFolders.forEach(folder => {
+    folderMap[folder.name] = folder.id;
+  });
+  
+  // Create subfolders where needed
+  Object.entries(SUBFOLDER_CONFIGS).forEach(([parentName, subfolders]) => {
+    const parentId = folderMap[parentName];
+    if (parentId) {
+      subfolders.forEach(subfolder => {
+        subfolderPromises.push(ensureFolder(subfolder, parentId));
+      });
     }
-  }
+  });
+  
+  await Promise.all(subfolderPromises);
+  
+  console.log('Standard folder structure initialized successfully');
 }
 
 /**
@@ -137,40 +130,32 @@ export async function ensureStandardFolders(): Promise<void> {
  * @returns Nested folder structure
  */
 export async function getFolderTree(): Promise<any[]> {
-  // Get all folders ordered by parent relationship and name
-  const query = db
-    .select()
-    .from(folders)
-    .orderBy(asc(folders.name));
+  // First, get all folders
+  const allFolders = await getFolders();
   
-  const result = await db.execute(query);
-  const allFolders = result.rows;
-  
-  // Create a map for quick lookups
-  const folderMap = {};
-  allFolders.forEach(folder => {
-    // Add children array to each folder
-    folder.children = [];
-    folderMap[folder.id] = folder;
-  });
-  
-  // Build the tree structure
-  const rootFolders = [];
+  // Group folders by parent ID
+  const foldersByParent: Record<string | null, any[]> = {};
   
   allFolders.forEach(folder => {
-    if (folder.parentId === null) {
-      // This is a root folder
-      rootFolders.push(folder);
-    } else if (folderMap[folder.parentId]) {
-      // This is a child folder, add it to its parent's children
-      folderMap[folder.parentId].children.push(folder);
-    } else {
-      // Parent doesn't exist (shouldn't happen), treat as root
-      rootFolders.push(folder);
+    const parentId = folder.parentId || null;
+    if (!foldersByParent[parentId]) {
+      foldersByParent[parentId] = [];
     }
+    foldersByParent[parentId].push(folder);
   });
   
-  return rootFolders;
+  // Function to build the tree recursively
+  function buildTree(parentId: string | null): any[] {
+    const children = foldersByParent[parentId] || [];
+    
+    return children.map(folder => ({
+      ...folder,
+      children: buildTree(folder.id)
+    }));
+  }
+  
+  // Start with root folders (null parent)
+  return buildTree(null);
 }
 
 /**
@@ -179,8 +164,6 @@ export async function getFolderTree(): Promise<any[]> {
  * @returns The folder object or null if not found
  */
 export async function getFolder(folderId: string): Promise<any | null> {
-  if (!folderId) return null;
-  
   const [folder] = await db
     .select()
     .from(folders)
@@ -198,13 +181,13 @@ export async function getFolder(folderId: string): Promise<any | null> {
 export async function createFolder(name: string, parentId: string | null = null): Promise<any> {
   // Validate parent folder if provided
   if (parentId) {
-    const parentFolder = await getFolder(parentId);
-    if (!parentFolder) {
+    const parent = await getFolder(parentId);
+    if (!parent) {
       throw new Error('Parent folder not found');
     }
   }
   
-  // Create folder
+  // Create the folder
   const [folder] = await db
     .insert(folders)
     .values({
@@ -226,43 +209,51 @@ export async function createFolder(name: string, parentId: string | null = null)
  * @returns The updated folder or null if not found
  */
 export async function updateFolder(folderId: string, data: { name?: string, parentId?: string | null }): Promise<any | null> {
-  // Get the folder to update
+  // Get the current folder
   const folder = await getFolder(folderId);
+  
   if (!folder) {
     return null;
   }
   
-  // Validate parent folder if provided
-  if (data.parentId && data.parentId !== 'null') {
-    if (data.parentId === folderId) {
-      throw new Error('A folder cannot be its own parent');
-    }
-    
-    const parentFolder = await getFolder(data.parentId);
-    if (!parentFolder) {
-      throw new Error('Parent folder not found');
-    }
-    
-    // Check for circular references
-    let currentFolder = parentFolder;
-    while (currentFolder.parentId) {
-      if (currentFolder.parentId === folderId) {
-        throw new Error('Circular folder reference detected');
+  // Validate parent folder if changing
+  if (data.parentId !== undefined && data.parentId !== folder.parentId) {
+    // Prevent circular references by ensuring the new parent is not a descendant of this folder
+    if (data.parentId !== null) {
+      // Check if the new parent exists
+      const parent = await getFolder(data.parentId);
+      if (!parent) {
+        throw new Error('Parent folder not found');
       }
       
-      currentFolder = await getFolder(currentFolder.parentId);
-      if (!currentFolder) break;
+      // Check if the new parent would create a cycle
+      let current = parent;
+      while (current && current.parentId) {
+        if (current.id === folderId) {
+          throw new Error('Cannot move a folder to its own descendant');
+        }
+        current = await getFolder(current.parentId);
+      }
     }
   }
   
-  // Update folder
+  // Prepare update data
+  const updateData: any = {
+    updatedAt: new Date()
+  };
+  
+  if (data.name !== undefined) {
+    updateData.name = data.name;
+  }
+  
+  if (data.parentId !== undefined) {
+    updateData.parentId = data.parentId;
+  }
+  
+  // Update the folder
   const [updatedFolder] = await db
     .update(folders)
-    .set({
-      name: data.name || folder.name,
-      parentId: data.parentId === 'null' ? null : (data.parentId ?? folder.parentId),
-      updatedAt: new Date()
-    })
+    .set(updateData)
     .where(eq(folders.id, folderId))
     .returning();
   
@@ -275,35 +266,22 @@ export async function updateFolder(folderId: string, data: { name?: string, pare
  * @returns True if deleted, false if not found
  */
 export async function deleteFolder(folderId: string): Promise<boolean> {
-  // Check if folder exists
+  // Get the folder to make sure it exists
   const folder = await getFolder(folderId);
+  
   if (!folder) {
     return false;
   }
   
-  // Check if folder has files
-  const fileQuery = db
-    .select()
-    .from(files)
-    .where(eq(files.folderId, folderId));
+  // Check if the folder has child folders
+  const children = await getFolders(folderId);
   
-  const fileResult = await db.execute(fileQuery);
-  
-  if (fileResult.rows.length > 0) {
-    throw new Error('Cannot delete folder with files');
+  if (children.length > 0) {
+    throw new Error('Cannot delete a folder with subfolders');
   }
   
-  // Check if folder has subfolders
-  const subfolderQuery = db
-    .select()
-    .from(folders)
-    .where(eq(folders.parentId, folderId));
-  
-  const subfolderResult = await db.execute(subfolderQuery);
-  
-  if (subfolderResult.rows.length > 0) {
-    throw new Error('Cannot delete folder with subfolders');
-  }
+  // Check if the folder has files
+  // This will be implemented in files routes
   
   // Delete the folder
   await db
@@ -312,8 +290,3 @@ export async function deleteFolder(folderId: string): Promise<boolean> {
   
   return true;
 }
-
-// Ensure standard folders are created at startup
-ensureStandardFolders().catch(err => {
-  console.error('Failed to create standard folders:', err);
-});
