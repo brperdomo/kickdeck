@@ -274,19 +274,25 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
     
     // Combine all the refs
     const combinedRef = (element: HTMLDivElement) => {
-      // Apply the drag ref
-      dragRef(element);
-      
-      // Apply the drop ref for dropping files/folders into this folder
-      dropRef(element);
-      
-      // Apply the forwarded ref
-      if (ref) {
-        if (typeof ref === 'function') {
-          ref(element);
-        } else {
-          (ref as React.MutableRefObject<HTMLDivElement | null>).current = element;
+      if (element) {
+        // Apply the drag ref
+        dragRef(element);
+        console.log('Applied drag ref to folder element:', element);
+        
+        // Apply the drop ref for dropping files/folders into this folder
+        dropRef(element);
+        console.log('Applied drop ref to folder element:', element);
+        
+        // Apply the forwarded ref
+        if (ref) {
+          if (typeof ref === 'function') {
+            ref(element);
+          } else {
+            (ref as React.MutableRefObject<HTMLDivElement | null>).current = element;
+          }
         }
+      } else {
+        console.log('Failed to apply drag/drop refs to folder element - element is null');
       }
     };
     

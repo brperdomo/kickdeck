@@ -270,16 +270,22 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
 
     // Combine refs
     const combinedRef = (element: HTMLDivElement) => {
-      // Apply the dragRef
-      dragRef(element);
-      
-      // Apply the forwarded ref
-      if (ref) {
-        if (typeof ref === 'function') {
-          ref(element);
-        } else {
-          (ref as React.MutableRefObject<HTMLDivElement | null>).current = element;
+      if (element) {
+        // Apply the dragRef
+        dragRef(element);
+        
+        console.log('Applied drag ref to file element:', element);
+        
+        // Apply the forwarded ref
+        if (ref) {
+          if (typeof ref === 'function') {
+            ref(element);
+          } else {
+            (ref as React.MutableRefObject<HTMLDivElement | null>).current = element;
+          }
         }
+      } else {
+        console.log('Failed to apply drag ref to file element - element is null');
       }
     };
     
