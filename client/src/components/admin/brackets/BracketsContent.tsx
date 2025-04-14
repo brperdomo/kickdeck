@@ -39,7 +39,7 @@ export function BracketsContent() {
   });
 
   // Set the first age group as selected when data loads
-  React.useEffect(() => {
+  useEffect(() => {
     if (ageGroups && ageGroups.length > 0 && !selectedAgeGroupId) {
       setSelectedAgeGroupId(ageGroups[0].id);
     }
