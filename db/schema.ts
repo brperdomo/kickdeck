@@ -545,6 +545,13 @@ export const files = pgTable("files", {
   folderId: text("folder_id"),
   thumbnailUrl: text("thumbnail_url"),
   uploadedById: integer("uploaded_by_id").references(() => users.id),
+  description: text("description"),
+  tags: text("tags").array(),
+  category: text("category"),
+  isFavorite: boolean("is_favorite").default(false),
+  relatedEntityId: text("related_entity_id"),
+  relatedEntityType: text("related_entity_type"),
+  metadata: jsonb("metadata"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
