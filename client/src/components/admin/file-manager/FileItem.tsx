@@ -79,15 +79,15 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
         };
       },
       options: {
-        // These settings make dragging more responsive
-        // Lower delay/threshold makes it easier to start dragging
+        // These settings make dragging more responsive and reliable
+        // Improving drag preview offset for better visibility
         dragPreviewOptions: {
-          offsetX: 10,
-          offsetY: 10,
+          offsetX: 15,
+          offsetY: 15,
         },
         // NOTE: These are custom options not in the type definition but supported by react-dnd
         // @ts-ignore - touchStartThreshold is supported but not in TypeScript defs
-        touchStartThreshold: 5,
+        touchStartThreshold: 3, // Reduce threshold to make it more sensitive
       },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
@@ -273,24 +273,38 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
       await toggleFavorite(file.id);
     };
 
-    // Combine refs
+    // Enhanced ref combination with more robust error handling
     const combinedRef = (element: HTMLDivElement) => {
-      if (element) {
-        // Apply the dragRef
-        dragRef(element);
-        
-        console.log('Applied drag ref to file element:', element);
-        
-        // Apply the forwarded ref
-        if (ref) {
-          if (typeof ref === 'function') {
-            ref(element);
-          } else {
-            (ref as React.MutableRefObject<HTMLDivElement | null>).current = element;
+      try {
+        if (element) {
+          // Apply the drag reference first - this enables the file to be draggable
+          console.log(`Applying drag ref to file ${file.name} (id: ${file.id})`);
+          dragRef(element);
+          
+          // Apply the forwarded ref if provided
+          if (ref) {
+            if (typeof ref === 'function') {
+              ref(element);
+            } else if (ref.hasOwnProperty('current')) {
+              (ref as React.MutableRefObject<HTMLDivElement | null>).current = element;
+            } else {
+              console.warn('Invalid ref object provided to FileItem');
+            }
+            console.log(`Applied forwarded ref to file ${file.name}`);
           }
+          
+          // Add debug data attributes to help trace drag events in the DOM
+          element.setAttribute('data-file-id', file.id);
+          element.setAttribute('data-draggable-item', 'file');
+          element.setAttribute('data-file-name', file.name);
+          
+          // Set explicit cursor styles to help users understand draggability
+          element.style.cursor = 'grab';
+        } else {
+          console.warn(`Failed to apply drag ref to file element - element is null for file ${file.name}`);
         }
-      } else {
-        console.log('Failed to apply drag ref to file element - element is null');
+      } catch (error) {
+        console.error('Error applying refs to file element:', error);
       }
     };
     

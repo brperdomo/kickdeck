@@ -277,27 +277,43 @@ const FolderItem = forwardRef<HTMLDivElement, FolderItemProps>(
       setIsDeleteDialogOpen(false);
     };
     
-    // Combine all the refs
+    // Enhanced combined refs with robust error handling
     const combinedRef = (element: HTMLDivElement) => {
-      if (element) {
-        // Apply the drag ref
-        dragRef(element);
-        console.log('Applied drag ref to folder element:', element);
-        
-        // Apply the drop ref for dropping files/folders into this folder
-        dropRef(element);
-        console.log('Applied drop ref to folder element:', element);
-        
-        // Apply the forwarded ref
-        if (ref) {
-          if (typeof ref === 'function') {
-            ref(element);
-          } else {
-            (ref as React.MutableRefObject<HTMLDivElement | null>).current = element;
+      try {
+        if (element) {
+          // Apply the drag ref for making this folder draggable
+          console.log(`Applying drag ref to folder ${folder.name} (id: ${folder.id})`);
+          dragRef(element);
+          
+          // Apply the drop ref for dropping files/folders into this folder
+          console.log(`Applying drop ref to folder ${folder.name} (id: ${folder.id})`);
+          dropRef(element);
+          
+          // Apply the forwarded ref if provided
+          if (ref) {
+            if (typeof ref === 'function') {
+              ref(element);
+            } else if (ref.hasOwnProperty('current')) {
+              (ref as React.MutableRefObject<HTMLDivElement | null>).current = element;
+            } else {
+              console.warn('Invalid ref object provided to FolderItem');
+            }
+            console.log(`Applied forwarded ref to folder ${folder.name}`);
           }
+          
+          // Add debug data attributes to help trace drag and drop events in the DOM
+          element.setAttribute('data-folder-id', folder.id);
+          element.setAttribute('data-draggable-item', 'folder');
+          element.setAttribute('data-droppable-target', 'folder');
+          element.setAttribute('data-folder-name', folder.name);
+          
+          // Set explicit cursor styles to help users understand draggability
+          element.style.cursor = 'grab';
+        } else {
+          console.warn(`Failed to apply drag/drop refs to folder element - element is null for folder ${folder.name}`);
         }
-      } else {
-        console.log('Failed to apply drag/drop refs to folder element - element is null');
+      } catch (error) {
+        console.error('Error applying refs to folder element:', error);
       }
     };
     
