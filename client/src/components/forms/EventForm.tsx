@@ -25,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { BracketsContent } from "@/components/admin/brackets/BracketsContent";
 import { Editor } from "@tinymce/tinymce-react";
 
 // TinyMCE API key from environment variable
@@ -1208,6 +1209,19 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   seasonalScopesQuery,
                   selectedSeasonalScopeId,
                   handleSeasonalScopeChange
+                )}
+              </TabsContent>
+
+              <TabsContent value="brackets">
+                {mode === 'edit' ? (
+                  <BracketsContent />
+                ) : (
+                  <div className="p-4 bg-muted/50 rounded-md text-center">
+                    <p>You must save the event before managing brackets.</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Save the event with age groups first, then you can add brackets in edit mode.
+                    </p>
+                  </div>
                 )}
               </TabsContent>
 

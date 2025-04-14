@@ -74,7 +74,7 @@ export interface EventSetting {
 }
 
 export type FieldSize = '3v3' | '4v4' | '5v5' | '6v6' | '7v7' | '8v8' | '9v9' | '10v10' | '11v11' | 'N/A';
-export type EventTab = 'information' | 'age-groups' | 'scoring' | 'complexes' | 'settings' | 'administrators';
+export type EventTab = 'information' | 'age-groups' | 'brackets' | 'scoring' | 'complexes' | 'settings' | 'administrators';
 
 export interface EventData {
   name: string;
@@ -100,7 +100,7 @@ export interface ScoringRule {
   points: number;
 }
 
-export const TAB_ORDER: EventTab[] = ['information', 'age-groups', 'scoring', 'complexes', 'settings', 'administrators'];
+export const TAB_ORDER: EventTab[] = ['information', 'age-groups', 'brackets', 'scoring', 'complexes', 'settings', 'administrators'];
 
 export const USA_TIMEZONES = [
   { value: 'America/New_York', label: 'Eastern Time (ET)' },

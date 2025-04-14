@@ -1,30 +1,25 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, InfoIcon } from "lucide-react";
-
+import axios from "axios";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { FormDescription } from "@/components/ui/form";
 
+// Define types
 type Bracket = {
   id: number;
   eventId: string;
   ageGroupId: number;
   name: string;
   description: string | null;
+  level: string;
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
@@ -47,14 +42,6 @@ export function BracketSelector({
   disabled = false,
   required = false,
 }: BracketSelectorProps) {
-  const [selectedBracketId, setSelectedBracketId] = useState<string>(
-    value ? value.toString() : ""
-  );
-
-  useEffect(() => {
-    setSelectedBracketId(value ? value.toString() : "");
-  }, [value]);
-
   // Fetch brackets for the selected age group
   const {
     data: brackets,
@@ -65,41 +52,30 @@ export function BracketSelector({
     queryKey: ["brackets", eventId, ageGroupId],
     queryFn: async () => {
       if (!ageGroupId) return [];
-      const { data } = await axios.get(
-        `/api/admin/events/${eventId}/age-groups/${ageGroupId}/brackets`
-      );
+      const { data } = await axios.get(`/api/events/${eventId}/age-groups/${ageGroupId}/brackets`);
       return data;
     },
     enabled: !!eventId && !!ageGroupId,
   });
 
-  // Handle selecting a bracket
-  const handleSelectBracket = (value: string) => {
-    setSelectedBracketId(value);
-    onChange(value ? parseInt(value) : null);
+  // Helper function to get bracket label with level
+  const getBracketLabel = (bracket: Bracket): string => {
+    return `${bracket.name} (${bracket.level.charAt(0).toUpperCase() + bracket.level.slice(1)})`;
   };
 
-  // If no age group is selected, don't show brackets
+  // Don't show the component if not needed
   if (!ageGroupId) {
-    return (
-      <div className="space-y-2">
-        <Label htmlFor="bracket">Bracket Selection</Label>
-        <Select disabled={true}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select an age group first" />
-          </SelectTrigger>
-        </Select>
-      </div>
-    );
+    return null;
   }
 
+  // Handle loading and error states
   if (isLoading) {
     return (
       <div className="space-y-2">
-        <Label htmlFor="bracket">Bracket Selection</Label>
-        <div className="flex items-center h-10 text-muted-foreground">
-          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          Loading brackets...
+        <Label>Bracket Selection</Label>
+        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <span>Loading brackets...</span>
         </div>
       </div>
     );
@@ -107,72 +83,64 @@ export function BracketSelector({
 
   if (isError) {
     return (
-      <div className="space-y-2">
-        <Label htmlFor="bracket">Bracket Selection</Label>
-        <div className="text-red-500 text-sm">
-          Error loading brackets: {error instanceof Error ? error.message : "Unknown error"}
-        </div>
-      </div>
+      <Alert variant="destructive" className="mt-2">
+        <AlertTitle>Error loading brackets</AlertTitle>
+        <AlertDescription>
+          {error instanceof Error ? error.message : "Failed to load brackets. Please try again."}
+        </AlertDescription>
+      </Alert>
     );
   }
 
-  // If no brackets exist for this age group
+  // Don't show selector if no brackets are available
   if (!brackets || brackets.length === 0) {
-    return (
-      <div className="space-y-2">
-        <Label htmlFor="bracket">Bracket Selection</Label>
-        <div className="text-muted-foreground text-sm">
-          No brackets available for this age group
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center">
-        <Label htmlFor="bracket" className="mr-2">
-          Bracket Selection {required && <span className="text-red-500">*</span>}
-        </Label>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <InfoIcon className="h-4 w-4 text-muted-foreground" />
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs">
-              <p>Select the appropriate bracket for your team's competitive level</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-
+      <Label htmlFor="bracket-select">
+        Bracket Selection {required && <span className="text-destructive">*</span>}
+      </Label>
       <Select
+        value={value?.toString() || ""}
+        onValueChange={(val) => onChange(val ? parseInt(val) : null)}
         disabled={disabled}
-        value={selectedBracketId}
-        onValueChange={handleSelectBracket}
       >
-        <SelectTrigger>
+        <SelectTrigger id="bracket-select" className="w-full">
           <SelectValue placeholder="Select a bracket" />
         </SelectTrigger>
         <SelectContent>
-          <SelectGroup>
-            {brackets
-              .sort((a, b) => a.sortOrder - b.sortOrder)
-              .map((bracket) => (
-                <SelectItem key={bracket.id} value={bracket.id.toString()}>
-                  <div>
-                    <span>{bracket.name}</span>
-                    {bracket.description && (
-                      <span className="block text-xs text-muted-foreground truncate max-w-[250px]">
-                        {bracket.description}
-                      </span>
-                    )}
-                  </div>
-                </SelectItem>
-              ))}
-          </SelectGroup>
+          {!required && (
+            <SelectItem value="">
+              <span className="text-muted-foreground">No bracket selected</span>
+            </SelectItem>
+          )}
+          {brackets.map((bracket) => (
+            <SelectItem 
+              key={bracket.id} 
+              value={bracket.id.toString()}
+              className="relative"
+            >
+              <span className="font-medium">{bracket.name}</span>
+              <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
+                bracket.level === 'beginner' ? 'bg-green-100 text-green-800' :
+                bracket.level === 'intermediate' ? 'bg-blue-100 text-blue-800' :
+                bracket.level === 'advanced' ? 'bg-purple-100 text-purple-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {bracket.level.charAt(0).toUpperCase() + bracket.level.slice(1)}
+              </span>
+              {bracket.description && (
+                <p className="text-muted-foreground text-xs mt-1">{bracket.description}</p>
+              )}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
+      <FormDescription>
+        Select the appropriate competitive level for your team. This helps us create balanced schedules.
+      </FormDescription>
     </div>
   );
 }
