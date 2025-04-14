@@ -1,7 +1,65 @@
 import { db } from '@db';
-import { folders } from '@db/schema';
-import { eq, isNull, and, sql } from 'drizzle-orm';
+import { folders, files } from '@db/schema';
+import { eq, isNull, and, desc, sql, asc } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid';
+
+/**
+ * Predefined folder names that should be created by default
+ */
+export const STANDARD_FOLDERS = [
+  'Teams',
+  'Players',
+  'Logos',
+  'Documents',
+  'Receipts', 
+  'Templates',
+  'Forms',
+  'Images',
+  'Reports & Exports'
+];
+
+/**
+ * Nested subfolders configuration
+ */
+export const SUBFOLDER_CONFIGS = {
+  'Documents': ['Legal', 'Waivers'],
+  'Templates': ['Email Templates']
+};
+
+/**
+ * Get all folders with optional parent filter
+ * @param parentId Optional parent folder ID
+ * @returns Array of folders
+ */
+export async function getFolders(parentId?: string | null) {
+  let query;
+  
+  if (parentId === undefined) {
+    // Get all folders
+    query = db
+      .select()
+      .from(folders)
+      .orderBy(asc(folders.name));
+  } else if (parentId === null) {
+    // Get root folders
+    query = db
+      .select()
+      .from(folders)
+      .where(isNull(folders.parentId))
+      .orderBy(asc(folders.name));
+  } else {
+    // Get folders with specific parent
+    query = db
+      .select()
+      .from(folders)
+      .where(eq(folders.parentId, parentId))
+      .orderBy(asc(folders.name));
+  }
+  
+  const result = await db.execute(query);
+  
+  return result.rows;
+}
 
 /**
  * Check if a standard folder exists and create it if it doesn't
@@ -13,27 +71,32 @@ async function ensureFolder(name: string, parentId: string | null = null): Promi
   // Check if folder already exists
   let query;
   if (parentId === null) {
-    query = db.select().from(folders)
+    query = db
+      .select()
+      .from(folders)
       .where(and(
         eq(folders.name, name),
         isNull(folders.parentId)
       ));
   } else {
-    query = db.select().from(folders)
+    query = db
+      .select()
+      .from(folders)
       .where(and(
         eq(folders.name, name),
         eq(folders.parentId, parentId)
       ));
   }
   
-  const [existingFolder] = await query;
+  const result = await db.execute(query);
   
-  if (existingFolder) {
-    return existingFolder;
+  if (result.rows.length > 0) {
+    return result.rows[0];
   }
   
-  // Create the folder if it doesn't exist
-  const [newFolder] = await db.insert(folders)
+  // Create folder if it doesn't exist
+  const [folder] = await db
+    .insert(folders)
     .values({
       id: uuidv4(),
       name,
@@ -42,33 +105,31 @@ async function ensureFolder(name: string, parentId: string | null = null): Promi
       updatedAt: new Date()
     })
     .returning();
-    
-  return newFolder;
+  
+  return folder;
 }
 
 /**
  * Ensures all standard folders exist in the system
  */
 export async function ensureStandardFolders(): Promise<void> {
-  console.log('Initializing standard folders...');
+  // Create standard top-level folders
+  const createdFolders = {};
   
-  // Create top-level folders
-  const teamsFolder = await ensureFolder('Teams');
-  const playersFolder = await ensureFolder('Players');
-  const logosFolder = await ensureFolder('Logos');
-  const documentsFolder = await ensureFolder('Documents');
-  const receiptsFolder = await ensureFolder('Receipts');
-  const templatesFolder = await ensureFolder('Templates');
-  const formsFolder = await ensureFolder('Forms');
-  const imagesFolder = await ensureFolder('Images');
-  const reportsFolder = await ensureFolder('Reports & Exports');
+  for (const folderName of STANDARD_FOLDERS) {
+    const folder = await ensureFolder(folderName);
+    createdFolders[folderName] = folder;
+  }
   
-  // Create second-level folders
-  await ensureFolder('Legal', documentsFolder.id);
-  await ensureFolder('Waivers', documentsFolder.id);
-  await ensureFolder('Email Templates', templatesFolder.id);
-  
-  console.log('Standard folders initialized successfully');
+  // Create configured subfolders
+  for (const [parentName, subfolderNames] of Object.entries(SUBFOLDER_CONFIGS)) {
+    const parentFolder = createdFolders[parentName];
+    if (parentFolder) {
+      for (const subfolderName of subfolderNames) {
+        await ensureFolder(subfolderName, parentFolder.id);
+      }
+    }
+  }
 }
 
 /**
@@ -76,33 +137,36 @@ export async function ensureStandardFolders(): Promise<void> {
  * @returns Nested folder structure
  */
 export async function getFolderTree(): Promise<any[]> {
-  // Fetch all folders
-  const allFolders = await db.select().from(folders);
+  // Get all folders ordered by parent relationship and name
+  const query = db
+    .select()
+    .from(folders)
+    .orderBy(asc(folders.name));
   
-  // Create a map for quick access
-  const folderMap = new Map();
+  const result = await db.execute(query);
+  const allFolders = result.rows;
+  
+  // Create a map for quick lookups
+  const folderMap = {};
   allFolders.forEach(folder => {
-    folderMap.set(folder.id, {
-      ...folder,
-      children: []
-    });
+    // Add children array to each folder
+    folder.children = [];
+    folderMap[folder.id] = folder;
   });
   
-  // Build the tree
+  // Build the tree structure
   const rootFolders = [];
   
   allFolders.forEach(folder => {
-    const folderWithChildren = folderMap.get(folder.id);
-    
     if (folder.parentId === null) {
       // This is a root folder
-      rootFolders.push(folderWithChildren);
+      rootFolders.push(folder);
+    } else if (folderMap[folder.parentId]) {
+      // This is a child folder, add it to its parent's children
+      folderMap[folder.parentId].children.push(folder);
     } else {
-      // This is a child folder
-      const parent = folderMap.get(folder.parentId);
-      if (parent) {
-        parent.children.push(folderWithChildren);
-      }
+      // Parent doesn't exist (shouldn't happen), treat as root
+      rootFolders.push(folder);
     }
   });
   
@@ -115,9 +179,7 @@ export async function getFolderTree(): Promise<any[]> {
  * @returns The folder object or null if not found
  */
 export async function getFolder(folderId: string): Promise<any | null> {
-  if (!folderId) {
-    return null;
-  }
+  if (!folderId) return null;
   
   const [folder] = await db
     .select()
@@ -134,40 +196,27 @@ export async function getFolder(folderId: string): Promise<any | null> {
  * @returns The created folder
  */
 export async function createFolder(name: string, parentId: string | null = null): Promise<any> {
-  const [newFolder] = await db
+  // Validate parent folder if provided
+  if (parentId) {
+    const parentFolder = await getFolder(parentId);
+    if (!parentFolder) {
+      throw new Error('Parent folder not found');
+    }
+  }
+  
+  // Create folder
+  const [folder] = await db
     .insert(folders)
     .values({
       id: uuidv4(),
       name,
       parentId,
       createdAt: new Date(),
-      updatedAt: new Date(),
+      updatedAt: new Date()
     })
     .returning();
   
-  return newFolder;
-}
-
-/**
- * Delete a folder by ID
- * @param folderId The folder ID to delete
- * @returns True if deleted, false if not found
- */
-export async function deleteFolder(folderId: string): Promise<boolean> {
-  const [folder] = await db
-    .select()
-    .from(folders)
-    .where(eq(folders.id, folderId));
-  
-  if (!folder) {
-    return false;
-  }
-  
-  await db
-    .delete(folders)
-    .where(eq(folders.id, folderId));
-  
-  return true;
+  return folder;
 }
 
 /**
@@ -177,24 +226,94 @@ export async function deleteFolder(folderId: string): Promise<boolean> {
  * @returns The updated folder or null if not found
  */
 export async function updateFolder(folderId: string, data: { name?: string, parentId?: string | null }): Promise<any | null> {
-  const [folder] = await db
-    .select()
-    .from(folders)
-    .where(eq(folders.id, folderId));
-  
+  // Get the folder to update
+  const folder = await getFolder(folderId);
   if (!folder) {
     return null;
   }
   
+  // Validate parent folder if provided
+  if (data.parentId && data.parentId !== 'null') {
+    if (data.parentId === folderId) {
+      throw new Error('A folder cannot be its own parent');
+    }
+    
+    const parentFolder = await getFolder(data.parentId);
+    if (!parentFolder) {
+      throw new Error('Parent folder not found');
+    }
+    
+    // Check for circular references
+    let currentFolder = parentFolder;
+    while (currentFolder.parentId) {
+      if (currentFolder.parentId === folderId) {
+        throw new Error('Circular folder reference detected');
+      }
+      
+      currentFolder = await getFolder(currentFolder.parentId);
+      if (!currentFolder) break;
+    }
+  }
+  
+  // Update folder
   const [updatedFolder] = await db
     .update(folders)
     .set({
       name: data.name || folder.name,
-      parentId: data.parentId !== undefined ? data.parentId : folder.parentId,
-      updatedAt: new Date(),
+      parentId: data.parentId === 'null' ? null : (data.parentId ?? folder.parentId),
+      updatedAt: new Date()
     })
     .where(eq(folders.id, folderId))
     .returning();
   
   return updatedFolder;
 }
+
+/**
+ * Delete a folder by ID
+ * @param folderId The folder ID to delete
+ * @returns True if deleted, false if not found
+ */
+export async function deleteFolder(folderId: string): Promise<boolean> {
+  // Check if folder exists
+  const folder = await getFolder(folderId);
+  if (!folder) {
+    return false;
+  }
+  
+  // Check if folder has files
+  const fileQuery = db
+    .select()
+    .from(files)
+    .where(eq(files.folderId, folderId));
+  
+  const fileResult = await db.execute(fileQuery);
+  
+  if (fileResult.rows.length > 0) {
+    throw new Error('Cannot delete folder with files');
+  }
+  
+  // Check if folder has subfolders
+  const subfolderQuery = db
+    .select()
+    .from(folders)
+    .where(eq(folders.parentId, folderId));
+  
+  const subfolderResult = await db.execute(subfolderQuery);
+  
+  if (subfolderResult.rows.length > 0) {
+    throw new Error('Cannot delete folder with subfolders');
+  }
+  
+  // Delete the folder
+  await db
+    .delete(folders)
+    .where(eq(folders.id, folderId));
+  
+  return true;
+}
+
+// Ensure standard folders are created at startup
+ensureStandardFolders().catch(err => {
+  console.error('Failed to create standard folders:', err);
+});
