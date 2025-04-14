@@ -278,12 +278,6 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
     try {
       console.log('Moving items with IDs:', itemIds, 'to folder:', targetFolderId);
       
-      // Check if target folder is same as current folder - no need to move in that case
-      if (targetFolderId === currentFolder?.id) {
-        console.log('Target folder is the same as current folder - no need to move');
-        return;
-      }
-      
       // Find the items to move by their IDs
       const itemsToMove = [...selectedItems, ...files, ...folders].filter(item => 
         itemIds.includes(item.id));
@@ -300,6 +294,19 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
       console.log('Files to move:', fileIds);
       console.log('Folders to move:', folderIds);
       
+      // Check if target folder is same as current folder - still return success info
+      // but don't perform actual move operation
+      if (targetFolderId === currentFolder?.id) {
+        console.log('Target folder is the same as current folder - returning success without moving');
+        return { 
+          moved: true, 
+          targetFolder: targetFolderId,
+          movedFileIds: fileIds,
+          movedFolderIds: folderIds,
+          itemsMoved: itemIds // For backward compatibility
+        };
+      }
+      
       // Move files
       if (fileIds.length > 0) {
         await api.moveFiles(fileIds, targetFolderId);
@@ -309,6 +316,7 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
       }
       
       // Move folders (one by one)
+      const movedFolderIds = [];
       for (const folderId of folderIds) {
         // Don't move a folder into itself or its descendants
         if (folderId === targetFolderId) {
@@ -317,6 +325,7 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
         }
         await api.updateFolder(folderId, { parentId: targetFolderId });
         console.log('Folder moved successfully:', folderId);
+        movedFolderIds.push(folderId);
       }
       
       // Remove moved folders from current view
@@ -330,8 +339,14 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
         description: 'Items moved successfully',
       });
       
-      // Return the updated items list for the UI to reflect changes
-      return { movedFileIds: fileIds, movedFolderIds: folderIds };
+      // Return detailed information about the move operation
+      return { 
+        moved: true, 
+        targetFolder: targetFolderId,
+        movedFileIds: fileIds,
+        movedFolderIds: movedFolderIds,
+        itemsMoved: [...fileIds, ...movedFolderIds] // For backward compatibility
+      };
     } catch (error) {
       console.error('Error moving items:', error);
       toast({
@@ -339,7 +354,13 @@ export const FileManagerProvider = ({ children }: FileManagerProviderProps) => {
         description: 'Failed to move items',
         variant: 'destructive',
       });
-      throw error;
+      
+      // Return error information
+      return {
+        moved: false,
+        error: true,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
   };
 

@@ -74,7 +74,8 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
           type: 'file',
           id: file.id,
           name: file.name,
-          size: file.size
+          size: file.size,
+          isSelected: isSelected // Pass the selection state
         };
       },
       options: {
@@ -117,7 +118,13 @@ const FileItem = forwardRef<HTMLDivElement, FileItemProps>(
             Array.isArray(dropResult.itemsMoved) && 
             dropResult.itemsMoved.includes(file.id);
             
-          if (dropResult.moved === true || wasItemMoved) {
+          // Also check using movedFileIds from the enhanced moveItems return value
+          const wasMovedInFileIds = dropResult.movedFileIds && 
+            Array.isArray(dropResult.movedFileIds) && 
+            dropResult.movedFileIds.includes(file.id);
+            
+          if (dropResult.moved === true || wasItemMoved || wasMovedInFileIds) {
+            console.log('Showing move success indicator for file:', file.name);
             setDidJustMove(true);
             setMoveCount(prev => prev + 1);
             
