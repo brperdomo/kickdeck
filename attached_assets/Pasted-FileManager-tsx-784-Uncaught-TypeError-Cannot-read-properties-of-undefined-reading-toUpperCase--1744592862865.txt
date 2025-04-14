@@ -1,0 +1,38 @@
+FileManager.tsx:784 Uncaught TypeError: Cannot read properties of undefined (reading 'toUpperCase')
+    at FileManager.tsx:784:57
+    at Array.map (<anonymous>)
+    at FileManager (FileManager.tsx:753:26)
+
+FileManager.tsx:784 Uncaught TypeError: Cannot read properties of undefined (reading 'toUpperCase')
+    at FileManager.tsx:784:57
+    at Array.map (<anonymous>)
+    at FileManager (FileManager.tsx:753:26)
+chunk-RPCDYKBN.js?v=601dc2d6:14032 The above error occurred in the <FileManager> component:
+
+    at FileManager (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/src/components/admin/FileManager.tsx:94:31)
+    at div
+    at div
+    at div
+    at MotionComponent (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/…unner/workspace/node_modules/.vite/deps/framer-motion.js?v=0cc2159d:945:40)
+    at AnimatedContent (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/src/components/ui/animation.tsx:162:3)
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/src/pages/admin-dashboard.tsx:7159:54)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=159737c6:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=159737c6:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/src/App.tsx:55:31)
+    at div
+    at div
+    at MainLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/src/components/layouts/MainLayout.tsx:18:30)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/…unner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=601dc2d6:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=d3f6fe33:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=8061b428:2829:3)
+    at App
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=8061b428:2829:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-RPCDYKBN.js?v=601dc2d6:9129 Uncaught TypeError: Cannot read properties of undefined (reading 'toUpperCase')
+    at FileManager.tsx:784:57
+    at Array.map (<anonymous>)
+    at FileManager (FileManager.tsx:753:26)
