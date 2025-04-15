@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { eventBrackets, eventAgeGroups, teams } from '../../../db/schema';
 import { hasEventAccess } from '../../middleware/event-access';
 
@@ -261,6 +261,123 @@ router.put('/events/:eventId/teams/:teamId/bracket', hasEventAccess, async (req,
   } catch (error) {
     console.error('Error assigning bracket to team:', error);
     res.status(500).json({ error: 'Failed to assign bracket to team' });
+  }
+});
+
+// Create brackets in bulk for multiple age groups
+router.post('/events/:eventId/bulk-brackets', hasEventAccess, async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { ageGroupIds, brackets } = req.body;
+    
+    // Validate required fields
+    if (!ageGroupIds || !Array.isArray(ageGroupIds) || ageGroupIds.length === 0) {
+      return res.status(400).json({ error: 'At least one age group ID is required' });
+    }
+    
+    if (!brackets || !Array.isArray(brackets) || brackets.length === 0) {
+      return res.status(400).json({ error: 'At least one bracket definition is required' });
+    }
+    
+    // Verify the age groups exist and belong to the event
+    const ageGroups = await db
+      .select()
+      .from(eventAgeGroups)
+      .where(
+        and(
+          eq(eventAgeGroups.eventId, eventId),
+          inArray(eventAgeGroups.id, ageGroupIds)
+        )
+      );
+    
+    if (ageGroups.length === 0) {
+      return res.status(404).json({ error: 'No valid age groups found for this event' });
+    }
+    
+    // For each age group, create the brackets
+    const createdBrackets = [];
+    const errors = [];
+    
+    for (const ageGroup of ageGroups) {
+      // Delete existing brackets for this age group if specified
+      if (req.body.replaceExisting) {
+        // Check if there are teams using brackets in this age group
+        const teamsUsingBrackets = await db
+          .select({ id: teams.id })
+          .from(teams)
+          .where(
+            and(
+              eq(teams.eventId, eventId),
+              eq(teams.ageGroupId, ageGroup.id),
+              // Only check for teams that have a bracketId
+              inArray(
+                teams.bracketId,
+                db.select({ id: eventBrackets.id })
+                  .from(eventBrackets)
+                  .where(eq(eventBrackets.ageGroupId, ageGroup.id))
+              )
+            )
+          )
+          .limit(1);
+          
+        if (teamsUsingBrackets.length > 0) {
+          errors.push({
+            ageGroupId: ageGroup.id,
+            message: `Cannot replace brackets for age group ${ageGroup.ageGroup} (${ageGroup.gender}) because there are teams assigned to them`
+          });
+          continue;
+        }
+        
+        // Delete existing brackets for this age group
+        await db
+          .delete(eventBrackets)
+          .where(
+            and(
+              eq(eventBrackets.eventId, eventId),
+              eq(eventBrackets.ageGroupId, ageGroup.id)
+            )
+          );
+      }
+      
+      // Create the new brackets for this age group
+      for (let i = 0; i < brackets.length; i++) {
+        const bracket = brackets[i];
+        
+        try {
+          const [newBracket] = await db
+            .insert(eventBrackets)
+            .values({
+              eventId,
+              ageGroupId: ageGroup.id,
+              name: bracket.name,
+              description: bracket.description || null,
+              sortOrder: i,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            })
+            .returning();
+            
+          createdBrackets.push(newBracket);
+        } catch (error) {
+          console.error(`Error creating bracket for age group ${ageGroup.id}:`, error);
+          errors.push({
+            ageGroupId: ageGroup.id,
+            bracketName: bracket.name,
+            message: 'Failed to create bracket'
+          });
+        }
+      }
+    }
+    
+    res.status(201).json({
+      success: true,
+      message: `Created ${createdBrackets.length} brackets across ${ageGroups.length} age groups`,
+      createdBrackets,
+      errors: errors.length > 0 ? errors : undefined
+    });
+  } catch (error) {
+    console.error('Error creating brackets in bulk:', error);
+    res.status(500).json({ error: 'Failed to create brackets in bulk' });
   }
 });
 

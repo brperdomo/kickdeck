@@ -6,7 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { BracketManager } from "./BracketManager";
+import { BulkBracketManager } from "./BulkBracketManager";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Define types
 type AgeGroup = {
@@ -98,56 +100,69 @@ export function BracketsContent() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Age Group Brackets</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {/* Improved age group selector with better layout and readability */}
-          <div className="border rounded-md mb-4 overflow-hidden">
-            <ScrollArea className="h-24 w-full p-1">
-              <div className="flex flex-wrap gap-2 p-2">
-                {ageGroups.map((ageGroup: AgeGroup) => (
-                  <button
-                    key={ageGroup.id}
-                    onClick={() => setSelectedAgeGroupId(ageGroup.id)}
-                    className={`px-4 py-2 rounded-md text-sm whitespace-nowrap transition-colors
-                      ${selectedAgeGroupId === ageGroup.id 
-                        ? "bg-primary text-primary-foreground font-medium" 
-                        : "bg-muted/50 hover:bg-muted"}
-                    `}
-                  >
-                    {getAgeGroupDisplayName(ageGroup)}
-                  </button>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-
-          {/* Selected age group content */}
-          {selectedAgeGroup && (
-            <div className="border rounded-lg p-4">
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-medium">
-                    {getAgeGroupDisplayName(selectedAgeGroup)} - {selectedAgeGroup.divisionCode}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">
-                    Manage brackets for this age group
-                  </p>
-                </div>
-                
-                <ScrollArea className="h-[calc(100vh-350px)] pr-4">
-                  <BracketManager 
-                    ageGroupId={selectedAgeGroup.id} 
-                    eventId={eventId} 
-                  />
+      <Tabs defaultValue="individual" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="individual">Individual Management</TabsTrigger>
+          <TabsTrigger value="bulk">Bulk Management</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="individual">
+          <Card>
+            <CardHeader>
+              <CardTitle>Individual Age Group Brackets</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Improved age group selector with better layout and readability */}
+              <div className="border rounded-md mb-4 overflow-hidden">
+                <ScrollArea className="h-24 w-full p-1">
+                  <div className="flex flex-wrap gap-2 p-2">
+                    {ageGroups.map((ageGroup: AgeGroup) => (
+                      <button
+                        key={ageGroup.id}
+                        onClick={() => setSelectedAgeGroupId(ageGroup.id)}
+                        className={`px-4 py-2 rounded-md text-sm whitespace-nowrap transition-colors
+                          ${selectedAgeGroupId === ageGroup.id 
+                            ? "bg-primary text-primary-foreground font-medium" 
+                            : "bg-muted/50 hover:bg-muted"}
+                        `}
+                      >
+                        {getAgeGroupDisplayName(ageGroup)}
+                      </button>
+                    ))}
+                  </div>
                 </ScrollArea>
               </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+
+              {/* Selected age group content */}
+              {selectedAgeGroup && (
+                <div className="border rounded-lg p-4">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-lg font-medium">
+                        {getAgeGroupDisplayName(selectedAgeGroup)} - {selectedAgeGroup.divisionCode}
+                      </h3>
+                      <p className="text-muted-foreground text-sm">
+                        Manage brackets for this age group
+                      </p>
+                    </div>
+                    
+                    <ScrollArea className="h-[calc(100vh-430px)] pr-4">
+                      <BracketManager 
+                        ageGroupId={selectedAgeGroup.id} 
+                        eventId={eventId} 
+                      />
+                    </ScrollArea>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="bulk">
+          <BulkBracketManager />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
