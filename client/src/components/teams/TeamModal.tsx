@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { BracketSelector } from "../registration/BracketSelector";
 
 // Define a proper schema to handle coach data structure
 const teamSchema = z.object({
@@ -25,6 +26,7 @@ const teamSchema = z.object({
   managerPhone: z.string().optional(),
   managerEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
   ageGroupId: z.string().optional(),
+  bracketId: z.number().nullable().optional(),
 });
 
 type TeamFormValues = z.infer<typeof teamSchema>;
@@ -51,6 +53,7 @@ interface TeamModalProps {
     eventId?: string;
     ageGroupId?: number;
     ageGroup?: string;
+    bracketId?: number | null;
   };
 }
 
@@ -74,6 +77,25 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
       return response.json();
     },
     enabled: !!team?.eventId,
+  });
+  
+  // Fetch brackets for the selected age group
+  const bracketsQuery = useQuery({
+    queryKey: ['/api/brackets', team?.eventId, form?.getValues('ageGroupId')],
+    queryFn: async () => {
+      const ageGroupId = form?.getValues('ageGroupId');
+      if (!team?.eventId || !ageGroupId) return [];
+      
+      console.log(`Fetching brackets for event ${team.eventId} and age group ${ageGroupId}`);
+      const response = await fetch(`/api/brackets?eventId=${team.eventId}&ageGroupId=${ageGroupId}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch brackets');
+      }
+      
+      return response.json();
+    },
+    enabled: !!team?.eventId && !!form?.getValues('ageGroupId'),
   });
   
   // Parse coach data if it's a string
@@ -109,6 +131,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
       assistantCoachPhone: coachData.assistantCoachPhone || "",
       clubName: team?.clubName || "",
       ageGroupId: team?.ageGroupId ? String(team.ageGroupId) : "",
+      bracketId: team?.bracketId || null,
     },
   });
 
@@ -129,6 +152,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
         assistantCoachPhone: coachData.assistantCoachPhone || "",
         clubName: team.clubName || "",
         ageGroupId: team.ageGroupId ? String(team.ageGroupId) : "",
+        bracketId: team.bracketId || null,
       });
     }
   }, [team, form]);
@@ -157,6 +181,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
         managerEmail: data.managerEmail,
         clubName: data.clubName,
         ageGroupId: data.ageGroupId ? parseInt(data.ageGroupId) : undefined,
+        bracketId: data.bracketId || null,
       };
       
       console.log("Sending PATCH request to /api/admin/teams/" + team?.id, payload);
