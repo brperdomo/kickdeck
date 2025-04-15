@@ -66,6 +66,7 @@ export function SeasonalScopeSettings() {
   const [selectedEndYear, setSelectedEndYear] = useState<string>("");
   const [scopeName, setScopeName] = useState<string>("");
   const [createCoedGroups, setCreateCoedGroups] = useState<boolean>(false);
+  const [coedOnly, setCoedOnly] = useState<boolean>(false);
   const [ageGroupMappings, setAgeGroupMappings] = useState<AgeGroupSettings[]>([]);
   const [scopeToDelete, setScopeToDelete] = useState<SeasonalScope | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -157,6 +158,7 @@ export function SeasonalScopeSettings() {
     setSelectedEndYear("");
     setScopeName("");
     setCreateCoedGroups(false);
+    setCoedOnly(false);
     setAgeGroupMappings([]);
   };
 
@@ -170,39 +172,46 @@ export function SeasonalScopeSettings() {
       for (let i = 4; i <= 18; i++) {
         const birthYear = year - i;
         const ageGroup = `U${i}`;
+        const isYoungerAgeGroup = i <= 12;
+        const shouldBeCoedOnly = createCoedGroups && coedOnly && isYoungerAgeGroup;
 
-        // Add boys division
-        const boysDivisionCode = `B${birthYear}`;
-        initialMappings.push({
-          id: 0,
-          seasonalScopeId: 0,
-          ageGroup,
-          birthYear,
-          gender: 'Boys',
-          divisionCode: boysDivisionCode,
-          minBirthYear: birthYear,
-          maxBirthYear: birthYear,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        });
+        // Add boys and girls divisions if not coed-only mode
+        // or if this is an older age group (above U12)
+        if (!shouldBeCoedOnly) {
+          // Add boys division
+          const boysDivisionCode = `B${birthYear}`;
+          initialMappings.push({
+            id: 0,
+            seasonalScopeId: 0,
+            ageGroup,
+            birthYear,
+            gender: 'Boys',
+            divisionCode: boysDivisionCode,
+            minBirthYear: birthYear,
+            maxBirthYear: birthYear,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
 
-        // Add girls division
-        const girlsDivisionCode = `G${birthYear}`;
-        initialMappings.push({
-          id: 0,
-          seasonalScopeId: 0,
-          ageGroup,
-          birthYear,
-          gender: 'Girls',
-          divisionCode: girlsDivisionCode,
-          minBirthYear: birthYear,
-          maxBirthYear: birthYear,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        });
+          // Add girls division
+          const girlsDivisionCode = `G${birthYear}`;
+          initialMappings.push({
+            id: 0,
+            seasonalScopeId: 0,
+            ageGroup,
+            birthYear,
+            gender: 'Girls',
+            divisionCode: girlsDivisionCode,
+            minBirthYear: birthYear,
+            maxBirthYear: birthYear,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+        }
 
-        // Add coed division if enabled
-        if (createCoedGroups) {
+        // Add coed division if createCoedGroups is enabled and
+        // either it's a younger age group or coedOnly is true
+        if (createCoedGroups && (isYoungerAgeGroup || coedOnly)) {
           const coedDivisionCode = `C${birthYear}`;
           initialMappings.push({
             id: 0,
@@ -238,6 +247,7 @@ export function SeasonalScopeSettings() {
         endYear: parseInt(selectedEndYear),
         isActive: true,
         createCoedGroups: createCoedGroups,
+        coedOnly: createCoedGroups && coedOnly, // Only send coedOnly as true if createCoedGroups is also enabled
         ageGroups: ageGroupMappings
       };
 
@@ -300,15 +310,29 @@ export function SeasonalScopeSettings() {
             </div>
           </div>
           
-          <div className="flex items-center space-x-2 mt-4">
-            <Switch
-              id="create-coed-groups"
-              checked={createCoedGroups}
-              onCheckedChange={setCreateCoedGroups}
-            />
-            <Label htmlFor="create-coed-groups">
-              Create Coed (mixed-gender) Age Groups
-            </Label>
+          <div className="space-y-4 mt-4">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="create-coed-groups"
+                checked={createCoedGroups}
+                onCheckedChange={setCreateCoedGroups}
+              />
+              <Label htmlFor="create-coed-groups">
+                Create Coed (mixed-gender) Age Groups
+              </Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="coed-only"
+                checked={coedOnly}
+                onCheckedChange={setCoedOnly}
+                disabled={!createCoedGroups}
+              />
+              <Label htmlFor="coed-only" className={!createCoedGroups ? "text-muted-foreground" : ""}>
+                Coed Only (create only coed groups for younger ages)
+              </Label>
+            </div>
           </div>
 
           {ageGroupMappings.length > 0 && (
@@ -429,7 +453,11 @@ export function SeasonalScopeSettings() {
                   {viewingScope?.name} ({viewingScope?.startYear}-{viewingScope?.endYear})
                 </DialogTitle>
                 <DialogDescription>
-                  {viewingScope?.createCoedGroups ? "Includes coed groups" : "Boys and girls groups only"}
+                  {viewingScope?.createCoedGroups 
+                    ? viewingScope?.coedOnly 
+                      ? "Coed only groups (no gender-specific groups)" 
+                      : "Includes coed groups along with gender-specific groups"
+                    : "Boys and girls groups only (no coed groups)"}
                 </DialogDescription>
               </DialogHeader>
               <div className="mt-4 overflow-y-auto flex-1">
