@@ -37,12 +37,14 @@ import {
 // Define type for a bracket
 type Bracket = {
   id: number;
-  ageGroupId: number;
+  event_id: number;
+  age_group_id: number;
   name: string;
   description: string | null;
   level: string;
   eligibility: string | null;
-  createdAt: string;
+  created_at: string;
+  updated_at: string;
 };
 
 // Type for the form data
@@ -79,9 +81,14 @@ export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["brackets", ageGroupId],
+    queryKey: ["brackets", ageGroupId, eventId],
     queryFn: async () => {
-      const { data } = await axios.get(`/api/age-groups/${ageGroupId}/brackets`);
+      // Use admin endpoint when eventId is provided, otherwise fallback to public endpoint
+      const endpoint = eventId 
+        ? `/api/admin/events/${eventId}/age-groups/${ageGroupId}/brackets`
+        : `/api/age-groups/${ageGroupId}/brackets`;
+      
+      const { data } = await axios.get(endpoint);
       return data;
     },
     enabled: !!ageGroupId,
@@ -97,7 +104,7 @@ export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["brackets", ageGroupId] });
+      queryClient.invalidateQueries({ queryKey: ["brackets", ageGroupId, eventId] });
       toast.success("Bracket created successfully");
       setIsCreateDialogOpen(false);
       resetForm();
@@ -114,7 +121,7 @@ export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["brackets", ageGroupId] });
+      queryClient.invalidateQueries({ queryKey: ["brackets", ageGroupId, eventId] });
       toast.success("Bracket updated successfully");
       setIsEditDialogOpen(false);
       setSelectedBracket(null);
@@ -131,7 +138,7 @@ export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["brackets", ageGroupId] });
+      queryClient.invalidateQueries({ queryKey: ["brackets", ageGroupId, eventId] });
       toast.success("Bracket deleted successfully");
       setIsDeleteDialogOpen(false);
       setSelectedBracket(null);
