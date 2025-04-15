@@ -74,13 +74,13 @@ export function BracketManager({ ageGroupId }: BracketManagerProps) {
 
   // Fetch brackets for this age group
   const {
-    data: brackets,
+    data: brackets = [], // Initialize with empty array to prevent map errors
     isLoading,
     isError,
   } = useQuery({
     queryKey: ["brackets", ageGroupId],
     queryFn: async () => {
-      const { data } = await axios.get(`/api/admin/age-groups/${ageGroupId}/brackets`);
+      const { data } = await axios.get(`/api/age-groups/${ageGroupId}/brackets`);
       return data;
     },
     enabled: !!ageGroupId,
@@ -89,7 +89,10 @@ export function BracketManager({ ageGroupId }: BracketManagerProps) {
   // Create bracket mutation
   const createBracketMutation = useMutation({
     mutationFn: async (data: BracketFormData) => {
-      const response = await axios.post(`/api/admin/age-groups/${ageGroupId}/brackets`, data);
+      const response = await axios.post(`/api/admin/events/${eventId}/brackets`, {
+        ...data,
+        ageGroupId
+      });
       return response.data;
     },
     onSuccess: () => {
@@ -106,7 +109,7 @@ export function BracketManager({ ageGroupId }: BracketManagerProps) {
   // Update bracket mutation
   const updateBracketMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: BracketFormData }) => {
-      const response = await axios.put(`/api/admin/brackets/${id}`, data);
+      const response = await axios.put(`/api/admin/events/${eventId}/brackets/${id}`, data);
       return response.data;
     },
     onSuccess: () => {
@@ -123,7 +126,7 @@ export function BracketManager({ ageGroupId }: BracketManagerProps) {
   // Delete bracket mutation
   const deleteBracketMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await axios.delete(`/api/admin/brackets/${id}`);
+      const response = await axios.delete(`/api/admin/events/${eventId}/brackets/${id}`);
       return response.data;
     },
     onSuccess: () => {
