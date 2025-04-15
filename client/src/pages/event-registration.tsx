@@ -454,6 +454,7 @@ const teamRegistrationSchema = z.object({
     required_error: "Age group is required",
     invalid_type_error: "Age group must be selected"
   }),
+  bracketId: z.number().nullable().optional(),
   headCoachName: z.string().min(1, "Head coach name is required"),
   headCoachEmail: z.string().email("Invalid email address"),
   headCoachPhone: z.string().min(10, "Phone number must be at least 10 digits"),
@@ -748,6 +749,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     defaultValues: {
       name: '',
       ageGroupId: 0,
+      bracketId: null,
       headCoachName: '',
       headCoachEmail: '',
       headCoachPhone: '',
