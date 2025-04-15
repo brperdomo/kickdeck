@@ -641,6 +641,7 @@ export const seasonalScopes = pgTable("seasonal_scopes", {
   startYear: integer("start_year").notNull(),
   endYear: integer("end_year").notNull(),
   isActive: boolean("is_active").notNull().default(false),
+  createCoedGroups: boolean("create_coed_groups").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
