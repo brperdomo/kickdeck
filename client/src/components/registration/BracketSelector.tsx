@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -9,10 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2, Info } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { FormDescription } from "@/components/ui/form";
 
 // Type definitions
 type Bracket = {
@@ -63,9 +60,9 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
             <SelectValue placeholder="No brackets available" />
           </SelectTrigger>
         </Select>
-        <p className="text-sm text-muted-foreground">
+        <FormDescription className="text-sm text-gray-500">
           There are no brackets defined for this age group.
-        </p>
+        </FormDescription>
       </div>
     );
   }
@@ -96,7 +93,7 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
         <SelectContent>
           {brackets.map((bracket: Bracket) => (
             <SelectItem key={bracket.id} value={bracket.id.toString()}>
-              {bracket.name} ({bracket.level.charAt(0).toUpperCase() + bracket.level.slice(1)})
+              {bracket.name} {bracket.level ? `(${bracket.level.charAt(0).toUpperCase() + bracket.level.slice(1)})` : ''}
             </SelectItem>
           ))}
         </SelectContent>
