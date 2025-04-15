@@ -154,6 +154,7 @@ export function SeasonalScopeSettings() {
     setSelectedStartYear("");
     setSelectedEndYear("");
     setScopeName("");
+    setCreateCoedGroups(false);
     setAgeGroupMappings([]);
   };
 
@@ -197,6 +198,23 @@ export function SeasonalScopeSettings() {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         });
+
+        // Add coed division if enabled
+        if (createCoedGroups) {
+          const coedDivisionCode = `C${birthYear}`;
+          initialMappings.push({
+            id: 0,
+            seasonalScopeId: 0,
+            ageGroup,
+            birthYear,
+            gender: 'Coed',
+            divisionCode: coedDivisionCode,
+            minBirthYear: birthYear,
+            maxBirthYear: birthYear,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+        }
       }
 
       // Sort by birth year (descending) and gender
@@ -217,6 +235,7 @@ export function SeasonalScopeSettings() {
         startYear: parseInt(selectedStartYear),
         endYear: parseInt(selectedEndYear),
         isActive: true,
+        createCoedGroups: createCoedGroups,
         ageGroups: ageGroupMappings
       };
 
@@ -277,6 +296,17 @@ export function SeasonalScopeSettings() {
                 placeholder="2025"
               />
             </div>
+          </div>
+          
+          <div className="flex items-center space-x-2 mt-4">
+            <Switch
+              id="create-coed-groups"
+              checked={createCoedGroups}
+              onCheckedChange={setCreateCoedGroups}
+            />
+            <Label htmlFor="create-coed-groups">
+              Create Coed (mixed-gender) Age Groups
+            </Label>
           </div>
 
           {ageGroupMappings.length > 0 && (
@@ -396,6 +426,9 @@ export function SeasonalScopeSettings() {
                 <DialogTitle>
                   {viewingScope?.name} ({viewingScope?.startYear}-{viewingScope?.endYear})
                 </DialogTitle>
+                <DialogDescription>
+                  {viewingScope?.createCoedGroups ? "Includes coed groups" : "Boys and girls groups only"}
+                </DialogDescription>
               </DialogHeader>
               <div className="mt-4 overflow-y-auto flex-1">
                 <Table>
