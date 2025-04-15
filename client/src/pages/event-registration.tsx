@@ -1490,6 +1490,33 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       )}
                     />
                     
+                    {/* Bracket Selector - appears after age group selection */}
+                    {selectedAgeGroup && availableBrackets.length > 0 && (
+                      <FormField
+                        control={teamForm.control}
+                        name="bracketId"
+                        render={({ field }) => (
+                          <FormItem className="mt-4">
+                            <FormLabel>Select Bracket</FormLabel>
+                            <FormControl>
+                              <BracketSelector 
+                                brackets={availableBrackets}
+                                value={field.value}
+                                onChange={(bracketId) => {
+                                  field.onChange(bracketId);
+                                  setSelectedBracket(bracketId);
+                                }}
+                              />
+                            </FormControl>
+                            <FormDescription className="text-sm text-gray-500">
+                              Select a bracket that best matches your team's skill level
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                    
                     {/* Fee display when age group is selected */}
                     {selectedAgeGroup && selectedFee && (
                       <div className="mt-2 bg-blue-50 p-3 rounded-md">

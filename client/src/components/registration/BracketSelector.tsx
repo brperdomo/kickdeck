@@ -17,39 +17,26 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 // Type definitions
 type Bracket = {
   id: number;
+  eventId: string;
   ageGroupId: number;
   name: string;
   description: string | null;
-  level: string;
-  eligibility: string | null;
+  level?: string;
+  eligibility?: string | null;
+  sortOrder?: number;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 interface BracketSelectorProps {
-  ageGroupId: number | null;
+  brackets: Bracket[];
   value: number | null;
   onChange: (bracketId: number | null) => void;
 }
 
-export function BracketSelector({ ageGroupId, value, onChange }: BracketSelectorProps) {
+export function BracketSelector({ brackets, value, onChange }: BracketSelectorProps) {
   const [selectedBracket, setSelectedBracket] = useState<Bracket | null>(null);
 
-  // Fetch brackets for the selected age group
-  const {
-    data: brackets,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["age-group-brackets", ageGroupId],
-    queryFn: async () => {
-      if (!ageGroupId) return [];
-      const { data } = await axios.get(`/api/age-groups/${ageGroupId}/brackets`);
-      return data;
-    },
-    enabled: !!ageGroupId,
-  });
-
-  // Update the selected bracket when the value changes or brackets load
   useEffect(() => {
     if (brackets && brackets.length > 0 && value) {
       const bracket = brackets.find((b: Bracket) => b.id === value);
@@ -66,43 +53,6 @@ export function BracketSelector({ ageGroupId, value, onChange }: BracketSelector
     setSelectedBracket(bracket || null);
     onChange(id);
   };
-
-  if (!ageGroupId) {
-    return (
-      <div className="space-y-2">
-        <Label>Bracket Selection</Label>
-        <Select disabled>
-          <SelectTrigger>
-            <SelectValue placeholder="Select an age group first" />
-          </SelectTrigger>
-        </Select>
-        <p className="text-sm text-muted-foreground">
-          Please select an age group before choosing a bracket.
-        </p>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="space-y-2">
-        <Label>Bracket Selection</Label>
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-4 w-3/4" />
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Alert variant="destructive">
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>
-          {error instanceof Error ? error.message : "Failed to load brackets"}
-        </AlertDescription>
-      </Alert>
-    );
-  }
 
   if (!brackets || brackets.length === 0) {
     return (
