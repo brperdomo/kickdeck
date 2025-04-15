@@ -1,436 +1,448 @@
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useParams } from "wouter";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { PlusCircle, Edit, Trash2, CheckCircle, XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import {
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { 
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Loader2, PlusCircle, Pencil, Trash2 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { toast } from 'sonner';
+import { Loader2 } from "lucide-react";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
 
-// Define types
+// Define type for a bracket
 type Bracket = {
   id: number;
-  eventId: string;
   ageGroupId: number;
   name: string;
   description: string | null;
-  level: string; // 'beginner', 'intermediate', 'advanced', 'elite'
-  sortOrder: number;
+  level: string;
+  eligibility: string | null;
   createdAt: string;
-  updatedAt: string;
 };
 
-// Form schema
-const bracketSchema = z.object({
-  name: z.string().min(1, "Bracket name is required"),
-  description: z.string().optional().nullable(),
-  level: z.string().min(1, "Level is required"),
-});
+// Type for the form data
+type BracketFormData = {
+  name: string;
+  description: string;
+  level: string;
+  eligibility: string;
+};
 
-type BracketFormValues = z.infer<typeof bracketSchema>;
+// Component props
+interface BracketManagerProps {
+  ageGroupId: number;
+}
 
-export function BracketManager({ ageGroupId }: { ageGroupId: number }) {
-  const { id: eventId } = useParams<{ id: string }>();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingBracket, setEditingBracket] = useState<Bracket | null>(null);
-  const [deletingBracketId, setDeletingBracketId] = useState<number | null>(null);
+export function BracketManager({ ageGroupId }: BracketManagerProps) {
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
-  // Initialize form
-  const form = useForm<BracketFormValues>({
-    resolver: zodResolver(bracketSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      level: "intermediate",
-    },
+  const [selectedBracket, setSelectedBracket] = useState<Bracket | null>(null);
+  const [formData, setFormData] = useState<BracketFormData>({
+    name: "",
+    description: "",
+    level: "intermediate",
+    eligibility: "",
   });
 
-  // Query to fetch brackets for this age group
+  const queryClient = useQueryClient();
+
+  // Fetch brackets for this age group
   const {
     data: brackets,
     isLoading,
     isError,
-    error,
-  } = useQuery<Bracket[]>({
-    queryKey: ["brackets", eventId, ageGroupId],
+  } = useQuery({
+    queryKey: ["brackets", ageGroupId],
     queryFn: async () => {
-      const { data } = await axios.get(`/api/admin/events/${eventId}/age-groups/${ageGroupId}/brackets`);
+      const { data } = await axios.get(`/api/admin/age-groups/${ageGroupId}/brackets`);
       return data;
     },
+    enabled: !!ageGroupId,
   });
 
-  // Mutation to create/update a bracket
-  const bracketMutation = useMutation({
-    mutationFn: async (data: BracketFormValues) => {
-      if (editingBracket) {
-        // Update existing bracket
-        return axios.put(
-          `/api/admin/events/${eventId}/age-groups/${ageGroupId}/brackets/${editingBracket.id}`,
-          data
-        );
-      } else {
-        // Create new bracket
-        return axios.post(
-          `/api/admin/events/${eventId}/age-groups/${ageGroupId}/brackets`,
-          data
-        );
-      }
+  // Create bracket mutation
+  const createBracketMutation = useMutation({
+    mutationFn: async (data: BracketFormData) => {
+      const response = await axios.post(`/api/admin/age-groups/${ageGroupId}/brackets`, data);
+      return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["brackets", eventId, ageGroupId] });
-      toast({
-        title: editingBracket ? "Bracket Updated" : "Bracket Created",
-        description: editingBracket
-          ? "The bracket has been updated successfully."
-          : "A new bracket has been created successfully.",
-      });
-      setIsDialogOpen(false);
-      setEditingBracket(null);
-      form.reset();
+      queryClient.invalidateQueries({ queryKey: ["brackets", ageGroupId] });
+      toast.success("Bracket created successfully");
+      setIsCreateDialogOpen(false);
+      resetForm();
     },
     onError: (error) => {
-      console.error("Error saving bracket:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save the bracket. Please try again.",
-        variant: "destructive",
-      });
+      toast.error(`Failed to create bracket: ${error instanceof Error ? error.message : "Unknown error"}`);
     },
   });
 
-  // Mutation to delete a bracket
+  // Update bracket mutation
+  const updateBracketMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: BracketFormData }) => {
+      const response = await axios.put(`/api/admin/brackets/${id}`, data);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["brackets", ageGroupId] });
+      toast.success("Bracket updated successfully");
+      setIsEditDialogOpen(false);
+      setSelectedBracket(null);
+    },
+    onError: (error) => {
+      toast.error(`Failed to update bracket: ${error instanceof Error ? error.message : "Unknown error"}`);
+    },
+  });
+
+  // Delete bracket mutation
   const deleteBracketMutation = useMutation({
-    mutationFn: async (bracketId: number) => {
-      return axios.delete(
-        `/api/admin/events/${eventId}/age-groups/${ageGroupId}/brackets/${bracketId}`
-      );
+    mutationFn: async (id: number) => {
+      const response = await axios.delete(`/api/admin/brackets/${id}`);
+      return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["brackets", eventId, ageGroupId] });
-      toast({
-        title: "Bracket Deleted",
-        description: "The bracket has been deleted successfully.",
-      });
+      queryClient.invalidateQueries({ queryKey: ["brackets", ageGroupId] });
+      toast.success("Bracket deleted successfully");
       setIsDeleteDialogOpen(false);
-      setDeletingBracketId(null);
+      setSelectedBracket(null);
     },
     onError: (error) => {
-      console.error("Error deleting bracket:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete the bracket. Please try again.",
-        variant: "destructive",
-      });
+      toast.error(`Failed to delete bracket: ${error instanceof Error ? error.message : "Unknown error"}`);
     },
   });
 
-  // Handle opening dialog for new bracket
-  const handleAddBracket = () => {
-    form.reset({
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCreateSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createBracketMutation.mutate(formData);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedBracket) {
+      updateBracketMutation.mutate({ id: selectedBracket.id, data: formData });
+    }
+  };
+
+  const handleDelete = () => {
+    if (selectedBracket) {
+      deleteBracketMutation.mutate(selectedBracket.id);
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
       name: "",
       description: "",
       level: "intermediate",
+      eligibility: "",
     });
-    setEditingBracket(null);
-    setIsDialogOpen(true);
   };
 
-  // Handle opening dialog for editing a bracket
-  const handleEditBracket = (bracket: Bracket) => {
-    form.reset({
+  const openEditDialog = (bracket: Bracket) => {
+    setSelectedBracket(bracket);
+    setFormData({
       name: bracket.name,
       description: bracket.description || "",
       level: bracket.level,
+      eligibility: bracket.eligibility || "",
     });
-    setEditingBracket(bracket);
-    setIsDialogOpen(true);
+    setIsEditDialogOpen(true);
   };
 
-  // Handle delete confirmation dialog
-  const handleDeleteConfirmation = (bracketId: number) => {
-    setDeletingBracketId(bracketId);
+  const openDeleteDialog = (bracket: Bracket) => {
+    setSelectedBracket(bracket);
     setIsDeleteDialogOpen(true);
   };
 
-  // Submit handler for the form
-  const onSubmit = async (data: BracketFormValues) => {
-    bracketMutation.mutate(data);
-  };
-
-  // Display loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-40">
+      <div className="flex items-center justify-center py-8">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <span className="ml-2">Loading brackets...</span>
       </div>
     );
   }
 
-  // Display error state
   if (isError) {
     return (
-      <Alert variant="destructive">
-        <AlertTitle>Error loading brackets</AlertTitle>
-        <AlertDescription>
-          {error instanceof Error ? error.message : "Unknown error occurred"}
-        </AlertDescription>
-      </Alert>
+      <div className="p-4 border border-destructive rounded bg-destructive/10 text-destructive">
+        <p>Failed to load brackets. Please try again.</p>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium">Brackets</h3>
-        <Button
-          onClick={handleAddBracket}
-          size="sm"
-          className="flex items-center"
-        >
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add Bracket
-        </Button>
-      </div>
-
-      {brackets && brackets.length > 0 ? (
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Level</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="w-[100px]">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {brackets.map((bracket) => (
-                  <TableRow key={bracket.id}>
-                    <TableCell className="font-medium">{bracket.name}</TableCell>
-                    <TableCell>
-                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                        bracket.level === 'beginner' ? 'bg-green-100 text-green-800' :
-                        bracket.level === 'intermediate' ? 'bg-blue-100 text-blue-800' :
-                        bracket.level === 'advanced' ? 'bg-purple-100 text-purple-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {bracket.level.charAt(0).toUpperCase() + bracket.level.slice(1)}
-                      </span>
-                    </TableCell>
-                    <TableCell className="max-w-md truncate">
-                      {bracket.description || "—"}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditBracket(bracket)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteConfirmation(bracket.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="text-center p-8 bg-muted/50 rounded-md">
-          <p className="text-muted-foreground">No brackets found for this age group.</p>
-          <p className="text-sm mt-1">
-            Create brackets to allow teams to select their skill level during registration.
-          </p>
-        </div>
-      )}
-
-      {/* Dialog for adding/editing brackets */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingBracket ? "Edit Bracket" : "Add Bracket"}</DialogTitle>
-          </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bracket Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Gold Division" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      The name of the bracket that teams will select.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="level"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Competitive Level</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select level" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="beginner">Beginner</SelectItem>
-                        <SelectItem value="intermediate">Intermediate</SelectItem>
-                        <SelectItem value="advanced">Advanced</SelectItem>
-                        <SelectItem value="elite">Elite</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      The competitive level for this bracket.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Bracket description (optional)"
-                        className="resize-none"
-                        {...field}
-                        value={field.value || ""}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Additional information about this bracket to help teams choose the right level.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsDialogOpen(false)}
+        <h3 className="text-xl font-semibold">Brackets</h3>
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={() => { resetForm(); }}>
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Add Bracket
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[550px]">
+            <DialogHeader>
+              <DialogTitle>Create New Bracket</DialogTitle>
+              <DialogDescription>
+                Add a new bracket for this age group. Teams will be able to select from these brackets during registration.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleCreateSubmit} className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-sm font-medium">Name</label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Gold Division"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="level" className="text-sm font-medium">Skill Level</label>
+                <Select
+                  name="level"
+                  value={formData.level}
+                  onValueChange={(value) => handleSelectChange("level", value)}
                 >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select skill level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="beginner">Beginner</SelectItem>
+                    <SelectItem value="intermediate">Intermediate</SelectItem>
+                    <SelectItem value="advanced">Advanced</SelectItem>
+                    <SelectItem value="elite">Elite</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="description" className="text-sm font-medium">Description</label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  placeholder="Describe the skill level and expectations for this bracket"
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="eligibility" className="text-sm font-medium">Eligibility (Optional)</label>
+                <Textarea
+                  id="eligibility"
+                  name="eligibility"
+                  value={formData.eligibility}
+                  onChange={handleInputChange}
+                  placeholder="Any specific eligibility requirements"
+                  rows={2}
+                />
+              </div>
+              <DialogFooter className="pt-4">
+                <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={bracketMutation.isPending}>
-                  {bracketMutation.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    "Save"
-                  )}
+                <Button type="submit" disabled={createBracketMutation.isPending}>
+                  {createBracketMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Create Bracket
                 </Button>
               </DialogFooter>
             </form>
-          </Form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {brackets && brackets.length > 0 ? (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Level</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {brackets.map((bracket: Bracket) => (
+              <TableRow key={bracket.id}>
+                <TableCell className="font-medium">{bracket.name}</TableCell>
+                <TableCell>
+                  <Badge variant="outline" className="capitalize">
+                    {bracket.level}
+                  </Badge>
+                </TableCell>
+                <TableCell className="max-w-[300px] truncate">
+                  {bracket.description || "No description"}
+                </TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => openEditDialog(bracket)}
+                      title="Edit"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => openDeleteDialog(bracket)}
+                      title="Delete"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <Card>
+          <CardContent className="py-8">
+            <div className="flex flex-col items-center justify-center text-center space-y-3 py-4">
+              <p className="text-muted-foreground">No brackets created yet.</p>
+              <p className="text-muted-foreground text-sm">
+                Create brackets to allow teams to select their competitive level during registration.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Edit Bracket Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[550px]">
+          <DialogHeader>
+            <DialogTitle>Edit Bracket</DialogTitle>
+            <DialogDescription>
+              Update the bracket information.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEditSubmit} className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <label htmlFor="edit-name" className="text-sm font-medium">Name</label>
+              <Input
+                id="edit-name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="edit-level" className="text-sm font-medium">Skill Level</label>
+              <Select
+                name="level"
+                value={formData.level}
+                onValueChange={(value) => handleSelectChange("level", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select skill level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="beginner">Beginner</SelectItem>
+                  <SelectItem value="intermediate">Intermediate</SelectItem>
+                  <SelectItem value="advanced">Advanced</SelectItem>
+                  <SelectItem value="elite">Elite</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="edit-description" className="text-sm font-medium">Description</label>
+              <Textarea
+                id="edit-description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                rows={3}
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="edit-eligibility" className="text-sm font-medium">Eligibility (Optional)</label>
+              <Textarea
+                id="edit-eligibility"
+                name="eligibility"
+                value={formData.eligibility}
+                onChange={handleInputChange}
+                rows={2}
+              />
+            </div>
+            <DialogFooter className="pt-4">
+              <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={updateBracketMutation.isPending}>
+                {updateBracketMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Save Changes
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
 
-      {/* Dialog for delete confirmation */}
+      {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-[450px]">
           <DialogHeader>
-            <DialogTitle>Delete Bracket</DialogTitle>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete the bracket "{selectedBracket?.name}"? 
+              This action cannot be undone.
+            </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <p>Are you sure you want to delete this bracket? This action cannot be undone.</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Note: Deleting a bracket will remove it as an option for future team registrations,
-              but existing teams that have selected this bracket will keep their selection.
-            </p>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteDialogOpen(false)}
-            >
+          <div className="pt-4 flex justify-end space-x-2">
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
               Cancel
             </Button>
-            <Button
-              variant="destructive"
-              onClick={() => deletingBracketId && deleteBracketMutation.mutate(deletingBracketId)}
+            <Button 
+              variant="destructive" 
+              onClick={handleDelete} 
               disabled={deleteBracketMutation.isPending}
             >
-              {deleteBracketMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                "Delete"
-              )}
+              {deleteBracketMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Delete
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

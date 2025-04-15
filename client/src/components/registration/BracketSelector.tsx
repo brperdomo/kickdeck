@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -7,140 +9,166 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Label } from "@/components/ui/label";
-import { FormDescription } from "@/components/ui/form";
+import { InfoCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-// Define types
+// Type definitions
 type Bracket = {
   id: number;
-  eventId: string;
   ageGroupId: number;
   name: string;
   description: string | null;
   level: string;
-  sortOrder: number;
-  createdAt: string;
-  updatedAt: string;
+  eligibility: string | null;
 };
 
-type BracketSelectorProps = {
-  eventId: string;
+interface BracketSelectorProps {
   ageGroupId: number | null;
   value: number | null;
   onChange: (bracketId: number | null) => void;
-  disabled?: boolean;
-  required?: boolean;
-};
+}
 
-export function BracketSelector({
-  eventId,
-  ageGroupId,
-  value,
-  onChange,
-  disabled = false,
-  required = false,
-}: BracketSelectorProps) {
+export function BracketSelector({ ageGroupId, value, onChange }: BracketSelectorProps) {
+  const [selectedBracket, setSelectedBracket] = useState<Bracket | null>(null);
+
   // Fetch brackets for the selected age group
   const {
     data: brackets,
     isLoading,
     isError,
     error,
-  } = useQuery<Bracket[]>({
-    queryKey: ["brackets", eventId, ageGroupId],
+  } = useQuery({
+    queryKey: ["age-group-brackets", ageGroupId],
     queryFn: async () => {
       if (!ageGroupId) return [];
-      const { data } = await axios.get(`/api/events/${eventId}/age-groups/${ageGroupId}/brackets`);
+      const { data } = await axios.get(`/api/age-groups/${ageGroupId}/brackets`);
       return data;
     },
-    enabled: !!eventId && !!ageGroupId,
+    enabled: !!ageGroupId,
   });
 
-  // Helper function to get bracket label with level
-  const getBracketLabel = (bracket: Bracket): string => {
-    return `${bracket.name} (${bracket.level.charAt(0).toUpperCase() + bracket.level.slice(1)})`;
+  // Update the selected bracket when the value changes or brackets load
+  useEffect(() => {
+    if (brackets && brackets.length > 0 && value) {
+      const bracket = brackets.find((b: Bracket) => b.id === value);
+      setSelectedBracket(bracket || null);
+    } else {
+      setSelectedBracket(null);
+    }
+  }, [brackets, value]);
+
+  // Handle bracket selection change
+  const handleBracketChange = (bracketId: string) => {
+    const id = parseInt(bracketId, 10);
+    const bracket = brackets.find((b: Bracket) => b.id === id);
+    setSelectedBracket(bracket || null);
+    onChange(id);
   };
 
-  // Don't show the component if not needed
   if (!ageGroupId) {
-    return null;
+    return (
+      <div className="space-y-2">
+        <Label>Bracket Selection</Label>
+        <Select disabled>
+          <SelectTrigger>
+            <SelectValue placeholder="Select an age group first" />
+          </SelectTrigger>
+        </Select>
+        <p className="text-sm text-muted-foreground">
+          Please select an age group before choosing a bracket.
+        </p>
+      </div>
+    );
   }
 
-  // Handle loading and error states
   if (isLoading) {
     return (
       <div className="space-y-2">
         <Label>Bracket Selection</Label>
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <span>Loading brackets...</span>
-        </div>
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-4 w-3/4" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <Alert variant="destructive" className="mt-2">
-        <AlertTitle>Error loading brackets</AlertTitle>
+      <Alert variant="destructive">
+        <AlertTitle>Error</AlertTitle>
         <AlertDescription>
-          {error instanceof Error ? error.message : "Failed to load brackets. Please try again."}
+          {error instanceof Error ? error.message : "Failed to load brackets"}
         </AlertDescription>
       </Alert>
     );
   }
 
-  // Don't show selector if no brackets are available
   if (!brackets || brackets.length === 0) {
-    return null;
+    return (
+      <div className="space-y-2">
+        <Label>Bracket Selection</Label>
+        <Select disabled>
+          <SelectTrigger>
+            <SelectValue placeholder="No brackets available" />
+          </SelectTrigger>
+        </Select>
+        <p className="text-sm text-muted-foreground">
+          There are no brackets defined for this age group.
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-2">
-      <Label htmlFor="bracket-select">
-        Bracket Selection {required && <span className="text-destructive">*</span>}
-      </Label>
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Label>Bracket Selection</Label>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <InfoCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-[300px]">
+              <p>Select the appropriate bracket for your team's competitive level.</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
       <Select
         value={value?.toString() || ""}
-        onValueChange={(val) => onChange(val ? parseInt(val) : null)}
-        disabled={disabled}
+        onValueChange={handleBracketChange}
       >
-        <SelectTrigger id="bracket-select" className="w-full">
+        <SelectTrigger>
           <SelectValue placeholder="Select a bracket" />
         </SelectTrigger>
         <SelectContent>
-          {!required && (
-            <SelectItem value="">
-              <span className="text-muted-foreground">No bracket selected</span>
-            </SelectItem>
-          )}
-          {brackets.map((bracket) => (
-            <SelectItem 
-              key={bracket.id} 
-              value={bracket.id.toString()}
-              className="relative"
-            >
-              <span className="font-medium">{bracket.name}</span>
-              <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
-                bracket.level === 'beginner' ? 'bg-green-100 text-green-800' :
-                bracket.level === 'intermediate' ? 'bg-blue-100 text-blue-800' :
-                bracket.level === 'advanced' ? 'bg-purple-100 text-purple-800' :
-                'bg-red-100 text-red-800'
-              }`}>
-                {bracket.level.charAt(0).toUpperCase() + bracket.level.slice(1)}
-              </span>
-              {bracket.description && (
-                <p className="text-muted-foreground text-xs mt-1">{bracket.description}</p>
-              )}
+          {brackets.map((bracket: Bracket) => (
+            <SelectItem key={bracket.id} value={bracket.id.toString()}>
+              {bracket.name} ({bracket.level.charAt(0).toUpperCase() + bracket.level.slice(1)})
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
-      <FormDescription>
-        Select the appropriate competitive level for your team. This helps us create balanced schedules.
-      </FormDescription>
+
+      {selectedBracket && (
+        <div className="rounded-md border p-3 bg-muted/30">
+          <h4 className="font-medium mb-1">{selectedBracket.name}</h4>
+          {selectedBracket.description && (
+            <p className="text-sm text-muted-foreground mb-2">
+              {selectedBracket.description}
+            </p>
+          )}
+          {selectedBracket.eligibility && (
+            <div className="text-sm">
+              <span className="font-medium">Eligibility:</span>{" "}
+              {selectedBracket.eligibility}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
