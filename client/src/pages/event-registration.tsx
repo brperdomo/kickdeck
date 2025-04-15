@@ -36,6 +36,7 @@ import { PaymentElement, CardElement, useStripe, useElements } from "@stripe/rea
 import StripeProvider from "@/components/StripeProvider";
 import { Footer } from "@/components/ui/Footer";
 import { motion, AnimatePresence } from "framer-motion";
+import { BracketSelector } from "@/components/registration/BracketSelector";
 import { 
   Dialog,
   DialogContent,
@@ -489,6 +490,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [currentStep, setCurrentStep] = useState<RegistrationStep>(isPreview ? 'personal' : 'auth');
   const [players, setPlayers] = useState<PlayerForm[]>([]);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup | null>(null);
+  const [selectedBracket, setSelectedBracket] = useState<number | null>(null);
   
   // Handle redirection to auth pages with proper return URL
   const handleAuthRedirect = () => {
