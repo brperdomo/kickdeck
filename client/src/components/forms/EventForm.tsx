@@ -1183,16 +1183,18 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       <Card className="bg-white shadow-sm border border-gray-200">
         <CardContent className="p-6">
           <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as EventTab)}>
-            <TabsList className="w-full grid grid-cols-6 gap-4 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
+            <TabsList className="w-full grid grid-cols-7 gap-2 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
               {TAB_ORDER.map((tab) => (
                 <TabsTrigger
                   key={tab}
                   value={tab}
-                  className={`wfullpx-4 py-2 rounded-md text-sm font-medium transition-colors
+                  className={`w-full px-2 py-2 rounded-md text-xs font-medium transition-colors
                     data-[state=active]:bg-white data-[state=active]:text-[#007AFF] data-[state=active]:shadow-sm
                     text-[#1C1C1E] hover:text-[#007AFF]`}
                 >
-                  {tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
+                  {tab === 'administrators' 
+                    ? 'Admins' 
+                    : tab.replace('-', ' ').charAt(0).toUpperCase() + tab.slice(1).replace('-', ' ')}
                 </TabsTrigger>
               ))}
             </TabsList>
