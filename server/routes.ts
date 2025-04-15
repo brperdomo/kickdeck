@@ -4307,12 +4307,28 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .where(eq(users.isAdmin, true));
 
         // Get the seasonal scope ID and age group IDs from the event
-        const seasonalScope = await db
-          .select()
-          .from(seasonalScopes)
-          .where(eq(seasonalScopes.id, eventAgeGroups[0]?.seasonalScopeId ?? 0))
-          .limit(1)
-          .then(rows => rows[0]);
+        console.log('Fetching complex data with safe query');
+        let seasonalScope = null;
+        try {
+          // Only select specific columns to avoid issues with missing columns
+          seasonalScope = await db
+            .select({
+              id: seasonalScopes.id,
+              name: seasonalScopes.name,
+              startYear: seasonalScopes.startYear,
+              endYear: seasonalScopes.endYear,
+              isActive: seasonalScopes.isActive,
+              // Don't try to select potentially missing columns
+              // createCoedGroups and coedOnly columns might not exist in older database schemas
+            })
+            .from(seasonalScopes)
+            .where(eq(seasonalScopes.id, eventAgeGroups[0]?.seasonalScopeId ?? 0))
+            .limit(1)
+            .then(rows => rows[0]);
+        } catch (error) {
+          console.error('Error fetching seasonal scope:', error);
+          // Continue without the seasonal scope data
+        }
 
         // Get event settings
         const settingsData = await db
