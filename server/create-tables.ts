@@ -18,6 +18,7 @@ import { addIsArchivedToEvents } from "./migrations/add-is-archived-to-events";
 import { addClubNameToTeams } from "./migrations/add_club_name";
 import { addCardDetailsToTeams } from "./migrations/add_card_details_to_teams";
 import { addSchedulingPermissions } from "./migrations/add_scheduling_permissions";
+import { addSortOrderToBrackets } from "./migrations/add_sort_order_to_brackets";
 
 export async function createTables() {
   try {
@@ -164,6 +165,9 @@ export async function createTables() {
     
     console.log('Adding scheduling permissions to tournament admins...');
     await addSchedulingPermissions();
+    
+    console.log('Adding sort_order column to event_brackets table...');
+    await addSortOrderToBrackets();
 
     console.log("All tables created successfully");
     return { success: true };
