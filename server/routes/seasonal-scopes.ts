@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import { db } from '../../db';
 import { seasonalScopes, ageGroupSettings, events } from '@db/schema';
 import { z } from 'zod';
@@ -28,12 +28,38 @@ const seasonalScopeSchema = z.object({
 // Get all seasonal scopes
 router.get('/', async (req, res) => {
   try {
-    const scopes = await db.query.seasonalScopes.findMany({
-      with: {
-        ageGroups: true,
-      },
-    });
-    res.json(scopes);
+    // Use explicit select with only columns we know exist in the DB
+    const scopes = await db
+      .select({
+        id: seasonalScopes.id,
+        name: seasonalScopes.name,
+        startYear: seasonalScopes.startYear,
+        endYear: seasonalScopes.endYear,
+        isActive: seasonalScopes.isActive,
+        createdAt: seasonalScopes.createdAt,
+        updatedAt: seasonalScopes.updatedAt,
+        // Explicitly omit potentially missing columns like createCoedGroups and coedOnly
+      })
+      .from(seasonalScopes);
+      
+    // Fetch age groups separately for each scope
+    const scopesWithAgeGroups = await Promise.all(
+      scopes.map(async (scope) => {
+        const ageGroups = await db.query.ageGroupSettings.findMany({
+          where: eq(ageGroupSettings.seasonalScopeId, scope.id),
+        });
+        
+        return {
+          ...scope,
+          // Add default values for potentially missing columns
+          createCoedGroups: false,
+          coedOnly: false,
+          ageGroups,
+        };
+      })
+    );
+    
+    res.json(scopesWithAgeGroups);
   } catch (error) {
     console.error('Error fetching seasonal scopes:', error);
     res.status(500).json({ error: 'Failed to fetch seasonal scopes' });
@@ -95,14 +121,43 @@ router.post('/', async (req, res) => {
     const validatedData = seasonalScopeSchema.parse(req.body);
 
     const scope = await db.transaction(async (tx) => {
-      const [newScope] = await tx.insert(seasonalScopes).values({
+      // Only include columns we know exist in the DB
+      // Check if create_coed_groups column exists in the database
+      let hasCreateCoedGroups = true;
+      let hasCoedOnly = true;
+      
+      try {
+        // Try to query a record with these columns to check if they exist
+        await tx.execute(sql`SELECT create_coed_groups, coed_only FROM seasonal_scopes LIMIT 1`);
+      } catch (e) {
+        // If error contains "column does not exist", check which column is missing
+        const errorMsg = String(e);
+        if (errorMsg.includes("column \"create_coed_groups\" does not exist")) {
+          hasCreateCoedGroups = false;
+        }
+        if (errorMsg.includes("column \"coed_only\" does not exist")) {
+          hasCoedOnly = false;
+        }
+      }
+      
+      // Create base values object with required fields
+      const baseValues = {
         name: validatedData.name,
         startYear: validatedData.startYear,
         endYear: validatedData.endYear,
         isActive: validatedData.isActive,
-        createCoedGroups: validatedData.createCoedGroups,
-        coedOnly: validatedData.coedOnly,
-      }).returning();
+      };
+      
+      // Only add columns if they exist in the database
+      const valuesWithOptionalColumns = {
+        ...baseValues,
+        ...(hasCreateCoedGroups ? { createCoedGroups: validatedData.createCoedGroups } : {}),
+        ...(hasCoedOnly ? { coedOnly: validatedData.coedOnly } : {})
+      };
+      
+      const [newScope] = await tx.insert(seasonalScopes)
+        .values(valuesWithOptionalColumns)
+        .returning();
 
       const ageGroupsWithScopeId = validatedData.ageGroups.map(group => ({
         ...group,
@@ -132,15 +187,41 @@ router.patch('/:id', async (req, res) => {
     const validatedData = seasonalScopeSchema.parse(req.body);
 
     await db.transaction(async (tx) => {
+      // Check if column exists in the database, similar to create endpoint
+      let hasCreateCoedGroups = true;
+      let hasCoedOnly = true;
+      
+      try {
+        // Try to query a record with these columns to check if they exist
+        await tx.execute(sql`SELECT create_coed_groups, coed_only FROM seasonal_scopes LIMIT 1`);
+      } catch (e) {
+        // If error contains "column does not exist", check which column is missing
+        const errorMsg = String(e);
+        if (errorMsg.includes("column \"create_coed_groups\" does not exist")) {
+          hasCreateCoedGroups = false;
+        }
+        if (errorMsg.includes("column \"coed_only\" does not exist")) {
+          hasCoedOnly = false;
+        }
+      }
+      
+      // Create base values object with required fields
+      const baseValues = {
+        name: validatedData.name,
+        startYear: validatedData.startYear,
+        endYear: validatedData.endYear,
+        isActive: validatedData.isActive,
+      };
+      
+      // Only add columns if they exist in the database
+      const valuesWithOptionalColumns = {
+        ...baseValues,
+        ...(hasCreateCoedGroups ? { createCoedGroups: validatedData.createCoedGroups } : {}),
+        ...(hasCoedOnly ? { coedOnly: validatedData.coedOnly } : {})
+      };
+
       await tx.update(seasonalScopes)
-        .set({
-          name: validatedData.name,
-          startYear: validatedData.startYear,
-          endYear: validatedData.endYear,
-          isActive: validatedData.isActive,
-          createCoedGroups: validatedData.createCoedGroups,
-          coedOnly: validatedData.coedOnly,
-        })
+        .set(valuesWithOptionalColumns)
         .where(eq(seasonalScopes.id, parseInt(id)));
 
       // Update age groups
