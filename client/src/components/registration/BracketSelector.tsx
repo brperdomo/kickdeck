@@ -10,9 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2 } from "lucide-react";
+import { Loader2, Info } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Type definitions
@@ -128,7 +127,7 @@ export function BracketSelector({ ageGroupId, value, onChange }: BracketSelector
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <InfoCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+              <Info className="h-4 w-4 text-muted-foreground cursor-help" />
             </TooltipTrigger>
             <TooltipContent className="max-w-[300px]">
               <p>Select the appropriate bracket for your team's competitive level.</p>

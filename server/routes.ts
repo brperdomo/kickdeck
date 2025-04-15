@@ -13,9 +13,9 @@ import foldersRouter from "./routes/folders";
 import csvUploadRouter from "./routes/csv-upload";
 import accountingCodesRouter from "./routes/admin/accounting-codes";
 import feesRouter from "./routes/admin/fees";
+import publicAgeGroupsRouter from "./routes/age-groups";  // Public age groups router
 import eventsRouter from "./routes/admin/events";
 import ageGroupsRouter from "./routes/admin/age-groups";
-import publicAgeGroupsRouter from "./routes/age-groups";  // Public age groups router
 import organizationsRouter from "./routes/admin/organizations"; 
 import emailProvidersRouter from "./routes/admin/email-providers";
 import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings";
