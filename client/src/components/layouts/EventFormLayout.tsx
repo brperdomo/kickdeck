@@ -104,6 +104,11 @@ export function EventFormLayout({
   }, []);
 
   const getTabLabel = (tab: EventTab): string => {
+    // Customize labels for specific tabs
+    if (tab === 'administrators') {
+      return 'Admins'; // Shortened version of "Administrators"
+    }
+    // Default formatting for other tabs
     return tab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
   
@@ -215,9 +220,9 @@ export function EventFormLayout({
                   )}
                   
                   <div className="flex items-center justify-between w-full">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm">{getTabIcon(tab)}</span>
-                      <span className="text-sm font-medium">{getTabLabel(tab)}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs">{getTabIcon(tab)}</span>
+                      <span className="text-xs font-medium">{getTabLabel(tab)}</span>
                     </div>
                     
                     {activeTab === tab && (
