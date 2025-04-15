@@ -139,7 +139,7 @@ export function BracketsContent() {
                     </div>
                     
                     <ScrollArea className="h-[calc(100vh-350px)] pr-4">
-                      <BracketManager ageGroupId={ageGroup.id} />
+                      <BracketManager ageGroupId={ageGroup.id} eventId={eventId} />
                     </ScrollArea>
                   </div>
                 </TabsContent>

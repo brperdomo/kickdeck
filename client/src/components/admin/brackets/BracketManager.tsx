@@ -56,9 +56,10 @@ type BracketFormData = {
 // Component props
 interface BracketManagerProps {
   ageGroupId: number;
+  eventId?: string; // Add eventId prop
 }
 
-export function BracketManager({ ageGroupId }: BracketManagerProps) {
+export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
