@@ -79,15 +79,19 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
     enabled: !!team?.eventId,
   });
   
+  // State to track the selected age group for brackets query
+  const [selectedAgeGroupId, setSelectedAgeGroupId] = useState<string | null>(
+    team?.ageGroupId ? String(team.ageGroupId) : null
+  );
+  
   // Fetch brackets for the selected age group
   const bracketsQuery = useQuery({
-    queryKey: ['/api/brackets', team?.eventId, form?.getValues('ageGroupId')],
+    queryKey: ['/api/brackets', team?.eventId, selectedAgeGroupId],
     queryFn: async () => {
-      const ageGroupId = form?.getValues('ageGroupId');
-      if (!team?.eventId || !ageGroupId) return [];
+      if (!team?.eventId || !selectedAgeGroupId) return [];
       
-      console.log(`Fetching brackets for event ${team.eventId} and age group ${ageGroupId}`);
-      const response = await fetch(`/api/brackets?eventId=${team.eventId}&ageGroupId=${ageGroupId}`);
+      console.log(`Fetching brackets for event ${team.eventId} and age group ${selectedAgeGroupId}`);
+      const response = await fetch(`/api/brackets?eventId=${team.eventId}&ageGroupId=${selectedAgeGroupId}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch brackets');
@@ -95,7 +99,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
       
       return response.json();
     },
-    enabled: !!team?.eventId && !!form?.getValues('ageGroupId'),
+    enabled: !!team?.eventId && !!selectedAgeGroupId,
   });
   
   // Parse coach data if it's a string
@@ -154,8 +158,28 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
         ageGroupId: team.ageGroupId ? String(team.ageGroupId) : "",
         bracketId: team.bracketId || null,
       });
+      
+      // Initialize the age group ID for bracket fetching
+      if (team.ageGroupId) {
+        setSelectedAgeGroupId(String(team.ageGroupId));
+      }
     }
   }, [team, form]);
+  
+  // Watch for age group changes and update the selected age group for bracket fetching
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === 'ageGroupId' && value.ageGroupId) {
+        console.log(`Age group changed to ${value.ageGroupId}, updating selectedAgeGroupId`);
+        setSelectedAgeGroupId(value.ageGroupId);
+        
+        // Reset the bracket selection when age group changes
+        form.setValue('bracketId', null);
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   const updateTeamMutation = useMutation({
     mutationFn: async (data: TeamFormValues) => {
@@ -420,7 +444,10 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
                       <FormLabel>Age Group</FormLabel>
                       <Select
                         value={field.value}
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          setSelectedAgeGroupId(value); // Update the age group for brackets query
+                        }}
                         disabled={ageGroupsQuery.isLoading || !team?.eventId}
                       >
                         <FormControl>
@@ -450,6 +477,40 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
                           )}
                         </SelectContent>
                       </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                {/* Bracket Selector */}
+                <FormField
+                  control={form.control}
+                  name="bracketId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bracket Selection</FormLabel>
+                      {bracketsQuery.isLoading ? (
+                        <div className="flex items-center space-x-2">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span className="text-sm text-muted-foreground">Loading brackets...</span>
+                        </div>
+                      ) : bracketsQuery.isError ? (
+                        <div className="text-sm text-destructive">
+                          Error loading brackets
+                        </div>
+                      ) : bracketsQuery.data?.length === 0 ? (
+                        <div className="text-sm text-muted-foreground">
+                          No brackets available for this age group
+                        </div>
+                      ) : (
+                        <FormControl>
+                          <BracketSelector
+                            brackets={bracketsQuery.data || []}
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
