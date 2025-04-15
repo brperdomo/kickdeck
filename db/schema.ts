@@ -642,6 +642,7 @@ export const seasonalScopes = pgTable("seasonal_scopes", {
   endYear: integer("end_year").notNull(),
   isActive: boolean("is_active").notNull().default(false),
   createCoedGroups: boolean("create_coed_groups").notNull().default(false),
+  coedOnly: boolean("coed_only").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -678,6 +679,7 @@ export const insertSeasonalScopeSchema = createInsertSchema(seasonalScopes, {
   endYear: z.number().int().min(2000).max(2100),
   isActive: z.boolean(),
   createCoedGroups: z.boolean().default(false),
+  coedOnly: z.boolean().default(false),
 });
 
 export const insertAgeGroupSettingSchema = createInsertSchema(ageGroupSettings, {

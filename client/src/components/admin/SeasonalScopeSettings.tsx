@@ -55,6 +55,7 @@ interface SeasonalScope {
   endYear: number;
   isActive: boolean;
   createCoedGroups?: boolean;
+  coedOnly?: boolean;
   ageGroups: AgeGroupSettings[];
 }
 
