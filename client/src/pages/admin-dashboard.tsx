@@ -4128,7 +4128,13 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
     const path = location.split('/');
     if (path.length >= 2 && path[1] === 'admin') {
       // URL format should be /admin/[view]
-      const urlView = path[2] as View;
+      let urlView = path[2];
+      
+      // Handle special cases for kebab-case to camelCase conversion
+      if (urlView === 'form-templates') {
+        urlView = 'formTemplates';
+      }
+      
       if (urlView && urlView !== activeView) {
         console.log('Updating activeView from URL:', urlView);
         setActiveView(urlView as View);
