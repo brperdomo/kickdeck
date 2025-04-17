@@ -203,7 +203,7 @@ export default function Register() {
         
         <div className="relative z-10 flex items-center justify-center min-h-screen">
           <div className="w-full max-w-[min(400px,100%-2rem)] mx-auto">
-            <Card className="w-full bg-[#3d3a98]/70 backdrop-blur-md shadow-xl border-0">
+            <Card className="w-full bg-[#3d3a98]/70 backdrop-blur-md shadow-xl border-0 ring-2 ring-[#6a67ff]/30 ring-offset-2 ring-offset-[#3d3a98]/10">
               <CardHeader className="space-y-3 pb-6">
                 <div className="flex justify-center">
                   <div className="w-100 h-100">
