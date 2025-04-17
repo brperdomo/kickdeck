@@ -192,7 +192,7 @@ export function AdminBanner() {
     
       {/* Regular admin banner */}
       <motion.div 
-        className="bg-card/50 backdrop-blur-sm p-4 border-b sticky top-0 z-10"
+        className="bg-card/50 backdrop-blur-sm p-4 border-b sticky top-0 z-10 shadow-sm"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, type: "spring" }}
@@ -264,7 +264,7 @@ export function AdminBanner() {
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="rounded-full px-3 gap-1 h-8 hover:bg-primary/10"
+                      className="rounded-full px-3 gap-1 h-8 hover:bg-primary/10 btn-enhanced"
                     >
                       <UserCog className="h-4 w-4" />
                       <span className="text-xs hidden md:inline-block">

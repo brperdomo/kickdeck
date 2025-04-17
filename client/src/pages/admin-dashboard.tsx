@@ -4573,8 +4573,8 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
       <AnimatedContent>
         {/* Use the imported AdminBanner component that includes the ViewToggle */}
         <AdminBanner />
-        <div className="p-8">
-          {/* This dashboard now includes animations directly */}
+        <div className="p-8 pattern-bg">
+          {/* Enhanced dashboard with subtle pattern background */}
 
           {/* Welcome Card with Animation */}
           {showWelcome && (
