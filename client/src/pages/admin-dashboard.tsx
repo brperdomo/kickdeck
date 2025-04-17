@@ -4101,7 +4101,12 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   const { hasPermission } = usePermissions();
   const [location, navigate] = useLocation();
   const [activeView, setActiveView] = useState<View>(initialView);
-  const [showWelcome, setShowWelcome] = useState(true);
+  // Show welcome banner only once per login session
+  const [showWelcome, setShowWelcome] = useState(() => {
+    // Check if we've already shown the banner in this session
+    const welcomeShown = sessionStorage.getItem('welcomeBannerShown');
+    return !welcomeShown;
+  });
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
@@ -4586,8 +4591,13 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                 }}
               >
                 <button 
-                  onClick={() => setShowWelcome(false)}
-                  className="absolute top-2 right-2 p-2 hover:bg-white/20 rounded-full"
+                  onClick={() => {
+                    // Store in session storage that banner has been shown
+                    sessionStorage.setItem('welcomeBannerShown', 'true');
+                    // Hide the banner
+                    setShowWelcome(false);
+                  }}
+                  className="absolute top-2 right-2 p-2 hover:bg-white/20 rounded-full z-10"
                   style={{ color: 'white' }}
                 >
                   <X className="h-4 w-4" />
