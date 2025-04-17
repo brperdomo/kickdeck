@@ -1,4 +1,4 @@
-import { pgTable, text, serial, boolean, jsonb, timestamp, integer, bigint } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, jsonb, timestamp, integer, bigint, date, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
@@ -1069,3 +1069,30 @@ export const emailTemplatesRelations = relations(emailTemplates, ({ one }) => ({
     references: [emailProviderSettings.id],
   }),
 }));
+
+// Product Updates feature for tracking application changes
+export const productUpdates = pgTable("product_updates", {
+  id: serial("id").primaryKey(),
+  version: varchar("version", { length: 20 }).notNull(),
+  releaseDate: date("release_date").notNull(),
+  title: varchar("title", { length: 100 }).notNull(),
+  description: text("description").notNull(),
+  category: varchar("category", { length: 50 }).notNull(),
+  isHighlighted: boolean("is_highlighted").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertProductUpdateSchema = createInsertSchema(productUpdates, {
+  version: z.string().min(1, "Version is required"),
+  releaseDate: z.date(),
+  title: z.string().min(1, "Title is required").max(100),
+  description: z.string().min(1, "Description is required"),
+  category: z.string().min(1, "Category is required"),
+  isHighlighted: z.boolean().optional(),
+});
+
+export const selectProductUpdateSchema = createSelectSchema(productUpdates);
+
+export type InsertProductUpdate = typeof productUpdates.$inferInsert;
+export type SelectProductUpdate = typeof productUpdates.$inferSelect;
