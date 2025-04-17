@@ -23,6 +23,7 @@ import membersRouter from "./routes/admin/members-router";
 import teamsRouter from "./routes/admin/teams-router";
 import playersRouter from "./routes/admin/players-router";
 import bracketsRouter from "./routes/admin/brackets";
+import productUpdatesRouter from "./routes/product-updates";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import { createStripePaymentIntent, getPaymentIntentStatus, handleStripeWebhook, getStripeConfig } from "./routes/payments";
