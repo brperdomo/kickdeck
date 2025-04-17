@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
-import MainLayout from "@/components/layouts/MainLayout";
+import AuthLayout from "@/components/layouts/AuthLayout";
 import {
   Form,
   FormControl,
@@ -69,7 +69,7 @@ export default function ForgotPassword() {
   }
 
   return (
-    <MainLayout>
+    <AuthLayout>
       <div className="relative">
         <AnimatedBackground type="particles" primaryColor="#3d3a98" secondaryColor="#2d2a88" speed="medium" />
 
@@ -146,6 +146,6 @@ export default function ForgotPassword() {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </AuthLayout>
   );
 }

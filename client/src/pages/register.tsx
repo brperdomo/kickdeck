@@ -4,7 +4,7 @@ import { type InsertUser } from "@db/schema";
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
-import MainLayout from "@/components/layouts/MainLayout";
+import AuthLayout from "@/components/layouts/AuthLayout";
 import { PasswordStrength } from "@/components/ui/password-strength";
 import {
   Form,
@@ -197,7 +197,7 @@ export default function Register() {
   }
 
   return (
-    <MainLayout>
+    <AuthLayout>
       <div className="relative">
         <AnimatedBackground type="particles" primaryColor="#3d3a98" secondaryColor="#2d2a88" speed="medium" />
         
@@ -359,6 +359,6 @@ export default function Register() {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </AuthLayout>
   );
 }

@@ -4,7 +4,7 @@ import { type InsertUser } from "@db/schema";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
-import MainLayout from "@/components/layouts/MainLayout";
+import AuthLayout from "@/components/layouts/AuthLayout";
 import {
   Form,
   FormControl,
@@ -138,7 +138,7 @@ export default function AuthPage() {
   }
 
   return (
-    <MainLayout>
+    <AuthLayout>
       <div className="min-h-screen w-full relative">
         <AnimatedBackground type="particles" primaryColor="#3d3a98" secondaryColor="#2d2a88" speed="medium" />
 
@@ -252,6 +252,6 @@ export default function AuthPage() {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </AuthLayout>
   );
 }
