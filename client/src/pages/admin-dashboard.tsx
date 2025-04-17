@@ -4270,7 +4270,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="formTemplates"
               activeView={activeView}
-              onClick={() => setActiveView('formTemplates')}
+              onClick={() => setLocation('/admin/form-templates')}
               icon={<FormInput className="mr-2 h-4 w-4" />}
               label="Form Templates"
               permission="view_form_templates"
@@ -4280,7 +4280,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="events"
               activeView={activeView}
-              onClick={() => setActiveView('events')}
+              onClick={() => setLocation('/admin/events')}
               icon={<Calendar className="mr-2 h-4 w-4" />}
               label="Events"
               permission="view_events"
@@ -4290,7 +4290,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="teams"
               activeView={activeView}
-              onClick={() => setActiveView('teams')}
+              onClick={() => setLocation('/admin/teams')}
               icon={<Users className="mr-2 h-4 w-4" />}
               label="Teams"
               permission="view_teams"
@@ -4300,7 +4300,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="administrators"
               activeView={activeView}
-              onClick={() => setActiveView('administrators')}
+              onClick={() => setLocation('/admin/administrators')}
               icon={<Shield className="mr-2 h-4 w-4" />}
               label="Administrators"
               permission="view_administrators"
@@ -4310,7 +4310,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="complexes"
               activeView={activeView}
-              onClick={() => setActiveView('complexes')}
+              onClick={() => setLocation('/admin/complexes')}
               icon={<Building2 className="mr-2 h-4 w-4" />}
               label="Field Complexes"
               permission="view_complexes"
@@ -4319,7 +4319,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="households"
               activeView={activeView}
-              onClick={() => setActiveView('households')}
+              onClick={() => setLocation('/admin/households')}
               icon={<Home className="mr-2 h-4 w-4" />}
               label="MatchPro Client"
               permission="view_households"
@@ -4328,7 +4328,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="scheduling"
               activeView={activeView}
-              onClick={() => setActiveView('scheduling')}
+              onClick={() => setLocation('/admin/scheduling')}
               icon={<CalendarDays className="mr-2 h-4 w-4" />}
               label="Scheduling"
               permission="view_scheduling"
@@ -4337,7 +4337,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="reports"
               activeView={activeView}
-              onClick={() => setActiveView('reports')}
+              onClick={() => setLocation('/admin/reports')}
               icon={<FileText className="mr-2 h-4 w-4" />}
               label="Reports and Financials"
               permission="view_reports"
@@ -4346,7 +4346,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="files"
               activeView={activeView}
-              onClick={() => setActiveView('files')}
+              onClick={() => setLocation('/admin/file-manager')}
               icon={<ImageIcon className="mr-2 h-4 w-4" />}
               label="File Manager"
               permission="view_files"
@@ -4355,7 +4355,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="members"
               activeView={activeView}
-              onClick={() => setActiveView('members')}
+              onClick={() => setLocation('/admin/members')}
               icon={<Users className="mr-2 h-4 w-4" />}
               label="Members"
               permission="view_members"
@@ -4366,7 +4366,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="roles"
               activeView={activeView}
-              onClick={() => setActiveView('roles')}
+              onClick={() => setLocation('/admin/roles')}
               icon={<KeyRound className="mr-2 h-4 w-4" />}
               label="Role Permissions"
               permission="view_role_permissions"
@@ -4409,7 +4409,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                           : 'var(--admin-nav-text, inherit)',
                       }}
                       onClick={() => {
-                        setActiveView('settings');
+                        setLocation('/admin/settings');
                         setActiveSettingsView('branding');
                       }}
                     >
@@ -4431,7 +4431,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                           : 'var(--admin-nav-text, inherit)',
                       }}
                       onClick={() => {
-                        setActiveView('settings');
+                        setLocation('/admin/settings');
                         setActiveSettingsView('payments');
                       }}
                     >
@@ -4453,7 +4453,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                           : 'var(--admin-nav-text, inherit)',
                       }}
                       onClick={() => {
-                        setActiveView('settings');
+                        setLocation('/admin/settings');
                         setActiveSettingsView('general');
                       }}
                     >
@@ -4475,7 +4475,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                           : 'var(--admin-nav-text, inherit)',
                       }}
                       onClick={() => {
-                        setActiveView('settings');
+                        setLocation('/admin/settings');
                         setActiveSettingsView('styling');
                       }}
                     >
@@ -4499,7 +4499,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                   ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
                   : 'var(--admin-nav-text, inherit)',
               }}
-              onClick={() => setActiveView('account')}
+              onClick={() => setLocation('/admin/account')}
             >
               <User className="mr-2 h-4 w-4" />
               My Account
