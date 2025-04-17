@@ -183,7 +183,7 @@ export default function AuthPage() {
                   </div>
                 </div>
                 <CardTitle className="text-2xl sm:text-3xl font-bold text-center text-white">
-                  Sign In to MatchPro
+                  Let's get you signed in
                 </CardTitle>
                 {logoutMessage && (
                   <div className={`mt-2 px-4 py-2 rounded-md text-sm font-medium ${
