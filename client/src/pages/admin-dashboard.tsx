@@ -4380,7 +4380,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="roles"
               activeView={activeView}
-              onClick={() => setLocation('/admin/roles')}
+              onClick={() => navigate('/admin/roles')}
               icon={<KeyRound className="mr-2 h-4 w-4" />}
               label="Role Permissions"
               permission="view_role_permissions"
@@ -4423,7 +4423,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                           : 'var(--admin-nav-text, inherit)',
                       }}
                       onClick={() => {
-                        setLocation('/admin/settings');
+                        navigate('/admin/settings');
                         setActiveSettingsView('branding');
                       }}
                     >
@@ -4445,7 +4445,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                           : 'var(--admin-nav-text, inherit)',
                       }}
                       onClick={() => {
-                        setLocation('/admin/settings');
+                        navigate('/admin/settings');
                         setActiveSettingsView('payments');
                       }}
                     >
@@ -4467,7 +4467,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                           : 'var(--admin-nav-text, inherit)',
                       }}
                       onClick={() => {
-                        setLocation('/admin/settings');
+                        navigate('/admin/settings');
                         setActiveSettingsView('general');
                       }}
                     >
@@ -4489,7 +4489,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                           : 'var(--admin-nav-text, inherit)',
                       }}
                       onClick={() => {
-                        setLocation('/admin/settings');
+                        navigate('/admin/settings');
                         setActiveSettingsView('styling');
                       }}
                     >
@@ -4513,7 +4513,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                   ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
                   : 'var(--admin-nav-text, inherit)',
               }}
-              onClick={() => setLocation('/admin/account')}
+              onClick={() => navigate('/admin/account')}
             >
               <User className="mr-2 h-4 w-4" />
               My Account
