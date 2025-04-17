@@ -80,35 +80,55 @@ export function AnimatedBackground({
       
       animate();
     } else if (type === "particles") {
-      // Configuration for particles
+      // Enhanced configuration for particles
       const primary = hexToRgb(primaryColor);
       const secondary = hexToRgb(secondaryColor);
+      const accent = {r: 106, g: 103, b: 255}; // Brighter purple accent (#6A67FF)
       const particles: Particle[] = [];
-      const particleCount = Math.floor((canvas.width * canvas.height) / 6000); // Responsive particle count with increased density
-      const speedFactor = speed === "slow" ? 0.5 : speed === "fast" ? 2 : 1;
+      const particleCount = Math.floor((canvas.width * canvas.height) / 4000); // Increased particle density
+      const speedFactor = speed === "slow" ? 0.8 : speed === "fast" ? 2.5 : 1.5;
       
-      // Create initial particles
+      // Create initial particles with more variety
       for (let i = 0; i < particleCount; i++) {
+        // Determine if this is a special "pulse" particle (10% chance)
+        const isPulseParticle = Math.random() < 0.1;
+        const colorRand = Math.random();
+        
+        // Use different color distribution
+        let particleColor;
+        if (isPulseParticle) {
+          // Special pulsing particles get the accent color with higher opacity
+          particleColor = `rgba(${accent.r}, ${accent.g}, ${accent.b}, ${Math.random() * 0.3 + 0.7})`;
+        } else if (colorRand > 0.7) {
+          particleColor = `rgba(${primary.r}, ${primary.g}, ${primary.b}, ${Math.random() * 0.4 + 0.4})`;
+        } else if (colorRand > 0.3) {
+          particleColor = `rgba(${secondary.r}, ${secondary.g}, ${secondary.b}, ${Math.random() * 0.4 + 0.4})`;
+        } else {
+          particleColor = `rgba(${accent.r}, ${accent.g}, ${accent.b}, ${Math.random() * 0.4 + 0.2})`;
+        }
+        
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 3 + 1,
-          color: Math.random() > 0.5 ? 
-            `rgba(${primary.r}, ${primary.g}, ${primary.b}, ${Math.random() * 0.5 + 0.25})` : 
-            `rgba(${secondary.r}, ${secondary.g}, ${secondary.b}, ${Math.random() * 0.5 + 0.25})`,
-          speedX: (Math.random() - 0.5) * speedFactor,
-          speedY: (Math.random() - 0.5) * speedFactor
+          size: isPulseParticle ? Math.random() * 5 + 3 : Math.random() * 3 + 1, // Larger for pulse particles
+          color: particleColor,
+          speedX: (Math.random() - 0.5) * speedFactor * (isPulseParticle ? 0.7 : 1), // Pulse particles move slower
+          speedY: (Math.random() - 0.5) * speedFactor * (isPulseParticle ? 0.7 : 1),
+          isPulse: isPulseParticle,
+          pulseSize: 0,
+          pulseDirection: 1, // 1 for growing, -1 for shrinking
+          pulseSpeed: Math.random() * 0.05 + 0.02
         });
       }
       
       // Draw a dark background
-      ctx.fillStyle = "#121212";
+      ctx.fillStyle = "#0F0F1A"; // Slightly blue-tinted dark background
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       // Particle animation
       const animate = () => {
         // Apply a semi-transparent overlay to create a trail effect
-        ctx.fillStyle = "rgba(18, 18, 18, 0.1)";
+        ctx.fillStyle = "rgba(15, 15, 26, 0.08)"; // Faster fade for more active feel
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
         // Update and draw particles
@@ -123,7 +143,32 @@ export function AnimatedBackground({
           if (particle.y < 0) particle.y = canvas.height;
           if (particle.y > canvas.height) particle.y = 0;
           
-          // Draw the particle
+          // For pulse particles, animate the size
+          if (particle.isPulse) {
+            // Update pulse size
+            particle.pulseSize += particle.pulseDirection * particle.pulseSpeed;
+            
+            // Reverse direction if reaching limits
+            if (particle.pulseSize > 1.5) particle.pulseDirection = -1;
+            if (particle.pulseSize < -0.5) particle.pulseDirection = 1;
+            
+            // Draw the pulse glow effect (larger circle with gradient)
+            const gradient = ctx.createRadialGradient(
+              particle.x, particle.y, 0,
+              particle.x, particle.y, particle.size * (2 + particle.pulseSize)
+            );
+            
+            const color = particle.color.replace(/[\d\.]+\)$/g, "0.1)"); // Lower opacity version for glow
+            gradient.addColorStop(0, particle.color);
+            gradient.addColorStop(1, color);
+            
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, particle.size * (2 + particle.pulseSize), 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+          }
+          
+          // Draw the particle core
           ctx.beginPath();
           ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
           ctx.fillStyle = particle.color;
@@ -137,10 +182,25 @@ export function AnimatedBackground({
             const dy = particles[i].y - particles[j].y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             
-            if (distance < 120) {
+            // Increased connection distance
+            if (distance < 150) {
+              // Determine if either particle is a pulse particle
+              const hasPulse = particles[i].isPulse || particles[j].isPulse;
+              
+              // Calculate opacity based on distance - higher for pulse connections
+              const opacity = hasPulse ? 
+                0.5 * (1 - distance / 150) : 
+                0.35 * (1 - distance / 150);
+              
+              // Choose color based on whether it's a pulse connection
+              const connectionColor = hasPulse ?
+                `rgba(${accent.r}, ${accent.g}, ${accent.b}, ${opacity})` :
+                `rgba(${primary.r}, ${primary.g}, ${primary.b}, ${opacity})`;
+                
+              // Draw the connection
               ctx.beginPath();
-              ctx.strokeStyle = `rgba(${primary.r}, ${primary.g}, ${primary.b}, ${0.3 * (1 - distance / 100)})`;
-              ctx.lineWidth = 0.5;
+              ctx.strokeStyle = connectionColor;
+              ctx.lineWidth = hasPulse ? 1 : 0.6; // Thicker lines for pulse particles
               ctx.moveTo(particles[i].x, particles[i].y);
               ctx.lineTo(particles[j].x, particles[j].y);
               ctx.stroke();
@@ -266,4 +326,8 @@ interface Particle {
   color: string;
   speedX: number;
   speedY: number;
+  isPulse?: boolean;
+  pulseSize?: number;
+  pulseDirection?: number;
+  pulseSpeed?: number;
 }
