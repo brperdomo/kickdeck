@@ -26,6 +26,9 @@ export function AnimatedBackground({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
+    // Log for debugging
+    console.log("AnimatedBackground initialized with type:", type);
+    
     // Set canvas to full screen
     const handleResize = () => {
       canvas.width = window.innerWidth;

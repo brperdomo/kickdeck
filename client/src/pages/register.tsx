@@ -197,7 +197,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen">
-      <AnimatedBackground type="gradients" primaryColor="#3d3a98" secondaryColor="#2d2a88" speed="medium" />
+      <AnimatedBackground type="particles" primaryColor="#3d3a98" secondaryColor="#2d2a88" speed="medium" />
       
       <div className="relative z-10 flex items-center justify-center min-h-screen">
         <div className="w-full max-w-[min(400px,100%-2rem)] mx-auto">
