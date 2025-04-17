@@ -142,7 +142,7 @@ export default function AuthPage() {
 
       <div className="relative z-10 flex items-center justify-center min-h-screen">
         <div className="w-full max-w-[min(400px,100%-2rem)] mx-auto">
-          <Card className="w-full bg-[#164e87]/85 backdrop-blur-md shadow-xl border-0">
+          <Card className="w-full bg-[#212045]/85 backdrop-blur-md shadow-xl border-0">
             <CardHeader className="space-y-3 pb-6">
               <div className="flex justify-center">
                 <div className="w-100 h-100">
@@ -211,7 +211,7 @@ export default function AuthPage() {
                   />
                   <Button
                     type="submit"
-                    className="w-full h-11 text-base bg-white hover:bg-white/90 text-[#164e87] font-medium transition-colors"
+                    className="w-full h-11 text-base bg-white hover:bg-white/90 text-[#212045] font-medium transition-colors"
                     disabled={loginMutation.isPending}
                   >
                     {loginMutation.isPending ? (
