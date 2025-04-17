@@ -4579,26 +4579,26 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
           {/* Welcome Card with Animation */}
           {showWelcome && (
             <AnimatedContainer animation="scale" delay={0.1}>
-              <Card className="mb-6 relative">
+              <Card className="mb-6 relative enhanced-card welcome-banner">
                 <button 
                   onClick={() => setShowWelcome(false)}
-                  className="absolute top-2 right-2 p-2 hover:bg-muted rounded-full"
+                  className="absolute top-2 right-2 p-2 hover:bg-white/20 rounded-full text-white"
                 >
                   <X className="h-4 w-4" />
                 </button>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
                     <motion.div 
-                      className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center"
+                      className="h-14 w-14 rounded-full bg-white/20 flex items-center justify-center"
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ delay: 0.2, duration: 0.5, type: "spring" }}
                     >
-                      <UserCircle className="h-6 w-6 text-primary" />
+                      <UserCircle className="h-7 w-7 text-white" />
                     </motion.div>
                     <div>
                       <motion.h2 
-                        className="text-2xl font-bold"
+                        className="text-2xl font-bold text-white"
                         initial={{ x: -10, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: 0.3, duration: 0.5 }}
@@ -4606,7 +4606,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                         Welcome back, {user?.firstName}!
                       </motion.h2>
                       <motion.p 
-                        className="text-muted-foreground"
+                        className="text-white/90"
                         initial={{ x: -10, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: 0.4, duration: 0.5 }}
@@ -4737,7 +4737,7 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
       return (
         <div className="space-y-6">
           <h2 className="text-2xl font-bold">Settings</h2>
-          <Card>
+          <Card className="enhanced-card">
             <CardContent className="p-6">
               <p>Settings content will be implemented here</p>
             </CardContent>
@@ -4891,7 +4891,7 @@ function CouponManagement() {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Coupon Management</h2>
+        <h2 className="text-2xl font-bold section-header">Coupon Management</h2>
         {hasPermission('create_coupons') && (
           <Button onClick={() => setIsAddModalOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
@@ -4900,9 +4900,9 @@ function CouponManagement() {
         )}
       </div>
 
-      <Card>
+      <Card className="enhanced-card">
         <CardContent className="p-0">
-          <Table>
+          <Table className="enhanced-table">
             <TableHeader>
               <TableRow>
                 <TableHead>Code</TableHead>
