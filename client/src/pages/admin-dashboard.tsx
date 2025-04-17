@@ -4632,9 +4632,9 @@ function AdminDashboard() {
           pragmaMeta.content = 'no-cache';
           document.head.appendChild(pragmaMeta);
           
-          // Force navigation to root which shows login for unauthenticated users
+          // Force navigation to auth page explicitly
           console.log("Redirecting to login screen...");
-          window.location.replace("/");
+          window.location.href = "/auth?logged_out=true";
         }} />
       )}
       

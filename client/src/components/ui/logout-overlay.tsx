@@ -57,7 +57,7 @@ export function LogoutOverlay({ className, onFinished, ...props }: LogoutOverlay
       // Force redirect as a fallback if the callback doesn't work
       setTimeout(() => {
         console.log("Forcing logout redirect via fallback");
-        window.location.replace("/");
+        window.location.href = "/auth?logged_out=true";
       }, 200);
     }, 1500); // Show the message for 1.5 seconds
 
