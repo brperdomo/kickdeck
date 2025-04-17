@@ -6,14 +6,13 @@ export function Footer() {
   const [location] = useLocation();
   
   // Check for routes where footer should not be displayed
-  const isAuthPage = location.includes('/auth') || location.includes('/register') || location.includes('/forgot-password');
+  const isAuthPage = location === '/' || location === '/auth' || location.includes('/register') || location.includes('/forgot-password') || location.includes('/reset-password');
   const isAdminPage = location.startsWith('/admin');
   
   // Get the current URL to detect if we're already inside a MainLayout
   const currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
   
   // Don't show footer on admin routes or auth pages when they use MainLayout
-  // The check for ?layout=main is a trick to detect if the page is using MainLayout
   if (isAdminPage || isAuthPage) {
     return null;
   }
