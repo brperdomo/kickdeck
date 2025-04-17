@@ -147,7 +147,7 @@ function Router() {
             {user.isAdmin ? <FormTemplateEditPage /> : <NotFound />}
           </Route>
           <Route path="/admin/form-templates">
-            {user.isAdmin ? <FormTemplatesPage /> : <NotFound />}
+            {user.isAdmin ? <AdminDashboard initialView="form-templates" /> : <NotFound />}
           </Route>
           <Route path="/admin/team-status-test">
             {user.isAdmin ? <TeamStatusTest /> : <NotFound />}
