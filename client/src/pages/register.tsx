@@ -289,11 +289,6 @@ export default function Register() {
                             </div>
                           </FormControl>
                           <FormMessage className="text-yellow-200" />
-                          {emailAvailability?.available === false && (
-                            <p className="text-sm text-red-300 mt-1">
-                              {emailAvailability.message}
-                            </p>
-                          )}
                         </FormItem>
                       )}
                     />
