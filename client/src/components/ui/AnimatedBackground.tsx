@@ -144,7 +144,8 @@ export function AnimatedBackground({
           if (particle.y > canvas.height) particle.y = 0;
           
           // For pulse particles, animate the size
-          if (particle.isPulse) {
+          if (particle.isPulse && particle.pulseSize !== undefined && 
+              particle.pulseDirection !== undefined && particle.pulseSpeed !== undefined) {
             // Update pulse size
             particle.pulseSize += particle.pulseDirection * particle.pulseSpeed;
             
