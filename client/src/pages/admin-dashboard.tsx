@@ -4586,7 +4586,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedContainer animation="scale" delay={0.1}>
               <div className="mb-6 relative rounded-lg overflow-hidden shadow-lg" 
                 style={{ 
-                  background: 'linear-gradient(135deg, #4361ee, #3f37c9)',
+                  background: 'linear-gradient(135deg, rgba(48, 46, 158, 0.65), rgba(48, 46, 158, 1))',
                   padding: '1.5rem'
                 }}
               >
