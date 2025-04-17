@@ -37,12 +37,16 @@ export default function AuthPage() {
 
   // Check for logout message from sessionStorage or URL params
   useEffect(() => {
+    console.log("AuthPage useEffect - checking for logout params");
+    console.log("Current search params:", window.location.search);
+    
     // First check if we have a message in sessionStorage (from LogoutHandler)
     const logoutMsg = sessionStorage.getItem('logout_message');
     if (logoutMsg) {
       // Clear the message so it's only shown once
       sessionStorage.removeItem('logout_message');
       
+      console.log("Found logout message in sessionStorage:", logoutMsg);
       setLogoutMessage(logoutMsg);
       toast({
         title: "Logged out",
@@ -54,10 +58,18 @@ export default function AuthPage() {
     
     // Fallback to URL params (for backwards compatibility)
     const searchParams = new URLSearchParams(window.location.search);
+    console.log("Searching URL parameters:", Object.fromEntries(searchParams.entries()));
+    
+    // Check for both 'logged_out' and 'logged_out=true' formats
     const loggedOut = searchParams.get('logged_out');
+    const hasLoggedOutParam = window.location.search.includes('logged_out');
     const forced = searchParams.get('forced');
     
-    if (loggedOut) {
+    console.log("loggedOut param value:", loggedOut);
+    console.log("hasLoggedOutParam:", hasLoggedOutParam);
+    
+    if (loggedOut || hasLoggedOutParam) {
+      console.log("Setting logout message from URL param");
       setLogoutMessage("You have been successfully logged out");
       toast({
         title: "Logged out",

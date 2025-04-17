@@ -1,12 +1,13 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Loader2 } from "lucide-react";
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
+import { RouteDebugger } from "@/components/RouteDebugger";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
@@ -61,8 +62,17 @@ function Router() {
       {/* Public routes that don't require authentication */}
       {!user ? (
         <>
+          {/* Special route to handle auth logout - using a special wrapper component */}
           <Route path="/auth">
-            <AuthPage />
+            {() => {
+              // This is a custom component to help debug the issue
+              // Check URL params directly here to handle different states
+              const hasLoggedOut = window.location.search.includes('logged_out=true');
+              console.log('Auth route accessed with logged_out param:', hasLoggedOut);
+              
+              // Always render the AuthPage component
+              return <AuthPage />;
+            }}
           </Route>
           <Route path="/register" component={Register} />
           <Route path="/forgot-password" component={ForgotPassword} />
@@ -186,6 +196,7 @@ function App() {
       <AuthProvider>
         <TooltipProvider>
           <MainLayout>
+            <RouteDebugger />
             <Router />
             <Toaster />
           </MainLayout>
