@@ -84,7 +84,7 @@ export function AnimatedBackground({
       const primary = hexToRgb(primaryColor);
       const secondary = hexToRgb(secondaryColor);
       const particles: Particle[] = [];
-      const particleCount = Math.floor((canvas.width * canvas.height) / 8000); // Responsive particle count
+      const particleCount = Math.floor((canvas.width * canvas.height) / 6000); // Responsive particle count with increased density
       const speedFactor = speed === "slow" ? 0.5 : speed === "fast" ? 2 : 1;
       
       // Create initial particles
@@ -137,7 +137,7 @@ export function AnimatedBackground({
             const dy = particles[i].y - particles[j].y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             
-            if (distance < 100) {
+            if (distance < 120) {
               ctx.beginPath();
               ctx.strokeStyle = `rgba(${primary.r}, ${primary.g}, ${primary.b}, ${0.3 * (1 - distance / 100)})`;
               ctx.lineWidth = 0.5;
@@ -239,7 +239,7 @@ export function AnimatedBackground({
         ref={canvasRef} 
         className="w-full h-full"
       />
-      <div className="absolute inset-0 bg-black/20" />
+      <div className="absolute inset-0 bg-black/10" />
     </div>
   );
 }

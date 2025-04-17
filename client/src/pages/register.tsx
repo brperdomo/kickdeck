@@ -344,7 +344,7 @@ export default function Register() {
                   </Button>
                   <div className="text-center">
                     <Link href="/auth">
-                      <Button variant="link" className="w-full text-sm text-white/90 p-0 h-auto font-semibold hover:text-white" type="button">
+                      <Button variant="link" className="w-full text-sm text-yellow-200 p-0 h-auto font-semibold hover:text-yellow-100" type="button">
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Back to Login
                       </Button>

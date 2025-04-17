@@ -229,15 +229,15 @@ export default function AuthPage() {
                     </div>
                   )}
                   <Link href="/forgot-password">
-                    <Button variant="link" className="w-full text-sm text-white/90 p-0 h-auto font-semibold hover:text-white">
+                    <Button variant="link" className="w-full text-sm text-yellow-200 p-0 h-auto font-semibold hover:text-yellow-100">
                       Forgot Password?
                     </Button>
                   </Link>
                   <div className="text-center">
-                    <p className="text-sm sm:text-base text-white/90">
+                    <p className="text-sm sm:text-base text-white">
                       New to MatchPro?{" "}
                       <Link href={`/register${window.location.search}`}>
-                        <Button variant="link" className="p-0 h-auto font-semibold text-yellow-200 hover:text-yellow-100">
+                        <Button variant="link" className="p-0 h-auto font-semibold text-yellow-300 hover:text-yellow-100">
                           Register Here
                         </Button>
                       </Link>
