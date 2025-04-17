@@ -49,7 +49,8 @@ export function LogoutHandler() {
           setTimeout(() => {
             // Store logout message in session storage so it persists through page reload
             sessionStorage.setItem('logout_message', 'You have been successfully logged out');
-            window.location.href = '/auth?logged_out=true'; // Redirect to auth page with logged_out parameter
+            // Redirect to our special page that handles logout redirects
+            window.location.href = '/auth-logged-out';
           }, 100);
         }
       } catch (error) {
@@ -60,7 +61,7 @@ export function LogoutHandler() {
         if (!redirectTimeoutActive) {
           setRedirectTimeoutActive(true);
           sessionStorage.setItem('logout_message', 'You have been successfully logged out');
-          window.location.href = '/auth?logged_out=true';
+          window.location.href = '/auth-logged-out';
         }
       }
     };
@@ -74,7 +75,7 @@ export function LogoutHandler() {
         console.log("Fallback logout redirect triggered");
         setRedirectTimeoutActive(true);
         sessionStorage.setItem('logout_message', 'You have been successfully logged out');
-        window.location.href = '/auth?logged_out=true';
+        window.location.href = '/auth-logged-out';
       }
     }, 3000);
     

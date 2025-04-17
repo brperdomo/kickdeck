@@ -11,6 +11,7 @@ import { RouteDebugger } from "@/components/RouteDebugger";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
+import AuthLoggedOut from "@/pages/auth-logged-out";
 import AdminDashboard from "@/pages/admin-dashboard";
 import CreateEvent from "@/pages/create-event";
 import CouponManagement from "@/pages/coupon-management";
@@ -62,7 +63,10 @@ function Router() {
       {/* Public routes that don't require authentication */}
       {!user ? (
         <>
-          {/* Special route to handle auth logout - using a special wrapper component */}
+          {/* Create a separate route for auth-logged-out to handle the redirect */}
+          <Route path="/auth-logged-out" component={AuthLoggedOut} />
+          
+          {/* Regular auth route */}
           <Route path="/auth">
             {() => {
               // This is a custom component to help debug the issue
@@ -70,7 +74,13 @@ function Router() {
               const hasLoggedOut = window.location.search.includes('logged_out=true');
               console.log('Auth route accessed with logged_out param:', hasLoggedOut);
               
-              // Always render the AuthPage component
+              // If this is the logout URL, redirect to our dedicated page
+              if (hasLoggedOut) {
+                window.location.href = '/auth-logged-out';
+                return <div>Redirecting...</div>;
+              }
+              
+              // Otherwise render the normal login page
               return <AuthPage />;
             }}
           </Route>
