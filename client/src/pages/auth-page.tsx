@@ -142,7 +142,7 @@ export default function AuthPage() {
 
       <div className="relative z-10 flex items-center justify-center min-h-screen">
         <div className="w-full max-w-[min(400px,100%-2rem)] mx-auto">
-          <Card className="w-full bg-white/50 backdrop-blur-md shadow-xl border-0">
+          <Card className="w-full bg-[#164e87]/85 backdrop-blur-md shadow-xl border-0">
             <CardHeader className="space-y-3 pb-6">
               <div className="flex justify-center">
                 <div className="w-100 h-100">
@@ -153,7 +153,7 @@ export default function AuthPage() {
                   />
                 </div>
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-center text-gray-900">
+              <CardTitle className="text-2xl sm:text-3xl font-bold text-center text-white">
                 Sign In to MatchPro
               </CardTitle>
               {logoutMessage && (
@@ -178,16 +178,16 @@ export default function AuthPage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-base">Email</FormLabel>
+                        <FormLabel className="text-base text-white">Email</FormLabel>
                         <FormControl>
                           <Input
                             type="email"
                             autoComplete="username email"
-                            className="h-11 text-base px-4"
+                            className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-yellow-200" />
                       </FormItem>
                     )}
                   />
@@ -196,22 +196,22 @@ export default function AuthPage() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-base">Password</FormLabel>
+                        <FormLabel className="text-base text-white">Password</FormLabel>
                         <FormControl>
                           <Input
                             type="password"
                             autoComplete="current-password"
-                            className="h-11 text-base px-4"
+                            className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-yellow-200" />
                       </FormItem>
                     )}
                   />
                   <Button
                     type="submit"
-                    className="w-full h-11 text-base bg-green-600 hover:bg-green-700 transition-colors"
+                    className="w-full h-11 text-base bg-white hover:bg-white/90 text-[#164e87] font-medium transition-colors"
                     disabled={loginMutation.isPending}
                   >
                     {loginMutation.isPending ? (
@@ -229,15 +229,15 @@ export default function AuthPage() {
                     </div>
                   )}
                   <Link href="/forgot-password">
-                    <Button variant="link" className="w-full text-sm text-green-600 p-0 h-auto font-semibold hover:text-green-700">
+                    <Button variant="link" className="w-full text-sm text-white/90 p-0 h-auto font-semibold hover:text-white">
                       Forgot Password?
                     </Button>
                   </Link>
                   <div className="text-center">
-                    <p className="text-sm sm:text-base text-gray-600">
+                    <p className="text-sm sm:text-base text-white/90">
                       New to MatchPro?{" "}
                       <Link href={`/register${window.location.search}`}>
-                        <Button variant="link" className="p-0 h-auto font-semibold text-green-600 hover:text-green-700">
+                        <Button variant="link" className="p-0 h-auto font-semibold text-yellow-200 hover:text-yellow-100">
                           Register Here
                         </Button>
                       </Link>
