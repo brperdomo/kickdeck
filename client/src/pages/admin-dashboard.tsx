@@ -4602,6 +4602,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                         initial={{ x: -10, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: 0.3, duration: 0.5 }}
+                        style={{ color: 'white' }}
                       >
                         Welcome back, {user?.firstName}!
                       </motion.h2>
@@ -4610,6 +4611,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                         initial={{ x: -10, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: 0.4, duration: 0.5 }}
+                        style={{ color: 'rgba(255, 255, 255, 0.9)' }}
                       >
                         Manage your organization's activities and settings from this dashboard.
                       </motion.p>

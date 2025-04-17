@@ -198,7 +198,6 @@
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, var(--primary), rgba(var(--primary-rgb), 0.8));
-  color: white;
 }
 
 .welcome-banner::before {
@@ -212,15 +211,12 @@
   opacity: 0.4;
 }
 
-.welcome-banner h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+.welcome-banner .text-white {
+  color: white !important;
 }
 
-.welcome-banner p {
-  opacity: 0.9;
-  max-width: 600px;
+.welcome-banner .text-white\/90 {
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 /* Status badge enhancements */
