@@ -4099,7 +4099,7 @@ interface AdminDashboardProps {
 function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   const { user, logout, isLoading: isUserLoading } = useUser();
   const { hasPermission } = usePermissions();
-  const [location, setLocation] = useLocation();
+  const [location, navigate] = useLocation();
   const [activeView, setActiveView] = useState<View>(initialView);
   const [showWelcome, setShowWelcome] = useState(true);
   const [activeSettingsView, setActiveSettingsView] = useState<SettingsView>('general');
@@ -4121,6 +4121,20 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
       setInitialLoadComplete(true);
     }
   }, [isUserLoading, isSettingsLoading, initialLoadComplete]);
+  
+  // Update activeView based on current location/URL
+  useEffect(() => {
+    // Extract view from URL path
+    const path = location.split('/');
+    if (path.length >= 2 && path[1] === 'admin') {
+      // URL format should be /admin/[view]
+      const urlView = path[2] as View;
+      if (urlView && urlView !== activeView) {
+        console.log('Updating activeView from URL:', urlView);
+        setActiveView(urlView as View);
+      }
+    }
+  }, [location, activeView]);
 
   // Prefetch critical data on initial load
   useEffect(() => {
@@ -4138,9 +4152,9 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
       return; // Wait for user data to load
     }
     if (!isAdminUser(user)) {
-      setLocation("/");
+      navigate("/");
     }
-  }, [user, setLocation]);
+  }, [user, navigate]);
 
   // Show a loading state during the initial load
   if (isUserLoading || !initialLoadComplete) {
