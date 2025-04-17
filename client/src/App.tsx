@@ -61,7 +61,9 @@ function Router() {
       {/* Public routes that don't require authentication */}
       {!user ? (
         <>
-          <Route path="/auth" component={AuthPage} />
+          <Route path="/auth">
+            <AuthPage />
+          </Route>
           <Route path="/register" component={Register} />
           <Route path="/forgot-password" component={ForgotPassword} />
           <Route path="/reset-password" component={ResetPassword} />
