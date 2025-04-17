@@ -1,8 +1,7 @@
 import express from 'express';
-import { db } from '../../db';
-import { productUpdates, insertProductUpdateSchema } from '../../db/schema';
+import { db } from '../../db/index.js';
+import { productUpdates, insertProductUpdateSchema } from '../../db/schema.js';
 import { eq, desc } from 'drizzle-orm';
-import { authenticateAdmin } from '../middleware/auth';
 
 const router = express.Router();
 
@@ -78,7 +77,11 @@ router.get('/:id', async (req, res) => {
  * Create a new product update
  * Admin only
  */
-router.post('/', authenticateAdmin, async (req, res) => {
+router.post('/', async (req, res) => {
+  // Check if user is authenticated and admin
+  if (!req.isAuthenticated() || !req.user?.isAdmin) {
+    return res.status(403).json({ error: 'Not authorized' });
+  }
   try {
     const validatedData = insertProductUpdateSchema.parse(req.body);
     
@@ -107,7 +110,11 @@ router.post('/', authenticateAdmin, async (req, res) => {
  * Update an existing product update
  * Admin only
  */
-router.put('/:id', authenticateAdmin, async (req, res) => {
+router.put('/:id', async (req, res) => {
+  // Check if user is authenticated and admin
+  if (!req.isAuthenticated() || !req.user?.isAdmin) {
+    return res.status(403).json({ error: 'Not authorized' });
+  }
   try {
     const id = parseInt(req.params.id);
     
@@ -148,7 +155,11 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
  * Delete a product update
  * Admin only
  */
-router.delete('/:id', authenticateAdmin, async (req, res) => {
+router.delete('/:id', async (req, res) => {
+  // Check if user is authenticated and admin
+  if (!req.isAuthenticated() || !req.user?.isAdmin) {
+    return res.status(403).json({ error: 'Not authorized' });
+  }
   try {
     const id = parseInt(req.params.id);
     

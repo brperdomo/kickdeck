@@ -23,7 +23,7 @@ import membersRouter from "./routes/admin/members-router";
 import teamsRouter from "./routes/admin/teams-router";
 import playersRouter from "./routes/admin/players-router";
 import bracketsRouter from "./routes/admin/brackets";
-import productUpdatesRouter from "./routes/product-updates";
+import productUpdatesRouter from "./routes/product-updates.js";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import { createStripePaymentIntent, getPaymentIntentStatus, handleStripeWebhook, getStripeConfig } from "./routes/payments";
@@ -3052,6 +3052,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     
     // Age groups public routes (for team registration)
     app.use('/api/age-groups', publicAgeGroupsRouter);
+    
+    // Product updates routes
+    app.use('/api/product-updates', productUpdatesRouter);
     
     // User routes
     app.use('/api/user', userRouter);
