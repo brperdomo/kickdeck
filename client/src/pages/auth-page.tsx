@@ -35,9 +35,24 @@ export default function AuthPage() {
   const [location, setLocation] = useLocation();
   const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
 
-  // Check for logout param
+  // Check for logout message from sessionStorage or URL params
   useEffect(() => {
-    // Parse URL search params manually since wouter doesn't provide a hook for this
+    // First check if we have a message in sessionStorage (from LogoutHandler)
+    const logoutMsg = sessionStorage.getItem('logout_message');
+    if (logoutMsg) {
+      // Clear the message so it's only shown once
+      sessionStorage.removeItem('logout_message');
+      
+      setLogoutMessage(logoutMsg);
+      toast({
+        title: "Logged out",
+        description: logoutMsg,
+        variant: "default"
+      });
+      return;
+    }
+    
+    // Fallback to URL params (for backwards compatibility)
     const searchParams = new URLSearchParams(window.location.search);
     const loggedOut = searchParams.get('logged_out');
     const forced = searchParams.get('forced');
