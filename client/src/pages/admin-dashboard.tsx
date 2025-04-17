@@ -4579,11 +4579,10 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
           {/* Welcome Card with Animation */}
           {showWelcome && (
             <AnimatedContainer animation="scale" delay={0.1}>
-              <div className="mb-6 relative rounded-lg overflow-hidden" 
+              <div className="mb-6 relative rounded-lg overflow-hidden shadow-lg" 
                 style={{ 
-                  background: 'linear-gradient(135deg, var(--primary), rgba(var(--primary-rgb), 0.8))',
-                  padding: '1.5rem',
-                  color: 'white'
+                  background: 'linear-gradient(135deg, #4361ee, #3f37c9)',
+                  padding: '1.5rem'
                 }}
               >
                 <button 
@@ -4624,6 +4623,22 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                     </motion.p>
                   </div>
                 </div>
+                
+                {/* Decorative elements */}
+                <div 
+                  className="absolute top-0 right-0 w-64 h-full opacity-10" 
+                  style={{ 
+                    background: 'radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 70%)',
+                    transform: 'translateX(20%)'
+                  }}
+                />
+                <div 
+                  className="absolute bottom-0 left-0 w-32 h-32 opacity-10" 
+                  style={{ 
+                    background: 'radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 70%)',
+                    transform: 'translateY(40%)'
+                  }}
+                />
               </div>
             </AnimatedContainer>
           )}
