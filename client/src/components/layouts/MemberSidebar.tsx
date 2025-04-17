@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { LogOut, User, Home, ChevronDown, Calendar, CreditCard, Menu, X } from "lucide-react";
+import { LogOut, User, Home, ChevronDown, Calendar, CreditCard, Menu, X, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
@@ -41,6 +41,11 @@ export function MemberSidebar() {
       href: "/dashboard/registrations",
       icon: <Calendar className="h-5 w-5" />,
       label: "My Registrations",
+    },
+    {
+      href: "/product-updates",
+      icon: <Bell className="h-5 w-5" />,
+      label: "Product Updates",
     },
   ];
 
