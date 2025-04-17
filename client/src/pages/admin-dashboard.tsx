@@ -4284,7 +4284,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="formTemplates"
               activeView={activeView}
-              onClick={() => setLocation('/admin/form-templates')}
+              onClick={() => navigate('/admin/form-templates')}
               icon={<FormInput className="mr-2 h-4 w-4" />}
               label="Form Templates"
               permission="view_form_templates"
@@ -4294,7 +4294,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="events"
               activeView={activeView}
-              onClick={() => setLocation('/admin/events')}
+              onClick={() => navigate('/admin/events')}
               icon={<Calendar className="mr-2 h-4 w-4" />}
               label="Events"
               permission="view_events"
@@ -4304,7 +4304,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="teams"
               activeView={activeView}
-              onClick={() => setLocation('/admin/teams')}
+              onClick={() => navigate('/admin/teams')}
               icon={<Users className="mr-2 h-4 w-4" />}
               label="Teams"
               permission="view_teams"
@@ -4314,7 +4314,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="administrators"
               activeView={activeView}
-              onClick={() => setLocation('/admin/administrators')}
+              onClick={() => navigate('/admin/administrators')}
               icon={<Shield className="mr-2 h-4 w-4" />}
               label="Administrators"
               permission="view_administrators"
@@ -4324,7 +4324,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="complexes"
               activeView={activeView}
-              onClick={() => setLocation('/admin/complexes')}
+              onClick={() => navigate('/admin/complexes')}
               icon={<Building2 className="mr-2 h-4 w-4" />}
               label="Field Complexes"
               permission="view_complexes"
@@ -4333,7 +4333,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="households"
               activeView={activeView}
-              onClick={() => setLocation('/admin/households')}
+              onClick={() => navigate('/admin/households')}
               icon={<Home className="mr-2 h-4 w-4" />}
               label="MatchPro Client"
               permission="view_households"
@@ -4342,7 +4342,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="scheduling"
               activeView={activeView}
-              onClick={() => setLocation('/admin/scheduling')}
+              onClick={() => navigate('/admin/scheduling')}
               icon={<CalendarDays className="mr-2 h-4 w-4" />}
               label="Scheduling"
               permission="view_scheduling"
@@ -4351,7 +4351,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="reports"
               activeView={activeView}
-              onClick={() => setLocation('/admin/reports')}
+              onClick={() => navigate('/admin/reports')}
               icon={<FileText className="mr-2 h-4 w-4" />}
               label="Reports and Financials"
               permission="view_reports"
@@ -4360,7 +4360,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="files"
               activeView={activeView}
-              onClick={() => setLocation('/admin/file-manager')}
+              onClick={() => navigate('/admin/file-manager')}
               icon={<ImageIcon className="mr-2 h-4 w-4" />}
               label="File Manager"
               permission="view_files"
@@ -4369,7 +4369,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             <AnimatedNavigationButton
               view="members"
               activeView={activeView}
-              onClick={() => setLocation('/admin/members')}
+              onClick={() => navigate('/admin/members')}
               icon={<Users className="mr-2 h-4 w-4" />}
               label="Members"
               permission="view_members"
