@@ -1,0 +1,249 @@
+/* Dashboard UI Enhancements for Marketing Materials */
+
+/* Improved Card Styling */
+.enhanced-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.enhanced-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Section Headers with Accent Line */
+.section-header {
+  position: relative;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+}
+
+.section-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+/* Table Enhancements */
+.enhanced-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 1.5rem;
+}
+
+.enhanced-table th {
+  text-align: left;
+  padding: 16px;
+  background-color: rgba(var(--primary-rgb), 0.04);
+  font-weight: 600;
+  border-bottom: 2px solid rgba(var(--primary-rgb), 0.1);
+}
+
+.enhanced-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+.enhanced-table tr:hover td {
+  background-color: rgba(var(--primary-rgb), 0.02);
+}
+
+/* Dashboard Stats Card */
+.stats-card {
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: linear-gradient(145deg, white, rgba(var(--primary-rgb), 0.02));
+  border: 1px solid rgba(var(--primary-rgb), 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--primary);
+  opacity: 0.8;
+}
+
+.stats-card .stats-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 0.25rem;
+}
+
+.stats-card .stats-label {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+/* Content Panel */
+.content-panel {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Subtle Pattern Background */
+.pattern-bg {
+  background-color: #ffffff;
+  background-image: radial-gradient(rgba(var(--primary-rgb), 0.03) 2px, transparent 2px);
+  background-size: 20px 20px;
+}
+
+/* Enhanced Buttons */
+.btn-enhanced {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-enhanced::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.btn-enhanced:hover::after {
+  transform: translateY(0);
+}
+
+.btn-enhanced:active {
+  transform: scale(0.98);
+}
+
+/* Improved Dashboard Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Animation for dashboard items */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+/* Staggered animations for multiple items */
+.staggered-item {
+  opacity: 0;
+}
+
+.staggered-item:nth-child(1) { animation: fadeInUp 0.3s ease 0.1s forwards; }
+.staggered-item:nth-child(2) { animation: fadeInUp 0.3s ease 0.2s forwards; }
+.staggered-item:nth-child(3) { animation: fadeInUp 0.3s ease 0.3s forwards; }
+.staggered-item:nth-child(4) { animation: fadeInUp 0.3s ease 0.4s forwards; }
+.staggered-item:nth-child(5) { animation: fadeInUp 0.3s ease 0.5s forwards; }
+.staggered-item:nth-child(6) { animation: fadeInUp 0.3s ease 0.6s forwards; }
+
+/* Improved form inputs */
+.input-enhanced {
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px 12px;
+  transition: all 0.2s ease;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.input-enhanced:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+/* Dashboard welcome banner */
+.welcome-banner {
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--primary), rgba(var(--primary-rgb), 0.8));
+  color: white;
+}
+
+.welcome-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background-image: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+  opacity: 0.4;
+}
+
+.welcome-banner h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-banner p {
+  opacity: 0.9;
+  max-width: 600px;
+}
+
+/* Status badge enhancements */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: rgb(16, 185, 129);
+}
+
+.status-badge.pending {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: rgb(245, 158, 11);
+}
+
+.status-badge.inactive {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: rgb(239, 68, 68);
+}
