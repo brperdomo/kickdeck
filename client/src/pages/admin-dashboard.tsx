@@ -4135,6 +4135,11 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
         urlView = 'formTemplates';
       }
       
+      // Handle file-manager URL path
+      if (urlView === 'file-manager') {
+        urlView = 'files';
+      }
+      
       if (urlView && urlView !== activeView) {
         console.log('Updating activeView from URL:', urlView);
         setActiveView(urlView as View);
