@@ -233,6 +233,38 @@ function Router() {
 }
 
 function App() {
+  // Set up cross-tab logout communication
+  useEffect(() => {
+    let broadcastChannel: BroadcastChannel | null = null;
+    
+    try {
+      // Create a broadcast channel for multi-tab/window communication
+      broadcastChannel = new BroadcastChannel('app-logout');
+      
+      // Handler for logout messages
+      const handleLogoutMessage = (event: MessageEvent) => {
+        if (event.data && event.data.type === 'LOGOUT') {
+          console.log('Received logout event from another tab/window');
+          
+          // Force route to our dedicated logout handler
+          window.location.href = '/logout';
+        }
+      };
+      
+      // Listen for logout messages
+      broadcastChannel.addEventListener('message', handleLogoutMessage);
+      
+      // Clean up when component unmounts
+      return () => {
+        broadcastChannel?.removeEventListener('message', handleLogoutMessage);
+        broadcastChannel?.close();
+      };
+    } catch (err) {
+      console.warn('BroadcastChannel not supported in this browser', err);
+      // No cleanup needed if channel creation failed
+    }
+  }, []);
+  
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

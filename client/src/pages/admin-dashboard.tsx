@@ -4671,17 +4671,33 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
         <LogoutOverlay onFinished={() => {
           // Initiate logout call but don't await it, in case it's stuck or taking too long
           console.log("Initiating logout process...");
+          
+          // Broadcast a logout event to all tabs - this helps with multi-tab logout
+          try {
+            // Create a broadcast channel for cross-tab communication
+            const broadcastChannel = new BroadcastChannel('app-logout');
+            // Send a logout message to all tabs
+            broadcastChannel.postMessage({ type: 'LOGOUT', timestamp: Date.now() });
+            // Close the channel
+            broadcastChannel.close();
+          } catch (err) {
+            console.warn('BroadcastChannel not supported or failed', err);
+          }
+          
+          // Make the actual logout API call
           logout().catch(e => console.error("API logout error:", e));
           
           // Don't wait for API call to complete, immediately continue with cleanup
           console.log("Performing client-side logout cleanup");
           
-          // Clear all storage and force page reload to completely reset the application state
+          // Clear all storage to reset application state
           localStorage.clear();
           sessionStorage.clear();
           
-          // Clear cookies
-          document.cookie = "connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+          // Clear cookies (all of them to be thorough)
+          document.cookie.split(";").forEach(function(c) { 
+            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+          });
           
           // Set cache control headers
           const meta = document.createElement('meta');
@@ -4694,9 +4710,9 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
           pragmaMeta.content = 'no-cache';
           document.head.appendChild(pragmaMeta);
           
-          // Force navigation to auth page explicitly
-          console.log("Redirecting to login screen...");
-          window.location.href = "/auth?logged_out=true";
+          // Use our dedicated logout page to ensure proper session clearing
+          console.log("Redirecting to dedicated logout handler...");
+          window.location.href = "/logout";
         }} />
       )}
       

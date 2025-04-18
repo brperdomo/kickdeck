@@ -7,19 +7,34 @@ export function LogoutHandler() {
   const [redirectTimeoutActive, setRedirectTimeoutActive] = useState(false);
 
   useEffect(() => {
-    // Simple direct logout with maximum reliability
+    // Enhanced direct logout with multi-tab/browser support
     const doLogout = async () => {
       try {
-        // 1. Call the API if possible
+        // 0. Broadcast logout event to all tabs
+        try {
+          // Create a broadcast channel for cross-tab communication
+          const broadcastChannel = new BroadcastChannel('app-logout');
+          // Send a logout message to all tabs
+          broadcastChannel.postMessage({ type: 'LOGOUT', timestamp: Date.now() });
+          // Close the channel after sending
+          broadcastChannel.close();
+          console.log("Broadcast logout event to all tabs");
+        } catch (err) {
+          console.warn('BroadcastChannel not supported or failed', err);
+        }
+
+        // 1. Call the API if possible - with additional anti-caching
         try {
           console.log("Initiating logout API call");
-          await fetch('/api/logout', {
+          const timestamp = Date.now(); // Add timestamp to prevent caching
+          await fetch(`/api/logout?_t=${timestamp}`, {
             method: 'POST',
             credentials: 'include',
             headers: {
               'Cache-Control': 'no-cache, no-store, must-revalidate',
               'Pragma': 'no-cache',
-              'Expires': '0'
+              'Expires': '0',
+              'X-Timestamp': timestamp.toString()
             }
           });
           console.log("Logout API call completed");
@@ -31,36 +46,81 @@ export function LogoutHandler() {
         queryClient.clear();
         queryClient.resetQueries();
         
-        // 3. Clear storage
-        localStorage.clear();
-        sessionStorage.clear();
+        // 3. Clear all storage
+        try {
+          localStorage.clear();
+          sessionStorage.clear();
+          
+          // Store the logout message in session storage so it persists through page reload
+          // We do this AFTER clearing to ensure it gets set
+          sessionStorage.setItem('logout_message', 'You have been successfully logged out');
+        } catch (e) {
+          console.error("Storage clear error:", e);
+        }
         
-        // 4. Clear cookies
-        document.cookie.split(';').forEach(c => {
-          document.cookie = c
-            .replace(/^ +/, '')
-            .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
-        });
+        // 4. Clear all cookies systematically
+        try {
+          document.cookie.split(';').forEach(c => {
+            // More robust cookie clearing
+            const cookie = c.trim();
+            const eqPos = cookie.indexOf('=');
+            const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
+            if (name) { // Only process non-empty cookie names
+              document.cookie = `${name}=;expires=${new Date(0).toUTCString()};path=/`;
+              // Also try with all variations of the path to ensure complete removal
+              document.cookie = `${name}=;expires=${new Date(0).toUTCString()};path=/;domain=${window.location.hostname}`;
+              document.cookie = `${name}=;expires=${new Date(0).toUTCString()};path=/;domain=.${window.location.hostname}`;
+            }
+          });
+          console.log("All cookies cleared");
+        } catch (e) {
+          console.error("Cookie clear error:", e);
+        }
+        
+        // 5. Set cache control headers to prevent browser caching
+        try {
+          const meta = document.createElement('meta');
+          meta.httpEquiv = 'Cache-Control';
+          meta.content = 'no-store, no-cache, must-revalidate, max-age=0';
+          document.head.appendChild(meta);
+          
+          const pragmaMeta = document.createElement('meta');
+          pragmaMeta.httpEquiv = 'Pragma';
+          pragmaMeta.content = 'no-cache';
+          document.head.appendChild(pragmaMeta);
+          
+          const expiresMeta = document.createElement('meta');
+          expiresMeta.httpEquiv = 'Expires';
+          expiresMeta.content = '0';
+          document.head.appendChild(expiresMeta);
+        } catch (e) {
+          console.error("Meta tag error:", e);
+        }
 
-        // 5. Finally, redirect
+        // 6. Finally, redirect with guard to prevent multiple redirects
         if (!redirectTimeoutActive) {
           setRedirectTimeoutActive(true);
-          // Use a very short timeout to ensure UI has time to update
+          // Short timeout to ensure UI has time to update
           setTimeout(() => {
-            // Store logout message in session storage so it persists through page reload
-            sessionStorage.setItem('logout_message', 'You have been successfully logged out');
-            // Redirect to our special page that handles logout redirects
+            console.log("Redirecting to auth-logged-out page");
+            // Our special intermediary page that handles clean logout redirects
             window.location.href = '/auth-logged-out';
-          }, 100);
+          }, 200);
         }
       } catch (error) {
         console.error("Critical error during logout:", error);
         setErrorMessage("Error during logout. Redirecting...");
         
-        // Fallback redirect
+        // Fallback redirect with the most essential operations
         if (!redirectTimeoutActive) {
           setRedirectTimeoutActive(true);
-          sessionStorage.setItem('logout_message', 'You have been successfully logged out');
+          try {
+            // Last attempt to clear minimal essential state
+            sessionStorage.setItem('logout_message', 'You have been successfully logged out');
+            document.cookie = "connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+          } catch (e) {
+            console.error("Final cleanup failed:", e);
+          }
           window.location.href = '/auth-logged-out';
         }
       }
@@ -74,24 +134,29 @@ export function LogoutHandler() {
       if (!redirectTimeoutActive) {
         console.log("Fallback logout redirect triggered");
         setRedirectTimeoutActive(true);
-        sessionStorage.setItem('logout_message', 'You have been successfully logged out');
+        try {
+          sessionStorage.setItem('logout_message', 'You have been successfully logged out');
+        } catch (e) {
+          // Ignore errors here
+        }
         window.location.href = '/auth-logged-out';
       }
     }, 3000);
     
     // Clean up the fallback timer
     return () => clearTimeout(fallbackTimer);
-  }, [queryClient, redirectTimeoutActive]);
-
-  // Simple spinner with minimal dependencies
+  }, [queryClient]);
+  
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-background">
+    <div className="flex items-center justify-center min-h-screen bg-background">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
-        <p className="text-lg font-medium">Logging out...</p>
-        {errorMessage && (
-          <p className="text-sm text-amber-500 mt-2">{errorMessage}</p>
+        {errorMessage ? (
+          <p className="text-destructive text-lg font-medium">{errorMessage}</p>
+        ) : (
+          <p className="text-lg font-medium">Securely logging you out...</p>
         )}
+        <p className="text-sm text-muted-foreground mt-2">Clearing session data...</p>
       </div>
     </div>
   );
