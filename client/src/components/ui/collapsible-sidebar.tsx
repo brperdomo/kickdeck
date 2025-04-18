@@ -76,7 +76,8 @@ export function CollapsibleSidebar({
   
   // Toggle sidebar collapsed state
   const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
+    console.log(`Toggle clicked: Current state=${isCollapsed}, changing to ${!isCollapsed}`);
+    setIsCollapsed(prevState => !prevState);
   };
   
   // Toggle mobile menu
@@ -102,13 +103,13 @@ export function CollapsibleSidebar({
             side={position}
             className={cn("p-0 w-80", className)}
           >
-            <div className="h-full overflow-y-auto flex flex-col">
+            <div className="h-full flex flex-col">
               {headerContent && (
                 <div className="p-4 border-b">
                   {headerContent}
                 </div>
               )}
-              <div className="flex-1 overflow-auto">
+              <div className="flex-1 overflow-y-auto">
                 {children}
               </div>
             </div>
@@ -123,21 +124,28 @@ export function CollapsibleSidebar({
     <motion.div
       className={cn("relative h-full border-r bg-card overflow-hidden", className)}
       initial={false}
-      animate={{ width: isCollapsed ? collapsedWidth : actualExpandedWidth }}
+      animate={{ 
+        width: isCollapsed ? collapsedWidth : actualExpandedWidth 
+      }}
       transition={{ 
         type: "spring",
-        stiffness: 350,
-        damping: 30
+        stiffness: 300,
+        damping: 26
       }}
-      style={sidebarStyles}
+      style={{
+        ...sidebarStyles,
+        // Force hardware acceleration for smoother transitions
+        WebkitTransform: 'translateZ(0)',
+        transform: 'translateZ(0)'
+      }}
     >
-      <div className="h-full overflow-hidden flex flex-col">
+      <div className="h-full flex flex-col">
         {headerContent && (
           <div className="p-4 border-b">
             {headerContent}
           </div>
         )}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-y-auto">
           {children}
         </div>
       </div>
@@ -147,8 +155,8 @@ export function CollapsibleSidebar({
           variant="ghost"
           size="sm"
           className={cn(
-            "absolute z-10 -right-3 top-16 rounded-full w-6 h-6 p-0 bg-background border shadow-sm",
-            position === "right" && "-left-3 right-auto",
+            "absolute z-10 -right-4 top-16 rounded-full w-8 h-8 p-0 bg-background border border-primary/20 shadow-md hover:shadow-lg hover:border-primary/50 hover:bg-primary/5",
+            position === "right" && "-left-4 right-auto",
             togglePosition === "bottom" && "top-auto bottom-16"
           )}
           onClick={toggleCollapse}
@@ -163,9 +171,9 @@ export function CollapsibleSidebar({
               transition={{ duration: 0.15 }}
             >
               {isCollapsed ? (
-                position === "left" ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />
+                position === "left" ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />
               ) : (
-                position === "left" ? <ChevronLeft className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />
+                position === "left" ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />
               )}
             </motion.div>
           </AnimatePresence>
