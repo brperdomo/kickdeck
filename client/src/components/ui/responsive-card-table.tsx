@@ -239,11 +239,59 @@ export function ResponsiveCardTable<T = any>({
           })}
         </div>
       ) : (
-        // Table View for Desktop - Fallback to regular table if needed
+        // Table View for Desktop
         <div className="border rounded-md overflow-hidden">
-          {/* This implementation should be handled by the regular table component */}
-          <div className="text-center p-4">
-            Table view for desktop - Use regular table component
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-muted/50">
+                <tr className="border-b">
+                  {columns.map((column) => (
+                    <th 
+                      key={column.accessorKey} 
+                      className={cn(
+                        "text-left p-3 text-muted-foreground font-medium text-sm",
+                        column.className
+                      )}
+                    >
+                      {column.header}
+                    </th>
+                  ))}
+                  {renderRowActions && <th className="w-[100px]"></th>}
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((row) => (
+                  <tr 
+                    key={row[keyField as keyof T] as React.Key}
+                    className={cn(
+                      "border-b last:border-b-0",
+                      onRowClick ? "cursor-pointer hover:bg-muted/50" : ""
+                    )}
+                    onClick={onRowClick ? () => onRowClick(row) : undefined}
+                  >
+                    {columns.map((column) => (
+                      <td 
+                        key={column.accessorKey} 
+                        className={cn(
+                          "p-3", 
+                          column.primaryColumn ? "font-medium" : "",
+                          column.className
+                        )}
+                      >
+                        {renderCellContent(row, column)}
+                      </td>
+                    ))}
+                    {renderRowActions && (
+                      <td className="p-3 text-right">
+                        <div className="flex justify-end" onClick={(e) => e.stopPropagation()}>
+                          {renderRowActions(row)}
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
