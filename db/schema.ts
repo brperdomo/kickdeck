@@ -308,7 +308,7 @@ export const games = pgTable("games", {
 export const paymentTransactions = pgTable("payment_transactions", {
   id: serial("id").primaryKey(),
   teamId: integer("team_id").references(() => teams.id),
-  eventId: text("event_id").references(() => events.id),
+  eventId: bigint("event_id", { mode: "number" }).references(() => events.id),
   userId: integer("user_id").references(() => users.id),
   paymentIntentId: text("payment_intent_id"),
   transactionType: text("transaction_type").notNull(), // payment, refund, chargeback, etc.

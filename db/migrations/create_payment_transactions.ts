@@ -22,13 +22,13 @@ export async function createPaymentTransactionsTable() {
       return true;
     }
     
-    // Create the payment_transactions table
+    // Create the payment_transactions table without foreign key constraints first
     await db.execute(sql`
       CREATE TABLE payment_transactions (
         id SERIAL PRIMARY KEY,
-        team_id INTEGER REFERENCES teams(id),
-        event_id TEXT REFERENCES events(id),
-        user_id INTEGER REFERENCES users(id),
+        team_id INTEGER,
+        event_id BIGINT,
+        user_id INTEGER,
         payment_intent_id TEXT,
         transaction_type TEXT NOT NULL,
         amount INTEGER NOT NULL,
@@ -44,6 +44,40 @@ export async function createPaymentTransactionsTable() {
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       );
     `);
+    
+    // Add foreign key constraints separately to handle any type conversion issues
+    try {
+      await db.execute(sql`
+        ALTER TABLE payment_transactions 
+        ADD CONSTRAINT payment_transactions_team_id_fkey 
+        FOREIGN KEY (team_id) REFERENCES teams(id);
+      `);
+      console.log("Added team_id foreign key constraint");
+    } catch (error) {
+      console.warn("Could not add team_id foreign key constraint:", error);
+    }
+    
+    try {
+      await db.execute(sql`
+        ALTER TABLE payment_transactions 
+        ADD CONSTRAINT payment_transactions_event_id_fkey 
+        FOREIGN KEY (event_id) REFERENCES events(id);
+      `);
+      console.log("Added event_id foreign key constraint");
+    } catch (error) {
+      console.warn("Could not add event_id foreign key constraint:", error);
+    }
+    
+    try {
+      await db.execute(sql`
+        ALTER TABLE payment_transactions 
+        ADD CONSTRAINT payment_transactions_user_id_fkey 
+        FOREIGN KEY (user_id) REFERENCES users(id);
+      `);
+      console.log("Added user_id foreign key constraint");
+    } catch (error) {
+      console.warn("Could not add user_id foreign key constraint:", error);
+    }
     
     console.log("payment_transactions table created successfully");
     return true;
