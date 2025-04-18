@@ -27,6 +27,7 @@ import productUpdatesRouter from "./routes/product-updates.js";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import { createStripePaymentIntent, getPaymentIntentStatus, handleStripeWebhook, getStripeConfig } from "./routes/payments";
+import { getFinancialReportData } from "./routes/reports";
 import { getTinyMCEConfig } from "./services/configService";
 import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
 import { generateTermsAcknowledgmentDocument, downloadTermsAcknowledgmentDocument, downloadTermsAcknowledgmentByFilename } from "./routes/terms-acknowledgments";
@@ -1056,6 +1057,9 @@ export function registerRoutes(app: Express): Server {
     app.post('/api/payments/create-intent', createStripePaymentIntent);
     app.get('/api/payments/intent/:id', getPaymentIntentStatus);
     app.post('/api/payments/webhook', handleStripeWebhook);
+    
+    // Financial reporting endpoints
+    app.get('/api/financial/reports/:reportType', isAdmin, getFinancialReportData);
     
     // Terms acknowledgment endpoints
     app.post('/api/teams/:teamId/terms-acknowledgment/generate', isAdmin, generateTermsAcknowledgmentDocument);

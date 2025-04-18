@@ -53,12 +53,5 @@ export async function createPaymentTransactionsTable() {
   }
 }
 
-// If this file is run directly (not imported)
-if (require.main === module) {
-  createPaymentTransactionsTable()
-    .then(() => process.exit(0))
-    .catch(error => {
-      console.error("Error:", error);
-      process.exit(1);
-    });
-}
+// For ES modules, we don't need to check if this is the main module
+// The file will be imported by the migration system

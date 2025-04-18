@@ -3,8 +3,72 @@ import { createPaymentIntent, retrievePaymentIntent } from '../services/stripeSe
 import Stripe from 'stripe';
 import { log } from '../vite';
 import { db } from '@db';
-import { teams } from '@db/schema';
+import { teams, paymentTransactions, insertPaymentTransactionSchema } from '@db/schema';
 import { eq } from 'drizzle-orm';
+
+/**
+ * Helper function to log payment transactions to the database
+ */
+async function logPaymentTransaction({
+  teamId,
+  eventId,
+  userId,
+  paymentIntentId,
+  transactionType,
+  amount,
+  status,
+  cardBrand,
+  cardLastFour,
+  paymentMethodType,
+  errorCode,
+  errorMessage,
+  metadata,
+  notes
+}: {
+  teamId?: number;
+  eventId?: string;
+  userId?: number;
+  paymentIntentId?: string;
+  transactionType: 'payment' | 'refund' | 'partial_refund' | 'chargeback' | 'credit' | 'onsite_payment';
+  amount: number;
+  status: 'succeeded' | 'failed' | 'pending' | 'processing' | 'canceled';
+  cardBrand?: string | null;
+  cardLastFour?: string | null;
+  paymentMethodType?: string | null;
+  errorCode?: string | null;
+  errorMessage?: string | null;
+  metadata?: Record<string, any>;
+  notes?: string;
+}) {
+  try {
+    const transaction = {
+      teamId: teamId || null,
+      eventId: eventId || null,
+      userId: userId || null,
+      paymentIntentId: paymentIntentId || null,
+      transactionType,
+      amount,
+      status,
+      cardBrand: cardBrand || null,
+      cardLastFour: cardLastFour || null,
+      paymentMethodType: paymentMethodType || null,
+      errorCode: errorCode || null,
+      errorMessage: errorMessage || null,
+      metadata: metadata || null,
+      notes: notes || null
+    };
+
+    // Log transaction in the database
+    const result = await db.insert(paymentTransactions).values(transaction);
+    
+    log(`Payment transaction logged: ${transactionType} for $${amount/100} with status ${status}`, 'payment-transaction');
+    
+    return { success: true, transactionId: result.rowCount ? result.rowCount : 0 };
+  } catch (error) {
+    log(`Error logging payment transaction: ${error}`, 'payment-transaction');
+    return { success: false, error };
+  }
+}
 
 /**
  * Get Stripe configuration including publishable key
@@ -312,8 +376,59 @@ export async function handleStripeWebhook(req: Request, res: Response) {
             .where(eq(teams.id, parseInt(paymentIntent.metadata.teamId)));
             
           log(`Updated team ${paymentIntent.metadata.teamId} payment status to paid from webhook with card details ${cardBrand} ${cardLastFour}`, 'payment');
+          
+          // Log the successful payment transaction
+          await logPaymentTransaction({
+            teamId: parseInt(paymentIntent.metadata.teamId),
+            eventId: paymentIntent.metadata.eventId,
+            userId: paymentIntent.metadata.userId ? parseInt(paymentIntent.metadata.userId) : undefined,
+            paymentIntentId: paymentIntent.id,
+            transactionType: 'payment',
+            amount: paymentIntent.amount,
+            status: 'succeeded',
+            cardBrand,
+            cardLastFour,
+            paymentMethodType,
+            metadata: paymentIntent.metadata,
+            notes: `Payment completed via Stripe webhook. Amount: $${(paymentIntent.amount/100).toFixed(2)}`
+          });
         } catch (dbError) {
           log(`Error updating team payment status from webhook: ${dbError}`, 'payment');
+        }
+      } else {
+        // Even if we don't have a team ID, still log the payment transaction
+        try {
+          let cardBrand = null;
+          let cardLastFour = null;
+          let paymentMethodType = null;
+          
+          if (paymentIntent.charges && paymentIntent.charges.data && paymentIntent.charges.data.length > 0) {
+            const charge = paymentIntent.charges.data[0];
+            if (charge.payment_method_details) {
+              paymentMethodType = charge.payment_method_details.type || null;
+              
+              if (charge.payment_method_details.card) {
+                cardBrand = charge.payment_method_details.card.brand || null;
+                cardLastFour = charge.payment_method_details.card.last4 || null;
+              }
+            }
+          }
+          
+          await logPaymentTransaction({
+            eventId: paymentIntent.metadata?.eventId,
+            userId: paymentIntent.metadata?.userId ? parseInt(paymentIntent.metadata.userId) : undefined,
+            paymentIntentId: paymentIntent.id,
+            transactionType: 'payment',
+            amount: paymentIntent.amount,
+            status: 'succeeded',
+            cardBrand,
+            cardLastFour,
+            paymentMethodType,
+            metadata: paymentIntent.metadata || {},
+            notes: `Payment completed via Stripe webhook without team association. Amount: $${(paymentIntent.amount/100).toFixed(2)}`
+          });
+        } catch (error) {
+          log(`Error logging non-team payment transaction: ${error}`, 'payment-transaction');
         }
       }
       break;
@@ -348,8 +463,49 @@ export async function handleStripeWebhook(req: Request, res: Response) {
             .where(eq(teams.id, parseInt(failedPaymentIntent.metadata.teamId)));
             
           log(`Updated team ${failedPaymentIntent.metadata.teamId} payment status to failed`, 'payment');
+          
+          // Log the failed payment transaction
+          await logPaymentTransaction({
+            teamId: parseInt(failedPaymentIntent.metadata.teamId),
+            eventId: failedPaymentIntent.metadata.eventId,
+            userId: failedPaymentIntent.metadata.userId ? parseInt(failedPaymentIntent.metadata.userId) : undefined,
+            paymentIntentId: failedPaymentIntent.id,
+            transactionType: 'payment',
+            amount: failedPaymentIntent.amount,
+            status: 'failed',
+            errorCode,
+            errorMessage,
+            metadata: failedPaymentIntent.metadata,
+            notes: `Payment failed. Error: ${errorMessage || 'Unknown error'}`
+          });
         } catch (dbError) {
           log(`Error updating team payment failure status: ${dbError}`, 'payment');
+        }
+      } else {
+        // Even if we don't have a team ID, still log the payment transaction failure
+        try {
+          let errorCode = null;
+          let errorMessage = null;
+          
+          if (failedPaymentIntent.last_payment_error) {
+            errorCode = failedPaymentIntent.last_payment_error.code || null;
+            errorMessage = failedPaymentIntent.last_payment_error.message || 'Payment failed';
+          }
+          
+          await logPaymentTransaction({
+            eventId: failedPaymentIntent.metadata?.eventId,
+            userId: failedPaymentIntent.metadata?.userId ? parseInt(failedPaymentIntent.metadata.userId) : undefined,
+            paymentIntentId: failedPaymentIntent.id,
+            transactionType: 'payment',
+            amount: failedPaymentIntent.amount,
+            status: 'failed',
+            errorCode,
+            errorMessage,
+            metadata: failedPaymentIntent.metadata || {},
+            notes: `Payment failed without team association. Error: ${errorMessage || 'Unknown error'}`
+          });
+        } catch (error) {
+          log(`Error logging non-team payment failure: ${error}`, 'payment-transaction');
         }
       }
       break;
