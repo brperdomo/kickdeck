@@ -7,6 +7,35 @@ window.addEventListener('unhandledrejection', (event) => {
   event.preventDefault();
 });
 
+/**
+ * Utility function for making API requests
+ * @param method - HTTP method to use
+ * @param endpoint - API endpoint to call
+ * @param body - Request body for POST/PUT requests
+ * @returns Promise with the response
+ */
+export async function apiRequest(method = 'GET', endpoint: string, body?: any) {
+  const options: RequestInit = {
+    method,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  if (body && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
+    options.body = JSON.stringify(body);
+  }
+
+  try {
+    const response = await fetch(endpoint, options);
+    return response;
+  } catch (error) {
+    console.error(`API request error (${method} ${endpoint}):`, error);
+    throw error;
+  }
+}
+
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

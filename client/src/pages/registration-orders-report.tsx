@@ -45,8 +45,6 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import PageHeader from '@/components/page-header';
-import AdminLayout from '@/components/layouts/admin-layout';
 import { format } from 'date-fns';
 
 // Define the type for a single transaction record
@@ -263,11 +261,11 @@ export default function RegistrationOrdersReport() {
   };
   
   return (
-    <AdminLayout>
-      <PageHeader
-        title="Registration Orders Report"
-        description="View and analyze all payment transactions for team registrations"
-      />
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Registration Orders Report</h1>
+        <p className="text-muted-foreground mt-2">View and analyze all payment transactions for team registrations</p>
+      </div>
       
       <Card className="mb-8">
         <CardHeader>
@@ -446,6 +444,6 @@ export default function RegistrationOrdersReport() {
           </p>
         </CardFooter>
       </Card>
-    </AdminLayout>
+    </div>
   );
 }
