@@ -304,9 +304,54 @@ export const games = pgTable("games", {
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
 });
 
+// Payment transactions table for recording all payment-related activity
+export const paymentTransactions = pgTable("payment_transactions", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").references(() => teams.id),
+  eventId: text("event_id").references(() => events.id),
+  userId: integer("user_id").references(() => users.id),
+  paymentIntentId: text("payment_intent_id"),
+  transactionType: text("transaction_type").notNull(), // payment, refund, chargeback, etc.
+  amount: integer("amount").notNull(), // Amount in cents, positive for payments, negative for refunds
+  status: text("status").notNull(), // succeeded, failed, pending, etc.
+  cardBrand: text("card_brand"), // Visa, Mastercard, etc.
+  cardLastFour: text("card_last_four"), // Last 4 digits of card
+  paymentMethodType: text("payment_method_type"), // card, bank_transfer, etc.
+  errorCode: text("error_code"), // Error code if transaction failed
+  errorMessage: text("error_message"), // Error message if transaction failed
+  metadata: jsonb("metadata"), // Additional data about the transaction
+  notes: text("notes"), // Admin notes about the transaction
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const paymentTransactionsRelations = relations(paymentTransactions, ({ one }) => ({
+  team: one(teams, {
+    fields: [paymentTransactions.teamId],
+    references: [teams.id]
+  }),
+  event: one(events, {
+    fields: [paymentTransactions.eventId],
+    references: [events.id]
+  }),
+  user: one(users, {
+    fields: [paymentTransactions.userId],
+    references: [users.id]
+  })
+}));
+
 export const insertGameTimeSlotSchema = createInsertSchema(gameTimeSlots);
 export const insertTournamentGroupSchema = createInsertSchema(tournamentGroups);
 export const insertTeamSchema = createInsertSchema(teams);
+export const insertPaymentTransactionSchema = createInsertSchema(paymentTransactions, {
+  transactionType: z.enum(['payment', 'refund', 'partial_refund', 'chargeback', 'credit', 'onsite_payment']),
+  status: z.enum(['succeeded', 'failed', 'pending', 'processing', 'canceled']),
+  amount: z.number().int(),
+});
+
+export const selectPaymentTransactionSchema = createSelectSchema(paymentTransactions);
+export type InsertPaymentTransaction = typeof paymentTransactions.$inferInsert;
+export type SelectPaymentTransaction = typeof paymentTransactions.$inferSelect;
 export const insertGameSchema = createInsertSchema(games, {
   status: z.enum(['scheduled', 'in_progress', 'completed', 'cancelled']),
   duration: z.number().min(20).max(120),
