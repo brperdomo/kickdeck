@@ -68,8 +68,8 @@ export function CollapsibleSidebar({
   const toggleClasses = cn(
     "z-50 bg-primary/90 shadow-sm border border-primary/10 rounded-sm p-0.5 flex items-center justify-center",
     {
-      "absolute -right-4 top-6 h-7": togglePosition === "right",
-      "absolute -left-4 top-6 h-7": togglePosition === "left",
+      "absolute -right-4 top-1/2 -translate-y-1/2 h-7": togglePosition === "right",
+      "absolute -left-4 top-1/2 -translate-y-1/2 h-7": togglePosition === "left",
       "absolute top-4 right-4": togglePosition === "top",
       "absolute bottom-4 right-4": togglePosition === "bottom",
     }
