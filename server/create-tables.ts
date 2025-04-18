@@ -19,6 +19,7 @@ import { addClubNameToTeams } from "./migrations/add_club_name";
 import { addCardDetailsToTeams } from "./migrations/add_card_details_to_teams";
 import { addSchedulingPermissions } from "./migrations/add_scheduling_permissions";
 import { addSortOrderToBrackets } from "./migrations/add_sort_order_to_brackets";
+import { createPaymentTransactionsTable } from "../db/migrations/create_payment_transactions";
 
 export async function createTables() {
   try {
@@ -168,6 +169,9 @@ export async function createTables() {
     
     console.log('Adding sort_order column to event_brackets table...');
     await addSortOrderToBrackets();
+    
+    console.log('Creating payment transactions table...');
+    await createPaymentTransactionsTable();
 
     console.log("All tables created successfully");
     return { success: true };
