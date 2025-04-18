@@ -36,6 +36,8 @@ import FeeManagementPage from "@/pages/fee-management";
 import FormEditorPage from "@/pages/form-editor";
 import CouponManagerPage from "@/pages/coupon-manager";
 import RegistrationOrdersReport from "@/pages/registration-orders-report";
+import Checkout from "@/pages/checkout";
+import PaymentConfirmation from "@/pages/payment-confirmation";
 import { AuthProvider } from "@/hooks/use-auth";
 // Account page import
 import AccountPage from "./pages/account";
