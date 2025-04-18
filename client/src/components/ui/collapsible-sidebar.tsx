@@ -92,96 +92,83 @@ export function CollapsibleSidebar({
       
       {/* Main sidebar */}
       <div className="relative">
-        <AnimatePresence initial={false}>
-          {!isCollapsed ? (
-            // Expanded sidebar
-            <motion.div
-              className={cn(
-                "flex flex-col h-screen border-r transition-all",
-                width,
-                !shouldAutoCollapse ? "relative" : "fixed left-0 top-0 z-40 shadow-lg",
-                className
-              )}
-              style={sidebarStyles}
-              initial={{
-                x: shouldAutoCollapse ? "-100%" : (defaultCollapsed ? -40 : 0),
-                width: shouldAutoCollapse ? width : (defaultCollapsed ? 0 : width)
-              }}
-              animate={{ 
-                x: 0,
-                width: width,
-              }}
-              exit={{
-                x: shouldAutoCollapse ? "-100%" : -40,
-                width: shouldAutoCollapse ? width : 0
-              }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-            >
-              {/* Sidebar header if provided */}
-              {headerContent && (
-                <div className="flex items-center justify-between p-4 border-b">
-                  {headerContent}
-                  
-                  {/* Close button on mobile */}
-                  {shouldAutoCollapse && (
-                    <Button variant="ghost" size="icon" onClick={() => setIsCollapsed(true)}>
-                      <X className="h-5 w-5" />
-                    </Button>
-                  )}
-                </div>
-              )}
-              
-              {/* Sidebar content */}
-              <div className="flex-1 overflow-y-auto">
-                {children}
-              </div>
-              
-              {/* Toggle button for expanded state */}
-              {showToggle && !shouldAutoCollapse && (
-                <div className={toggleClasses}>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 p-0"
-                    onClick={() => setIsCollapsed(true)}
-                  >
-                    {togglePosition === "left" || togglePosition === "right" ? (
-                      <ChevronLeft className="h-4 w-4" />
-                    ) : (
-                      <Menu className="h-4 w-4" />
-                    )}
+        {/* Expanded sidebar */}
+        {!isCollapsed && (
+          <motion.div
+            className={cn(
+              "flex flex-col h-screen border-r transition-all",
+              width,
+              !shouldAutoCollapse ? "relative" : "fixed left-0 top-0 z-40 shadow-lg",
+              className
+            )}
+            style={sidebarStyles}
+            initial={{ x: shouldAutoCollapse ? "-100%" : -40 }}
+            animate={{ x: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+          >
+            {/* Sidebar header if provided */}
+            {headerContent && (
+              <div className="flex items-center justify-between p-4 border-b">
+                {headerContent}
+                
+                {/* Close button on mobile */}
+                {shouldAutoCollapse && (
+                  <Button variant="ghost" size="icon" onClick={() => setIsCollapsed(true)}>
+                    <X className="h-5 w-5" />
                   </Button>
-                </div>
-              )}
-            </motion.div>
-          ) : (
-            // Collapsed sidebar - just a thin line
-            <motion.div
+                )}
+              </div>
+            )}
+            
+            {/* Sidebar content */}
+            <div className="flex-1 overflow-y-auto">
+              {children}
+            </div>
+            
+            {/* Toggle button for expanded state */}
+            {showToggle && !shouldAutoCollapse && (
+              <div className={toggleClasses}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 p-0"
+                  onClick={() => setIsCollapsed(true)}
+                >
+                  {togglePosition === "left" || togglePosition === "right" ? (
+                    <ChevronLeft className="h-4 w-4" />
+                  ) : (
+                    <Menu className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        )}
+        
+        {/* Collapsed sidebar - just a placeholder */}
+        {isCollapsed && !shouldAutoCollapse && (
+          <div className="relative h-screen">
+            <div 
               className={cn(
-                "flex flex-col h-screen border-r transition-all",
-                "w-2", // Very narrow when collapsed on desktop
-                !shouldAutoCollapse ? "relative" : "", // Only position relative when on desktop
+                "h-screen border-r w-2 relative", 
                 className
               )}
               style={sidebarStyles}
-              initial={{ width: shouldAutoCollapse ? 0 : 40 }}
-              animate={{ width: shouldAutoCollapse ? 0 : 10 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
             />
-          )}
-        </AnimatePresence>
-        
-        {/* Dedicated Toggle button for collapsed state - always visible when collapsed */}
-        {isCollapsed && showToggle && !shouldAutoCollapse && (
-          <div className={toggleClasses}>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 p-0"
-              onClick={() => setIsCollapsed(false)}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+            
+            {/* Expand button */}
+            {showToggle && (
+              <div className={toggleClasses}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 p-0"
+                  onClick={() => setIsCollapsed(false)}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         )}
         
