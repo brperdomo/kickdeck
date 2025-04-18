@@ -1,153 +1,142 @@
 import { Request, Response } from 'express';
 import { db } from '@db';
-import { 
-  teams, 
-  paymentTransactions, 
-  events,
-  users
-} from '@db/schema';
-import { desc, eq, and, sql, isNotNull } from 'drizzle-orm';
+import { eq, sql, and, like, gte, lte, desc, asc, or } from 'drizzle-orm';
+import { teams, events, users, paymentTransactions } from '@db/schema';
+import { log } from '../vite';
+import { stringify } from 'csv-stringify/sync';
 
 /**
- * Get registration orders report data
+ * Get Registration Orders Report
+ * Provides a detailed report of team registration orders with payment information
  */
 export async function getRegistrationOrdersReport(req: Request, res: Response) {
   try {
-    // Check if user is authenticated and has finance admin permissions
-    if (!req.user || !req.isAuthenticated()) {
-      return res.status(401).json({ error: 'Authentication required' });
-    }
-    
-    // Check for admin status (permissions will be checked in more detail later)
-    if (!req.user.isAdmin) {
-      return res.status(403).json({ error: 'You do not have permission to access this report' });
-    }
-    
-    // Allow optional filtering by date range, event, or status
-    const { startDate, endDate, eventId, status } = req.query;
-    
-    // Build query conditions
-    const conditions = [];
-    
-    if (startDate) {
-      conditions.push(sql`pt.created_at >= ${startDate}`);
-    }
-    
-    if (endDate) {
-      conditions.push(sql`pt.created_at <= ${endDate}`);
-    }
-    
+    const { 
+      eventId, 
+      status, 
+      search, 
+      startDate, 
+      endDate,
+      format = 'json' 
+    } = req.query;
+
+    // Build the base SQL query
+    let query = db
+      .select({
+        id: paymentTransactions.id,
+        teamId: paymentTransactions.teamId,
+        eventId: paymentTransactions.eventId,
+        paymentIntentId: paymentTransactions.paymentIntentId,
+        amount: paymentTransactions.amount,
+        paymentStatus: paymentTransactions.status,
+        paymentMethodType: paymentTransactions.paymentMethodType,
+        cardBrand: paymentTransactions.cardBrand,
+        cardLast4: paymentTransactions.cardLastFour,
+        submitterName: teams.submitterName,
+        submitterEmail: teams.submitterEmail,
+        teamName: teams.name,
+        eventName: events.name,
+        paymentDate: paymentTransactions.createdAt,
+        notes: paymentTransactions.notes,
+      })
+      .from(paymentTransactions)
+      .leftJoin(teams, eq(paymentTransactions.teamId, teams.id))
+      .leftJoin(events, eq(paymentTransactions.eventId, events.id))
+      .where(
+        and(
+          eq(paymentTransactions.transactionType, 'payment')
+        )
+      )
+      .orderBy(desc(paymentTransactions.createdAt));
+
+    // Apply filters
     if (eventId) {
-      conditions.push(sql`pt.event_id = ${eventId}`);
+      query = query.where(eq(paymentTransactions.eventId, String(eventId)));
     }
-    
+
     if (status) {
-      conditions.push(sql`pt.status = ${status}`);
+      query = query.where(eq(paymentTransactions.status, String(status)));
     }
-    
-    // Include only payment transactions (not refunds, etc.) by default
-    conditions.push(sql`pt.transaction_type = 'payment'`);
-    
-    const whereClause = conditions.length > 0 
-      ? sql`WHERE ${sql.join(conditions, sql` AND `)}` 
-      : sql``;
-    
-    // Execute the query with joins to get all the required data
-    const results = await db.execute(sql`
-      SELECT 
-        pt.id,
-        pt.transaction_type,
-        pt.amount,
-        pt.status,
-        pt.card_brand,
-        pt.card_last_four,
-        pt.payment_method_type,
-        pt.payment_intent_id,
-        pt.created_at AS date_paid,
-        pt.updated_at AS date_settled,
-        t.id AS team_id,
-        t.name AS team_name,
-        t.submitter_name AS order_submitter,
-        e.id AS event_id,
-        e.name AS event_name,
-        e.start_date AS event_start_date,
-        u.id AS user_id,
-        u.name AS user_name,
-        u.email AS user_email
-      FROM payment_transactions pt
-      LEFT JOIN teams t ON pt.team_id = t.id
-      LEFT JOIN events e ON pt.event_id = e.id
-      LEFT JOIN users u ON pt.user_id = u.id
-      ${whereClause}
-      ORDER BY pt.created_at DESC
-    `);
-    
-    // Format the data for the frontend
-    const formattedData = results.rows.map((row: any) => ({
-      id: row.id,
-      transactionType: row.transaction_type,
-      amount: row.amount,
-      formattedAmount: `$${(row.amount / 100).toFixed(2)}`,
-      status: row.status,
-      cardBrand: row.card_brand,
-      cardLastFour: row.card_last_four,
-      paymentMethodType: row.payment_method_type,
-      paymentIntentId: row.payment_intent_id,
-      datePaid: row.date_paid ? new Date(row.date_paid).toLocaleString() : null,
-      dateSettled: row.date_settled ? new Date(row.date_settled).toLocaleString() : null,
-      teamId: row.team_id,
-      teamName: row.team_name,
-      orderSubmitter: row.order_submitter,
-      eventId: row.event_id,
-      eventName: row.event_name,
-      eventStartDate: row.event_start_date ? new Date(row.event_start_date).toLocaleString() : null,
-      userId: row.user_id,
-      userName: row.user_name,
-      userEmail: row.user_email
-    }));
-    
+
+    if (search) {
+      const searchTerm = `%${search}%`;
+      query = query.where(
+        or(
+          like(teams.name, searchTerm),
+          like(teams.submitterName, searchTerm),
+          like(teams.submitterEmail, searchTerm),
+          like(paymentTransactions.paymentIntentId, searchTerm)
+        )
+      );
+    }
+
+    if (startDate) {
+      query = query.where(gte(paymentTransactions.createdAt, new Date(String(startDate))));
+    }
+
+    if (endDate) {
+      query = query.where(lte(paymentTransactions.createdAt, new Date(String(endDate))));
+    }
+
+    // Execute the query
+    const transactions = await query;
+
+    // Format the response based on requested format
+    if (format === 'csv') {
+      const csvData = stringify(transactions.map(tx => ({
+        'Transaction ID': tx.id,
+        'Event Name': tx.eventName,
+        'Team Name': tx.teamName,
+        'Payment ID': tx.paymentIntentId,
+        'Amount': (tx.amount / 100).toFixed(2), // Convert cents to dollars
+        'Payment Status': tx.paymentStatus,
+        'Payment Method': tx.paymentMethodType,
+        'Card Details': tx.cardBrand && tx.cardLast4 ? `${tx.cardBrand} **** ${tx.cardLast4}` : '',
+        'Submitter Name': tx.submitterName,
+        'Submitter Email': tx.submitterEmail,
+        'Date': tx.paymentDate ? new Date(tx.paymentDate).toISOString() : '',
+        'Notes': tx.notes
+      })), { 
+        header: true, 
+        columns: [
+          'Transaction ID',
+          'Event Name',
+          'Team Name',
+          'Payment ID',
+          'Amount',
+          'Payment Status',
+          'Payment Method',
+          'Card Details',
+          'Submitter Name',
+          'Submitter Email',
+          'Date',
+          'Notes'
+        ] 
+      });
+
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename=registration-orders-${new Date().toISOString().slice(0, 10)}.csv`);
+      return res.send(csvData);
+    }
+
+    // Default JSON response
     return res.json({
       success: true,
-      data: formattedData
+      transactions,
+      count: transactions.length,
+      filters: {
+        eventId,
+        status,
+        search,
+        startDate,
+        endDate
+      }
     });
   } catch (error) {
-    console.error('Error fetching registration orders report:', error);
-    return res.status(500).json({ 
-      error: 'Failed to fetch registration orders report',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-}
-
-/**
- * Get all financial reports data based on type
- */
-export async function getFinancialReportData(req: Request, res: Response) {
-  try {
-    const { reportType } = req.params;
-    
-    // Check if user is authenticated and has admin permission
-    if (!req.user || !req.isAuthenticated()) {
-      return res.status(401).json({ error: 'Authentication required' });
-    }
-    
-    // Check for admin status
-    if (!req.user.isAdmin) {
-      return res.status(403).json({ error: 'You do not have permission to access this report' });
-    }
-    
-    // Route to the appropriate report handler
-    switch (reportType) {
-      case 'registration-orders':
-        return await getRegistrationOrdersReport(req, res);
-      // Add more report types as needed
-      default:
-        return res.status(400).json({ error: `Unknown report type: ${reportType}` });
-    }
-  } catch (error) {
-    console.error('Error fetching financial report:', error);
-    return res.status(500).json({ 
-      error: 'Failed to fetch financial report',
+    log(`Error getting registration orders report: ${error}`, 'reports');
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to generate registration orders report',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
   }

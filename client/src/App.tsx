@@ -221,6 +221,12 @@ function Router() {
           <Route path="/registration-orders-report">
             {user.isAdmin ? <RegistrationOrdersReport /> : <NotFound />}
           </Route>
+          <Route path="/checkout">
+            <Checkout />
+          </Route>
+          <Route path="/payment-confirmation">
+            <PaymentConfirmation />
+          </Route>
           <Route path="/dashboard" component={UserDashboard} />
 
           {/* Preview routes */}

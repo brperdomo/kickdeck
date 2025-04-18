@@ -259,6 +259,8 @@ export const teams = pgTable("teams", {
   submitterEmail: text("submitter_email"),
   seedRanking: integer("seed_ranking"),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  // Club/Organization name
+  clubName: text("club_name"),
   // User ID is not in the actual database schema
   // New fields for registration status and fee tracking
   status: text("status").notNull().default("registered"), // registered, approved, rejected, etc.
@@ -266,33 +268,23 @@ export const teams = pgTable("teams", {
   // New fields for multiple fee selection
   selectedFeeIds: text("selected_fee_ids"), // Comma-separated list of fee IDs
   totalAmount: integer("total_amount"), // Store total amount in cents (includes all fees)
+  // Terms acknowledgement
   termsAcknowledged: boolean("terms_acknowledged").default(false),
-  // Payment related fields
-  paymentIntentId: text("payment_intent_id"),
-  paymentStatus: text("payment_status"),
-  paymentDate: timestamp("payment_date"),
-  refundDate: timestamp("refund_date"),
-  // Card details fields
-  cardBrand: text("card_brand"),
-  cardLast4: text("card_last_four"),
-  paymentMethodType: text("payment_method_type"),
-  paymentErrorCode: text("payment_error_code"),
-  paymentErrorMessage: text("payment_error_message"),
   termsAcknowledgedAt: timestamp("terms_acknowledged_at"),
   termsAcknowledgementRecord: text("terms_acknowledgement_record"), // Path to PDF or record ID
-  // Payment tracking fields
+  // Notes field for admin comments
+  notes: text("notes"),
+  // Payment related fields
   paymentIntentId: text("payment_intent_id"), // Stripe payment intent ID
-  refundDate: text("refund_date"),  // Date when refund was processed
-  notes: text("notes"), // General notes field for admin comments
-  // Club/Organization name
-  clubName: text("club_name"),
-  // Payment method and card details
-  cardLastFour: text("card_last_four"), // Last 4 digits of credit card
+  paymentStatus: text("payment_status"), // paid, pending, failed, refunded, etc.
+  paymentDate: timestamp("payment_date"), // When payment was processed
+  refundDate: timestamp("refund_date"), // Date when refund was processed
+  // Card details fields
+  cardLast4: text("card_last_four"), // Last 4 digits of credit card
   cardBrand: text("card_brand"), // Visa, Mastercard, etc.
   paymentMethodType: text("payment_method_type"), // card, bank_transfer, etc.
   paymentErrorCode: text("payment_error_code"), // Error code if payment failed
   paymentErrorMessage: text("payment_error_message"), // Error message if payment failed
-  paymentDate: timestamp("payment_date") // When payment was processed
 });
 
 export const games = pgTable("games", {

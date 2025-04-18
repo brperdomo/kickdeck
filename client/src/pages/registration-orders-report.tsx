@@ -1,449 +1,367 @@
-import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, FileText, Download, Filter } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { 
-  Table, 
-  TableBody, 
-  TableCaption, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
+import React, { useState, useEffect } from "react";
+import { Search, FileText, DownloadCloud, Filter, X } from "lucide-react";
+import { DateRange } from "react-day-picker";
+import { format } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { format } from 'date-fns';
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { AdminLayout } from "@/components/layouts/AdminLayout";
+import { usePermissions } from "@/hooks/use-permissions";
 
-// Define the type for a single transaction record
-interface Transaction {
-  id: number;
-  transactionType: string;
-  amount: number;
-  formattedAmount: string;
-  status: string;
-  cardBrand: string | null;
-  cardLastFour: string | null;
-  paymentMethodType: string | null;
-  paymentIntentId: string | null;
-  datePaid: string | null;
-  dateSettled: string | null;
-  teamId: number | null;
-  teamName: string | null;
-  orderSubmitter: string | null;
-  eventId: number | null;
-  eventName: string | null;
-  eventStartDate: string | null;
-  userId: number | null;
-  userName: string | null;
-  userEmail: string | null;
-}
+const PaymentStatusBadge = ({ status }) => {
+  const getVariant = () => {
+    switch (status?.toLowerCase()) {
+      case 'paid':
+        return "success";
+      case 'pending':
+        return "outline";
+      case 'failed':
+        return "destructive";
+      case 'refunded':
+        return "secondary";
+      case 'partial_refund':
+        return "warning";
+      default:
+        return "outline";
+    }
+  };
 
-// Define the type for API response
-interface RegistrationOrdersResponse {
-  success: boolean;
-  data: Transaction[];
-}
+  return (
+    <Badge variant={getVariant()}>{status || 'Unknown'}</Badge>
+  );
+};
 
-function TransactionStatusBadge({ status }: { status: string }) {
-  let variant: 'default' | 'success' | 'destructive' | 'secondary' | 'outline' = 'default';
-  
-  switch (status) {
-    case 'succeeded':
-      variant = 'success';
-      break;
-    case 'failed':
-      variant = 'destructive';
-      break;
-    case 'pending':
-    case 'processing':
-      variant = 'secondary';
-      break;
-    case 'refunded':
-    case 'partial_refund':
-    case 'chargeback':
-      variant = 'outline';
-      break;
-  }
-  
-  return <Badge variant={variant}>{status}</Badge>;
-}
-
-function formatPaymentMethod(transaction: Transaction) {
-  if (!transaction.paymentMethodType) return 'N/A';
-  
-  if (transaction.paymentMethodType === 'card' && transaction.cardBrand && transaction.cardLastFour) {
-    return `${transaction.cardBrand.toUpperCase()} •••• ${transaction.cardLastFour}`;
-  }
-  
-  return transaction.paymentMethodType;
-}
+const formatCurrency = (amount) => {
+  if (amount === null || amount === undefined) return 'N/A';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  }).format(amount / 100); // Convert cents to dollars
+};
 
 export default function RegistrationOrdersReport() {
+  const { hasPermission } = usePermissions();
+  const canViewFinancialReports = hasPermission('view_financial_reports');
   const { toast } = useToast();
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [isStartDateOpen, setIsStartDateOpen] = useState(false);
-  const [isEndDateOpen, setIsEndDateOpen] = useState(false);
+  
+  // State for filters
+  const [selectedEvent, setSelectedEvent] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [page, setPage] = useState(1);
   const [isExporting, setIsExporting] = useState(false);
   
-  // Get the data from the API
-  const { data, isLoading, error, refetch } = useQuery<RegistrationOrdersResponse>({
-    queryKey: ['registration-orders-report'],
+  const queryParams = {
+    ...(selectedEvent && { eventId: selectedEvent }),
+    ...(paymentStatus && { status: paymentStatus }),
+    ...(searchQuery && { search: searchQuery }),
+    ...(dateRange?.from && { startDate: format(dateRange.from, 'yyyy-MM-dd') }),
+    ...(dateRange?.to && { endDate: format(dateRange.to, 'yyyy-MM-dd') }),
+  };
+  
+  // Fetch events for the dropdown
+  const eventsQuery = useQuery({
+    queryKey: ['events'],
     queryFn: async () => {
-      // Build query parameters
-      const params = new URLSearchParams();
-      
-      if (startDate) {
-        params.append('startDate', startDate.toISOString());
-      }
-      
-      if (endDate) {
-        params.append('endDate', endDate.toISOString());
-      }
-      
-      if (statusFilter) {
-        params.append('status', statusFilter);
-      }
-      
-      const url = `/api/financial/reports/registration-orders${params.toString() ? '?' + params.toString() : ''}`;
-      const response = await apiRequest('GET', url);
+      const response = await apiRequest('GET', '/api/admin/events');
       return response.json();
     }
   });
   
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Error loading report',
-        description: 'There was a problem fetching the registration orders data.',
-        variant: 'destructive',
-      });
-    }
-  }, [error, toast]);
-  
-  // Filter function for searching
-  const filteredData = data?.data.filter(transaction => {
-    if (!searchQuery) return true;
-    
-    const searchLower = searchQuery.toLowerCase();
-    return (
-      (transaction.teamName?.toLowerCase().includes(searchLower) || false) ||
-      (transaction.eventName?.toLowerCase().includes(searchLower) || false) ||
-      (transaction.orderSubmitter?.toLowerCase().includes(searchLower) || false) ||
-      (transaction.paymentIntentId?.toLowerCase().includes(searchLower) || false) ||
-      (transaction.formattedAmount.toLowerCase().includes(searchLower))
-    );
+  // Fetch registration orders with filters
+  const ordersQuery = useQuery({
+    queryKey: ['registration-orders', queryParams],
+    queryFn: async () => {
+      const queryString = new URLSearchParams(queryParams as Record<string, string>).toString();
+      const response = await apiRequest('GET', `/api/reports/registration-orders?${queryString}`);
+      return response.json();
+    },
+    enabled: canViewFinancialReports
   });
   
-  // Apply filters and refetch data
-  const applyFilters = () => {
-    refetch();
-  };
-  
-  // Reset all filters
-  const resetFilters = () => {
-    setStartDate(null);
-    setEndDate(null);
-    setStatusFilter('');
-    setSearchQuery('');
-    refetch();
-  };
-  
-  // Function to export data as CSV
-  const exportToCsv = () => {
-    if (!data?.data.length) {
-      toast({
-        title: 'No data to export',
-        description: 'There is currently no data available to export.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    
-    setIsExporting(true);
-    
+  const handleExportCSV = async () => {
     try {
-      // CSV headers
-      const headers = [
-        'ID',
-        'Transaction Type',
-        'Amount',
-        'Status',
-        'Payment Method',
-        'Date Paid',
-        'Date Settled',
-        'Team Name',
-        'Order Submitter',
-        'Event Name',
-        'Event Start Date'
-      ];
+      setIsExporting(true);
+      const queryString = new URLSearchParams({
+        ...queryParams,
+        format: 'csv'
+      } as Record<string, string>).toString();
       
-      // Convert data to CSV rows
-      const csvRows = [
-        headers.join(','),
-        ...filteredData!.map(t => [
-          t.id,
-          t.transactionType,
-          t.formattedAmount,
-          t.status,
-          formatPaymentMethod(t),
-          t.datePaid || 'N/A',
-          t.dateSettled || 'N/A',
-          t.teamName ? `"${t.teamName.replace(/"/g, '""')}"` : 'N/A',
-          t.orderSubmitter ? `"${t.orderSubmitter.replace(/"/g, '""')}"` : 'N/A',
-          t.eventName ? `"${t.eventName.replace(/"/g, '""')}"` : 'N/A',
-          t.eventStartDate || 'N/A'
-        ].join(','))
-      ];
+      const response = await fetch(`/api/reports/registration-orders?${queryString}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      });
       
-      // Create CSV content
-      const csvContent = csvRows.join('\n');
+      if (!response.ok) {
+        throw new Error('Failed to export report');
+      }
       
-      // Create Blob and download link
-      const blob = new Blob([csvContent], { type: 'text/csv' });
+      // Get the filename from the Content-Disposition header or use a default
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filename = contentDisposition
+        ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+        : `registration-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+      
+      // Create a blob from the response and create a download link
+      const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.setAttribute('hidden', '');
-      a.setAttribute('href', url);
-      a.setAttribute('download', `registration-orders-report-${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      a.href = url;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
+      
+      // Clean up
+      window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       
       toast({
-        title: 'Export Successful',
-        description: 'The report has been exported to CSV format.',
+        title: "Export Successful",
+        description: "Report has been downloaded as a CSV file.",
       });
-    } catch (err) {
+    } catch (error) {
+      console.error('Export error:', error);
       toast({
-        title: 'Export Failed',
-        description: 'There was a problem exporting the data.',
-        variant: 'destructive',
+        title: "Export Failed",
+        description: "There was an error exporting the report.",
+        variant: "destructive",
       });
     } finally {
       setIsExporting(false);
     }
   };
   
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Registration Orders Report</h1>
-        <p className="text-muted-foreground mt-2">View and analyze all payment transactions for team registrations</p>
-      </div>
-      
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Report Filters</CardTitle>
-          <CardDescription>Filter the report data by various criteria</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">Start Date</label>
-              <Popover open={isStartDateOpen} onOpenChange={setIsStartDateOpen}>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                    {startDate ? format(startDate, 'PPP') : 'Pick a date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={startDate}
-                    onSelect={(date) => {
-                      setStartDate(date);
-                      setIsStartDateOpen(false);
-                    }}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">End Date</label>
-              <Popover open={isEndDateOpen} onOpenChange={setIsEndDateOpen}>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                    {endDate ? format(endDate, 'PPP') : 'Pick a date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={endDate}
-                    onSelect={(date) => {
-                      setEndDate(date);
-                      setIsEndDateOpen(false);
-                    }}
-                    initialFocus
-                    disabled={(date) => startDate ? date < startDate : false}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">Status</label>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="All Statuses" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">All Statuses</SelectItem>
-                  <SelectItem value="succeeded">Succeeded</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="failed">Failed</SelectItem>
-                  <SelectItem value="refunded">Refunded</SelectItem>
-                  <SelectItem value="partial_refund">Partial Refund</SelectItem>
-                  <SelectItem value="chargeback">Chargeback</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-4 items-end">
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1">Search</label>
-              <Input
-                type="text"
-                placeholder="Search by team, event, amount..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            
-            <div className="flex gap-2">
-              <Button onClick={applyFilters} className="w-full md:w-auto">
-                <Filter className="mr-2 h-4 w-4" />
-                Apply Filters
-              </Button>
-              
-              <Button onClick={resetFilters} variant="outline" className="w-full md:w-auto">
-                Clear Filters
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>Registration Order Transactions</CardTitle>
+  const clearFilters = () => {
+    setSelectedEvent("");
+    setPaymentStatus("");
+    setSearchQuery("");
+    setDateRange(undefined);
+  };
+  
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  if (!canViewFinancialReports) {
+    return (
+      <AdminLayout>
+        <Card>
+          <CardHeader>
+            <CardTitle>Access Denied</CardTitle>
             <CardDescription>
-              {filteredData ? `Showing ${filteredData.length} transactions` : 'Loading transaction data...'}
+              You do not have permission to view financial reports.
             </CardDescription>
+          </CardHeader>
+        </Card>
+      </AdminLayout>
+    );
+  }
+
+  return (
+    <AdminLayout>
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
+          <div>
+            <h1 className="text-2xl font-bold">Registration Orders Report</h1>
+            <p className="text-muted-foreground">
+              View detailed payment information for all team registrations
+            </p>
           </div>
           
           <Button
-            onClick={exportToCsv}
-            disabled={isLoading || !data?.data.length || isExporting}
-            className="ml-auto"
+            onClick={handleExportCSV}
+            disabled={isExporting || ordersQuery.isLoading || !ordersQuery.data?.transactions?.length}
           >
             {isExporting ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <>Exporting<span className="loading loading-dots ml-1"></span></>
             ) : (
-              <Download className="mr-2 h-4 w-4" />
+              <>
+                <DownloadCloud className="w-4 h-4 mr-2" />
+                Export CSV
+              </>
             )}
-            Export CSV
           </Button>
-        </CardHeader>
-        
-        <CardContent>
-          {isLoading ? (
-            <div className="flex justify-center items-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin" />
-              <span className="ml-2">Loading report data...</span>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Filters</CardTitle>
+            <CardDescription>
+              Filter the report by various parameters
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-4">
+              <div className="w-full md:w-1/4">
+                <Select value={selectedEvent} onValueChange={setSelectedEvent}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Events" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Events</SelectItem>
+                    {eventsQuery.data?.map(event => (
+                      <SelectItem key={event.id} value={event.id.toString()}>
+                        {event.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="w-full md:w-1/4">
+                <Select value={paymentStatus} onValueChange={setPaymentStatus}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Payment Statuses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="paid">Paid</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="failed">Failed</SelectItem>
+                    <SelectItem value="refunded">Refunded</SelectItem>
+                    <SelectItem value="partial_refund">Partial Refund</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="w-full md:w-1/4">
+                <DateRangePicker
+                  value={dateRange}
+                  onChange={setDateRange}
+                  placeholder="Payment Date Range"
+                />
+              </div>
+              
+              <div className="w-full md:w-1/4 flex gap-2">
+                <div className="relative flex-grow">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search team, submitter..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-8"
+                  />
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={clearFilters}
+                  title="Clear all filters"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-          ) : !data?.data.length ? (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium">No transactions found</h3>
-              <p className="text-muted-foreground max-w-md">
-                There are no transaction records matching your current filters. Try changing your filter criteria or check back later.
-              </p>
-            </div>
-          ) : (
-            <div className="rounded-md border overflow-x-auto">
-              <Table>
-                <TableCaption>List of all registration order transactions</TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Order Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Payment Method</TableHead>
-                    <TableHead>Team</TableHead>
-                    <TableHead>Event</TableHead>
-                    <TableHead>Submitter</TableHead>
-                    <TableHead>Transaction ID</TableHead>
-                  </TableRow>
-                </TableHeader>
-                
-                <TableBody>
-                  {filteredData && filteredData.map((transaction) => (
-                    <TableRow key={transaction.id}>
-                      <TableCell className="font-medium">{transaction.datePaid || 'N/A'}</TableCell>
-                      <TableCell>
-                        <TransactionStatusBadge status={transaction.status} />
-                      </TableCell>
-                      <TableCell>{transaction.formattedAmount}</TableCell>
-                      <TableCell>{formatPaymentMethod(transaction)}</TableCell>
-                      <TableCell>{transaction.teamName || 'N/A'}</TableCell>
-                      <TableCell>{transaction.eventName || 'N/A'}</TableCell>
-                      <TableCell>{transaction.orderSubmitter || 'N/A'}</TableCell>
-                      <TableCell className="font-mono text-xs">{transaction.paymentIntentId || 'N/A'}</TableCell>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-0">
+            {ordersQuery.isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            ) : ordersQuery.error ? (
+              <div className="flex justify-center items-center h-64">
+                <p className="text-destructive">Error loading report data</p>
+              </div>
+            ) : !ordersQuery.data?.transactions?.length ? (
+              <div className="flex flex-col justify-center items-center h-64">
+                <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">No registration orders found with the selected filters</p>
+              </div>
+            ) : (
+              <div className="overflow-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Event</TableHead>
+                      <TableHead>Team</TableHead>
+                      <TableHead>Submitter</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Payment Method</TableHead>
+                      <TableHead>Card Details</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Reference</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-        
-        <CardFooter className="flex justify-between">
-          <p className="text-sm text-muted-foreground">
-            {filteredData ? `Showing ${filteredData.length} of ${data?.data.length} transactions` : ''}
-          </p>
-        </CardFooter>
-      </Card>
-    </div>
+                  </TableHeader>
+                  <TableBody>
+                    {ordersQuery.data.transactions.map((transaction) => (
+                      <TableRow key={transaction.id}>
+                        <TableCell>{formatDate(transaction.paymentDate)}</TableCell>
+                        <TableCell>{transaction.eventName || 'N/A'}</TableCell>
+                        <TableCell>{transaction.teamName || 'N/A'}</TableCell>
+                        <TableCell>
+                          <div>{transaction.submitterName || 'N/A'}</div>
+                          <div className="text-sm text-muted-foreground">{transaction.submitterEmail || ''}</div>
+                        </TableCell>
+                        <TableCell>{formatCurrency(transaction.amount)}</TableCell>
+                        <TableCell>{transaction.paymentMethodType || 'N/A'}</TableCell>
+                        <TableCell>
+                          {transaction.cardBrand && transaction.cardLast4 
+                            ? `${transaction.cardBrand} **** ${transaction.cardLast4}`
+                            : 'N/A'
+                          }
+                        </TableCell>
+                        <TableCell>
+                          <PaymentStatusBadge status={transaction.paymentStatus} />
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-xs font-mono">
+                            {transaction.paymentIntentId 
+                              ? transaction.paymentIntentId.substring(0, 12) + '...'
+                              : 'N/A'
+                            }
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </AdminLayout>
   );
 }
