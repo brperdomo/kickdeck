@@ -17,8 +17,11 @@ interface CollapsibleSidebarProps {
   collapseBreakpoint?: string; // Alias for mobileBreakpoint for backward compatibility
   collapsedWidth?: string;
   expandedWidth?: string;
+  width?: string; // Alias for expandedWidth for backward compatibility
   position?: 'left' | 'right';
   showToggle?: boolean;
+  showToggleOnDesktop?: boolean; // Alias for showToggle for backward compatibility
+  togglePosition?: string; // Position of the toggle button
   sidebarStyles?: React.CSSProperties;
   headerContent?: React.ReactNode;
 }
@@ -28,10 +31,14 @@ export function CollapsibleSidebar({
   className,
   defaultCollapsed = false,
   mobileBreakpoint = 'md',
+  collapseBreakpoint,
   collapsedWidth = '72px',
   expandedWidth = '240px',
+  width,
   position = 'left',
   showToggle = true,
+  showToggleOnDesktop,
+  togglePosition,
   sidebarStyles = {},
   headerContent
 }: CollapsibleSidebarProps) {
@@ -43,8 +50,19 @@ export function CollapsibleSidebar({
   
   const { isMobile, isTablet, isDesktop } = useMobileContext();
   
+  // Handle backward compatibility parameters
+  const actualMobileBreakpoint = collapseBreakpoint || mobileBreakpoint;
+  
+  // Handle width that might be passed as "w-64" format
+  let actualExpandedWidth = width || expandedWidth;
+  if (actualExpandedWidth && actualExpandedWidth.startsWith('w-')) {
+    actualExpandedWidth = actualExpandedWidth.replace('w-', '');
+  }
+  
+  const actualShowToggle = showToggleOnDesktop !== undefined ? showToggleOnDesktop : showToggle;
+  
   // Whether we're in mobile view
-  const isMobileView = isMobile || (mobileBreakpoint === 'lg' && isTablet);
+  const isMobileView = isMobile || (actualMobileBreakpoint === 'lg' && isTablet);
   
   // Reset collapse state when switching between mobile and desktop
   useEffect(() => {
@@ -107,11 +125,11 @@ export function CollapsibleSidebar({
     <div
       className={cn(
         "relative h-full transition-all duration-300 ease-in-out border-r bg-card",
-        isCollapsed ? `w-[${collapsedWidth}]` : `w-[${expandedWidth}]`,
+        isCollapsed ? `w-[${collapsedWidth}]` : `w-[${actualExpandedWidth}]`,
         className
       )}
       style={{ 
-        width: isCollapsed ? collapsedWidth : expandedWidth,
+        width: isCollapsed ? collapsedWidth : actualExpandedWidth,
         ...sidebarStyles
       }}
     >
@@ -128,13 +146,14 @@ export function CollapsibleSidebar({
       </div>
       
       {/* Toggle button */}
-      {showToggle && (
+      {actualShowToggle && (
         <Button
           variant="ghost"
           size="sm"
           className={cn(
             "absolute -right-3 top-16 rounded-full w-6 h-6 p-0 bg-background border shadow-sm",
-            position === "right" && "-left-3 right-auto"
+            position === "right" && "-left-3 right-auto",
+            togglePosition === "bottom" && "top-auto bottom-16"
           )}
           onClick={toggleCollapse}
         >
