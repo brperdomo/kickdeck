@@ -594,8 +594,8 @@ export function EventsTable() {
       </Dialog>
       
       {/* Pagination and Archive Toggle */}
-      <div className="p-4 flex items-center justify-between border-t">
-        <div className="flex items-center gap-6">
+      <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between border-t gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full sm:w-auto">
           <div className="flex items-center gap-2">
             <Switch 
               id="show-archived" 
@@ -605,7 +605,7 @@ export function EventsTable() {
             <label htmlFor="show-archived">Show archived events</label>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <label htmlFor="page-size">Show</label>
             <Select value={pageSize.toString()} onValueChange={(value) => {
               setPageSize(parseInt(value));
@@ -626,81 +626,93 @@ export function EventsTable() {
           </div>
         </div>
         
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <Button 
-                variant="outline"
-                size="sm"
-                className="gap-1 h-8"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage <= 1 || eventsQuery.isLoading}
-              >
-                <ChevronLeft className="h-4 w-4" />
-                <span>Previous</span>
-              </Button>
-            </PaginationItem>
-            
-            {paginationData.totalPages > 0 && Array.from({ length: Math.min(paginationData.totalPages, 5) }).map((_, i) => {
-              // Show pages around current page
-              let pageToShow;
+        {/* Mobile-friendly pagination with horizontal scrolling if needed */}
+        <div className="w-full sm:w-auto overflow-x-auto">
+          <Pagination>
+            <PaginationContent className="flex flex-wrap gap-1 sm:gap-0">
+              <PaginationItem>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="gap-1 h-8 whitespace-nowrap flex-shrink-0"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage <= 1 || eventsQuery.isLoading}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline">Previous</span>
+                  <span className="sm:hidden">Prev</span>
+                </Button>
+              </PaginationItem>
               
-              if (paginationData.totalPages <= 5) {
-                // If we have 5 or fewer pages, show all pages
-                pageToShow = i + 1;
-              } else if (currentPage <= 3) {
-                // If we're near the start, show first 5 pages
-                pageToShow = i + 1;
-              } else if (currentPage >= paginationData.totalPages - 2) {
-                // If we're near the end, show last 5 pages
-                pageToShow = paginationData.totalPages - 4 + i;
-              } else {
-                // Otherwise show 2 pages before and after current page
-                pageToShow = currentPage - 2 + i;
-              }
+              {/* Page numbers - hidden on small mobile screens */}
+              <div className="hidden sm:flex items-center">
+                {paginationData.totalPages > 0 && Array.from({ length: Math.min(paginationData.totalPages, 5) }).map((_, i) => {
+                  // Show pages around current page
+                  let pageToShow;
+                  
+                  if (paginationData.totalPages <= 5) {
+                    // If we have 5 or fewer pages, show all pages
+                    pageToShow = i + 1;
+                  } else if (currentPage <= 3) {
+                    // If we're near the start, show first 5 pages
+                    pageToShow = i + 1;
+                  } else if (currentPage >= paginationData.totalPages - 2) {
+                    // If we're near the end, show last 5 pages
+                    pageToShow = paginationData.totalPages - 4 + i;
+                  } else {
+                    // Otherwise show 2 pages before and after current page
+                    pageToShow = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <PaginationItem key={pageToShow}>
+                      <PaginationLink 
+                        onClick={() => setCurrentPage(pageToShow)}
+                        isActive={currentPage === pageToShow}
+                      >
+                        {pageToShow}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+                
+                {paginationData.totalPages > 5 && currentPage < paginationData.totalPages - 2 && (
+                  <>
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink 
+                        onClick={() => setCurrentPage(paginationData.totalPages)}
+                        isActive={currentPage === paginationData.totalPages}
+                      >
+                        {paginationData.totalPages}
+                      </PaginationLink>
+                    </PaginationItem>
+                  </>
+                )}
+              </div>
               
-              return (
-                <PaginationItem key={pageToShow}>
-                  <PaginationLink 
-                    onClick={() => setCurrentPage(pageToShow)}
-                    isActive={currentPage === pageToShow}
-                  >
-                    {pageToShow}
-                  </PaginationLink>
-                </PaginationItem>
-              );
-            })}
-            
-            {paginationData.totalPages > 5 && currentPage < paginationData.totalPages - 2 && (
-              <>
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink 
-                    onClick={() => setCurrentPage(paginationData.totalPages)}
-                    isActive={currentPage === paginationData.totalPages}
-                  >
-                    {paginationData.totalPages}
-                  </PaginationLink>
-                </PaginationItem>
-              </>
-            )}
-            
-            <PaginationItem>
-              <Button 
-                variant="outline"
-                size="sm"
-                className="gap-1 h-8"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, paginationData.totalPages))}
-                disabled={currentPage >= paginationData.totalPages || eventsQuery.isLoading}
-              >
-                <span>Next</span>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+              {/* Simple page indicator for mobile */}
+              <div className="sm:hidden flex items-center px-2 text-sm">
+                Page {currentPage} of {paginationData.totalPages}
+              </div>
+              
+              <PaginationItem>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="gap-1 h-8 whitespace-nowrap flex-shrink-0"
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, paginationData.totalPages))}
+                  disabled={currentPage >= paginationData.totalPages || eventsQuery.isLoading}
+                >
+                  <span>Next</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
       </div>
     </Card>
   );
