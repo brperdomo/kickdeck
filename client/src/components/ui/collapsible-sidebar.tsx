@@ -14,10 +14,13 @@ interface CollapsibleSidebarProps {
   className?: string;
   defaultCollapsed?: boolean;
   mobileBreakpoint?: 'sm' | 'md' | 'lg'; // Size at which to switch to mobile view
+  collapseBreakpoint?: string; // Alias for mobileBreakpoint for backward compatibility
   collapsedWidth?: string;
   expandedWidth?: string;
   position?: 'left' | 'right';
   showToggle?: boolean;
+  sidebarStyles?: React.CSSProperties;
+  headerContent?: React.ReactNode;
 }
 
 export function CollapsibleSidebar({
@@ -28,7 +31,9 @@ export function CollapsibleSidebar({
   collapsedWidth = '72px',
   expandedWidth = '240px',
   position = 'left',
-  showToggle = true
+  showToggle = true,
+  sidebarStyles = {},
+  headerContent
 }: CollapsibleSidebarProps) {
   // State for collapsed status on desktop
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
@@ -82,7 +87,16 @@ export function CollapsibleSidebar({
               className
             )}
           >
-            <div className="h-full overflow-y-auto">{children}</div>
+            <div className="h-full overflow-y-auto flex flex-col">
+            {headerContent && (
+              <div className="p-4 border-b">
+                {headerContent}
+              </div>
+            )}
+            <div className="flex-1 overflow-auto">
+              {children}
+            </div>
+          </div>
           </SheetContent>
         </Sheet>
       </>
@@ -97,12 +111,20 @@ export function CollapsibleSidebar({
         className
       )}
       style={{ 
-        width: isCollapsed ? collapsedWidth : expandedWidth
+        width: isCollapsed ? collapsedWidth : expandedWidth,
+        ...sidebarStyles
       }}
     >
       {/* Desktop sidebar content */}
-      <div className="h-full overflow-hidden">
-        {children}
+      <div className="h-full overflow-hidden flex flex-col">
+        {headerContent && (
+          <div className="p-4 border-b">
+            {headerContent}
+          </div>
+        )}
+        <div className="flex-1 overflow-auto">
+          {children}
+        </div>
       </div>
       
       {/* Toggle button */}
