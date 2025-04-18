@@ -50,6 +50,8 @@ import {
 } from "@/components/ui/pagination";
 import { Switch } from "@/components/ui/switch";
 import { formatDate } from "@/lib/utils";
+import { ResponsiveCardTable } from "@/components/ui/responsive-card-table";
+import { useMobileContext } from "@/hooks/use-mobile";
 
 interface Event {
   id: bigint | number;  
