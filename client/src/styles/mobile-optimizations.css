@@ -1,0 +1,297 @@
+/* Mobile Optimizations CSS */
+
+/* Touch-friendly inputs and controls */
+.touch-friendly-input {
+  min-height: 44px; /* Apple's recommended minimum touch target size */
+  font-size: 16px; /* Prevents iOS zoom on focus */
+  padding: 10px 12px;
+}
+
+@media (max-width: 640px) {
+  /* Prevent iOS zoom on input focus */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  input[type="date"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Increase target size of interactive elements */
+  button,
+  .button,
+  a[role="button"],
+  [data-interactive],
+  .interactive {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Improve form spacing on mobile */
+  .form-group,
+  .input-group,
+  .form-field {
+    margin-bottom: 16px;
+  }
+
+  /* Form labels are more visible */
+  label {
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: block;
+  }
+}
+
+/* Mobile nav adjustments */
+.mobile-nav-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+  z-index: 50;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
+  width: 70px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.mobile-nav-item.active {
+  color: var(--primary);
+}
+
+.mobile-nav-item-icon {
+  margin-bottom: 4px;
+  font-size: 24px;
+}
+
+/* Mobile container spacing */
+@media (max-width: 640px) {
+  .mobile-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  h1 {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  h2 {
+    font-size: 1.25rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  h3 {
+    font-size: 1.125rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* Mobile-specific header adjustments */
+@media (max-width: 640px) {
+  .mobile-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background-color: var(--background);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .mobile-header-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+}
+
+/* Mobile content area (accounts for fixed headers/footers) */
+.mobile-content-area {
+  padding-bottom: 70px; /* Space for bottom nav */
+}
+
+@media (max-width: 640px) {
+  .mobile-content-area {
+    padding-top: 16px;
+  }
+}
+
+/* Mobile action button (FAB style) */
+.mobile-action-button {
+  position: fixed;
+  bottom: 80px; /* Above the bottom nav */
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 49;
+}
+
+/* Enhanced mobile card styles */
+.mobile-card {
+  border-radius: 12px;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.mobile-card-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--card);
+}
+
+.mobile-card-body {
+  padding: 16px;
+}
+
+.mobile-card-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  background-color: var(--muted);
+}
+
+/* Top Modal sheet animation for mobile */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.mobile-bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--background);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.12);
+  animation: slide-up 0.3s ease-out;
+}
+
+.mobile-bottom-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.mobile-bottom-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background-color: var(--border);
+  border-radius: 2px;
+  margin: 8px auto;
+}
+
+/* Table adjustments for mobile */
+@media (max-width: 640px) {
+  table {
+    font-size: 14px;
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+  }
+  
+  .mobile-table-stacked th {
+    display: none;
+  }
+  
+  .mobile-table-stacked td {
+    display: block;
+    text-align: right;
+    width: 100%;
+    position: relative;
+    padding-left: 50% !important;
+  }
+  
+  .mobile-table-stacked td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px;
+    font-weight: 500;
+    text-align: left;
+  }
+}
+
+/* Improved scrollable areas on mobile */
+.mobile-scroll-container {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
+.mobile-horizontal-scroll {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 8px;
+}
+
+.mobile-horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Bottom safe area for iOS devices */
+.ios-safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+/* Hide elements on mobile */
+@media (max-width: 640px) {
+  .hidden-on-mobile {
+    display: none !important;
+  }
+}
+
+/* Show elements only on mobile */
+.visible-on-mobile {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .visible-on-mobile {
+    display: block;
+  }
+}

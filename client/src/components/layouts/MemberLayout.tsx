@@ -1,15 +1,31 @@
 import { ReactNode } from "react";
 import { MemberSidebar } from "./MemberSidebar";
 import { motion } from "framer-motion";
+import { useBreakpoint } from "@/hooks/use-mobile";
+import { MobileDashboard } from "@/components/mobile/MobileDashboard";
 
 interface MemberLayoutProps {
   children: ReactNode;
+  mobileDashboard?: boolean; // Flag to force mobile dashboard
 }
 
-export function MemberLayout({ children }: MemberLayoutProps) {
+export function MemberLayout({ children, mobileDashboard = false }: MemberLayoutProps) {
+  const { isMobile } = useBreakpoint();
+  
+  // Check if we should use mobile layout
+  const useMobileDashboard = mobileDashboard || isMobile;
+  
+  // For the main dashboard view, we'll use a completely mobile-optimized version on small devices
+  const isMemberDashboard = location.pathname === "/dashboard" || location.pathname === "/dashboard/";
+  
+  // If it's the main dashboard page and we're on mobile, use the dedicated mobile layout
+  if (useMobileDashboard && isMemberDashboard) {
+    return <MobileDashboard />;
+  }
+  
   return (
     <div className="flex min-h-screen bg-background">
-      {/* Sidebar */}
+      {/* Sidebar - only visible on desktop */}
       <MemberSidebar />
 
       {/* Main Content */}
