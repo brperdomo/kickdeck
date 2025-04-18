@@ -267,6 +267,17 @@ export const teams = pgTable("teams", {
   selectedFeeIds: text("selected_fee_ids"), // Comma-separated list of fee IDs
   totalAmount: integer("total_amount"), // Store total amount in cents (includes all fees)
   termsAcknowledged: boolean("terms_acknowledged").default(false),
+  // Payment related fields
+  paymentIntentId: text("payment_intent_id"),
+  paymentStatus: text("payment_status"),
+  paymentDate: timestamp("payment_date"),
+  refundDate: timestamp("refund_date"),
+  // Card details fields
+  cardBrand: text("card_brand"),
+  cardLast4: text("card_last_four"),
+  paymentMethodType: text("payment_method_type"),
+  paymentErrorCode: text("payment_error_code"),
+  paymentErrorMessage: text("payment_error_message"),
   termsAcknowledgedAt: timestamp("terms_acknowledged_at"),
   termsAcknowledgementRecord: text("terms_acknowledgement_record"), // Path to PDF or record ID
   // Payment tracking fields

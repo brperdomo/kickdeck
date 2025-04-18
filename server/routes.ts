@@ -26,7 +26,7 @@ import bracketsRouter from "./routes/admin/brackets";
 import productUpdatesRouter from "./routes/product-updates.js";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
-import { createStripePaymentIntent, getPaymentIntentStatus, handleStripeWebhook, getStripeConfig } from "./routes/payments";
+import { createPaymentIntent, getPaymentStatus, handleStripeWebhook, getStripeConfig } from "./routes/payments";
 import { getFinancialReportData } from "./routes/reports";
 import { getTinyMCEConfig } from "./services/configService";
 import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
@@ -1054,8 +1054,8 @@ export function registerRoutes(app: Express): Server {
 
     // Payment processing endpoints
     app.get('/api/payments/config', getStripeConfig);
-    app.post('/api/payments/create-intent', createStripePaymentIntent);
-    app.get('/api/payments/intent/:id', getPaymentIntentStatus);
+    app.post('/api/payments/create-intent', createPaymentIntent);
+    app.get('/api/payments/status/:id', getPaymentStatus);
     app.post('/api/payments/webhook', handleStripeWebhook);
     
     // Financial reporting endpoints

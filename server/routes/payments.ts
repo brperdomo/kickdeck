@@ -1,61 +1,63 @@
 import { Request, Response } from 'express';
-import { createPaymentIntent, retrievePaymentIntent } from '../services/stripeService';
 import Stripe from 'stripe';
+import { db } from '../../db';
 import { log } from '../vite';
-import { db } from '@db';
-import { teams, paymentTransactions, insertPaymentTransactionSchema } from '@db/schema';
+import { paymentTransactions } from '../../db/schema';
+import { teams } from '../../db/schema';
 import { eq } from 'drizzle-orm';
 
+// Initialize Stripe
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 /**
- * Helper function to log payment transactions to the database
+ * Log a payment transaction to the database
  */
-async function logPaymentTransaction({
-  teamId,
-  eventId,
-  userId,
-  paymentIntentId,
+export async function logTransaction({
+  teamId = null,
+  eventId = null,
+  userId = null,
+  paymentIntentId = null,
   transactionType,
   amount,
   status,
-  cardBrand,
-  cardLastFour,
-  paymentMethodType,
-  errorCode,
-  errorMessage,
-  metadata,
-  notes
-}: {
-  teamId?: number;
-  eventId?: string;
-  userId?: number;
-  paymentIntentId?: string;
-  transactionType: 'payment' | 'refund' | 'partial_refund' | 'chargeback' | 'credit' | 'onsite_payment';
-  amount: number;
-  status: 'succeeded' | 'failed' | 'pending' | 'processing' | 'canceled';
-  cardBrand?: string | null;
-  cardLastFour?: string | null;
-  paymentMethodType?: string | null;
-  errorCode?: string | null;
-  errorMessage?: string | null;
-  metadata?: Record<string, any>;
-  notes?: string;
+  cardBrand = null,
+  cardLast4 = null,
+  submitterEmail = null,
+  submitterName = null,
+  paymentMethod = 'stripe',
+  errorCode = null,
+  errorMessage = null,
+  metadata = null,
+  refundId = null,
+  refundAmount = null,
+  notes = null,
 }) {
   try {
     const transaction = {
-      teamId: teamId || null,
-      eventId: eventId || null,
-      userId: userId || null,
-      paymentIntentId: paymentIntentId || null,
+      teamId,
+      eventId,
+      userId,
+      paymentIntentId,
       transactionType,
       amount,
       status,
-      cardBrand: cardBrand || null,
-      cardLastFour: cardLastFour || null,
-      paymentMethodType: paymentMethodType || null,
-      errorCode: errorCode || null,
-      errorMessage: errorMessage || null,
-      metadata: metadata || null,
-      notes: notes || null
+      cardBrand,
+      cardLast4,
+      submitterEmail,
+      submitterName,
+      paymentMethod,
+      errorCode,
+      errorMessage,
+      metadata: metadata ? JSON.stringify(metadata) : null,
+      refundId,
+      refundAmount,
+      notes,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     // Log transaction in the database
@@ -76,7 +78,7 @@ async function logPaymentTransaction({
 export async function getStripeConfig(req: Request, res: Response) {
   try {
     // Return the publishable key from environment variables
-    const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
+    const publishableKey = process.env.VITE_STRIPE_PUBLIC_KEY;
     
     if (!publishableKey) {
       log('Stripe publishable key not found in environment variables', 'payment');
@@ -96,171 +98,93 @@ export async function getStripeConfig(req: Request, res: Response) {
 }
 
 /**
- * Create a Stripe payment intent
+ * Create a payment intent for team registration
  */
-export async function createStripePaymentIntent(req: Request, res: Response) {
+export async function createPaymentIntent(req: Request, res: Response) {
   try {
-    const { amount, currency, description, metadata, eventId, ageGroupId, teamId, isPreview } = req.body;
+    const { 
+      amount, 
+      currency = 'usd', 
+      description = 'Team registration payment',
+      metadata = {},
+      teamId = null,
+      eventId = null,
+      ageGroupId = null
+    } = req.body;
 
-    // Handle preview mode
-    if (isPreview === true || eventId === 'preview') {
-      console.log('Preview mode: simulating payment intent creation without using Stripe');
-      
-      // Generate a fake client secret
-      const fakePaymentIntentId = `pi_preview_${Date.now()}`;
-      const fakeClientSecret = `${fakePaymentIntentId}_secret_${Math.random().toString(36).substring(2, 15)}`;
-      
-      // Log preview transaction
-      await logPaymentTransaction({
-        teamId: teamId ? parseInt(teamId) : undefined,
-        eventId: eventId !== 'preview' ? eventId : undefined,
-        userId: req.user?.id,
-        paymentIntentId: fakePaymentIntentId,
-        transactionType: 'payment',
-        amount: Math.round(amount),
-        status: 'succeeded',
-        metadata: { ...metadata, isPreview: true },
-        notes: 'Preview mode payment - no actual charge'
-      });
-      
-      return res.json({
-        clientSecret: fakeClientSecret,
-        paymentIntentId: fakePaymentIntentId,
-        isPreview: true,
-        message: "This is a preview payment intent. No actual payment will be processed."
-      });
-    }
-
-    if (!amount || amount <= 0) {
+    // Basic validation
+    if (!amount || isNaN(amount) || amount <= 0) {
       return res.status(400).json({ error: 'Valid amount is required' });
     }
 
-    // Make sure user is authenticated
-    if (!req.user) {
-      return res.status(401).json({ error: 'You must be logged in to process payments' });
-    }
-    
-    // If teamId is provided, check if this team already has a payment intent
-    if (teamId) {
-      try {
-        // Check if the team already has a payment intent registered
-        const existingTeam = await db.query.teams.findFirst({
-          where: eq(teams.id, parseInt(teamId)),
-          columns: {
-            id: true,
-            paymentIntentId: true,
-            status: true
-          }
-        });
-        
-        // If team already has a payment intent ID and status is paid, return an error
-        if (existingTeam?.paymentIntentId && existingTeam.status === 'paid') {
-          log(`Prevented duplicate payment for team ${teamId}: already has payment intent ${existingTeam.paymentIntentId}`, 'payment');
-          
-          // Log the rejected duplicate payment attempt
-          await logPaymentTransaction({
-            teamId: parseInt(teamId),
-            eventId: eventId?.toString(),
-            userId: req.user?.id,
-            paymentIntentId: existingTeam.paymentIntentId,
-            transactionType: 'payment',
-            amount: Math.round(amount),
-            status: 'canceled',
-            errorCode: 'duplicate_payment_attempt',
-            errorMessage: 'Duplicate payment attempt rejected',
-            metadata: { originalPaymentIntentId: existingTeam.paymentIntentId },
-            notes: 'System prevented duplicate payment'
-          });
-          
-          return res.status(400).json({ 
-            error: 'This registration has already been paid for',
-            details: 'To avoid duplicate charges, the system prevented a second payment attempt',
-            existingPaymentId: existingTeam.paymentIntentId
-          });
-        }
-      } catch (dbError) {
-        // Just log the error but continue with payment processing
-        log(`Error checking for existing payment: ${dbError}`, 'payment');
-      }
-    }
-    
-    // Add user ID and team ID to metadata for later reference
-    const enhancedMetadata = {
-      ...metadata,
-      userId: String(req.user.id),
-      eventId: String(eventId),
-      ageGroupId: String(ageGroupId),
-      teamId: teamId ? String(teamId) : undefined
-    };
-    
-    // Create the payment intent with Stripe
-    const paymentIntent = await createPaymentIntent({
-      amount,
+    // Create a payment intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount), // Amount in cents
       currency,
-      description,
-      metadata: enhancedMetadata
-    });
-    
-    // Log the payment intent creation in our transaction history
-    await logPaymentTransaction({
-      teamId: teamId ? parseInt(teamId) : undefined,
-      eventId: eventId?.toString(),
-      userId: req.user?.id,
-      paymentIntentId: paymentIntent.id,
-      transactionType: 'payment',
-      amount: Math.round(amount),
-      status: 'pending', // Initial status is pending until webhook confirms payment
       metadata: {
         ...metadata,
-        currency: currency || 'usd',
-        description: description || 'Tournament registration'
+        description,
+        teamId: teamId ? String(teamId) : null,
+        eventId: eventId ? String(eventId) : null,
+        ageGroupId: ageGroupId ? String(ageGroupId) : null,
       },
-      notes: 'Payment intent created'
+      payment_method_types: ['card'],
     });
-    
-    // If we have a teamId, immediately associate the payment intent with the team
-    // This helps prevent multiple payments even if client-side validation fails
+
+    // Log the payment intent creation
+    await logTransaction({
+      teamId,
+      eventId,
+      userId: req.user?.id || null,
+      paymentIntentId: paymentIntent.id,
+      transactionType: 'payment',
+      amount: paymentIntent.amount,
+      status: 'pending',
+      submitterEmail: req.user?.email || null,
+      submitterName: req.user?.name || null,
+      notes: 'Payment intent created',
+      metadata: {
+        description,
+        ...metadata
+      }
+    });
+
+    // If this is for a team, update the payment intent ID
     if (teamId) {
       try {
         await db.update(teams)
           .set({
             paymentIntentId: paymentIntent.id,
-            updatedAt: new Date().toISOString()
           })
-          .where(eq(teams.id, parseInt(teamId)));
-          
-        log(`Associated payment intent ${paymentIntent.id} with team ${teamId}`, 'payment');
-      } catch (dbError) {
-        // Log but continue - the payment intent was still created successfully
-        log(`Error associating payment intent with team: ${dbError}`, 'payment');
+          .where(eq(teams.id, teamId));
+      } catch (error) {
+        log(`Error updating team with payment intent ID: ${error}`, 'payment');
+        // We don't want to fail the overall request if just the team update fails
       }
     }
-    
-    return res.json({
-      clientSecret: paymentIntent.clientSecret,
-      paymentIntentId: paymentIntent.id
+
+    // Return the client secret to the client
+    return res.status(200).json({
+      clientSecret: paymentIntent.client_secret,
+      id: paymentIntent.id,
     });
   } catch (error) {
     log(`Error creating payment intent: ${error instanceof Error ? error.message : String(error)}`, 'payment');
     
-    // Log the failed payment attempt
-    if (req.body && req.body.teamId) {
-      try {
-        await logPaymentTransaction({
-          teamId: req.body.teamId ? parseInt(req.body.teamId) : undefined,
-          eventId: req.body.eventId?.toString(),
-          userId: req.user?.id,
-          transactionType: 'payment',
-          amount: req.body.amount ? Math.round(req.body.amount) : 0,
-          status: 'failed',
-          errorCode: 'payment_intent_creation_failed',
-          errorMessage: error instanceof Error ? error.message : String(error),
-          notes: 'Error occurred while creating payment intent'
-        });
-      } catch (logError) {
-        log(`Error logging payment failure: ${logError}`, 'payment-transaction');
-      }
-    }
+    // Log the failure
+    await logTransaction({
+      teamId: req.body.teamId || null,
+      eventId: req.body.eventId || null,
+      userId: req.user?.id || null,
+      transactionType: 'payment',
+      amount: req.body.amount || 0,
+      status: 'failed',
+      errorCode: 'payment_intent_creation_failed',
+      errorMessage: error instanceof Error ? error.message : String(error),
+      submitterEmail: req.user?.email || null,
+      submitterName: req.user?.name || null,
+      notes: 'Error creating payment intent',
+    });
     
     return res.status(500).json({ 
       error: 'Failed to create payment intent',
@@ -270,9 +194,9 @@ export async function createStripePaymentIntent(req: Request, res: Response) {
 }
 
 /**
- * Get payment intent status
+ * Get the status of a payment intent
  */
-export async function getPaymentIntentStatus(req: Request, res: Response) {
+export async function getPaymentStatus(req: Request, res: Response) {
   try {
     const { id } = req.params;
     
@@ -280,142 +204,79 @@ export async function getPaymentIntentStatus(req: Request, res: Response) {
       return res.status(400).json({ error: 'Payment intent ID is required' });
     }
     
-    // Check if this is a preview mode payment intent
-    if (id.startsWith('pi_preview_')) {
-      console.log('Preview mode: simulating successful payment status for preview intent');
-      return res.json({
-        status: 'succeeded',
-        amount: 2500,
-        currency: 'usd',
-        created: Math.floor(Date.now() / 1000),
-        isPreview: true,
-        message: "This is a preview payment status. No actual payment was processed."
-      });
-    }
+    // Retrieve the payment intent from Stripe
+    const paymentIntent = await stripe.paymentIntents.retrieve(id);
     
-    // First check if this team has a successful test payment recorded
-    let teamId: number | undefined;
-    try {
-      // Check if this is a test payment that was processed via our simulated webhook
-      // For testing only - this shouldn't be in production code
-      const teamsWithPayment = await db.query.teams.findMany({
-        where: eq(teams.status, 'paid'),
-        columns: {
-          id: true,
-          notes: true,
-          status: true,
-          registrationFee: true,
-          totalAmount: true,
-          eventId: true
+    // Get payment details for successful payments
+    let paymentDetails = null;
+    if (paymentIntent.status === 'succeeded' && paymentIntent.charges.data.length > 0) {
+      const charge = paymentIntent.charges.data[0];
+      paymentDetails = {
+        paymentMethod: charge.payment_method_details?.card ? {
+          brand: charge.payment_method_details.card.brand,
+          last4: charge.payment_method_details.card.last4,
+          expiryMonth: charge.payment_method_details.card.exp_month,
+          expiryYear: charge.payment_method_details.card.exp_year,
+        } : null,
+        receiptUrl: charge.receipt_url,
+        receiptEmail: charge.receipt_email,
+        receiptNumber: charge.receipt_number,
+      };
+      
+      // If this is a successful payment, update transaction status and card details
+      if (paymentIntent.status === 'succeeded') {
+        // Extract card details from charge if available
+        const cardDetails = charge.payment_method_details?.card;
+        
+        // Log the successful payment
+        await logTransaction({
+          paymentIntentId: paymentIntent.id,
+          transactionType: 'payment',
+          amount: paymentIntent.amount,
+          status: 'completed',
+          cardBrand: cardDetails?.brand || null,
+          cardLast4: cardDetails?.last4 || null,
+          metadata: paymentIntent.metadata || {},
+          notes: 'Payment completed successfully',
+        });
+        
+        // Update team payment status if this was for a team registration
+        if (paymentIntent.metadata?.teamId) {
+          try {
+            const teamId = parseInt(paymentIntent.metadata.teamId);
+            await db.update(teams)
+              .set({
+                paymentStatus: 'paid',
+                cardBrand: cardDetails?.brand || null,
+                cardLast4: cardDetails?.last4 || null,
+                paymentDate: new Date(),
+              })
+              .where(eq(teams.id, teamId));
+          } catch (error) {
+            log(`Error updating team payment status: ${error}`, 'payment');
+            // Don't fail the request if just this update fails
+          }
         }
-      });
-      
-      // Check all teams to find one with this payment ID in the notes
-      const team = teamsWithPayment.find(t => t.notes && t.notes.includes(id));
-      
-      // If we find a team with this payment ID in the notes, it was a simulated payment
-      if (team) {
-        teamId = team.id;
-        
-        // Log the transaction status check
-        await logPaymentTransaction({
-          teamId: team.id,
-          eventId: team.eventId?.toString(),
-          paymentIntentId: id,
-          transactionType: 'payment',
-          amount: team.totalAmount || team.registrationFee || 2500,
-          status: 'succeeded',
-          notes: 'Simulated payment status check - test mode'
-        });
-        
-        log(`Found simulated payment status 'succeeded' for intent: ${id}`, 'payment-test');
-        return res.json({
-          status: 'succeeded', // Simulated success status for testing
-          amount: team.totalAmount || team.registrationFee || 2500,
-          currency: 'usd',
-          created: Math.floor(Date.now() / 1000)
-        });
-      }
-    } catch (dbError) {
-      // Just log and continue to normal payment intent retrieval
-      log(`Error checking for test payment: ${dbError}`, 'payment-test');
-    }
-    
-    // If not a test payment, proceed with normal Stripe API call
-    const paymentIntent = await retrievePaymentIntent(id);
-    
-    // If payment was successful and has team ID in metadata, update team record
-    if (paymentIntent.status === 'succeeded' && 
-        paymentIntent.metadata && 
-        paymentIntent.metadata.teamId) {
-      
-      teamId = parseInt(paymentIntent.metadata.teamId);
-      
-      try {
-        // Update team's payment status using existing fields
-        await db
-          .update(teams)
-          .set({
-            status: 'paid', // Use the status field for payment status
-            totalAmount: paymentIntent.amount, // Store the total amount paid
-            paymentIntentId: paymentIntent.id, // Store the payment intent ID for refunds
-            notes: `Payment completed. Payment ID: ${paymentIntent.id}`, // Store payment ID in notes
-          })
-          .where(eq(teams.id, parseInt(paymentIntent.metadata.teamId)));
-          
-        // Log the successful payment in our transaction history
-        await logPaymentTransaction({
-          teamId: parseInt(paymentIntent.metadata.teamId),
-          eventId: paymentIntent.metadata.eventId,
-          userId: paymentIntent.metadata.userId ? parseInt(paymentIntent.metadata.userId) : undefined,
-          paymentIntentId: paymentIntent.id,
-          transactionType: 'payment',
-          amount: paymentIntent.amount,
-          status: 'succeeded',
-          notes: 'Payment confirmed via status check'
-        });
-          
-        log(`Updated team ${paymentIntent.metadata.teamId} payment status to paid`, 'payment');
-      } catch (dbError) {
-        // Log but don't fail the request
-        log(`Error updating team payment status: ${dbError}`, 'payment');
-      }
-    } else if (paymentIntent.status !== 'succeeded' && paymentIntent.metadata && paymentIntent.metadata.teamId) {
-      // Also log non-successful payment statuses
-      try {
-        // Log the payment status update
-        await logPaymentTransaction({
-          teamId: parseInt(paymentIntent.metadata.teamId),
-          eventId: paymentIntent.metadata.eventId,
-          userId: paymentIntent.metadata.userId ? parseInt(paymentIntent.metadata.userId) : undefined,
-          paymentIntentId: paymentIntent.id,
-          transactionType: 'payment',
-          amount: paymentIntent.amount,
-          status: paymentIntent.status === 'requires_payment_method' ? 'failed' : 
-                 paymentIntent.status === 'requires_action' ? 'pending' : 
-                 paymentIntent.status === 'processing' ? 'processing' : 'pending',
-          errorCode: paymentIntent.status === 'requires_payment_method' ? 'payment_failed' : undefined,
-          errorMessage: paymentIntent.status === 'requires_payment_method' ? 'Payment method failed or was declined' : undefined,
-          notes: `Payment status updated to: ${paymentIntent.status}`
-        });
-      } catch (logError) {
-        log(`Error logging payment status update: ${logError}`, 'payment-transaction');
       }
     }
     
     return res.json({
+      id: paymentIntent.id,
+      clientSecret: paymentIntent.client_secret,
       status: paymentIntent.status,
       amount: paymentIntent.amount,
       currency: paymentIntent.currency,
-      created: paymentIntent.created
+      created: paymentIntent.created,
+      paymentDetails,
+      message: getPaymentStatusMessage(paymentIntent.status),
     });
   } catch (error) {
-    log(`Error retrieving payment intent: ${error}`, 'payment');
+    log(`Error retrieving payment status: ${error instanceof Error ? error.message : String(error)}`, 'payment');
     
-    // Try to log the error
-    if (req.params && req.params.id) {
+    // Log the status check failure
+    if (req.params.id) {
       try {
-        await logPaymentTransaction({
+        await logTransaction({
           paymentIntentId: req.params.id,
           transactionType: 'payment',
           amount: 0, // Unknown amount
@@ -437,438 +298,198 @@ export async function getPaymentIntentStatus(req: Request, res: Response) {
 }
 
 /**
- * Handle webhook events from Stripe
+ * Handle Stripe webhook events for payment processing
  */
 export async function handleStripeWebhook(req: Request, res: Response) {
-  const sig = req.headers['stripe-signature'];
+  const sig = req.headers['stripe-signature'] as string;
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
   
-  if (!sig || !endpointSecret) {
-    return res.status(400).json({ error: 'Missing signature or endpoint secret' });
+  if (!endpointSecret) {
+    log('Stripe webhook secret not configured, skipping signature verification', 'payment');
   }
   
-  let event: Stripe.Event;
+  let event;
   
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-      apiVersion: '2023-10-16', // Match the version used in stripeService.ts
+    if (endpointSecret && sig) {
+      // Verify the event came from Stripe if we have a secret
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    } else {
+      // In development, we might just parse the event without verification
+      event = req.body;
+    }
+    
+    // Handle the event based on its type
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        await handlePaymentIntentSucceeded(event.data.object);
+        break;
+        
+      case 'payment_intent.payment_failed':
+        await handlePaymentIntentFailed(event.data.object);
+        break;
+        
+      case 'charge.refunded':
+        await handleChargeRefunded(event.data.object);
+        break;
+        
+      default:
+        log(`Unhandled Stripe event type: ${event.type}`, 'payment');
+    }
+    
+    // Return a 200 response to acknowledge receipt of the event
+    res.json({ received: true });
+  } catch (error) {
+    log(`Webhook Error: ${error instanceof Error ? error.message : String(error)}`, 'payment');
+    return res.status(400).send(`Webhook Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
+  try {
+    log(`Payment succeeded: ${paymentIntent.id}`, 'payment');
+    
+    // Get charge details if available
+    let cardBrand = null;
+    let cardLast4 = null;
+    
+    if (paymentIntent.charges.data.length > 0) {
+      const charge = paymentIntent.charges.data[0];
+      if (charge.payment_method_details?.card) {
+        cardBrand = charge.payment_method_details.card.brand;
+        cardLast4 = charge.payment_method_details.card.last4;
+      }
+    }
+    
+    // Log the successful payment transaction
+    await logTransaction({
+      paymentIntentId: paymentIntent.id,
+      teamId: paymentIntent.metadata?.teamId ? parseInt(paymentIntent.metadata.teamId) : null,
+      eventId: paymentIntent.metadata?.eventId || null,
+      transactionType: 'payment',
+      amount: paymentIntent.amount,
+      status: 'completed',
+      cardBrand,
+      cardLast4,
+      metadata: paymentIntent.metadata,
+      notes: 'Payment completed via webhook notification',
     });
     
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      endpointSecret
-    );
-  } catch (err) {
-    log(`Webhook Error: ${err}`, 'stripe-webhook');
-    return res.status(400).json({ error: `Webhook Error: ${err}` });
+    // Update team payment status if applicable
+    if (paymentIntent.metadata?.teamId) {
+      const teamId = parseInt(paymentIntent.metadata.teamId);
+      await db.update(teams)
+        .set({
+          paymentStatus: 'paid',
+          cardBrand,
+          cardLast4,
+          paymentDate: new Date(),
+        })
+        .where(eq(teams.id, teamId));
+    }
+  } catch (error) {
+    log(`Error handling payment_intent.succeeded event: ${error}`, 'payment');
   }
-  
-  // Handle specific events
-  switch (event.type) {
-    case 'payment_intent.succeeded':
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      log(`PaymentIntent was successful! ID: ${paymentIntent.id}`, 'stripe-webhook');
-      
-      // If payment has team ID in metadata, update team record
-      if (paymentIntent.metadata && paymentIntent.metadata.teamId) {
-        try {
-          // Get payment method details if available
-          let cardBrand = null;
-          let cardLastFour = null;
-          let paymentMethodType = null;
-          
-          // Check if we have payment method details
-          if (paymentIntent.charges && paymentIntent.charges.data && paymentIntent.charges.data.length > 0) {
-            const charge = paymentIntent.charges.data[0];
-            if (charge.payment_method_details) {
-              paymentMethodType = charge.payment_method_details.type || null;
-              
-              // If it's a card payment, get card details
-              if (charge.payment_method_details.card) {
-                cardBrand = charge.payment_method_details.card.brand || null;
-                cardLastFour = charge.payment_method_details.card.last4 || null;
-              }
-            }
-          }
-          
-          // Update team's payment status using existing fields
-          await db
-            .update(teams)
-            .set({
-              status: 'paid', // Use the status field for payment status
-              totalAmount: paymentIntent.amount, // Store the total amount paid
-              paymentIntentId: paymentIntent.id, // Store the payment intent ID for refunds
-              cardBrand: cardBrand, // Store the card brand
-              cardLastFour: cardLastFour, // Store the last 4 digits of the card
-              paymentMethodType: paymentMethodType, // Store the payment method type
-              paymentDate: new Date(), // Record payment date
-              notes: `Payment completed via webhook. Payment ID: ${paymentIntent.id}`, // Store payment ID in notes
-              termsAcknowledgedAt: new Date(), // Record payment confirmation timestamp
-              termsAcknowledged: true // Mark as acknowledged
-            })
-            .where(eq(teams.id, parseInt(paymentIntent.metadata.teamId)));
-            
-          log(`Updated team ${paymentIntent.metadata.teamId} payment status to paid from webhook with card details ${cardBrand} ${cardLastFour}`, 'payment');
-          
-          // Log the successful payment transaction
-          await logPaymentTransaction({
-            teamId: parseInt(paymentIntent.metadata.teamId),
-            eventId: paymentIntent.metadata.eventId,
-            userId: paymentIntent.metadata.userId ? parseInt(paymentIntent.metadata.userId) : undefined,
-            paymentIntentId: paymentIntent.id,
-            transactionType: 'payment',
-            amount: paymentIntent.amount,
-            status: 'succeeded',
-            cardBrand,
-            cardLastFour,
-            paymentMethodType,
-            metadata: paymentIntent.metadata,
-            notes: `Payment completed via Stripe webhook. Amount: $${(paymentIntent.amount/100).toFixed(2)}`
-          });
-        } catch (dbError) {
-          log(`Error updating team payment status from webhook: ${dbError}`, 'payment');
-        }
-      } else {
-        // Even if we don't have a team ID, still log the payment transaction
-        try {
-          let cardBrand = null;
-          let cardLastFour = null;
-          let paymentMethodType = null;
-          
-          if (paymentIntent.charges && paymentIntent.charges.data && paymentIntent.charges.data.length > 0) {
-            const charge = paymentIntent.charges.data[0];
-            if (charge.payment_method_details) {
-              paymentMethodType = charge.payment_method_details.type || null;
-              
-              if (charge.payment_method_details.card) {
-                cardBrand = charge.payment_method_details.card.brand || null;
-                cardLastFour = charge.payment_method_details.card.last4 || null;
-              }
-            }
-          }
-          
-          await logPaymentTransaction({
-            eventId: paymentIntent.metadata?.eventId,
-            userId: paymentIntent.metadata?.userId ? parseInt(paymentIntent.metadata.userId) : undefined,
-            paymentIntentId: paymentIntent.id,
-            transactionType: 'payment',
-            amount: paymentIntent.amount,
-            status: 'succeeded',
-            cardBrand,
-            cardLastFour,
-            paymentMethodType,
-            metadata: paymentIntent.metadata || {},
-            notes: `Payment completed via Stripe webhook without team association. Amount: $${(paymentIntent.amount/100).toFixed(2)}`
-          });
-        } catch (error) {
-          log(`Error logging non-team payment transaction: ${error}`, 'payment-transaction');
-        }
-      }
-      break;
+}
+
+async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
+  try {
+    log(`Payment failed: ${paymentIntent.id}`, 'payment');
     
-    case 'payment_intent.payment_failed':
-      const failedPaymentIntent = event.data.object as Stripe.PaymentIntent;
-      log(`Payment failed: ${failedPaymentIntent.id}`, 'stripe-webhook');
-      
-      // If there's a teamId in the metadata, update the team with failure details
-      if (failedPaymentIntent.metadata && failedPaymentIntent.metadata.teamId) {
-        try {
-          // Get error details if available
-          let errorCode = null;
-          let errorMessage = null;
-          
-          // Check for the last_payment_error which contains details about the failure
-          if (failedPaymentIntent.last_payment_error) {
-            errorCode = failedPaymentIntent.last_payment_error.code || null;
-            errorMessage = failedPaymentIntent.last_payment_error.message || 'Payment failed';
-          }
-          
-          // Update team to indicate payment failure and capture error details
-          await db
-            .update(teams)
-            .set({
-              status: 'payment_failed', // Set status to payment_failed
-              paymentIntentId: failedPaymentIntent.id, // Store the failed payment intent ID
-              paymentErrorCode: errorCode, // Store the error code
-              paymentErrorMessage: errorMessage, // Store the error message
-              notes: `Payment failed. Payment ID: ${failedPaymentIntent.id}. Error: ${errorMessage}`, // Store details in notes
-            })
-            .where(eq(teams.id, parseInt(failedPaymentIntent.metadata.teamId)));
-            
-          log(`Updated team ${failedPaymentIntent.metadata.teamId} payment status to failed`, 'payment');
-          
-          // Log the failed payment transaction
-          await logPaymentTransaction({
-            teamId: parseInt(failedPaymentIntent.metadata.teamId),
-            eventId: failedPaymentIntent.metadata.eventId,
-            userId: failedPaymentIntent.metadata.userId ? parseInt(failedPaymentIntent.metadata.userId) : undefined,
-            paymentIntentId: failedPaymentIntent.id,
-            transactionType: 'payment',
-            amount: failedPaymentIntent.amount,
-            status: 'failed',
-            errorCode,
-            errorMessage,
-            metadata: failedPaymentIntent.metadata,
-            notes: `Payment failed. Error: ${errorMessage || 'Unknown error'}`
-          });
-        } catch (dbError) {
-          log(`Error updating team payment failure status: ${dbError}`, 'payment');
-        }
-      } else {
-        // Even if we don't have a team ID, still log the payment transaction failure
-        try {
-          let errorCode = null;
-          let errorMessage = null;
-          
-          if (failedPaymentIntent.last_payment_error) {
-            errorCode = failedPaymentIntent.last_payment_error.code || null;
-            errorMessage = failedPaymentIntent.last_payment_error.message || 'Payment failed';
-          }
-          
-          await logPaymentTransaction({
-            eventId: failedPaymentIntent.metadata?.eventId,
-            userId: failedPaymentIntent.metadata?.userId ? parseInt(failedPaymentIntent.metadata.userId) : undefined,
-            paymentIntentId: failedPaymentIntent.id,
-            transactionType: 'payment',
-            amount: failedPaymentIntent.amount,
-            status: 'failed',
-            errorCode,
-            errorMessage,
-            metadata: failedPaymentIntent.metadata || {},
-            notes: `Payment failed without team association. Error: ${errorMessage || 'Unknown error'}`
-          });
-        } catch (error) {
-          log(`Error logging non-team payment failure: ${error}`, 'payment-transaction');
-        }
-      }
-      break;
-      
-    case 'charge.refunded':
-      const refund = event.data.object as Stripe.Charge;
-      log(`Charge refunded: ${refund.id}`, 'stripe-webhook');
-      
-      // Get the payment intent from the charge if available
-      const refundedPaymentIntentId = refund.payment_intent as string;
-      const chargeId = refund.id;
-      const isPartialRefund = refund.amount_refunded < refund.amount;
-      
-      // If payment intent ID is available, update related team and log transaction
-      if (refundedPaymentIntentId) {
-        try {
-          // Find the team by the payment intent ID
-          const teamWithPayment = await db.query.teams.findFirst({
-            where: eq(teams.paymentIntentId, refundedPaymentIntentId),
-            columns: {
-              id: true,
-              eventId: true,
-              paymentIntentId: true,
-              notes: true,
-              status: true,
-              totalAmount: true
-            }
-          });
-          
-          if (teamWithPayment) {
-            // Get card details if available
-            let cardBrand = null;
-            let cardLastFour = null;
-            let paymentMethodType = null;
-            
-            if (refund.payment_method_details) {
-              paymentMethodType = refund.payment_method_details.type;
-              
-              if (refund.payment_method_details.card) {
-                cardBrand = refund.payment_method_details.card.brand;
-                cardLastFour = refund.payment_method_details.card.last4;
-              }
-            }
-            
-            // Update team payment status
-            await db
-              .update(teams)
-              .set({
-                status: isPartialRefund ? 'partial_refund' : 'refunded',
-                refundDate: new Date(),
-                notes: `${teamWithPayment.notes || ''}; ${isPartialRefund ? 'Partial Refund' : 'Refunded'}: ${refund.id} on ${new Date().toISOString()}`,
-              })
-              .where(eq(teams.id, teamWithPayment.id));
-              
-            log(`Updated team ${teamWithPayment.id} payment status to ${isPartialRefund ? 'partial_refund' : 'refunded'}`, 'payment');
-            
-            // Log the refund transaction
-            await logPaymentTransaction({
-              teamId: teamWithPayment.id,
-              eventId: teamWithPayment.eventId?.toString(),
-              paymentIntentId: refundedPaymentIntentId,
-              transactionType: isPartialRefund ? 'partial_refund' : 'refund',
-              amount: refund.amount_refunded, // Use the refunded amount
-              status: 'succeeded',
-              cardBrand,
-              cardLastFour,
-              paymentMethodType,
-              metadata: {
-                chargeId: chargeId,
-                originalAmount: refund.amount,
-                refundedAmount: refund.amount_refunded,
-                isPartialRefund: isPartialRefund
-              },
-              notes: `${isPartialRefund ? 'Partial refund' : 'Full refund'} processed. Amount: $${(refund.amount_refunded/100).toFixed(2)}`
-            });
-          } else {
-            // If we can't find the team, still log the refund transaction
-            await logPaymentTransaction({
-              paymentIntentId: refundedPaymentIntentId,
-              transactionType: isPartialRefund ? 'partial_refund' : 'refund',
-              amount: refund.amount_refunded,
-              status: 'succeeded',
-              metadata: {
-                chargeId: chargeId,
-                originalAmount: refund.amount,
-                refundedAmount: refund.amount_refunded,
-                isPartialRefund: isPartialRefund
-              },
-              notes: `${isPartialRefund ? 'Partial refund' : 'Full refund'} processed (no team found). Amount: $${(refund.amount_refunded/100).toFixed(2)}`
-            });
-          }
-        } catch (dbError) {
-          log(`Error processing refund webhook: ${dbError}`, 'payment');
-          
-          // Try to log the refund even if there was an error updating the team
-          try {
-            await logPaymentTransaction({
-              paymentIntentId: refundedPaymentIntentId,
-              transactionType: isPartialRefund ? 'partial_refund' : 'refund',
-              amount: refund.amount_refunded,
-              status: 'succeeded',
-              metadata: {
-                chargeId: chargeId,
-                originalAmount: refund.amount,
-                refundedAmount: refund.amount_refunded,
-                isPartialRefund: isPartialRefund,
-                error: String(dbError)
-              },
-              notes: `${isPartialRefund ? 'Partial refund' : 'Full refund'} processed but team update failed. Amount: $${(refund.amount_refunded/100).toFixed(2)}`
-            });
-          } catch (logError) {
-            log(`Error logging refund transaction: ${logError}`, 'payment-transaction');
-          }
-        }
-      } else {
-        // If we don't have a payment intent ID, log as much as we can
-        try {
-          await logPaymentTransaction({
-            transactionType: isPartialRefund ? 'partial_refund' : 'refund',
-            amount: refund.amount_refunded,
-            status: 'succeeded',
-            metadata: {
-              chargeId: chargeId,
-              originalAmount: refund.amount,
-              refundedAmount: refund.amount_refunded,
-              isPartialRefund: isPartialRefund
-            },
-            notes: `${isPartialRefund ? 'Partial refund' : 'Full refund'} processed (no payment intent ID). Amount: $${(refund.amount_refunded/100).toFixed(2)}`
-          });
-        } catch (logError) {
-          log(`Error logging refund without payment intent: ${logError}`, 'payment-transaction');
-        }
-      }
-      break;
-      
-    case 'charge.dispute.created':
-      const dispute = event.data.object as Stripe.Dispute;
-      const disputedCharge = dispute.charge as string;
-      log(`Dispute created for charge: ${disputedCharge}`, 'stripe-webhook');
-      
-      try {
-        // Try to find the payment intent related to this charge
-        const teamsWithDispute = await db.query.teams.findMany({
-          where: eq(teams.status, 'paid'),
-          columns: {
-            id: true,
-            eventId: true,
-            paymentIntentId: true,
-            notes: true,
-            status: true,
-            totalAmount: true
-          }
-        });
-        
-        // Find the team that matches this disputed charge
-        const disputedTeam = teamsWithDispute.find(t => 
-          t.notes && (t.notes.includes(disputedCharge) || t.paymentIntentId === dispute.payment_intent)
-        );
-        
-        if (disputedTeam) {
-          // Update team payment status to chargeback
-          await db
-            .update(teams)
-            .set({
-              status: 'chargeback',
-              notes: `${disputedTeam.notes || ''}; Chargeback: ${dispute.id} for charge ${disputedCharge} on ${new Date().toISOString()}`,
-            })
-            .where(eq(teams.id, disputedTeam.id));
-            
-          log(`Updated team ${disputedTeam.id} payment status to chargeback`, 'payment');
-          
-          // Log the chargeback transaction
-          await logPaymentTransaction({
-            teamId: disputedTeam.id,
-            eventId: disputedTeam.eventId?.toString(),
-            paymentIntentId: disputedTeam.paymentIntentId || undefined,
-            transactionType: 'chargeback',
-            amount: dispute.amount, // Amount being disputed
-            status: 'succeeded', // The chargeback process started successfully
-            metadata: {
-              chargeId: disputedCharge,
-              disputeId: dispute.id,
-              reason: dispute.reason,
-              disputeEvidence: dispute.evidence
-            },
-            notes: `Chargeback initiated. Reason: ${dispute.reason || 'Unknown'}. Amount: $${(dispute.amount/100).toFixed(2)}`
-          });
-        } else {
-          // If we can't find the team, still log the chargeback
-          await logPaymentTransaction({
-            transactionType: 'chargeback',
-            amount: dispute.amount,
-            status: 'succeeded',
-            metadata: {
-              chargeId: disputedCharge,
-              disputeId: dispute.id,
-              reason: dispute.reason,
-              paymentIntentId: dispute.payment_intent as string
-            },
-            notes: `Chargeback initiated (no team found). Reason: ${dispute.reason || 'Unknown'}. Amount: $${(dispute.amount/100).toFixed(2)}`
-          });
-        }
-      } catch (dbError) {
-        log(`Error processing dispute webhook: ${dbError}`, 'payment');
-        
-        // Try to log the chargeback even if there was an error updating the team
-        try {
-          await logPaymentTransaction({
-            transactionType: 'chargeback',
-            amount: dispute.amount,
-            status: 'succeeded',
-            metadata: {
-              chargeId: disputedCharge,
-              disputeId: dispute.id,
-              reason: dispute.reason,
-              error: String(dbError)
-            },
-            notes: `Chargeback initiated but team update failed. Reason: ${dispute.reason || 'Unknown'}. Amount: $${(dispute.amount/100).toFixed(2)}`
-          });
-        } catch (logError) {
-          log(`Error logging chargeback: ${logError}`, 'payment-transaction');
-        }
-      }
-      break;
-      
-    default:
-      log(`Unhandled event type: ${event.type}`, 'stripe-webhook');
+    // Get the last error message if available
+    let errorMessage = 'Payment failed';
+    let errorCode = 'payment_failed';
+    
+    if (paymentIntent.last_payment_error) {
+      errorMessage = paymentIntent.last_payment_error.message || errorMessage;
+      errorCode = paymentIntent.last_payment_error.code || errorCode;
+    }
+    
+    // Log the failed payment transaction
+    await logTransaction({
+      paymentIntentId: paymentIntent.id,
+      teamId: paymentIntent.metadata?.teamId ? parseInt(paymentIntent.metadata.teamId) : null,
+      eventId: paymentIntent.metadata?.eventId || null,
+      transactionType: 'payment',
+      amount: paymentIntent.amount,
+      status: 'failed',
+      errorCode,
+      errorMessage,
+      metadata: paymentIntent.metadata,
+      notes: 'Payment failed via webhook notification',
+    });
+    
+    // Update team payment status if applicable
+    if (paymentIntent.metadata?.teamId) {
+      const teamId = parseInt(paymentIntent.metadata.teamId);
+      await db.update(teams)
+        .set({
+          paymentStatus: 'failed',
+          paymentDate: new Date(),
+        })
+        .where(eq(teams.id, teamId));
+    }
+  } catch (error) {
+    log(`Error handling payment_intent.payment_failed event: ${error}`, 'payment');
   }
-  
-  // Return success to Stripe
-  res.json({ received: true });
+}
+
+async function handleChargeRefunded(charge: Stripe.Charge) {
+  try {
+    log(`Charge refunded: ${charge.id}`, 'payment');
+    
+    // Get the payment intent ID from the charge
+    const paymentIntentId = charge.payment_intent as string;
+    
+    // Determine if this is a full or partial refund
+    const isFullRefund = charge.amount_refunded === charge.amount;
+    const refundStatus = isFullRefund ? 'refunded' : 'partial_refund';
+    
+    // Log the refund transaction
+    await logTransaction({
+      paymentIntentId,
+      teamId: charge.metadata?.teamId ? parseInt(charge.metadata.teamId) : null,
+      eventId: charge.metadata?.eventId || null,
+      transactionType: isFullRefund ? 'refund' : 'partial_refund',
+      amount: charge.amount_refunded,
+      status: 'completed',
+      cardBrand: charge.payment_method_details?.card?.brand || null,
+      cardLast4: charge.payment_method_details?.card?.last4 || null,
+      metadata: charge.metadata,
+      notes: `${isFullRefund ? 'Full' : 'Partial'} refund processed via webhook notification`,
+    });
+    
+    // Update team payment status if applicable
+    if (charge.metadata?.teamId) {
+      const teamId = parseInt(charge.metadata.teamId);
+      await db.update(teams)
+        .set({
+          paymentStatus: refundStatus,
+          refundDate: new Date(),
+        })
+        .where(eq(teams.id, teamId));
+    }
+  } catch (error) {
+    log(`Error handling charge.refunded event: ${error}`, 'payment');
+  }
+}
+
+/**
+ * Helper function to get a user-friendly payment status message
+ */
+function getPaymentStatusMessage(status: string): string {
+  switch (status) {
+    case 'succeeded':
+      return 'Your payment has been processed successfully.';
+    case 'processing':
+      return 'Your payment is being processed.';
+    case 'requires_payment_method':
+      return 'Your payment method was declined or expired. Please try a different payment method.';
+    case 'requires_action':
+      return 'Your payment requires additional verification. Please complete the verification process.';
+    case 'canceled':
+      return 'This payment was canceled.';
+    default:
+      return 'Payment status unknown.';
+  }
 }
