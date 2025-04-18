@@ -68,6 +68,15 @@
   overflow: hidden;
 }
 
+/* ========== Mobile-First Design System ========== */
+:root {
+  --header-height: 64px;
+  --sidebar-width: 280px;
+  --sidebar-width-collapsed: 80px;
+  --sidebar-width-mobile: 260px;
+}
+
+/* ========== Stat Cards ========== */
 .stats-card::before {
   content: '';
   position: absolute;
@@ -80,10 +89,16 @@
 }
 
 .stats-card .stats-value {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--foreground);
   margin-bottom: 0.25rem;
+}
+
+@media (min-width: 768px) {
+  .stats-card .stats-value {
+    font-size: 2rem;
+  }
 }
 
 .stats-card .stats-label {
@@ -91,34 +106,49 @@
   color: var(--muted-foreground);
 }
 
-/* Content Panel */
+/* ========== Content Panel ========== */
 .content-panel {
   background-color: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-/* Subtle Pattern Background */
+@media (min-width: 768px) {
+  .content-panel {
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* ========== Background Patterns ========== */
 .pattern-bg {
   background-color: #ffffff;
   background-image: radial-gradient(rgba(var(--primary-rgb), 0.03) 2px, transparent 2px);
   background-size: 20px 20px;
 }
 
-/* Enhanced Buttons */
+/* ========== Enhanced Buttons ========== */
 .btn-enhanced {
-  padding: 10px 16px;
+  padding: 8px 12px;
   border-radius: 6px;
   font-weight: 500;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   position: relative;
   overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .btn-enhanced {
+    padding: 10px 16px;
+    gap: 8px;
+  }
 }
 
 .btn-enhanced::after {
@@ -141,11 +171,144 @@
   transform: scale(0.98);
 }
 
-/* Improved Dashboard Layout */
+/* ========== Responsive Grid Layouts ========== */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* ========== Responsive Paddings ========== */
+.responsive-container {
+  padding: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .responsive-container {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-container {
+    padding: 2rem;
+  }
+}
+
+/* ========== Responsive Font Sizes ========== */
+.responsive-heading {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+@media (min-width: 640px) {
+  .responsive-heading {
+    font-size: 1.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-heading {
+    font-size: 2rem;
+  }
+}
+
+/* ========== Responsive Tables ========== */
+.responsive-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Table card styles for mobile view */
+.mobile-table-card {
+  display: block;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0.75rem;
+  background-color: white;
+}
+
+.mobile-table-card__row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.mobile-table-card__row:last-child {
+  border-bottom: none;
+}
+
+.mobile-table-card__label {
+  font-weight: 500;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+/* ========== Responsive Form Elements ========== */
+.responsive-form-group {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-form-group {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-form-group {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ========== Responsive Button Groups ========== */
+.responsive-button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .responsive-button-group {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* ========== Touch-Friendly Elements ========== */
+.touch-target {
+  min-height: 44px; /* Apple's recommended minimum touch target size */
+  min-width: 44px;
+}
+
+/* ========== Mobile Scroll Optimizations ========== */
+.scroll-container {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
 }
 
 /* Animation for dashboard items */
