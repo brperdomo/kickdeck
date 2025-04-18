@@ -327,21 +327,23 @@ export function ResponsiveTable<T = any>({
       
       {/* Mobile Pagination */}
       {showPagination && (
-        <div className="flex items-center justify-between py-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 py-4">
           <Button
             variant="outline"
             size="sm"
+            className="flex-shrink-0"
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
           >
             Previous
           </Button>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-muted-foreground text-center flex-grow">
             Page {currentPage} of {Math.ceil(sortedData.length / pageSize)}
           </div>
           <Button
             variant="outline"
             size="sm"
+            className="flex-shrink-0"
             onClick={() => setCurrentPage(prev => prev + 1)}
             disabled={currentPage * pageSize >= sortedData.length}
           >
