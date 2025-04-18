@@ -66,12 +66,12 @@ export function CollapsibleSidebar({
   
   // Calculate the classes for the toggle button based on position
   const toggleClasses = cn(
-    "z-50 bg-primary/90 shadow-sm border border-primary/10 rounded-sm p-0.5 flex items-center justify-center",
+    "z-50 bg-primary/90 shadow-md shadow-primary/20 border border-primary/10 rounded-full p-0.5 flex items-center justify-center",
     {
-      "absolute -right-4 top-1/2 -translate-y-1/2 h-7": togglePosition === "right",
-      "absolute -left-4 top-1/2 -translate-y-1/2 h-7": togglePosition === "left",
-      "absolute top-4 right-4": togglePosition === "top",
-      "absolute bottom-4 right-4": togglePosition === "bottom",
+      "absolute -right-4 top-1/2 -translate-y-1/2 h-8 w-8": togglePosition === "right",
+      "absolute -left-4 top-1/2 -translate-y-1/2 h-8 w-8": togglePosition === "left",
+      "absolute top-4 right-4 h-8 w-8": togglePosition === "top",
+      "absolute bottom-4 right-4 h-8 w-8": togglePosition === "bottom",
     }
   );
   
@@ -131,13 +131,13 @@ export function CollapsibleSidebar({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-primary-foreground p-0 h-5 w-5"
+                  className="text-primary-foreground p-0 h-6 w-6"
                   onClick={() => setIsCollapsed(true)}
                 >
                   {togglePosition === "left" || togglePosition === "right" ? (
-                    <ChevronLeft className="h-3.5 w-3.5" />
+                    <ChevronLeft className="h-4 w-4" />
                   ) : (
-                    <Menu className="h-3.5 w-3.5" />
+                    <Menu className="h-4 w-4" />
                   )}
                 </Button>
               </div>
@@ -145,27 +145,39 @@ export function CollapsibleSidebar({
           </motion.div>
         )}
         
-        {/* Collapsed sidebar - just a placeholder */}
+        {/* Collapsed sidebar - now with better visibility for expand button */}
         {isCollapsed && !shouldAutoCollapse && (
           <div className="relative h-screen">
             <div 
               className={cn(
-                "h-screen border-r w-2 relative", 
+                "h-screen border-r w-10 flex items-center justify-center relative", 
                 className
               )}
-              style={sidebarStyles}
-            />
+              style={{
+                ...sidebarStyles,
+                cursor: 'pointer',
+              }}
+              onClick={() => setIsCollapsed(false)}
+            >
+              {/* Visual indicators for expandability */}
+              <div className="h-20 w-1 rounded-full bg-primary/20 absolute"></div>
+              <div className="flex flex-col items-center justify-center gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-primary/40"></div>
+                <div className="h-1.5 w-1.5 rounded-full bg-primary/40"></div>
+                <div className="h-1.5 w-1.5 rounded-full bg-primary/40"></div>
+              </div>
+            </div>
             
-            {/* Expand button */}
+            {/* Expand button with improved visibility */}
             {showToggle && (
               <div className={toggleClasses}>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-primary-foreground p-0 h-5 w-5"
+                  className="text-primary-foreground p-0 h-6 w-6"
                   onClick={() => setIsCollapsed(false)}
                 >
-                  <ChevronRight className="h-3.5 w-3.5" />
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
             )}
