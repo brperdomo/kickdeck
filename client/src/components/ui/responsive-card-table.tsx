@@ -1,20 +1,12 @@
-import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationEllipsis, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
-} from '@/components/ui/pagination';
-import { Badge } from '@/components/ui/badge';
-import { ChevronRight } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
-import { Button } from './button';
-import { useMobileContext } from '@/hooks/use-mobile';
+import React, { useState, useMemo } from "react";
+import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useMobileContext } from "@/hooks/use-mobile";
 
 export interface ResponsiveCardTableColumn<T = any> {
   header: string;
@@ -53,10 +45,12 @@ export function ResponsiveCardTable<T = any>({
   columns,
   onRowClick,
   isLoading = false,
-  emptyMessage = 'No data available',
-  keyField = 'id',
-  className = '',
-  cardClassName = '',
+  emptyMessage = "No data found",
+  onSearch,
+  searchPlaceholder = "Search...",
+  keyField = "id",
+  className,
+  cardClassName,
   showPagination = false,
   currentPage = 1,
   setCurrentPage,
@@ -65,210 +59,265 @@ export function ResponsiveCardTable<T = any>({
   totalPages = 1,
   renderRowActions
 }: ResponsiveCardTableProps<T>) {
-  const { isMobile, isTablet } = useMobileContext();
-  const isCardView = isMobile || isTablet;
-
-  // Render loading skeletons
-  if (isLoading) {
-    return (
-      <div className={cn("space-y-4", className)}>
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i} className="p-4 space-y-3">
-            <Skeleton className="h-5 w-2/3" />
-            <Skeleton className="h-4 w-1/2" />
-            <div className="flex gap-2">
-              <Skeleton className="h-6 w-20" />
-              <Skeleton className="h-6 w-20" />
-            </div>
-          </Card>
-        ))}
-      </div>
-    );
-  }
-
-  // Render empty state
-  if (data.length === 0) {
-    return (
-      <div className={cn("py-8 text-center text-muted-foreground", className)}>
-        {emptyMessage}
-      </div>
-    );
-  }
-
+  const { isMobile } = useMobileContext();
+  const [searchTerm, setSearchTerm] = useState("");
+  
+  // Handle local search if onSearch is not provided
+  const filteredData = useMemo(() => {
+    if (!onSearch && searchTerm) {
+      const lowerSearchTerm = searchTerm.toLowerCase();
+      return data.filter(row => {
+        return Object.entries(row as Record<string, any>).some(([key, value]) => {
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(lowerSearchTerm);
+          }
+          if (typeof value === 'number') {
+            return value.toString().includes(lowerSearchTerm);
+          }
+          return false;
+        });
+      });
+    }
+    return data;
+  }, [data, searchTerm, onSearch]);
+  
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (onSearch) {
+      onSearch(value);
+    }
+  };
+  
+  // Pagination handlers
+  const handlePreviousPage = () => {
+    if (setCurrentPage && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+  
+  const handleNextPage = () => {
+    if (setCurrentPage && currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  
+  // Get primary column for card title
+  const getPrimaryColumn = () => columns.find(col => col.primaryColumn);
+  
+  // Get secondary column for card subtitle
+  const getSecondaryColumn = () => columns.find(col => col.secondaryColumn);
+  
+  // Get badge column for card badge
+  const getBadgeColumn = () => columns.find(col => col.badgeColumn);
+  
+  // Helper to render cell content
   const renderCellContent = (row: T, column: ResponsiveCardTableColumn<T>) => {
     if (column.cell) {
       return column.cell(row);
     }
     
-    const value = row[column.accessorKey as keyof T];
-    if (value === undefined || value === null) {
-      return null;
+    const value = (row as any)[column.accessorKey];
+    
+    if (value === null || value === undefined) {
+      return "-";
     }
     
-    return String(value);
+    return value;
   };
-
-  // Get the primary column for card title
-  const getPrimaryColumn = () => columns.find(col => col.primaryColumn) || columns[0];
   
-  // Get the secondary column for card subtitle if defined
-  const getSecondaryColumn = () => columns.find(col => col.secondaryColumn);
-  
-  // Get badge columns
-  const getBadgeColumns = () => columns.filter(col => col.badgeColumn);
-  
-  // Get data columns (excluding primary, secondary, badges, and actions)
-  const getDataColumns = () => columns.filter(
-    col => !col.primaryColumn && !col.secondaryColumn && !col.badgeColumn && !col.disableCards
-  );
-
-  // For direct pagination number rendering
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    let startPage = Math.max(1, currentPage - 1);
-    let endPage = Math.min(totalPages, startPage + 2);
-    
-    // Adjust startPage if endPage is maxed out
-    if (endPage === totalPages) {
-      startPage = Math.max(1, endPage - 2);
-    }
-    
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(
-        <PaginationItem key={i}>
-          <PaginationLink
-            isActive={i === currentPage}
-            onClick={() => setCurrentPage?.(i)}
-          >
-            {i}
-          </PaginationLink>
-        </PaginationItem>
-      );
-    }
-    
-    // Add ellipses if needed
-    if (startPage > 1) {
-      pageNumbers.unshift(
-        <PaginationItem key="start-ellipsis">
-          <PaginationEllipsis />
-        </PaginationItem>
-      );
-    }
-    
-    if (endPage < totalPages) {
-      pageNumbers.push(
-        <PaginationItem key="end-ellipsis">
-          <PaginationEllipsis />
-        </PaginationItem>
-      );
-    }
-    
-    return pageNumbers;
-  };
-
   return (
     <div className={cn("space-y-4", className)}>
-      {/* Card View for Mobile and Tablet */}
-      {isCardView ? (
-        <div className="space-y-4">
-          {data.map((row) => {
-            const primaryColumn = getPrimaryColumn();
-            const secondaryColumn = getSecondaryColumn();
-            const badgeColumns = getBadgeColumns();
-            const dataColumns = getDataColumns();
+      {/* Search input */}
+      {onSearch !== undefined && (
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={searchPlaceholder}
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="pl-9"
+          />
+        </div>
+      )}
+      
+      {isLoading ? (
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : filteredData.length === 0 ? (
+        <div className="text-center py-8 text-muted-foreground">
+          {emptyMessage}
+        </div>
+      ) : isMobile ? (
+        // Mobile card view
+        <div className="space-y-3">
+          {filteredData.map((row, rowIndex) => {
+            const primaryCol = getPrimaryColumn() || columns[0];
+            const secondaryCol = getSecondaryColumn();
+            const badgeCol = getBadgeColumn();
             
             return (
               <Card 
-                key={row[keyField as keyof T] as React.Key}
+                key={rowIndex}
                 className={cn(
-                  "overflow-hidden",
-                  onRowClick ? "cursor-pointer" : "",
+                  "border overflow-hidden", 
+                  onRowClick && "cursor-pointer hover:border-primary transition-colors",
                   cardClassName
                 )}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
-                <div className="p-4 space-y-4">
-                  {/* Header with primary column and badges */}
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      {/* Primary column (title) */}
-                      <div className="font-medium text-lg">
-                        {primaryColumn && renderCellContent(row, primaryColumn)}
+                <CardContent className="p-0">
+                  {/* Card header with primary and badge if available */}
+                  <div className="flex items-start justify-between border-b p-4">
+                    <div>
+                      <div className="font-medium text-base">
+                        {renderCellContent(row, primaryCol)}
                       </div>
                       
-                      {/* Secondary column (subtitle) */}
-                      {secondaryColumn && (
-                        <div className="text-sm text-muted-foreground">
-                          {renderCellContent(row, secondaryColumn)}
+                      {secondaryCol && (
+                        <div className="text-sm text-muted-foreground mt-1">
+                          {renderCellContent(row, secondaryCol)}
                         </div>
                       )}
                     </div>
                     
-                    {/* Badge columns */}
-                    <div className="flex flex-wrap gap-2 justify-end">
-                      {badgeColumns.map((column) => (
-                        <div key={column.accessorKey}>
-                          {renderCellContent(row, column)}
-                        </div>
-                      ))}
-                    </div>
+                    {badgeCol && (
+                      <div>
+                        {typeof renderCellContent(row, badgeCol) === 'string' ? (
+                          <Badge variant="outline">
+                            {renderCellContent(row, badgeCol)}
+                          </Badge>
+                        ) : (
+                          renderCellContent(row, badgeCol)
+                        )}
+                      </div>
+                    )}
                   </div>
                   
-                  {/* Data columns */}
-                  <div className="space-y-2">
-                    {dataColumns.map((column) => (
-                      <div 
-                        key={column.accessorKey} 
-                        className="flex justify-between items-center text-sm"
-                      >
-                        <span className="font-medium">{column.header}:</span>
-                        <span>{renderCellContent(row, column)}</span>
+                  {/* Card body with remaining columns */}
+                  <div className="p-4 pt-3 space-y-2">
+                    {columns.filter(col => 
+                      !col.primaryColumn && 
+                      !col.secondaryColumn && 
+                      !col.badgeColumn && 
+                      !col.disableCards
+                    ).map((column, colIndex) => (
+                      <div key={colIndex} className="flex justify-between items-start gap-2">
+                        <div className="text-sm font-medium text-muted-foreground">
+                          {column.header}:
+                        </div>
+                        <div className="text-sm text-right">
+                          {renderCellContent(row, column)}
+                        </div>
                       </div>
                     ))}
                   </div>
                   
-                  {/* Actions */}
+                  {/* Row actions if provided */}
                   {renderRowActions && (
-                    <div className="pt-2 border-t mt-2">
+                    <div className="border-t px-4 py-3 bg-muted/10">
                       {renderRowActions(row)}
                     </div>
                   )}
-                </div>
+                </CardContent>
               </Card>
             );
           })}
         </div>
       ) : (
-        // Table View for Desktop - Fallback to regular table if needed
+        // Desktop table view (using standard table)
         <div className="border rounded-md overflow-hidden">
-          {/* This implementation should be handled by the regular table component */}
-          <div className="text-center p-4">
-            Table view for desktop - Use regular table component
-          </div>
+          <table className="w-full">
+            <thead className="bg-muted/50">
+              <tr>
+                {columns.map((column, index) => (
+                  <th 
+                    key={index} 
+                    className={cn(
+                      "px-4 py-3 text-left text-sm font-medium text-muted-foreground",
+                      column.className
+                    )}
+                  >
+                    {column.header}
+                  </th>
+                ))}
+                
+                {renderRowActions && (
+                  <th className="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
+                    Actions
+                  </th>
+                )}
+              </tr>
+            </thead>
+            
+            <tbody>
+              {filteredData.map((row, rowIndex) => (
+                <tr 
+                  key={rowIndex}
+                  className={cn(
+                    "border-t",
+                    onRowClick && "cursor-pointer hover:bg-muted/50 transition-colors"
+                  )}
+                  onClick={onRowClick ? () => onRowClick(row) : undefined}
+                >
+                  {columns.map((column, colIndex) => (
+                    <td 
+                      key={colIndex} 
+                      className={cn("px-4 py-3 text-sm", column.className)}
+                    >
+                      {renderCellContent(row, column)}
+                    </td>
+                  ))}
+                  
+                  {renderRowActions && (
+                    <td className="px-4 py-3 text-right">
+                      {renderRowActions(row)}
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
       
-      {/* Pagination Controls */}
-      {showPagination && totalPages > 1 && (
-        <Pagination className="pt-2">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setCurrentPage?.(Math.max(1, currentPage - 1))}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-              />
-            </PaginationItem>
+      {/* Pagination */}
+      {showPagination && (
+        <div className="flex flex-wrap items-center justify-between gap-4 mt-4">
+          <div className="text-sm text-muted-foreground">
+            Showing {Math.min((currentPage - 1) * pageSize + 1, totalItems)} to {Math.min(currentPage * pageSize, totalItems)} of {totalItems} entries
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePreviousPage}
+              disabled={currentPage <= 1 || !setCurrentPage}
+              className="h-8 px-3"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
             
-            {renderPageNumbers()}
+            <div className="text-sm px-2">
+              Page {currentPage} of {totalPages}
+            </div>
             
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setCurrentPage?.(Math.min(totalPages, currentPage + 1))}
-                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages || !setCurrentPage}
+              className="h-8 px-3"
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );

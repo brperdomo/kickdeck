@@ -391,175 +391,6 @@ export function EventsTable() {
     setEventToDelete(event);
     setDeleteDialogOpen(true);
   };
-  
-  // Handle status filters
-  const handleStatusFilterChange = (value: "past" | "active" | "upcoming" | "all") => {
-    setStatusFilter(value);
-    setCurrentPage(1); // Reset to first page when changing filters
-  };
-
-  // Define columns for the responsive card table
-  const { isMobile } = useMobileContext();
-  
-  // Prepare columns for responsive card table
-  const tableColumns = [
-    {
-      header: "Event Name",
-      accessorKey: "name",
-      primaryColumn: true,
-      cell: (row: any) => (
-        <div className="font-medium">
-          {row.name}
-          {row.isArchived && (
-            <Badge variant="outline" className="ml-2">Archived</Badge>
-          )}
-        </div>
-      )
-    },
-    {
-      header: "Dates",
-      accessorKey: "dates",
-      secondaryColumn: true,
-      cell: (row: any) => (
-        <span className="whitespace-nowrap">
-          {formatDate(row.startDate)} — {formatDate(row.endDate)}
-        </span>
-      )
-    },
-    {
-      header: "Applications",
-      accessorKey: "applications",
-      cell: (row: any) => (
-        <span>
-          {row.applicationsReceived} / {row.teamsAccepted}
-        </span>
-      )
-    },
-    {
-      header: "Application Deadline",
-      accessorKey: "applicationDeadline",
-      cell: (row: any) => (
-        <span className="whitespace-nowrap">
-          {formatDate(row.applicationDeadline)}
-        </span>
-      )
-    },
-    {
-      header: "Status",
-      accessorKey: "status",
-      badgeColumn: true,
-      cell: (row: any) => (
-        <Badge 
-          variant={
-            row.status === "active" ? "default" : 
-            row.status === "upcoming" ? "outline" : 
-            "secondary"
-          }
-        >
-          {row.status === "active" ? "Active" : 
-           row.status === "upcoming" ? "Upcoming" : 
-           "Past"}
-        </Badge>
-      )
-    }
-  ];
-  
-  // Row actions for responsive card table
-  const renderRowActions = (event: any) => {
-    return (
-      <div className="flex flex-wrap gap-2 justify-end">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => navigate(`/admin/events/${event.id}/edit`)}
-        >
-          <Edit className="h-4 w-4 mr-2" />
-          Edit
-        </Button>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
-              <MoreHorizontal className="h-4 w-4 mr-2" />
-              More
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem 
-              onClick={() => navigate(`/admin/events/${event.id}/teams`)}
-            >
-              <User className="mr-2 h-4 w-4" />
-              View Teams
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => navigate(`/admin/events/${event.id}/forms`)}
-            >
-              <FormInput className="mr-2 h-4 w-4" />
-              Forms
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => navigate(`/admin/events/${event.id}/fee-manager`)}
-            >
-              <DollarSign className="mr-2 h-4 w-4" />
-              Fees
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => navigate(`/admin/events/${event.id}/terms-condition`)}
-            >
-              <FileQuestion className="mr-2 h-4 w-4" />
-              Terms
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => handleGenerateRegistrationLink(event.id)}
-            >
-              <Link2 className="mr-2 h-4 w-4" />
-              Registration Link
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => navigate(`/admin/events/${event.id}/coupons`)}
-            >
-              <Ticket className="mr-2 h-4 w-4" />
-              Coupons
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => {
-                cloneEventMutation.mutate(event.id);
-              }}
-            >
-              <Copy className="mr-2 h-4 w-4" />
-              Clone Event
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                toggleArchiveMutation.mutate(event.id);
-              }}
-            >
-              {event.isArchived ? (
-                <>
-                  <RotateCcw className="mr-2 h-4 w-4" />
-                  Unarchive Event
-                </>
-              ) : (
-                <>
-                  <Archive className="mr-2 h-4 w-4" />
-                  Archive Event
-                </>
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={() => openDeleteDialog(event)}
-            >
-              <Trash className="mr-2 h-4 w-4" />
-              Delete Event
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    );
-  };
 
   if (eventsQuery.isLoading) {
     return (
@@ -578,134 +409,183 @@ export function EventsTable() {
   }
 
   return (
-    <Card className="overflow-hidden">
-      {/* Search and filter controls */}
-      <div className="p-4 flex flex-col sm:flex-row items-start justify-between gap-4">
-        <div className="w-full sm:w-96 relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search events by name..."
-            className="pl-9"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+    <Card className="shadow-sm">
+      <div className="p-6">
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search events..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 w-[300px]"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as typeof statusFilter)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="past">Past</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="upcoming">Upcoming</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        
-        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
-          <Button
-            variant={statusFilter === "all" ? "default" : "outline"}
-            size="sm"
-            onClick={() => handleStatusFilterChange("all")}
-            className="h-8 px-3"
-          >
-            All
-          </Button>
-          
-          <Button
-            variant={statusFilter === "upcoming" ? "default" : "outline"}
-            size="sm"
-            onClick={() => handleStatusFilterChange("upcoming")}
-            className="h-8 px-3"
-          >
-            Upcoming
-          </Button>
-          
-          <Button
-            variant={statusFilter === "active" ? "default" : "outline"}
-            size="sm"
-            onClick={() => handleStatusFilterChange("active")}
-            className="h-8 px-3"
-          >
-            Active
-          </Button>
-          
-          <Button
-            variant={statusFilter === "past" ? "default" : "outline"}
-            size="sm"
-            onClick={() => handleStatusFilterChange("past")}
-            className="h-8 px-3"
-          >
-            Past
-          </Button>
+
+        <div className="rounded-md border">
+          <Table className="event-list">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("name")}>
+                  <div className="flex items-center">
+                    Event Name
+                    <SortIcon field="name" />
+                  </div>
+                </TableHead>
+                <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("date")}>
+                  <div className="flex items-center">
+                    Date
+                    <SortIcon field="date" />
+                  </div>
+                </TableHead>
+                <TableHead>End Date</TableHead>
+                <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("status")}>
+                  <div className="flex items-center">
+                    Status
+                    <SortIcon field="status" />
+                  </div>
+                </TableHead>
+                <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("deadline")}>
+                  <div className="flex items-center">
+                    Registration Deadline
+                    <SortIcon field="deadline" />
+                  </div>
+                </TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedEvents.map((event) => (
+                <TableRow key={event.id}>
+                  <TableCell className="font-medium">{event.name}</TableCell>
+                  <TableCell>{formatDate(event.startDate)}</TableCell>
+                  <TableCell>{formatDate(event.endDate)}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        event.status === "past"
+                          ? "secondary"
+                          : event.status === "active"
+                          ? "default"
+                          : "outline"
+                      }
+                    >
+                      {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{formatDate(event.applicationDeadline)}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Event Actions</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={() => navigate(`/admin/events/${event.id}/edit`)}
+                          className="event-edit-button"
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/fees`)}>
+                          <DollarSign className="mr-2 h-4 w-4" />
+                          Manage Fees
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/application-form`)}>
+                          <FormInput className="mr-2 h-4 w-4" />
+                          Registration Form
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleGenerateRegistrationLink(event.id)}>
+                          <Link2 className="mr-2 h-4 w-4" />
+                          Generate Registration Link
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/coupons`)}>
+                          <Ticket className="mr-2 h-4 w-4" />
+                          Create Coupons
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => cloneEventMutation.mutate(event.id)}>
+                          <Copy className="mr-2 h-4 w-4" />
+                          Clone Event
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => toggleArchiveMutation.mutate(event.id)}
+                        >
+                          {event.isArchived ? (
+                            <>
+                              <RotateCcw className="mr-2 h-4 w-4" />
+                              Unarchive
+                            </>
+                          ) : (
+                            <>
+                              <Archive className="mr-2 h-4 w-4" />
+                              Archive
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-red-600 event-delete-button"
+                          onClick={() => openDeleteDialog(event)}
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </div>
-      
-      {/* Responsive Table/Card View */}
-      <div className="border-t">
-        {eventsQuery.isLoading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : eventsQuery.isError ? (
-          <div className="flex justify-center py-8 text-red-500">
-            <AlertTriangle className="h-6 w-6 mr-2" />
-            <span>Failed to load events: {(eventsQuery.error as Error).message}</span>
-          </div>
-        ) : eventsQuery.data && eventsQuery.data.events.length === 0 ? (
-          <div className="flex justify-center items-center py-8 text-muted-foreground">
-            No events found. {showArchived ? "" : "Enable 'Show archived events' to see archived events."}
-          </div>
-        ) : (
-          <div className="p-4">
-            <ResponsiveCardTable
-              data={sortedEvents}
-              columns={tableColumns}
-              renderRowActions={renderRowActions}
-              onRowClick={(event) => navigate(`/admin/events/${event.id}/edit`)}
-              keyField="id"
-              cardClassName="hover:border-primary transition-all duration-200"
-              showPagination={true}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-              totalPages={paginationData.totalPages}
-              totalItems={paginationData.totalEvents}
-              pageSize={pageSize}
-            />
-          </div>
-        )}
-      </div>
-      
-      {/* Archive Toggle - Separate from pagination now */}
-      <div className="p-4 border-t">
-        <div className="flex items-center gap-2">
-          <Switch 
-            id="show-archived" 
-            checked={showArchived}
-            onCheckedChange={setShowArchived}
-          />
-          <label htmlFor="show-archived">Show archived events</label>
-        </div>
-      </div>
-      
-      {/* Delete confirmation dialog */}
+
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Event</DialogTitle>
             <DialogDescription>
-              This action cannot be undone. This will permanently delete the event and all associated data.
+              This action cannot be undone. To confirm deletion, please type REMOVE in the field below.
+              This will permanently delete the event "{eventToDelete?.name}" and all associated data.
             </DialogDescription>
           </DialogHeader>
-          
-          <div className="py-4">
-            <p className="mb-2">Type <strong>REMOVE</strong> to confirm deletion:</p>
-            <Input 
-              value={deleteConfirmText}
-              onChange={(e) => setDeleteConfirmText(e.target.value)}
-              placeholder="REMOVE"
-              className="mt-2"
-            />
-          </div>
-          
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setDeleteDialogOpen(false)}
+          <Input
+            value={deleteConfirmText}
+            onChange={(e) => setDeleteConfirmText(e.target.value)}
+            placeholder="Type REMOVE to confirm"
+            className="mt-4"
+          />
+          <DialogFooter className="mt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setDeleteConfirmText("");
+                setEventToDelete(null);
+              }}
             >
               Cancel
             </Button>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
+              className="event-delete-button"
               onClick={handleDeleteEvent}
               disabled={deleteConfirmText.toUpperCase() !== "REMOVE"}
             >
@@ -714,6 +594,128 @@ export function EventsTable() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      {/* Pagination and Archive Toggle */}
+      <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between border-t gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full sm:w-auto">
+          <div className="flex items-center gap-2">
+            <Switch 
+              id="show-archived" 
+              checked={showArchived}
+              onCheckedChange={setShowArchived}
+            />
+            <label htmlFor="show-archived">Show archived events</label>
+          </div>
+          
+          <div className="flex items-center gap-2 flex-wrap">
+            <label htmlFor="page-size">Show</label>
+            <Select value={pageSize.toString()} onValueChange={(value) => {
+              setPageSize(parseInt(value));
+              setCurrentPage(1); // Reset to page 1 when changing page size
+            }}>
+              <SelectTrigger className="w-[80px]" id="page-size">
+                <SelectValue placeholder="5" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectContent>
+            </Select>
+            <span>events per page</span>
+          </div>
+        </div>
+        
+        {/* Mobile-friendly pagination with horizontal scrolling if needed */}
+        <div className="w-full sm:w-auto overflow-x-auto">
+          <Pagination>
+            <PaginationContent className="flex flex-wrap gap-1 sm:gap-0">
+              <PaginationItem>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="gap-1 h-8 whitespace-nowrap flex-shrink-0"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage <= 1 || eventsQuery.isLoading}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline">Previous</span>
+                  <span className="sm:hidden">Prev</span>
+                </Button>
+              </PaginationItem>
+              
+              {/* Page numbers - hidden on small mobile screens */}
+              <div className="hidden sm:flex items-center">
+                {paginationData.totalPages > 0 && Array.from({ length: Math.min(paginationData.totalPages, 5) }).map((_, i) => {
+                  // Show pages around current page
+                  let pageToShow;
+                  
+                  if (paginationData.totalPages <= 5) {
+                    // If we have 5 or fewer pages, show all pages
+                    pageToShow = i + 1;
+                  } else if (currentPage <= 3) {
+                    // If we're near the start, show first 5 pages
+                    pageToShow = i + 1;
+                  } else if (currentPage >= paginationData.totalPages - 2) {
+                    // If we're near the end, show last 5 pages
+                    pageToShow = paginationData.totalPages - 4 + i;
+                  } else {
+                    // Otherwise show 2 pages before and after current page
+                    pageToShow = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <PaginationItem key={pageToShow}>
+                      <PaginationLink 
+                        onClick={() => setCurrentPage(pageToShow)}
+                        isActive={currentPage === pageToShow}
+                      >
+                        {pageToShow}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+                
+                {paginationData.totalPages > 5 && currentPage < paginationData.totalPages - 2 && (
+                  <>
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink 
+                        onClick={() => setCurrentPage(paginationData.totalPages)}
+                        isActive={currentPage === paginationData.totalPages}
+                      >
+                        {paginationData.totalPages}
+                      </PaginationLink>
+                    </PaginationItem>
+                  </>
+                )}
+              </div>
+              
+              {/* Simple page indicator for mobile */}
+              <div className="sm:hidden flex items-center px-2 text-sm">
+                Page {currentPage} of {paginationData.totalPages}
+              </div>
+              
+              <PaginationItem>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="gap-1 h-8 whitespace-nowrap flex-shrink-0"
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, paginationData.totalPages))}
+                  disabled={currentPage >= paginationData.totalPages || eventsQuery.isLoading}
+                >
+                  <span>Next</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      </div>
     </Card>
   );
 }

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { MemberSidebar } from "./MemberSidebar";
 import { motion } from "framer-motion";
-import { useMobileContext } from "@/hooks/use-mobile";
+import { useBreakpoint } from "@/hooks/use-mobile";
 import { MobileDashboard } from "@/components/mobile/MobileDashboard";
 
 interface MemberLayoutProps {
@@ -10,7 +10,7 @@ interface MemberLayoutProps {
 }
 
 export function MemberLayout({ children, mobileDashboard = false }: MemberLayoutProps) {
-  const { isMobile } = useMobileContext();
+  const { isMobile } = useBreakpoint();
   
   // Check if we should use mobile layout
   const useMobileDashboard = mobileDashboard || isMobile;

@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { useMobileContext } from "@/hooks/use-mobile";
+import { useBreakpoint } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Link } from "wouter";
@@ -30,7 +30,7 @@ export function ResponsivePageLayout({
   headerClassName,
   contentClassName,
 }: ResponsivePageLayoutProps) {
-  const { isMobile, isTablet } = useMobileContext();
+  const { isMobile, isTablet } = useBreakpoint();
 
   return (
     <div className={cn(
@@ -132,7 +132,7 @@ export function ResponsiveSection({
   titleClassName,
   contentClassName,
 }: ResponsiveSectionProps) {
-  const { isMobile } = useMobileContext();
+  const { isMobile } = useBreakpoint();
   
   return (
     <section className={cn("mb-8", className)}>
