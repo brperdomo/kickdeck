@@ -64,13 +64,32 @@ export function AdminLayout({ children, sidebar, styles }) {
   const { isMobile, isTablet } = useBreakpoint();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [location] = useLocation();
-
+  
   // Close sidebar when changing routes on mobile
   useEffect(() => {
     if (isMobile && isSidebarOpen) {
       setIsSidebarOpen(false);
     }
   }, [location, isMobile]);
+  
+  // Check if we're on the main admin dashboard page
+  const isMainAdminDashboard = location === "/admin" || location === "/admin/";
+  
+  // If it's the main admin dashboard and we're on mobile, use the dedicated mobile layout
+  if (isMobile && isMainAdminDashboard) {
+    // Import is at the top of the file
+    const MobileAdminDashboard = React.lazy(() => import('@/components/mobile/MobileAdminDashboard').then(mod => ({ default: mod.MobileAdminDashboard })));
+    
+    return (
+      <React.Suspense fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full"></div>
+        </div>
+      }>
+        <MobileAdminDashboard toggleSidebar={() => setIsSidebarOpen(true)} />
+      </React.Suspense>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen" style={{ backgroundColor: styles?.adminNavBackground || '#FFFFFF'}}> 
@@ -133,7 +152,10 @@ export function AdminLayout({ children, sidebar, styles }) {
         
         {/* Main Content */}
         <main className="flex-1 overflow-auto scroll-container">
-          {children}
+          {/* On mobile, add padding to the content */}
+          <div className={isMobile || isTablet ? "p-4" : ""}>
+            {children}
+          </div>
         </main>
       </div>
     </div>
