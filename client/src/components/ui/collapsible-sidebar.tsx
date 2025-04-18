@@ -66,10 +66,10 @@ export function CollapsibleSidebar({
   
   // Calculate the classes for the toggle button based on position
   const toggleClasses = cn(
-    "z-50 bg-card shadow-md border rounded-full p-1.5",
+    "z-50 bg-primary shadow-md border border-primary/20 rounded-md p-1 flex items-center justify-center",
     {
-      "absolute -right-4 top-4": togglePosition === "right",
-      "absolute -left-4 top-4": togglePosition === "left",
+      "absolute -right-6 top-6 h-12": togglePosition === "right",
+      "absolute -left-6 top-6 h-12": togglePosition === "left",
       "absolute top-4 right-4": togglePosition === "top",
       "absolute bottom-4 right-4": togglePosition === "bottom",
     }
@@ -130,14 +130,20 @@ export function CollapsibleSidebar({
               <div className={toggleClasses}>
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 p-0"
+                  size="sm"
+                  className="text-primary-foreground p-0 px-2 flex items-center min-w-max"
                   onClick={() => setIsCollapsed(true)}
                 >
                   {togglePosition === "left" || togglePosition === "right" ? (
-                    <ChevronLeft className="h-4 w-4" />
+                    <>
+                      <ChevronLeft className="h-4 w-4 mr-1" />
+                      <span className="text-xs font-medium">Close</span>
+                    </>
                   ) : (
-                    <Menu className="h-4 w-4" />
+                    <>
+                      <Menu className="h-4 w-4 mr-1" />
+                      <span className="text-xs font-medium">Close</span>
+                    </>
                   )}
                 </Button>
               </div>
@@ -161,11 +167,12 @@ export function CollapsibleSidebar({
               <div className={toggleClasses}>
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 p-0"
+                  size="sm"
+                  className="text-primary-foreground p-0 px-2 flex items-center min-w-max"
                   onClick={() => setIsCollapsed(false)}
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4 mr-1" />
+                  <span className="text-xs font-medium">Open</span>
                 </Button>
               </div>
             )}
