@@ -139,15 +139,15 @@ export function AnimatedSidebar({
       <div className="absolute top-0 bottom-0 right-0 w-[1px] bg-gradient-to-b from-indigo-500/0 via-indigo-500/20 to-indigo-500/0 pointer-events-none" />
       
       {/* Enhanced content wrapper with decorative elements */}
-      <div className="relative flex-1 overflow-y-auto">
+      <div className="relative flex-1 flex flex-col overflow-hidden">
         {/* Multiple decorative sidebar elements for enhanced visual depth */}
         <div className="absolute top-10 right-0 w-full h-40 bg-indigo-600/5 blur-[100px] rounded-full pointer-events-none"></div>
         <div className="absolute top-1/2 left-10 w-20 h-20 bg-purple-600/5 blur-[70px] rounded-full pointer-events-none"></div>
         <div className="absolute bottom-20 right-0 w-full h-40 bg-indigo-600/5 blur-[100px] rounded-full pointer-events-none"></div>
         
-        {/* Content with improved spacing */}
-        <div className="p-5 pt-6">
-          <div className="space-y-2.5 relative">
+        {/* Compact content container */}
+        <div className="p-3 pt-4 flex-1 flex flex-col">
+          <div className="space-y-1 relative">
             {children}
           </div>
         </div>

@@ -168,7 +168,7 @@ function NavigationButtonContent({
       animate="visible"
       whileHover="hover"
       whileTap="tap"
-      className="w-full mb-2"
+      className="w-full mb-1"
     >
       <Button
         variant="ghost"
@@ -186,7 +186,9 @@ function NavigationButtonContent({
             : 'rgba(255, 255, 255, 0.7)',
           boxShadow: isActive ? '0 0 20px rgba(99, 102, 241, 0.15)' : 'none',
           borderRadius: '0.375rem',
-          padding: '0.75rem 0.875rem',
+          padding: '0.5rem 0.75rem',
+          height: 'auto',
+          minHeight: '2.25rem',
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
       >
@@ -238,7 +240,7 @@ function NavigationButtonContent({
             {/* Enhanced icon wrapper */}
             <motion.div 
               className={cn(
-                "min-w-8 h-8 flex items-center justify-center rounded-md mr-3 relative",
+                "min-w-6 h-6 flex items-center justify-center rounded-md mr-3 relative",
                 isActive 
                   ? "bg-gradient-to-br from-indigo-600/90 to-indigo-800/90 shadow-lg shadow-indigo-900/20" 
                   : "bg-gray-800/70 border border-gray-700/50"
@@ -293,7 +295,7 @@ function NavigationButtonContent({
                 
                 {/* Subtle underline for active state - always rendered but conditionally visible */}
                 <motion.div 
-                  className={`h-[2px] mt-1 bg-gradient-to-r from-indigo-500/0 via-indigo-500/60 to-indigo-500/0 ${isActive ? 'block' : 'hidden'}`}
+                  className={`h-[1px] mt-0.5 bg-gradient-to-r from-indigo-500/0 via-indigo-500/60 to-indigo-500/0 ${isActive ? 'block' : 'hidden'}`}
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: isActive ? 1 : 0 }}
                   transition={{ duration: 0.3, delay: 0.15 }}
