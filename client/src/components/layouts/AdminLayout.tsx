@@ -4,7 +4,7 @@ import { Link, useLocation } from 'wouter';
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { useBreakpoint } from "@/hooks/use-mobile";
+import { useMobileContext } from "@/hooks/use-mobile";
 
 // Add CSS to use admin dashboard variables
 const sidebarStyles = {
@@ -61,7 +61,7 @@ function StyleSettingsView() {
 }
 
 export function AdminLayout({ children, sidebar, styles }) {
-  const { isMobile, isTablet } = useBreakpoint();
+  const { isMobile, isTablet } = useMobileContext();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [location] = useLocation();
   
@@ -171,7 +171,7 @@ export function AdminSidebar({ children, styles }) {
 }
 
 export function AdminSidebarItem({ activePath, item, styles, ...props }) {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useMobileContext();
   
   return (
     <Link
