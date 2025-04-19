@@ -1148,13 +1148,27 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       id="primaryColor"
                       type="color"
                       value={primaryColor}
-                      onChange={(e) => setPrimaryColor(e.target.value)}
+                      onChange={(e) => {
+                        const color = e.target.value;
+                        setPrimaryColor(color);
+                        form.setValue('branding.primaryColor', color, { 
+                          shouldDirty: true,
+                          shouldValidate: false 
+                        });
+                      }}
                       className="w-24 h-10 p-1"
                     />
                     <Input
                       type="text"
                       value={primaryColor}
-                      onChange={(e) => setPrimaryColor(e.target.value)}
+                      onChange={(e) => {
+                        const color = e.target.value;
+                        setPrimaryColor(color);
+                        form.setValue('branding.primaryColor', color, { 
+                          shouldDirty: true,
+                          shouldValidate: false 
+                        });
+                      }}
                       className="ml-2 w-32"
                     />
                   </div>
@@ -1174,13 +1188,27 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       id="secondaryColor"
                       type="color"
                       value={secondaryColor}
-                      onChange={(e) => setSecondaryColor(e.target.value)}
+                      onChange={(e) => {
+                        const color = e.target.value;
+                        setSecondaryColor(color);
+                        form.setValue('branding.secondaryColor', color, { 
+                          shouldDirty: true,
+                          shouldValidate: false 
+                        });
+                      }}
                       className="w-24 h-10 p-1"
                     />
                     <Input
                       type="text"
                       value={secondaryColor}
-                      onChange={(e) => setSecondaryColor(e.target.value)}
+                      onChange={(e) => {
+                        const color = e.target.value;
+                        setSecondaryColor(color);
+                        form.setValue('branding.secondaryColor', color, { 
+                          shouldDirty: true,
+                          shouldValidate: false 
+                        });
+                      }}
                       className="ml-2 w-32"
                     />
                   </div>
