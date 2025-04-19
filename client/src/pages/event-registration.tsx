@@ -632,8 +632,33 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
           data.settings = [];
         }
         
-        // Log the branding data received from the server
-        console.log('Branding data received from server:', data.branding);
+        // Inspect branding data more carefully - this is critical for theme animation
+        console.log('Inspecting branding data for event:', {
+          eventId,
+          hasBranding: !!data.branding,
+          primaryColor: data.branding?.primaryColor,
+          secondaryColor: data.branding?.secondaryColor,
+          primaryColorType: typeof data.branding?.primaryColor,
+          secondaryColorType: typeof data.branding?.secondaryColor,
+          primaryColorLength: data.branding?.primaryColor?.length,
+          secondaryColorLength: data.branding?.secondaryColor?.length,
+          validPrimaryColor: typeof data.branding?.primaryColor === 'string' && data.branding?.primaryColor?.startsWith('#'),
+          validSecondaryColor: typeof data.branding?.secondaryColor === 'string' && data.branding?.secondaryColor?.startsWith('#')
+        });
+        
+        // Ensure branding object is properly structured before setting state
+        if (data.branding) {
+          // Normalize branding colors to ensure they have # prefix
+          if (data.branding.primaryColor && !data.branding.primaryColor.startsWith('#')) {
+            data.branding.primaryColor = '#' + data.branding.primaryColor;
+            console.log('Fixed primary color format:', data.branding.primaryColor);
+          }
+          
+          if (data.branding.secondaryColor && !data.branding.secondaryColor.startsWith('#')) {
+            data.branding.secondaryColor = '#' + data.branding.secondaryColor;
+            console.log('Fixed secondary color format:', data.branding.secondaryColor);
+          }
+        }
 
         // Set the event data including branding information
         setEvent(data);
