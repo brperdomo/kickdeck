@@ -28,6 +28,7 @@ import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/c
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import paymentsRouter from "./routes/payments";
 import { getRegistrationOrdersReport } from "./routes/reports";
+import { getNewRegistrationsCount, acknowledgeNewRegistrations } from "./routes/admin/registrations";
 import { getTinyMCEConfig } from "./services/configService";
 import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
 import { generateTermsAcknowledgmentDocument, downloadTermsAcknowledgmentDocument, downloadTermsAcknowledgmentByFilename } from "./routes/terms-acknowledgments";
@@ -3078,7 +3079,72 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    // Admin routes
+    // Admin routes for registration notifications
+    app.get('/api/admin/registrations/new-count', isAdmin, async (req, res) => {
+      try {
+        if (!req.user?.id) {
+          return res.status(401).json({ error: "Not authenticated" });
+        }
+    
+        // Get the admin user with last viewed timestamp
+        const [admin] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, req.user.id))
+          .limit(1);
+    
+        if (!admin) {
+          return res.status(404).json({ error: "Admin user not found" });
+        }
+    
+        // If admin has never viewed registrations, use their last login time
+        // If neither exists, default to a recent timestamp (1 day ago)
+        const lastViewTimestamp = admin.lastViewedRegistrations || admin.lastLogin || new Date(Date.now() - 86400000);
+    
+        // Count teams created after the last view timestamp
+        const newRegistrationsCount = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(teams)
+          .where(gt(teams.createdAt, lastViewTimestamp.toISOString()))
+          .then(result => result[0]?.count || 0);
+    
+        // Return the count of new registrations
+        return res.json({ 
+          count: newRegistrationsCount,
+          lastViewed: lastViewTimestamp
+        });
+      } catch (error) {
+        console.error("Error fetching new registrations count:", error);
+        return res.status(500).json({ error: "Failed to fetch new registrations count" });
+      }
+    });
+    
+    app.post('/api/admin/registrations/acknowledge', isAdmin, async (req, res) => {
+      try {
+        if (!req.user?.id) {
+          return res.status(401).json({ error: "Not authenticated" });
+        }
+    
+        // Update the admin's last viewed timestamp to now
+        await db
+          .update(users)
+          .set({
+            lastViewedRegistrations: new Date()
+          })
+          .where(eq(users.id, req.user.id));
+    
+        return res.json({ 
+          success: true, 
+          message: "New team registrations acknowledged",
+          timestamp: new Date()
+        });
+      } catch (error) {
+        console.error("Error acknowledging new registrations:", error);
+        return res.status(500).json({ error: "Failed to acknowledge new registrations" });
+      }
+    });
+    
+    // Admin user management routes
     app.get('/api/admin/users', isAdmin, async (req, res) => {
       try {
         const allUsers = await db

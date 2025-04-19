@@ -145,6 +145,7 @@ import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPa
 import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
 import RolePermissionsManager from "@/components/admin/RolePermissionsManager"; // Added import
 import { AdminBanner } from "@/components/admin/AdminBanner"; // Import the AdminBanner component
+import { NewRegistrationsBanner } from "@/components/admin/NewRegistrationsBanner"; // Import the notification banner
 import { Toggle } from '@/components/ui/toggle';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -4543,6 +4544,8 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
         {/* Use the imported AdminBanner component that includes the ViewToggle */}
         <AdminBanner />
         <div className="p-8 pattern-bg">
+          {/* Display new registration notifications */}
+          <NewRegistrationsBanner />
           {/* Enhanced dashboard with subtle pattern background */}
 
           {/* Welcome Card with Animation */}

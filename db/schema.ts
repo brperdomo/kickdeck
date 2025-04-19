@@ -26,6 +26,8 @@ export const users = pgTable("users", {
   isAdmin: boolean("isAdmin").default(false).notNull(),
   createdAt: text("createdAt").notNull().default(new Date().toISOString()),
   householdId: serial("householdId").references(() => households.id),
+  lastLogin: timestamp("last_login"), // Track last login time
+  lastViewedRegistrations: timestamp("last_viewed_registrations"), // Track when admin last viewed team registrations
 });
 
 export const households = pgTable("households", {

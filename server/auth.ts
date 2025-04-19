@@ -277,9 +277,32 @@ export function setupAuth(app: Express) {
         return res.status(400).send(info.message ?? "Login failed");
       }
 
-      req.logIn(user, (err) => {
+      req.logIn(user, async (err) => {
         if (err) {
           return next(err);
+        }
+
+        try {
+          // Update the user's last login time in the database
+          await db
+            .update(users)
+            .set({
+              lastLogin: new Date()
+            })
+            .where(eq(users.id, user.id));
+            
+          // Also update the cached user
+          if (userCache[user.id]) {
+            userCache[user.id].user = {
+              ...userCache[user.id].user,
+              lastLogin: new Date()
+            };
+          }
+          
+          console.log(`Updated last_login for user ${user.id}`);
+        } catch (updateError) {
+          // Non-blocking - log error but continue login process
+          console.error('Failed to update last_login:', updateError);
         }
 
         // Add stricter caching headers to ensure freshness

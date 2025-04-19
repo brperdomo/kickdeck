@@ -20,6 +20,7 @@ import { addCardDetailsToTeams } from "./migrations/add_card_details_to_teams";
 import { addSchedulingPermissions } from "./migrations/add_scheduling_permissions";
 import { addSortOrderToBrackets } from "./migrations/add_sort_order_to_brackets";
 import { createPaymentTransactionsTable } from "../db/migrations/create_payment_transactions";
+import { addAdminLastLoginFields } from "./migrations/add_admin_last_login";
 
 export async function createTables() {
   try {
@@ -172,6 +173,9 @@ export async function createTables() {
     
     console.log('Creating payment transactions table...');
     await createPaymentTransactionsTable();
+    
+    console.log('Adding admin last login fields...');
+    await addAdminLastLoginFields();
 
     console.log("All tables created successfully");
     return { success: true };
