@@ -1284,25 +1284,38 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     );
   }
 
-  // Log information about branding to debug the issue
+  // Enhanced logging for debugging branding issues
   console.log('Rendering event registration with event data:', { 
     eventId, 
     hasBranding: !!event?.branding,
     primaryColor: event?.branding?.primaryColor,
-    secondaryColor: event?.branding?.secondaryColor
+    secondaryColor: event?.branding?.secondaryColor,
+    brandingObject: event?.branding
   });
 
+  // Force the colors to display for testing (regardless of event branding)
+  const primaryColor = event?.branding?.primaryColor || '#3498db';
+  const secondaryColor = event?.branding?.secondaryColor || '#e74c3c';
+  const shouldShowBranding = true; // Force to true for testing
+  
   return (
     <div className="min-h-screen relative register-event-page">
       {/* Display themed background using event branding colors */}
-      {event?.branding?.primaryColor && event?.branding?.secondaryColor ? (
-        <AnimatedEventBackground 
-          primaryColor={event.branding.primaryColor}
-          secondaryColor={event.branding.secondaryColor}
-          type="particles" 
-          opacity={0.4}
-          className="opacity-80"
-        />
+      {shouldShowBranding ? (
+        <>
+          {/* Debug element to verify positioning */}
+          <div className="fixed top-2 right-2 bg-black text-white p-2 z-50 text-xs rounded">
+            Background active: Primary: {primaryColor}, Secondary: {secondaryColor}
+          </div>
+          
+          <AnimatedEventBackground 
+            primaryColor={primaryColor}
+            secondaryColor={secondaryColor}
+            type="particles" 
+            opacity={0.6}
+            className="opacity-90"
+          />
+        </>
       ) : (
         <SoccerFieldBackground className="opacity-50" />
       )}

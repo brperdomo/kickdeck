@@ -116,7 +116,7 @@ export function AnimatedEventBackground({
       const accent = brightenColor(primary, 20);
       
       const particles: Particle[] = [];
-      const particleCount = Math.floor((canvas.width * canvas.height) / 10000); // Increased density
+      const particleCount = Math.floor((canvas.width * canvas.height) / 5000); // Much higher density
       const speedFactor = speed === "slow" ? 0.3 : speed === "fast" ? 0.8 : 0.5;
       
       console.log("Creating particles animation with:", {
@@ -145,7 +145,7 @@ export function AnimatedEventBackground({
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 5 + 2, // Larger particle size between 2-7
+          size: Math.random() * 8 + 3, // Much larger particle size between 3-11
           speedX: (Math.random() - 0.5) * speedFactor,
           speedY: (Math.random() - 0.5) * speedFactor,
           color: `rgba(${particleColor.r}, ${particleColor.g}, ${particleColor.b}, ${Math.min(opacity * 1.5, 1)})`
@@ -200,15 +200,15 @@ export function AnimatedEventBackground({
       <div 
         className="fixed top-0 left-0 w-full h-full" 
         style={{
-          backgroundColor: primaryColor,
-          opacity: 0.3,
-          zIndex: -1,
+          background: `linear-gradient(45deg, ${primaryColor}, ${secondaryColor})`,
+          opacity: 0.1,
+          zIndex: 0,
           pointerEvents: 'none'
         }}
       />
       <canvas 
         ref={canvasRef} 
-        className={`fixed top-0 left-0 w-full h-full z-0 ${className}`}
+        className={`fixed top-0 left-0 w-full h-full z-10 ${className}`}
         style={{pointerEvents: 'none'}}
       />
     </>
