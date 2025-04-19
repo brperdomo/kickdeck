@@ -32,6 +32,14 @@ export function AnimatedEventBackground({
 }: AnimatedEventBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
+  // Log detailed color information for debugging
+  console.log("AnimatedEventBackground CONSTRUCTOR - Received colors:", {
+    primaryColor,
+    secondaryColor,
+    type,
+    opacity
+  });
+  
   // Use different animation based on type
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -40,7 +48,14 @@ export function AnimatedEventBackground({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    console.log("AnimatedEventBackground initialized with colors:", primaryColor, secondaryColor);
+    console.log("AnimatedEventBackground INITIALIZED with colors:", {
+      primaryColor,
+      secondaryColor,
+      validPrimary: typeof primaryColor === 'string' && primaryColor.length > 0,
+      validSecondary: typeof secondaryColor === 'string' && secondaryColor.length > 0,
+      canvasWidth: canvas.width,
+      canvasHeight: canvas.height
+    });
     
     // Set canvas to full screen
     const handleResize = () => {

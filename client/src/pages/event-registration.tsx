@@ -1259,6 +1259,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     );
   }
 
+  // Log information about branding to debug the issue
+  console.log('Rendering event registration with event data:', { 
+    eventId, 
+    hasBranding: !!event?.branding,
+    primaryColor: event?.branding?.primaryColor,
+    secondaryColor: event?.branding?.secondaryColor
+  });
+
   return (
     <div className="min-h-screen relative register-event-page">
       {/* Display themed background using event branding colors */}
