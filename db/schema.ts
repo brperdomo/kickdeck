@@ -283,18 +283,7 @@ export const teams = pgTable("teams", {
   termsAcknowledgedAt: timestamp("terms_acknowledged_at"),
   termsAcknowledgementRecord: text("terms_acknowledgement_record"), // Path to PDF or record ID
   // Notes field for admin comments
-  notes: text("notes"),
-  // Payment related fields
-  paymentIntentId: text("payment_intent_id"), // Stripe payment intent ID
-  paymentStatus: text("payment_status"), // paid, pending, failed, refunded, etc.
-  paymentDate: timestamp("payment_date"), // When payment was processed
-  refundDate: timestamp("refund_date"), // Date when refund was processed
-  // Card details fields
-  cardLast4: text("card_last_four"), // Last 4 digits of credit card
-  cardBrand: text("card_brand"), // Visa, Mastercard, etc.
-  paymentMethodType: text("payment_method_type"), // card, bank_transfer, etc.
-  paymentErrorCode: text("payment_error_code"), // Error code if payment failed
-  paymentErrorMessage: text("payment_error_message"), // Error message if payment failed
+  notes: text("notes")
 });
 
 export const games = pgTable("games", {
