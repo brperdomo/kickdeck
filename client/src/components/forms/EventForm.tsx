@@ -1022,56 +1022,146 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         </CardContent>
       </Card>
       
-      {/* Event Logo Upload Section */}
+      {/* Event Branding Section */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Event Logo</CardTitle>
+          <CardTitle className="text-lg">Event Branding</CardTitle>
           <CardDescription>
-            Upload a logo for your event. This will be displayed during the team registration process.
+            Customize your event's appearance. The logo and colors will be used during the team registration process.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <div
-                {...getRootProps()}
-                className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${
-                  isDragActive ? 'border-primary bg-primary/5' : 'border-border'
-                }`}
-              >
-                <input {...getInputProps()} />
-                <div className="flex flex-col items-center justify-center gap-2">
-                  <div className="p-2 rounded-full bg-muted">
-                    <Upload className="h-6 w-6 text-muted-foreground" />
+        <CardContent className="space-y-6">
+          {/* Logo Upload */}
+          <div>
+            <h4 className="text-sm font-medium mb-4">Event Logo</h4>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <div
+                  {...getRootProps()}
+                  className={`border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${
+                    isDragActive ? 'border-primary bg-primary/5' : 'border-border'
+                  }`}
+                >
+                  <input {...getInputProps()} />
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <div className="p-2 rounded-full bg-muted">
+                      <Upload className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <p className="text-sm text-muted-foreground text-center">
+                      {isDragActive
+                        ? "Drop the logo here"
+                        : "Drag & drop your event logo here, or click to select"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Supported formats: PNG, JPG, SVG
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground text-center">
-                    {isDragActive
-                      ? "Drop the logo here"
-                      : "Drag & drop your event logo here, or click to select"}
+                </div>
+              </div>
+              
+              <div className="flex flex-col items-center justify-center p-4 bg-muted rounded-lg">
+                {previewUrl ? (
+                  <div className="flex flex-col items-center gap-4">
+                    <img
+                      src={previewUrl}
+                      alt="Event logo preview"
+                      className="max-h-32 object-contain"
+                    />
+                    <p className="text-sm text-center">Logo Preview</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                    <ImageIcon className="h-10 w-10" />
+                    <p className="text-sm">No logo uploaded</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {/* Color Pickers */}
+          <div>
+            <h4 className="text-sm font-medium mb-4">Event Colors</h4>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="primaryColor">Primary Color</Label>
+                  <div className="flex mt-2">
+                    <div 
+                      className="w-10 h-10 rounded border mr-3" 
+                      style={{ backgroundColor: primaryColor }}
+                    ></div>
+                    <Input
+                      id="primaryColor"
+                      type="color"
+                      value={primaryColor}
+                      onChange={(e) => setPrimaryColor(e.target.value)}
+                      className="w-24 h-10 p-1"
+                    />
+                    <Input
+                      type="text"
+                      value={primaryColor}
+                      onChange={(e) => setPrimaryColor(e.target.value)}
+                      className="ml-2 w-32"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Primary color for branding and theming
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    Supported formats: PNG, JPG, SVG
+                </div>
+
+                <div>
+                  <Label htmlFor="secondaryColor">Secondary Color</Label>
+                  <div className="flex mt-2">
+                    <div 
+                      className="w-10 h-10 rounded border mr-3" 
+                      style={{ backgroundColor: secondaryColor }}
+                    ></div>
+                    <Input
+                      id="secondaryColor"
+                      type="color"
+                      value={secondaryColor}
+                      onChange={(e) => setSecondaryColor(e.target.value)}
+                      className="w-24 h-10 p-1"
+                    />
+                    <Input
+                      type="text"
+                      value={secondaryColor}
+                      onChange={(e) => setSecondaryColor(e.target.value)}
+                      className="ml-2 w-32"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Secondary color for accents and highlights
                   </p>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex flex-col items-center justify-center p-4 bg-muted rounded-lg">
-              {previewUrl ? (
-                <div className="flex flex-col items-center gap-4">
-                  <img
-                    src={previewUrl}
-                    alt="Event logo preview"
-                    className="max-h-32 object-contain"
-                  />
-                  <p className="text-sm text-center">Logo Preview</p>
+
+              <div className="flex flex-col justify-center p-6 border rounded-lg bg-muted/30">
+                <div className="text-sm font-medium mb-3">Color Preview</div>
+                <div className="flex items-center gap-4">
+                  <div className="space-y-2">
+                    <div
+                      className="w-16 h-16 rounded-md shadow-md"
+                      style={{ backgroundColor: primaryColor }}
+                    ></div>
+                    <p className="text-xs text-center">Primary</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div
+                      className="w-16 h-16 rounded-md shadow-md"
+                      style={{ backgroundColor: secondaryColor }}
+                    ></div>
+                    <p className="text-xs text-center">Secondary</p>
+                  </div>
                 </div>
-              ) : (
-                <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                  <ImageIcon className="h-10 w-10" />
-                  <p className="text-sm">No logo uploaded</p>
+                <div className="mt-4 p-4 rounded-md" style={{ 
+                  background: `linear-gradient(135deg, ${primaryColor}80 0%, ${secondaryColor}80 100%)`,
+                  border: `1px solid ${primaryColor}40`
+                }}>
+                  <p className="text-sm font-medium text-center">Sample Gradient</p>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </CardContent>

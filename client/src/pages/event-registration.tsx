@@ -20,6 +20,7 @@ import {
   FileText
 } from "lucide-react";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
+import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
 import { useAuth } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -1238,7 +1239,18 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
 
   return (
     <div className="min-h-screen relative register-event-page">
-      <SoccerFieldBackground className="opacity-50" />
+      {/* Display themed background using event branding colors */}
+      {event?.branding?.primaryColor && event?.branding?.secondaryColor ? (
+        <AnimatedEventBackground 
+          primaryColor={event.branding.primaryColor}
+          secondaryColor={event.branding.secondaryColor}
+          type="particles" 
+          opacity={0.4}
+          className="opacity-80"
+        />
+      ) : (
+        <SoccerFieldBackground className="opacity-50" />
+      )}
       <div className="container mx-auto px-4 py-8 relative z-10">
         {renderStepIndicator()}
 
@@ -1253,7 +1265,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 />
               </div>
             )}
-            <CardTitle className="text-3xl font-bold text-[#2C5282]">{event.name}</CardTitle>
+            <CardTitle 
+              className="text-3xl font-bold" 
+              style={{ 
+                color: event?.branding?.primaryColor || '#2C5282',
+                textShadow: event?.branding?.primaryColor ? `0 1px 2px rgba(0,0,0,0.1)` : 'none'
+              }}
+            >
+              {event.name}
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
             <AnimatePresence mode="wait">
