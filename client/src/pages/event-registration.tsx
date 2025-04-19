@@ -403,7 +403,8 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
         <Button 
           disabled={!stripe || isProcessing} 
           type="submit"
-          className="bg-[#2C5282] hover:bg-[#1A365D] text-white mt-4"
+          className="text-white mt-4"
+          style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
         >
           {isProcessing ? (
             <>
@@ -686,10 +687,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       <div className="flex items-center justify-center mb-8">
         {steps.map((step, index) => (
           <div key={step.key} className="flex items-center">
-            <div className={`flex flex-col items-center ${currentStep === step.key ? 'text-[#2C5282]' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 
-                ${currentStep === step.key ? 'bg-[#2C5282] text-white' : 
-                  index < steps.findIndex(s => s.key === currentStep) ? 'bg-[#48BB78] text-white' : 'bg-gray-200'}`}>
+            <div className={`flex flex-col items-center ${currentStep === step.key ? '' : 'text-gray-400'}`}
+                 style={{ color: currentStep === step.key ? (event?.branding?.primaryColor || '#2C5282') : undefined }}>
+              <div 
+                className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 text-white
+                ${index < steps.findIndex(s => s.key === currentStep) ? 'bg-[#48BB78]' : 'bg-gray-200'}`}
+                style={{ 
+                  backgroundColor: currentStep === step.key ? (event?.branding?.primaryColor || '#2C5282') : undefined
+                }}>
                 {index < steps.findIndex(s => s.key === currentStep) ? (
                   <CheckCircle2 className="w-5 h-5" />
                 ) : (
@@ -724,13 +729,26 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     return (
       <div className="space-y-4">
         {Object.entries(groupedByGender).map(([gender, groups]) => (
-          <div key={gender} className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-blue-800 mb-2">{gender}:</h4>
+          <div 
+            key={gender} 
+            className="p-4 rounded-lg"
+            style={{ 
+              backgroundColor: `${event?.branding?.primaryColor || '#2C5282'}10` // 10 = 10% opacity
+            }}
+          >
+            <h4 
+              className="font-semibold mb-2"
+              style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+            >{gender}:</h4>
             <div className="flex flex-wrap gap-2">
               {groups.map((group) => (
                 <span 
                   key={group.id} 
-                  className="bg-white px-3 py-1 rounded-full text-sm text-blue-600 border border-blue-100"
+                  className="bg-white px-3 py-1 rounded-full text-sm border"
+                  style={{ 
+                    color: event?.branding?.primaryColor || '#2C5282',
+                    borderColor: `${event?.branding?.primaryColor || '#2C5282'}25` // 25 = 25% opacity
+                  }}
                 >
                   {group.displayText}
                 </span>
