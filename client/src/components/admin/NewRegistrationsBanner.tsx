@@ -69,7 +69,8 @@ export function NewRegistrationsBanner() {
   }, [registrationsQuery.data?.count]);
 
   // Don't render anything if the user is not an admin or there's no new registrations
-  if (!isAdmin || !visible || registrationsQuery.isLoading || registrationsQuery.data?.count === 0) {
+  if (!isAdmin || !visible || registrationsQuery.isLoading || registrationsQuery.isError || 
+      !registrationsQuery.data || registrationsQuery.data?.count === 0) {
     return null;
   }
 

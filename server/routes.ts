@@ -3105,7 +3105,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const newRegistrationsCount = await db
           .select({ count: sql<number>`count(*)` })
           .from(teams)
-          .where(gt(teams.createdAt, lastViewTimestamp.toISOString()))
+          .where(sql`${teams.createdAt} > ${lastViewTimestamp.toISOString()}`)
           .then(result => result[0]?.count || 0);
     
         // Return the count of new registrations
