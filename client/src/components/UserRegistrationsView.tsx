@@ -15,9 +15,14 @@ interface Registration {
   eventId: string;
   ageGroup: string;
   registeredAt: string;
-  status: 'registered' | 'paid' | 'approved' | 'rejected' | 'pending_payment';
+  status: 'registered' | 'approved' | 'rejected' | 'withdrawn';
   amount: number;
   paymentId?: string;
+  paymentStatus?: 'paid' | 'pending' | 'failed' | 'refunded';
+  paymentDate?: string;
+  cardLastFour?: string;
+  errorCode?: string;
+  errorMessage?: string;
 }
 
 export default function UserRegistrationsView() {
@@ -35,19 +40,33 @@ export default function UserRegistrationsView() {
   // Extract registrations array from the response
   const registrations = data?.registrations || [];
 
-  const getStatusBadge = (status: string) => {
+  // Get badge for team status
+  const getTeamStatusBadge = (status: string) => {
     switch (status) {
-      case 'paid':
-        return <Badge className="bg-green-500"><CheckCircle className="w-3 h-3 mr-1" /> Paid</Badge>;
       case 'approved':
         return <Badge className="bg-blue-500"><CheckCircle className="w-3 h-3 mr-1" /> Approved</Badge>;
       case 'rejected':
         return <Badge className="bg-red-500"><XCircle className="w-3 h-3 mr-1" /> Rejected</Badge>;
-      case 'pending_payment':
-        return <Badge className="bg-amber-500"><Clock className="w-3 h-3 mr-1" /> Payment Pending</Badge>;
+      case 'withdrawn':
+        return <Badge className="bg-slate-500"><XCircle className="w-3 h-3 mr-1" /> Withdrawn</Badge>;
       case 'registered':
       default:
-        return <Badge className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" /> Pending</Badge>;
+        return <Badge className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" /> Pending Approval</Badge>;
+    }
+  };
+  
+  // Get badge for payment status
+  const getPaymentStatusBadge = (paymentStatus: string | undefined) => {
+    switch (paymentStatus) {
+      case 'paid':
+        return <Badge className="bg-green-500"><CheckCircle className="w-3 h-3 mr-1" /> Paid</Badge>;
+      case 'refunded':
+        return <Badge className="bg-purple-500"><CheckCircle className="w-3 h-3 mr-1" /> Refunded</Badge>;
+      case 'failed':
+        return <Badge className="bg-red-500"><XCircle className="w-3 h-3 mr-1" /> Payment Failed</Badge>;
+      case 'pending':
+      default:
+        return <Badge className="bg-amber-500"><Clock className="w-3 h-3 mr-1" /> Payment Pending</Badge>;
     }
   };
 
@@ -99,8 +118,10 @@ export default function UserRegistrationsView() {
                   Event: {registration.eventName} | Age Group: {registration.ageGroup}
                 </CardDescription>
               </div>
-              <div>
-                {getStatusBadge(registration.status)}
+              <div className="flex flex-col gap-2">
+                {/* Show both team status and payment status badges */}
+                {getTeamStatusBadge(registration.status)}
+                {getPaymentStatusBadge(registration.paymentStatus)}
               </div>
             </div>
           </CardHeader>
@@ -110,12 +131,37 @@ export default function UserRegistrationsView() {
                 <span className="text-sm text-muted-foreground">Registered on:</span>
                 <span className="text-sm">{formatDate(registration.registeredAt)}</span>
               </div>
-              {registration.status === 'paid' && (
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Payment ID:</span>
-                  <span className="text-sm">{registration.paymentId || 'N/A'}</span>
+              
+              {/* Show payment details when available */}
+              {registration.paymentStatus === 'paid' && (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Payment ID:</span>
+                    <span className="text-sm">{registration.paymentId || 'N/A'}</span>
+                  </div>
+                  {registration.paymentDate && (
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Payment Date:</span>
+                      <span className="text-sm">{formatDate(registration.paymentDate)}</span>
+                    </div>
+                  )}
+                  {registration.cardLastFour && (
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Card:</span>
+                      <span className="text-sm">••••{registration.cardLastFour}</span>
+                    </div>
+                  )}
+                </>
+              )}
+              
+              {/* Show error message if payment failed */}
+              {registration.paymentStatus === 'failed' && registration.errorMessage && (
+                <div className="mt-2 p-2 bg-red-50 border border-red-100 rounded text-red-700 text-sm">
+                  <p className="font-medium">Payment Error:</p>
+                  <p>{registration.errorMessage}</p>
                 </div>
               )}
+              
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Amount:</span>
                 <span className="text-sm font-semibold">${(registration.amount / 100).toFixed(2)}</span>
@@ -128,7 +174,9 @@ export default function UserRegistrationsView() {
                 <Link href={`/events/${registration.eventId}`}>View Event</Link>
               </Button>
               
-              {(registration.status === 'registered' || registration.status === 'pending_payment') && (
+              {/* Only show payment button if payment is still pending */}
+              {(registration.paymentStatus === 'pending' || !registration.paymentStatus) && 
+                registration.amount > 0 && (
                 <Button variant="default" asChild>
                   <Link href={`/events/${registration.eventId}/pay/${registration.id}`}>Complete Payment</Link>
                 </Button>
