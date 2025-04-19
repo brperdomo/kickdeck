@@ -3566,6 +3566,13 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         } else {
           eventData = req.body;
         }
+        
+        // Add more detailed logging for branding colors
+        if (eventData.branding) {
+          console.log('EVENT UPDATE - Received branding colors:');
+          console.log('Primary:', eventData.branding.primaryColor);
+          console.log('Secondary:', eventData.branding.secondaryColor);
+        }
 
         // Start a transaction to update event and related records
         await db.transaction(async (tx) => {
@@ -3631,15 +3638,21 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
                   console.log(`BEFORE update: ${key} = ${existingSetting[0].settingValue}`);
                   console.log(`AFTER update: ${key} will be set to ${value}`);
                   
-                  await tx
-                    .update(eventSettings)
-                    .set({
-                      settingValue: value || '',
-                      updatedAt: new Date().toISOString()
-                    })
-                    .where(eq(eventSettings.id, existingSetting[0].id));
+                  // Use a direct SQL UPDATE to guarantee this gets done immediately and correctly
+                  await tx.execute(
+                    sql`UPDATE event_settings 
+                        SET setting_value = ${value || ''}, 
+                            updated_at = ${new Date().toISOString()} 
+                        WHERE id = ${existingSetting[0].id}`
+                  );
                   
-                  console.log(`Updated existing branding setting: ${key}`);
+                  // Double-check the update worked by querying it again
+                  const verifyUpdate = await tx
+                    .select()
+                    .from(eventSettings)
+                    .where(eq(eventSettings.id, existingSetting[0].id));
+                    
+                  console.log(`Verified branding setting update: ${key} = ${verifyUpdate[0].settingValue}`);
                 } else {
                   // Insert new setting
                   await tx
@@ -4003,6 +4016,26 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             }
           }
         });
+        
+        // Verify the branding settings were actually updated in the database
+        if (eventData.branding && eventData.branding.secondaryColor) {
+          const verifySettings = await db
+            .select()
+            .from(eventSettings)
+            .where(and(
+              eq(eventSettings.eventId, eventId),
+              eq(eventSettings.settingKey, 'branding.secondaryColor')
+            ));
+            
+          if (verifySettings.length > 0) {
+            console.log(`VERIFICATION - Secondary color is now: ${verifySettings[0].settingValue}`);
+            // If the value doesn't match what was sent, something went wrong
+            if (verifySettings[0].settingValue !== eventData.branding.secondaryColor) {
+              console.error(`ERROR - Verification failed: Secondary color not updated properly!`);
+              console.error(`Expected: ${eventData.branding.secondaryColor}, Found: ${verifySettings[0].settingValue}`);
+            }
+          }
+        }
 
         res.json({ message: "Event updated successfully" });
       } catch (error) {
@@ -4379,7 +4412,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           // Continue without the seasonal scope data
         }
 
-        // Get event settings
+        // Important: Get fresh event settings after the transaction is complete
+        // This ensures we have the most up-to-date values
         const settingsData = await db
           .select()
           .from(eventSettings)
@@ -4416,6 +4450,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         }
         
         console.log('Processed branding data:', brandingData);
+        
+        // Double-check the secondary color in the branding data
+        const secondaryColorSetting = brandingSettings.find(s => s.settingKey === 'branding.secondaryColor');
+        console.log('Direct check of secondaryColor setting:', secondaryColorSetting);
 
         // Format response to match create event view structure exactly
         const response = {
