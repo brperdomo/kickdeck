@@ -190,6 +190,15 @@ export function AnimatedEventBackground({
 
 // Helper functions for color manipulation
 function hexToRgb(hex: string) {
+  // Add validation and debugging
+  console.log(`hexToRgb: Processing color "${hex}"`);
+  
+  if (!hex || typeof hex !== 'string') {
+    console.error('Invalid hex color provided:', hex);
+    // Return a fallback color (gray) when input is invalid
+    return { r: 128, g: 128, b: 128 };
+  }
+  
   // Remove # if present
   hex = hex.replace(/^#/, '');
   
@@ -198,12 +207,20 @@ function hexToRgb(hex: string) {
     hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
   }
   
+  // Validate hex format
+  if (!/^[0-9A-Fa-f]{6}$/.test(hex)) {
+    console.error('Invalid hex color format:', hex);
+    // Return a fallback color (gray) for invalid format
+    return { r: 128, g: 128, b: 128 };
+  }
+  
   // Parse the hex values
   const bigint = parseInt(hex, 16);
   const r = (bigint >> 16) & 255;
   const g = (bigint >> 8) & 255;
   const b = bigint & 255;
   
+  console.log(`hexToRgb: Converted "${hex}" to RGB: ${r},${g},${b}`);
   return { r, g, b };
 }
 
