@@ -3592,6 +3592,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           if (eventData.branding) {
             // Log branding data for debugging
             console.log('Processing branding data in update:', eventData.branding);
+            console.log('Secondary color from request:', eventData.branding.secondaryColor);
             
             // Process each branding property and save in event_settings
             // Use default values if not provided to ensure we always have colors set
@@ -3627,6 +3628,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
                 
                 if (existingSetting.length > 0) {
                   // Update existing setting
+                  console.log(`BEFORE update: ${key} = ${existingSetting[0].settingValue}`);
+                  console.log(`AFTER update: ${key} will be set to ${value}`);
+                  
                   await tx
                     .update(eventSettings)
                     .set({
