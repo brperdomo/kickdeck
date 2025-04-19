@@ -770,6 +770,25 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       return acc;
     }, {} as Record<string, (AgeGroup & { displayText: string })[]>);
 
+    // Sort each gender group by birth year (oldest to youngest)
+    Object.keys(groupedByGender).forEach(gender => {
+      groupedByGender[gender].sort((a, b) => {
+        // Extract birth year from division code if available
+        const getBirthYear = (ageGroup: AgeGroup & { displayText: string }) => {
+          if (ageGroup.birthYear) return ageGroup.birthYear;
+          
+          // Try to extract year from division code (format like B2008, G2017)
+          const match = ageGroup.divisionCode?.match(/\d{4}/);
+          if (match) return parseInt(match[0]);
+          
+          return 0; // Fallback for items without birth year
+        };
+        
+        // Sort from oldest to youngest (ascending birth year)
+        return getBirthYear(a) - getBirthYear(b);
+      });
+    });
+
     return (
       <div className="space-y-4">
         {Object.entries(groupedByGender).map(([gender, groups]) => (
