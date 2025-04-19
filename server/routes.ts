@@ -4029,10 +4029,27 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             
           if (verifySettings.length > 0) {
             console.log(`VERIFICATION - Secondary color is now: ${verifySettings[0].settingValue}`);
-            // If the value doesn't match what was sent, something went wrong
+            // If the value doesn't match what was sent, force an update outside the transaction
             if (verifySettings[0].settingValue !== eventData.branding.secondaryColor) {
               console.error(`ERROR - Verification failed: Secondary color not updated properly!`);
               console.error(`Expected: ${eventData.branding.secondaryColor}, Found: ${verifySettings[0].settingValue}`);
+              
+              // Force a direct SQL update outside the transaction as a fallback
+              console.log(`Attempting direct database update as fallback...`);
+              await db.execute(
+                sql`UPDATE event_settings 
+                    SET setting_value = ${eventData.branding.secondaryColor || ''}, 
+                        updated_at = ${new Date().toISOString()} 
+                    WHERE id = ${verifySettings[0].id}`
+              );
+              
+              // Double-check the update worked
+              const recheck = await db
+                .select()
+                .from(eventSettings)
+                .where(eq(eventSettings.id, verifySettings[0].id));
+                
+              console.log(`Fallback update complete - color is now: ${recheck[0].settingValue}`);
             }
           }
         }
