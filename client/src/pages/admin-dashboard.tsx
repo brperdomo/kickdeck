@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { PaymentStatusBadge, TeamStatusBadge } from "@/components/ui/payment-status-badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/hooks/use-user";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -3517,13 +3518,7 @@ function TeamsView() {
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Payment Status:</div>
                       <div className="col-span-2">
-                        <Badge variant={selectedTeam.paymentStatus === 'paid' 
-                          ? 'success' 
-                          : selectedTeam.paymentStatus === 'refunded' 
-                            ? 'outline' 
-                            : 'secondary'}>
-                          {selectedTeam.paymentStatus || 'Unpaid'}
-                        </Badge>
+                        <PaymentStatusBadge status={selectedTeam.paymentStatus} />
                       </div>
                     </div>
                     
