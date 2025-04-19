@@ -1,0 +1,86 @@
+Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/register/event/1251362271
+RouteDebugger.tsx:15 Current pathname: /register/event/1251362271
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+use-auth.tsx:72 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /register/event/1251362271
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.repl.co/register/event/1251362271
+RouteDebugger.tsx:15 Current pathname: /register/event/1251362271
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:76 User data fetched: 
+Object
+2
+event-registration.tsx:622 Fetching event details for ID: 1251362271
+1251362271:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+1251362271:1 OTS parsing error: invalid sfntVersion: 791289955
+event-registration.tsx:628 Received event data: 
+Object
+event-registration.tsx:636 Inspecting branding data for event: 
+Object
+event-registration.tsx:668 Pay Later Feature enabled: false
+event-registration.tsx:1288 Rendering event registration with event data: 
+Object
+event-registration.tsx:1288 Rendering event registration with event data: 
+Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: 
+Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: 
+Object
+2
+framer-motion.js?v=b6082e80:252 You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+AnimatedEventBackground.tsx:51 AnimatedEventBackground INITIALIZED with colors: 
+Object
+AnimatedEventBackground.tsx:194 hexToRgb: Processing color "#ede8e8"
+AnimatedEventBackground.tsx:223 hexToRgb: Converted "ede8e8" to RGB: 237,232,232
+AnimatedEventBackground.tsx:194 hexToRgb: Processing color "#f9002a"
+AnimatedEventBackground.tsx:223 hexToRgb: Converted "f9002a" to RGB: 249,0,42
+AnimatedEventBackground.tsx:51 AnimatedEventBackground INITIALIZED with colors: 
+Object
+AnimatedEventBackground.tsx:194 hexToRgb: Processing color "#ede8e8"
+AnimatedEventBackground.tsx:223 hexToRgb: Converted "ede8e8" to RGB: 237,232,232
+AnimatedEventBackground.tsx:194 hexToRgb: Processing color "#f9002a"
+AnimatedEventBackground.tsx:223 hexToRgb: Converted "f9002a" to RGB: 249,0,42
+util.js:44 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+event-registration.tsx:628 Received event data: 
+Object
+event-registration.tsx:636 Inspecting branding data for event: 
+Object
+event-registration.tsx:668 Pay Later Feature enabled: false
+event-registration.tsx:1288 Rendering event registration with event data: 
+Object
+event-registration.tsx:1288 Rendering event registration with event data: 
+Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: 
+Object
+opacity
+: 
+0.4
+primaryColor
+: 
+"#ede8e8"
+secondaryColor
+: 
+"#f9002a"
+type
+: 
+"particles"
+[[Prototype]]
+: 
+Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: 
+Object
+opacity
+: 
+0.4
+primaryColor
+: 
+"#ede8e8"
+secondaryColor
+: 
+"#f9002a"
+type
+: 
+"particles"
+[[Prototype]]
+: 
+Object

@@ -94,6 +94,9 @@ function Router() {
           <Route path="/register/event/:eventId">
             {(params) => <EventRegistration eventIdOverride={params.eventId} />}
           </Route>
+          <Route path="/event/:eventId/register">
+            {(params) => <EventRegistration eventIdOverride={params.eventId} />}
+          </Route>
           <Route path="/dashboard">
             <AuthPage />
           </Route>
@@ -215,6 +218,9 @@ function Router() {
           </Route>
           <Route path="/chat" component={ChatPage} />
           <Route path="/register/event/:eventId">
+            {(params) => <EventRegistration eventIdOverride={params.eventId} />}
+          </Route>
+          <Route path="/event/:eventId/register">
             {(params) => <EventRegistration eventIdOverride={params.eventId} />}
           </Route>
           <Route path="/product-updates" component={ProductUpdatesPage} />
