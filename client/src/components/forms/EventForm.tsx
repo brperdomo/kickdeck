@@ -101,6 +101,13 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState<AdminModalProps['adminToEdit']>(null);
   const [logo, setLogo] = useState<File | null>(null);
+  // Log the default values for branding to help debug issues
+  console.log('EventForm initializing with branding values:', {
+    logoUrl: defaultValues?.branding?.logoUrl,
+    primaryColor: defaultValues?.branding?.primaryColor,
+    secondaryColor: defaultValues?.branding?.secondaryColor
+  });
+  
   const [previewUrl, setPreviewUrl] = useState<string | null>(defaultValues?.branding?.logoUrl || null);
   const [primaryColor, setPrimaryColor] = useState(defaultValues?.branding?.primaryColor || '#007AFF');
   const [secondaryColor, setSecondaryColor] = useState(defaultValues?.branding?.secondaryColor || '#34C759');

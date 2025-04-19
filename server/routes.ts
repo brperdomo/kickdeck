@@ -4395,10 +4395,14 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           selectedAgeGroupIds: ageGroups.map(({ ageGroup }) => ageGroup.id),
           // Include event settings
           settings: settings || [],
-          // Include branding data
+          // Include branding data with better default handling
           branding: Object.keys(brandingData).length > 0 
-            ? brandingData 
-            : { logoUrl: null, primaryColor: null, secondaryColor: null },
+            ? {
+                logoUrl: brandingData.logoUrl || null,
+                primaryColor: brandingData.primaryColor || '#007AFF',
+                secondaryColor: brandingData.secondaryColor || '#34C759'
+              }
+            : { logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759' },
           // Additional metadata needed by create view
           availableAgeGroups: ageGroups.map(({ ageGroup }) => ageGroup.ageGroup),
           availableFieldSizes: [...new Set(fieldSizes.map(f => f.fieldSize))].filter(Boolean),
