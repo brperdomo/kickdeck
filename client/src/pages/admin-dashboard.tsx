@@ -615,6 +615,21 @@ function AdministratorsView() {
     }
   };
 
+  // Helper function for payment status badges
+  const getPaymentStatusBadge = (status: string | null | undefined) => {
+    const variant = 
+      status === 'paid' ? 'success' :
+      status === 'refunded' ? 'outline' :
+      status === 'failed' ? 'destructive' :
+      'secondary';
+      
+    const label = status 
+      ? status.charAt(0).toUpperCase() + status.slice(1)
+      : 'Pending';
+      
+    return <Badge variant={variant}>{label}</Badge>;
+  };
+
   const getTypeLabel = (type: string) => {
     switch (type) {
       case 'super_admin':
