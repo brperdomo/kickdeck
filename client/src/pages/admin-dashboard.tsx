@@ -390,7 +390,7 @@ function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: t
 }
 
 type View = 'events' | 'teams' | 'administrators' | 'settings' | 'households' | 'reports' | 'account' | 'complexes' | 'scheduling' | 'files' | 'formTemplates' | 'roles' | 'members';
-type SettingsView = 'branding' | 'general' | 'payments' | 'styling';
+type SettingsView = 'general';
 type ReportType = 'financial' | 'manager' | 'player' | 'schedule' | 'guest-player';
 type RoleType = 'super_admin' | 'tournament_admin' | 'score_admin' | 'finance_admin';
 
@@ -4456,50 +4456,6 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                   </Button>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="space-y-2 pl-4">
-                  {hasPermission('edit_organization_settings') && (
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start relative overflow-hidden group"
-                      style={{
-                        backgroundColor: activeSettingsView === 'branding' 
-                          ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
-                          : 'transparent',
-                        color: activeSettingsView === 'branding'
-                          ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
-                          : 'var(--admin-nav-text, inherit)',
-                      }}
-                      onClick={() => {
-                        navigate('/admin/settings');
-                        setActiveSettingsView('branding');
-                      }}
-                    >
-                      <Palette className="mr-2 h-4 w-4" />
-                      Branding
-                    </Button>
-                  )}
-                  
-                  {hasPermission('process_payments') && (
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start relative overflow-hidden group"
-                      style={{
-                        backgroundColor: activeSettingsView === 'payments' 
-                          ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
-                          : 'transparent',
-                        color: activeSettingsView === 'payments'
-                          ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
-                          : 'var(--admin-nav-text, inherit)',
-                      }}
-                      onClick={() => {
-                        navigate('/admin/settings');
-                        setActiveSettingsView('payments');
-                      }}
-                    >
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Payments
-                    </Button>
-                  )}
-                  
                   {hasPermission('view_organization_settings') && (
                     <Button
                       variant="ghost"
@@ -4519,28 +4475,6 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                     >
                       <Settings className="mr-2 h-4 w-4" />
                       General
-                    </Button>
-                  )}
-                  
-                  {hasPermission('edit_organization_settings') && (
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start relative overflow-hidden group"
-                      style={{
-                        backgroundColor: activeSettingsView === 'styling' 
-                          ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
-                          : 'transparent',
-                        color: activeSettingsView === 'styling'
-                          ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
-                          : 'var(--admin-nav-text, inherit)',
-                      }}
-                      onClick={() => {
-                        navigate('/admin/settings');
-                        setActiveSettingsView('styling');
-                      }}
-                    >
-                      <Palette className="mr-2 h-4 w-4" />
-                      Theme
                     </Button>
                   )}
                 </CollapsibleContent>
@@ -4766,10 +4700,7 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
   
   // Permission mapping for different settings views
   const permissionMap = {
-    'branding': 'edit_organization_settings',
-    'general': 'view_organization_settings',
-    'styling': 'edit_organization_settings',
-    'payments': 'process_payments'
+    'general': 'view_organization_settings'
   };
   
   // Check if user has permission to access the requested settings view
@@ -4785,17 +4716,6 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
   }
   
   switch (activeSettingsView) {
-    case 'branding':
-      return (
-        <BrandingPreviewProvider>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="col-span-1">
-              <OrganizationSettingsForm />
-            </div>
-            <BrandingPreview />
-          </div>
-        </BrandingPreviewProvider>
-      );
     case 'general':
       return (
         <div className="space-y-6">
@@ -4803,15 +4723,6 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
           <GeneralSettingsView />
         </div>
       );
-    case 'styling':
-      return <GeneralSettingsView />;
-    case 'payments':
-      return (
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold">Payments Settings</h2>
-          <StripeSettingsView />
-        </div>
-        );
     default:
       return (
         <div className="space-y-6">
