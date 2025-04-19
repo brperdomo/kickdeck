@@ -308,6 +308,41 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         ? defaultValues.seasonalScopeId
         : selectedSeasonalScopeId || data.seasonalScopeId || defaultValues?.seasonalScopeId;
       
+      // Make sure branding values are also present in settings array
+      // Create a new settings array with updated branding values
+      const updatedSettings = [...settings];
+      
+      // Helper function to find or create a setting
+      const findOrCreateSetting = (key: string, value: string) => {
+        const existingIndex = updatedSettings.findIndex(s => s.key === key);
+        if (existingIndex >= 0) {
+          // Update existing setting
+          updatedSettings[existingIndex] = {
+            ...updatedSettings[existingIndex],
+            value: value
+          };
+        } else {
+          // Add new setting
+          updatedSettings.push({
+            key,
+            value,
+            id: undefined // Backend will assign an ID
+          });
+        }
+      };
+      
+      // Make sure branding colors get properly synced in settings
+      console.log('Syncing branding settings before submit:', {
+        primaryColor, secondaryColor, logoUrl: previewUrl
+      });
+      
+      // Update settings with current branding values
+      findOrCreateSetting('branding.primaryColor', primaryColor);
+      findOrCreateSetting('branding.secondaryColor', secondaryColor);
+      if (previewUrl) {
+        findOrCreateSetting('branding.logoUrl', previewUrl);
+      }
+      
       const submitData = {
         ...data,
         seasonalScopeId: scopeIdToSubmit,
@@ -317,7 +352,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           isEligible: group.isEligible !== false // defaults to true if not explicitly set to false
         })),
         scoringRules,
-        settings,
+        settings: updatedSettings, // Use the updated settings
         complexFieldSizes,
         selectedComplexIds,
         administrators: defaultValues?.administrators || [],

@@ -4030,39 +4030,78 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           }
         });
         
-        // Verify the branding settings were actually updated in the database
-        if (eventData.branding && eventData.branding.secondaryColor) {
-          const verifySettings = await db
+        // Verify all branding settings were actually updated in the database
+        if (eventData.branding) {
+          console.log(`Checking all branding settings from request:`, eventData.branding);
+          
+          // Check if any branding settings exist in the database
+          const allBrandingSettings = await db
             .select()
             .from(eventSettings)
             .where(and(
               eq(eventSettings.eventId, eventId),
-              eq(eventSettings.settingKey, 'branding.secondaryColor')
+              or(
+                eq(eventSettings.settingKey, 'branding.primaryColor'),
+                eq(eventSettings.settingKey, 'branding.secondaryColor'),
+                eq(eventSettings.settingKey, 'branding.logoUrl')
+              )
             ));
+          
+          console.log(`Found ${allBrandingSettings.length} branding settings in database:`, 
+            allBrandingSettings.map(s => `${s.settingKey}=${s.settingValue}`));
+          
+          // Check and potentially fix each branding setting
+          const brandingProperties = [
+            { key: 'branding.primaryColor', value: eventData.branding.primaryColor },
+            { key: 'branding.secondaryColor', value: eventData.branding.secondaryColor },
+            { key: 'branding.logoUrl', value: eventData.branding.logoUrl }
+          ];
+          
+          for (const prop of brandingProperties) {
+            if (!prop.value) continue; // Skip undefined/null values
             
-          if (verifySettings.length > 0) {
-            console.log(`VERIFICATION - Secondary color is now: ${verifySettings[0].settingValue}`);
-            // If the value doesn't match what was sent, force an update outside the transaction
-            if (verifySettings[0].settingValue !== eventData.branding.secondaryColor) {
-              console.error(`ERROR - Verification failed: Secondary color not updated properly!`);
-              console.error(`Expected: ${eventData.branding.secondaryColor}, Found: ${verifySettings[0].settingValue}`);
+            const settingInDb = allBrandingSettings.find(s => s.settingKey === prop.key);
+            
+            if (settingInDb) {
+              console.log(`VERIFICATION - ${prop.key} is now: ${settingInDb.settingValue}`);
               
-              // Force a direct SQL update outside the transaction as a fallback
-              console.log(`Attempting direct database update as fallback...`);
-              await db.execute(
-                sql`UPDATE event_settings 
-                    SET setting_value = ${eventData.branding.secondaryColor || ''}, 
-                        updated_at = ${new Date().toISOString()} 
-                    WHERE id = ${verifySettings[0].id}`
-              );
-              
-              // Double-check the update worked
-              const recheck = await db
-                .select()
-                .from(eventSettings)
-                .where(eq(eventSettings.id, verifySettings[0].id));
+              // If the value doesn't match what was sent, force an update outside the transaction
+              if (settingInDb.settingValue !== prop.value) {
+                console.error(`ERROR - Verification failed: ${prop.key} not updated properly!`);
+                console.error(`Expected: ${prop.value}, Found: ${settingInDb.settingValue}`);
                 
-              console.log(`Fallback update complete - color is now: ${recheck[0].settingValue}`);
+                // Force a direct SQL update outside the transaction as a fallback
+                console.log(`Attempting direct database update as fallback for ${prop.key}...`);
+                await db.execute(
+                  sql`UPDATE event_settings 
+                      SET setting_value = ${prop.value}, 
+                          updated_at = ${new Date().toISOString()} 
+                      WHERE id = ${settingInDb.id}`
+                );
+                
+                // Double-check the update worked
+                const recheck = await db
+                  .select()
+                  .from(eventSettings)
+                  .where(eq(eventSettings.id, settingInDb.id));
+                  
+                console.log(`Fallback update complete - ${prop.key} is now: ${recheck[0].settingValue}`);
+              }
+            } else {
+              // Setting doesn't exist at all, create it
+              console.log(`Setting ${prop.key} doesn't exist, creating it now with value: ${prop.value}`);
+              
+              await db
+                .insert(eventSettings)
+                .values({
+                  eventId,
+                  settingKey: prop.key,
+                  settingValue: prop.value,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString()
+                });
+                
+              console.log(`Created new setting: ${prop.key} = ${prop.value}`);
             }
           }
         }
