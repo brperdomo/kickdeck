@@ -632,6 +632,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
           data.settings = [];
         }
         
+        // Log the branding data received from the server
+        console.log('Branding data received from server:', data.branding);
+
+        // Set the event data including branding information
         setEvent(data);
         
         // Check if pay later is enabled and update UI state
