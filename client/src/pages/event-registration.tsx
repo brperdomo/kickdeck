@@ -2339,7 +2339,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             
                             <Button 
                               type="button" 
-                              className="w-full"
+                              className="w-full text-white"
+                              style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
                               onClick={() => {
                                 // Make sure to sync the latest players array with form data
                                 teamForm.setValue('players', players);
