@@ -116,10 +116,19 @@ export function AnimatedEventBackground({
       const accent = brightenColor(primary, 20);
       
       const particles: Particle[] = [];
-      const particleCount = Math.floor((canvas.width * canvas.height) / 20000); // Reduced density
+      const particleCount = Math.floor((canvas.width * canvas.height) / 10000); // Increased density
       const speedFactor = speed === "slow" ? 0.3 : speed === "fast" ? 0.8 : 0.5;
       
-      // Create initial particles with more subtle appearance
+      console.log("Creating particles animation with:", {
+        width: canvas.width,
+        height: canvas.height,
+        particleCount,
+        speedFactor,
+        primaryRGB: `${primary.r}, ${primary.g}, ${primary.b}`,
+        secondaryRGB: `${secondary.r}, ${secondary.g}, ${secondary.b}`
+      });
+      
+      // Create initial particles with more visible appearance
       for (let i = 0; i < particleCount; i++) {
         // Randomly choose between primary, secondary and accent colors
         const colorChoice = Math.random();
@@ -136,17 +145,22 @@ export function AnimatedEventBackground({
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 3 + 1, // Particle size between 1-4
+          size: Math.random() * 5 + 2, // Larger particle size between 2-7
           speedX: (Math.random() - 0.5) * speedFactor,
           speedY: (Math.random() - 0.5) * speedFactor,
-          color: `rgba(${particleColor.r}, ${particleColor.g}, ${particleColor.b}, ${opacity})`
+          color: `rgba(${particleColor.r}, ${particleColor.g}, ${particleColor.b}, ${Math.min(opacity * 1.5, 1)})`
         });
       }
       
       const animate = () => {
-        // Clear canvas with a very subtle background color for better blending
-        ctx.fillStyle = `rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.01)`;
+        // Clear canvas with a subtle background color for better visibility
+        ctx.fillStyle = `rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.05)`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Only log once per second to avoid console spam
+        if (Math.floor(Date.now() / 1000) % 3 === 0) {
+          console.log("Animation frame running, particles:", particles.length, "Canvas size:", canvas.width, "x", canvas.height);
+        }
         
         // Update and draw particles
         particles.forEach(particle => {
@@ -181,11 +195,23 @@ export function AnimatedEventBackground({
   }, [primaryColor, secondaryColor, type, speed, opacity]);
   
   return (
-    <canvas 
-      ref={canvasRef} 
-      className={`fixed top-0 left-0 w-full h-full z-0 ${className}`}
-      style={{pointerEvents: 'none'}}
-    />
+    <>
+      {/* Debug background - a visible solid color to confirm component is rendering */}
+      <div 
+        className="fixed top-0 left-0 w-full h-full" 
+        style={{
+          backgroundColor: primaryColor,
+          opacity: 0.3,
+          zIndex: -1,
+          pointerEvents: 'none'
+        }}
+      />
+      <canvas 
+        ref={canvasRef} 
+        className={`fixed top-0 left-0 w-full h-full z-0 ${className}`}
+        style={{pointerEvents: 'none'}}
+      />
+    </>
   );
 }
 
