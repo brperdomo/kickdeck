@@ -121,16 +121,42 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     
     if (defaultValues?.branding?.primaryColor) {
       setPrimaryColor(defaultValues.branding.primaryColor);
+      // Update form state to ensure branding colors persist
+      form.setValue('branding.primaryColor', defaultValues.branding.primaryColor, { 
+        shouldDirty: false,
+        shouldValidate: false 
+      });
     }
     
     if (defaultValues?.branding?.secondaryColor) {
       setSecondaryColor(defaultValues.branding.secondaryColor);
+      // Update form state to ensure branding colors persist
+      form.setValue('branding.secondaryColor', defaultValues.branding.secondaryColor, { 
+        shouldDirty: false,
+        shouldValidate: false 
+      });
     }
     
     if (defaultValues?.branding?.logoUrl) {
       setPreviewUrl(defaultValues.branding.logoUrl);
+      // Update form state to ensure branding logo persists
+      form.setValue('branding.logoUrl', defaultValues.branding.logoUrl, { 
+        shouldDirty: false,
+        shouldValidate: false 
+      });
     }
-  }, [defaultValues?.branding]);
+    
+    // Ensure the branding object itself exists in form values
+    form.setValue('branding', {
+      ...(form.getValues('branding') || {}),
+      primaryColor: defaultValues?.branding?.primaryColor || '#007AFF',
+      secondaryColor: defaultValues?.branding?.secondaryColor || '#34C759',
+      logoUrl: defaultValues?.branding?.logoUrl || ''
+    }, { 
+      shouldDirty: false,
+      shouldValidate: false 
+    });
+  }, [defaultValues?.branding, form]);
   const [isExtracting, setIsExtracting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [selectedComplexIds, setSelectedComplexIds] = useState<number[]>(defaultValues?.selectedComplexIds || []);
