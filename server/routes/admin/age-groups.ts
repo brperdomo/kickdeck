@@ -27,10 +27,25 @@ router.get('/:eventId', async (req, res) => {
       .from(eventAgeGroups)
       .where(eq(eventAgeGroups.eventId, eventId));
 
-    console.log(`Found ${groups.length} age groups`);
-
-    // Return all age groups, regardless of duplicates (cleanup will handle this)
-    res.json(groups);
+    console.log(`Fetched ${groups.length} age groups for event ${eventId}`);
+    
+    // Deduplicate age groups based on division code or gender+ageGroup
+    const uniqueGroups = [];
+    const uniqueMap = new Map();
+    
+    for (const group of groups) {
+      // Create a unique key based on division code or gender+ageGroup
+      const key = group.divisionCode || 
+                 `${group.gender.charAt(0)}${group.birthYear || group.ageGroup.replace(/\D/g, '')}`;
+      
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, true);
+        uniqueGroups.push(group);
+      }
+    }
+    
+    console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication`);
+    res.json(uniqueGroups);
   } catch (error) {
     console.error('Error fetching age groups:', error);
     res.status(500).json({ error: "Failed to fetch age groups" });

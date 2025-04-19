@@ -487,6 +487,44 @@ export function registerRoutes(app: Express): Server {
           }
         }
         
+        // Define standard age groups to ensure none are missing (especially B2018, B2019)
+        const STANDARD_AGE_GROUPS = [
+          { ageGroup: 'U7', birthYear: 2018, gender: 'Boys', divisionCode: 'B2018' },
+          { ageGroup: 'U7', birthYear: 2018, gender: 'Girls', divisionCode: 'G2018' },
+          { ageGroup: 'U6', birthYear: 2019, gender: 'Boys', divisionCode: 'B2019' },
+          { ageGroup: 'U6', birthYear: 2019, gender: 'Girls', divisionCode: 'G2019' }
+        ];
+        
+        // Add any standard age groups that are missing
+        for (const standardGroup of STANDARD_AGE_GROUPS) {
+          if (!uniqueMap.has(standardGroup.divisionCode)) {
+            // Add the missing standard age group
+            const newGroup = {
+              id: null, // Will be assigned by database when inserted
+              eventId: parsedEventId.toString(),
+              ageGroup: standardGroup.ageGroup,
+              gender: standardGroup.gender,
+              birthYear: standardGroup.birthYear,
+              divisionCode: standardGroup.divisionCode,
+              fieldSize: standardGroup.ageGroup.startsWith('U') ?
+                  (parseInt(standardGroup.ageGroup.substring(1)) <= 7 ? '4v4' :
+                  parseInt(standardGroup.ageGroup.substring(1)) <= 10 ? '7v7' :
+                  parseInt(standardGroup.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+              projectedTeams: 0,
+              createdAt: new Date().toISOString(),
+              birthDateStart: new Date(standardGroup.birthYear, 0, 1).toISOString().split('T')[0],
+              birthDateEnd: new Date(standardGroup.birthYear, 11, 31).toISOString().split('T')[0]
+            };
+            
+            // Insert it into the database for future use
+            await db.insert(eventAgeGroups).values(newGroup).onConflictDoNothing();
+            
+            // Include in the response
+            uniqueAgeGroups.push(newGroup);
+            uniqueMap.set(standardGroup.divisionCode, true);
+          }
+        }
+        
         console.log(`Deduplicated age groups: ${uniqueAgeGroups.length} unique groups from ${rawAgeGroups.length} total`);
           
         // Get event settings
