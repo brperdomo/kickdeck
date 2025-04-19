@@ -371,6 +371,14 @@ export function registerRoutes(app: Express): Server {
             details: 'Preview mode tournament for testing the registration process.',
             agreement: 'This is a sample agreement text for preview mode. In an actual event, this would contain the terms and conditions.',
             refundPolicy: 'This is a sample refund policy for preview mode. In an actual event, this would contain the refund policy details.',
+            // Include settings for the preview mode
+            settings: [
+              {
+                id: 1001,
+                key: 'allowPayLater',
+                value: 'true'
+              }
+            ],
             ageGroups: [
               {
                 id: 1001,
@@ -564,11 +572,27 @@ export function registerRoutes(app: Express): Server {
         
         console.log('Processed event branding data:', brandingData);
 
-        // Send event details, age groups, and branding
+        // Convert the settings to the format expected by the client
+        const formattedSettings = settings.map(setting => ({
+          id: setting.id,
+          key: setting.settingKey,
+          value: setting.settingValue
+        }));
+        
+        console.log('Formatted event settings for event:', parsedEventId, formattedSettings);
+        
+        // Check for allowPayLater setting specifically
+        const allowPayLaterSetting = settings.find(s => s.settingKey === 'allowPayLater');
+        if (allowPayLaterSetting) {
+          console.log('Found allowPayLater setting:', allowPayLaterSetting);
+        }
+        
+        // Send event details, age groups, branding, and settings
         res.json({
           ...event,
           ageGroups: uniqueAgeGroups,
-          branding: brandingData
+          branding: brandingData,
+          settings: formattedSettings
         });
       } catch (error) {
         console.error('Error fetching event:', error);
