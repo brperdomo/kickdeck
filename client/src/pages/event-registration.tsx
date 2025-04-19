@@ -1429,7 +1429,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     </Button>
                     <Button 
                       type="submit"
-                      className="bg-[#2C5282] hover:bg-[#1A365D] text-white"
+                      className="text-white"
+                      style={{ 
+                        backgroundColor: event?.branding?.primaryColor || '#2C5282',
+                        '&:hover': { 
+                          backgroundColor: event?.branding?.primaryColor ? 
+                            `${event.branding.primaryColor}dd` : 
+                            '#1A365D'
+                        } 
+                      }}
                       disabled={updatePersonalDetailsMutation.isPending}
                     >
                       {updatePersonalDetailsMutation.isPending ? (
@@ -1458,7 +1466,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 <Form {...teamForm}>
                   <form onSubmit={teamForm.handleSubmit(onSubmitTeamRegistration)} className="space-y-6">
                   <div className="space-y-4">
-                    <h3 className="text-xl font-semibold text-[#2C5282]">Team Information</h3>
+                    <h3 
+                      className="text-xl font-semibold"
+                      style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                    >
+                      Team Information
+                    </h3>
                     
                     <FormField
                       control={teamForm.control}
@@ -1582,7 +1595,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   </div>
 
                   <div className="space-y-4 border-t pt-4">
-                    <h3 className="text-xl font-semibold text-[#2C5282]">Coach Information</h3>
+                    <h3 
+                      className="text-xl font-semibold"
+                      style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                    >
+                      Coach Information
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={teamForm.control}
@@ -1643,7 +1661,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   </div>
 
                   <div className="space-y-4 border-t pt-4">
-                    <h3 className="text-xl font-semibold text-[#2C5282]">Team Manager Information</h3>
+                    <h3 
+                      className="text-xl font-semibold"
+                      style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                    >
+                      Team Manager Information
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={teamForm.control}
@@ -1693,7 +1716,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   
                   <div className="space-y-4 border-t pt-4">
                     <div className="flex justify-between items-center">
-                      <h3 className="text-xl font-semibold text-[#2C5282]">Player Roster</h3>
+                      <h3 
+                        className="text-xl font-semibold"
+                        style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                      >
+                        Player Roster
+                      </h3>
                       <div className="flex gap-2">
                         <Button
                           type="button"
