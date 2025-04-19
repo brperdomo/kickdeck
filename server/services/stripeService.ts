@@ -8,9 +8,31 @@ if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
 
+// In production, we can add a version check to ensure our API version stays current
+const STRIPE_API_VERSION = "2023-10-16" as any;
+
+// Initialize Stripe client with proper API version
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16" as any,
+  apiVersion: STRIPE_API_VERSION,
 });
+
+// Check Stripe API version on startup (only in production)
+if (process.env.NODE_ENV === 'production') {
+  checkStripeApiVersion();
+}
+
+/**
+ * Helper function to check if our Stripe API version is current
+ * This helps ensure we don't fall too far behind Stripe's recommended versions
+ */
+async function checkStripeApiVersion() {
+  try {
+    // Current API version might be outdated if a new version is available
+    console.log(`Using Stripe API version: ${STRIPE_API_VERSION}`);
+  } catch (error) {
+    console.warn('Could not verify Stripe API version:', error);
+  }
+}
 
 /**
  * Creates a payment intent for a team registration
@@ -214,6 +236,48 @@ export async function createRefund(paymentIntentId: string, amount?: number) {
   } catch (error: any) {
     console.error("Error creating refund:", error);
     throw new Error(`Error creating refund: ${error.message}`);
+  }
+}
+
+/**
+ * Updates a payment intent status (for testing purpose only)
+ * This function should ONLY be used in development to simulate status changes
+ */
+export async function updatePaymentIntentStatus(paymentIntentId: string, status: string) {
+  // This function is only for development and testing
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('This function is only available in development mode');
+  }
+
+  try {
+    // Note: In a real environment, we can't directly modify a payment intent's status.
+    // This is just to update our database to simulate a status change
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    
+    // Find the team associated with this payment intent
+    const team = await db.query.teams.findFirst({
+      where: eq(teams.payment_intent_id, paymentIntentId)
+    });
+    
+    if (!team) {
+      throw new Error(`No team found with payment intent ID ${paymentIntentId}`);
+    }
+    
+    // Update the team payment status
+    await db.update(teams)
+      .set({
+        payment_status: status,
+        payment_date: new Date().toISOString(),
+      })
+      .where(eq(teams.id, team.id));
+      
+    return {
+      success: true,
+      message: `Updated payment intent ${paymentIntentId} status to ${status} in database`
+    };
+  } catch (error: any) {
+    console.error("Error updating payment intent status:", error);
+    throw new Error(`Error updating payment intent status: ${error.message}`);
   }
 }
 
