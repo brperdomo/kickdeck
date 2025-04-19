@@ -1,437 +1,263 @@
 import Stripe from 'stripe';
+import { db } from "../../db";
+import { teams, paymentTransactions } from "../../db/schema";
+import { eq } from 'drizzle-orm';
 import { log } from '../vite';
 
-// Check if Stripe API key is available
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-let stripe: Stripe | null = null;
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
-// Only initialize Stripe if we have an API key
-if (stripeSecretKey) {
-  try {
-    stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2023-10-16', // Use the latest API version or specify one
-    });
-    log('Stripe initialized successfully', 'stripe');
-  } catch (error) {
-    console.error('Failed to initialize Stripe:', error);
-    stripe = null;
-  }
-} else {
-  console.warn('STRIPE_SECRET_KEY not found in environment variables. Stripe functionality will be disabled.');
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
 
-export interface PaymentIntentParams {
-  amount: number; // Amount in cents
-  currency?: string; // Default: 'usd'
-  description?: string;
-  metadata?: Record<string, string>;
-}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16" as any,
+});
 
 /**
- * Fallback response for when Stripe is not available
- * This helps prevent the application from crashing in production
+ * Creates a payment intent for a team registration
  */
-function getStripeUnavailableResponse() {
-  return {
-    id: 'stripe_unavailable',
-    clientSecret: 'stripe_unavailable',
-    status: 'not_available',
-    amount: 0,
-    message: 'Stripe payment processing is currently unavailable. Please contact support.'
-  };
-}
-
-/**
- * Create a payment intent for processing payments
- */
-export async function createPaymentIntent(params: PaymentIntentParams) {
+export async function createPaymentIntent(amount: number, teamId: number, metadata?: Record<string, string>) {
   try {
-    if (!stripe) {
-      const errorMsg = 'Stripe is not initialized. Check STRIPE_SECRET_KEY environment variable.';
-      log(errorMsg, 'stripe');
-      
-      if (isDevelopment) {
-        throw new Error(errorMsg);
-      } else {
-        console.error('Payment processing unavailable in production - missing Stripe API key');
-        return getStripeUnavailableResponse();
-      }
-    }
-
-    const { amount, currency = 'usd', description, metadata = {} } = params;
-    
-    if (!params || typeof amount !== 'number' || amount <= 0) {
-      const errorMsg = `Invalid payment parameters: amount must be a positive number, received: ${amount}`;
-      log(errorMsg, 'stripe');
-      
-      if (isDevelopment) {
-        throw new Error(errorMsg);
-      } else {
-        console.error(errorMsg);
-        return getStripeUnavailableResponse();
-      }
-    }
-    
     const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency,
-      description,
-      metadata,
-      // Setting to true for automatic payment methods
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    });
-    
-    return {
-      clientSecret: paymentIntent.client_secret,
-      id: paymentIntent.id,
-      status: paymentIntent.status,
-      amount: paymentIntent.amount
-    };
-  } catch (error) {
-    log(`Error creating payment intent: ${error}`, 'stripe');
-    
-    if (isDevelopment) {
-      throw error;
-    } else {
-      console.error('Failed to create payment intent in production:', error);
-      return getStripeUnavailableResponse();
-    }
-  }
-}
-
-/**
- * Retrieve a payment intent by ID
- */
-export async function retrievePaymentIntent(paymentIntentId: string) {
-  try {
-    if (!stripe) {
-      const errorMsg = 'Stripe is not initialized. Check STRIPE_SECRET_KEY environment variable.';
-      log(errorMsg, 'stripe');
-      
-      if (isDevelopment) {
-        throw new Error(errorMsg);
-      } else {
-        console.error('Payment retrieval unavailable in production - missing Stripe API key');
-        return getStripeUnavailableResponse();
-      }
-    }
-    
-    if (!paymentIntentId || typeof paymentIntentId !== 'string') {
-      const errorMsg = `Invalid payment intent ID: ${paymentIntentId}`;
-      log(errorMsg, 'stripe');
-      
-      if (isDevelopment) {
-        throw new Error(errorMsg);
-      } else {
-        console.error(errorMsg);
-        return getStripeUnavailableResponse();
-      }
-    }
-    
-    return await stripe.paymentIntents.retrieve(paymentIntentId);
-  } catch (error) {
-    log(`Error retrieving payment intent: ${error}`, 'stripe');
-    
-    if (isDevelopment) {
-      throw error;
-    } else {
-      console.error('Failed to retrieve payment intent in production:', error);
-      return getStripeUnavailableResponse();
-    }
-  }
-}
-
-/**
- * Update a payment intent status to simulate successful payment
- * Only used for testing purposes
- */
-export async function updatePaymentIntentStatus(paymentIntentId: string, status: 'succeeded') {
-  try {
-    if (!stripe) {
-      const errorMsg = 'Stripe is not initialized. Check STRIPE_SECRET_KEY environment variable.';
-      log(errorMsg, 'stripe');
-      
-      if (isDevelopment) {
-        throw new Error(errorMsg);
-      } else {
-        console.error('Payment status update unavailable in production - missing Stripe API key');
-        return getStripeUnavailableResponse();
-      }
-    }
-    
-    if (!paymentIntentId || typeof paymentIntentId !== 'string') {
-      const errorMsg = `Invalid payment intent ID: ${paymentIntentId}`;
-      log(errorMsg, 'stripe');
-      
-      if (isDevelopment) {
-        throw new Error(errorMsg);
-      } else {
-        console.error(errorMsg);
-        return getStripeUnavailableResponse();
-      }
-    }
-    
-    // In real Stripe, we can't directly update status, but we can mimic it via test mode
-    const updated = await stripe.paymentIntents.update(
-      paymentIntentId,
-      { metadata: { test_status_simulation: status } }
-    );
-    
-    // For test accounts, this additional call would confirm and mark as succeeded
-    // This will only work in test mode with test keys
-    const confirmed = await stripe.paymentIntents.confirm(
-      paymentIntentId,
-      { payment_method: 'pm_card_visa' } // Using a test payment method
-    );
-    
-    log(`Updated payment intent ${paymentIntentId} to status: ${status}`, 'stripe');
-    return confirmed;
-  } catch (error) {
-    log(`Error updating payment intent status: ${error}`, 'stripe');
-    
-    if (isDevelopment) {
-      throw error;
-    } else {
-      console.error('Failed to update payment intent status in production:', error);
-      return getStripeUnavailableResponse();
-    }
-  }
-}
-
-/**
- * Create a new customer in Stripe
- */
-export async function createCustomer(email: string, name?: string, metadata?: Record<string, string>) {
-  try {
-    if (!stripe) {
-      const errorMsg = 'Stripe is not initialized. Check STRIPE_SECRET_KEY environment variable.';
-      log(errorMsg, 'stripe');
-      
-      if (isDevelopment) {
-        throw new Error(errorMsg);
-      } else {
-        console.error('Customer creation unavailable in production - missing Stripe API key');
-        return { id: 'stripe_unavailable', email, name, object: 'customer' };
-      }
-    }
-    
-    if (!email || typeof email !== 'string') {
-      const errorMsg = `Invalid customer email: ${email}`;
-      log(errorMsg, 'stripe');
-      
-      if (isDevelopment) {
-        throw new Error(errorMsg);
-      } else {
-        console.error(errorMsg);
-        return { id: 'stripe_unavailable', email: 'unavailable', name, object: 'customer' };
-      }
-    }
-    
-    return await stripe.customers.create({
-      email,
-      name,
-      metadata,
-    });
-  } catch (error) {
-    log(`Error creating customer: ${error}`, 'stripe');
-    
-    if (isDevelopment) {
-      throw error;
-    } else {
-      console.error('Failed to create customer in production:', error);
-      return { id: 'stripe_unavailable', email, name, object: 'customer' };
-    }
-  }
-}
-
-/**
- * Creates a test payment intent that can be used for testing refunds
- * This is only used in development/test mode
- */
-export async function createTestPaymentIntent(amount: number, metadata?: Record<string, string>) {
-  try {
-    if (!stripe || !isDevelopment) {
-      const errorMsg = 'Test payment intent creation only available in development with Stripe initialized';
-      log(errorMsg, 'stripe');
-      throw new Error(errorMsg);
-    }
-    
-    log(`Creating test payment intent for amount ${amount}`, 'stripe');
-    
-    // Create a payment intent that we'll immediately confirm
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: 'usd',
+      amount: Math.round(amount * 100), // Convert to cents
+      currency: "usd",
       metadata: {
-        test_mode: 'true',
+        teamId: teamId.toString(),
         ...metadata
-      },
-      payment_method_types: ['card'],
+      }
     });
-    
-    // Confirm it with a test payment method to make it succeed immediately
-    const confirmed = await stripe.paymentIntents.confirm(
-      paymentIntent.id,
-      { payment_method: 'pm_card_visa' } // Test card that will succeed
-    );
-    
-    log(`Created and confirmed test payment intent ${paymentIntent.id}`, 'stripe');
-    
-    return {
-      id: confirmed.id,
-      status: confirmed.status,
-      amount: confirmed.amount,
-      clientSecret: confirmed.client_secret
+
+    // Update the team with the payment intent ID
+    await db.update(teams)
+      .set({
+        payment_intent_id: paymentIntent.id
+      })
+      .where(eq(teams.id, teamId));
+
+    return { 
+      clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id
     };
-  } catch (error) {
-    log(`Error creating test payment intent: ${error}`, 'stripe');
-    throw error;
+  } catch (error: any) {
+    console.error("Error creating payment intent:", error);
+    throw new Error(`Error creating payment intent: ${error.message}`);
   }
 }
 
 /**
- * Process a refund for a payment
+ * Handles a successful payment intent webhook event
  */
-export async function createRefund(paymentIntentId: string, reason?: string) {
+export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
   try {
-    if (!stripe) {
-      const errorMsg = 'Stripe is not initialized. Check STRIPE_SECRET_KEY environment variable.';
-      log(errorMsg, 'stripe');
-      
-      if (isDevelopment) {
-        throw new Error(errorMsg);
-      } else {
-        console.error('Refund processing unavailable in production - missing Stripe API key');
-        return { 
-          id: 'stripe_unavailable', 
-          object: 'refund',
-          status: 'failed',
-          payment_intent: paymentIntentId,
-          amount: 0
-        };
-      }
+    const teamId = paymentIntent.metadata.teamId;
+    if (!teamId) {
+      console.error("No teamId found in payment intent metadata");
+      return;
     }
-    
-    if (!paymentIntentId || typeof paymentIntentId !== 'string') {
-      const errorMsg = `Invalid payment intent ID for refund: ${paymentIntentId}`;
-      log(errorMsg, 'stripe');
-      
-      if (isDevelopment) {
-        throw new Error(errorMsg);
-      } else {
-        console.error(errorMsg);
-        return { 
-          id: 'stripe_unavailable', 
-          object: 'refund',
-          status: 'failed',
-          payment_intent: paymentIntentId,
-          amount: 0
-        };
-      }
+
+    // Find the team
+    const teamIdNumber = parseInt(teamId);
+    const existingTeam = await db.query.teams.findFirst({
+      where: eq(teams.id, teamIdNumber)
+    });
+
+    if (!existingTeam) {
+      console.error(`Team with ID ${teamId} not found`);
+      return;
     }
-    
-    // Check if this is a test-specific payment intent ID format (not a real one)
-    if (paymentIntentId.startsWith('test_intent_')) {
-      log(`Using test mode refund for ${paymentIntentId}`, 'stripe');
-      
-      // For test-specific formats, we'll create a fake refund response
-      return {
-        id: `re_test_${Date.now()}`,
-        object: 'refund',
-        status: 'succeeded',
-        payment_intent: paymentIntentId,
-        amount: 0, // We don't know the original amount in this case
-        metadata: {
-          reason: reason || 'Requested by administrator',
-          test_mode: 'true'
-        }
-      };
-    }
-    
-    try {
-      // Verify the payment intent exists first
-      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-      
-      if (!paymentIntent || paymentIntent.status !== 'succeeded') {
-        log(`Payment intent ${paymentIntentId} is not in a refundable state (status: ${paymentIntent?.status})`, 'stripe');
-        
-        // If we're in development, we can automatically fix this by confirming the payment
-        if (isDevelopment && paymentIntent && paymentIntent.status !== 'succeeded') {
-          log(`Attempting to auto-confirm payment intent in development mode`, 'stripe');
-          
-          try {
-            const confirmed = await stripe.paymentIntents.confirm(
-              paymentIntentId,
-              { payment_method: 'pm_card_visa' } // Test card that will succeed
-            );
-            
-            log(`Successfully auto-confirmed payment intent in development mode: ${confirmed.status}`, 'stripe');
-          } catch (confirmError) {
-            log(`Failed to auto-confirm payment intent: ${confirmError}`, 'stripe');
-          }
-        }
-      }
-    } catch (retrieveError) {
-      // If the payment intent can't be found and we're in development, return a test refund
-      if (isDevelopment) {
-        log(`Payment intent ${paymentIntentId} not found in Stripe. Creating test refund instead.`, 'stripe');
-        return {
-          id: `re_test_${Date.now()}`,
-          object: 'refund',
-          status: 'succeeded',
-          payment_intent: paymentIntentId,
-          amount: 0,
-          metadata: {
-            reason: reason || 'Requested by administrator',
-            test_mode: 'true'
-          }
-        };
-      } else {
-        throw retrieveError;
-      }
-    }
-    
-    // Now attempt to process the actual refund
-    const refund = await stripe.refunds.create({
-      payment_intent: paymentIntentId,
-      reason: 'requested_by_customer',
-      metadata: {
-        reason: reason || 'Requested by administrator'
-      }
+
+    // Get payment details
+    const charges = await stripe.charges.list({
+      payment_intent: paymentIntent.id
     });
     
-    log(`Created refund for payment intent ${paymentIntentId}`, 'stripe');
-    return refund;
-  } catch (error) {
-    log(`Error processing refund: ${error}`, 'stripe');
-    
-    if (isDevelopment) {
-      // In development, generate a test refund instead of failing
-      log(`Generating test refund data due to error in development mode`, 'stripe');
-      return {
-        id: `re_test_${Date.now()}`,
-        object: 'refund',
-        status: 'succeeded',
-        payment_intent: paymentIntentId,
-        amount: 0, 
-        metadata: {
-          reason: reason || 'Requested by administrator',
-          test_mode: 'true',
-          fallback: 'true'
-        }
-      };
-    } else {
-      console.error('Failed to process refund in production:', error);
-      return { 
-        id: 'stripe_unavailable', 
-        object: 'refund',
-        status: 'failed',
-        payment_intent: paymentIntentId,
-        amount: 0
-      };
+    const charge = charges.data[0];
+    const cardDetails = charge?.payment_method_details?.card;
+
+    // Record payment transaction
+    await db.insert(paymentTransactions).values({
+      team_id: teamIdNumber,
+      payment_intent_id: paymentIntent.id,
+      amount: paymentIntent.amount,
+      status: 'paid',
+      payment_date: new Date(),
+      card_brand: cardDetails?.brand || null,
+      card_last_four: cardDetails?.last4 || null,
+    });
+
+    // Update team payment status and card details
+    await db.update(teams)
+      .set({
+        payment_status: 'paid',
+        payment_date: new Date().toISOString(),
+        card_brand: cardDetails?.brand || null,
+        card_last_four: cardDetails?.last4 || null,
+      })
+      .where(eq(teams.id, teamIdNumber));
+
+    console.log(`Payment recorded successfully for team ${teamId}`);
+    return true;
+  } catch (error: any) {
+    console.error("Error handling payment success:", error);
+    throw new Error(`Error handling payment success: ${error.message}`);
+  }
+}
+
+/**
+ * Handles a payment intent failure webhook event
+ */
+export async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
+  try {
+    const teamId = paymentIntent.metadata.teamId;
+    if (!teamId) {
+      console.error("No teamId found in payment intent metadata");
+      return;
     }
+
+    // Find the team
+    const teamIdNumber = parseInt(teamId);
+    
+    // Record payment transaction
+    await db.insert(paymentTransactions).values({
+      team_id: teamIdNumber,
+      payment_intent_id: paymentIntent.id,
+      amount: paymentIntent.amount,
+      status: 'failed',
+      payment_date: new Date(),
+      error_code: paymentIntent.last_payment_error?.code || null,
+      error_message: paymentIntent.last_payment_error?.message || null,
+    });
+
+    // Update team payment status
+    await db.update(teams)
+      .set({
+        payment_status: 'failed',
+        error_code: paymentIntent.last_payment_error?.code || null,
+        error_message: paymentIntent.last_payment_error?.message || null,
+      })
+      .where(eq(teams.id, teamIdNumber));
+
+    console.log(`Payment failure recorded for team ${teamId}`);
+    return true;
+  } catch (error: any) {
+    console.error("Error handling payment failure:", error);
+    throw new Error(`Error handling payment failure: ${error.message}`);
+  }
+}
+
+/**
+ * Creates a test payment intent for development/testing purposes
+ */
+export async function createTestPaymentIntent(amount: number, teamId: number, metadata?: Record<string, string>) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Test payment intents are not allowed in production');
+  }
+  
+  log('Creating test payment intent');
+  return createPaymentIntent(amount, teamId, metadata);
+}
+
+/**
+ * Creates a refund for a payment
+ */
+export async function createRefund(paymentIntentId: string, amount?: number) {
+  try {
+    log(`Creating refund for payment intent ${paymentIntentId}`);
+    
+    // Find the payment intent
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    
+    if (!paymentIntent) {
+      throw new Error(`Payment intent ${paymentIntentId} not found`);
+    }
+    
+    // Find the charge associated with this payment intent
+    const charges = await stripe.charges.list({
+      payment_intent: paymentIntentId
+    });
+    
+    if (charges.data.length === 0) {
+      throw new Error(`No charges found for payment intent ${paymentIntentId}`);
+    }
+    
+    const chargeId = charges.data[0].id;
+    
+    // Create the refund
+    const refund = await stripe.refunds.create({
+      charge: chargeId,
+      amount: amount, // If not specified, refund the full amount
+    });
+    
+    // Get the team from the payment intent metadata
+    const teamId = paymentIntent.metadata.teamId;
+    if (teamId) {
+      const teamIdNumber = parseInt(teamId);
+      
+      // Update the team status
+      await db.update(teams)
+        .set({
+          payment_status: 'refunded',
+          refund_date: new Date().toISOString(),
+        })
+        .where(eq(teams.id, teamIdNumber));
+      
+      // Record the refund transaction
+      await db.insert(paymentTransactions).values({
+        team_id: teamIdNumber,
+        payment_intent_id: paymentIntentId,
+        amount: -(amount || paymentIntent.amount), // Negative amount for refund
+        status: 'refunded',
+        payment_date: new Date(),
+      });
+    }
+    
+    return refund;
+  } catch (error: any) {
+    console.error("Error creating refund:", error);
+    throw new Error(`Error creating refund: ${error.message}`);
+  }
+}
+
+export async function handleRefund(charge: Stripe.Charge, refund: Stripe.Refund) {
+  try {
+    const paymentIntentId = charge.payment_intent as string;
+    if (!paymentIntentId) {
+      console.error("No payment intent ID found in charge");
+      return;
+    }
+
+    // Find the team with this payment intent
+    const team = await db.query.teams.findFirst({
+      where: eq(teams.payment_intent_id, paymentIntentId)
+    });
+
+    if (!team) {
+      console.error(`No team found with payment intent ID ${paymentIntentId}`);
+      return;
+    }
+
+    // Record payment transaction for the refund
+    await db.insert(paymentTransactions).values({
+      team_id: team.id,
+      payment_intent_id: paymentIntentId,
+      amount: -refund.amount, // negative amount for refund
+      status: 'refunded',
+      payment_date: new Date(),
+      card_brand: team.card_brand,
+      card_last_four: team.card_last_four,
+    });
+
+    // Update team payment status
+    await db.update(teams)
+      .set({
+        payment_status: 'refunded',
+        refund_date: new Date().toISOString(),
+      })
+      .where(eq(teams.id, team.id));
+
+    console.log(`Refund recorded for team ${team.id}`);
+    return true;
+  } catch (error: any) {
+    console.error("Error handling refund:", error);
+    throw new Error(`Error handling refund: ${error.message}`);
   }
 }
