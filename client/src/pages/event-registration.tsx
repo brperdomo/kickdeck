@@ -2179,7 +2179,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 {/* Agreement Section */}
                 <div className="border rounded-lg p-4 space-y-4">
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-blue-800">Tournament Agreement</h4>
+                    <h4 
+                      className="font-semibold"
+                      style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                    >Tournament Agreement</h4>
                     <ScrollArea className="h-48 w-full rounded-md border p-4 bg-white">
                       <div className="text-sm text-gray-700 space-y-3">
                         {event.agreement ? (
@@ -2197,7 +2200,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   
                   {/* Refund Policy */}
                   <div className="space-y-2">
-                    <h4 className="font-semibold text-blue-800">Refund Policy</h4>
+                    <h4 
+                      className="font-semibold"
+                      style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                    >Refund Policy</h4>
                     <ScrollArea className="h-32 w-full rounded-md border p-4 bg-white">
                       <div className="text-sm text-gray-700 space-y-3">
                         {event.refundPolicy ? (
@@ -2237,7 +2243,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 {termsAgreed && registrationFee && (
                   <div className="border rounded-lg p-4 space-y-6">
                     <div>
-                      <h4 className="font-semibold text-blue-800">Payment Options</h4>
+                      <h4 
+                        className="font-semibold"
+                        style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                      >Payment Options</h4>
                       <p className="text-sm text-gray-600">Select how you would like to proceed with payment</p>
                     </div>
                     
@@ -2279,7 +2288,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         {/* Pay Now option - Show credit card form */}
                         {!payLaterOption && (
                           <div className="mt-4">
-                            <h4 className="font-semibold text-blue-800">Payment Information</h4>
+                            <h4 
+                              className="font-semibold"
+                              style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                            >Payment Information</h4>
                             <p className="text-sm text-gray-600 mb-4">Please provide your payment details to complete registration</p>
                             
                             <StripeProvider>
@@ -2365,7 +2377,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     ) : (
                       // Regular Payment Flow (Pay Later not enabled)
                       <div>
-                        <h4 className="font-semibold text-blue-800">Payment Information</h4>
+                        <h4 
+                          className="font-semibold"
+                          style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                        >Payment Information</h4>
                         <p className="text-sm text-gray-600 mb-4">Please provide your payment details to complete registration</p>
                         
                         <StripeProvider>
@@ -2451,27 +2466,42 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 transition={{ duration: 0.3 }}>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-[#2C5282]">Event Dates</h3>
+                    <h3 
+                      className="font-semibold"
+                      style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                    >Event Dates</h3>
                     <p>{new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}</p>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-[#2C5282]">Registration Deadline</h3>
+                    <h3 
+                      className="font-semibold"
+                      style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                    >Registration Deadline</h3>
                     <p>{new Date(event.applicationDeadline).toLocaleDateString()}</p>
                   </div>
                 </div>
 
                 {event.ageGroups && event.ageGroups.length > 0 && (
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-[#2C5282]">Eligible Age Groups</h3>
+                    <h3 
+                      className="font-semibold"
+                      style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                    >Eligible Age Groups</h3>
                     {renderAgeGroups(event.ageGroups)}
                   </div>
                 )}
 
                 {event.details && (
                   <div className="space-y-2">
-                    <h3 className="font-semibold text-[#2C5282]">Event Details</h3>
+                    <h3 
+                      className="font-semibold"
+                      style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                    >Event Details</h3>
                     <div 
-                      className="prose max-w-none prose-blue prose-headings:text-[#2C5282] prose-p:text-gray-700" 
+                      className="prose max-w-none prose-blue prose-p:text-gray-700" 
+                      style={{ 
+                        '--tw-prose-headings': event?.branding?.primaryColor || '#2C5282' 
+                      } as React.CSSProperties}
                       dangerouslySetInnerHTML={{ __html: event.details }} 
                     />
                   </div>
