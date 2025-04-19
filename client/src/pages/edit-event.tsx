@@ -151,6 +151,15 @@ export default function EditEvent() {
     );
   }
 
+  // Log the raw data from the server to debug branding issues
+  console.log('Raw event data from server:', eventQuery.data);
+  
+  // Check if branding data exists and has valid colors
+  const hasBranding = eventQuery.data.branding && 
+    (eventQuery.data.branding.primaryColor || eventQuery.data.branding.secondaryColor);
+  
+  console.log('Has branding data:', hasBranding, eventQuery.data.branding);
+  
   // Prepare the event data for the form
   const eventData = {
     ...eventQuery.data,
@@ -165,10 +174,14 @@ export default function EditEvent() {
     complexFieldSizes: eventQuery.data.complexFieldSizes || {},
     scoringRules: eventQuery.data.scoringRules || [],
     settings: eventQuery.data.settings || [],
-    branding: eventQuery.data.branding || {
+    branding: hasBranding ? {
+      logoUrl: eventQuery.data.branding.logoUrl || "",
+      primaryColor: eventQuery.data.branding.primaryColor || "#007AFF",
+      secondaryColor: eventQuery.data.branding.secondaryColor || "#34C759"
+    } : {
       logoUrl: "",
-      primaryColor: "#000000",
-      secondaryColor: "#ffffff"
+      primaryColor: "#007AFF",
+      secondaryColor: "#34C759"
     }
   };
 
