@@ -4379,12 +4379,20 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const brandingSettings = settingsData.filter(setting => 
           setting.settingKey.startsWith('branding.'));
           
-        let brandingData = {};
+        // Initialize with default colors to ensure we always have values
+        let brandingData = {
+          logoUrl: '',
+          primaryColor: '#007AFF',   // Default blue
+          secondaryColor: '#34C759'  // Default green
+        };
         
         if (brandingSettings.length > 0) {
           brandingSettings.forEach(setting => {
             const key = setting.settingKey.replace('branding.', '');
-            brandingData[key] = setting.settingValue;
+            // Only override default values if the setting exists and has a value
+            if (setting.settingValue) {
+              brandingData[key] = setting.settingValue;
+            }
           });
         }
         
