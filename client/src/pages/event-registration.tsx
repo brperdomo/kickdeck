@@ -1292,7 +1292,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   </p>
                   <Button 
                     size="lg"
-                    className="bg-[#2C5282] hover:bg-[#1A365D] text-white font-semibold px-8"
+                    className="text-white font-semibold px-8"
+                    style={{ 
+                      backgroundColor: event?.branding?.primaryColor || '#2C5282',
+                    }}
                     onClick={handleAuthRedirect}
                   >
                     Sign In / Register
@@ -1430,14 +1433,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     <Button 
                       type="submit"
                       className="text-white"
-                      style={{ 
-                        backgroundColor: event?.branding?.primaryColor || '#2C5282',
-                        '&:hover': { 
-                          backgroundColor: event?.branding?.primaryColor ? 
-                            `${event.branding.primaryColor}dd` : 
-                            '#1A365D'
-                        } 
-                      }}
+                      style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
                       disabled={updatePersonalDetailsMutation.isPending}
                     >
                       {updatePersonalDetailsMutation.isPending ? (
@@ -2016,7 +2012,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     </Button>
                     <Button 
                       type="submit"
-                      className="bg-[#2C5282] hover:bg-[#1A365D] text-white"
+                      className="text-white"
+                      style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
                       disabled={registerTeamMutation.isPending}
                     >
                       {registerTeamMutation.isPending ? (
@@ -2042,7 +2039,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
                 className="space-y-6">
-                <h3 className="text-xl font-semibold text-[#2C5282]">Payment and Terms</h3>
+                <h3 
+                  className="text-xl font-semibold"
+                  style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                >
+                  Payment and Terms
+                </h3>
                 
                 {/* Cart Summary */}
                 <div className="bg-blue-50 p-4 rounded-lg">
@@ -2417,7 +2419,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
                 className="space-y-6">
-                <h3 className="text-xl font-semibold text-[#2C5282]">Registration Complete</h3>
+                <h3 
+                  className="text-xl font-semibold"
+                  style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                >
+                  Registration Complete
+                </h3>
                 <div className="bg-green-50 border border-green-200 rounded-md p-4">
                   <div className="flex items-center">
                     <CheckCircle className="h-6 w-6 text-green-500 mr-2" />
@@ -2427,7 +2434,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 
                 <Button
                   onClick={() => setLocation('/dashboard')}
-                  className="bg-[#2C5282] hover:bg-[#1A365D] text-white"
+                  className="text-white"
+                  style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
                 >
                   Go to Dashboard
                 </Button>
