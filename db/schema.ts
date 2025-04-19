@@ -268,6 +268,16 @@ export const teams = pgTable("teams", {
   // New fields for multiple fee selection
   selectedFeeIds: text("selected_fee_ids"), // Comma-separated list of fee IDs
   totalAmount: integer("total_amount"), // Store total amount in cents (includes all fees)
+  // Payment status and details
+  paymentStatus: text("payment_status").default("pending"), // pending, paid, failed, refunded
+  paymentDate: timestamp("payment_date"), // When the payment was processed
+  paymentIntentId: text("payment_intent_id"), // Stripe payment intent ID
+  cardBrand: text("card_brand"), // Card brand (Visa, Mastercard, etc.)
+  cardLast4: text("card_last_4"), // Last 4 digits of the card
+  paymentMethodType: text("payment_method_type"), // Type of payment method
+  paymentErrorCode: text("payment_error_code"), // Error code if payment failed
+  paymentErrorMessage: text("payment_error_message"), // Error message if payment failed
+  refundDate: timestamp("refund_date"), // When a refund was processed
   // Terms acknowledgement
   termsAcknowledged: boolean("terms_acknowledged").default(false),
   termsAcknowledgedAt: timestamp("terms_acknowledged_at"),
