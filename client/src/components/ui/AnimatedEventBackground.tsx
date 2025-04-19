@@ -183,7 +183,8 @@ export function AnimatedEventBackground({
   return (
     <canvas 
       ref={canvasRef} 
-      className={`absolute top-0 left-0 w-full h-full z-[-1] ${className}`}
+      className={`fixed top-0 left-0 w-full h-full z-0 ${className}`}
+      style={{pointerEvents: 'none'}}
     />
   );
 }
