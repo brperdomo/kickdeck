@@ -2871,12 +2871,23 @@ function TeamsView() {
                 transition={{ duration: 0.4 }}
               >
                 <motion.div whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 400 }}>
-                  <Input
-                    placeholder="Search teams..."
-                    className="w-[300px]"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+                  <div className="relative w-[220px]">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-primary" />
+                    <Input
+                      placeholder="Search teams..."
+                      className="pl-9 bg-background h-10"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    {searchTerm && (
+                      <button 
+                        onClick={() => setSearchTerm('')}
+                        className="absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
                 </motion.div>
                 
                 <motion.div whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 400 }}>
@@ -2884,25 +2895,67 @@ function TeamsView() {
                     value={selectedEvent} 
                     onValueChange={setSelectedEvent}
                   >
-                    <SelectTrigger className="w-[200px]">
+                    <SelectTrigger className="w-[220px] bg-background">
+                      <Calendar className="h-4 w-4 mr-2 text-primary" />
                       <SelectValue placeholder="Select Event" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Events</SelectItem>
-                      {Array.isArray(importEligibleEventsQuery.data) 
-                        ? importEligibleEventsQuery.data.map((event: any) => (
-                          <SelectItem key={event.id} value={event.id.toString()}>
-                            {event.name}
-                          </SelectItem>
-                        ))
-                        : Array.isArray(importEligibleEventsQuery.data?.events)
-                          ? importEligibleEventsQuery.data.events.map((event: any) => (
-                            <SelectItem key={event.id} value={event.id.toString()}>
+                    <SelectContent className="max-h-[250px]">
+                      <SelectGroup>
+                        <SelectLabel className="flex items-center font-semibold text-primary">
+                          <ListFilter className="h-4 w-4 mr-2" />
+                          Filter Options
+                        </SelectLabel>
+                        <SelectItem value="all" className="flex items-center rounded-md mb-1 bg-muted/40 font-medium">
+                          <Eye className="h-4 w-4 mr-2 text-primary" />
+                          All Events
+                        </SelectItem>
+                      </SelectGroup>
+                      
+                      <SelectSeparator />
+                      
+                      <SelectGroup>
+                        <SelectLabel className="flex items-center font-semibold text-primary">
+                          <CalendarDays className="h-4 w-4 mr-2" />
+                          Available Events
+                        </SelectLabel>
+                        {importEligibleEventsQuery.isLoading ? (
+                          <div className="flex items-center justify-center py-2 text-sm text-muted-foreground">
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Loading events...
+                          </div>
+                        ) : Array.isArray(importEligibleEventsQuery.data) && importEligibleEventsQuery.data.length > 0 ? (
+                          importEligibleEventsQuery.data.map((event: any) => (
+                            <SelectItem 
+                              key={event.id} 
+                              value={event.id.toString()} 
+                              className="flex items-center mb-0.5 hover:bg-muted/60 transition-colors"
+                            >
+                              <Badge variant="outline" className="mr-2 px-1 py-0 h-5 text-xs">
+                                {new Date(event.startDate).toLocaleDateString(undefined, { month: 'short' })}
+                              </Badge>
                               {event.name}
                             </SelectItem>
                           ))
-                          : (<SelectItem value="none" disabled>No events available</SelectItem>)
-                      }
+                        ) : Array.isArray(importEligibleEventsQuery.data?.events) && importEligibleEventsQuery.data.events.length > 0 ? (
+                          importEligibleEventsQuery.data.events.map((event: any) => (
+                            <SelectItem 
+                              key={event.id} 
+                              value={event.id.toString()} 
+                              className="flex items-center mb-0.5 hover:bg-muted/60 transition-colors"
+                            >
+                              <Badge variant="outline" className="mr-2 px-1 py-0 h-5 text-xs">
+                                {new Date(event.startDate).toLocaleDateString(undefined, { month: 'short' })}
+                              </Badge>
+                              {event.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <div className="flex items-center justify-center py-2 text-sm text-muted-foreground">
+                            <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                            No events available
+                          </div>
+                        )}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </motion.div>
@@ -2912,16 +2965,61 @@ function TeamsView() {
                     value={selectedStatus} 
                     onValueChange={setSelectedStatus}
                   >
-                    <SelectTrigger className="w-[200px]">
+                    <SelectTrigger className="w-[220px] bg-background">
+                      <ClipboardList className="h-4 w-4 mr-2 text-primary" />
                       <SelectValue placeholder="Registration Status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="registered">Registered (Pending)</SelectItem>
-                      <SelectItem value="approved">Approved</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
-                      <SelectItem value="paid">Paid</SelectItem>
-                      <SelectItem value="refunded">Refunded</SelectItem>
+                      <SelectGroup>
+                        <SelectLabel className="flex items-center font-semibold text-primary">
+                          <Filter className="h-4 w-4 mr-2" />
+                          Status Filters
+                        </SelectLabel>
+                        <SelectItem value="all" className="flex items-center rounded-md mb-1 bg-muted/40 font-medium">
+                          <ListChecks className="h-4 w-4 mr-2 text-primary" />
+                          All Statuses
+                        </SelectItem>
+                      </SelectGroup>
+                      
+                      <SelectSeparator />
+                      
+                      <SelectGroup>
+                        <SelectItem value="registered" className="flex items-center mb-0.5">
+                          <Badge variant="outline" className="mr-2 border-yellow-400/30 bg-yellow-50/40 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400">
+                            <Clock className="h-3 w-3 mr-1" />
+                            Pending
+                          </Badge>
+                          Registered (Pending)
+                        </SelectItem>
+                        <SelectItem value="approved" className="flex items-center mb-0.5">
+                          <Badge variant="outline" className="mr-2 border-green-400/30 bg-green-50/40 text-green-700 dark:bg-green-900/20 dark:text-green-400">
+                            <Check className="h-3 w-3 mr-1" />
+                            OK
+                          </Badge>
+                          Approved
+                        </SelectItem>
+                        <SelectItem value="rejected" className="flex items-center mb-0.5">
+                          <Badge variant="outline" className="mr-2 border-red-400/30 bg-red-50/40 text-red-700 dark:bg-red-900/20 dark:text-red-400">
+                            <X className="h-3 w-3 mr-1" />
+                            No
+                          </Badge>
+                          Rejected
+                        </SelectItem>
+                        <SelectItem value="paid" className="flex items-center mb-0.5">
+                          <Badge variant="outline" className="mr-2 border-blue-400/30 bg-blue-50/40 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
+                            <CreditCard className="h-3 w-3 mr-1" />
+                            $
+                          </Badge>
+                          Paid
+                        </SelectItem>
+                        <SelectItem value="refunded" className="flex items-center mb-0.5">
+                          <Badge variant="outline" className="mr-2 border-purple-400/30 bg-purple-50/40 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400">
+                            <RefreshCcw className="h-3 w-3 mr-1" />
+                            ↩
+                          </Badge>
+                          Refunded
+                        </SelectItem>
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </motion.div>
