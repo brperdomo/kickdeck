@@ -659,11 +659,15 @@ const ScheduleVisualization: React.FC<ScheduleVisualizationProps> = ({
           </SelectContent>
         </Select>
         
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'games' | 'brackets' | 'teams')}>
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'games' | 'brackets' | 'teams' | 'divisions')}>
           <TabsList>
             <TabsTrigger value="games" className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
-              <span>Games</span>
+              <span>By Time</span>
+            </TabsTrigger>
+            <TabsTrigger value="divisions" className="flex items-center gap-1">
+              <Filter className="h-4 w-4" />
+              <span>By Division</span>
             </TabsTrigger>
             <TabsTrigger value="brackets" className="flex items-center gap-1">
               <Trophy className="h-4 w-4" />
@@ -680,6 +684,7 @@ const ScheduleVisualization: React.FC<ScheduleVisualizationProps> = ({
       <Card>
         <CardContent className="pt-6">
           {activeTab === 'games' && renderGamesView()}
+          {activeTab === 'divisions' && renderDivisionsView()}
           {activeTab === 'brackets' && renderBracketView()}
           {activeTab === 'teams' && renderTeamsView()}
         </CardContent>
