@@ -43,14 +43,20 @@ export class SoccerSchedulerAI {
       const teamsData = await this.getTeamsData(eventId);
       console.log(`Teams data fetched successfully. Found ${teamsData.length} teams.`);
       
+      // Check if we have enough teams to generate a schedule
+      if (teamsData.length < 2) {
+        console.log(`Not enough teams (${teamsData.length}) to generate a schedule`);
+        throw new Error(`Not enough teams to generate a schedule. Found only ${teamsData.length} approved teams.`);
+      }
+      
       // 2. Prepare prompt for OpenAI
       console.log("Generating scheduling prompt...");
       const prompt = this.generateSchedulingPrompt(eventData, teamsData, constraints);
       console.log("Prompt generated successfully");
       
-      // 3. Call OpenAI API
-      console.log("Making OpenAI API call...");
       try {
+        // 3. Call OpenAI API
+        console.log("Making OpenAI API call...");
         const scheduleResponse = await openai.chat.completions.create({
           model: MODEL,
           messages: [
@@ -113,10 +119,37 @@ export class SoccerSchedulerAI {
         };
       } catch (openaiError) {
         console.error("OpenAI API call failed:", openaiError);
+        
+        // Check if it's a rate limit or quota error
+        const isRateLimitError = openaiError.status === 429 || 
+                               (openaiError.error && 
+                               (openaiError.error.type === 'insufficient_quota' || 
+                                openaiError.error.type === 'rate_limit_exceeded'));
+        
+        if (isRateLimitError) {
+          throw new Error("OpenAI API rate limit exceeded or insufficient quota. Please try again later or check your API usage limits.");
+        }
+        
+        // More specific error messages based on OpenAI error types
+        if (openaiError.error && openaiError.error.type === 'invalid_request_error') {
+          throw new Error(`OpenAI API invalid request error: ${openaiError.message}`);
+        }
+        
+        if (openaiError.error && openaiError.error.type === 'authentication_error') {
+          throw new Error("OpenAI API authentication error. Please check your API key.");
+        }
+        
+        // For other OpenAI errors
         throw new Error(`OpenAI API call failed: ${openaiError.message}`);
       }
     } catch (error) {
       console.error("Error generating AI schedule:", error);
+      
+      // If it's already an Error object with a message, rethrow it
+      if (error instanceof Error) {
+        throw error;
+      }
+      
       throw new Error("Failed to generate AI schedule");
     }
   }
@@ -128,50 +161,125 @@ export class SoccerSchedulerAI {
    * @returns The optimized schedule
    */
   static async optimizeSchedule(eventId: string | number, options: OptimizationOptions) {
+    console.log(`Starting schedule optimization for event ID: ${eventId}`);
+    console.log(`Options: ${JSON.stringify(options)}`);
+    
     try {
       // 1. Get the current schedule
+      console.log("Fetching current schedule...");
       const existingSchedule = await this.getCurrentSchedule(eventId);
+      console.log(`Current schedule fetched with ${existingSchedule.length} games`);
       
       // 2. Get teams and fields data
+      console.log("Fetching teams data...");
       const teamsData = await this.getTeamsData(eventId);
+      console.log(`Teams data fetched successfully. Found ${teamsData.length} teams.`);
+      
+      console.log("Fetching event data...");
       const eventData = await this.getEventData(eventId);
+      console.log("Event data fetched successfully");
       
       // 3. Prepare the optimization prompt
+      console.log("Generating optimization prompt...");
       const prompt = this.generateOptimizationPrompt(existingSchedule, teamsData, eventData, options);
+      console.log("Prompt generated successfully");
       
-      // 4. Call OpenAI API
-      const optimizationResponse = await openai.chat.completions.create({
-        model: MODEL,
-        messages: [
-          {
-            role: "system",
-            content: "You are an advanced sports tournament scheduling assistant specializing in soccer tournaments. You optimize existing game schedules to resolve conflicts while making minimal changes."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        response_format: { type: "json_object" },
-        max_tokens: 4000,
-        temperature: 0.2
-      });
-      
-      // 5. Parse and validate the optimized schedule
-      const optimizedResult = JSON.parse(optimizationResponse.choices[0].message.content);
-      
-      // 6. Check for remaining conflicts
-      const remainingConflicts = this.detectScheduleConflicts(optimizedResult.games, teamsData);
-      
-      // 7. Return the optimized schedule with any remaining conflicts
-      return {
-        schedule: optimizedResult.games,
-        qualityScore: optimizedResult.qualityScore || 95,
-        conflicts: remainingConflicts,
-        changesApplied: optimizedResult.changesApplied || []
-      };
+      try {
+        // 4. Call OpenAI API
+        console.log("Making OpenAI API call for schedule optimization...");
+        const optimizationResponse = await openai.chat.completions.create({
+          model: MODEL,
+          messages: [
+            {
+              role: "system",
+              content: "You are an advanced sports tournament scheduling assistant specializing in soccer tournaments. You optimize existing game schedules to resolve conflicts while making minimal changes."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          response_format: { type: "json_object" },
+          max_tokens: 4000,
+          temperature: 0.2
+        });
+        
+        console.log("OpenAI API response received for optimization");
+        
+        if (!optimizationResponse.choices || optimizationResponse.choices.length === 0) {
+          throw new Error("OpenAI API returned empty response");
+        }
+        
+        // 5. Parse and validate the optimized schedule
+        console.log("Parsing API response...");
+        const responseContent = optimizationResponse.choices[0].message.content;
+        
+        if (!responseContent) {
+          throw new Error("OpenAI API returned empty content");
+        }
+        
+        let optimizedResult;
+        try {
+          optimizedResult = JSON.parse(responseContent);
+        } catch (parseError) {
+          console.error("Failed to parse OpenAI response:", parseError);
+          console.error("Raw response:", responseContent);
+          throw new Error("Failed to parse OpenAI optimization response as JSON");
+        }
+        
+        if (!optimizedResult.games || !Array.isArray(optimizedResult.games)) {
+          console.error("Unexpected response format:", optimizedResult);
+          throw new Error("OpenAI response missing expected 'games' array");
+        }
+        
+        console.log(`Optimization parsed successfully with ${optimizedResult.games.length} games`);
+        
+        // 6. Check for remaining conflicts
+        console.log("Detecting potential remaining conflicts...");
+        const remainingConflicts = this.detectScheduleConflicts(optimizedResult.games, teamsData);
+        console.log(`Detected ${remainingConflicts.length} potential conflicts after optimization`);
+        
+        // 7. Return the optimized schedule with any remaining conflicts
+        console.log("Returning optimized schedule data");
+        return {
+          schedule: optimizedResult.games,
+          qualityScore: optimizedResult.qualityScore || 95,
+          conflicts: remainingConflicts,
+          changesApplied: optimizedResult.changesApplied || []
+        };
+      } catch (openaiError) {
+        console.error("OpenAI API call failed:", openaiError);
+        
+        // Check if it's a rate limit or quota error
+        const isRateLimitError = openaiError.status === 429 || 
+                               (openaiError.error && 
+                               (openaiError.error.type === 'insufficient_quota' || 
+                                openaiError.error.type === 'rate_limit_exceeded'));
+        
+        if (isRateLimitError) {
+          throw new Error("OpenAI API rate limit exceeded or insufficient quota. Please try again later or check your API usage limits.");
+        }
+        
+        // More specific error messages based on OpenAI error types
+        if (openaiError.error && openaiError.error.type === 'invalid_request_error') {
+          throw new Error(`OpenAI API invalid request error: ${openaiError.message}`);
+        }
+        
+        if (openaiError.error && openaiError.error.type === 'authentication_error') {
+          throw new Error("OpenAI API authentication error. Please check your API key.");
+        }
+        
+        // For other OpenAI errors
+        throw new Error(`OpenAI API call failed for optimization: ${openaiError.message}`);
+      }
     } catch (error) {
       console.error("Error optimizing schedule:", error);
+      
+      // If it's already an Error object with a message, rethrow it
+      if (error instanceof Error) {
+        throw error;
+      }
+      
       throw new Error("Failed to optimize schedule");
     }
   }
