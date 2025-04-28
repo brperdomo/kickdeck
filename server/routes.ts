@@ -5071,10 +5071,11 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         // Call the AI service to suggest bracket assignments
         const suggestions = await SoccerSchedulerAI.suggestBracketAssignments(eventId);
         
-        // Return the suggested bracket assignments
+        // Return the suggested bracket assignments with source information
         res.json({
           message: "Bracket assignments suggested successfully",
-          suggestions: suggestions.suggestions
+          suggestions: suggestions.suggestions,
+          source: suggestions.source // Pass through the source (ai or fallback)
         });
       } catch (error) {
         console.error('Error suggesting bracket assignments:', error);
