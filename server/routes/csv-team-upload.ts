@@ -266,11 +266,22 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
     for (const team of validTeams) {
       // Check if the age group exists in our mapping
       if (!ageGroups[team.ageGroup]) {
-        invalidAgeGroups.push({ 
-          record: team, 
-          error: `Age group "${team.ageGroup}" does not exist in this event` 
-        });
-        continue;
+        // Try to find a close match by ignoring case and extra spaces
+        const formattedAgeGroup = team.ageGroup.trim().toLowerCase();
+        const potentialMatch = Object.keys(ageGroups).find(ag => 
+          ag.trim().toLowerCase() === formattedAgeGroup
+        );
+        
+        if (potentialMatch) {
+          // Use the properly formatted age group name from our mapping
+          team.ageGroup = potentialMatch;
+        } else {
+          invalidAgeGroups.push({ 
+            record: team, 
+            error: `Age group "${team.ageGroup}" does not exist in this event` 
+          });
+          continue;
+        }
       }
 
       const ageGroupInfo = ageGroups[team.ageGroup];
