@@ -30,45 +30,91 @@ export class SoccerSchedulerAI {
    * @returns The generated schedule and any detected conflicts
    */
   static async generateSchedule(eventId: string | number, constraints: ScheduleConstraints) {
+    console.log(`Starting schedule generation for event ID: ${eventId}`);
+    console.log(`Constraints: ${JSON.stringify(constraints)}`);
+    
     try {
       // 1. Fetch all necessary data for scheduling
+      console.log("Fetching event data...");
       const eventData = await this.getEventData(eventId);
+      console.log("Event data fetched successfully");
+      
+      console.log("Fetching teams data...");
       const teamsData = await this.getTeamsData(eventId);
+      console.log(`Teams data fetched successfully. Found ${teamsData.length} teams.`);
       
       // 2. Prepare prompt for OpenAI
+      console.log("Generating scheduling prompt...");
       const prompt = this.generateSchedulingPrompt(eventData, teamsData, constraints);
+      console.log("Prompt generated successfully");
       
       // 3. Call OpenAI API
-      const scheduleResponse = await openai.chat.completions.create({
-        model: MODEL,
-        messages: [
-          {
-            role: "system",
-            content: "You are an advanced sports tournament scheduling assistant specializing in soccer tournaments. You create optimal game schedules while respecting all constraints."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        response_format: { type: "json_object" },
-        max_tokens: 4000,
-        temperature: 0.2 // Lower temperature for more consistent results
-      });
-      
-      // 4. Parse and validate the schedule
-      const scheduleResult = JSON.parse(scheduleResponse.choices[0].message.content);
-      
-      // 5. Check for conflicts and validation issues
-      const conflicts = this.detectScheduleConflicts(scheduleResult.games, teamsData);
-      
-      // 6. Return the complete schedule with conflicts
-      return {
-        schedule: scheduleResult.games,
-        qualityScore: scheduleResult.qualityScore || 85,
-        conflicts,
-        bracketSchedules: scheduleResult.bracketSchedules || []
-      };
+      console.log("Making OpenAI API call...");
+      try {
+        const scheduleResponse = await openai.chat.completions.create({
+          model: MODEL,
+          messages: [
+            {
+              role: "system",
+              content: "You are an advanced sports tournament scheduling assistant specializing in soccer tournaments. You create optimal game schedules while respecting all constraints."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          response_format: { type: "json_object" },
+          max_tokens: 4000,
+          temperature: 0.2 // Lower temperature for more consistent results
+        });
+        
+        console.log("OpenAI API response received");
+        
+        if (!scheduleResponse.choices || scheduleResponse.choices.length === 0) {
+          throw new Error("OpenAI API returned empty response");
+        }
+        
+        // 4. Parse and validate the schedule
+        console.log("Parsing API response...");
+        const responseContent = scheduleResponse.choices[0].message.content;
+        
+        if (!responseContent) {
+          throw new Error("OpenAI API returned empty content");
+        }
+        
+        let scheduleResult;
+        try {
+          scheduleResult = JSON.parse(responseContent);
+        } catch (parseError) {
+          console.error("Failed to parse OpenAI response:", parseError);
+          console.error("Raw response:", responseContent);
+          throw new Error("Failed to parse OpenAI response as JSON");
+        }
+        
+        if (!scheduleResult.games || !Array.isArray(scheduleResult.games)) {
+          console.error("Unexpected response format:", scheduleResult);
+          throw new Error("OpenAI response missing expected 'games' array");
+        }
+        
+        console.log(`Schedule parsed successfully with ${scheduleResult.games.length} games`);
+        
+        // 5. Check for conflicts and validation issues
+        console.log("Detecting potential schedule conflicts...");
+        const conflicts = this.detectScheduleConflicts(scheduleResult.games, teamsData);
+        console.log(`Detected ${conflicts.length} potential conflicts`);
+        
+        // 6. Return the complete schedule with conflicts
+        console.log("Returning schedule data");
+        return {
+          schedule: scheduleResult.games,
+          qualityScore: scheduleResult.qualityScore || 85,
+          conflicts,
+          bracketSchedules: scheduleResult.bracketSchedules || []
+        };
+      } catch (openaiError) {
+        console.error("OpenAI API call failed:", openaiError);
+        throw new Error(`OpenAI API call failed: ${openaiError.message}`);
+      }
     } catch (error) {
       console.error("Error generating AI schedule:", error);
       throw new Error("Failed to generate AI schedule");
