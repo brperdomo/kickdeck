@@ -10,7 +10,8 @@ import * as z from 'zod';
 import path from 'path';
 import fs from 'fs';
 import { db } from '../../db';
-import { teams, eventAgeGroups } from '../../db/schema';
+import { teams, eventAgeGroups, events, eventSettings } from '../../db/schema';
+import * as schema from '../../db/schema';
 import { eq, and } from 'drizzle-orm';
 
 // Set up multer for file uploads
@@ -118,6 +119,37 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
       return res.status(400).json({ error: 'Event ID is required' });
     }
 
+    // First get the event to determine its seasonal scope ID
+    const [eventData] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, Number(eventId)))
+      .limit(1);
+    
+    if (!eventData) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+    
+    // Get the seasonal scope ID from event settings
+    let seasonalScopeId = null;
+    const [seasonalScopeSetting] = await db
+      .select()
+      .from(eventSettings)
+      .where(
+        and(
+          eq(eventSettings.eventId, String(eventId)),
+          eq(eventSettings.settingKey, 'seasonalScopeId')
+        )
+      )
+      .limit(1);
+    
+    if (seasonalScopeSetting) {
+      seasonalScopeId = parseInt(seasonalScopeSetting.settingValue);
+      console.log(`Using seasonal scope ID ${seasonalScopeId} for event ${eventId}`);
+    } else {
+      console.log(`No seasonal scope found for event ${eventId}`);
+    }
+    
     // Get age groups for this event to validate age group names
     const eventAgeGroupsData = await db
       .select()
@@ -127,16 +159,46 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
     if (eventAgeGroupsData.length === 0) {
       return res.status(400).json({ error: 'No age groups found for this event' });
     }
-
-    // Create a mapping of age group names to IDs
-    const ageGroupMapping: { [key: string]: number } = {};
+    
+    // Create a mapping of age group objects 
+    const ageGroups: { [key: string]: { id: number, divisionCode?: string, birthYear?: number } } = {};
+    
+    // Get division codes and birth years from the seasonal scope if available
+    let ageGroupSettings = [];
+    if (seasonalScopeId) {
+      ageGroupSettings = await db
+        .select()
+        .from(schema.ageGroupSettings)
+        .where(eq(schema.ageGroupSettings.seasonalScopeId, seasonalScopeId));
+      
+      console.log(`Found ${ageGroupSettings.length} age group settings in the seasonal scope`);
+    }
+    
+    // Create a mapping of seasonal scope age groups to division codes and birth years
+    const scopeSettings: { [key: string]: { divisionCode: string, birthYear: number } } = {};
+    ageGroupSettings.forEach(setting => {
+      const key = `${setting.ageGroup} ${setting.gender}`;
+      scopeSettings[key] = {
+        divisionCode: setting.divisionCode,
+        birthYear: setting.birthYear
+      };
+    });
+    
+    // Create the final age group mapping
     eventAgeGroupsData.forEach(group => {
       // Store the age group with the combined format that includes gender ("U8 Boys")
       const fullAgeGroupName = `${group.ageGroup} ${group.gender}`;
-      ageGroupMapping[fullAgeGroupName] = group.id;
+      ageGroups[fullAgeGroupName] = { 
+        id: group.id,
+        divisionCode: group.divisionCode || undefined,
+        birthYear: group.birthYear || undefined
+      };
       
-      // Also store the age group without gender as a fallback ("U8")
-      ageGroupMapping[group.ageGroup] = group.id;
+      // If seasonal scope settings exist for this age group, use them
+      if (scopeSettings[fullAgeGroupName]) {
+        ageGroups[fullAgeGroupName].divisionCode = scopeSettings[fullAgeGroupName].divisionCode;
+        ageGroups[fullAgeGroupName].birthYear = scopeSettings[fullAgeGroupName].birthYear;
+      }
     });
 
     // Parse the CSV file
@@ -202,7 +264,8 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
     const teamsToInsert = [];
 
     for (const team of validTeams) {
-      if (!ageGroupMapping[team.ageGroup]) {
+      // Check if the age group exists in our mapping
+      if (!ageGroups[team.ageGroup]) {
         invalidAgeGroups.push({ 
           record: team, 
           error: `Age group "${team.ageGroup}" does not exist in this event` 
@@ -210,12 +273,30 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
         continue;
       }
 
-      const ageGroupId = ageGroupMapping[team.ageGroup];
+      const ageGroupInfo = ageGroups[team.ageGroup];
       
-      // Prepare team data for insertion
-      teamsToInsert.push({
+      // Define the type of our team data with optional fields
+      type TeamInsertData = {
+        eventId: string | number;
+        ageGroupId: number;
+        name: string;
+        coach: string;
+        managerName: string | null;
+        managerEmail: string | null;
+        managerPhone: string | null;
+        clubName: string | null;
+        submitterName: string | null;
+        submitterEmail: string | null;
+        status: string;
+        createdAt: string;
+        divisionCode?: string;
+        birthYear?: number;
+      };
+      
+      // Prepare team data for insertion with proper typing
+      const teamData: TeamInsertData = {
         eventId,
-        ageGroupId,
+        ageGroupId: ageGroupInfo.id,
         name: team.name,
         coach: JSON.stringify({
           name: team.headCoachName,
@@ -230,19 +311,32 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
         submitterEmail: team.submitterEmail || null,
         status: "registered",
         createdAt: new Date().toISOString(),
-      });
+      };
+      
+      // Add division code and birth year if available from the seasonal scope
+      if (ageGroupInfo.divisionCode) {
+        teamData.divisionCode = ageGroupInfo.divisionCode;
+        console.log(`Using division code ${ageGroupInfo.divisionCode} for team ${team.name}`);
+      }
+      
+      if (ageGroupInfo.birthYear) {
+        teamData.birthYear = ageGroupInfo.birthYear;
+        console.log(`Using birth year ${ageGroupInfo.birthYear} for team ${team.name}`);
+      }
+      
+      teamsToInsert.push(teamData);
     }
 
     if (invalidAgeGroups.length > 0) {
       // Create a message with all available age groups to help the user
-      const availableAgeGroups = Object.keys(ageGroupMapping).join(', ');
+      const availableAgeGroups = Object.keys(ageGroups).join(', ');
       
       return res.status(400).json({
         error: `Some records contain invalid age groups. Valid age groups for this event are: ${availableAgeGroups}`,
         invalidAgeGroups,
         validCount: teamsToInsert.length,
         totalCount: validTeams.length,
-        availableAgeGroups: Object.keys(ageGroupMapping)
+        availableAgeGroups: Object.keys(ageGroups)
       });
     }
 
