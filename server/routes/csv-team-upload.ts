@@ -131,6 +131,11 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
     // Create a mapping of age group names to IDs
     const ageGroupMapping: { [key: string]: number } = {};
     eventAgeGroupsData.forEach(group => {
+      // Store the age group with the combined format that includes gender ("U8 Boys")
+      const fullAgeGroupName = `${group.ageGroup} ${group.gender}`;
+      ageGroupMapping[fullAgeGroupName] = group.id;
+      
+      // Also store the age group without gender as a fallback ("U8")
       ageGroupMapping[group.ageGroup] = group.id;
     });
 
@@ -229,11 +234,15 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
     }
 
     if (invalidAgeGroups.length > 0) {
+      // Create a message with all available age groups to help the user
+      const availableAgeGroups = Object.keys(ageGroupMapping).join(', ');
+      
       return res.status(400).json({
-        error: 'Some records contain invalid age groups',
+        error: `Some records contain invalid age groups. Valid age groups for this event are: ${availableAgeGroups}`,
         invalidAgeGroups,
         validCount: teamsToInsert.length,
         totalCount: validTeams.length,
+        availableAgeGroups: Object.keys(ageGroupMapping)
       });
     }
 
