@@ -3236,6 +3236,74 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     
     // CSV upload helper for team imports (admin)
     app.use('/api/admin/import', isAdmin, csvTeamUploadRouter);
+
+    // API endpoint for team import eligible events - shows ALL events regardless of application deadline
+    app.get('/api/admin/import-eligible-events', isAdmin, async (req, res) => {
+      try {
+        // First check if the user is a super admin
+        const userRoles = await db
+          .select({
+            roleName: roles.name
+          })
+          .from(adminRoles)
+          .innerJoin(roles, eq(adminRoles.roleId, roles.id))
+          .where(eq(adminRoles.userId, req.user.id));
+        
+        const isSuperAdmin = userRoles.some(role => role.roleName === 'super_admin');
+        
+        // Base query setup - don't filter by application deadline
+        let eventsQuery = db
+          .select({
+            event: events,
+            applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
+            teamCount: sql<number>`count(${teams.id})`.mapWith(Number),
+          })
+          .from(events)
+          .leftJoin(teams, eq(events.id, teams.eventId));
+        
+        // Only filter for archived status
+        eventsQuery = eventsQuery.where(eq(events.isArchived, false));
+        
+        // For non-super-admin users, restrict events to those they are administrators for
+        if (!isSuperAdmin) {
+          // Get list of events where the user is an administrator
+          const userEventIds = await db
+            .select({
+              eventId: eventAdministrators.eventId
+            })
+            .from(eventAdministrators)
+            .where(eq(eventAdministrators.userId, req.user.id))
+            .then(results => results.map(r => r.eventId));
+          
+          // If there are no events assigned to the user, return an empty array
+          if (userEventIds.length === 0) {
+            return res.json([]);
+          }
+          
+          // Modify the query to only include events the user has access to
+          eventsQuery = eventsQuery.where(
+            sql`${events.id} IN (${sql.join(userEventIds.map(id => sql`${id}`), sql`, `)})`
+          );
+        }
+        
+        // Execute the query
+        const eventsList = await eventsQuery
+          .groupBy(events.id)
+          .orderBy(events.startDate);
+
+        // Format the response
+        const formattedEvents = eventsList.map(({ event, applicationCount, teamCount }) => ({
+          ...event,
+          applicationCount,
+          teamCount
+        }));
+
+        res.json(formattedEvents);
+      } catch (error) {
+        console.error('Error fetching import-eligible events:', error);
+        res.status(500).send("Failed to fetch import-eligible events");
+      }
+    });
     
     // Age groups public routes (for team registration)
     app.use('/api/age-groups', publicAgeGroupsRouter);
