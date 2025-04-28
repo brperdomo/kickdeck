@@ -4088,6 +4088,70 @@ function TeamsView() {
           )}
         </DialogContent>
       </Dialog>
+      
+      {/* Team CSV Import Dialog */}
+      <Dialog open={isTeamCsvImportDialogOpen} onOpenChange={setIsTeamCsvImportDialogOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Import Teams</DialogTitle>
+            <DialogDescription>
+              Upload a CSV file to import multiple teams at once into an event.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {/* Event Selector for Team Import */}
+          <div className="mb-4">
+            <Label htmlFor="importEventSelect">Select Event</Label>
+            <Select 
+              value={selectedEvent !== 'all' ? selectedEvent : ''} 
+              onValueChange={(value) => setSelectedEvent(value)}
+            >
+              <SelectTrigger id="importEventSelect" className="w-full">
+                <SelectValue placeholder="Select Event" />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.isArray(eventsQuery.data) 
+                  ? eventsQuery.data.map((event: any) => (
+                    <SelectItem key={event.id} value={event.id.toString()}>
+                      {event.name}
+                    </SelectItem>
+                  ))
+                  : Array.isArray(eventsQuery.data?.events)
+                    ? eventsQuery.data.events.map((event: any) => (
+                      <SelectItem key={event.id} value={event.id.toString()}>
+                        {event.name}
+                      </SelectItem>
+                    ))
+                    : (<SelectItem value="none" disabled>No events available</SelectItem>)
+                }
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {selectedEvent && selectedEvent !== 'all' ? (
+            <TeamCsvUploader
+              eventId={parseInt(selectedEvent)}
+              onUploadSuccess={(teams) => {
+                setIsTeamCsvImportDialogOpen(false);
+                queryClient.invalidateQuery(['admin', 'teams']);
+                
+                toast({
+                  title: "Teams Imported",
+                  description: `Successfully imported ${teams.length} teams to the event.`
+                });
+              }}
+            />
+          ) : (
+            <Alert className="my-4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Event Required</AlertTitle>
+              <AlertDescription>
+                Please select an event to import teams to.
+              </AlertDescription>
+            </Alert>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
