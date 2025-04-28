@@ -86,7 +86,30 @@ export function TeamCsvUploader({ eventId, onUploadSuccess }: TeamCsvUploaderPro
         
         // Handle age group validation errors
         if (response.status === 400 && errorData.invalidAgeGroups) {
-          throw new Error(`${errorData.invalidAgeGroups.length} records contain invalid age groups. Please ensure all age groups exist in the event.`);
+          // Create a more detailed error message with the available age groups
+          let errorMsg = `${errorData.invalidAgeGroups.length} records contain invalid age groups.`;
+          
+          // If availableAgeGroups data is included in the response, include it in the error message
+          if (errorData.availableAgeGroups) {
+            if (errorData.availableAgeGroups.standardFormats && errorData.availableAgeGroups.standardFormats.length > 0) {
+              errorMsg += `\n\nValid age groups for this event are:\n${errorData.availableAgeGroups.standardFormats.join(', ')}`;
+            }
+            
+            if (errorData.availableAgeGroups.divisionCodes && errorData.availableAgeGroups.divisionCodes.length > 0) {
+              errorMsg += `\n\nValid division codes:\n${errorData.availableAgeGroups.divisionCodes.join(', ')}`;
+            }
+          }
+          
+          // Include which records had problems
+          if (errorData.invalidAgeGroups.length > 0) {
+            const invalidTeams = errorData.invalidAgeGroups.map((item: any) => 
+              `"${item.record.name}" with age group "${item.record.ageGroup}"`
+            ).join(', ');
+            
+            errorMsg += `\n\nInvalid entries: ${invalidTeams}`;
+          }
+          
+          throw new Error(errorMsg);
         }
         
         throw new Error(errorData.error || 'Failed to upload file');
@@ -114,7 +137,7 @@ export function TeamCsvUploader({ eventId, onUploadSuccess }: TeamCsvUploaderPro
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription className="whitespace-pre-line">{error}</AlertDescription>
         </Alert>
       )}
       

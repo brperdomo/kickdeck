@@ -147,7 +147,7 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
       seasonalScopeId = parseInt(seasonalScopeSetting.settingValue);
       console.log(`Using seasonal scope ID ${seasonalScopeId} for event ${eventId}`);
     } else {
-      console.log(`No seasonal scope found for event ${eventId}`);
+      console.log(`No seasonal scope found for event ${eventId}. Will use event age groups directly.`);
     }
     
     // Get age groups for this event to validate age group names
@@ -186,18 +186,63 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
     
     // Create the final age group mapping
     eventAgeGroupsData.forEach(group => {
-      // Store the age group with the combined format that includes gender ("U8 Boys")
-      const fullAgeGroupName = `${group.ageGroup} ${group.gender}`;
-      ageGroups[fullAgeGroupName] = { 
+      // Store all possible formats that the user might input
+      
+      // 1. Standard format with space: "U8 Boys"
+      const standardFormat = `${group.ageGroup} ${group.gender}`;
+      ageGroups[standardFormat] = { 
         id: group.id,
         divisionCode: group.divisionCode || undefined,
         birthYear: group.birthYear || undefined
       };
       
-      // If seasonal scope settings exist for this age group, use them
-      if (scopeSettings[fullAgeGroupName]) {
-        ageGroups[fullAgeGroupName].divisionCode = scopeSettings[fullAgeGroupName].divisionCode;
-        ageGroups[fullAgeGroupName].birthYear = scopeSettings[fullAgeGroupName].birthYear;
+      // 2. No space format: "U8Boys"
+      const noSpaceFormat = `${group.ageGroup}${group.gender}`;
+      ageGroups[noSpaceFormat] = { 
+        id: group.id,
+        divisionCode: group.divisionCode || undefined,
+        birthYear: group.birthYear || undefined
+      };
+      
+      // 3. Singular gender format: "U8 Boy" (in case user uses singular)
+      const singularGender = group.gender === 'Boys' ? 'Boy' : 'Girl';
+      const singularFormat = `${group.ageGroup} ${singularGender}`;
+      ageGroups[singularFormat] = { 
+        id: group.id,
+        divisionCode: group.divisionCode || undefined,
+        birthYear: group.birthYear || undefined
+      };
+      
+      // 4. Division code as input (if available): "B2014" or "G2014"
+      if (group.divisionCode) {
+        ageGroups[group.divisionCode] = {
+          id: group.id,
+          divisionCode: group.divisionCode,
+          birthYear: group.birthYear || undefined
+        };
+      }
+      
+      // If seasonal scope settings exist for this age group, use them to override
+      if (scopeSettings[standardFormat]) {
+        const divisionCode = scopeSettings[standardFormat].divisionCode;
+        const birthYear = scopeSettings[standardFormat].birthYear;
+        
+        // Update all formats with the seasonal scope data
+        ageGroups[standardFormat].divisionCode = divisionCode;
+        ageGroups[standardFormat].birthYear = birthYear;
+        ageGroups[noSpaceFormat].divisionCode = divisionCode;
+        ageGroups[noSpaceFormat].birthYear = birthYear;
+        ageGroups[singularFormat].divisionCode = divisionCode;
+        ageGroups[singularFormat].birthYear = birthYear;
+        
+        // Add the division code as another key if not already present
+        if (divisionCode && !ageGroups[divisionCode]) {
+          ageGroups[divisionCode] = {
+            id: group.id,
+            divisionCode: divisionCode,
+            birthYear: birthYear
+          };
+        }
       }
     });
 
@@ -339,15 +384,41 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
     }
 
     if (invalidAgeGroups.length > 0) {
-      // Create a message with all available age groups to help the user
-      const availableAgeGroups = Object.keys(ageGroups).join(', ');
+      // Create a message with a clear list of valid age groups to help the user
+      
+      // Filter out duplicates and non-standard formats for display
+      const standardFormats = Object.keys(ageGroups)
+        .filter(key => key.includes(' ') && (key.includes('Boys') || key.includes('Girls')))
+        .sort();
+        
+      // Also include division codes if available
+      const divisionCodes = Object.keys(ageGroups)
+        .filter(key => /^[BG]\d{4}$/.test(key)) // Match format like B2014 or G2014
+        .sort();
+      
+      let errorMessage = `Some records contain invalid age groups.`;
+      errorMessage += `\n\nValid age group formats for this event are:`;
+      errorMessage += `\n- Standard format (e.g., "${standardFormats[0] || 'U10 Boys'}")`;
+      
+      if (divisionCodes.length > 0) {
+        errorMessage += `\n- Division code format (e.g., "${divisionCodes[0] || 'B2014'}")`;
+      }
+      
+      errorMessage += `\n\nValid age groups: ${standardFormats.join(', ')}`;
+      
+      if (divisionCodes.length > 0) {
+        errorMessage += `\n\nValid division codes: ${divisionCodes.join(', ')}`;
+      }
       
       return res.status(400).json({
-        error: `Some records contain invalid age groups. Valid age groups for this event are: ${availableAgeGroups}`,
+        error: errorMessage,
         invalidAgeGroups,
         validCount: teamsToInsert.length,
         totalCount: validTeams.length,
-        availableAgeGroups: Object.keys(ageGroups)
+        availableAgeGroups: {
+          standardFormats,
+          divisionCodes
+        }
       });
     }
 
