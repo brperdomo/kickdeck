@@ -45,7 +45,7 @@ router.get("/:id", async (req, res) => {
 // Create organization
 router.post("/", async (req, res) => {
   try {
-    const { name, domain, primaryColor, secondaryColor, logoUrl } = req.body;
+    const { name, domain, customDomain, primaryColor, secondaryColor, logoUrl } = req.body;
     
     if (!name) {
       return res.status(400).json({ error: "Organization name is required" });
@@ -63,12 +63,31 @@ router.post("/", async (req, res) => {
         return res.status(400).json({ error: "Domain is already in use" });
       }
     }
+
+    // Check if custom domain is already in use
+    if (customDomain) {
+      try {
+        const [existingCustomDomain] = await db
+          .select()
+          .from(organizationSettings)
+          .where(eq(organizationSettings.customDomain, customDomain))
+          .limit(1);
+          
+        if (existingCustomDomain) {
+          return res.status(400).json({ error: "Custom domain is already in use" });
+        }
+      } catch (err) {
+        // Custom domain column might not exist yet
+        console.log('Custom domain check failed - column might not exist yet');
+      }
+    }
     
     const [organization] = await db
       .insert(organizationSettings)
       .values({
         name,
         domain,
+        customDomain,
         primaryColor: primaryColor || '#000000',
         secondaryColor: secondaryColor || '#32CD32',
         logoUrl,
@@ -88,7 +107,7 @@ router.post("/", async (req, res) => {
 router.patch("/:id", async (req, res) => {
   try {
     const id = parseInt(req.params.id);
-    const { name, domain, primaryColor, secondaryColor, logoUrl } = req.body;
+    const { name, domain, customDomain, primaryColor, secondaryColor, logoUrl } = req.body;
     
     // Validate required fields
     if (!name) {
@@ -119,17 +138,45 @@ router.patch("/:id", async (req, res) => {
       }
     }
     
+    // Check if custom domain is already in use (by another org)
+    let hasCustomDomainField = true; // Will be set to false if column doesn't exist
+    
+    if (customDomain && (!existingOrg.customDomain || customDomain !== existingOrg.customDomain)) {
+      try {
+        const [customDomainExists] = await db
+          .select()
+          .from(organizationSettings)
+          .where(eq(organizationSettings.customDomain, customDomain))
+          .limit(1);
+          
+        if (customDomainExists) {
+          return res.status(400).json({ error: "Custom domain is already in use" });
+        }
+      } catch (err) {
+        console.log('Custom domain check failed - column might not exist yet');
+        hasCustomDomainField = false;
+      }
+    }
+    
+    // Create update object
+    const updateData: any = {
+      name,
+      domain,
+      primaryColor: primaryColor || existingOrg.primaryColor,
+      secondaryColor: secondaryColor || existingOrg.secondaryColor,
+      logoUrl: logoUrl || existingOrg.logoUrl,
+      updatedAt: new Date().toISOString(),
+    };
+    
+    // Only include customDomain if the field exists in the database
+    if (hasCustomDomainField && customDomain !== undefined) {
+      updateData.customDomain = customDomain;
+    }
+    
     // Update the organization
     const [updatedOrg] = await db
       .update(organizationSettings)
-      .set({
-        name,
-        domain,
-        primaryColor: primaryColor || existingOrg.primaryColor,
-        secondaryColor: secondaryColor || existingOrg.secondaryColor,
-        logoUrl: logoUrl || existingOrg.logoUrl,
-        updatedAt: new Date().toISOString(),
-      })
+      .set(updateData)
       .where(eq(organizationSettings.id, id))
       .returning();
       

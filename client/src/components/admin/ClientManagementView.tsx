@@ -21,6 +21,7 @@ interface OrganizationSettings {
   id: number;
   name: string;
   domain: string;
+  customDomain: string | null;
   primaryColor: string;
   secondaryColor: string | null;
   logoUrl: string | null;
@@ -38,6 +39,7 @@ export function ClientManagementView() {
   const [formData, setFormData] = useState({
     name: "",
     domain: "",
+    customDomain: "",
     primaryColor: "#000000",
     secondaryColor: "#32CD32",
     logoUrl: "",
@@ -167,6 +169,7 @@ export function ClientManagementView() {
     setFormData({
       name: "",
       domain: "",
+      customDomain: "",
       primaryColor: "#000000",
       secondaryColor: "#32CD32",
       logoUrl: "",
@@ -184,6 +187,7 @@ export function ClientManagementView() {
     setFormData({
       name: org.name,
       domain: org.domain || "",
+      customDomain: org.customDomain || "",
       primaryColor: org.primaryColor || "#000000",
       secondaryColor: org.secondaryColor || "#32CD32",
       logoUrl: org.logoUrl || "",
@@ -217,7 +221,8 @@ export function ClientManagementView() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
-                    <TableHead>Domain</TableHead>
+                    <TableHead>Domain (Subdomain)</TableHead>
+                    <TableHead>Custom Domain</TableHead>
                     <TableHead>Primary Color</TableHead>
                     <TableHead>Created</TableHead>
                     <TableHead>Actions</TableHead>
@@ -228,6 +233,7 @@ export function ClientManagementView() {
                     <TableRow key={org.id}>
                       <TableCell className="font-medium">{org.name}</TableCell>
                       <TableCell>{org.domain || "—"}</TableCell>
+                      <TableCell>{org.customDomain || "—"}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <div
@@ -299,6 +305,18 @@ export function ClientManagementView() {
                   placeholder="client"
                 />
                 <p className="text-xs text-muted-foreground">This will be accessible as client.matchpro.ai</p>
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="customDomain">Custom Domain</Label>
+                <Input
+                  id="customDomain"
+                  name="customDomain"
+                  value={formData.customDomain}
+                  onChange={handleInputChange}
+                  placeholder="clientbrand.com"
+                />
+                <p className="text-xs text-muted-foreground">Enter a fully-qualified domain name (e.g., clientbrand.com). Requires DNS A-record setup.</p>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="primaryColor">Primary Color</Label>

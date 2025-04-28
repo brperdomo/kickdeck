@@ -101,7 +101,45 @@ const identifyOrganization = async (req: Request, res: Response, next: NextFunct
   try {
     const hostname = req.hostname;
     
-    // Extract the subdomain (e.g., 'client' from 'client.matchpro.ai')
+    // First, check if this is a custom domain (not matchpro.ai)
+    // This handles clientbrand.com or other custom A-record domains
+    if (!hostname.includes('matchpro.ai')) {
+      // Skip localhost or IP addresses during development
+      if (hostname === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(hostname)) {
+        return next();
+      }
+      
+      // Try to find organization by custom domain
+      try {
+        const organizationQuery = db
+          .select()
+          .from(organizationSettings)
+          .limit(1);
+          
+        try {
+          // First try with custom_domain (this may fail if migration hasn't run)
+          const [organization] = await db
+            .select()
+            .from(organizationSettings)
+            .where(eq(organizationSettings.customDomain, hostname))
+            .limit(1);
+            
+          if (organization) {
+            // Attach organization to request object for use in route handlers
+            (req as any).organization = organization;
+            return next();
+          }
+        } catch (customDomainErr) {
+          // If customDomain field doesn't exist yet, this will fail silently
+          console.log('Custom domain lookup failed - falling back to hostname check');
+        }
+      } catch (err) {
+        // If any other error occurs, continue with normal subdomain detection
+        console.log('Custom domain lookup skipped - using subdomain detection instead');
+      }
+    }
+    
+    // Check for subdomain (e.g., 'client' from 'client.matchpro.ai')
     const parts = hostname.split('.');
     const isSubdomain = parts.length > 2;
     

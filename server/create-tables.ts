@@ -21,6 +21,7 @@ import { addSchedulingPermissions } from "./migrations/add_scheduling_permission
 import { addSortOrderToBrackets } from "./migrations/add_sort_order_to_brackets";
 import { createPaymentTransactionsTable } from "../db/migrations/create_payment_transactions";
 import { addAdminLastLoginFields } from "./migrations/add_admin_last_login";
+import { addCustomDomainToOrganizationSettings } from "./migrations/add_custom_domain_to_organization_settings";
 
 export async function createTables() {
   try {
@@ -176,6 +177,9 @@ export async function createTables() {
     
     console.log('Adding admin last login fields...');
     await addAdminLastLoginFields();
+    
+    console.log('Adding custom domain to organization settings...');
+    await addCustomDomainToOrganizationSettings();
 
     console.log("All tables created successfully");
     return { success: true };
