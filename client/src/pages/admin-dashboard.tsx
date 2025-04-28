@@ -2044,13 +2044,20 @@ function SchedulingView() {
   
   // Function to suggest bracket assignments using AI
   const suggestBracketAssignments = async () => {
+    if (!selectedEvent) {
+      toast({
+        title: "No Event Selected",
+        description: "Please select an event first",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSuggestingBrackets(true);
+    setBracketAssignmentModalOpen(true);
+    
     try {
-      if (!selectedEvent) {
-        throw new Error("No event selected");
-      }
-      
-      // Call the AI bracket suggestion endpoint
+      // Call API to get bracket suggestions
       const response = await fetch(`/api/admin/events/${selectedEvent}/suggest-bracket-assignments`, {
         method: 'POST',
         headers: {
@@ -2059,45 +2066,19 @@ function SchedulingView() {
       });
       
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Failed to suggest bracket assignments: ${response.status}`);
+        throw new Error(`Failed to get bracket suggestions: ${response.status}`);
       }
       
       const data = await response.json();
+      setBracketSuggestions(data.suggestions || []);
       
-      // Process the suggestions received from the AI service
-      if (data.suggestions && Array.isArray(data.suggestions)) {
-        // Format the suggestions for the UI
-        const formattedSuggestions = data.suggestions.map((suggestion: any) => ({
-          teamId: suggestion.teamId,
-          teamName: suggestion.teamName,
-          ageGroup: suggestion.ageGroup,
-          suggestedBracket: suggestion.bracketId,
-          confidence: suggestion.confidence || 0.7,
-          accepted: true, // Default to accepted
-          availableBrackets: suggestion.availableBrackets || [] 
-        }));
-        
-        setBracketSuggestions(formattedSuggestions);
-        
-        // If there are suggestions, open the modal to show them
-        if (formattedSuggestions.length > 0) {
-          setBracketAssignmentModalOpen(true);
-          
-          toast({
-            title: "Suggestions Ready",
-            description: `AI has suggested brackets for ${formattedSuggestions.length} teams`,
-            variant: "default",
-          });
-        } else {
-          toast({
-            title: "No teams found",
-            description: "No teams requiring bracket assignment were found.",
-            variant: "default",
-          });
-        }
-      } else {
-        throw new Error("Invalid response format from bracket suggestion service");
+      // If no suggestions, show notification
+      if (!data.suggestions || data.suggestions.length === 0) {
+        toast({
+          title: "No Teams Need Brackets",
+          description: "All teams already have bracket assignments or there are no teams without brackets",
+          variant: "default",
+        });
       }
     } catch (error) {
       console.error("Error suggesting bracket assignments:", error);
@@ -2106,6 +2087,8 @@ function SchedulingView() {
         description: error instanceof Error ? error.message : "Failed to suggest bracket assignments",
         variant: "destructive",
       });
+      // Close modal on error
+      setBracketAssignmentModalOpen(false);
     } finally {
       setIsSuggestingBrackets(false);
     }
