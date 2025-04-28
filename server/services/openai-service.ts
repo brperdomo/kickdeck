@@ -241,10 +241,10 @@ export class SoccerSchedulerAI {
         suggestions.push({
           teamId: team.id,
           teamName: team.name,
-          bracketId: matchingBrackets[0].id,
-          bracketName: matchingBrackets[0].name,
+          suggestedBracketId: matchingBrackets[0].id,
+          suggestedBracketName: matchingBrackets[0].name,
           confidence: 0.7, // Lower confidence since this is a fallback method
-          reason: "Based on matching age group (fallback method)"
+          reasoning: "Based on matching age group (fallback method)"
         });
       }
     }
