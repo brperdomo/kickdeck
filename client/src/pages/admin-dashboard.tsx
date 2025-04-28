@@ -1947,6 +1947,7 @@ function SchedulingView() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          useAI: true, // Add the useAI flag to use the OpenAI integration
           gamesPerDay: constraints.maxGamesPerDay || 3,
           minutesPerGame: 60,
           breakBetweenGames: 15,
