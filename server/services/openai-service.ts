@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { db } from "../db";
+import { db } from "../../db";
 import { eq, and } from "drizzle-orm";
 import { 
   teams, 
