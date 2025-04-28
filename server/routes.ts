@@ -5061,7 +5061,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     });
     
     // Add endpoint for suggesting bracket assignments for teams
-    app.get('/api/admin/events/:id/suggest-bracket-assignments', hasEventAccess, async (req, res) => {
+    app.post('/api/admin/events/:id/suggest-bracket-assignments', hasEventAccess, async (req, res) => {
       try {
         const eventId = req.params.id;
         
@@ -5079,7 +5079,59 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       } catch (error) {
         console.error('Error suggesting bracket assignments:', error);
         console.error("Error details:", error);
-        res.status(500).send("Failed to suggest bracket assignments");
+        res.status(500).json({
+          error: "Failed to suggest bracket assignments",
+          message: error.message
+        });
+      }
+    });
+    
+    // Endpoint for updating team brackets based on AI suggestions
+    app.post('/api/admin/events/:id/update-team-brackets', hasEventAccess, async (req, res) => {
+      try {
+        const eventId = req.params.id;
+        const { assignments } = req.body;
+        
+        if (!assignments || !Array.isArray(assignments) || assignments.length === 0) {
+          return res.status(400).json({
+            error: 'Invalid request',
+            message: 'Assignments array is required and must not be empty'
+          });
+        }
+        
+        // Validate each assignment has required fields
+        for (const assignment of assignments) {
+          if (!assignment.teamId || !assignment.bracketId) {
+            return res.status(400).json({
+              error: 'Invalid assignment',
+              message: 'Each assignment must include teamId and bracketId'
+            });
+          }
+        }
+        
+        // Update team brackets in the database
+        await db.transaction(async (tx) => {
+          for (const assignment of assignments) {
+            // Update the team's bracket_id
+            await tx
+              .update(teams)
+              .set({ bracketId: assignment.bracketId })
+              .where(and(
+                eq(teams.id, assignment.teamId),
+                eq(teams.eventId, eventId)
+              ));
+          }
+        });
+        
+        return res.json({
+          message: `Updated brackets for ${assignments.length} teams successfully`
+        });
+      } catch (error) {
+        console.error('Error updating team brackets:', error);
+        return res.status(500).json({
+          error: 'Failed to update team brackets',
+          message: error.message
+        });
       }
     });
 
