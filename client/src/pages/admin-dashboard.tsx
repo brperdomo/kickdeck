@@ -4133,7 +4133,7 @@ function TeamsView() {
               eventId={parseInt(selectedEvent)}
               onUploadSuccess={(teams) => {
                 setIsTeamCsvImportDialogOpen(false);
-                queryClient.invalidateQuery(['admin', 'teams']);
+                queryClient.invalidateQueries({queryKey: ['admin', 'teams']});
                 
                 toast({
                   title: "Teams Imported",

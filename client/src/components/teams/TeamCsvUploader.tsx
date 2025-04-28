@@ -161,7 +161,7 @@ export function TeamCsvUploader({ eventId, onUploadSuccess }: TeamCsvUploaderPro
       
       <div className="flex justify-between items-center mt-4">
         <a
-          href="/api/admin/import/teams/template"
+          href="/api/admin/import/template"
           download="team-import-template.csv"
           className="flex items-center text-[#2C5282] hover:underline text-sm"
         >

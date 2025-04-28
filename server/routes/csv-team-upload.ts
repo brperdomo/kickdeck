@@ -54,15 +54,16 @@ type TeamData = z.infer<typeof teamSchema>;
 // Route for downloading team import template
 router.get('/template', (req: Request, res: Response) => {
   try {
+    // Using direct file path for template
     const templatePath = path.join(process.cwd(), 'public', 'team-import-template.csv');
-    const fileContent = fs.readFileSync(templatePath, 'utf8');
     
     // Set proper headers for CSV download
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename="team-import-template.csv"');
     
-    // Send the file content
-    res.send(fileContent);
+    // Send the file directly using fs.createReadStream to avoid any text encoding issues
+    const fileStream = fs.createReadStream(templatePath);
+    fileStream.pipe(res);
   } catch (error) {
     console.error('Error serving team CSV template:', error);
     res.status(500).send('Failed to generate team CSV template');
