@@ -4,10 +4,15 @@
  * the mapping of age groups to division codes and birth years based on the event's seasonal scope.
  */
 
-const path = require('path');
-const fs = require('fs');
-const fetch = require('node-fetch');
-const FormData = require('form-data');
+import path from 'path';
+import fs from 'fs';
+import fetch from 'node-fetch';
+import FormData from 'form-data';
+import { fileURLToPath } from 'url';
+
+// Get the directory name in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Helper function for making API requests with cookie support
 async function apiRequest(endpoint, method = 'GET', body = null, cookies = '') {
@@ -24,7 +29,6 @@ async function apiRequest(endpoint, method = 'GET', body = null, cookies = '') {
   };
 
   const response = await fetch(url, options);
-  const setCookies = response.headers.get('set-cookie');
   
   let data;
   const contentType = response.headers.get('content-type');
@@ -34,34 +38,26 @@ async function apiRequest(endpoint, method = 'GET', body = null, cookies = '') {
     data = await response.text();
   }
   
+  // Extract cookies in a safer way
+  let resultCookies = cookies;
+  const setCookieHeader = response.headers.get('set-cookie');
+  if (setCookieHeader && setCookieHeader.includes('connect.sid')) {
+    const matches = setCookieHeader.match(/connect\.sid=([^;]*)/);
+    if (matches && matches[1]) {
+      resultCookies = `connect.sid=${matches[1]}`;
+    }
+  }
+  
   return {
     ok: response.ok,
     status: response.status,
     data,
-    cookies: setCookies || cookies
+    cookies: resultCookies
   };
 }
 
-// Load stored cookies from file
-function loadCookiesFromFile() {
-  try {
-    if (fs.existsSync('./cookies.txt')) {
-      return fs.readFileSync('./cookies.txt', 'utf8');
-    }
-  } catch (error) {
-    console.error('Error loading cookies:', error);
-  }
-  return '';
-}
-
-// Save cookies to file
-function saveCookiesToFile(cookieStr) {
-  try {
-    fs.writeFileSync('./cookies.txt', cookieStr);
-  } catch (error) {
-    console.error('Error saving cookies:', error);
-  }
-}
+// In-memory cookie store - no need for file operations
+let sessionCookie = '';
 
 // Login to get authenticated
 async function login() {
@@ -78,27 +74,19 @@ async function login() {
   
   console.log('Login successful');
   
-  // Save cookies for future requests
+  // Save cookie for future requests
   if (response.cookies) {
-    saveCookiesToFile(response.cookies);
+    sessionCookie = response.cookies;
   }
   
-  return response.cookies;
+  return sessionCookie;
 }
 
 // Test CSV team import functionality
 async function testCsvTeamImport() {
   try {
-    // First get or refresh auth cookies
-    let cookies = loadCookiesFromFile();
-    
-    // Test access to user endpoint to verify authentication
-    const userResponse = await apiRequest('/api/user', 'GET', null, cookies);
-    
-    // If not authenticated, login
-    if (!userResponse.ok || userResponse.status === 401) {
-      cookies = await login();
-    }
+    // Always start with a fresh login for testing
+    let cookies = await login();
     
     // Fetch import-eligible events to find a valid event ID
     console.log('Fetching import-eligible events...');
