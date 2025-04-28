@@ -23,6 +23,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { TeamModal } from "@/components/teams/TeamModal";
+import { TeamCsvUploader } from "@/components/teams/TeamCsvUploader";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -2377,8 +2378,10 @@ function TeamsView() {
   const [isPlayerDialogOpen, setIsPlayerDialogOpen] = useState(false);
   const [isDeletePlayerDialogOpen, setIsDeletePlayerDialogOpen] = useState(false);
   const [isCsvUploadDialogOpen, setIsCsvUploadDialogOpen] = useState(false);
+  const [isTeamCsvImportDialogOpen, setIsTeamCsvImportDialogOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
   const [isAddPlayerMode, setIsAddPlayerMode] = useState(false);
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   
   // DialogDescription is already imported at the top of the file
@@ -2832,6 +2835,16 @@ function TeamsView() {
           >
             Team Registrations
           </motion.h2>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button 
+              variant="default"
+              onClick={() => setIsTeamCsvImportDialogOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <FileText className="h-4 w-4" />
+              Import Teams
+            </Button>
+          </motion.div>
         </div>
       </AnimatedContainer>
       
