@@ -38,6 +38,7 @@ async function testOpenAIKey() {
     }
   } catch (error) {
     console.error('Error testing OpenAI API key:');
+    console.error('Full error object:', JSON.stringify(error, null, 2));
     
     if (error.status === 401) {
       console.error('Authentication error: Your API key is invalid. Check the key and try again.');
@@ -47,6 +48,8 @@ async function testOpenAIKey() {
       console.error('Insufficient quota: Your account has run out of available credits.');
     } else {
       console.error('Error details:', error.message);
+      console.error('Error name:', error.name);
+      console.error('Error status:', error.status);
       if (error.response) {
         console.error('Error response:', error.response);
       }
