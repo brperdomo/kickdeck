@@ -18,13 +18,15 @@ import { Badge } from "@/components/ui/badge";
 
 interface Game {
   id: string;
-  homeTeam: { id: number; name: string; coach: string };
-  awayTeam: { id: number; name: string; coach: string };
+  homeTeam: { id: number; name: string; coach: string; clubName?: string };
+  awayTeam: { id: number; name: string; coach: string; clubName?: string };
   field: string;
+  complexName?: string;
   startTime: string;
   endTime: string;
   bracket: string;
   round: string;
+  ageGroup?: string;
 }
 
 interface BracketSchedule {
