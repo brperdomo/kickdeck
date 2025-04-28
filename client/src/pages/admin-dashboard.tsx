@@ -1844,20 +1844,28 @@ function SchedulingView() {
   const mockGames: any[] = [];
   const mockAgeGroups: any[] = [];
   
-  // Fetch events for dropdown
+  // Fetch events for dropdown - using import-eligible-events to show all upcoming events
   const eventsQuery = useQuery({
-    queryKey: ['admin', 'events'],
+    queryKey: ['admin', 'import-eligible-events', 'scheduling'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/events');
-      if (!response.ok) throw new Error('Failed to fetch events');
+      const response = await fetch('/api/admin/import-eligible-events');
+      if (!response.ok) throw new Error('Failed to fetch eligible events');
       const data = await response.json();
       
       // Ensure we handle different response formats and always return an array
       if (Array.isArray(data)) {
-        return data;
+        // Filter for active or upcoming events for scheduling
+        return data.filter((event: any) => {
+          const eventEndDate = new Date(event.endDate);
+          return eventEndDate >= new Date(); // Only include events that haven't ended yet
+        });
       } else if (data && typeof data === 'object') {
         if (Array.isArray(data.events)) {
-          return data.events;
+          // Filter for active or upcoming events for scheduling
+          return data.events.filter((event: any) => {
+            const eventEndDate = new Date(event.endDate);
+            return eventEndDate >= new Date(); // Only include events that haven't ended yet
+          });
         } else {
           console.warn('Events data is not in expected format:', data);
           return [];
