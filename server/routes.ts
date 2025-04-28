@@ -4875,7 +4875,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .where(eq(games.eventId, eventId))
           .orderBy(gameTimeSlots.startTime);
 
-        // Format the schedule for frontend display with null checks
+        // Format the schedule for frontend display with null checks and enhanced data
         const formattedSchedule = schedule
           .filter(item => item.timeSlot && item.field && item.homeTeam && item.ageGroup)
           .map(item => ({
@@ -4883,9 +4883,30 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             startTime: item.timeSlot!.startTime,
             endTime: item.timeSlot!.endTime,
             fieldName: item.field!.name,
+            fieldId: item.field!.id,
+            complexId: item.field!.complexId,
+            complexName: item.field!.complexName || 'Unknown',
             ageGroup: item.ageGroup!.ageGroup,
-            homeTeam: item.homeTeam!.name,
-            awayTeam: (item.awayTeam as { name: string }).name,
+            ageGroupId: item.ageGroup!.id,
+            bracket: item.game.bracketId ? { 
+              id: item.game.bracketId,
+              name: item.game.bracketName || 'Default Bracket'
+            } : null,
+            round: item.game.round || 'Group Stage',
+            homeTeam: {
+              id: item.homeTeam!.id,
+              name: item.homeTeam!.name,
+              clubName: item.homeTeam!.clubName || '',
+              coach: item.homeTeam!.coachName || '',
+              status: item.homeTeam!.status || 'approved'
+            },
+            awayTeam: {
+              id: (item.awayTeam as any)?.id || 0,
+              name: (item.awayTeam as { name: string })?.name || 'TBD',
+              clubName: (item.awayTeam as any)?.clubName || '',
+              coach: (item.awayTeam as any)?.coachName || '',
+              status: (item.awayTeam as any)?.status || 'approved'
+            },
             status: item.game.status,
           }));
 

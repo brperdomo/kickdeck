@@ -1898,23 +1898,66 @@ function SchedulingView() {
         const ageGroupsData = await ageGroupsResponse.json();
         
         // Format the games data for the ScheduleVisualization component
-        const formattedGames = scheduleData.games.map((game: any) => ({
-          id: game.id.toString(),
-          homeTeam: {
-            id: 1, // We need actual team IDs here
-            name: game.homeTeam,
-            status: 'approved' // We should get actual status from backend
-          },
-          awayTeam: {
-            id: 2, // We need actual team IDs here
-            name: game.awayTeam,
-            status: 'approved' // We should get actual status from backend
-          },
-          field: game.fieldName,
-          startTime: game.startTime,
-          endTime: game.endTime,
-          status: game.status || 'scheduled'
-        }));
+        // Handle both old and new data formats
+        const formattedGames = scheduleData.games.map((game: any) => {
+          // Enhanced format (new format has homeTeam as an object)
+          if (typeof game.homeTeam === 'object') {
+            return {
+              id: game.id.toString(),
+              homeTeam: {
+                id: game.homeTeam?.id || 0,
+                name: game.homeTeam?.name || 'TBD',
+                coach: game.homeTeam?.coach || '',
+                clubName: game.homeTeam?.clubName || '',
+                status: game.homeTeam?.status || 'approved'
+              },
+              awayTeam: {
+                id: game.awayTeam?.id || 0,
+                name: game.awayTeam?.name || 'TBD',
+                coach: game.awayTeam?.coach || '',
+                clubName: game.awayTeam?.clubName || '',
+                status: game.awayTeam?.status || 'approved'
+              },
+              field: game.fieldName || '',
+              complexName: game.complexName || 'Unknown',
+              complexId: game.complexId || 0,
+              fieldId: game.fieldId || 0,
+              startTime: game.startTime,
+              endTime: game.endTime,
+              status: game.status || 'scheduled',
+              ageGroup: game.ageGroup || 'Unknown',
+              ageGroupId: game.ageGroupId || 0,
+              bracket: game.bracket?.name || 'Default',
+              bracketId: game.bracket?.id || 0,
+              round: game.round || 'Group Stage'
+            };
+          }
+          
+          // Legacy format
+          return {
+            id: game.id.toString(),
+            homeTeam: {
+              id: 0,
+              name: game.homeTeam || 'TBD',
+              coach: '',
+              status: 'approved'
+            },
+            awayTeam: {
+              id: 0,
+              name: game.awayTeam || 'TBD',
+              coach: '',
+              status: 'approved'
+            },
+            field: game.fieldName || '',
+            complexName: 'Unknown',
+            startTime: game.startTime,
+            endTime: game.endTime,
+            status: game.status || 'scheduled',
+            ageGroup: game.ageGroup || 'Unknown',
+            bracket: 'Default',
+            round: 'Group Stage'
+          };
+        });
         
         // Format age groups for dropdown
         const formattedAgeGroups = ageGroupsData.map((ag: any) => ag.ageGroup);
@@ -2380,18 +2423,22 @@ function SchedulingView() {
                     homeTeam: {
                       id: game.homeTeam?.id || 0,
                       name: game.homeTeam?.name || 'TBD',
-                      coach: game.homeTeam?.coach || ''
+                      coach: game.homeTeam?.coach || '',
+                      clubName: game.homeTeam?.clubName || ''
                     },
                     awayTeam: {
                       id: game.awayTeam?.id || 0,
                       name: game.awayTeam?.name || 'TBD',
-                      coach: game.awayTeam?.coach || ''
+                      coach: game.awayTeam?.coach || '',
+                      clubName: game.awayTeam?.clubName || ''
                     },
                     field: game.field || '',
+                    complexName: game.complexName || '',
                     startTime: game.startTime || new Date().toISOString(),
                     endTime: game.endTime || new Date().toISOString(),
                     bracket: game.bracket || 'Default',
-                    round: game.round || 'Group Stage'
+                    round: game.round || 'Group Stage',
+                    ageGroup: game.ageGroup || ''
                   }))}
                   conflicts={conflicts}
                   qualityScore={scheduleQuality || undefined}
