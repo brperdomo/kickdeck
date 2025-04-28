@@ -92,7 +92,11 @@ import {
   Trash,
   FileUp,
   FileText,
-  Loader2
+  Loader2,
+  Filter,
+  ListFilter,
+  ListChecks,
+  Clock
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
