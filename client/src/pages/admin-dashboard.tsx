@@ -1837,6 +1837,7 @@ function SchedulingView() {
   const [scheduleQuality, setScheduleQuality] = useState<number | null>(null);
   const [conflicts, setConflicts] = useState<any[]>([]);
   const [bracketSuggestions, setBracketSuggestions] = useState<any[]>([]);
+  const { toast } = useToast();
   
   // Mock data until we implement the backend
   const mockGames: any[] = [];
