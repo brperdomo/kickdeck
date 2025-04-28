@@ -403,21 +403,23 @@ export class SoccerSchedulerAI {
    * @returns Event data including age groups, fields, etc.
    */
   private static async getEventData(eventId: string | number) {
-    // Get event details - ensuring we're using the proper types
-    const eventIdStr = eventId.toString();
-    
     try {
+      // Get event details - ensuring we're using the proper types
+      const eventIdStr = eventId.toString();
+      // For the events table, we need to use numeric comparison since it's a bigint
+      const eventIdNum = Number(eventId);
+      
       // Get event details
       const [eventData] = await db
         .select()
         .from(events)
-        .where(eq(events.id, eventIdStr));
+        .where(eq(events.id, eventIdNum));
         
       if (!eventData) {
         throw new Error("Event not found");
       }
       
-      // Get age groups for this event
+      // Get age groups for this event - eventId columns are text in these tables
       const ageGroupsData = await db
         .select()
         .from(eventAgeGroups)
@@ -460,18 +462,25 @@ export class SoccerSchedulerAI {
    * @returns Teams data
    */
   private static async getTeamsData(eventId: string | number) {
-    // Get all teams for this event with approved status
-    const teamsData = await db
-      .select()
-      .from(teams)
-      .where(
-        and(
-          eq(teams.eventId, eventId.toString()),
-          eq(teams.status, 'approved')
-        )
-      );
+    try {
+      // Get all teams for this event with approved status
+      const eventIdStr = eventId.toString();
       
-    return teamsData;
+      const teamsData = await db
+        .select()
+        .from(teams)
+        .where(
+          and(
+            eq(teams.eventId, eventIdStr),
+            eq(teams.status, 'approved')
+          )
+        );
+        
+      return teamsData;
+    } catch (error) {
+      console.error("Error fetching teams data:", error);
+      throw error;
+    }
   }
   
   /**
@@ -480,13 +489,20 @@ export class SoccerSchedulerAI {
    * @returns Current schedule data
    */
   private static async getCurrentSchedule(eventId: string | number) {
-    // Get existing games for this event
-    const gamesData = await db
-      .select()
-      .from(games)
-      .where(eq(games.eventId, eventId.toString()));
+    try {
+      // Get existing games for this event
+      const eventIdStr = eventId.toString();
       
-    return gamesData;
+      const gamesData = await db
+        .select()
+        .from(games)
+        .where(eq(games.eventId, eventIdStr));
+        
+      return gamesData;
+    } catch (error) {
+      console.error("Error fetching current schedule:", error);
+      throw error;
+    }
   }
   
   /**
@@ -495,31 +511,37 @@ export class SoccerSchedulerAI {
    * @returns Teams without bracket assignments
    */
   private static async getTeamsWithoutBrackets(eventId: string | number) {
-    // Get teams that don't have a bracket assigned
-    console.log(`Finding teams without brackets for event: ${eventId}`);
-    
-    const allTeams = await db
-      .select()
-      .from(teams)
-      .where(
-        and(
-          eq(teams.eventId, eventId.toString()),
-          eq(teams.status, 'approved')
-        )
-      );
-    
-    console.log(`Total approved teams found: ${allTeams.length}`);
-    
-    // Check if bracketId is null OR bracketId is undefined
-    const teamsWithoutBrackets = allTeams.filter(team => team.bracketId === null || team.bracketId === undefined);
-    
-    console.log(`Teams without bracketId: ${teamsWithoutBrackets.length}`);
-    // Log the first few teams for debugging
-    if (teamsWithoutBrackets.length > 0) {
-      console.log(`Sample team without bracket: ${JSON.stringify(teamsWithoutBrackets[0])}`);
+    try {
+      // Get teams that don't have a bracket assigned
+      console.log(`Finding teams without brackets for event: ${eventId}`);
+      const eventIdStr = eventId.toString();
+      
+      const allTeams = await db
+        .select()
+        .from(teams)
+        .where(
+          and(
+            eq(teams.eventId, eventIdStr),
+            eq(teams.status, 'approved')
+          )
+        );
+      
+      console.log(`Total approved teams found: ${allTeams.length}`);
+      
+      // Check if bracketId is null OR bracketId is undefined
+      const teamsWithoutBrackets = allTeams.filter(team => team.bracketId === null || team.bracketId === undefined);
+      
+      console.log(`Teams without bracketId: ${teamsWithoutBrackets.length}`);
+      // Log the first few teams for debugging
+      if (teamsWithoutBrackets.length > 0) {
+        console.log(`Sample team without bracket: ${JSON.stringify(teamsWithoutBrackets[0])}`);
+      }
+      
+      return teamsWithoutBrackets;
+    } catch (error) {
+      console.error("Error fetching teams without brackets:", error);
+      throw error;
     }
-    
-    return teamsWithoutBrackets;
   }
   
   /**
@@ -528,13 +550,20 @@ export class SoccerSchedulerAI {
    * @returns Available brackets
    */
   private static async getAvailableBrackets(eventId: string | number) {
-    // Get all brackets for this event
-    const brackets = await db
-      .select()
-      .from(eventBrackets)
-      .where(eq(eventBrackets.eventId, eventId.toString()));
+    try {
+      // Get all brackets for this event
+      const eventIdStr = eventId.toString();
       
-    return brackets;
+      const brackets = await db
+        .select()
+        .from(eventBrackets)
+        .where(eq(eventBrackets.eventId, eventIdStr));
+        
+      return brackets;
+    } catch (error) {
+      console.error("Error fetching available brackets:", error);
+      throw error;
+    }
   }
   
   /**
