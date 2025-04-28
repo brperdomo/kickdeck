@@ -7,6 +7,7 @@ export const organizationSettings = pgTable("organization_settings", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   domain: text("domain").unique(),
+  customDomain: text("custom_domain").unique(),
   primaryColor: text("primary_color").notNull(),
   secondaryColor: text("secondary_color"),
   logoUrl: text("logo_url"),
@@ -78,6 +79,8 @@ const passwordSchema = z.string()
 
 export const insertOrganizationSettingsSchema = createInsertSchema(organizationSettings, {
   name: z.string().min(1, "Organization name is required"),
+  domain: z.string().optional(),
+  customDomain: z.string().optional(),
   primaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color format"),
   secondaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color format").optional(),
   logoUrl: z.string().url("Invalid URL format").optional(),
