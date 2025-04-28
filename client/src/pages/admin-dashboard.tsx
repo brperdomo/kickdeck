@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/collapsible";
 import { TeamModal } from "@/components/teams/TeamModal";
 import { TeamCsvUploader } from "@/components/teams/TeamCsvUploader";
+import { BracketAssignmentModal } from "@/components/BracketAssignmentModal";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -2042,6 +2043,9 @@ function SchedulingView() {
     }
   };
   
+  // State for tracking if we're using fallback mode for bracket suggestions
+  const [usingFallbackMode, setUsingFallbackMode] = useState(false);
+
   // Function to suggest bracket assignments using AI
   const suggestBracketAssignments = async () => {
     if (!selectedEvent) {
@@ -2055,6 +2059,7 @@ function SchedulingView() {
     
     setIsSuggestingBrackets(true);
     setBracketAssignmentModalOpen(true);
+    setUsingFallbackMode(false); // Reset fallback mode state
     
     try {
       // Call API to get bracket suggestions
@@ -2071,6 +2076,16 @@ function SchedulingView() {
       
       const data = await response.json();
       setBracketSuggestions(data.suggestions || []);
+      
+      // Check if response is using fallback mode
+      if (data.source === 'fallback') {
+        setUsingFallbackMode(true);
+        toast({
+          title: "Using Fallback Mode",
+          description: "AI suggestions are limited due to API rate limiting. Using simpler matching criteria instead.",
+          variant: "warning",
+        });
+      }
       
       // If no suggestions, show notification
       if (!data.suggestions || data.suggestions.length === 0) {
