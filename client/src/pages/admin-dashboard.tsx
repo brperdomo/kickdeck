@@ -1933,6 +1933,8 @@ function SchedulingView() {
   });
   
   // Function to generate AI schedule
+  const queryClient = useQueryClient();
+  
   const generateSchedule = async (constraints: any) => {
     setIsGenerating(true);
     try {

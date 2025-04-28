@@ -89,6 +89,7 @@ import {
   eventSettings,
   ageGroupSettings,
   eventAdministrators,
+  eventBrackets,
 } from "@db/schema";
 import fs from "fs/promises";
 import path from "path";
