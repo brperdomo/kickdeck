@@ -2092,7 +2092,7 @@ function SchedulingView() {
       if (!data.suggestions || data.suggestions.length === 0) {
         toast({
           title: "No Teams Need Brackets",
-          description: "All teams already have bracket assignments or there are no teams without brackets",
+          description: data.message || "All teams already have bracket assignments or there are no approved teams without brackets",
           variant: "default",
         });
       }

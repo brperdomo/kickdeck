@@ -141,11 +141,26 @@ export class SoccerSchedulerAI {
       const teamsWithoutBrackets = await this.getTeamsWithoutBrackets(eventId);
       
       if (teamsWithoutBrackets.length === 0) {
-        return { suggestions: [] };
+        console.log("No teams without brackets found for event " + eventId);
+        return { 
+          suggestions: [],
+          source: 'fallback',
+          message: "All teams already have bracket assignments or there are no approved teams without brackets."
+        };
       }
       
       // 2. Get available brackets
       const availableBrackets = await this.getAvailableBrackets(eventId);
+      
+      // Check if we have available brackets
+      if (availableBrackets.length === 0) {
+        console.log("No available brackets found for event " + eventId);
+        return { 
+          suggestions: [],
+          source: 'fallback',
+          message: "No brackets found for this event. Please create brackets first."
+        };
+      }
       
       try {
         // 3. Prepare prompt for OpenAI
@@ -473,7 +488,9 @@ export class SoccerSchedulerAI {
    */
   private static async getTeamsWithoutBrackets(eventId: string | number) {
     // Get teams that don't have a bracket assigned
-    const teamsWithoutBrackets = await db
+    console.log(`Finding teams without brackets for event: ${eventId}`);
+    
+    const allTeams = await db
       .select()
       .from(teams)
       .where(
@@ -482,9 +499,19 @@ export class SoccerSchedulerAI {
           eq(teams.status, 'approved')
         )
       );
-      
-    // Filter to only include teams without bracketId
-    return teamsWithoutBrackets.filter(team => team.bracketId === null);
+    
+    console.log(`Total approved teams found: ${allTeams.length}`);
+    
+    // Check if bracketId is null OR bracketId is undefined
+    const teamsWithoutBrackets = allTeams.filter(team => team.bracketId === null || team.bracketId === undefined);
+    
+    console.log(`Teams without bracketId: ${teamsWithoutBrackets.length}`);
+    // Log the first few teams for debugging
+    if (teamsWithoutBrackets.length > 0) {
+      console.log(`Sample team without bracket: ${JSON.stringify(teamsWithoutBrackets[0])}`);
+    }
+    
+    return teamsWithoutBrackets;
   }
   
   /**
