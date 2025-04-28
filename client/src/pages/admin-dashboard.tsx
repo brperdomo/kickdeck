@@ -2889,14 +2889,14 @@ function TeamsView() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Events</SelectItem>
-                      {Array.isArray(eventsQuery.data) 
-                        ? eventsQuery.data.map((event: any) => (
+                      {Array.isArray(importEligibleEventsQuery.data) 
+                        ? importEligibleEventsQuery.data.map((event: any) => (
                           <SelectItem key={event.id} value={event.id.toString()}>
                             {event.name}
                           </SelectItem>
                         ))
-                        : Array.isArray(eventsQuery.data?.events)
-                          ? eventsQuery.data.events.map((event: any) => (
+                        : Array.isArray(importEligibleEventsQuery.data?.events)
+                          ? importEligibleEventsQuery.data.events.map((event: any) => (
                             <SelectItem key={event.id} value={event.id.toString()}>
                               {event.name}
                             </SelectItem>
