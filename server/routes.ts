@@ -4899,9 +4899,46 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
     app.post('/api/admin/events/:id/generate-schedule', hasEventAccess, async (req, res) => {
       try {
-        const eventId = parseInt(req.params.id);
-        const { gamesPerDay, minutesPerGame, breakBetweenGames } = req.body;
+        const eventId = req.params.id;
+        const { 
+          gamesPerDay, 
+          minutesPerGame, 
+          breakBetweenGames,
+          minRestPeriod,
+          resolveCoachConflicts,
+          optimizeFieldUsage,
+          tournamentFormat
+        } = req.body;
 
+        // Check if we should use AI to generate the schedule
+        const useAI = req.query.useAI === 'true' || req.body.useAI === true;
+
+        if (useAI) {
+          // Import the OpenAI service
+          const { SoccerSchedulerAI } = await import('./services/openai-service');
+
+          // Call the AI service to generate the schedule
+          const aiScheduleResult = await SoccerSchedulerAI.generateSchedule(eventId, {
+            maxGamesPerDay: gamesPerDay || 3,
+            minutesPerGame: minutesPerGame || 60,
+            breakBetweenGames: breakBetweenGames || 15,
+            minRestPeriod: minRestPeriod || 2,
+            resolveCoachConflicts: resolveCoachConflicts || true,
+            optimizeFieldUsage: optimizeFieldUsage || true,
+            tournamentFormat: tournamentFormat || 'round_robin_knockout'
+          });
+
+          // Return the AI-generated schedule
+          return res.json({
+            message: "AI schedule generated successfully",
+            scheduleData: aiScheduleResult.schedule,
+            qualityScore: aiScheduleResult.qualityScore,
+            conflicts: aiScheduleResult.conflicts,
+            bracketSchedules: aiScheduleResult.bracketSchedules
+          });
+        }
+
+        // If not using AI, proceed with the traditional scheduling approach
         // Start a transaction for the entire schedule generation process
         await db.transaction(async (tx) => {
           // 1. Fetch event details
@@ -4984,6 +5021,65 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         // Added basic error logging for white screen debugging.
         console.error("Error details:", error);
         res.status(500).send("Failed to generate schedule");
+      }
+    });
+    
+    // Add endpoint for optimizing schedules with AI
+    app.post('/api/admin/events/:id/optimize-schedule', hasEventAccess, async (req, res) => {
+      try {
+        const eventId = req.params.id;
+        const {
+          resolveCoachConflicts,
+          optimizeFieldUsage,
+          minimizeTravel
+        } = req.body;
+        
+        // Import the OpenAI service
+        const { SoccerSchedulerAI } = await import('./services/openai-service');
+        
+        // Call the AI service to optimize the schedule
+        const optimizationResult = await SoccerSchedulerAI.optimizeSchedule(eventId, {
+          resolveCoachConflicts: resolveCoachConflicts || true,
+          optimizeFieldUsage: optimizeFieldUsage || true,
+          minimizeTravel: minimizeTravel || false
+        });
+        
+        // Return the optimized schedule
+        res.json({
+          message: "Schedule optimized successfully",
+          scheduleData: optimizationResult.schedule,
+          qualityScore: optimizationResult.qualityScore,
+          conflicts: optimizationResult.conflicts,
+          changesApplied: optimizationResult.changesApplied
+        });
+      } catch (error) {
+        console.error('Error optimizing schedule:', error);
+        // Added basic error logging for white screen debugging.
+        console.error("Error details:", error);
+        res.status(500).send("Failed to optimize schedule");
+      }
+    });
+    
+    // Add endpoint for suggesting bracket assignments for teams
+    app.get('/api/admin/events/:id/suggest-bracket-assignments', hasEventAccess, async (req, res) => {
+      try {
+        const eventId = req.params.id;
+        
+        // Import the OpenAI service
+        const { SoccerSchedulerAI } = await import('./services/openai-service');
+        
+        // Call the AI service to suggest bracket assignments
+        const suggestions = await SoccerSchedulerAI.suggestBracketAssignments(eventId);
+        
+        // Return the suggested bracket assignments
+        res.json({
+          message: "Bracket assignments suggested successfully",
+          suggestions: suggestions.suggestions
+        });
+      } catch (error) {
+        console.error('Error suggesting bracket assignments:', error);
+        console.error("Error details:", error);
+        res.status(500).send("Failed to suggest bracket assignments");
       }
     });
 

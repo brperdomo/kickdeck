@@ -1835,10 +1835,13 @@ function SchedulingView() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<string>("");
   const [aiSchedulingModalOpen, setAiSchedulingModalOpen] = useState(false);
+  const [bracketAssignmentModalOpen, setBracketAssignmentModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isOptimizing, setIsOptimizing] = useState(false);
+  const [isSuggestingBrackets, setIsSuggestingBrackets] = useState(false);
   const [scheduleQuality, setScheduleQuality] = useState<number | null>(null);
   const [conflicts, setConflicts] = useState<any[]>([]);
+  const [bracketSuggestions, setBracketSuggestions] = useState<any[]>([]);
   
   // Mock data until we implement the backend
   const mockGames: any[] = [];
@@ -2050,6 +2053,14 @@ function SchedulingView() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">AI-Powered Scheduling</h2>
         <div className="flex gap-2">
+          <Button 
+            variant="outline"
+            onClick={() => setBracketAssignmentModalOpen(true)}
+            disabled={!selectedEvent}
+          >
+            <Trophy className="mr-2 h-4 w-4" />
+            Assign Brackets
+          </Button>
           <Button 
             variant="outline"
             onClick={() => setAiSchedulingModalOpen(true)}
