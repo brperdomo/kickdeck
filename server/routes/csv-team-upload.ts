@@ -52,9 +52,44 @@ const teamSchema = z.object({
 type TeamData = z.infer<typeof teamSchema>;
 
 // Route for downloading team import template
-router.get('/template', (req: Request, res: Response) => {
+router.get('/template', async (req: Request, res: Response) => {
   try {
-    // Using direct file path for template
+    // Check if eventId is provided as query parameter to customize the template
+    const eventId = req.query.eventId ? parseInt(req.query.eventId as string) : null;
+    
+    if (eventId) {
+      // Fetch age groups for this event to help users fill out the CSV correctly
+      const eventAgeGroupsData = await db
+        .select()
+        .from(eventAgeGroups)
+        .where(eq(eventAgeGroups.eventId, String(eventId)));
+      
+      if (eventAgeGroupsData.length === 0) {
+        return res.status(400).json({ error: 'No age groups found for this event' });
+      }
+      
+      // Create a dynamic CSV template with available age groups in the examples
+      const headers = 'Team Name,Head Coach Name,Head Coach Email,Head Coach Phone,Manager Name,Manager Email,Manager Phone,Club Name,Age Group,Submitter Name,Submitter Email';
+      
+      // Create examples using the actual age groups from the event
+      const example1 = `Sample Team 1,John Doe,coach@example.com,555-123-4567,Jane Smith,manager@example.com,555-987-6543,FC United,${eventAgeGroupsData[0].ageGroup} ${eventAgeGroupsData[0].gender},Admin User,admin@example.com`;
+      
+      // Use another age group for the second example if available
+      const ageGroup2 = eventAgeGroupsData.length > 1 ? eventAgeGroupsData[1] : eventAgeGroupsData[0];
+      const example2 = `Sample Team 2,Mary Johnson,mjohnson@example.com,555-333-2222,Bob Williams,bwilliams@example.com,555-444-1111,Soccer Stars,${ageGroup2.ageGroup} ${ageGroup2.gender},Admin User,admin@example.com`;
+      
+      // Create the CSV content
+      const csvContent = `${headers}\n${example1}\n${example2}`;
+      
+      // Set proper headers for CSV download
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename="team-import-template.csv"');
+      
+      // Send the dynamic CSV content
+      return res.send(csvContent);
+    }
+    
+    // If no eventId provided, send the static template
     const templatePath = path.join(process.cwd(), 'public', 'team-import-template.csv');
     
     // Set proper headers for CSV download
@@ -87,7 +122,7 @@ router.post('/teams', upload.single('file'), async (req: Request, res: Response)
     const eventAgeGroupsData = await db
       .select()
       .from(eventAgeGroups)
-      .where(eq(eventAgeGroups.eventId, eventId));
+      .where(eq(eventAgeGroups.eventId, String(eventId)));
 
     if (eventAgeGroupsData.length === 0) {
       return res.status(400).json({ error: 'No age groups found for this event' });
