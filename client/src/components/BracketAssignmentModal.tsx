@@ -39,6 +39,7 @@ interface BracketAssignmentModalProps {
   eventId: string | null;
   suggestions: BracketSuggestion[];
   isSuggesting: boolean;
+  usingFallbackMode?: boolean;
 }
 
 export function BracketAssignmentModal({
@@ -46,7 +47,8 @@ export function BracketAssignmentModal({
   onOpenChange,
   eventId,
   suggestions,
-  isSuggesting
+  isSuggesting,
+  usingFallbackMode = false
 }: BracketAssignmentModalProps) {
   const [selectedSuggestions, setSelectedSuggestions] = useState<Record<number, boolean>>({});
   const [isApplying, setIsApplying] = useState(false);
@@ -154,6 +156,20 @@ export function BracketAssignmentModal({
           </div>
         ) : suggestions.length > 0 ? (
           <>
+            {usingFallbackMode && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
+                <div className="flex items-start">
+                  <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5 mr-2" />
+                  <div>
+                    <h4 className="text-sm font-medium text-yellow-800">Using Fallback Mode</h4>
+                    <p className="text-sm text-yellow-700 mt-1">
+                      These bracket suggestions are based on simple matching criteria. The AI-powered suggestions are currently unavailable due to rate limiting. The confidence scores and reasoning may be less accurate.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-2">
                 <Checkbox 
