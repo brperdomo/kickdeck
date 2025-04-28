@@ -147,37 +147,112 @@ export class SoccerSchedulerAI {
       // 2. Get available brackets
       const availableBrackets = await this.getAvailableBrackets(eventId);
       
-      // 3. Prepare prompt for OpenAI
-      const prompt = this.generateBracketAssignmentPrompt(teamsWithoutBrackets, availableBrackets);
-      
-      // 4. Call OpenAI API
-      const bracketResponse = await openai.chat.completions.create({
-        model: MODEL,
-        messages: [
-          {
-            role: "system",
-            content: "You are an advanced sports tournament assistant specializing in soccer team classifications. You assign teams to appropriate brackets based on their attributes."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        response_format: { type: "json_object" },
-        max_tokens: 2000,
-        temperature: 0.3
-      });
-      
-      // 5. Parse and return the suggestions
-      const suggestions = JSON.parse(bracketResponse.choices[0].message.content);
-      
-      return {
-        suggestions: suggestions.bracketAssignments || []
-      };
+      try {
+        // 3. Prepare prompt for OpenAI
+        const prompt = this.generateBracketAssignmentPrompt(teamsWithoutBrackets, availableBrackets);
+        
+        // 4. Call OpenAI API
+        const bracketResponse = await openai.chat.completions.create({
+          model: MODEL,
+          messages: [
+            {
+              role: "system",
+              content: "You are an advanced sports tournament assistant specializing in soccer team classifications. You assign teams to appropriate brackets based on their attributes."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          response_format: { type: "json_object" },
+          max_tokens: 2000,
+          temperature: 0.3
+        });
+        
+        // 5. Parse and return the suggestions
+        const suggestions = JSON.parse(bracketResponse.choices[0].message.content);
+        
+        return {
+          suggestions: suggestions.bracketAssignments || [],
+          source: "ai"
+        };
+      } catch (openaiError) {
+        console.error("OpenAI API error:", openaiError);
+        
+        // Check if it's a rate limit or quota error
+        const isRateLimitError = openaiError.status === 429 || 
+                               (openaiError.error && 
+                               (openaiError.error.type === 'insufficient_quota' || 
+                                openaiError.error.type === 'rate_limit_exceeded'));
+        
+        if (isRateLimitError) {
+          console.log("Rate limit or quota exceeded, using fallback method for bracket assignment");
+          
+          // Use a fallback method for bracket suggestions
+          return this.generateFallbackBracketSuggestions(teamsWithoutBrackets, availableBrackets);
+        }
+        
+        // For other OpenAI errors, rethrow
+        throw openaiError;
+      }
     } catch (error) {
       console.error("Error suggesting bracket assignments:", error);
+      
+      // If it's already an Error object with a message, rethrow it
+      if (error instanceof Error) {
+        throw error;
+      }
+      
       throw new Error("Failed to suggest bracket assignments");
     }
+  }
+  
+  /**
+   * Generates fallback bracket suggestions when OpenAI API is unavailable
+   * Uses simple heuristics based on age group, birth year, etc.
+   * @param teams - Teams without brackets
+   * @param brackets - Available brackets
+   * @returns Suggested bracket assignments
+   */
+  private static generateFallbackBracketSuggestions(teams: any[], brackets: any[]) {
+    const suggestions = [];
+    
+    // Group brackets by age group
+    const bracketsByAgeGroup = brackets.reduce((acc, bracket) => {
+      const ageGroup = bracket.ageGroup || '';
+      if (!acc[ageGroup]) {
+        acc[ageGroup] = [];
+      }
+      acc[ageGroup].push(bracket);
+      return acc;
+    }, {});
+    
+    // For each team, find a matching bracket based on age group
+    for (const team of teams) {
+      const teamAgeGroup = team.ageGroup || '';
+      const matchingBrackets = bracketsByAgeGroup[teamAgeGroup] || [];
+      
+      if (matchingBrackets.length > 0) {
+        // Sort brackets alphabetically to at least be consistent
+        matchingBrackets.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        
+        // Just take the first available bracket of the matching age group
+        // This is a simplistic approach but better than nothing when AI is unavailable
+        suggestions.push({
+          teamId: team.id,
+          teamName: team.name,
+          bracketId: matchingBrackets[0].id,
+          bracketName: matchingBrackets[0].name,
+          confidence: 0.7, // Lower confidence since this is a fallback method
+          reason: "Based on matching age group (fallback method)"
+        });
+      }
+    }
+    
+    return {
+      suggestions,
+      source: "fallback"
+    };
   }
   
   /**
