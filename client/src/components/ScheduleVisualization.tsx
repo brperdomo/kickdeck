@@ -35,6 +35,9 @@ interface Game {
   round?: number;
   status?: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
   score?: { home: number; away: number };
+  bracketName?: string; // Added bracketName to identify which bracket a game belongs to
+  bracketId?: number;    // Added bracketId for reference to actual bracket
+  division?: string;     // Division information (can be derived from teams' age groups)
 }
 
 interface Match {
@@ -75,10 +78,10 @@ const ScheduleVisualization: React.FC<ScheduleVisualizationProps> = ({
   bracketData,
   onMatchSelect
 }) => {
-  const [activeTab, setActiveTab] = useState<'games' | 'brackets' | 'teams'>('games');
+  const [activeTab, setActiveTab] = useState<'games' | 'brackets' | 'teams' | 'divisions'>('games');
   
   // Format games by time slot for display
-  const groupedGames = useMemo(() => {
+  const groupedGamesByTime = useMemo(() => {
     return games.reduce<Record<string, Game[]>>((acc, game) => {
       if (!game.startTime) return acc;
       
@@ -88,6 +91,33 @@ const ScheduleVisualization: React.FC<ScheduleVisualizationProps> = ({
       }
       acc[timeKey].push(game);
       return acc;
+    }, {});
+  }, [games]);
+  
+  // Group games by division and bracket for the division view
+  const groupedGamesByDivisionAndBracket = useMemo(() => {
+    return games.reduce<Record<string, Record<string, Game[]>>>((divisions, game) => {
+      // Get division (age group) from either home or away team
+      const division = (game.homeTeam?.ageGroup || game.awayTeam?.ageGroup || 'Unassigned');
+      
+      // Initialize the division if it doesn't exist
+      if (!divisions[division]) {
+        divisions[division] = {};
+      }
+      
+      // Use bracket name if available, otherwise use a default
+      // This could come from additional properties we add to the game object
+      const bracketName = game.bracketName || 'Unassigned Bracket';
+      
+      // Initialize the bracket if it doesn't exist
+      if (!divisions[division][bracketName]) {
+        divisions[division][bracketName] = [];
+      }
+      
+      // Add the game to the appropriate division and bracket
+      divisions[division][bracketName].push(game);
+      
+      return divisions;
     }, {});
   }, [games]);
   
@@ -289,7 +319,7 @@ const ScheduleVisualization: React.FC<ScheduleVisualizationProps> = ({
           </div>
         )}
         
-        {Object.entries(groupedGames)
+        {Object.entries(groupedGamesByTime)
           .sort(([timeA], [timeB]) => timeA.localeCompare(timeB))
           .map(([timeSlot, gamesInSlot]) => (
             <div key={timeSlot} className="space-y-2">
@@ -379,6 +409,130 @@ const ScheduleVisualization: React.FC<ScheduleVisualizationProps> = ({
     );
   };
 
+  // Render divisions view (games organized by division and bracket)
+  const renderDivisionsView = () => {
+    if (games.length === 0) {
+      return (
+        <div className="text-center py-8">
+          <div className="p-4 bg-muted rounded-lg inline-block">
+            <Filter className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">No games scheduled for this division.</p>
+            <p className="text-xs text-muted-foreground mt-1">Games will appear here when scheduled.</p>
+          </div>
+        </div>
+      );
+    }
+
+    // Check for non-approved teams in games
+    const teamsWithIssues = games.flatMap(game => {
+      const issues = [];
+      if (game.homeTeam && game.homeTeam.status !== 'approved') issues.push(game.homeTeam);
+      if (game.awayTeam && game.awayTeam.status !== 'approved') issues.push(game.awayTeam);
+      return issues;
+    });
+
+    return (
+      <div className="space-y-8 py-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">
+            Games by Division and Bracket
+          </h3>
+        </div>
+        
+        {/* Warning for non-approved teams in games */}
+        {teamsWithIssues.length > 0 && (
+          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+            <p className="text-sm text-center text-destructive">
+              <span className="font-medium">Warning:</span> There {teamsWithIssues.length === 1 ? 'is' : 'are'} {teamsWithIssues.length} non-approved {teamsWithIssues.length === 1 ? 'team' : 'teams'} in scheduled games. 
+              Only teams with 'Approved' status should be used for scheduling.
+            </p>
+          </div>
+        )}
+        
+        {/* Iterate through each division */}
+        {Object.entries(groupedGamesByDivisionAndBracket).map(([divisionName, bracketGames]) => (
+          <div key={divisionName} className="space-y-4 mb-8 border-b pb-6">
+            <h4 className="text-md font-semibold bg-muted/50 p-2 rounded">
+              Division: {divisionName}
+            </h4>
+            
+            {/* Iterate through each bracket in this division */}
+            {Object.entries(bracketGames).map(([bracketName, gamesInBracket]) => (
+              <div key={`${divisionName}-${bracketName}`} className="space-y-3">
+                <h5 className="text-sm font-medium pl-2 border-l-2 border-primary">
+                  Bracket: {bracketName}
+                </h5>
+                
+                <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  {gamesInBracket.map(game => (
+                    <div 
+                      key={game.id}
+                      className="p-3 border rounded-md hover:bg-accent/50 transition-colors"
+                    >
+                      <div className="flex justify-between items-center mb-2 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <span>Field: {game.field || 'TBD'}</span>
+                          {game.startTime && (
+                            <span>
+                              {game.startTime.split('T')[1].substring(0, 5)}
+                            </span>
+                          )}
+                        </div>
+                        <Badge 
+                          variant={
+                            game.status === 'completed' ? 'default' : 
+                            game.status === 'in_progress' ? 'secondary' :
+                            game.status === 'cancelled' ? 'destructive' : 
+                            'outline'
+                          }
+                          className="text-xs"
+                        >
+                          {game.status === 'scheduled' ? 'Scheduled' : 
+                          game.status === 'in_progress' ? 'In Progress' :
+                          game.status === 'completed' ? 'Completed' : 
+                          game.status === 'cancelled' ? 'Cancelled' : 'Unknown'}
+                        </Badge>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <span className={`font-medium ${game.homeTeam?.status !== 'approved' && game.homeTeam ? 'text-destructive' : ''}`}>
+                              {game.homeTeam?.name || 'TBD'}
+                            </span>
+                            {game.homeTeam?.status && game.homeTeam.status !== 'approved' && (
+                              <Badge variant="destructive" className="ml-2 text-xs">
+                                {game.homeTeam.status}
+                              </Badge>
+                            )}
+                          </div>
+                          <span className="text-sm font-bold">{game.score?.home ?? '-'}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                            <span className={`font-medium ${game.awayTeam?.status !== 'approved' && game.awayTeam ? 'text-destructive' : ''}`}>
+                              {game.awayTeam?.name || 'TBD'}
+                            </span>
+                            {game.awayTeam?.status && game.awayTeam.status !== 'approved' && (
+                              <Badge variant="destructive" className="ml-2 text-xs">
+                                {game.awayTeam.status}
+                              </Badge>
+                            )}
+                          </div>
+                          <span className="text-sm font-bold">{game.score?.away ?? '-'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  };
+  
   // Render teams view
   const renderTeamsView = () => {
     if (teams.length === 0) {
