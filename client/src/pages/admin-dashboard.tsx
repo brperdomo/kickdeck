@@ -2470,6 +2470,148 @@ function SchedulingView() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      {/* Bracket Assignment Modal */}
+      <Dialog open={bracketAssignmentModalOpen} onOpenChange={setBracketAssignmentModalOpen}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>AI Bracket Assignment</DialogTitle>
+            <DialogDescription>
+              Review and apply AI-suggested bracket assignments for teams.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            {bracketSuggestions.length === 0 ? (
+              <div className="space-y-4">
+                <p className="text-center text-muted-foreground">
+                  No teams requiring bracket assignment were found, or the AI hasn't generated suggestions yet.
+                </p>
+                
+                <div className="flex justify-center">
+                  <Button 
+                    onClick={suggestBracketAssignments}
+                    disabled={isSuggestingBrackets || !selectedEvent}
+                  >
+                    {isSuggestingBrackets ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating suggestions...
+                      </>
+                    ) : (
+                      <>
+                        <WandSparkles className="mr-2 h-4 w-4" />
+                        Generate AI suggestions
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[200px]">Team</TableHead>
+                        <TableHead className="w-[150px]">Age Group</TableHead>
+                        <TableHead className="w-[150px]">Suggested Bracket</TableHead>
+                        <TableHead className="w-[150px]">Confidence</TableHead>
+                        <TableHead className="w-[100px]">Accept</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {bracketSuggestions.map((suggestion, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{suggestion.teamName}</TableCell>
+                          <TableCell>{suggestion.ageGroup}</TableCell>
+                          <TableCell>
+                            <Select 
+                              defaultValue={suggestion.suggestedBracket.toString()} 
+                              onValueChange={(value) => {
+                                // Update the suggestion with the new bracket selection
+                                const updatedSuggestions = [...bracketSuggestions];
+                                updatedSuggestions[index].suggestedBracket = parseInt(value);
+                                setBracketSuggestions(updatedSuggestions);
+                              }}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select bracket" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {suggestion.availableBrackets.map((bracket) => (
+                                  <SelectItem key={bracket.id} value={bracket.id.toString()}>
+                                    {bracket.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={cn(
+                              suggestion.confidence >= 0.8 ? "bg-green-100 text-green-800" :
+                              suggestion.confidence >= 0.5 ? "bg-yellow-100 text-yellow-800" :
+                              "bg-red-100 text-red-800"
+                            )}>
+                              {suggestion.confidence >= 0.8 ? "High" :
+                               suggestion.confidence >= 0.5 ? "Medium" : "Low"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Checkbox 
+                              checked={suggestion.accepted !== false} 
+                              onCheckedChange={(checked) => {
+                                // Update the suggestion acceptance status
+                                const updatedSuggestions = [...bracketSuggestions];
+                                updatedSuggestions[index].accepted = !!checked;
+                                setBracketSuggestions(updatedSuggestions);
+                              }}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-muted-foreground">
+                    {bracketSuggestions.filter(s => s.accepted !== false).length} of {bracketSuggestions.length} suggestions accepted
+                  </p>
+                  
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setBracketAssignmentModalOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    
+                    <Button
+                      onClick={() => {
+                        // Filter out only the accepted suggestions
+                        const acceptedSuggestions = bracketSuggestions
+                          .filter(s => s.accepted !== false)
+                          .map(s => ({
+                            teamId: s.teamId,
+                            bracketId: s.suggestedBracket
+                          }));
+                        
+                        // Apply the bracket assignments
+                        applyBracketAssignments(acceptedSuggestions);
+                      }}
+                      disabled={bracketSuggestions.filter(s => s.accepted !== false).length === 0}
+                    >
+                      <Trophy className="mr-2 h-4 w-4" />
+                      Apply Assignments
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
