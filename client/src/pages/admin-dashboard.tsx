@@ -4122,20 +4122,28 @@ function TeamsView() {
                 <SelectValue placeholder="Select Event" />
               </SelectTrigger>
               <SelectContent>
-                {Array.isArray(importEligibleEventsQuery.data) 
-                  ? importEligibleEventsQuery.data.map((event: any) => (
-                    <SelectItem key={event.id} value={event.id.toString()}>
-                      {event.name}
-                    </SelectItem>
-                  ))
-                  : Array.isArray(importEligibleEventsQuery.data?.events)
-                    ? importEligibleEventsQuery.data.events.map((event: any) => (
-                      <SelectItem key={event.id} value={event.id.toString()}>
-                        {event.name}
-                      </SelectItem>
-                    ))
-                    : (<SelectItem value="none" disabled>No events available</SelectItem>)
-                }
+                {importEligibleEventsQuery.isLoading && <SelectItem value="loading" disabled>Loading events...</SelectItem>}
+                {importEligibleEventsQuery.isError && (
+                  <SelectItem value="error" disabled>Error loading events</SelectItem>
+                )}
+                {!importEligibleEventsQuery.isLoading && !importEligibleEventsQuery.isError && (
+                  <>
+                    {Array.isArray(importEligibleEventsQuery.data) && importEligibleEventsQuery.data.length > 0 
+                      ? importEligibleEventsQuery.data.map((event: any) => (
+                        <SelectItem key={event.id} value={event.id.toString()}>
+                          {event.name}
+                        </SelectItem>
+                      ))
+                      : Array.isArray(importEligibleEventsQuery.data?.events) && importEligibleEventsQuery.data.events.length > 0
+                        ? importEligibleEventsQuery.data.events.map((event: any) => (
+                          <SelectItem key={event.id} value={event.id.toString()}>
+                            {event.name}
+                          </SelectItem>
+                        ))
+                        : (<SelectItem value="none" disabled>No events available</SelectItem>)
+                    }
+                  </>
+                )}
               </SelectContent>
             </Select>
           </div>

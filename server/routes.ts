@@ -3240,47 +3240,29 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     // API endpoint for team import eligible events - shows ALL events regardless of application deadline
     app.get('/api/admin/import-eligible-events', isAdmin, async (req, res) => {
       try {
-        // First check if the user is a super admin
-        const userRoles = await db
-          .select({
-            roleName: roles.name
-          })
-          .from(adminRoles)
-          .innerJoin(roles, eq(adminRoles.roleId, roles.id))
-          .where(eq(adminRoles.userId, req.user.id));
+        console.log(`[IMPORT-ELIGIBLE] Fetching all events for user ${req.user.id}`);
         
-        const isSuperAdmin = userRoles.some(role => role.roleName === 'super_admin');
-        
-        // Base query setup - don't filter by application deadline
-        let eventsQuery = db
+        // Simple query to get all non-archived events with no filtering
+        const allEvents = await db
           .select({
-            event: events,
-            applicationCount: sql<number>`count(distinct ${teams.id})`.mapWith(Number),
-            teamCount: sql<number>`count(${teams.id})`.mapWith(Number),
+            id: events.id,
+            name: events.name,
+            startDate: events.startDate,
+            endDate: events.endDate,
+            location: events.location,
+            applicationDeadline: events.applicationDeadline,
+            isArchived: events.isArchived,
+            createdAt: events.createdAt,
           })
           .from(events)
-          .leftJoin(teams, eq(events.id, teams.eventId));
-        
-        // Only filter for archived status
-        eventsQuery = eventsQuery.where(eq(events.isArchived, false));
-        
-        // For team imports, we want to show ALL events regardless of registration deadline
-        // and allow all users with admin access to import teams to any event
-        // So we don't restrict events by user assignment for this endpoint
-        
-        // Execute the query
-        const eventsList = await eventsQuery
-          .groupBy(events.id)
+          .where(eq(events.isArchived, false))
           .orderBy(events.startDate);
-
-        // Format the response
-        const formattedEvents = eventsList.map(({ event, applicationCount, teamCount }) => ({
-          ...event,
-          applicationCount,
-          teamCount
-        }));
-
-        res.json(formattedEvents);
+        
+        console.log(`[IMPORT-ELIGIBLE] Found ${allEvents.length} total events`);
+        console.log('[IMPORT-ELIGIBLE] Event IDs:', allEvents.map(e => e.id));
+        
+        // Return all events directly
+        return res.json(allEvents);
       } catch (error) {
         console.error('Error fetching import-eligible events:', error);
         res.status(500).send("Failed to fetch import-eligible events");
