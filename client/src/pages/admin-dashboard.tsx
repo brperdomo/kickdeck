@@ -2395,6 +2395,16 @@ function TeamsView() {
       return response.json();
     }
   });
+  
+  // Fetch import-eligible events (including those with past registration deadlines)
+  const importEligibleEventsQuery = useQuery({
+    queryKey: ['admin', 'import-eligible-events'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/import-eligible-events');
+      if (!response.ok) throw new Error('Failed to fetch import-eligible events');
+      return response.json();
+    }
+  });
 
   // Fetch teams with event and age group data
   const teamsQuery = useQuery({
@@ -4110,14 +4120,14 @@ function TeamsView() {
                 <SelectValue placeholder="Select Event" />
               </SelectTrigger>
               <SelectContent>
-                {Array.isArray(eventsQuery.data) 
-                  ? eventsQuery.data.map((event: any) => (
+                {Array.isArray(importEligibleEventsQuery.data) 
+                  ? importEligibleEventsQuery.data.map((event: any) => (
                     <SelectItem key={event.id} value={event.id.toString()}>
                       {event.name}
                     </SelectItem>
                   ))
-                  : Array.isArray(eventsQuery.data?.events)
-                    ? eventsQuery.data.events.map((event: any) => (
+                  : Array.isArray(importEligibleEventsQuery.data?.events)
+                    ? importEligibleEventsQuery.data.events.map((event: any) => (
                       <SelectItem key={event.id} value={event.id.toString()}>
                         {event.name}
                       </SelectItem>
