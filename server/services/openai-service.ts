@@ -403,47 +403,55 @@ export class SoccerSchedulerAI {
    * @returns Event data including age groups, fields, etc.
    */
   private static async getEventData(eventId: string | number) {
-    // Get event details
-    const [eventData] = await db
-      .select()
-      .from(events)
-      .where(eq(events.id, eventId.toString()));
+    // Get event details - ensuring we're using the proper types
+    const eventIdStr = eventId.toString();
+    
+    try {
+      // Get event details
+      const [eventData] = await db
+        .select()
+        .from(events)
+        .where(eq(events.id, eventIdStr));
+        
+      if (!eventData) {
+        throw new Error("Event not found");
+      }
       
-    if (!eventData) {
-      throw new Error("Event not found");
+      // Get age groups for this event
+      const ageGroupsData = await db
+        .select()
+        .from(eventAgeGroups)
+        .where(eq(eventAgeGroups.eventId, eventIdStr));
+        
+      // Get brackets for this event
+      const bracketsData = await db
+        .select()
+        .from(eventBrackets)
+        .where(eq(eventBrackets.eventId, eventIdStr));
+        
+      // Get fields for this event
+      const fieldsData = await db
+        .select()
+        .from(fields)
+        .where(eq(fields.eventId, eventIdStr));
+        
+      // Get available time slots for this event
+      const timeSlotsData = await db
+        .select()
+        .from(gameTimeSlots)
+        .where(eq(gameTimeSlots.eventId, eventIdStr));
+      
+      return {
+        event: eventData,
+        ageGroups: ageGroupsData,
+        brackets: bracketsData,
+        fields: fieldsData,
+        timeSlots: timeSlotsData
+      };
+    } catch (error) {
+      console.error("Error fetching event data:", error);
+      throw error;
     }
-    
-    // Get age groups for this event
-    const ageGroupsData = await db
-      .select()
-      .from(eventAgeGroups)
-      .where(eq(eventAgeGroups.eventId, eventId.toString()));
-      
-    // Get brackets for this event
-    const bracketsData = await db
-      .select()
-      .from(eventBrackets)
-      .where(eq(eventBrackets.eventId, eventId.toString()));
-      
-    // Get fields for this event
-    const fieldsData = await db
-      .select()
-      .from(fields)
-      .where(eq(fields.eventId, eventId.toString()));
-      
-    // Get available time slots for this event
-    const timeSlotsData = await db
-      .select()
-      .from(gameTimeSlots)
-      .where(eq(gameTimeSlots.eventId, eventId.toString()));
-    
-    return {
-      event: eventData,
-      ageGroups: ageGroupsData,
-      brackets: bracketsData,
-      fields: fieldsData,
-      timeSlots: timeSlotsData
-    };
   }
   
   /**
