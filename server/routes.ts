@@ -3389,6 +3389,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             name: req.body.name,
             hasLights: req.body.hasLights,
             hasParking: req.body.hasParking,
+            isOpen: req.body.isOpen || true,
+            openTime: req.body.openTime || '08:00',
+            closeTime: req.body.closeTime || '22:00',
             specialInstructions: req.body.specialInstructions || null,
             complexId: req.body.complexId,
             createdAt: new Date().toISOString(),
@@ -3441,6 +3444,40 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       } catch (error) {
         console.error('Error deleting field:', error);
         res.status(500).send("Failed to delete field");
+      }
+    });
+
+    // Field update endpoint for all field properties
+    app.put('/api/admin/fields/:id', isAdmin, async (req, res) => {
+      try {
+        const fieldId = parseInt(req.params.id);
+        const { name, hasLights, hasParking, isOpen, openTime, closeTime, specialInstructions } = req.body;
+        
+        // Update the field
+        const [updatedField] = await db
+          .update(fields)
+          .set({
+            name,
+            hasLights,
+            hasParking,
+            isOpen,
+            openTime,
+            closeTime,
+            specialInstructions: specialInstructions || null,
+            updatedAt: new Date().toISOString(),
+          })
+          .where(eq(fields.id, fieldId))
+          .returning();
+          
+        if (!updatedField) {
+          return res.status(404).send("Field not found");
+        }
+        
+        res.json(updatedField);
+      } catch (error) {
+        console.error('Error updating field:', error);
+        console.error("Error details:", error);
+        res.status(500).send("Failed to update field");
       }
     });
 

@@ -186,6 +186,54 @@ export function FieldEditor({ open, onOpenChange, onSubmit, field, complexId }: 
                 </FormItem>
               )}
             />
+            
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="openTime"
+                render={({ field: formField }) => (
+                  <FormItem>
+                    <FormLabel>Opening Time</FormLabel>
+                    <div className="flex">
+                      <FormControl>
+                        <div className="relative">
+                          <Clock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            type="time"
+                            className="pl-8"
+                            {...formField}
+                          />
+                        </div>
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="closeTime"
+                render={({ field: formField }) => (
+                  <FormItem>
+                    <FormLabel>Closing Time</FormLabel>
+                    <div className="flex">
+                      <FormControl>
+                        <div className="relative">
+                          <Clock className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            type="time"
+                            className="pl-8"
+                            {...formField}
+                          />
+                        </div>
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
