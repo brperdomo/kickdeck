@@ -15,6 +15,20 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface Game {
   id: string;
@@ -46,13 +60,17 @@ interface ScheduleVisualizationProps {
   }>;
   bracketSchedules?: BracketSchedule[];
   qualityScore?: number;
+  onDeleteGame?: (gameId: string) => Promise<void>;
+  allowEditing?: boolean;
 }
 
 export function ScheduleVisualization({
   games,
   conflicts = [],
   bracketSchedules = [],
-  qualityScore
+  qualityScore,
+  onDeleteGame,
+  allowEditing = false
 }: ScheduleVisualizationProps) {
   if (!games || games.length === 0) {
     return (
@@ -240,6 +258,9 @@ export function ScheduleVisualization({
                   <TableHead className="hidden md:table-cell">Round</TableHead>
                   <TableHead>Field</TableHead>
                   <TableHead className="hidden md:table-cell">Complex</TableHead>
+                  {allowEditing && onDeleteGame && (
+                    <TableHead className="w-[80px]">Actions</TableHead>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -280,6 +301,41 @@ export function ScheduleVisualization({
                     <TableCell className="hidden md:table-cell">
                       {game.complexName || 'Unknown Facility'}
                     </TableCell>
+                    {allowEditing && onDeleteGame && (
+                      <TableCell>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Game</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete this game? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={async () => {
+                                  try {
+                                    await onDeleteGame(game.id);
+                                    toast.success('Game successfully deleted');
+                                  } catch (error) {
+                                    console.error('Error deleting game:', error);
+                                    toast.error('Failed to delete game');
+                                  }
+                                }}
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
