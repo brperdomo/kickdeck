@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../../db';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { games } from '../../../db/schema';
 import { hasEventAccess } from '../../middleware/event-access';
 
@@ -76,18 +76,10 @@ router.post('/batch-delete', hasEventAccess, async (req, res) => {
     }
     
     // Delete all specified games
+    // We need to use the inArray operator for multiple values
     const result = await db
       .delete(games)
-      .where(eq(games.id, parsedGameIds[0])); // Start with the first one
-    
-    // For multiple games, we need to use a loop because of how eq() works with drizzle
-    if (parsedGameIds.length > 1) {
-      for (let i = 1; i < parsedGameIds.length; i++) {
-        await db
-          .delete(games)
-          .where(eq(games.id, parsedGameIds[i]));
-      }
-    }
+      .where(games.id.in(parsedGameIds));
     
     return res.json({ 
       success: true,

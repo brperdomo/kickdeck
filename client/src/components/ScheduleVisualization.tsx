@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, CheckSquare } from "lucide-react";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 
 interface Game {
@@ -61,6 +62,7 @@ interface ScheduleVisualizationProps {
   bracketSchedules?: BracketSchedule[];
   qualityScore?: number;
   onDeleteGame?: (gameId: string) => Promise<void>;
+  onBulkDeleteGames?: (gameIds: string[]) => Promise<void>;
   allowEditing?: boolean;
 }
 
@@ -70,8 +72,61 @@ export function ScheduleVisualization({
   bracketSchedules = [],
   qualityScore,
   onDeleteGame,
+  onBulkDeleteGames,
   allowEditing = false
 }: ScheduleVisualizationProps) {
+  const [selectedGames, setSelectedGames] = React.useState<{ [key: string]: boolean }>({});
+  const [showBulkActions, setShowBulkActions] = React.useState(false);
+  
+  // Handle select all games for a day
+  const handleSelectAllGames = (day: string, isSelected: boolean) => {
+    const newSelectedGames = { ...selectedGames };
+    gamesByDay[day].forEach(game => {
+      newSelectedGames[game.id] = isSelected;
+    });
+    setSelectedGames(newSelectedGames);
+    setShowBulkActions(Object.values(newSelectedGames).some(v => v));
+  };
+  
+  // Handle selection of individual game
+  const handleSelectGame = (gameId: string, isSelected: boolean) => {
+    setSelectedGames(prev => ({ ...prev, [gameId]: isSelected }));
+    
+    // If at least one game is selected, show bulk actions
+    if (isSelected) {
+      setShowBulkActions(true);
+    } else {
+      // If no games are selected after this change, hide bulk actions
+      const updatedSelected = { ...selectedGames, [gameId]: isSelected };
+      setShowBulkActions(Object.values(updatedSelected).some(v => v));
+    }
+  };
+  
+  // Get all selected game IDs
+  const getSelectedGameIds = (): string[] => {
+    return Object.entries(selectedGames)
+      .filter(([_, isSelected]) => isSelected)
+      .map(([gameId, _]) => gameId);
+  };
+  
+  // Handle bulk delete action
+  const handleBulkDelete = async () => {
+    if (!onBulkDeleteGames) return;
+    
+    const selectedIds = getSelectedGameIds();
+    if (selectedIds.length === 0) return;
+    
+    try {
+      await onBulkDeleteGames(selectedIds);
+      toast.success(`Successfully deleted ${selectedIds.length} games`);
+      // Reset selections after successful delete
+      setSelectedGames({});
+      setShowBulkActions(false);
+    } catch (error) {
+      console.error('Error bulk deleting games:', error);
+      toast.error('Failed to delete selected games');
+    }
+  };
   if (!games || games.length === 0) {
     return (
       <div className="text-center py-10">
@@ -251,6 +306,16 @@ export function ScheduleVisualization({
             <Table>
               <TableHeader>
                 <TableRow>
+                  {allowEditing && onBulkDeleteGames && (
+                    <TableHead className="w-[50px]">
+                      <Checkbox 
+                        checked={gamesByDay[day].every(game => selectedGames[game.id])}
+                        onCheckedChange={(checked) => {
+                          handleSelectAllGames(day, checked === true);
+                        }}
+                      />
+                    </TableHead>
+                  )}
                   <TableHead className="w-[120px]">Time</TableHead>
                   <TableHead>Match</TableHead>
                   <TableHead>Age Group</TableHead>
@@ -266,6 +331,16 @@ export function ScheduleVisualization({
               <TableBody>
                 {gamesByDay[day].map(game => (
                   <TableRow key={game.id}>
+                    {allowEditing && onBulkDeleteGames && (
+                      <TableCell>
+                        <Checkbox 
+                          checked={selectedGames[game.id] || false}
+                          onCheckedChange={(checked) => {
+                            handleSelectGame(game.id, checked === true);
+                          }}
+                        />
+                      </TableCell>
+                    )}
                     <TableCell className="font-mono whitespace-nowrap">
                       {formatTime(game.startTime)} - {formatTime(game.endTime)}
                     </TableCell>
