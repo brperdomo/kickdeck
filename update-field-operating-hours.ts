@@ -1,6 +1,6 @@
 import { db } from './db';
 import { fields, complexes } from './db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, or, isNull } from 'drizzle-orm';
 
 // This script adds open_time and close_time fields to existing fields
 // If a field doesn't have times set, it will inherit from its complex
@@ -18,7 +18,10 @@ async function migrateFieldOperatingHours() {
       .from(fields)
       .where(
         // Either openTime is null or closeTime is null
-        (fields.openTime === null) || (fields.closeTime === null)
+        or(
+          isNull(fields.openTime),
+          isNull(fields.closeTime)
+        )
       );
     
     console.log(`Found ${fieldsToUpdate.length} fields that need operating hours set`);
