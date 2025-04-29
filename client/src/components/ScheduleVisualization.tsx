@@ -298,6 +298,56 @@ export function ScheduleVisualization({
         </div>
       </div>
 
+      {/* Bulk actions bar */}
+      {showBulkActions && allowEditing && onBulkDeleteGames && (
+        <div className="bg-muted px-4 py-3 rounded-md flex items-center justify-between mb-4">
+          <div className="text-sm">
+            <span className="font-medium">{getSelectedGameIds().length}</span> games selected
+          </div>
+          <div className="flex gap-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="destructive" 
+                  size="sm" 
+                  className="flex items-center gap-1"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete Selected
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Selected Games</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete {getSelectedGameIds().length} selected games? 
+                    This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleBulkDelete}
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                setSelectedGames({});
+                setShowBulkActions(false);
+              }}
+            >
+              Clear Selection
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Display games by day with additional information */}
       {sortedDays.map(day => (
         <div key={day} className="border rounded-md overflow-hidden mb-6">

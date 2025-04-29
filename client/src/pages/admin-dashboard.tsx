@@ -2019,6 +2019,52 @@ function SchedulingView() {
     }
   };
   
+  // Bulk delete games mutation
+  const bulkDeleteGamesMutation = useMutation({
+    mutationFn: async (gameIds: string[]) => {
+      const response = await fetch(`/api/admin/games/batch-delete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ gameIds })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to delete games: ${response.status}`);
+      }
+      
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['admin', 'games', selectedEvent] });
+      toast({
+        title: "Success",
+        description: `${data.deletedCount || 'Multiple'} games deleted successfully`,
+        variant: "default",
+      });
+    },
+    onError: (error) => {
+      console.error("Error bulk deleting games:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete games",
+        variant: "destructive",
+      });
+    }
+  });
+  
+  // Function to handle bulk game deletion
+  const handleBulkDeleteGames = async (gameIds: string[]) => {
+    try {
+      await bulkDeleteGamesMutation.mutateAsync(gameIds);
+    } catch (error) {
+      // Error is handled in the mutation's onError
+    }
+  };
+  
   // Function to generate AI schedule
   const queryClient = useQueryClient();
   
