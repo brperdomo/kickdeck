@@ -646,7 +646,11 @@ export class SoccerSchedulerAI {
           closeTime: fields.closeTime,
           specialInstructions: fields.specialInstructions,
           complexId: fields.complexId,
-          complex: complexes
+          // Select only specific complex fields that exist in the database
+          complexName: complexes.name,
+          complexOpenTime: complexes.openTime,
+          complexCloseTime: complexes.closeTime,
+          complexIsOpen: complexes.isOpen
         })
         .from(fields)
         .leftJoin(complexes, eq(fields.complexId, complexes.id))
@@ -807,7 +811,7 @@ EVENT INFORMATION:
 - Available Fields: ${eventData.fields.map(f => f.name).join(', ')}
 
 FIELD AVAILABILITY CONSTRAINTS:
-${eventData.fields.map(f => `- ${f.name}: Open from ${f.openTime} to ${f.closeTime} ${f.complex && f.complex.isOpen ? `(Complex: ${f.complex.name})` : ''}`).join('\n')}
+${eventData.fields.map(f => `- ${f.name}: Open from ${f.openTime} to ${f.closeTime} ${f.complexName ? `(Complex: ${f.complexName}, Open from ${f.complexOpenTime} to ${f.complexCloseTime})` : ''}`).join('\n')}
 
 TEAMS INFORMATION:
 ${teamsData.map(team => `- Team ID: ${team.id}, Name: ${team.name}, Age Group: ${team.ageGroup}, Coach: ${team.coach || 'Unknown'}, Bracket: ${team.bracketId || 'Not assigned'}`).join('\n')}
@@ -889,7 +893,7 @@ EVENT INFORMATION:
 - Available Fields: ${eventData.fields.map(f => f.name).join(', ')}
 
 FIELD AVAILABILITY CONSTRAINTS:
-${eventData.fields.map(f => `- ${f.name}: Open from ${f.openTime} to ${f.closeTime} ${f.complex && f.complex.isOpen ? `(Complex: ${f.complex.name})` : ''}`).join('\n')}
+${eventData.fields.map(f => `- ${f.name}: Open from ${f.openTime} to ${f.closeTime} ${f.complexName ? `(Complex: ${f.complexName}, Open from ${f.complexOpenTime} to ${f.complexCloseTime})` : ''}`).join('\n')}
 
 OPTIMIZATION PRIORITIES:
 - Resolve Coach Conflicts: ${options.resolveCoachConflicts ? 'Yes' : 'No'} (The same coach should not have overlapping games)
