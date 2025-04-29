@@ -1,0 +1,34 @@
+admin-dashboard.tsx:2488 Uncaught ReferenceError: permissions is not defined
+    at SchedulingView (admin-dashboard.tsx:2488:33)
+SchedulingView	@	admin-dashboard.tsx:2488
+
+admin-dashboard.tsx:2488 Uncaught ReferenceError: permissions is not defined
+    at SchedulingView (admin-dashboard.tsx:2488:33)
+SchedulingView	@	admin-dashboard.tsx:2488
+chunk-RPCDYKBN.js?v=b7f81d86:14032 The above error occurred in the <SchedulingView> component:
+
+    at SchedulingView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:2843:45)
+    at div
+    at div
+    at MotionComponent (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/framer-motion.js?v=b7f81d86:945:40)
+    at AnimatedContent (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/animation.tsx:162:3)
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx:7906:27)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b7f81d86:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b7f81d86:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:60:31)
+    at div
+    at div
+    at MainLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/MainLayout.tsx:18:30)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=b7f81d86:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b7f81d86:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=b7f81d86:2829:3)
+    at App (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:684:3)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=b7f81d86:2829:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-RPCDYKBN.js?v=b7f81d86:9129 Uncaught ReferenceError: permissions is not defined
+    at SchedulingView (admin-dashboard.tsx:2488:33)
+SchedulingView	@	admin-dashboard.tsx:2488
