@@ -279,6 +279,13 @@ export function ComplexCard({
                       </div>
                       <div className="flex flex-wrap gap-x-3 text-xs text-gray-400 mt-1">
                         <span className="flex items-center">
+                          <Clock className="h-3 w-3 mr-1 text-indigo-400" />
+                          {field.openTime && field.closeTime 
+                            ? `${field.openTime} - ${field.closeTime}`
+                            : "No hours set"
+                          }
+                        </span>
+                        <span className="flex items-center">
                           {field.hasLights 
                             ? <span className="flex items-center">
                                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500 mr-1"></span>

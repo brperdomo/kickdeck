@@ -2414,6 +2414,8 @@ export function registerRoutes(app: Express): Server {
                   'hasLights', ${fields.hasLights},
                   'hasParking', ${fields.hasParking},
                   'isOpen', ${fields.isOpen},
+                  'openTime', ${fields.openTime},
+                  'closeTime', ${fields.closeTime},
                   'specialInstructions', ${fields.specialInstructions}
                 )
               ELSE NULL
