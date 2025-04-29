@@ -1,0 +1,74 @@
+Uncaught ReferenceError: hasPermission is not defined
+    at SchedulingView (admin-dashboard.tsx:2489:33)
+SchedulingView	@	admin-dashboard.tsx:2489
+
+admin-dashboard.tsx:2489 Uncaught ReferenceError: hasPermission is not defined
+    at SchedulingView (admin-dashboard.tsx:2489:33)
+SchedulingView	@	admin-dashboard.tsx:2489
+chunk-RPCDYKBN.js?v=b7f81d86:14032 The above error occurred in the <SchedulingView> component:
+
+    at SchedulingView (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx?t=1745895243988:2843:27)
+    at div
+    at div
+    at MotionComponent (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/framer-motion.js?v=b7f81d86:945:40)
+    at AnimatedContent (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/animation.tsx:162:3)
+    at div
+    at AdminDashboard (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/admin-dashboard.tsx?t=1745895243988:7907:27)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b7f81d86:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b7f81d86:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx?t=1745895243988:60:31)
+    at div
+    at div
+    at MainLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/MainLayout.tsx:18:30)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=b7f81d86:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b7f81d86:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=b7f81d86:2829:3)
+    at App (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx?t=1745895243988:684:3)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=b7f81d86:2829:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError	@	chunk-RPCDYKBN.js?v=b7f81d86:14032
+update.callback	@	chunk-RPCDYKBN.js?v=b7f81d86:14052
+callCallback	@	chunk-RPCDYKBN.js?v=b7f81d86:11248
+commitUpdateQueue	@	chunk-RPCDYKBN.js?v=b7f81d86:11265
+commitLayoutEffectOnFiber	@	chunk-RPCDYKBN.js?v=b7f81d86:17093
+commitLayoutMountEffects_complete	@	chunk-RPCDYKBN.js?v=b7f81d86:17980
+commitLayoutEffects_begin	@	chunk-RPCDYKBN.js?v=b7f81d86:17969
+commitLayoutEffects	@	chunk-RPCDYKBN.js?v=b7f81d86:17920
+commitRootImpl	@	chunk-RPCDYKBN.js?v=b7f81d86:19353
+commitRoot	@	chunk-RPCDYKBN.js?v=b7f81d86:19277
+performSyncWorkOnRoot	@	chunk-RPCDYKBN.js?v=b7f81d86:18895
+flushSyncCallbacks	@	chunk-RPCDYKBN.js?v=b7f81d86:9119
+(anonymous)	@	chunk-RPCDYKBN.js?v=b7f81d86:18627
+setTimeout		
+scheduleFn	@	@tanstack_react-query.js?v=b7f81d86:554
+flush	@	@tanstack_react-query.js?v=b7f81d86:568
+batch	@	@tanstack_react-query.js?v=b7f81d86:586
+dispatch_fn	@	@tanstack_react-query.js?v=b7f81d86:995
+setData	@	@tanstack_react-query.js?v=b7f81d86:695
+onSuccess	@	@tanstack_react-query.js?v=b7f81d86:896
+resolve	@	@tanstack_react-query.js?v=b7f81d86:455
+Promise.then		
+run	@	@tanstack_react-query.js?v=b7f81d86:497
+start	@	@tanstack_react-query.js?v=b7f81d86:535
+fetch	@	@tanstack_react-query.js?v=b7f81d86:925
+executeFetch_fn	@	@tanstack_react-query.js?v=b7f81d86:2237
+setOptions	@	@tanstack_react-query.js?v=b7f81d86:1981
+(anonymous)	@	@tanstack_react-query.js?v=b7f81d86:3057
+commitHookEffectListMount	@	chunk-RPCDYKBN.js?v=b7f81d86:16915
+commitPassiveMountOnFiber	@	chunk-RPCDYKBN.js?v=b7f81d86:18156
+commitPassiveMountEffects_complete	@	chunk-RPCDYKBN.js?v=b7f81d86:18129
+commitPassiveMountEffects_begin	@	chunk-RPCDYKBN.js?v=b7f81d86:18119
+commitPassiveMountEffects	@	chunk-RPCDYKBN.js?v=b7f81d86:18109
+flushPassiveEffectsImpl	@	chunk-RPCDYKBN.js?v=b7f81d86:19490
+flushPassiveEffects	@	chunk-RPCDYKBN.js?v=b7f81d86:19447
+commitRootImpl	@	chunk-RPCDYKBN.js?v=b7f81d86:19416
+commitRoot	@	chunk-RPCDYKBN.js?v=b7f81d86:19277
+performSyncWorkOnRoot	@	chunk-RPCDYKBN.js?v=b7f81d86:18895
+flushSyncCallbacks	@	chunk-RPCDYKBN.js?v=b7f81d86:9119
+(anonymous)	@	chunk-RPCDYKBN.js?v=b7f81d86:18627
+chunk-RPCDYKBN.js?v=b7f81d86:9129 Uncaught ReferenceError: hasPermission is not defined
+    at SchedulingView (admin-dashboard.tsx:2489:33)
+SchedulingView	@	admin-dashboard.tsx:2489
