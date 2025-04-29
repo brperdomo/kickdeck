@@ -515,10 +515,10 @@ export class SoccerSchedulerAI {
           }
           
           // Check if field's complex is closed
-          if (fieldInfo.complex && !fieldInfo.complex.isOpen) {
+          if (fieldInfo.complexName && !fieldInfo.complexIsOpen) {
             conflicts.push({
               type: 'complex_closed',
-              description: `Game scheduled on field ${game.field} where the complex (${fieldInfo.complex.name}) is closed`,
+              description: `Game scheduled on field ${game.field} where the complex (${fieldInfo.complexName}) is closed`,
               severity: 'critical',
               affectedGames: [game.id]
             });
