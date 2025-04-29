@@ -21,12 +21,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect } from "react";
+import { Clock } from "lucide-react";
 
 const fieldSchema = z.object({
   name: z.string().min(1, "Field name is required"),
   hasLights: z.boolean().default(false),
   hasParking: z.boolean().default(false),
   isOpen: z.boolean().default(true),
+  openTime: z.string().optional(),
+  closeTime: z.string().optional(),
   specialInstructions: z.string().optional(),
 });
 
@@ -38,6 +41,8 @@ interface Field {
   hasLights: boolean;
   hasParking: boolean;
   isOpen: boolean;
+  openTime?: string;
+  closeTime?: string;
   specialInstructions?: string;
   complexId: number;
 }
@@ -60,6 +65,8 @@ export function FieldEditor({ open, onOpenChange, onSubmit, field, complexId }: 
       hasLights: false,
       hasParking: false,
       isOpen: true,
+      openTime: '08:00',
+      closeTime: '22:00',
       specialInstructions: '',
     },
   });
@@ -71,6 +78,8 @@ export function FieldEditor({ open, onOpenChange, onSubmit, field, complexId }: 
         hasLights: field.hasLights,
         hasParking: field.hasParking,
         isOpen: field.isOpen,
+        openTime: field.openTime || '08:00',
+        closeTime: field.closeTime || '22:00',
         specialInstructions: field.specialInstructions || '',
       });
     } else {
@@ -79,6 +88,8 @@ export function FieldEditor({ open, onOpenChange, onSubmit, field, complexId }: 
         hasLights: false,
         hasParking: false,
         isOpen: true,
+        openTime: '08:00',
+        closeTime: '22:00',
         specialInstructions: '',
       });
     }
