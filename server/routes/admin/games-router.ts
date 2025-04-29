@@ -79,7 +79,7 @@ router.post('/batch-delete', hasEventAccess, async (req, res) => {
     // We need to use the inArray operator for multiple values
     const result = await db
       .delete(games)
-      .where(games.id.in(parsedGameIds));
+      .where(inArray(games.id, parsedGameIds));
     
     return res.json({ 
       success: true,
