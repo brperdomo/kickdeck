@@ -9,7 +9,8 @@ import {
   games, 
   fields, 
   gameTimeSlots,
-  tournamentGroups
+  tournamentGroups,
+  complexes
 } from "../../db/schema";
 
 // Initialize the OpenAI client
