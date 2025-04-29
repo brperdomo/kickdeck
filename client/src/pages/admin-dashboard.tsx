@@ -1828,6 +1828,7 @@ function HouseholdsView() {
 function SchedulingView() {
   const permissionsHook = usePermissions();
   const canEditSchedule = permissionsHook.hasPermission("edit_schedule");
+  const canDeleteGames = permissionsHook.hasPermission("edit_schedule"); // Using edit_schedule permission for game deletion
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<string>("");
@@ -2532,8 +2533,8 @@ function SchedulingView() {
                   }))}
                   conflicts={conflicts}
                   qualityScore={scheduleQuality || undefined}
-                  onDeleteGame={handleDeleteGame}
-                  onBulkDeleteGames={handleBulkDeleteGames}
+                  onDeleteGame={canDeleteGames ? handleDeleteGame : undefined}
+                  onBulkDeleteGames={canDeleteGames ? handleBulkDeleteGames : undefined}
                   allowEditing={canEditSchedule}
                 />
               ) : (
