@@ -5614,9 +5614,15 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .select({
             team: teams,
             ageGroup: eventAgeGroups,
+            club: {
+              name: clubs.name,
+              logoUrl: clubs.logoUrl
+            }
           })
           .from(teams)
           .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
+          // Add a join with the clubs table based on clubId
+          .leftJoin(clubs, eq(teams.clubId, clubs.id))
           .where(eq(teams.eventId, eventId));
 
         // Add age group filter if specified
@@ -5627,9 +5633,11 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const results = await query.orderBy(teams.name);
 
         // Format the response
-        const formattedTeams = results.map(({ team, ageGroup }) => ({
+        const formattedTeams = results.map(({ team, ageGroup, club }) => ({
           ...team,
           ageGroup: ageGroup?.ageGroup || 'Unknown',
+          // Include the club logo URL if available
+          clubLogoUrl: club?.logoUrl || null
         }));
 
         res.json(formattedTeams);

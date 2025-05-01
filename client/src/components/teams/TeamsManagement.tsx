@@ -53,6 +53,7 @@ interface Team {
   bracketId?: number | null;
   bracketName?: string | null;
   clubName?: string;
+  clubLogoUrl?: string | null;
 }
 
 interface AgeGroup {
@@ -174,13 +175,8 @@ export function TeamsManagement({ eventId }: TeamsManagementProps) {
           </TableHeader>
           <TableBody>
             {teamsQuery.data?.map((team, index) => {
-              // Construct the club logo URL if a club is associated
-              let clubLogoUrl = null;
-              if (team.clubName) {
-                // We need to find the club logo URL - for this example we can use the ClubLogo component
-                // that will show initials if no logo is found
-                clubLogoUrl = `/uploads/club-logos/${team.id}.png`; // This is a placeholder, real data will use actual logo URLs
-              }
+              // Use the club logo URL from the API if available
+              const clubLogoUrl = team.clubLogoUrl || null;
               
               return (
                 <TableRow 
