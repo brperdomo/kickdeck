@@ -86,7 +86,10 @@ router.get('/event/:eventId', async (req, res) => {
       clubsList = await db
         .select()
         .from(clubs)
-        .where(sql`${clubs.name} IN (${clubNames.join(',')})`)
+        .where(
+          clubNames.length === 1 
+            ? eq(clubs.name, clubNames[0]) 
+            : sql`${clubs.name} IN (${sql.join(clubNames.map(name => sql`${name}`), sql`, `)})`)
         .orderBy(clubs.name);
     }
     

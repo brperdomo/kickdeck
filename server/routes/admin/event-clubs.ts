@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../../db';
 import { clubs, teams, events } from '@db/schema';
-import { eq, sql, and, isNotNull, isNull, desc } from 'drizzle-orm';
+import { eq, sql, and, isNotNull, isNull, desc, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { hasEventAccess } from '../../middleware/event-access';
 
@@ -32,12 +32,20 @@ router.get('/:eventId/clubs', hasEventAccess, async (req, res) => {
       .map(team => team.clubId))];
 
     // Get club details for these club IDs
-    const clubsData = clubIds.length > 0 
-      ? await db
+    let clubsData = [];
+    if (clubIds.length > 0) {
+      if (clubIds.length === 1) {
+        clubsData = await db
           .select()
           .from(clubs)
-          .where(sql`${clubs.id} IN (${clubIds.join(',')})`)
-      : [];
+          .where(eq(clubs.id, clubIds[0]));
+      } else {
+        clubsData = await db
+          .select()
+          .from(clubs)
+          .where(inArray(clubs.id, clubIds));
+      }
+    }
 
     // Count teams per club
     const clubStats = clubIds.map(clubId => {
@@ -86,12 +94,20 @@ router.get('/:eventId/clubs/clubs', hasEventAccess, async (req, res) => {
       .map(team => team.clubId))];
 
     // Get club details for these club IDs
-    const clubsData = clubIds.length > 0 
-      ? await db
+    let clubsData = [];
+    if (clubIds.length > 0) {
+      if (clubIds.length === 1) {
+        clubsData = await db
           .select()
           .from(clubs)
-          .where(sql`${clubs.id} IN (${clubIds.join(',')})`)
-      : [];
+          .where(eq(clubs.id, clubIds[0]));
+      } else {
+        clubsData = await db
+          .select()
+          .from(clubs)
+          .where(inArray(clubs.id, clubIds));
+      }
+    }
 
     // Count teams per club
     const clubStats = clubIds.map(clubId => {
