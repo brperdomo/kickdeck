@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Home, ArrowLeft, UserCog, Users, LogOut } from "lucide-react";
+import { UserCog, Users, LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
@@ -198,42 +198,7 @@ export function AdminBanner() {
         transition={{ duration: 0.4, type: "spring" }}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            {/* Back button - only show when not on root admin */}
-            {!isRootAdmin && (
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate("/admin")}
-                  title="Back to Dashboard"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
-              </motion.div>
-            )}
-            
-            {/* Home button - always visible */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate("/")}
-                title="Home"
-              >
-                <Home className="h-5 w-5" />
-              </Button>
-            </motion.div>
-            
+          <div className="flex items-center">
             {/* MatchPro Logo */}
             <motion.div
               className="flex items-center"
