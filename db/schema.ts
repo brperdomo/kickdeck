@@ -1154,3 +1154,22 @@ export const selectProductUpdateSchema = createSelectSchema(productUpdates);
 
 export type InsertProductUpdate = typeof productUpdates.$inferInsert;
 export type SelectProductUpdate = typeof productUpdates.$inferSelect;
+
+// Clubs table for storing club information
+export const clubs = pgTable("clubs", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  logoUrl: text("logo_url"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertClubSchema = createInsertSchema(clubs, {
+  name: z.string().min(1, "Club name is required"),
+  logoUrl: z.string().optional(),
+});
+
+export const selectClubSchema = createSelectSchema(clubs);
+
+export type InsertClub = typeof clubs.$inferInsert;
+export type SelectClub = typeof clubs.$inferSelect;
