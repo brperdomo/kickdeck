@@ -409,21 +409,21 @@ export function EventsTable() {
   }
 
   return (
-    <Card className="shadow-sm">
-      <div className="p-6">
+    <Card className="shadow-md rounded-xl overflow-hidden border border-gray-200">
+      <div className="p-6 bg-gradient-to-r from-indigo-50/30 to-white">
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-indigo-400" />
               <Input
                 placeholder="Search events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 w-[300px]"
+                className="pl-9 w-[300px] border-indigo-200 focus:border-indigo-300 focus:ring-indigo-200"
               />
             </div>
             <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as typeof statusFilter)}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] border-indigo-200 focus:border-indigo-300">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -436,53 +436,61 @@ export function EventsTable() {
           </div>
         </div>
 
-        <div className="rounded-md border">
+        <div className="rounded-lg border border-gray-200 overflow-hidden shadow-sm">
           <Table className="event-list">
             <TableHeader>
-              <TableRow>
-                <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("name")}>
+              <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
+                <TableHead className="font-semibold cursor-pointer py-4 text-indigo-900 dark:text-blue-100" onClick={() => handleSort("name")}>
                   <div className="flex items-center">
                     Event Name
                     <SortIcon field="name" />
                   </div>
                 </TableHead>
-                <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("date")}>
+                <TableHead className="font-semibold cursor-pointer py-4 text-indigo-900 dark:text-blue-100" onClick={() => handleSort("date")}>
                   <div className="flex items-center">
                     Date
                     <SortIcon field="date" />
                   </div>
                 </TableHead>
-                <TableHead>End Date</TableHead>
-                <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("status")}>
+                <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">End Date</TableHead>
+                <TableHead className="font-semibold cursor-pointer py-4 text-indigo-900 dark:text-blue-100" onClick={() => handleSort("status")}>
                   <div className="flex items-center">
                     Status
                     <SortIcon field="status" />
                   </div>
                 </TableHead>
-                <TableHead className="font-semibold cursor-pointer" onClick={() => handleSort("deadline")}>
+                <TableHead className="font-semibold cursor-pointer py-4 text-indigo-900 dark:text-blue-100" onClick={() => handleSort("deadline")}>
                   <div className="flex items-center">
                     Registration Deadline
                     <SortIcon field="deadline" />
                   </div>
                 </TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-right py-4 text-indigo-900 dark:text-blue-100">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedEvents.map((event) => (
-                <TableRow key={event.id}>
+              {sortedEvents.map((event, index) => (
+                <TableRow 
+                  key={event.id} 
+                  className={`
+                    ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} 
+                    hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors
+                    ${event.isArchived ? 'opacity-70' : ''}
+                  `}
+                >
                   <TableCell className="font-medium">{event.name}</TableCell>
                   <TableCell>{formatDate(event.startDate)}</TableCell>
                   <TableCell>{formatDate(event.endDate)}</TableCell>
                   <TableCell>
                     <Badge
-                      variant={
-                        event.status === "past"
-                          ? "secondary"
+                      className={`
+                        px-3 py-1 text-xs font-medium shadow-sm
+                        ${event.status === "past" 
+                          ? "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 border-gray-200" 
                           : event.status === "active"
-                          ? "default"
-                          : "outline"
-                      }
+                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border-green-200" 
+                          : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 border-blue-200"}
+                      `}
                     >
                       {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
                     </Badge>
@@ -491,12 +499,12 @@ export function EventsTable() {
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Event Actions</DropdownMenuLabel>
+                      <DropdownMenuContent align="end" className="min-w-[200px] shadow-lg">
+                        <DropdownMenuLabel className="text-indigo-700 dark:text-indigo-300">Event Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                           onClick={() => navigate(`/admin/events/${event.id}/edit`)}
@@ -596,24 +604,27 @@ export function EventsTable() {
       </Dialog>
       
       {/* Pagination and Archive Toggle */}
-      <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between border-t gap-4">
+      <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between border-t border-gray-100 gap-4 bg-gray-50/50">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 w-full sm:w-auto">
           <div className="flex items-center gap-2">
             <Switch 
               id="show-archived" 
               checked={showArchived}
               onCheckedChange={setShowArchived}
+              className="data-[state=checked]:bg-indigo-500"
             />
-            <label htmlFor="show-archived">Show archived events</label>
+            <label htmlFor="show-archived" className="text-sm font-medium text-gray-700">
+              Show archived events
+            </label>
           </div>
           
           <div className="flex items-center gap-2 flex-wrap">
-            <label htmlFor="page-size">Show</label>
+            <label htmlFor="page-size" className="text-sm font-medium text-gray-700">Show</label>
             <Select value={pageSize.toString()} onValueChange={(value) => {
               setPageSize(parseInt(value));
               setCurrentPage(1); // Reset to page 1 when changing page size
             }}>
-              <SelectTrigger className="w-[80px]" id="page-size">
+              <SelectTrigger className="w-[80px] h-8 border-indigo-200 focus:border-indigo-300" id="page-size">
                 <SelectValue placeholder="5" />
               </SelectTrigger>
               <SelectContent>
@@ -624,19 +635,19 @@ export function EventsTable() {
                 <SelectItem value="100">100</SelectItem>
               </SelectContent>
             </Select>
-            <span>events per page</span>
+            <span className="text-sm text-gray-700">events per page</span>
           </div>
         </div>
         
         {/* Mobile-friendly pagination with horizontal scrolling if needed */}
         <div className="w-full sm:w-auto overflow-x-auto">
           <Pagination>
-            <PaginationContent className="flex flex-wrap gap-1 sm:gap-0">
+            <PaginationContent className="flex flex-wrap gap-1 sm:gap-0 shadow-sm">
               <PaginationItem>
                 <Button 
                   variant="outline"
                   size="sm"
-                  className="gap-1 h-8 whitespace-nowrap flex-shrink-0"
+                  className="gap-1 h-8 whitespace-nowrap flex-shrink-0 text-indigo-600 border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage <= 1 || eventsQuery.isLoading}
                 >
@@ -671,6 +682,10 @@ export function EventsTable() {
                       <PaginationLink 
                         onClick={() => setCurrentPage(pageToShow)}
                         isActive={currentPage === pageToShow}
+                        className={currentPage === pageToShow ? 
+                          "bg-indigo-100 text-indigo-700 border-indigo-200 hover:bg-indigo-200 font-medium" : 
+                          "text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                        }
                       >
                         {pageToShow}
                       </PaginationLink>
@@ -681,12 +696,16 @@ export function EventsTable() {
                 {paginationData.totalPages > 5 && currentPage < paginationData.totalPages - 2 && (
                   <>
                     <PaginationItem>
-                      <PaginationEllipsis />
+                      <PaginationEllipsis className="text-indigo-400" />
                     </PaginationItem>
                     <PaginationItem>
                       <PaginationLink 
                         onClick={() => setCurrentPage(paginationData.totalPages)}
                         isActive={currentPage === paginationData.totalPages}
+                        className={currentPage === paginationData.totalPages ? 
+                          "bg-indigo-100 text-indigo-700 border-indigo-200 hover:bg-indigo-200 font-medium" : 
+                          "text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                        }
                       >
                         {paginationData.totalPages}
                       </PaginationLink>
@@ -696,7 +715,7 @@ export function EventsTable() {
               </div>
               
               {/* Simple page indicator for mobile */}
-              <div className="sm:hidden flex items-center px-2 text-sm">
+              <div className="sm:hidden flex items-center px-3 py-1.5 bg-gray-50 rounded-md text-sm font-medium text-gray-700 border border-gray-200">
                 Page {currentPage} of {paginationData.totalPages}
               </div>
               
@@ -704,7 +723,7 @@ export function EventsTable() {
                 <Button 
                   variant="outline"
                   size="sm"
-                  className="gap-1 h-8 whitespace-nowrap flex-shrink-0"
+                  className="gap-1 h-8 whitespace-nowrap flex-shrink-0 text-indigo-600 border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, paginationData.totalPages))}
                   disabled={currentPage >= paginationData.totalPages || eventsQuery.isLoading}
                 >
