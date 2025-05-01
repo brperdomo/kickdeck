@@ -3397,6 +3397,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             openTime: req.body.openTime || '08:00',
             closeTime: req.body.closeTime || '22:00',
             specialInstructions: req.body.specialInstructions || null,
+            fieldSize: req.body.fieldSize || '11v11',
             complexId: req.body.complexId,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
@@ -3455,7 +3456,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     app.put('/api/admin/fields/:id', isAdmin, async (req, res) => {
       try {
         const fieldId = parseInt(req.params.id);
-        const { name, hasLights, hasParking, isOpen, openTime, closeTime, specialInstructions } = req.body;
+        const { name, hasLights, hasParking, isOpen, openTime, closeTime, specialInstructions, fieldSize } = req.body;
         
         // Update the field
         const [updatedField] = await db
@@ -3468,6 +3469,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             openTime,
             closeTime,
             specialInstructions: specialInstructions || null,
+            fieldSize: fieldSize || '11v11',
             updatedAt: new Date().toISOString(),
           })
           .where(eq(fields.id, fieldId))
