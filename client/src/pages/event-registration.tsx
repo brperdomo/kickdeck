@@ -1723,9 +1723,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       <div className="flex flex-col space-y-1.5">
                         <Label htmlFor="club-select">Club</Label>
                         <Select
-                          value={teamForm.watch('clubId')?.toString() || ''}
+                          value={teamForm.watch('clubId')?.toString() || 'none'}
                           onValueChange={(value) => {
-                            const clubId = value === '' ? null : 
+                            const clubId = value === 'none' ? null : 
                                           value === '-1' ? -1 : 
                                           parseInt(value, 10);
                             handleClubSelect(clubId);
@@ -1735,7 +1735,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             <SelectValue placeholder="Select a club" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">No club</SelectItem>
+                            <SelectItem value="none">No club</SelectItem>
                             {clubs.map((club) => (
                               <SelectItem key={club.id} value={club.id.toString()}>
                                 {club.name}
