@@ -4916,30 +4916,34 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           .where(eq(games.eventId, eventId))
           .orderBy(gameTimeSlots.startTime);
 
-        // Format the schedule for frontend display with null checks and enhanced data
-        const formattedSchedule = schedule
-          .filter(item => item.timeSlot && item.field && item.homeTeam && item.ageGroup)
-          .map(item => ({
+        // Format the schedule for frontend display with enhanced data - no filtering to ensure all games are displayed
+        const formattedSchedule = schedule.map(item => ({
             id: item.game.id,
-            startTime: item.timeSlot!.startTime,
-            endTime: item.timeSlot!.endTime,
-            fieldName: item.field!.name,
-            fieldId: item.field!.id,
-            complexId: item.field!.complexId,
-            complexName: item.field!.complexName || 'Unknown',
-            ageGroup: item.ageGroup!.ageGroup,
-            ageGroupId: item.ageGroup!.id,
+            startTime: item.timeSlot?.startTime || item.game.createdAt, // Fallback to game creation time
+            endTime: item.timeSlot?.endTime || '', // Empty string fallback
+            fieldName: item.field?.name || 'Unassigned', 
+            fieldId: item.field?.id || 0,
+            complexId: item.field?.complexId || 0,
+            complexName: item.field?.complexName || 'Unassigned',
+            ageGroup: item.ageGroup?.ageGroup || 'Unassigned',
+            ageGroupId: item.ageGroup?.id || 0,
             bracket: item.game.bracketId ? { 
               id: item.game.bracketId,
               name: item.game.bracketName || 'Default Bracket'
             } : null,
             round: item.game.round || 'Group Stage',
-            homeTeam: {
-              id: item.homeTeam!.id,
-              name: item.homeTeam!.name,
-              clubName: item.homeTeam!.clubName || '',
-              coach: item.homeTeam!.coachName || '',
-              status: item.homeTeam!.status || 'approved'
+            homeTeam: item.homeTeam ? {
+              id: item.homeTeam.id,
+              name: item.homeTeam.name || 'TBD',
+              clubName: item.homeTeam.clubName || '',
+              coach: item.homeTeam.coachName || '',
+              status: item.homeTeam.status || 'approved'
+            } : {
+              id: 0,
+              name: 'TBD',
+              clubName: '',
+              coach: '',
+              status: 'approved'
             },
             awayTeam: {
               id: (item.awayTeam as any)?.id || 0,
@@ -4948,7 +4952,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               coach: (item.awayTeam as any)?.coachName || '',
               status: (item.awayTeam as any)?.status || 'approved'
             },
-            status: item.game.status,
+            status: item.game.status || 'scheduled',
           }));
 
         res.json({ games: formattedSchedule });
