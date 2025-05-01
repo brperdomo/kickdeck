@@ -1331,7 +1331,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     if (selectedAgeGroup && eventId) {
       const fetchBrackets = async () => {
         try {
-          const response = await fetch(`/api/events/${eventId}/age-groups/${selectedAgeGroup.id}/brackets`);
+          // Use the correct API endpoint route for fetching brackets
+          const response = await fetch(`/api/age-groups/${selectedAgeGroup.id}/brackets`);
           if (!response.ok) {
             console.error(`Error fetching brackets: Server responded with status ${response.status}`);
             setAvailableBrackets([]);
