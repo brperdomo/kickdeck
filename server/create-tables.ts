@@ -18,6 +18,7 @@ import { addIsArchivedToEvents } from "./migrations/add-is-archived-to-events";
 import { addClubNameToTeams } from "./migrations/add_club_name";
 import { addCardDetailsToTeams } from "./migrations/add_card_details_to_teams";
 import { addSchedulingPermissions } from "./migrations/add_scheduling_permissions";
+import { createClubsTable } from "./migrations/add_clubs_table";
 import { addSortOrderToBrackets } from "./migrations/add_sort_order_to_brackets";
 import { createPaymentTransactionsTable } from "../db/migrations/create_payment_transactions";
 import { addAdminLastLoginFields } from "./migrations/add_admin_last_login";
@@ -180,6 +181,9 @@ export async function createTables() {
     
     console.log('Adding custom domain to organization settings...');
     await addCustomDomainToOrganizationSettings();
+    
+    console.log('Creating clubs table...');
+    await createClubsTable();
 
     console.log("All tables created successfully");
     return { success: true };

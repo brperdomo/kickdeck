@@ -25,6 +25,7 @@ import teamsRouter from "./routes/admin/teams-router";
 import playersRouter from "./routes/admin/players-router";
 import bracketsRouter from "./routes/admin/brackets";
 import gamesRouter from "./routes/admin/games-router";
+import clubsRouter from "./routes/clubs";
 import productUpdatesRouter from "./routes/product-updates.js";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
@@ -3300,6 +3301,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     
     // User routes
     app.use('/api/user', userRouter);
+    
+    // Clubs routes
+    app.use('/api/clubs', clubsRouter);
 
     // Add bulk action endpoint after the upload router registration
     app.post('/api/files/bulk', isAdmin, async (req, res) => {

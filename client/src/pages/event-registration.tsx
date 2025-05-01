@@ -469,6 +469,10 @@ const teamRegistrationSchema = z.object({
   // Add fields for fee processing
   selectedFeeIds: z.array(z.number()).optional(),
   totalAmount: z.number().optional(),
+  // Club information
+  clubId: z.number().nullable().optional(),
+  clubName: z.string().optional(),
+  newClub: z.boolean().optional(),
 });
 
 type TeamRegistrationForm = z.infer<typeof teamRegistrationSchema>;
