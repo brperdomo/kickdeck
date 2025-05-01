@@ -37,7 +37,7 @@ async function checkStripeApiVersion() {
 /**
  * Creates a payment intent for a team registration
  */
-export async function createPaymentIntent(amount: number, teamId: number, metadata?: Record<string, string>) {
+export async function createPaymentIntent(amount: number, teamId: number | string, metadata?: Record<string, string>) {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
@@ -48,12 +48,21 @@ export async function createPaymentIntent(amount: number, teamId: number, metada
       }
     });
 
-    // Update the team with the payment intent ID
-    await db.update(teams)
-      .set({
-        payment_intent_id: paymentIntent.id
-      })
-      .where(eq(teams.id, teamId));
+    // Only update the team in the database if it's a numeric ID (not a temp ID)
+    if (typeof teamId === 'number' || !teamId.toString().startsWith('temp-')) {
+      try {
+        const numericTeamId = typeof teamId === 'number' ? teamId : parseInt(teamId.toString());
+        // Update the team with the payment intent ID
+        await db.update(teams)
+          .set({
+            payment_intent_id: paymentIntent.id
+          })
+          .where(eq(teams.id, numericTeamId));
+      } catch (dbError) {
+        // Log the db error but don't fail the payment intent creation
+        console.warn(`Could not update team record with payment intent ID, likely a temporary team: ${dbError.message}`);
+      }
+    }
 
     return { 
       clientSecret: paymentIntent.client_secret,
@@ -73,6 +82,12 @@ export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) 
     const teamId = paymentIntent.metadata.teamId;
     if (!teamId) {
       console.error("No teamId found in payment intent metadata");
+      return;
+    }
+
+    // Check if this is a temporary team ID (for new registrations)
+    if (teamId.toString().startsWith('temp-')) {
+      console.log(`Payment received for temporary team ID: ${teamId}. This will be handled by the frontend registration flow.`);
       return;
     }
 
@@ -132,6 +147,12 @@ export async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) 
     const teamId = paymentIntent.metadata.teamId;
     if (!teamId) {
       console.error("No teamId found in payment intent metadata");
+      return;
+    }
+    
+    // Check if this is a temporary team ID (for new registrations)
+    if (teamId.toString().startsWith('temp-')) {
+      console.log(`Payment failure for temporary team ID: ${teamId}. This will be handled by the frontend registration flow.`);
       return;
     }
 
