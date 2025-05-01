@@ -69,6 +69,7 @@ export const fields = pgTable("fields", {
   openTime: text("open_time").default("08:00"),
   closeTime: text("close_time").default("22:00"),
   specialInstructions: text("special_instructions"),
+  fieldSize: text("field_size").default("11v11"), // Size options: 7v7, 9v9, 11v11
   complexId: serial("complex_id").references(() => complexes.id),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),
@@ -140,6 +141,7 @@ export const insertFieldSchema = createInsertSchema(fields, {
   openTime: z.string().min(1, "Opening time is required"),
   closeTime: z.string().min(1, "Closing time is required"),
   specialInstructions: z.string().optional(),
+  fieldSize: z.enum(["7v7", "9v9", "11v11"]).default("11v11"),
   complexId: z.number(),
 });
 
