@@ -498,6 +498,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup | null>(null);
   const [selectedBracket, setSelectedBracket] = useState<number | null>(null);
   const [availableBrackets, setAvailableBrackets] = useState<any[]>([]);
+  const [clubs, setClubs] = useState<{id: number, name: string, logoUrl: string | null}[]>([]);
+  const [clubLoading, setClubLoading] = useState(false);
+  const [isNewClub, setIsNewClub] = useState(false);
+  const [clubLogo, setClubLogo] = useState<File | null>(null);
   
   // Handle redirection to auth pages with proper return URL
   const handleAuthRedirect = () => {
@@ -848,7 +852,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       managerPhone: '',
       players: [],
       selectedFeeIds: [],
-      totalAmount: 0
+      totalAmount: 0,
+      clubId: null,
+      clubName: '',
+      newClub: false
     }
   });
 
