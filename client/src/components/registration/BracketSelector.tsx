@@ -45,6 +45,14 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
 
   // Handle bracket selection change
   const handleBracketChange = (bracketId: string) => {
+    // Handle special case for "Allow directors to choose"
+    if (bracketId === "-1") {
+      setSelectedBracket(null);
+      onChange(null); // Pass null as the bracket ID to indicate director choice
+      return;
+    }
+    
+    // Handle normal bracket selection
     const id = parseInt(bracketId, 10);
     const bracket = brackets.find((b: Bracket) => b.id === id);
     setSelectedBracket(bracket || null);
@@ -84,13 +92,17 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
       </div>
 
       <Select
-        value={value?.toString() || ""}
+        value={value?.toString() || (value === null ? "-1" : "")}
         onValueChange={handleBracketChange}
       >
         <SelectTrigger>
           <SelectValue placeholder="Select a bracket" />
         </SelectTrigger>
         <SelectContent>
+          {/* Allow directors to choose option */}
+          <SelectItem value="-1">Allow directors to choose</SelectItem>
+          
+          {/* Bracket options */}
           {brackets.map((bracket: Bracket) => (
             <SelectItem key={bracket.id} value={bracket.id.toString()}>
               {bracket.name} {bracket.level ? `(${bracket.level.charAt(0).toUpperCase() + bracket.level.slice(1)})` : ''}
@@ -99,7 +111,8 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
         </SelectContent>
       </Select>
 
-      {selectedBracket && (
+      {/* Show selected bracket details or director choice message */}
+      {selectedBracket ? (
         <div className="rounded-md border p-3 bg-muted/30">
           <h4 className="font-medium mb-1">{selectedBracket.name}</h4>
           {selectedBracket.description && (
@@ -113,6 +126,13 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
               {selectedBracket.eligibility}
             </div>
           )}
+        </div>
+      ) : value === null && (
+        <div className="rounded-md border p-3 bg-muted/30">
+          <h4 className="font-medium mb-1">Allow directors to choose</h4>
+          <p className="text-sm text-muted-foreground mb-2">
+            Tournament directors will determine the appropriate bracket for your team.
+          </p>
         </div>
       )}
     </div>
