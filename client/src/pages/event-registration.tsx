@@ -279,12 +279,13 @@ const fadeInUp = {
 };
 
 // Payment component for handling Stripe checkout
-function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPreview = false }: { 
+function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPreview = false, teamId = null }: { 
   amount: number; 
   onSuccess: () => void; 
   isProcessing: boolean;
   setIsProcessing: (value: boolean) => void;
   isPreview?: boolean;
+  teamId?: string | null;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -324,6 +325,10 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
     setIsProcessing(true);
 
     try {
+      // For initial registration, we don't have a teamId yet
+      // We'll use a temporary ID that will be replaced once registration is complete
+      const tempTeamId = teamId || `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      
       // First create a payment intent on the server
       const response = await fetch('/api/payments/create-intent', {
         method: 'POST',
@@ -332,8 +337,12 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
         },
         body: JSON.stringify({
           amount, // amount is in cents
+          teamId: tempTeamId, // Include teamId to satisfy the server requirement
           currency: 'usd',
           description: 'Team Registration Fee with Additional Services',
+          metadata: {
+            isNewRegistration: teamId ? 'false' : 'true' // Flag if this is a new registration
+          }
         }),
       });
       
@@ -372,7 +381,7 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
       console.error("Payment error:", e);
       toast({
         title: "Payment Error",
-        description: "An unexpected error occurred during payment processing",
+        description: e instanceof Error ? e.message : "An unexpected error occurred during payment processing",
         variant: "destructive",
       });
     } finally {
