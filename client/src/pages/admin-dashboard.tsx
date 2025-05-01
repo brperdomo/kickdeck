@@ -7,6 +7,7 @@ import {
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
   Trophy, WandSparkles
 } from "lucide-react";
+import { ClubLogo } from "@/components/clubs/ClubLogo";
 import { ComplexCard } from "@/components/admin/ComplexCard";
 import { formatAddress } from "@/lib/format-address";
 import { EventsTable } from "@/components/events/EventsTable";
