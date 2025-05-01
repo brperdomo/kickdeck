@@ -1,200 +1,179 @@
 import { Router } from 'express';
-import { db } from '@db';
-import { teams, clubs } from '@db/schema';
-import { eq, and, sql } from 'drizzle-orm';
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs/promises';
-import { v4 as uuidv4 } from 'uuid';
-import sharp from 'sharp';
+import { db } from '../../../db';
+import { clubs, teams, events } from '@db/schema';
+import { eq, sql, and, isNotNull, isNull, desc } from 'drizzle-orm';
+import { z } from 'zod';
 import { hasEventAccess } from '../../middleware/event-access';
 
 const router = Router();
 
-// Setup multer for file uploads
-const storage = multer.diskStorage({
-  destination: async (req, file, cb) => {
-    try {
-      const uploadsDir = './uploads/club-logos';
-      // Ensure the uploads directory exists
-      try {
-        await fs.access(uploadsDir);
-      } catch (error) {
-        await fs.mkdir(uploadsDir, { recursive: true });
-      }
-      cb(null, uploadsDir);
-    } catch (error) {
-      cb(error as Error, './uploads/club-logos');
-    }
-  },
-  filename: (req, file, cb) => {
-    // Create a unique filename with the original extension
-    const uniqueId = uuidv4();
-    const extension = path.extname(file.originalname).toLowerCase();
-    cb(null, `${uniqueId}${extension}`);
-  }
-});
-
-const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  // Accept image files only
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only image files are allowed'));
-  }
-};
-
-const upload = multer({ 
-  storage,
-  fileFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
-  }
-});
-
-// GET /api/admin/events/:eventId/clubs - Get all clubs for an event
+// Get clubs for a specific event
 router.get('/:eventId/clubs', hasEventAccess, async (req, res) => {
   try {
-    const { eventId } = req.params;
+    const eventId = parseInt(req.params.eventId);
 
-    // Get all unique club IDs from teams registered for this event
-    const teamClubs = await db
+    // Get teams for this event that have club information
+    const teamsWithClubs = await db
       .select({
+        teamId: teams.id,
+        teamName: teams.name,
         clubId: teams.clubId,
-        clubName: teams.clubName
+        clubName: teams.clubName,
       })
       .from(teams)
-      .where(eq(teams.eventId, eventId))
-      .groupBy(teams.clubId, teams.clubName);
-    
-    // Create a list of club IDs
-    const clubIds = teamClubs
-      .filter(tc => tc.clubId !== null)
-      .map(tc => tc.clubId) as number[];
-    
-    // Get club details from the clubs table
-    const clubsList = clubIds.length > 0 
+      .where(and(
+        eq(teams.eventId, eventId),
+        isNotNull(teams.clubId)
+      ));
+
+    // Get unique club IDs from teams
+    const clubIds = [...new Set(teamsWithClubs
+      .filter(team => team.clubId !== null)
+      .map(team => team.clubId))];
+
+    // Get club details for these club IDs
+    const clubsData = clubIds.length > 0 
       ? await db
           .select()
           .from(clubs)
           .where(sql`${clubs.id} IN (${clubIds.join(',')})`)
       : [];
-    
-    // Get team counts for each club
-    const clubTeamCounts = await Promise.all(clubIds.map(async (clubId) => {
-      const count = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(teams)
-        .where(and(
-          eq(teams.eventId, eventId),
-          eq(teams.clubId, clubId)
-        ));
-      
-      return { clubId, count: count[0].count };
-    }));
 
-    // Merge club details with team counts
-    const clubsWithCounts = clubsList.map(club => {
-      const teamCount = clubTeamCounts.find(c => c.clubId === club.id)?.count || 0;
-      return { ...club, teamCount };
-    });
-    
-    // Check for unlinked clubs (teams with club name but no club ID)
-    const unlinkedClubs = teamClubs
-      .filter(tc => tc.clubId === null && tc.clubName && tc.clubName.trim() !== '')
-      .map(tc => tc.clubName);
-    
-    // Add placeholder entries for unlinked clubs
-    const unlinkedClubEntries = unlinkedClubs.map(name => {
-      // Count teams for this unlinked club
-      const teamCount = teamClubs.filter(tc => tc.clubName === name).length;
+    // Count teams per club
+    const clubStats = clubIds.map(clubId => {
+      const teamsForClub = teamsWithClubs.filter(team => team.clubId === clubId);
+      const clubData = clubsData.find(club => club.id === clubId) || { 
+        id: clubId,
+        name: teamsForClub[0]?.clubName || 'Unknown Club',
+        logoUrl: null,
+      };
       
       return {
-        id: -1, // Use a placeholder ID for unlinked clubs
-        name,
-        logoUrl: null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        teamCount
+        ...clubData,
+        teamCount: teamsForClub.length,
       };
     });
 
-    res.json([...clubsWithCounts, ...unlinkedClubEntries]);
+    return res.json(clubStats);
   } catch (error) {
-    console.error('Error fetching clubs for event:', error);
-    res.status(500).json({ error: 'Failed to fetch clubs for event' });
+    console.error(`Error getting clubs for event ID ${req.params.eventId}:`, error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// POST /api/admin/events/:eventId/clubs - Add a new club and associate with the event
-router.post('/:eventId/clubs', hasEventAccess, upload.single('logo'), async (req, res) => {
+// Update club information
+router.patch('/:eventId/clubs/:clubId', hasEventAccess, async (req, res) => {
   try {
-    const { eventId } = req.params;
-    const { name } = req.body;
-    
-    if (!name) {
-      return res.status(400).json({ error: 'Club name is required' });
-    }
-    
-    // Check if club already exists
-    const existingClub = await db
+    const eventId = parseInt(req.params.eventId);
+    const clubId = parseInt(req.params.clubId);
+
+    const clubSchema = z.object({
+      name: z.string().min(1, "Club name is required"),
+      logoUrl: z.string().optional().nullable(),
+    });
+
+    const validatedData = clubSchema.parse(req.body);
+
+    // First, check if the club exists
+    const [existingClub] = await db
       .select()
       .from(clubs)
-      .where(eq(clubs.name, name))
+      .where(eq(clubs.id, clubId))
       .limit(1);
-    
-    // If club exists, just return it
-    if (existingClub.length > 0) {
-      return res.status(200).json({
-        ...existingClub[0],
-        message: 'Club already exists'
-      });
+
+    let club;
+
+    if (existingClub) {
+      // Update existing club
+      [club] = await db
+        .update(clubs)
+        .set({
+          name: validatedData.name,
+          logoUrl: validatedData.logoUrl,
+          updatedAt: new Date().toISOString(),
+        })
+        .where(eq(clubs.id, clubId))
+        .returning();
+    } else {
+      // Create new club
+      [club] = await db
+        .insert(clubs)
+        .values({
+          id: clubId,
+          name: validatedData.name,
+          logoUrl: validatedData.logoUrl || null,
+          createdAt: new Date().toISOString(),
+        })
+        .returning();
     }
-    
-    let logoUrl = null;
-    
-    // If a logo was uploaded, process and save it
-    if (req.file) {
-      try {
-        // Resize the image to a standard size
-        const outputPath = path.join('./uploads/club-logos', `resized-${req.file.filename}`);
-        await sharp(req.file.path)
-          .resize(200, 200, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } })
-          .toFile(outputPath);
-        
-        // Update the logo URL to point to the resized image
-        logoUrl = `/uploads/club-logos/resized-${req.file.filename}`;
-      } catch (error) {
-        console.error('Error processing logo:', error);
-        // If image processing fails, use the original file
-        logoUrl = `/uploads/club-logos/${req.file.filename}`;
-      }
+
+    // Update all teams for this event with this club ID
+    await db
+      .update(teams)
+      .set({
+        clubName: validatedData.name,
+      })
+      .where(and(
+        eq(teams.eventId, eventId),
+        eq(teams.clubId, clubId)
+      ));
+
+    return res.json(club);
+  } catch (error) {
+    console.error(`Error updating club for event ID ${req.params.eventId}:`, error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors });
     }
-    
-    // Create the new club
-    const newClub = await db.insert(clubs).values({
-      name,
-      logoUrl,
-    }).returning();
-    
-    // Get count of teams for this club in this event (will be 0 for new clubs)
-    const teamCount = await db
-      .select({ count: sql<number>`count(*)` })
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get event details with club count
+router.get('/:eventId', hasEventAccess, async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.eventId);
+
+    // Get event details
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Count unique club IDs for this event
+    const uniqueClubCount = await db
+      .select({
+        count: sql<number>`COUNT(DISTINCT ${teams.clubId})`,
+      })
       .from(teams)
       .where(and(
         eq(teams.eventId, eventId),
-        eq(teams.clubName, name)
-      ));
-    
-    res.status(201).json({
-      ...newClub[0],
-      teamCount: teamCount[0].count
+        isNotNull(teams.clubId)
+      ))
+      .then(result => result[0]?.count || 0);
+
+    // Get total teams count
+    const totalTeamsCount = await db
+      .select({
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(teams)
+      .where(eq(teams.eventId, eventId))
+      .then(result => result[0]?.count || 0);
+
+    return res.json({
+      ...event,
+      clubCount: uniqueClubCount,
+      teamCount: totalTeamsCount,
     });
   } catch (error) {
-    console.error('Error creating club:', error);
-    res.status(500).json({ error: 'Failed to create club' });
+    console.error(`Error getting event details for ID ${req.params.eventId}:`, error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Export the router
 export default router;

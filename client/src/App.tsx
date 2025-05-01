@@ -35,6 +35,7 @@ import { FeeManagement } from "@/components/events/FeeManagement";
 import FeeManagementPage from "@/pages/fee-management";
 import FormEditorPage from "@/pages/form-editor";
 import CouponManagerPage from "@/pages/coupon-manager";
+import EventClubsPage from "@/pages/event-clubs";
 import RegistrationOrdersReport from "@/pages/registration-orders-report";
 import Checkout from "@/pages/checkout";
 import PaymentConfirmation from "@/pages/payment-confirmation";
@@ -124,6 +125,9 @@ function Router() {
           </Route>
           <Route path="/admin/events/:id/coupons">
             {(params) => user.isAdmin ? <CouponManagerPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id/clubs">
+            {(params) => user.isAdmin ? <EventClubsPage /> : <NotFound />}
           </Route>
           <Route path="/admin/events/:id/preview-registration">
             {user.isAdmin ? <RegistrationPreview /> : <NotFound />}

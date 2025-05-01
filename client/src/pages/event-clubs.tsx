@@ -1,18 +1,10 @@
-import { useState, useEffect } from "react";
-import { useLocation, useParams, Link } from "wouter";
+import { useParams } from "wouter";
+import { AdminPageLayout } from "@/components/layouts/AdminPageLayout";
+import { Users } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowLeft,
-  Edit,
-  Plus,
-  X,
-  Upload,
-  Loader2,
-  AlertTriangle,
-  Building2
-} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -21,14 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -36,509 +21,313 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
+import { Loader2, PenLine, Image } from "lucide-react";
 
-// Define a type for club data
 interface Club {
   id: number;
   name: string;
   logoUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
+  teamCount?: number;
 }
 
-// Form validation schema
-const clubFormSchema = z.object({
-  name: z.string().min(1, "Club name is required"),
-  logo: z.instanceof(FileList).optional().refine(
-    (files) => !files || files.length === 0 || Array.from(files).every(file => file.type.startsWith('image/')),
-    "Only image files are allowed"
-  )
-});
-
-type ClubFormValues = z.infer<typeof clubFormSchema>;
+interface EventDetails {
+  id: number;
+  name: string;
+  clubCount: number;
+  teamCount: number;
+}
 
 export default function EventClubsPage() {
-  const { eventId } = useParams();
-  const [location, navigate] = useLocation();
-  const [selectedClub, setSelectedClub] = useState<Club | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const params = useParams();
+  const eventId = params.id;
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
+  
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingClub, setEditingClub] = useState<Club | null>(null);
+  
   // Fetch event details
-  const eventQuery = useQuery({
-    queryKey: ['/api/admin/events', eventId],
+  const eventQuery = useQuery<EventDetails>({
+    queryKey: [`/api/admin/events/${eventId}/clubs`, eventId],
     queryFn: async () => {
-      const response = await axios.get(`/api/admin/events/${eventId}`);
-      return response.data;
-    }
+      const response = await fetch(`/api/admin/events/${eventId}/clubs`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch event details");
+      }
+      return response.json();
+    },
   });
-
+  
   // Fetch clubs for this event
-  const clubsQuery = useQuery({
-    queryKey: ['/api/admin/events/clubs', eventId],
+  const clubsQuery = useQuery<Club[]>({
+    queryKey: [`/api/admin/events/${eventId}/clubs/clubs`, eventId],
     queryFn: async () => {
-      const response = await axios.get(`/api/admin/events/${eventId}/clubs`);
-      return response.data;
-    }
+      const response = await fetch(`/api/admin/events/${eventId}/clubs/clubs`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch clubs");
+      }
+      return response.json();
+    },
   });
-
-  // Edit club mutation
-  const editClubMutation = useMutation({
-    mutationFn: async ({ id, formData }: { id: number, formData: FormData }) => {
-      const response = await axios.put(`/api/admin/clubs/${id}`, formData, {
+  
+  // Update club mutation
+  const updateClubMutation = useMutation({
+    mutationFn: async (clubData: Partial<Club>) => {
+      if (!editingClub) return null;
+      
+      const response = await fetch(`/api/admin/events/${eventId}/clubs/${editingClub.id}`, {
+        method: 'PATCH',
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: clubData.name,
+          logoUrl: clubData.logoUrl,
+        }),
       });
-      return response.data;
+      
+      if (!response.ok) {
+        throw new Error("Failed to update club");
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
+      // Invalidate and refetch the clubs query to update the UI
+      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/clubs/clubs`] });
+      
+      // Close the dialog and clear the editing club
+      setIsEditDialogOpen(false);
+      setEditingClub(null);
+      
+      // Show success toast
       toast({
         title: "Club updated",
-        description: "The club information has been updated successfully.",
+        description: "Club information has been updated successfully.",
       });
-      setIsEditDialogOpen(false);
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/events/clubs', eventId] });
     },
     onError: (error) => {
       toast({
         title: "Error",
-        description: "Failed to update club information. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to update club",
         variant: "destructive",
       });
-    }
-  });
-
-  // Add club mutation
-  const addClubMutation = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const response = await axios.post(`/api/admin/events/${eventId}/clubs`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      return response.data;
     },
-    onSuccess: () => {
-      toast({
-        title: "Club added",
-        description: "The new club has been added successfully.",
-      });
-      setIsAddDialogOpen(false);
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/events/clubs', eventId] });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to add new club. Please try again.",
-        variant: "destructive",
-      });
-    }
   });
-
-  // Edit club form
-  const editForm = useForm<ClubFormValues>({
-    resolver: zodResolver(clubFormSchema),
-    defaultValues: {
-      name: selectedClub?.name || "",
-    }
-  });
-
-  // Add club form
-  const addForm = useForm<ClubFormValues>({
-    resolver: zodResolver(clubFormSchema),
-    defaultValues: {
-      name: "",
-    }
-  });
-
-  // Update form values when selected club changes
-  useEffect(() => {
-    if (selectedClub) {
-      editForm.reset({
-        name: selectedClub.name
-      });
-    }
-  }, [selectedClub, editForm]);
-
-  // Handle edit submission
-  const onEditSubmit = (values: ClubFormValues) => {
-    if (!selectedClub) return;
-    
-    const formData = new FormData();
-    formData.append('name', values.name);
-    
-    // Only append logo if a file was selected
-    if (values.logo && values.logo.length > 0) {
-      formData.append('logo', values.logo[0]);
-    }
-    
-    editClubMutation.mutate({ id: selectedClub.id, formData });
-  };
-
-  // Handle add submission
-  const onAddSubmit = (values: ClubFormValues) => {
-    const formData = new FormData();
-    formData.append('name', values.name);
-    
-    // Only append logo if a file was selected
-    if (values.logo && values.logo.length > 0) {
-      formData.append('logo', values.logo[0]);
-    }
-    
-    addClubMutation.mutate(formData);
-  };
-
-  // Initialize edit dialog
-  const handleEditClick = (club: Club) => {
-    setSelectedClub(club);
+  
+  const handleEditClub = (club: Club) => {
+    setEditingClub(club);
     setIsEditDialogOpen(true);
   };
-
-  if (eventQuery.isLoading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (eventQuery.isError) {
-    return (
-      <div className="flex flex-col items-center justify-center h-96 gap-4">
-        <AlertTriangle className="h-12 w-12 text-red-500" />
-        <h2 className="text-xl font-semibold">Error loading event</h2>
-        <p className="text-muted-foreground">
-          There was a problem loading the event information.
-        </p>
-        <Button
-          variant="secondary"
-          onClick={() => navigate("/admin")}
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
-        </Button>
-      </div>
-    );
-  }
-
-  const event = eventQuery.data;
-
+  
+  const handleSubmitEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingClub) return;
+    
+    updateClubMutation.mutate({
+      name: editingClub.name,
+      logoUrl: editingClub.logoUrl,
+    });
+  };
+  
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="container py-6 space-y-6"
+    <AdminPageLayout 
+      title="Participating Clubs" 
+      subtitle="Manage Club Information"
+      icon={<Users className="h-5 w-5 text-indigo-300" />}
+      backUrl={`/admin/events/${eventId}/edit`}
+      backLabel="Back to Event"
     >
-      <Breadcrumb className="mb-6">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink as={Link} href="/admin">Dashboard</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink as={Link} href="/admin/events">Events</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink>{event.name}</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink>Participating Clubs</BreadcrumbLink>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Participating Clubs
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Manage clubs participating in {event.name}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline"
-            onClick={() => navigate(`/admin/events`)}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Events
-          </Button>
-          <Button onClick={() => setIsAddDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Add Club
-          </Button>
-        </div>
-      </div>
-
-      <Card>
+      <Card className="mb-6 bg-white shadow-lg border border-gray-100">
         <CardHeader>
-          <CardTitle>Clubs</CardTitle>
+          <CardTitle>Event Information</CardTitle>
           <CardDescription>
-            Clubs with teams registered in this event
+            {eventQuery.isLoading ? (
+              <div className="flex items-center space-x-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Loading event details...</span>
+              </div>
+            ) : eventQuery.isError ? (
+              <span className="text-red-500">Failed to load event details</span>
+            ) : (
+              <>
+                <p>Event: <span className="font-medium">{eventQuery.data?.name}</span></p>
+                <p className="mt-1">
+                  <span className="font-medium">{eventQuery.data?.clubCount}</span> participating clubs with 
+                  <span className="font-medium"> {eventQuery.data?.teamCount}</span> total teams
+                </p>
+              </>
+            )}
+          </CardDescription>
+        </CardHeader>
+      </Card>
+      
+      <Card className="bg-white shadow-lg border border-gray-100">
+        <CardHeader>
+          <CardTitle>Participating Clubs</CardTitle>
+          <CardDescription>
+            Manage clubs that teams have selected during registration.
+            Updates to club information will be reflected in all team registrations.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {clubsQuery.isLoading ? (
-            <div className="flex justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            <div className="flex justify-center py-10">
+              <div className="flex flex-col items-center space-y-2">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm text-gray-500">Loading clubs...</p>
+              </div>
             </div>
           ) : clubsQuery.isError ? (
-            <div className="flex flex-col items-center py-8 gap-2">
-              <AlertTriangle className="h-8 w-8 text-amber-500" />
-              <p className="text-muted-foreground">
-                Failed to load clubs. Please try again.
-              </p>
-            </div>
-          ) : clubsQuery.data.length === 0 ? (
-            <div className="flex flex-col items-center py-12 gap-3">
-              <Building2 className="h-12 w-12 text-muted-foreground opacity-20" />
-              <p className="text-center text-muted-foreground">
-                No clubs have registered teams for this event yet.
-              </p>
-              <Button
-                variant="outline"
-                size="sm" 
+            <div className="py-10 text-center">
+              <p className="text-red-500">Failed to load clubs</p>
+              <Button 
+                variant="outline" 
+                onClick={() => clubsQuery.refetch()} 
                 className="mt-2"
-                onClick={() => setIsAddDialogOpen(true)}
               >
-                <Plus className="mr-2 h-4 w-4" /> Add Club
+                Try Again
               </Button>
             </div>
+          ) : clubsQuery.data?.length === 0 ? (
+            <div className="py-10 text-center">
+              <Users className="mx-auto h-12 w-12 text-gray-300" />
+              <p className="mt-2 text-gray-500">No clubs found for this event</p>
+              <p className="text-sm text-gray-400">Clubs will appear here when teams select them during registration</p>
+            </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Logo</TableHead>
-                  <TableHead>Club Name</TableHead>
-                  <TableHead>Teams</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {clubsQuery.data.map((club: Club & { teamCount: number }) => (
-                  <TableRow key={club.id}>
-                    <TableCell>
-                      <Avatar className="h-10 w-10">
-                        {club.logoUrl ? (
-                          <AvatarImage src={club.logoUrl} alt={club.name} />
-                        ) : (
-                          <AvatarFallback>
-                            {club.name.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        )}
-                      </Avatar>
-                    </TableCell>
-                    <TableCell>{club.name}</TableCell>
-                    <TableCell>{club.teamCount} teams</TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditClick(club)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="font-semibold text-indigo-900">Club Name</TableHead>
+                    <TableHead className="font-semibold text-indigo-900">Logo</TableHead>
+                    <TableHead className="font-semibold text-indigo-900">Teams</TableHead>
+                    <TableHead className="font-semibold text-indigo-900 text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {clubsQuery.data?.map((club) => (
+                    <TableRow key={club.id}>
+                      <TableCell className="font-medium">{club.name}</TableCell>
+                      <TableCell>
+                        {club.logoUrl ? (
+                          <div className="h-10 w-10 overflow-hidden rounded-md">
+                            <img 
+                              src={club.logoUrl} 
+                              alt={`${club.name} logo`} 
+                              className="h-full w-full object-contain"
+                            />
+                          </div>
+                        ) : (
+                          <div className="h-10 w-10 flex items-center justify-center rounded-md bg-gray-100">
+                            <Image className="h-5 w-5 text-gray-400" />
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell>{club.teamCount || 0}</TableCell>
+                      <TableCell className="text-right">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleEditClub(club)}
+                        >
+                          <PenLine className="mr-2 h-4 w-4" />
+                          Edit
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
-
+      
       {/* Edit Club Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Club</DialogTitle>
             <DialogDescription>
-              Update the club information
+              Update the information for {editingClub?.name}. Changes will be reflected for all teams associated with this club.
             </DialogDescription>
           </DialogHeader>
-          <Form {...editForm}>
-            <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
-              <FormField
-                control={editForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Club Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+          
+          <form onSubmit={handleSubmitEdit}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="club-name" className="text-right">
+                  Club Name
+                </Label>
+                <Input
+                  id="club-name"
+                  value={editingClub?.name || ''}
+                  onChange={(e) => setEditingClub(prev => prev ? {...prev, name: e.target.value} : null)}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="logo-url" className="text-right">
+                  Logo URL
+                </Label>
+                <Input
+                  id="logo-url"
+                  value={editingClub?.logoUrl || ''}
+                  onChange={(e) => setEditingClub(prev => prev ? {...prev, logoUrl: e.target.value} : null)}
+                  placeholder="https://example.com/logo.png"
+                  className="col-span-3"
+                />
+              </div>
+              
+              {editingClub?.logoUrl && (
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label className="text-right">Preview</Label>
+                  <div className="col-span-3">
+                    <div className="h-16 w-16 overflow-hidden rounded-md border border-gray-200">
+                      <img 
+                        src={editingClub.logoUrl} 
+                        alt="Logo preview" 
+                        className="h-full w-full object-contain"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'https://placehold.co/200x200?text=Invalid+URL';
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <DialogFooter>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => {
+                  setIsEditDialogOpen(false);
+                  setEditingClub(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={updateClubMutation.isPending}
+              >
+                {updateClubMutation.isPending && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-              />
-
-              <FormField
-                control={editForm.control}
-                name="logo"
-                render={({ field: { onChange, value, ...field } }) => (
-                  <FormItem>
-                    <FormLabel>Club Logo</FormLabel>
-                    <FormControl>
-                      <div className="flex flex-col gap-2">
-                        {selectedClub?.logoUrl && (
-                          <div className="mb-2">
-                            <p className="text-sm text-muted-foreground mb-1">Current logo:</p>
-                            <Avatar className="h-16 w-16">
-                              <AvatarImage src={selectedClub.logoUrl} alt={selectedClub.name} />
-                              <AvatarFallback>
-                                {selectedClub.name.substring(0, 2).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          </div>
-                        )}
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          {...field}
-                          onChange={(e) => {
-                            onChange(e.target.files);
-                          }}
-                          className="cursor-pointer"
-                        />
-                        <p className="text-sm text-muted-foreground">
-                          Recommended size: 200x200 pixels, max 5MB.
-                        </p>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  type="button"
-                  onClick={() => setIsEditDialogOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={editClubMutation.isPending}
-                >
-                  {editClubMutation.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    "Save Changes"
-                  )}
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
+                Save Changes
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
-
-      {/* Add Club Dialog */}
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add New Club</DialogTitle>
-            <DialogDescription>
-              Enter the details of the new club
-            </DialogDescription>
-          </DialogHeader>
-          <Form {...addForm}>
-            <form onSubmit={addForm.handleSubmit(onAddSubmit)} className="space-y-4">
-              <FormField
-                control={addForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Club Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={addForm.control}
-                name="logo"
-                render={({ field: { onChange, value, ...field } }) => (
-                  <FormItem>
-                    <FormLabel>Club Logo</FormLabel>
-                    <FormControl>
-                      <div className="flex flex-col gap-2">
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          {...field}
-                          onChange={(e) => {
-                            onChange(e.target.files);
-                          }}
-                          className="cursor-pointer"
-                        />
-                        <p className="text-sm text-muted-foreground">
-                          Recommended size: 200x200 pixels, max 5MB.
-                        </p>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  type="button"
-                  onClick={() => setIsAddDialogOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={addClubMutation.isPending}
-                >
-                  {addClubMutation.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Adding...
-                    </>
-                  ) : (
-                    "Add Club"
-                  )}
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-    </motion.div>
+    </AdminPageLayout>
   );
 }
