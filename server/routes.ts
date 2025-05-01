@@ -918,6 +918,8 @@ export function registerRoutes(app: Express): Server {
           // Club information
           clubId,
           clubName,
+          // Bracket selection
+          bracketId,
           // New fields for registration status and terms
           termsAcknowledged,
           termsAcknowledgedAt,
@@ -986,6 +988,8 @@ export function registerRoutes(app: Express): Server {
               name,
               eventId: eventId,  // Use camelCase as defined in the schema
               ageGroupId: ageGroupId,  // Use camelCase as defined in the schema
+              // Add bracket selection from registration
+              bracketId: bracketId || null, // Add bracketId from request
               // Add club information
               clubId: clubId || null, // Add clubId field from request
               clubName: clubName || null, // Add clubName field for easier access
@@ -1162,6 +1166,7 @@ export function registerRoutes(app: Express): Server {
           name: result.team.name,
           eventId: result.team.eventId,
           ageGroupId: result.team.ageGroupId,
+          bracketId: result.team.bracketId, // Include the bracketId
           status: result.team.status,
           registrationFee: result.team.registrationFee,
           selectedFeeIds: result.team.selectedFeeIds,
