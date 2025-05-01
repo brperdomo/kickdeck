@@ -144,35 +144,37 @@ export default function EventClubsPage() {
       <Card className="mb-6 bg-white shadow-lg border border-gray-100">
         <CardHeader>
           <CardTitle>Event Information</CardTitle>
-          <CardDescription>
-            {eventQuery.isLoading ? (
-              <div className="flex items-center space-x-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Loading event details...</span>
-              </div>
-            ) : eventQuery.isError ? (
-              <span className="text-red-500">Failed to load event details</span>
-            ) : (
-              <>
-                <span className="block">Event: <span className="font-medium">{eventQuery.data?.name}</span></span>
-                <span className="block mt-1">
-                  <span className="font-medium">{eventQuery.data?.clubCount}</span> participating clubs with 
-                  <span className="font-medium"> {eventQuery.data?.teamCount}</span> total teams
-                </span>
-              </>
-            )}
-          </CardDescription>
         </CardHeader>
+        <CardContent className="pt-0">
+          {eventQuery.isLoading ? (
+            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Loading event details...</span>
+            </div>
+          ) : eventQuery.isError ? (
+            <div className="text-sm text-red-500">Failed to load event details</div>
+          ) : (
+            <div className="text-sm text-muted-foreground">
+              <div>Event: <span className="font-medium">{eventQuery.data?.name}</span></div>
+              <div className="mt-1">
+                <span className="font-medium">{eventQuery.data?.clubCount}</span> participating clubs with 
+                <span className="font-medium"> {eventQuery.data?.teamCount}</span> total teams
+              </div>
+            </div>
+          )}
+        </CardContent>
       </Card>
       
       <Card className="bg-white shadow-lg border border-gray-100">
         <CardHeader>
           <CardTitle>Participating Clubs</CardTitle>
-          <CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0 pb-2">
+          <div className="text-sm text-muted-foreground">
             Manage clubs that teams have selected during registration.
             Updates to club information will be reflected in all team registrations.
-          </CardDescription>
-        </CardHeader>
+          </div>
+        </CardContent>
         <CardContent>
           {clubsQuery.isLoading ? (
             <div className="flex justify-center py-10">
@@ -253,10 +255,10 @@ export default function EventClubsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Club</DialogTitle>
-            <DialogDescription>
-              Update the information for {editingClub?.name}. Changes will be reflected for all teams associated with this club.
-            </DialogDescription>
           </DialogHeader>
+          <div className="text-sm text-muted-foreground mt-2 mb-4">
+            Update the information for {editingClub?.name}. Changes will be reflected for all teams associated with this club.
+          </div>
           
           <form onSubmit={handleSubmitEdit}>
             <div className="grid gap-4 py-4">
