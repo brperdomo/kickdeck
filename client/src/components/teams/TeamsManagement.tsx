@@ -17,9 +17,10 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Loader2, Edit, Trash2, Upload, Plus } from "lucide-react";
+import { Loader2, Edit, Trash2, Upload, Plus, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TeamCsvUploader } from "./TeamCsvUploader";
+import { TeamModal } from "./TeamModal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -47,6 +48,10 @@ interface Team {
   managerPhone?: string;
   managerEmail?: string;
   ageGroup: string;
+  ageGroupId?: number;
+  bracketId?: number | null;
+  bracketName?: string | null;
+  clubName?: string;
 }
 
 interface AgeGroup {
@@ -160,6 +165,7 @@ export function TeamsManagement({ eventId }: TeamsManagementProps) {
             <TableRow>
               <TableHead>Team Name</TableHead>
               <TableHead>Age Group</TableHead>
+              <TableHead>Bracket</TableHead>
               <TableHead>Manager</TableHead>
               <TableHead>Contact</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -167,9 +173,23 @@ export function TeamsManagement({ eventId }: TeamsManagementProps) {
           </TableHeader>
           <TableBody>
             {teamsQuery.data?.map((team) => (
-              <TableRow key={team.id}>
+              <TableRow key={team.id} className={team.bracketId === null ? "bg-amber-50" : ""}>
                 <TableCell className="font-medium">{team.name}</TableCell>
                 <TableCell>{team.ageGroup}</TableCell>
+                <TableCell>
+                  {team.bracketId === null ? (
+                    <div className="flex items-center">
+                      <span className="text-amber-600 text-sm font-medium flex items-center">
+                        <AlertTriangle className="h-3.5 w-3.5 mr-1 inline" />
+                        Needs assignment
+                      </span>
+                    </div>
+                  ) : team.bracketName ? (
+                    team.bracketName
+                  ) : (
+                    '-'
+                  )}
+                </TableCell>
                 <TableCell>{team.managerName || '-'}</TableCell>
                 <TableCell>{team.managerEmail || team.managerPhone || '-'}</TableCell>
                 <TableCell className="text-right">
@@ -196,7 +216,7 @@ export function TeamsManagement({ eventId }: TeamsManagementProps) {
             ))}
             {teamsQuery.data?.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   No teams found
                 </TableCell>
               </TableRow>
@@ -227,24 +247,25 @@ export function TeamsManagement({ eventId }: TeamsManagementProps) {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* TeamModal component would be implemented separately - using Dialog for now */}
+      {/* Use the TeamModal component for editing teams */}
       {teamToEdit && (
-        <Dialog open={!!teamToEdit} onOpenChange={(open) => !open && setTeamToEdit(null)}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Team</DialogTitle>
-              <DialogDescription>
-                Edit details for team {teamToEdit.name}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-4">
-              <p>Team editing functionality will be fully implemented later.</p>
-            </div>
-            <DialogFooter>
-              <Button onClick={() => setTeamToEdit(null)}>Close</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <TeamModal 
+          isOpen={!!teamToEdit} 
+          onClose={() => setTeamToEdit(null)} 
+          team={{
+            id: teamToEdit.id,
+            name: teamToEdit.name,
+            coach: teamToEdit.coach,
+            managerName: teamToEdit.managerName,
+            managerPhone: teamToEdit.managerPhone,
+            managerEmail: teamToEdit.managerEmail,
+            eventId: String(eventId),
+            ageGroupId: teamToEdit.ageGroupId,
+            ageGroup: teamToEdit.ageGroup,
+            bracketId: teamToEdit.bracketId,
+            clubName: teamToEdit.clubName
+          }} 
+        />
       )}
       
       {/* CSV Import Dialog */}
