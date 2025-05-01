@@ -40,10 +40,12 @@ export default function UserDashboard() {
           </CardHeader>
         </Card>
         
-        {/* Product Updates */}
-        <div className="mb-8">
-          <RecentProductUpdates limit={3} />
-        </div>
+        {/* Product Updates - only visible to admins */}
+        {user?.isAdmin && (
+          <div className="mb-8">
+            <RecentProductUpdates limit={3} />
+          </div>
+        )}
         
         {/* User Registrations Section */}
         <div className="mt-8">

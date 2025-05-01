@@ -223,7 +223,9 @@ function Router() {
           <Route path="/event/:eventId/register">
             {(params) => <EventRegistration eventIdOverride={params.eventId} />}
           </Route>
-          <Route path="/product-updates" component={ProductUpdatesPage} />
+          <Route path="/product-updates">
+            {user.isAdmin ? <ProductUpdatesPage /> : <NotFound />}
+          </Route>
           <Route path="/registration-orders-report">
             {user.isAdmin ? <RegistrationOrdersReport /> : <NotFound />}
           </Route>

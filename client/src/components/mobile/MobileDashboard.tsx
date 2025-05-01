@@ -75,11 +75,12 @@ export function MobileDashboard({ toggleSidebar }: MobileDashboardProps) {
       label: "Account",
       icon: <User className="h-6 w-6" />
     },
-    {
+    // Only show Updates tab for admin users
+    ...(user?.isAdmin ? [{
       href: "/product-updates",
       label: "Updates",
       icon: <Bell className="h-6 w-6" />
-    }
+    }] : [])
   ];
   
   return (
@@ -185,48 +186,50 @@ export function MobileDashboard({ toggleSidebar }: MobileDashboardProps) {
           </div>
         </div>
         
-        {/* Latest Updates Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold">Latest Updates</h2>
-            <Button variant="ghost" size="sm" className="text-xs" asChild>
-              <Link href="/product-updates">
-                All Updates
-                <ChevronRight className="ml-1 h-3 w-3" />
-              </Link>
-            </Button>
+        {/* Latest Updates Section - only visible to admins */}
+        {user?.isAdmin && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-semibold">Latest Updates</h2>
+              <Button variant="ghost" size="sm" className="text-xs" asChild>
+                <Link href="/product-updates">
+                  All Updates
+                  <ChevronRight className="ml-1 h-3 w-3" />
+                </Link>
+              </Button>
+            </div>
+            
+            <Card>
+              <CardContent className="p-4">
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex items-center mb-2">
+                      <div className="h-2 w-2 rounded-full bg-blue-500 mr-2"></div>
+                      <span className="text-xs text-muted-foreground">April 15, 2025</span>
+                    </div>
+                    <h3 className="text-sm font-medium mb-1">Mobile Responsive Update</h3>
+                    <p className="text-xs text-muted-foreground">
+                      MatchPro is now optimized for mobile devices! Access all features on your phone or tablet with improved layouts.
+                    </p>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div>
+                    <div className="flex items-center mb-2">
+                      <div className="h-2 w-2 rounded-full bg-blue-500 mr-2"></div>
+                      <span className="text-xs text-muted-foreground">April 10, 2025</span>
+                    </div>
+                    <h3 className="text-sm font-medium mb-1">Tournament Scheduling Improvements</h3>
+                    <p className="text-xs text-muted-foreground">
+                      New features for tournament directors to manage scheduling more efficiently.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-          
-          <Card>
-            <CardContent className="p-4">
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center mb-2">
-                    <div className="h-2 w-2 rounded-full bg-blue-500 mr-2"></div>
-                    <span className="text-xs text-muted-foreground">April 15, 2025</span>
-                  </div>
-                  <h3 className="text-sm font-medium mb-1">Mobile Responsive Update</h3>
-                  <p className="text-xs text-muted-foreground">
-                    MatchPro is now optimized for mobile devices! Access all features on your phone or tablet with improved layouts.
-                  </p>
-                </div>
-                
-                <Separator />
-                
-                <div>
-                  <div className="flex items-center mb-2">
-                    <div className="h-2 w-2 rounded-full bg-blue-500 mr-2"></div>
-                    <span className="text-xs text-muted-foreground">April 10, 2025</span>
-                  </div>
-                  <h3 className="text-sm font-medium mb-1">Tournament Scheduling Improvements</h3>
-                  <p className="text-xs text-muted-foreground">
-                    New features for tournament directors to manage scheduling more efficiently.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        )}
       </div>
       
       {/* Mobile Navigation Bar */}
