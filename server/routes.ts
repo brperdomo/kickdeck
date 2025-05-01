@@ -15,6 +15,7 @@ import csvTeamUploadRouter from "./routes/csv-team-upload";
 import accountingCodesRouter from "./routes/admin/accounting-codes";
 import feesRouter from "./routes/admin/fees";
 import publicAgeGroupsRouter from "./routes/age-groups";  // Public age groups router
+import publicBracketsRouter from "./routes/brackets";  // Public brackets router
 import eventsRouter from "./routes/admin/events";
 import ageGroupsRouter from "./routes/admin/age-groups";
 import organizationsRouter from "./routes/admin/organizations"; 
@@ -3301,6 +3302,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     
     // Age groups public routes (for team registration)
     app.use('/api/age-groups', publicAgeGroupsRouter);
+    
+    // Brackets public routes (for team registration and editing)
+    app.use('/api/brackets', publicBracketsRouter);
     
     // Product updates routes
     app.use('/api/product-updates', productUpdatesRouter);
