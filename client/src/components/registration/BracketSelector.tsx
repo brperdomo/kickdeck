@@ -61,16 +61,41 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
 
   if (!brackets || brackets.length === 0) {
     return (
-      <div className="space-y-2">
-        <Label>Bracket Selection</Label>
-        <Select disabled>
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Label>Bracket Selection</Label>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent className="max-w-[300px]">
+                <p>No specific brackets are defined for this age group, but you can allow directors to choose.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+
+        <Select
+          value="-1"
+          onValueChange={handleBracketChange}
+        >
           <SelectTrigger>
-            <SelectValue placeholder="No brackets available" />
+            <SelectValue placeholder="Select bracket option" />
           </SelectTrigger>
+          <SelectContent>
+            {/* Allow directors to choose option */}
+            <SelectItem value="-1">Allow directors to choose</SelectItem>
+          </SelectContent>
         </Select>
-        <FormDescription className="text-sm text-gray-500">
-          There are no brackets defined for this age group.
-        </FormDescription>
+
+        {/* Director choice message */}
+        <div className="rounded-md border p-3 bg-muted/30">
+          <h4 className="font-medium mb-1">Allow directors to choose</h4>
+          <p className="text-sm text-muted-foreground mb-2">
+            Tournament directors will determine the appropriate bracket for your team.
+          </p>
+        </div>
       </div>
     );
   }
