@@ -72,16 +72,16 @@ export default function RegistrationOrdersReport() {
   const { toast } = useToast();
   
   // State for filters
-  const [selectedEvent, setSelectedEvent] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState("");
+  const [selectedEvent, setSelectedEvent] = useState("all-events");
+  const [paymentStatus, setPaymentStatus] = useState("all-statuses");
   const [searchQuery, setSearchQuery] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [page, setPage] = useState(1);
   const [isExporting, setIsExporting] = useState(false);
   
   const queryParams = {
-    ...(selectedEvent && { eventId: selectedEvent }),
-    ...(paymentStatus && { status: paymentStatus }),
+    ...(selectedEvent !== "all-events" && { eventId: selectedEvent }),
+    ...(paymentStatus !== "all-statuses" && { status: paymentStatus }),
     ...(searchQuery && { search: searchQuery }),
     ...(dateRange?.from && { startDate: format(dateRange.from, 'yyyy-MM-dd') }),
     ...(dateRange?.to && { endDate: format(dateRange.to, 'yyyy-MM-dd') }),
@@ -162,8 +162,8 @@ export default function RegistrationOrdersReport() {
   };
   
   const clearFilters = () => {
-    setSelectedEvent("");
-    setPaymentStatus("");
+    setSelectedEvent("all-events");
+    setPaymentStatus("all-statuses");
     setSearchQuery("");
     setDateRange(undefined);
   };
@@ -236,7 +236,7 @@ export default function RegistrationOrdersReport() {
                     <SelectValue placeholder="All Events" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Events</SelectItem>
+                    <SelectItem value="all-events">All Events</SelectItem>
                     {eventsQuery.data?.map(event => (
                       <SelectItem key={event.id} value={event.id.toString()}>
                         {event.name}
@@ -252,7 +252,7 @@ export default function RegistrationOrdersReport() {
                     <SelectValue placeholder="All Payment Statuses" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="all-statuses">All Statuses</SelectItem>
                     <SelectItem value="paid">Paid</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="failed">Failed</SelectItem>
