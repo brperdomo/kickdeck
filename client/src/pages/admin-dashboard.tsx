@@ -3360,25 +3360,25 @@ function TeamsView() {
                 </TabsList>
                 
                 <TabsContent value="registered">
-                  <div className="border rounded-md">
+                  <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
                     <Table className="team-list">
                       <TableHeader>
-                        <TableRow>
-                          <TableHead>Team Name</TableHead>
-                          <TableHead>Event</TableHead>
-                          <TableHead>Age Group</TableHead>
-                          <TableHead>Submitter</TableHead>
-                          <TableHead>Manager</TableHead>
-                          <TableHead>Coach</TableHead>
-                          <TableHead>Registration Fee</TableHead>
-                          <TableHead>Payment Status</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                        <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Team Name</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Age Group</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Submitter</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Manager</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Coach</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registration Fee</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Payment Status</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100 text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {teamsQuery.isLoading ? (
                           <TableRow>
-                            <TableCell colSpan={8} className="text-center py-4">
+                            <TableCell colSpan={9} className="text-center py-4">
                               <div className="flex justify-center">
                                 <Loader2 className="h-6 w-6 animate-spin" />
                               </div>
@@ -3386,16 +3386,23 @@ function TeamsView() {
                           </TableRow>
                         ) : filteredTeams.length === 0 ? (
                           <TableRow>
-                            <TableCell colSpan={8} className="text-center py-4">
+                            <TableCell colSpan={9} className="text-center py-4">
                               No teams found
                             </TableCell>
                           </TableRow>
                         ) : (
                           filteredTeams
                             .filter((team: any) => team && team.status === 'registered')
-                            .map((team: any) => (
-                              <TableRow key={team.id}>
-                                <TableCell className="font-medium">{team.name}</TableCell>
+                            .map((team: any, index) => (
+                              <TableRow key={team.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                                <TableCell className="font-medium">
+                                  <div className="flex items-center space-x-2">
+                                    {team.clubName && (
+                                      <ClubLogo clubName={team.clubName} size="sm" />
+                                    )}
+                                    <span>{team.name}</span>
+                                  </div>
+                                </TableCell>
                                 <TableCell>{team.event?.name || "N/A"}</TableCell>
                                 <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
                                 <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
@@ -3446,25 +3453,25 @@ function TeamsView() {
                 </TabsContent>
                 
                 <TabsContent value="approved">
-                  <div className="border rounded-md">
+                  <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
                     <Table className="team-list">
                       <TableHeader>
-                        <TableRow>
-                          <TableHead>Team Name</TableHead>
-                          <TableHead>Event</TableHead>
-                          <TableHead>Age Group</TableHead>
-                          <TableHead>Submitter</TableHead>
-                          <TableHead>Manager</TableHead>
-                          <TableHead>Coach</TableHead>
-                          <TableHead>Registration Fee</TableHead>
-                          <TableHead>Payment Status</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                        <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Team Name</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Age Group</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Submitter</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Manager</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Coach</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registration Fee</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Payment Status</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100 text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {teamsQuery.isLoading ? (
                           <TableRow>
-                            <TableCell colSpan={8} className="text-center py-4">
+                            <TableCell colSpan={9} className="text-center py-4">
                               <div className="flex justify-center">
                                 <Loader2 className="h-6 w-6 animate-spin" />
                               </div>
@@ -3472,16 +3479,23 @@ function TeamsView() {
                           </TableRow>
                         ) : filteredTeams.filter((team: any) => team && team.status === 'approved').length === 0 ? (
                           <TableRow>
-                            <TableCell colSpan={8} className="text-center py-4">
+                            <TableCell colSpan={9} className="text-center py-4">
                               No approved teams found
                             </TableCell>
                           </TableRow>
                         ) : (
                           filteredTeams
                             .filter((team: any) => team && team.status === 'approved')
-                            .map((team: any) => (
-                              <TableRow key={team.id}>
-                                <TableCell className="font-medium">{team.name}</TableCell>
+                            .map((team: any, index) => (
+                              <TableRow key={team.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                                <TableCell className="font-medium">
+                                  <div className="flex items-center space-x-2">
+                                    {team.clubName && (
+                                      <ClubLogo clubName={team.clubName} size="sm" />
+                                    )}
+                                    <span>{team.name}</span>
+                                  </div>
+                                </TableCell>
                                 <TableCell>{team.event?.name || "N/A"}</TableCell>
                                 <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
                                 <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
@@ -3533,18 +3547,18 @@ function TeamsView() {
                 </TabsContent>
                 
                 <TabsContent value="rejected">
-                  <div className="border rounded-md">
+                  <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
                     <Table className="team-list">
                       <TableHeader>
-                        <TableRow>
-                          <TableHead>Team Name</TableHead>
-                          <TableHead>Event</TableHead>
-                          <TableHead>Age Group</TableHead>
-                          <TableHead>Submitter</TableHead>
-                          <TableHead>Manager</TableHead>
-                          <TableHead>Coach</TableHead>
-                          <TableHead>Rejection Reason</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                        <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Team Name</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Age Group</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Submitter</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Manager</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Coach</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Rejection Reason</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100 text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -3565,9 +3579,16 @@ function TeamsView() {
                         ) : (
                           filteredTeams
                             .filter((team: any) => team && team.status === 'rejected')
-                            .map((team: any) => (
-                              <TableRow key={team.id}>
-                                <TableCell className="font-medium">{team.name}</TableCell>
+                            .map((team: any, index) => (
+                              <TableRow key={team.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                                <TableCell className="font-medium">
+                                  <div className="flex items-center space-x-2">
+                                    {team.clubName && (
+                                      <ClubLogo clubName={team.clubName} size="sm" />
+                                    )}
+                                    <span>{team.name}</span>
+                                  </div>
+                                </TableCell>
                                 <TableCell>{team.event?.name || "N/A"}</TableCell>
                                 <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
                                 <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
