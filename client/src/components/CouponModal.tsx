@@ -234,7 +234,7 @@ export function CouponModal({ open, onOpenChange, eventId, couponToEdit }: Coupo
                             </SelectItem>
                           ))
                         ) : (
-                          <SelectItem value="" disabled>No events available</SelectItem>
+                          <SelectItem value="no-events" disabled>No events available</SelectItem>
                         )
                       ) : (
                         <SelectItem value="" disabled>Loading events...</SelectItem>

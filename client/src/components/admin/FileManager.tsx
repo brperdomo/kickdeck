@@ -435,6 +435,9 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
     }
 
     try {
+      // Convert "root" to empty string for the API (representing root folder)
+      const folderIdForApi = targetFolderId === 'root' ? '' : targetFolderId;
+      
       const response = await fetch('/api/files/bulk', {
         method: 'POST',
         headers: {
@@ -443,7 +446,7 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
         body: JSON.stringify({ 
           action: 'move',
           fileIds: selectedIds,
-          targetFolderId
+          targetFolderId: folderIdForApi
         }),
       });
 
@@ -930,7 +933,7 @@ export function FileManager({ className, onFileSelect, allowMultiple = false }: 
                 <SelectValue placeholder="Select a folder" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Root (No folder)</SelectItem>
+                <SelectItem value="root">Root (No folder)</SelectItem>
                 {folders.map((folder) => (
                   <SelectItem key={folder.id} value={folder.id}>
                     {folder.name}
