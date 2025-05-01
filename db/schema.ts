@@ -3,6 +3,24 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
 
+export const clubs = pgTable("clubs", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  logoUrl: text("logo_url"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertClubSchema = createInsertSchema(clubs, {
+  name: z.string().min(1, "Club name is required"),
+  logoUrl: z.string().optional(),
+});
+
+export const selectClubSchema = createSelectSchema(clubs);
+
+export type InsertClub = typeof clubs.$inferInsert;
+export type SelectClub = typeof clubs.$inferSelect;
+
 export const organizationSettings = pgTable("organization_settings", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -259,6 +277,8 @@ export const teams = pgTable("teams", {
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   groupId: integer("group_id").references(() => tournamentGroups.id),
   bracketId: integer("bracket_id").references(() => eventBrackets.id), // Reference to selected bracket
+  clubId: integer("club_id").references(() => clubs.id), // Reference to club
+  clubName: text("club_name"), // Denormalized for easier access
   name: text("name").notNull(),
   // Use a single coach JSON field to match the actual database structure
   coach: text("coach"),
@@ -270,8 +290,7 @@ export const teams = pgTable("teams", {
   submitterEmail: text("submitter_email"),
   seedRanking: integer("seed_ranking"),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
-  // Club/Organization name
-  clubName: text("club_name"),
+  // Club/Organization name is already defined above
   // User ID is not in the actual database schema
   // New fields for registration status and fee tracking
   status: text("status").notNull().default("registered"), // registered, approved, rejected, etc.
@@ -412,6 +431,10 @@ export const teamsRelations = relations(teams, ({ many, one }) => ({
   bracket: one(eventBrackets, {
     fields: [teams.bracketId],
     references: [eventBrackets.id]
+  }),
+  club: one(clubs, {
+    fields: [teams.clubId],
+    references: [clubs.id]
   }),
 }));
 
@@ -1155,21 +1178,4 @@ export const selectProductUpdateSchema = createSelectSchema(productUpdates);
 export type InsertProductUpdate = typeof productUpdates.$inferInsert;
 export type SelectProductUpdate = typeof productUpdates.$inferSelect;
 
-// Clubs table for storing club information
-export const clubs = pgTable("clubs", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull().unique(),
-  logoUrl: text("logo_url"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
-
-export const insertClubSchema = createInsertSchema(clubs, {
-  name: z.string().min(1, "Club name is required"),
-  logoUrl: z.string().optional(),
-});
-
-export const selectClubSchema = createSelectSchema(clubs);
-
-export type InsertClub = typeof clubs.$inferInsert;
-export type SelectClub = typeof clubs.$inferSelect;
+// Note: Clubs table already defined at the top of the file
