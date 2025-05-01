@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Link2, Edit, FileQuestion, Copy, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash, Archive, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link2, Edit, FileQuestion, Copy, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash, Archive, RotateCcw, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -528,6 +528,10 @@ export function EventsTable() {
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/coupons`)}>
                           <Ticket className="mr-2 h-4 w-4" />
                           Create Coupons
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/clubs`)}>
+                          <Users className="mr-2 h-4 w-4" />
+                          Participating Clubs
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => cloneEventMutation.mutate(event.id)}>
                           <Copy className="mr-2 h-4 w-4" />
