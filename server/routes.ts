@@ -914,6 +914,9 @@ export function registerRoutes(app: Express): Server {
           managerEmail,
           managerPhone,
           players,
+          // Club information
+          clubId,
+          clubName,
           // New fields for registration status and terms
           termsAcknowledged,
           termsAcknowledgedAt,
@@ -982,6 +985,9 @@ export function registerRoutes(app: Express): Server {
               name,
               eventId: eventId,  // Use camelCase as defined in the schema
               ageGroupId: ageGroupId,  // Use camelCase as defined in the schema
+              // Add club information
+              clubId: clubId || null, // Add clubId field from request
+              clubName: clubName || null, // Add clubName field for easier access
               // Combine coach data into a single JSON field to match the 'coach' column in DB
               coach: JSON.stringify({
                 headCoachName,
