@@ -154,11 +154,11 @@ export default function EventClubsPage() {
               <span className="text-red-500">Failed to load event details</span>
             ) : (
               <>
-                <p>Event: <span className="font-medium">{eventQuery.data?.name}</span></p>
-                <p className="mt-1">
+                <span className="block">Event: <span className="font-medium">{eventQuery.data?.name}</span></span>
+                <span className="block mt-1">
                   <span className="font-medium">{eventQuery.data?.clubCount}</span> participating clubs with 
                   <span className="font-medium"> {eventQuery.data?.teamCount}</span> total teams
-                </p>
+                </span>
               </>
             )}
           </CardDescription>
@@ -178,12 +178,12 @@ export default function EventClubsPage() {
             <div className="flex justify-center py-10">
               <div className="flex flex-col items-center space-y-2">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="text-sm text-gray-500">Loading clubs...</p>
+                <span className="text-sm text-gray-500">Loading clubs...</span>
               </div>
             </div>
           ) : clubsQuery.isError ? (
             <div className="py-10 text-center">
-              <p className="text-red-500">Failed to load clubs</p>
+              <span className="block text-red-500">Failed to load clubs</span>
               <Button 
                 variant="outline" 
                 onClick={() => clubsQuery.refetch()} 
@@ -195,8 +195,8 @@ export default function EventClubsPage() {
           ) : clubsQuery.data?.length === 0 ? (
             <div className="py-10 text-center">
               <Users className="mx-auto h-12 w-12 text-gray-300" />
-              <p className="mt-2 text-gray-500">No clubs found for this event</p>
-              <p className="text-sm text-gray-400">Clubs will appear here when teams select them during registration</p>
+              <span className="block mt-2 text-gray-500">No clubs found for this event</span>
+              <span className="block text-sm text-gray-400">Clubs will appear here when teams select them during registration</span>
             </div>
           ) : (
             <div className="overflow-x-auto">

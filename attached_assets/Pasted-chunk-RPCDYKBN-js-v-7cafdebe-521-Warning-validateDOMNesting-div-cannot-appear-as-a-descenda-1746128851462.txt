@@ -1,0 +1,85 @@
+chunk-RPCDYKBN.js?v=7cafdebe:521 Warning: validateDOMNesting(...): <div> cannot appear as a descendant of <p>.
+    at div
+    at p
+    at _c7 (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:86:12)
+    at div
+    at _c3 (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:43:12)
+    at div
+    at _c (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at div
+    at AdminPageLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/AdminPageLayout.tsx:103:3)
+    at EventClubsPage (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/event-clubs.tsx:47:18)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=7cafdebe:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=7cafdebe:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:61:31)
+    at div
+    at div
+    at MainLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/MainLayout.tsx:18:30)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=7cafdebe:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=7cafdebe:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=7cafdebe:2829:3)
+    at App (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:706:3)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=7cafdebe:2829:3)
+printWarning @ chunk-RPCDYKBN.js?v=7cafdebe:521
+error @ chunk-RPCDYKBN.js?v=7cafdebe:505
+validateDOMNesting @ chunk-RPCDYKBN.js?v=7cafdebe:8256
+createInstance @ chunk-RPCDYKBN.js?v=7cafdebe:8328
+completeWork @ chunk-RPCDYKBN.js?v=7cafdebe:16290
+completeUnitOfWork @ chunk-RPCDYKBN.js?v=7cafdebe:19224
+performUnitOfWork @ chunk-RPCDYKBN.js?v=7cafdebe:19206
+workLoopSync @ chunk-RPCDYKBN.js?v=7cafdebe:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=7cafdebe:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=7cafdebe:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=7cafdebe:9119
+flushSync @ chunk-RPCDYKBN.js?v=7cafdebe:18959
+flushSync$1 @ chunk-RPCDYKBN.js?v=7cafdebe:21538
+dispatchDiscreteCustomEvent @ chunk-CPFL7ZFD.js?v=7cafdebe:52
+handleSelect @ @radix-ui_react-dropdown-menu.js?v=7cafdebe:432
+handleEvent @ chunk-OD433RWB.js?v=7cafdebe:6
+callCallback2 @ chunk-RPCDYKBN.js?v=7cafdebe:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=7cafdebe:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=7cafdebe:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=7cafdebe:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=7cafdebe:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=7cafdebe:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=7cafdebe:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=7cafdebe:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=7cafdebe:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=7cafdebe:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=7cafdebe:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=7cafdebe:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=7cafdebe:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=7cafdebe:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=7cafdebe:5449Understand this error
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events/1251362271/clubs
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1251362271/clubs
+RouteDebugger.tsx:15 Current pathname: /admin/events/1251362271/clubs
+RouteDebugger.tsx:16 Current search: 
+chunk-RPCDYKBN.js?v=7cafdebe:521 Warning: validateDOMNesting(...): <p> cannot appear as a descendant of <p>.
+    at p
+    at p
+    at _c7 (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:86:12)
+    at div
+    at _c3 (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:43:12)
+    at div
+    at _c (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at div
+    at AdminPageLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/AdminPageLayout.tsx:103:3)
+    at EventClubsPage (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/event-clubs.tsx:47:18)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=7cafdebe:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=7cafdebe:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:61:31)
+    at div
+    at div
+    at MainLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/MainLayout.tsx:18:30)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=7cafdebe:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=7cafdebe:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=7cafdebe:2829:3)
+    at App (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:706:3)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=7cafdebe:2829:3)
