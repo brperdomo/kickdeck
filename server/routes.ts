@@ -3573,6 +3573,26 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           } as typeof users.$inferInsert)
           .where(eq(users.id, req.user.id))
           .returning();
+          
+        // Also update household address if address fields are provided
+        if (address && city && state && zipCode && req.user.householdId) {
+          try {
+            await db
+              .update(households)
+              .set({
+                address,
+                city,
+                state,
+                zipCode,
+              })
+              .where(eq(households.id, req.user.householdId));
+              
+            console.log(`Updated household address for householdId: ${req.user.householdId}`);
+          } catch (householdError) {
+            // Log error but don't fail the entire request
+            console.error('Error updating household address:', householdError);
+          }
+        }
 
         // Update session
         req.login(updatedUser, (err) => {
