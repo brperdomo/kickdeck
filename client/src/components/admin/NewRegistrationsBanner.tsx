@@ -83,54 +83,67 @@ export function NewRegistrationsBanner() {
     <AnimatePresence>
       {visible && (
         <motion.div 
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.3 }}
-          className="mb-6"
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.4, type: "spring", stiffness: 100 }}
+          className="mb-8"
         >
-          <Alert variant="default" className="border-blue-200 bg-blue-50 text-blue-800">
-            <BellRing className="h-4 w-4 text-blue-500" />
-            <div className="flex items-center justify-between w-full">
-              <div>
-                <AlertTitle className="text-blue-700">
-                  {registrationsQuery.data?.count === 1
-                    ? '1 new team registration'
-                    : `${registrationsQuery.data?.count} new team registrations`}
-                </AlertTitle>
-                <AlertDescription className="text-blue-600 text-sm">
-                  {lastViewedText}
-                </AlertDescription>
+          <div className="relative rounded-xl overflow-hidden shadow-lg border border-indigo-100">
+            {/* Animated gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-blue-500/10 to-indigo-500/10 animate-gradient-x"></div>
+            
+            {/* Main alert content */}
+            <div className="relative p-5 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/40 dark:to-blue-900/40">
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 p-2 rounded-full bg-indigo-100 dark:bg-indigo-800/50">
+                    <BellRing className="h-5 w-5 text-indigo-600 dark:text-indigo-300" />
+                  </div>
+                  <div>
+                    <AlertTitle className="text-lg font-bold text-indigo-900 dark:text-indigo-100">
+                      {registrationsQuery.data?.count === 1
+                        ? '1 New Team Registration'
+                        : `${registrationsQuery.data?.count} New Team Registrations`}
+                    </AlertTitle>
+                    <AlertDescription className="text-indigo-700 dark:text-indigo-300 mt-1">
+                      {lastViewedText}
+                    </AlertDescription>
+                  </div>
+                </div>
+                
+                <div className="flex space-x-3 items-center">
+                  <Button 
+                    size="sm" 
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all duration-200 hover:shadow-md"
+                    onClick={acknowledgeMarkAsSeen}
+                    disabled={acknowledgeMutation.isPending}
+                  >
+                    {acknowledgeMutation.isPending ? (
+                      <span className="flex items-center">
+                        <span className="animate-spin mr-2">⏳</span> Processing...
+                      </span>
+                    ) : (
+                      <span className="flex items-center">
+                        <Check className="h-4 w-4 mr-2" /> Mark as Seen
+                      </span>
+                    )}
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="rounded-full h-8 w-8 p-0 hover:bg-indigo-100 text-indigo-700 hover:text-indigo-900 dark:hover:bg-indigo-800/50"
+                    onClick={() => setVisible(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex space-x-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="bg-white text-blue-700 border-blue-200 hover:bg-blue-100 hover:text-blue-800"
-                  onClick={acknowledgeMarkAsSeen}
-                  disabled={acknowledgeMutation.isPending}
-                >
-                  {acknowledgeMutation.isPending ? (
-                    <span className="flex items-center">
-                      <span className="animate-spin mr-1">⏳</span> Processing...
-                    </span>
-                  ) : (
-                    <span className="flex items-center">
-                      <Check className="h-4 w-4 mr-1" /> Mark as Seen
-                    </span>
-                  )}
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  className="text-blue-700 hover:bg-blue-100 hover:text-blue-800"
-                  onClick={() => setVisible(false)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
+              
+              {/* Bottom border with gradient */}
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-400 to-blue-500"></div>
             </div>
-          </Alert>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
