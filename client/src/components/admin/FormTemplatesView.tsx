@@ -90,72 +90,70 @@ export function FormTemplatesView() {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Form Templates</h2>
-        <Button onClick={handleCreateTemplate}>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-indigo-900 dark:text-indigo-100">Form Templates</h2>
+        <Button 
+          onClick={handleCreateTemplate}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Create Template
         </Button>
       </div>
 
-      <Card>
+      <Card className="shadow-md rounded-xl overflow-hidden border border-gray-200">
         <CardContent className="p-0">
-          <div className="overflow-hidden rounded-md border border-gray-200">
+          <div className="rounded-lg overflow-hidden">
             <Table>
-              <TableHeader style={{ 
-                backgroundColor: 'var(--admin-nav-bg, #FFFFFF)',
-                color: 'var(--admin-nav-text, #42526E)',
-                borderBottom: '1px solid var(--admin-nav-border, #E5E7EB)'
-              }}>
-                <TableRow>
-                  <TableHead style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Name</TableHead>
-                  <TableHead style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Description</TableHead>
-                  <TableHead style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Status</TableHead>
-                  <TableHead style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Fields</TableHead>
-                  <TableHead style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Created</TableHead>
-                  <TableHead className="w-[80px]" style={{ color: 'var(--admin-nav-text, #42526E)', fontWeight: 'bold' }}>Actions</TableHead>
+              <TableHeader>
+                <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
+                  <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Name</TableHead>
+                  <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Description</TableHead>
+                  <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Status</TableHead>
+                  <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Fields</TableHead>
+                  <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Created</TableHead>
+                  <TableHead className="w-[80px] font-semibold py-4 text-indigo-900 dark:text-blue-100 text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {templatesQuery.data.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
+                    <TableCell colSpan={6} className="text-center py-10 text-gray-500">
                       No templates found. Create your first template.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  templatesQuery.data.map((template: FormTemplate) => (
+                  templatesQuery.data.map((template: FormTemplate, index: number) => (
                     <TableRow 
                       key={template.id}
-                      className="transition-colors"
-                      style={{ 
-                        borderBottom: '1px solid var(--admin-nav-border, #E5E7EB)'
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.backgroundColor = 'var(--admin-nav-hover, #f3f4f6)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.backgroundColor = '';
-                      }}
+                      className={`
+                        ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'} 
+                        hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors
+                      `}
                     >
                       <TableCell className="font-medium">{template.name}</TableCell>
                       <TableCell>{template.description || "-"}</TableCell>
                       <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs ${template.isPublished ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}`}>
+                        <span className={`
+                          px-3 py-1 text-xs font-medium shadow-sm rounded-full
+                          ${template.isPublished 
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 border-green-200" 
+                            : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 border-gray-200"}
+                        `}>
                           {template.isPublished ? "Published" : "Draft"}
                         </span>
                       </TableCell>
                       <TableCell>{template.fields?.length || 0} fields</TableCell>
                       <TableCell>{new Date(template.createdAt).toLocaleDateString()}</TableCell>
-                      <TableCell>
+                      <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
                               <span className="sr-only">Open menu</span>
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
+                          <DropdownMenuContent align="end" className="min-w-[160px] shadow-lg">
                             <DropdownMenuItem onClick={() => handleEditTemplate(template.id)}>
                               <Edit className="mr-2 h-4 w-4" />
                               Edit
