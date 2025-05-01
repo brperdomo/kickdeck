@@ -24,7 +24,7 @@ import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground
 import { useAuth } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -710,6 +710,35 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       setCurrentStep('personal');
     }
   }, [authLoading, user]);
+  
+  // Fetch clubs for the current event
+  useEffect(() => {
+    if (eventId) {
+      const fetchClubs = async () => {
+        try {
+          setClubLoading(true);
+          const response = await fetch(`/api/clubs/event/${eventId}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch clubs');
+          }
+          
+          const data = await response.json();
+          setClubs(data);
+        } catch (error) {
+          console.error('Error fetching clubs:', error);
+          toast({
+            title: 'Error',
+            description: 'Failed to load club information',
+            variant: 'destructive',
+          });
+        } finally {
+          setClubLoading(false);
+        }
+      };
+      
+      fetchClubs();
+    }
+  }, [eventId, toast]);
 
   const renderStepIndicator = () => {
     const steps: { key: RegistrationStep; label: string }[] = [
@@ -877,6 +906,61 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     const updatedPlayers = players.filter(player => player.id !== playerId);
     setPlayers(updatedPlayers);
     teamForm.setValue('players', updatedPlayers);
+  };
+  
+  // Handle club selection
+  const handleClubSelect = (clubId: number | null) => {
+    if (clubId === -1) {
+      // -1 indicates "Enter new club"
+      setIsNewClub(true);
+      teamForm.setValue('clubId', null);
+      teamForm.setValue('newClub', true);
+    } else if (clubId === null) {
+      // No club selected
+      setIsNewClub(false);
+      teamForm.setValue('clubId', null);
+      teamForm.setValue('clubName', '');
+      teamForm.setValue('newClub', false);
+    } else {
+      // Existing club selected
+      setIsNewClub(false);
+      teamForm.setValue('clubId', clubId);
+      teamForm.setValue('newClub', false);
+      
+      // Find the club name
+      const selectedClub = clubs.find(club => club.id === clubId);
+      if (selectedClub) {
+        teamForm.setValue('clubName', selectedClub.name);
+      }
+    }
+  };
+  
+  // Handle club logo file selection
+  const handleClubLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: 'Invalid file type',
+          description: 'Please upload an image file',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: 'File too large',
+          description: 'Please upload an image smaller than 5MB',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
+      setClubLogo(file);
+    }
   };
 
   // State to track terms agreement
@@ -1154,6 +1238,36 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         };
       }
       
+      // If creating a new club with a logo, upload it first
+      let clubId = data.clubId;
+      
+      if (data.newClub && data.clubName && clubLogo) {
+        try {
+          const formData = new FormData();
+          formData.append('name', data.clubName);
+          formData.append('logo', clubLogo);
+          
+          const clubResponse = await fetch('/api/clubs', {
+            method: 'POST',
+            body: formData,
+          });
+          
+          if (!clubResponse.ok) {
+            throw new Error('Failed to create club');
+          }
+          
+          const clubData = await clubResponse.json();
+          clubId = clubData.id;
+        } catch (error) {
+          console.error('Error creating club:', error);
+          toast({
+            title: 'Error',
+            description: 'Failed to create club. Team will be registered without club information.',
+            variant: 'destructive',
+          });
+        }
+      }
+      
       // Transform dates and include terms agreement and fee in submission
       const response = await fetch(`/api/events/${eventId}/register-team`, {
         method: 'POST',
@@ -1162,6 +1276,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         },
         body: JSON.stringify({
           ...data,
+          clubId, // Use updated clubId if a new club was created
           players: processedPlayers,
           termsAcknowledged: termsAgreed,
           registrationFee: registrationFee,
@@ -1602,6 +1717,93 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         </FormItem>
                       )}
                     />
+                    
+                    {/* Club Selection */}
+                    <div className="space-y-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <Label htmlFor="club-select">Club</Label>
+                        <Select
+                          value={teamForm.watch('clubId')?.toString() || ''}
+                          onValueChange={(value) => {
+                            const clubId = value === '' ? null : 
+                                          value === '-1' ? -1 : 
+                                          parseInt(value, 10);
+                            handleClubSelect(clubId);
+                          }}
+                        >
+                          <SelectTrigger id="club-select" className={clubLoading ? 'opacity-50' : ''}>
+                            <SelectValue placeholder="Select a club" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">No club</SelectItem>
+                            {clubs.map((club) => (
+                              <SelectItem key={club.id} value={club.id.toString()}>
+                                {club.name}
+                              </SelectItem>
+                            ))}
+                            <SelectItem value="-1">
+                              <span className="flex items-center">
+                                <PlusCircle className="mr-2 h-4 w-4" />
+                                Enter new club
+                              </span>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      {/* New Club Input Fields */}
+                      {isNewClub && (
+                        <div className="p-4 border rounded-md bg-gray-50 space-y-4">
+                          <h4 className="font-medium">New Club Details</h4>
+                          
+                          <FormField
+                            control={teamForm.control}
+                            name="clubName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Club Name</FormLabel>
+                                <FormControl>
+                                  <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="club-logo">Club Logo (optional)</Label>
+                            <div className="flex flex-col gap-4">
+                              <Input
+                                id="club-logo"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleClubLogoChange}
+                                className="max-w-md"
+                              />
+                              {clubLogo && (
+                                <div className="mt-2">
+                                  <p className="text-sm text-muted-foreground mb-2">Logo Preview:</p>
+                                  <div className="relative w-16 h-16 bg-gray-200 rounded overflow-hidden">
+                                    <img
+                                      src={URL.createObjectURL(clubLogo)}
+                                      alt="Club logo preview"
+                                      className="w-full h-full object-contain"
+                                      onLoad={() => {
+                                        // Revoke object URL to avoid memory leaks
+                                        URL.revokeObjectURL(URL.createObjectURL(clubLogo));
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              Upload a logo image (max 5MB). The logo will be resized to fit appropriately on game cards.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
 
                     <FormField
                       control={teamForm.control}
