@@ -240,7 +240,7 @@ function NavigationButtonContent({
             {/* Enhanced icon wrapper */}
             <motion.div 
               className={cn(
-                "min-w-6 h-6 flex items-center justify-center rounded-md mr-3 relative",
+                "w-6 h-6 flex items-center justify-center rounded-md mr-3 relative",
                 isActive 
                   ? "bg-gradient-to-br from-indigo-600/90 to-indigo-800/90 shadow-lg shadow-indigo-900/20" 
                   : "bg-gray-800/70 border border-gray-700/50"
@@ -267,7 +267,7 @@ function NavigationButtonContent({
                   duration: 0.5,
                   ease: "easeInOut"
                 }}
-                className="z-10"
+                className="z-10 flex items-center justify-center w-full h-full"
               >
                 {icon}
               </motion.div>
@@ -326,7 +326,7 @@ function NavigationButtonContent({
             transition={{ duration: 0.3, type: "spring" }}
             className={`h-5 w-5 rounded-full bg-indigo-600/40 flex items-center justify-center ${isActive ? 'block' : 'hidden'}`}
           >
-            <ChevronRight className="h-3 w-3 text-indigo-200" />
+            <ChevronRight className="h-3 w-3 text-indigo-200 flex-shrink-0" />
           </motion.div>
         </div>
       </Button>
