@@ -57,31 +57,69 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Check for emulation token
       const emulationToken = typeof window !== 'undefined' ? localStorage.getItem('emulationToken') : null;
       
-      // Prepare headers
+      // Get cached ETag value from cache if available - specifically for user data
+      let etag: string | null = null;
+      const cacheKey = `etag:/api/user`;
+      try {
+        etag = localStorage.getItem(cacheKey);
+      } catch (e) {
+        console.warn('Could not access localStorage for user ETag:', e);
+      }
+      
+      // Prepare headers - use conditional caching with ETag instead of disabling cache entirely
       const headers: HeadersInit = {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
+        'Cache-Control': 'max-age=3600' // Allow caching for an hour
       };
+      
+      // Add If-None-Match header if we have an ETag
+      if (etag) {
+        headers['If-None-Match'] = etag;
+      }
       
       // Add emulation token if present
       if (emulationToken) {
-        console.log('Fetching user with emulation token:', emulationToken);
         headers['x-emulation-token'] = emulationToken;
-      } else {
-        console.log('Fetching user with emulation token: not present');
       }
       
+      // Make request with appropriate caching headers
       const res = await fetch("/api/user", {
-        credentials: "include", // Add this to ensure cookies are sent
+        credentials: "include", // Ensure cookies are sent
         headers
       });
+      
+      // Handle 304 Not Modified responses - use cached data
+      if (res.status === 304) {
+        // Let React Query use its cache
+        throw new Error('Use cached data');
+      }
+      
+      // Store the ETag for future requests if provided
+      const newEtag = res.headers.get('ETag');
+      if (newEtag) {
+        try {
+          localStorage.setItem(cacheKey, newEtag);
+        } catch (e) {
+          console.warn('Could not store user ETag in localStorage:', e);
+        }
+      }
+      
       if (res.status === 401) return null;
       if (!res.ok) throw new Error("Failed to fetch user");
-      return res.json();
+      
+      const userData = await res.json();
+      return userData;
     },
-    retry: 1, // Limit retries to prevent excessive requests
-    refetchOnWindowFocus: false, // Don't refetch on focus to reduce load
+    retry: (failureCount, error) => {
+      // Don't retry on "Use cached data" errors - this is expected behavior
+      if (error instanceof Error && error.message === 'Use cached data') {
+        return false;
+      }
+      // Only retry once for other types of errors
+      return failureCount < 1;
+    },
+    refetchOnWindowFocus: false, // Don't refetch on focus
+    staleTime: 60 * 60 * 1000, // 1 hour - consider data fresh for longer
+    gcTime: 2 * 60 * 60 * 1000, // 2 hours - keep in cache longer
   });
 
   const loginMutation = useMutation({
