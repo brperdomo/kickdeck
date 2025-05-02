@@ -15,7 +15,7 @@ const LandingHeader = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#1a1e36]/40 bg-[#0a0c16]/95 backdrop-blur supports-[backdrop-filter]:bg-[#0a0c16]/80">
-      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+      <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between px-4 md:px-8">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center">
             <svg className="h-8 w-8 text-blue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,7 +28,7 @@ const LandingHeader = () => {
         </div>
         
         {/* Center Navigation */}
-        <nav className="hidden md:flex md:items-center md:gap-8">
+        <nav className="hidden absolute left-1/2 transform -translate-x-1/2 md:flex md:items-center md:gap-8">
           <Link href="/#features" className="text-sm font-medium text-gray-300 transition-colors hover:text-blue-400">
             Features
           </Link>
@@ -76,8 +76,8 @@ const LandingHeader = () => {
       
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="container md:hidden bg-[#0a0c16]/95 border-b border-[#1a1e36]/40">
-          <nav className="flex flex-col space-y-3 p-4">
+        <div className="container max-w-7xl mx-auto md:hidden bg-[#0a0c16]/95 border-b border-[#1a1e36]/40">
+          <nav className="flex flex-col space-y-3 p-4 px-4 md:px-8">
             <Link 
               href="/#features" 
               className="text-sm font-medium text-gray-300 transition-colors hover:text-blue-400"
