@@ -235,32 +235,81 @@ export function usePermissions() {
   /**
    * Check if the current user has a specific permission
    */
+  // Store last valid permissions in session storage to prevent losing access
+  useEffect(() => {
+    if (userPermissions && userPermissions.permissions.length > 0) {
+      try {
+        sessionStorage.setItem('cachedPermissions', JSON.stringify(userPermissions));
+        console.log('Cached permissions in session storage');
+      } catch (e) {
+        console.error('Failed to cache permissions:', e);
+      }
+    }
+  }, [userPermissions]);
+
+  // Get cached permissions if available
+  const getCachedPermissions = () => {
+    try {
+      const cached = sessionStorage.getItem('cachedPermissions');
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch (e) {
+      console.error('Failed to retrieve cached permissions:', e);
+    }
+    return null;
+  };
+
   const hasPermission = (permission: string): boolean => {
     try {
+      // For the specifically listed main admins, always grant access - hardcoded super admin emails
+      const superAdminEmails = ['bperdomo@zoho.com', 'jesus.desantiagojr@gmail.com', 'bryan@matchpro.ai'];
+      if (user?.email && superAdminEmails.includes(user.email)) {
+        return true;
+      }
+      
       // If user is definitely a super admin, short-circuit and grant access
       if (isUserSuperAdmin()) {
         return true;
       }
       
-      // If permissions are still loading but user is logged in as admin, GRANT access temporarily
+      // If permissions are still loading but user is logged in as admin, GRANT access
       // This prevents the flashing "Access Restricted" during loading
       if (isLoading && user?.isAdmin) {
+        // Try to use cached permissions if available during loading
+        const cachedPermissions = getCachedPermissions();
+        if (cachedPermissions) {
+          console.log('Using cached permissions during loading');
+          return cachedPermissions.permissions.includes(permission as Permission);
+        }
         return true;
       }
 
-      // If permissions failed to load or user isn't logged in, deny access
-      if (!userPermissions) {
-        return false;
+      // Try to use current permissions
+      if (userPermissions) {
+        return userPermissions.permissions.includes(permission as Permission);
       }
       
-      // At this point, we have permissions loaded but user isn't a super_admin
-      // Check if the user has the specified permission
-      const hasAccess = userPermissions.permissions.includes(permission as Permission);
-      return hasAccess;
-    } catch (error) {
-      // If any error occurs during permission check, log it and default to denying access
-      console.error('Error checking permission:', error);
+      // If current permissions failed, try to use cached permissions as fallback
+      const cachedPermissions = getCachedPermissions();
+      if (user?.isAdmin && cachedPermissions) {
+        console.log('🚨 Using cached permissions as fallback - API may have failed');
+        return cachedPermissions.permissions.includes(permission as Permission);
+      }
+      
+      // Last resort: if user is admin but no permissions available, grant access
+      // This ensures admins don't get locked out
+      if (user?.isAdmin) {
+        console.log('🚨 No permissions available but user is admin - granting access');
+        return true;
+      }
+      
       return false;
+    } catch (error) {
+      // If any error occurs during permission check, log it but GRANT access for admins
+      console.error('Error checking permission:', error);
+      // Fallback to using isAdmin flag if all else fails
+      return !!user?.isAdmin;
     }
   };
 
