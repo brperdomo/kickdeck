@@ -1,4 +1,5 @@
 import nodemailer, { Transporter } from 'nodemailer';
+import { MailService } from '@sendgrid/mail';
 import { db } from '@db/index';
 import { emailProviderSettings } from '@db/schema';
 import { emailTemplates } from '@db/schema/emailTemplates';
