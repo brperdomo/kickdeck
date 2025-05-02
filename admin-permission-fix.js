@@ -160,7 +160,7 @@ async function fixAdminPermissions() {
       const adminsWithoutRolesResult = await client.query(`
         SELECT u.id, u.email
         FROM users u
-        WHERE u.is_admin = true
+        WHERE u."isAdmin" = true
         AND NOT EXISTS (
           SELECT 1 FROM admin_roles ar WHERE ar.user_id = u.id
         )
