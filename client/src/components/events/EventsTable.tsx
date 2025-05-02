@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Link2, Edit, FileQuestion, Copy, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash, Archive, RotateCcw, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { useLocation } from "wouter";
@@ -82,6 +82,7 @@ type SortDirection = "asc" | "desc";
 export function EventsTable() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"past" | "active" | "upcoming" | "all">("all");
   const [sortField, setSortField] = useState<SortField>("date");
@@ -92,6 +93,19 @@ export function EventsTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [showArchived, setShowArchived] = useState(false);
+
+  // Create a debounced search effect
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      setSearchQuery(searchInput);
+      // Reset to page 1 when searching
+      if (searchInput !== searchQuery) {
+        setCurrentPage(1);
+      }
+    }, 400); // 400ms delay
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchInput]);
 
   const queryClient = useQueryClient();
 
@@ -177,7 +191,7 @@ export function EventsTable() {
       
       // Force refetch all events data with the current filters
       queryClient.invalidateQueries({ 
-        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived]
+        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery]
       });
       
       toast({
@@ -212,7 +226,7 @@ export function EventsTable() {
     onSuccess: (data) => {
       // Force refetch all events data with the current filters
       queryClient.invalidateQueries({ 
-        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived]
+        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery]
       });
       
       // Log the data to help with debugging
@@ -373,7 +387,7 @@ export function EventsTable() {
         description: "The event was successfully deleted"
       });
 
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/events", currentPage, pageSize, showArchived] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery] });
       setDeleteDialogOpen(false);
       setDeleteConfirmText("");
       setEventToDelete(null);
@@ -417,8 +431,8 @@ export function EventsTable() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-indigo-400" />
               <Input
                 placeholder="Search events..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 className="pl-9 w-[300px] border-indigo-200 focus:border-indigo-300 focus:ring-indigo-200"
               />
             </div>
