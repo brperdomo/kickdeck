@@ -12,6 +12,7 @@ import { createTables } from './create-tables';
 import { setupAuth } from './auth';
 import { emulationMiddleware } from './services/emulationService';
 import { initializeStandardFolders } from './utils/initStandardFolders';
+import { verifySuperAdminRoles, logPermissionDetails } from './middleware/role-verification';
 
 const app = express();
 
@@ -105,6 +106,9 @@ async function testDbConnection() {
     await createAdmin();
     log("Admin user setup completed");
     
+    // Verify super admin role permissions to prevent missing access issues
+    await verifySuperAdminRoles();
+    
     // Initialize standard folder structure
     await initializeStandardFolders();
 
@@ -120,6 +124,10 @@ async function testDbConnection() {
     // Apply emulation middleware after authentication but before routes
     app.use(emulationMiddleware);
     log("User emulation middleware set up successfully");
+    
+    // Add permission logging middleware to catch and debug 403 errors
+    app.use(logPermissionDetails);
+    log("Permission logging middleware set up successfully");
     
     // Register routes after authentication setup
     const routes = registerRoutes(app);
