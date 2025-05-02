@@ -55,16 +55,16 @@ const LandingFooter = () => {
             <div className="mb-4">
               <Link href="/" className="flex items-center">
                 <img 
-                  src="/logo.png" 
+                  src="/uploads/MatchProAI_Linear_WhiteNOBUFFER_1746209469843_at6929.png" 
                   alt="MatchPro.ai" 
-                  className="h-8 w-auto"
+                  className="h-10 w-auto"
                   onError={(e) => {
                     // Fallback in case the image doesn't load
                     const target = e.target as HTMLImageElement;
-                    target.src = "https://raw.githubusercontent.com/replit/replit.github.io/main/static/images/logo.svg";
+                    target.onerror = null; // Prevent infinite loop
+                    target.src = "https://placehold.co/200x50/1a1e36/4d79ff.png?text=MatchPro.ai";
                   }} 
                 />
-                <span className="ml-2 text-lg font-bold text-white">MATCHPRO.AI</span>
               </Link>
             </div>
             <p className="text-sm text-gray-400 mb-4">
