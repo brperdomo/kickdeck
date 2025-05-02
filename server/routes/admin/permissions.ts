@@ -22,6 +22,20 @@ export async function getCurrentUserPermissions(req: Request, res: Response) {
       console.log(`Using emulated user ID: ${emulatedUserId} for permissions`);
     }
 
+    // Special handling for main admin (bperdomo@zoho.com)
+    if (req.user?.email === 'bperdomo@zoho.com') {
+      console.log('Granting super_admin permissions to main admin: bperdomo@zoho.com');
+      
+      // Get all permission values as an array of strings
+      const allPermissions = Object.values(PERMISSIONS);
+      
+      // Return all permissions and super_admin role
+      return res.json({
+        roles: ['super_admin'],
+        permissions: allPermissions
+      });
+    }
+
     // Fetch the user's roles with a join to get role names
     const userRolesResult = await db
       .select({
@@ -38,9 +52,14 @@ export async function getCurrentUserPermissions(req: Request, res: Response) {
     
     // If the user is a super_admin, they have all permissions
     if (roleNames.includes('super_admin')) {
+      console.log('Granting super_admin permissions based on role');
+      
+      // Get all permission values as an array of strings
+      const allPermissions = Object.values(PERMISSIONS);
+      
       return res.json({
         roles: roleNames,
-        permissions: Object.keys(PERMISSIONS)
+        permissions: allPermissions
       });
     }
 
