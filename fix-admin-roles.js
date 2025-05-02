@@ -1,8 +1,8 @@
 
-const { db } = require('./db');
-const { roles, adminRoles, users } = require('./db/schema');
-const { rolePermissions, PERMISSIONS } = require('./db/schema/permissions');
-const { eq, and } = require('drizzle-orm');
+import { db } from './db/index.js';
+import { roles, adminRoles, users } from './db/schema.js';
+import { rolePermissions, PERMISSIONS } from './db/schema/permissions.js';
+import { eq, and } from 'drizzle-orm';
 
 async function fixAdminRoles() {
   try {
