@@ -96,9 +96,9 @@ export function EventsTable() {
   const queryClient = useQueryClient();
 
   const eventsQuery = useQuery<EventsResponse>({
-    queryKey: ["/api/admin/events", currentPage, pageSize, showArchived],
+    queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events?page=${currentPage}&pageSize=${pageSize}&showArchived=${showArchived}`);
+      const response = await fetch(`/api/admin/events?page=${currentPage}&pageSize=${pageSize}&showArchived=${showArchived}&search=${encodeURIComponent(searchQuery)}`);
       if (!response.ok) {
         throw new Error("Failed to fetch events");
       }
@@ -121,7 +121,7 @@ export function EventsTable() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/events", currentPage, pageSize, showArchived] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery] });
       toast({
         title: "Success",
         description: "Event deleted successfully",

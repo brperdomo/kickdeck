@@ -14,6 +14,7 @@ router.get('/', async (req, res) => {
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 5;
     const showArchived = req.query.showArchived === 'true';
+    const searchQuery = req.query.search as string || '';
     
     // Calculate offset for pagination
     const offset = (page - 1) * pageSize;
@@ -33,22 +34,47 @@ router.get('/', async (req, res) => {
       eventsQuery = eventsQuery.where(eq(events.isArchived, false));
     }
     
+    // Apply search filter if search query is provided
+    if (searchQuery) {
+      eventsQuery = eventsQuery.where(
+        sql`LOWER(${events.name}) LIKE LOWER(${'%' + searchQuery + '%'})`
+      );
+    }
+    
     // First get the total count for pagination
-    const countResult = await db
+    let countQuery = db
       .select({
         count: sql<number>`count(distinct ${events.id})`.mapWith(Number),
       })
-      .from(events)
-      .where(showArchived ? sql`1=1` : eq(events.isArchived, false));
+      .from(events);
+    
+    // Apply the same filters to the count query
+    if (!showArchived) {
+      countQuery = countQuery.where(eq(events.isArchived, false));
+    }
+    
+    if (searchQuery) {
+      countQuery = countQuery.where(
+        sql`LOWER(${events.name}) LIKE LOWER(${'%' + searchQuery + '%'})`
+      );
+    }
+    
+    const countResult = await countQuery;
     
     const totalEvents = countResult[0]?.count || 0;
     
     // Execute the main query with pagination
-    const eventsList = await eventsQuery
-      .groupBy(events.id)
-      .orderBy(events.startDate)
-      .limit(pageSize)
-      .offset(offset);
+    // If searching, we might want to show all results on one page
+    const applyPagination = !searchQuery || totalEvents > pageSize;
+    
+    let finalEventsQuery = eventsQuery.groupBy(events.id).orderBy(events.startDate);
+    
+    // Apply pagination only if not searching or if there are more results than the page size
+    if (applyPagination) {
+      finalEventsQuery = finalEventsQuery.limit(pageSize).offset(offset);
+    }
+    
+    const eventsList = await finalEventsQuery;
 
     // Format the response
     const formattedEvents = eventsList.map(({ event, applicationCount, teamCount }) => ({
