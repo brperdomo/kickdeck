@@ -23,7 +23,8 @@ async function checkAdminPermissions() {
     // Array of emails to check
     const emailsToCheck = [
       'bperdomo@zoho.com',
-      'jesus.desantiagojr@gmail.com'
+      'jesus.desantiagojr@gmail.com',
+      'bryan@matchpro.ai'
     ];
 
     // Check each email
