@@ -30,11 +30,14 @@ export async function verifySuperAdminRoles() {
     
     const superAdminRoleId = superAdminRoles[0].id;
     
-    // Get count of permissions for super_admin role
+    // Get count of permissions for super_admin role and ensure all permissions exist
     const permissionsCount = await db
       .select({ count: count() })
       .from(rolePermissions)
       .where(eq(rolePermissions.roleId, superAdminRoleId));
+
+    // Get all available permissions
+    const allPermissions = Object.values(PERMISSIONS).flat();
     
     // Get count of assigned users
     const assignedUsers = await db
@@ -48,7 +51,7 @@ export async function verifySuperAdminRoles() {
     console.log(`Found ${permissionsCount[0].count} permissions assigned to super_admin role`);
     
     // If permissions are missing, assign them
-    if (permissionsCount[0].count < Object.keys(PERMISSIONS).length) {
+    if (permissionsCount[0].count < allPermissions.length) {
       console.log('WARNING: super_admin role is missing some permissions, fixing...');
       
       // Delete existing permissions to avoid duplicates
