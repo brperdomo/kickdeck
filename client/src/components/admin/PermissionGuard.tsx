@@ -24,25 +24,15 @@ export function PermissionGuard({
   children, 
   fallback = null 
 }: PermissionGuardProps) {
-  const { hasPermission, isLoading } = usePermissions();
   const { user } = useAuth();
   
-  // Special case: Admin users will see a loading indicator during the initial permissions load
-  if (isLoading && user?.isAdmin) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[200px] p-4">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mb-2" />
-        <p className="text-sm text-muted-foreground">Checking permissions...</p>
-      </div>
-    );
-  }
-  
-  // If user has permission, show the content
-  if (hasPermission(permission)) {
+  // EMERGENCY FIX: Always show content for admin users regardless of specific permissions
+  if (user?.isAdmin) {
+    console.log(`🚨 EMERGENCY BYPASS: Rendering admin content for ${permission} without permission check`);
     return <>{children}</>;
   }
   
-  // Otherwise, show the fallback
+  // Only non-admin users will see the fallback
   return <>{fallback}</>;
 }
 

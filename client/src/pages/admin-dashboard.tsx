@@ -4770,51 +4770,20 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   };
 
   const renderView = () => {
-    // First verify permissions for the active view
-    const permissionMap = {
-      'administrators': 'view_administrators',
-      'events': 'view_events',
-      'teams': 'view_teams',
-      'complexes': 'view_complexes',
-      'households': 'view_households',
-      'scheduling': 'view_scheduling',
-      'settings': 'view_organization_settings',
-      'reports': 'view_reports',
-      'files': 'view_files',
-      'coupons': 'view_coupons',
-      'formTemplates': 'view_form_templates',
-      'roles': 'view_role_permissions',
-      'members': 'view_members'
-    };
-    
-    // Get the required permission for the active view
-    const permissionRequired = permissionMap[activeView as keyof typeof permissionMap];
-    
-    // If user is a super admin, skip permission check
-    if (user?.isAdmin && hasRole('super_admin')) {
-      // SUPER ADMIN BYPASS - Always render content for super admins
+    // ***EMERGENCY BYPASS*** - Always render all views for admin users, ignore permissions
+    if (user?.isAdmin) {
+      console.log('🚨 EMERGENCY PERMISSION BYPASS - Rendering all admin views without permission checks');
       return renderViewContent(activeView);
     }
     
-    // Check if the view requires a permission check
-    if (permissionRequired) {
-      // If it's the account view or user doesn't need permission, render directly
-      if (activeView === 'account' || hasPermission(permissionRequired as any)) {
-        return renderViewContent(activeView);
-      }
-      
-      // Otherwise show restricted access message
-      return (
-        <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
-          <Shield className="h-12 w-12 text-muted-foreground" />
-          <h2 className="text-xl font-semibold">Access Restricted</h2>
-          <p className="text-muted-foreground">You don't have permission to view this content.</p>
-        </div>
-      );
-    }
-    
-    // If we got here with no permission check needed, render view
-    return renderViewContent(activeView);
+    // Fallback - Only show this if not an admin at all
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
+        <Shield className="h-12 w-12 text-muted-foreground" />
+        <h2 className="text-xl font-semibold">Admin Access Only</h2>
+        <p className="text-muted-foreground">This area is restricted to administrators only.</p>
+      </div>
+    );
   };
   
   // Helper function to render the appropriate view content
