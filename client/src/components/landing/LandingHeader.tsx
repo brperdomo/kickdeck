@@ -33,17 +33,17 @@ const LandingHeader = () => {
         </div>
         
         {/* Center Navigation */}
-        <nav className="hidden absolute left-1/2 transform -translate-x-1/2 md:flex md:items-center md:gap-8">
-          <Link href="/#features" className="text-sm font-medium text-gray-300 transition-colors hover:text-blue-400">
+        <nav className="hidden md:flex md:items-center md:gap-8">
+          <Link href="/#features" className="text-sm font-medium text-white transition-colors hover:text-blue-400">
             Features
           </Link>
-          <Link href="/#testimonials" className="text-sm font-medium text-gray-300 transition-colors hover:text-blue-400">
+          <Link href="/#testimonials" className="text-sm font-medium text-white transition-colors hover:text-blue-400">
             Testimonials
           </Link>
-          <Link href="/#pricing" className="text-sm font-medium text-gray-300 transition-colors hover:text-blue-400">
+          <Link href="/#pricing" className="text-sm font-medium text-white transition-colors hover:text-blue-400">
             Pricing
           </Link>
-          <Link href="/#contact" className="text-sm font-medium text-gray-300 transition-colors hover:text-blue-400">
+          <Link href="/#contact" className="text-sm font-medium text-white transition-colors hover:text-blue-400">
             Contact
           </Link>
         </nav>
