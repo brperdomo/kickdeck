@@ -21,6 +21,15 @@ export interface SendGridEmailParams {
 }
 
 /**
+ * Set the SendGrid API key
+ * @param apiKey The SendGrid API key
+ */
+export function setApiKey(apiKey: string): void {
+  mailService.setApiKey(apiKey);
+  console.log('SendGrid API key configured');
+}
+
+/**
  * Sends an email using SendGrid
  * @param params Email parameters
  * @returns Promise resolving to true if email was sent successfully
@@ -51,10 +60,15 @@ export async function sendEmail(params: SendGridEmailParams): Promise<boolean> {
     const response = await mailService.send(message);
     console.log(`SendGrid: Email sent to ${params.to}, status: ${response[0].statusCode}`);
     return true;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('SendGrid: Error sending email:', error);
-    if (error.response) {
-      console.error('SendGrid API response error:', error.response.body);
+    // Type guard for the SendGrid error response
+    if (error && typeof error === 'object' && 'response' in error) {
+      // Safe type assertion after the type guard
+      const sgError = error as { response: { body: any } };
+      if (sgError.response && sgError.response.body) {
+        console.error('SendGrid API response error:', sgError.response.body);
+      }
     }
     return false;
   }
@@ -91,10 +105,15 @@ export async function verifyConfiguration(testEmail: string): Promise<boolean> {
     const response = await mailService.send(message);
     console.log(`SendGrid configuration verified, status: ${response[0].statusCode}`);
     return response[0].statusCode >= 200 && response[0].statusCode < 300;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('SendGrid configuration verification failed:', error);
-    if (error.response) {
-      console.error('SendGrid API response error:', error.response.body);
+    // Type guard for the SendGrid error response
+    if (error && typeof error === 'object' && 'response' in error) {
+      // Safe type assertion after the type guard
+      const sgError = error as { response: { body: any } };
+      if (sgError.response && sgError.response.body) {
+        console.error('SendGrid API response error:', sgError.response.body);
+      }
     }
     return false;
   }

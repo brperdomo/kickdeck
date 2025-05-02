@@ -149,8 +149,7 @@ async function getEmailTransporter(): Promise<Transporter> {
         }
       });
       
-      // Also set up the SendGrid API key for direct API access
-      sendgridService.setApiKey(apiKey);
+      // We don't need to explicitly set the API key here as it's handled in the sendgridService
     } else {
       throw new Error(`Unsupported email provider type: ${provider.providerType}`);
     }
@@ -226,19 +225,42 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
       return;
     }
     
-    // In production, try to send the actual email
-    const transporter = await getEmailTransporter();
+    // Get the email provider to determine which method to use for sending
+    const provider = await getEmailProvider();
     
-    // Double check that we have a valid transporter before trying to send
-    if (!transporter) {
-      console.error('No email transporter available');
-      // Log the issue but don't crash the application in production
-      console.error('Email could not be sent to', options.to, 'due to missing email transporter');
-      return;
+    // Use the appropriate provider to send the email
+    if (provider.providerType === 'sendgrid') {
+      // Use SendGrid API directly
+      const from = options.from || `${provider.providerName} <${(provider.settings as any).from || 'noreply@example.com'}>`;
+      
+      const result = await sendgridService.sendEmail({
+        to: options.to,
+        from: from,
+        subject: options.subject,
+        html: options.html,
+        text: options.html ? undefined : 'Please view this email in a compatible email client.'
+      });
+      
+      if (result) {
+        console.log(`SendGrid: Email sent to ${options.to}`);
+      } else {
+        throw new Error('Failed to send email via SendGrid');
+      }
+    } else {
+      // Use traditional SMTP via nodemailer
+      const transporter = await getEmailTransporter();
+      
+      // Double check that we have a valid transporter before trying to send
+      if (!transporter) {
+        console.error('No email transporter available');
+        // Log the issue but don't crash the application in production
+        console.error('Email could not be sent to', options.to, 'due to missing email transporter');
+        return;
+      }
+      
+      await transporter.sendMail(options);
+      console.log(`SMTP: Email sent to ${options.to}`);
     }
-    
-    await transporter.sendMail(options);
-    console.log(`Email sent to ${options.to}`);
   } catch (error) {
     console.error('Error sending email:', error);
     
