@@ -44,12 +44,18 @@ import { AuthProvider } from "@/hooks/use-auth";
 import AccountPage from "./pages/account";
 import { LogoutHandler } from "@/components/LogoutHandler";
 
+// Import landing page components
+import LandingPage from "@/pages/landing-page";
+import { isMainDomain } from "@/lib/domainHelper";
+
 // Import fully implemented components for preview mode
 import EventPreviewSelector from '@/pages/event-preview-selector';
 import RegistrationPreview from '@/pages/registration-preview';
 
 function Router() {
   const { user, isLoading } = useUser();
+  // Check if we're on the main domain (matchpro.ai)
+  const showLandingPage = isMainDomain();
 
   if (isLoading) {
     return (
@@ -59,6 +65,31 @@ function Router() {
     );
   }
 
+  // Show landing page if we're on the main domain
+  if (showLandingPage) {
+    return (
+      <Switch>
+        {/* Routes for the landing page */}
+        <Route path="/auth" component={AuthPage} />
+        <Route path="/register" component={Register} />
+        <Route path="/forgot-password" component={ForgotPassword} />
+        <Route path="/reset-password" component={ResetPassword} />
+        <Route path="/product-updates" component={ProductUpdatesPage} />
+        
+        {/* Main landing page for the root path */}
+        <Route path="/">
+          <LandingPage />
+        </Route>
+        
+        {/* Fallback for any other paths on the main domain */}
+        <Route>
+          <LandingPage />
+        </Route>
+      </Switch>
+    );
+  }
+
+  // For all other domains, show the application routes
   // Logout route - available to all users
   return (
     <Switch>
