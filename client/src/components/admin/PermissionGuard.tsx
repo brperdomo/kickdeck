@@ -62,36 +62,26 @@ export function PermissionAwareLink({
   onClick,
   href
 }: PermissionAwareLinkProps) {
-  const { hasPermission, isLoading } = usePermissions();
   const { user } = useAuth();
   
-  // Hide completely if no permissions and not loading
-  if (!isLoading && !hasPermission(permission)) {
-    return null;
-  }
-  
-  // Show a more subtle loading state for links (slightly transparent)
-  if (isLoading && user?.isAdmin) {
+  // EMERGENCY FIX: Always show navigation for admin users
+  if (user?.isAdmin) {
+    console.log(`🚨 EMERGENCY BYPASS: Showing navigation link for ${permission}`);
+    if (href) {
+      return (
+        <a href={href} className={className} onClick={onClick}>
+          {children}
+        </a>
+      );
+    }
+    
     return (
-      <div className={`${className} opacity-60 cursor-not-allowed flex items-center`}>
+      <button className={className} onClick={onClick}>
         {children}
-        <Loader2 className="ml-2 h-3 w-3 animate-spin" />
-      </div>
+      </button>
     );
   }
   
-  // Show the actual link when permission is granted
-  if (href) {
-    return (
-      <a href={href} className={className} onClick={onClick}>
-        {children}
-      </a>
-    );
-  }
-  
-  return (
-    <button className={className} onClick={onClick}>
-      {children}
-    </button>
-  );
+  // Non-admins don't see the link at all
+  return null;
 }
