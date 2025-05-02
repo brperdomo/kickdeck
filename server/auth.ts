@@ -72,13 +72,15 @@ export function setupAuth(app: Express) {
     resave: true, // Changed to true to ensure session is saved on every request
     saveUninitialized: false,
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for longer sessions
       httpOnly: true,
       sameSite: 'lax',
       path: '/'
     },
     store: new MemoryStore({
-      checkPeriod: 86400000, // 24 hours
+      checkPeriod: 86400000, // 24 hours cleanup interval
+      // Don't refresh/ping inactive sessions in the background
+      stale: false
     }),
     rolling: true, // Reset expiration countdown on every response
     unset: 'destroy' // Immediately destroy when unset
@@ -372,17 +374,35 @@ export function setupAuth(app: Express) {
       const emulatedUserId = (req as any).emulatedUserId;
       const actualUserId = (req as any).actualUserId;
       
+      // Add ETag support for more efficient caching
+      const timestamp = req.user?.lastLogin?.getTime() || Date.now();
+      const etag = `"user-${req.user?.id}-${timestamp}"`;
+      
+      // Check if client already has this version (If-None-Match header)
+      if (req.headers['if-none-match'] === etag) {
+        return res.status(304).end();
+      }
+      
+      // Set appropriate cache-control based on environment
+      // Add longer cache time in production, but allow revalidation
+      const isProduction = app.get("env") === "production";
+      
       // Disable caching during emulation to ensure latest data
-      // Otherwise, add caching headers to improve performance
       if (emulatedUserId) {
         res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      } else if (isProduction) {
+        // In production, improve performance with longer cache but allow revalidation
+        res.set('Cache-Control', 'private, max-age=3600, must-revalidate');
       } else {
-        res.set('Cache-Control', 'private, max-age=300, must-revalidate');
+        // In development, shorter cache time
+        res.set('Cache-Control', 'private, max-age=60, must-revalidate');
       }
+      
+      // Set ETag for efficient caching
+      res.set('ETag', etag);
       
       // Check if this is an emulated session
       if (emulatedUserId) {
-        console.log('Emulating user:', emulatedUserId, 'for actual user:', actualUserId);
         // Get the emulated user from the database or cache
         const emulatedUser = await getUserById(emulatedUserId);
         if (emulatedUser) {
@@ -398,6 +418,10 @@ export function setupAuth(app: Express) {
       return res.json(req.user);
     }
 
+    // For unauthenticated requests, add cache headers to prevent frequent refreshes
+    // This is key to solving the login page refresh issue
+    res.set('Cache-Control', 'private, max-age=3600');
+    res.set('Expires', new Date(Date.now() + 3600000).toUTCString());
     res.status(401).send("Not logged in");
   });
 

@@ -45,15 +45,48 @@ export const queryClient = new QueryClient({
           : [queryKey, []];
           
         try {
+          // Get cached ETag value from cache if available
+          let etag: string | null = null;
+          const cacheKey = `etag:${url}`;
+          try {
+            etag = localStorage.getItem(cacheKey);
+          } catch (e) {
+            console.warn('Could not access localStorage for ETag:', e);
+          }
+          
           // Add caching directives to improve performance
+          const headers: Record<string, string> = {
+            "Cache-Control": "max-age=3600" // Tell browser to cache for 1 hour
+          };
+          
+          // Add If-None-Match header if we have an ETag
+          if (etag) {
+            headers["If-None-Match"] = etag;
+          }
+          
           const options: RequestInit = {
             credentials: "include",
-            headers: {
-              "Cache-Control": "max-age=300" // Tell browser to cache for 5 minutes
-            }
+            headers
           };
 
           const res = await fetch(url as string, options);
+          
+          // Handle 304 Not Modified responses
+          if (res.status === 304) {
+            // Return cached data - this should be in stale cache
+            // React Query will handle returning the cached data
+            throw new Error('Use cached data');
+          }
+          
+          // Store the ETag for future requests if provided
+          const newEtag = res.headers.get('ETag');
+          if (newEtag) {
+            try {
+              localStorage.setItem(cacheKey, newEtag);
+            } catch (e) {
+              console.warn('Could not store ETag in localStorage:', e);
+            }
+          }
 
           if (!res.ok) {
             if (res.status >= 500) {
@@ -68,6 +101,11 @@ export const queryClient = new QueryClient({
 
           return res.json();
         } catch (error) {
+          // If error is "Use cached data", let React Query use stale data
+          if (error instanceof Error && error.message === 'Use cached data') {
+            throw error;
+          }
+          
           // Improve error handling and logging
           console.error(`Error fetching ${url}:`, error);
           throw error; // Re-throw so React Query can handle it
@@ -84,17 +122,11 @@ export const queryClient = new QueryClient({
         }
         return false; // Don't retry other errors
       },
-      // Add global error handler
-      onError: (error) => {
-        console.error('Query error:', error);
-      }
+      // Don't add a global error handler here as it's not supported in the type
     },
     mutations: {
       retry: false,
-      // Add global error handler for mutations
-      onError: (error) => {
-        console.error('Mutation error:', error);
-      }
+      // No global onError here either - we'll add specific error handlers to each mutation
     }
   },
 });
