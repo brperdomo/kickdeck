@@ -63,55 +63,56 @@ const LandingPricing = () => {
   ];
 
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32" id="pricing">
+    <section className="w-full py-12 md:py-24 lg:py-32 bg-[#0a0c16] border-b border-[#1a1e36]/40" id="pricing">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
-            <div className="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm text-primary">
+            <div className="inline-block rounded-lg bg-[#1a1e36] px-3 py-1 text-sm text-[#4d79ff] font-medium">
               Pricing
             </div>
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-white mt-6">
               Choose the Right Plan for Your Organization
             </h2>
-            <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+            <p className="max-w-[900px] text-gray-300 md:text-lg mt-4">
               Affordable solutions for organizations of all sizes. All plans include core MatchPro.ai features.
             </p>
           </div>
         </div>
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 lg:grid-cols-3">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 py-12 lg:grid-cols-3">
           {plans.map((plan, index) => (
             <div 
               key={index} 
-              className={`flex flex-col rounded-lg border ${plan.isPopular ? 'border-primary shadow-lg' : ''} p-6 space-y-6`}
+              className={`flex flex-col rounded-lg border border-[#1a1e36] ${plan.isPopular ? 'border-[#4d79ff] bg-[#131724]' : 'bg-[#0e1019]'} p-6 space-y-6`}
             >
               {plan.isPopular && (
-                <div className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary w-fit">
+                <div className="rounded-full bg-[#4d79ff]/20 px-3 py-1 text-xs font-medium text-[#4d79ff] w-fit">
                   Most Popular
                 </div>
               )}
               <div>
-                <h3 className="text-2xl font-bold">{plan.name}</h3>
+                <h3 className="text-2xl font-bold text-white">{plan.name}</h3>
                 <div className="mt-2 flex items-baseline">
-                  <span className="text-3xl font-bold">{plan.price}</span>
-                  <span className="ml-1 text-sm text-gray-500">/{plan.period}</span>
+                  <span className="text-3xl font-bold text-white">{plan.price}</span>
+                  <span className="ml-1 text-sm text-gray-400">/{plan.period}</span>
                 </div>
-                <p className="mt-2 text-sm text-gray-500">
+                <p className="mt-2 text-sm text-gray-400">
                   {plan.description}
                 </p>
               </div>
               <ul className="space-y-2 text-sm">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-center">
-                    <Check className="mr-2 h-4 w-4 text-primary" />
-                    <span>{feature}</span>
+                    <Check className="mr-2 h-4 w-4 text-[#4d79ff]" />
+                    <span className="text-gray-300">{feature}</span>
                   </li>
                 ))}
               </ul>
               <div className="mt-auto pt-4">
                 <Link href={plan.name === "Enterprise" ? "/#contact" : "/register"}>
                   <Button 
-                    className="w-full" 
-                    variant={plan.isPopular ? "default" : "outline"}
+                    className={`w-full ${plan.isPopular 
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white' 
+                      : 'bg-transparent border border-[#1a1e36] text-gray-300 hover:bg-[#1a1e36] hover:text-white'}`}
                   >
                     {plan.cta}
                   </Button>
@@ -121,9 +122,9 @@ const LandingPricing = () => {
           ))}
         </div>
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-gray-500">
+          <p className="text-gray-400">
             All plans include a 14-day free trial. No credit card required to start.
-            Need a custom solution? <Link href="/#contact" className="text-primary hover:underline">Contact our sales team</Link>.
+            Need a custom solution? <Link href="/#contact" className="text-[#4d79ff] hover:underline">Contact our sales team</Link>.
           </p>
         </div>
       </div>

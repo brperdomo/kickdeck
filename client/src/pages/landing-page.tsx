@@ -16,7 +16,7 @@ import LandingFooter from '@/components/landing/LandingFooter';
  */
 export function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-[#0a0c16]">
       <LandingHeader />
       <main className="flex-grow">
         <LandingHero />

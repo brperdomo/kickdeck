@@ -9,87 +9,46 @@ import { ChevronRight } from 'lucide-react';
  */
 const LandingHero = () => {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 xl:py-40 bg-slate-50">
-      <div className="container px-4 md:px-6">
-        <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-          <div className="flex flex-col justify-center space-y-4">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                Simplify Soccer Tournament Management
-              </h1>
-              <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
-                MatchPro.ai combines AI-powered automation with intuitive tools to help you manage tournaments, teams, 
-                and facilities with unmatched efficiency.
-              </p>
-            </div>
-            <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              <Link href="/register">
-                <Button size="lg" className="gap-1">
-                  Get Started <ChevronRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="#features">
-                <Button size="lg" variant="outline">
-                  Learn More
-                </Button>
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4 text-sm">
-              <div className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                <span>Modern Interface</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                <span>AI-Powered</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                <span>24/7 Support</span>
-              </div>
-            </div>
+    <section className="w-full py-24 md:py-36 lg:py-40 xl:py-48 bg-[#0a0c16] border-b border-[#1a1e36]/40 relative overflow-hidden">
+      {/* Soccer field pattern background - subtle overlay */}
+      <div 
+        className="absolute inset-0 opacity-10 bg-cover bg-center" 
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')",
+          backgroundBlendMode: "overlay",
+          mixBlendMode: "luminosity"
+        }}
+      ></div>
+      
+      <div className="container px-4 md:px-6 relative z-10">
+        <div className="flex flex-col items-center justify-center text-center mb-12">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-[#4d79ff] mb-4">
+            For Soccer Tournament Directors.
+          </h1>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter text-[#4d79ff] mb-12">
+            By Soccer Tournament Directors.
+          </h2>
+          
+          <div className="max-w-3xl mx-auto">
+            <p className="text-base md:text-lg text-gray-300 mb-6">
+              Our software is built with adaptability at its core. From player development to game-day management, we're constantly iterating, refining, and pushing boundaries. Every update, every feature, and every integration is driven by real-world feedback and forward-thinking strategy.
+            </p>
+            <p className="text-base md:text-lg text-gray-300 mb-12">
+              We envision a sports ecosystem where data isn't just collected, it's translated into actionable insight — where coaches, players, and organizations are empowered by software that grows with the game.
+            </p>
           </div>
-          <div className="flex items-center justify-center">
-            <div className="relative w-full h-[420px] overflow-hidden rounded-xl border bg-gradient-to-b from-primary/20 to-primary/10 p-4 shadow-xl">
-              <div className="absolute inset-0 flex items-center justify-center bg-white/40 backdrop-blur-sm">
-                <div className="relative h-72 w-72">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg
-                      className="h-full w-full text-primary/40"
-                      viewBox="0 0 200 200"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M44.3,-76.5C59.1,-70.2,74,-61.5,83.3,-47.8C92.6,-34.2,96.2,-17.1,94.8,-1C93.3,15.1,86.9,30.1,77.7,43.2C68.5,56.2,56.5,67.2,42.6,74.7C28.7,82.2,14.3,86.2,-0.6,87.2C-15.5,88.2,-31,86.3,-43.1,78.7C-55.1,71.1,-63.8,57.9,-71.6,44.3C-79.4,30.7,-86.4,16.3,-88.2,0.9C-90,-14.5,-86.6,-29,-79.1,-40.7C-71.5,-52.4,-59.8,-61.3,-46.6,-68.5C-33.4,-75.7,-16.7,-81.1,-0.2,-80.7C16.2,-80.3,29.5,-82.9,44.3,-76.5Z"
-                        transform="translate(100 100)"
-                      />
-                    </svg>
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <img
-                      src="/public/logo.png"
-                      alt="MatchPro.ai"
-                      className="h-[40%] w-auto object-contain relative z-10"
-                      onError={(e) => {
-                        // Fallback to a blue hexagon if image doesn't load
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-lg bg-white/90 p-4 shadow-lg backdrop-blur-sm">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Get Started Today</p>
-                  <p className="text-xs text-gray-500">Setup in minutes, not days</p>
-                </div>
-                <Link href="/register">
-                  <Button size="sm">Try Now</Button>
-                </Link>
-              </div>
-            </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/register">
+              <Button size="lg" className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-8">
+                Get Started
+              </Button>
+            </Link>
+            <Link href="/#features">
+              <Button size="lg" variant="outline" className="text-gray-300 border-gray-600 hover:bg-[#1a1e36] hover:text-white">
+                Learn More
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
