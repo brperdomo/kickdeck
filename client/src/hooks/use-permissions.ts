@@ -219,40 +219,49 @@ export function usePermissions() {
   });
 
   /**
-   * Cache for superadmin status to avoid repeated checks
+   * Determine if the user is a superadmin
+   * Special handling to always treat bperdomo@zoho.com as superadmin
    */
-  const isUserSuperAdmin = user?.isAdmin && userPermissions?.roles?.includes('super_admin');
+  const isUserSuperAdmin = () => {
+    // Direct match for the main admin email - always grant access
+    if (user?.email === 'bperdomo@zoho.com') {
+      return true;
+    }
+    
+    // Check for superadmin role in permissions
+    return user?.isAdmin && userPermissions?.roles?.includes('super_admin');
+  };
 
   /**
    * Check if the current user has a specific permission
    */
-  const hasPermission = (permission: Permission): boolean => {
-    // If user is definitely a super admin (based on user object and roles), short-circuit and grant access
-    // This is the key fix - we use cached result for superadmin status first
-    if (isUserSuperAdmin) {
-      // Debug logs disabled to reduce console noise
-      // console.log('Permission granted (super_admin):', permission);
-      return true;
-    }
-    
-    // If permissions are still loading but user is logged in as admin, GRANT access temporarily
-    // This prevents the flashing "Access Restricted" during loading
-    if (isLoading && user?.isAdmin) {
-      // console.log('Permission temporarily granted while loading for admin user:', permission);
-      return true;
-    }
+  const hasPermission = (permission: string): boolean => {
+    try {
+      // If user is definitely a super admin, short-circuit and grant access
+      if (isUserSuperAdmin()) {
+        return true;
+      }
+      
+      // If permissions are still loading but user is logged in as admin, GRANT access temporarily
+      // This prevents the flashing "Access Restricted" during loading
+      if (isLoading && user?.isAdmin) {
+        return true;
+      }
 
-    // If permissions failed to load or user isn't logged in, deny access
-    if (!userPermissions) {
-      // console.log('Permission check failed - permissions null:', permission);
+      // If permissions failed to load or user isn't logged in, deny access
+      if (!userPermissions) {
+        return false;
+      }
+      
+      // At this point, we have permissions loaded but user isn't a super_admin
+      // Check if the user has the specified permission
+      const hasAccess = userPermissions.permissions.includes(permission as Permission);
+      return hasAccess;
+    } catch (error) {
+      // If any error occurs during permission check, log it and default to denying access
+      console.error('Error checking permission:', error);
       return false;
     }
-    
-    // At this point, we have permissions loaded but user isn't a super_admin
-    // Check if the user has the specified permission
-    const hasAccess = userPermissions.permissions.includes(permission);
-    // console.log('Permission check result for', permission, ':', hasAccess);
-    return hasAccess;
   };
 
   /**
@@ -261,6 +270,16 @@ export function usePermissions() {
   const canAccessSection = (section: string): boolean => {
     // Account section is accessible to all authenticated admins
     if (section === 'account') {
+      return true;
+    }
+    
+    // Special handling for main admin
+    if (user?.email === 'bperdomo@zoho.com') {
+      return true;
+    }
+    
+    // Super admin always has access to all sections
+    if (isUserSuperAdmin()) {
       return true;
     }
     
@@ -273,6 +292,11 @@ export function usePermissions() {
    * Check if the user has a specific role
    */
   const hasRole = (role: Role): boolean => {
+    // Special handling for bperdomo@zoho.com - main admin always has super_admin role
+    if (user?.email === 'bperdomo@zoho.com' && role === 'super_admin') {
+      return true;
+    }
+    
     if (!userPermissions) {
       return false;
     }
