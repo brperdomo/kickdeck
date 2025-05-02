@@ -49,7 +49,7 @@ const LandingFooter = () => {
 
   return (
     <footer className="w-full bg-[#0a0c16] border-t border-[#1a1e36]/40 py-12">
-      <div className="container px-4 md:px-6">
+      <div className="container max-w-7xl mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           <div className="flex flex-col">
             <div className="mb-4">

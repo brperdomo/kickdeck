@@ -23,21 +23,21 @@ const LandingContact = () => {
 
   return (
     <section className="w-full py-12 md:py-24 lg:py-32 bg-[#0a0c16] border-b border-[#1a1e36]/40" id="contact">
-      <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center">
-          <div className="space-y-2">
+      <div className="container max-w-7xl mx-auto px-4 md:px-8">
+        <div className="flex flex-col items-center justify-center space-y-4 text-center w-full">
+          <div className="space-y-2 w-full">
             <div className="inline-block rounded-lg bg-[#1a1e36] px-3 py-1 text-sm text-[#4d79ff] font-medium">
               Contact Us
             </div>
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-white mt-6">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-white mt-6">
               Get in Touch with Our Team
             </h2>
-            <p className="max-w-[900px] text-gray-300 md:text-lg mt-4">
+            <p className="max-w-[1000px] mx-auto text-gray-300 md:text-xl mt-6">
               Have questions about MatchPro.ai? Our team is here to help you get started.
             </p>
           </div>
         </div>
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 py-12 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-full grid-cols-1 gap-8 py-16 lg:grid-cols-2">
           {/* Contact Form */}
           <div className="rounded-lg border border-[#1a1e36] bg-[#0e1019] p-6">
             <h3 className="text-xl font-bold mb-6 text-white">Send Us a Message</h3>
