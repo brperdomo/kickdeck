@@ -1,6 +1,6 @@
-# SendGrid Email Integration
+# SendGrid Email Integration for MatchPro
 
-This document explains how to set up and use SendGrid for sending emails in this application.
+This document explains how to set up and use SendGrid for sending emails in MatchPro.
 
 ## Setup Requirements
 
@@ -45,22 +45,28 @@ export SENDGRID_API_KEY='your_api_key_here'
 # Add it to your environment variables or .env file
 ```
 
-## Testing the Integration
+## Overview
 
-The repository includes several test scripts to verify your SendGrid integration:
+MatchPro now uses SendGrid as the primary and only email provider for all system emails, including:
 
-```bash
-# Basic SendGrid test
-node test-sendgrid-direct.js recipient@example.com verified-sender@yourdomain.com
+1. Password reset emails
+2. Team registration confirmations
+3. Administrative notifications
+4. User welcome emails
 
-# Test with verified domain
-node test-sendgrid-verified-domain.js recipient@example.com noreply@yourdomain.com
+The integration is configured to use either:
+- A SendGrid provider configured in the database, or
+- The SENDGRID_API_KEY environment variable as a fallback
 
-# Test the application's email service with SendGrid
-node test-email-service-sendgrid.js recipient@example.com verified-sender@yourdomain.com
-```
+## Email Templates
 
-Replace `recipient@example.com` with your email and `verified-sender@yourdomain.com` with a verified sender email from your SendGrid account.
+All email templates are stored in the database and retrieved when needed. The system includes:
+
+- Password reset template
+- Welcome email template 
+- Other team/event related templates
+
+If a template is not found, a fallback template is automatically generated.
 
 ## Troubleshooting
 
@@ -80,34 +86,63 @@ You must send from an email address that matches one of:
 - An address from a verified domain
 - A sender that matches a verified domain alias
 
-## Using SendGrid in the Application
+Currently configured to use: `support@matchpro.ai` (must be verified in your SendGrid account)
 
-The application is set up to use SendGrid as an email provider with the following capabilities:
+## Usage Examples
 
-1. Regular email sending
-2. Templated emails
-3. HTML and plain text content
-
-Example usage within the code:
+### Direct usage of SendGrid service
 
 ```javascript
-// Direct usage of SendGrid service
 import * as sendgridService from './server/services/sendgridService';
 
 await sendgridService.sendEmail({
   to: 'recipient@example.com',
-  from: 'verified-sender@yourdomain.com',
-  subject: 'Hello from the application',
+  from: 'support@matchpro.ai', // Must be verified in SendGrid
+  subject: 'Hello from MatchPro',
   html: '<h1>Hello world!</h1>'
 });
+```
 
-// Or using the application's email service (automatically selects provider)
+### Using the application's email service
+
+```javascript
 import { sendEmail } from './server/services/emailService';
 
 await sendEmail({
   to: 'recipient@example.com',
-  from: 'verified-sender@yourdomain.com',
-  subject: 'Hello from the application',
+  from: 'MatchPro Support <support@matchpro.ai>', // Uses the verified sender
+  subject: 'Hello from MatchPro',
   html: '<h1>Hello world!</h1>'
 });
+```
+
+### Sending templated emails (recommended approach)
+
+```javascript
+import { sendTemplatedEmail } from './server/services/emailService';
+
+await sendTemplatedEmail(
+  'recipient@example.com',
+  'password_reset', // Template type
+  {
+    // Context variables for the template
+    username: 'John Doe',
+    resetUrl: 'https://example.com/reset?token=abc123',
+    expiryHours: 24
+  }
+);
+```
+
+## Testing
+
+You can test the SendGrid integration with:
+
+```
+node test-sendgrid.js your-email@example.com
+```
+
+To test password reset emails specifically:
+
+```
+node test-password-reset-email.js your-email@example.com
 ```

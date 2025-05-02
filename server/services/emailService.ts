@@ -25,37 +25,40 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 type EmailProvider = 'smtp' | 'sendgrid';
 
 /**
- * Gets the configured email provider settings from the database
- * with fallback to environment variables if no provider is configured
+ * Gets the configured email provider settings, prioritizing SendGrid as the primary provider
+ * First checks the database, then falls back to SendGrid environment variables
  */
 async function getEmailProvider() {
   try {
-    // Get the default email provider
-    const [provider] = await db
+    // First, check if there's a SendGrid provider in the database
+    const sendGridProviders = await db
       .select()
       .from(emailProviderSettings)
       .where(and(
-        eq(emailProviderSettings.isDefault, true),
+        eq(emailProviderSettings.providerType, 'sendgrid'),
         eq(emailProviderSettings.isActive, true)
       ));
-
-    if (provider) {
-      return provider;
+    
+    // If we have an active SendGrid provider, use it
+    if (sendGridProviders.length > 0) {
+      // Prefer the default provider if there are multiple
+      const defaultProvider = sendGridProviders.find(p => p.isDefault);
+      return defaultProvider || sendGridProviders[0];
     }
-
-    // No provider found in database, check for environment variables as fallback
+    
+    // If no SendGrid provider in database, use environment variables
     const sendgridApiKey = process.env.SENDGRID_API_KEY;
     if (sendgridApiKey) {
-      console.log('Using SendGrid API key from environment variables as fallback');
+      console.log('Using SendGrid API key from environment variables');
       
-      // Create a fallback provider from SendGrid environment variables
+      // Create a SendGrid provider from environment variables
       return {
         id: 0,
         providerType: 'sendgrid' as EmailProvider,
-        providerName: 'Fallback SendGrid Provider',
+        providerName: 'SendGrid Provider',
         settings: {
           apiKey: sendgridApiKey,
-          from: process.env.SENDGRID_FROM_EMAIL || 'noreply@example.com'
+          from: process.env.SENDGRID_FROM_EMAIL || 'support@matchpro.ai'
         },
         isActive: true,
         isDefault: true,
@@ -64,37 +67,8 @@ async function getEmailProvider() {
       };
     }
 
-    // Check for SMTP settings if SendGrid is not available
-    const smtpHost = process.env.SMTP_HOST;
-    const smtpPort = process.env.SMTP_PORT;
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPassword = process.env.SMTP_PASSWORD;
-    const smtpSecure = process.env.SMTP_SECURE === 'true';
-
-    if (smtpHost && smtpPort && smtpUser && smtpPassword) {
-      console.log('Using SMTP settings from environment variables as fallback');
-      
-      // Create a fallback provider from environment variables
-      return {
-        id: 0,
-        providerType: 'smtp' as EmailProvider,
-        providerName: 'Fallback SMTP Provider',
-        settings: {
-          host: smtpHost,
-          port: smtpPort,
-          username: smtpUser,
-          password: smtpPassword,
-          secure: smtpSecure.toString()
-        },
-        isActive: true,
-        isDefault: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-    }
-
-    // No fallback available either
-    throw new Error('No email provider configured in database and no valid email settings in environment variables');
+    // SendGrid is not available - this is an error as we require SendGrid
+    throw new Error('SendGrid is not configured. Please set SENDGRID_API_KEY in environment variables.');
   } catch (error) {
     console.error('Error getting email provider:', error);
     throw error;
@@ -207,7 +181,7 @@ function renderTemplate(template: string, context: TemplateContext): string {
 }
 
 /**
- * Sends an email using the configured provider
+ * Sends an email using the SendGrid API
  */
 export async function sendEmail(options: EmailOptions): Promise<void> {
   const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -225,41 +199,24 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
       return;
     }
     
-    // Get the email provider to determine which method to use for sending
+    // Get the SendGrid provider
     const provider = await getEmailProvider();
     
-    // Use the appropriate provider to send the email
-    if (provider.providerType === 'sendgrid') {
-      // Use SendGrid API directly
-      const from = options.from || `${provider.providerName} <${(provider.settings as any).from || 'noreply@example.com'}>`;
-      
-      const result = await sendgridService.sendEmail({
-        to: options.to,
-        from: from,
-        subject: options.subject,
-        html: options.html,
-        text: options.html ? undefined : 'Please view this email in a compatible email client.'
-      });
-      
-      if (result) {
-        console.log(`SendGrid: Email sent to ${options.to}`);
-      } else {
-        throw new Error('Failed to send email via SendGrid');
-      }
+    // Use SendGrid to send the email
+    const from = options.from || `${provider.providerName} <${(provider.settings as any).from || 'support@matchpro.ai'}>`;
+    
+    const result = await sendgridService.sendEmail({
+      to: options.to,
+      from: from,
+      subject: options.subject,
+      html: options.html,
+      text: options.html ? undefined : 'Please view this email in a compatible email client.'
+    });
+    
+    if (result) {
+      console.log(`SendGrid: Email sent to ${options.to}`);
     } else {
-      // Use traditional SMTP via nodemailer
-      const transporter = await getEmailTransporter();
-      
-      // Double check that we have a valid transporter before trying to send
-      if (!transporter) {
-        console.error('No email transporter available');
-        // Log the issue but don't crash the application in production
-        console.error('Email could not be sent to', options.to, 'due to missing email transporter');
-        return;
-      }
-      
-      await transporter.sendMail(options);
-      console.log(`SMTP: Email sent to ${options.to}`);
+      throw new Error('Failed to send email via SendGrid');
     }
   } catch (error) {
     console.error('Error sending email:', error);
@@ -344,8 +301,8 @@ function createFallbackTemplate(templateType: string, context: TemplateContext, 
           <p style="margin-top: 20px; font-size: 12px; color: #666;">This template was generated automatically as a fallback in development mode.</p>
         </div>
       `,
-      senderName: "System (Dev)",
-      senderEmail: "noreply@example.com",
+      senderName: "MatchPro",
+      senderEmail: "support@matchpro.ai",
       isActive: true,
       type: templateType,
       providerId: null
@@ -363,8 +320,8 @@ function createFallbackTemplate(templateType: string, context: TemplateContext, 
           <p style="margin-top: 20px; font-size: 12px; color: #666;">This is an automated notification.</p>
         </div>
       `,
-      senderName: "Team Registration System",
-      senderEmail: "noreply@matchpro.ai",
+      senderName: "MatchPro",
+      senderEmail: "support@matchpro.ai",
       isActive: true,
       type: templateType,
       providerId: null
