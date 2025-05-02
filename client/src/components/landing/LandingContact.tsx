@@ -22,81 +22,107 @@ const LandingContact = () => {
   };
 
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-slate-50" id="contact">
+    <section className="w-full py-12 md:py-24 lg:py-32 bg-[#0a0c16] border-b border-[#1a1e36]/40" id="contact">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
-            <div className="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm text-primary">
+            <div className="inline-block rounded-lg bg-[#1a1e36] px-3 py-1 text-sm text-[#4d79ff] font-medium">
               Contact Us
             </div>
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-white mt-6">
               Get in Touch with Our Team
             </h2>
-            <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+            <p className="max-w-[900px] text-gray-300 md:text-lg mt-4">
               Have questions about MatchPro.ai? Our team is here to help you get started.
             </p>
           </div>
         </div>
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 py-12 lg:grid-cols-2">
           {/* Contact Form */}
-          <div className="rounded-lg border bg-background p-6 shadow-sm">
-            <h3 className="text-xl font-bold mb-4">Send Us a Message</h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="rounded-lg border border-[#1a1e36] bg-[#0e1019] p-6">
+            <h3 className="text-xl font-bold mb-6 text-white">Send Us a Message</h3>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  <label htmlFor="name" className="text-sm font-medium text-gray-300 leading-none">
                     Name
                   </label>
-                  <Input id="name" placeholder="Enter your name" required />
+                  <Input 
+                    id="name" 
+                    placeholder="Enter your name" 
+                    className="bg-[#131724] border-[#1a1e36] text-gray-300 placeholder:text-gray-500 focus:border-[#4d79ff] focus:ring-[#4d79ff]/20" 
+                    required 
+                  />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  <label htmlFor="email" className="text-sm font-medium text-gray-300 leading-none">
                     Email
                   </label>
-                  <Input id="email" type="email" placeholder="Enter your email" required />
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    placeholder="Enter your email" 
+                    className="bg-[#131724] border-[#1a1e36] text-gray-300 placeholder:text-gray-500 focus:border-[#4d79ff] focus:ring-[#4d79ff]/20" 
+                    required 
+                  />
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="subject" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                <label htmlFor="subject" className="text-sm font-medium text-gray-300 leading-none">
                   Subject
                 </label>
-                <Input id="subject" placeholder="Enter subject" required />
+                <Input 
+                  id="subject" 
+                  placeholder="Enter subject" 
+                  className="bg-[#131724] border-[#1a1e36] text-gray-300 placeholder:text-gray-500 focus:border-[#4d79ff] focus:ring-[#4d79ff]/20" 
+                  required 
+                />
               </div>
               <div className="space-y-2">
-                <label htmlFor="message" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                <label htmlFor="message" className="text-sm font-medium text-gray-300 leading-none">
                   Message
                 </label>
-                <Textarea id="message" placeholder="Enter your message" className="min-h-[120px]" required />
+                <Textarea 
+                  id="message" 
+                  placeholder="Enter your message" 
+                  className="min-h-[150px] bg-[#131724] border-[#1a1e36] text-gray-300 placeholder:text-gray-500 focus:border-[#4d79ff] focus:ring-[#4d79ff]/20" 
+                  required 
+                />
               </div>
-              <Button type="submit" className="w-full">Send Message</Button>
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white"
+              >
+                Send Message
+              </Button>
             </form>
           </div>
           
           {/* Contact Information */}
-          <div className="rounded-lg border bg-background p-6 shadow-sm">
-            <h3 className="text-xl font-bold mb-4">Contact Information</h3>
-            <div className="space-y-6">
+          <div className="rounded-lg border border-[#1a1e36] bg-[#0e1019] p-6">
+            <h3 className="text-xl font-bold mb-6 text-white">Contact Information</h3>
+            <div className="space-y-8">
               <div className="flex items-start space-x-4">
-                <Mail className="h-6 w-6 text-primary" />
+                <Mail className="h-6 w-6 text-[#4d79ff]" />
                 <div>
-                  <h4 className="font-medium">Email</h4>
-                  <p className="text-sm text-gray-500">info@matchpro.ai</p>
-                  <p className="text-sm text-gray-500">support@matchpro.ai</p>
+                  <h4 className="font-medium text-white">Email</h4>
+                  <p className="text-sm text-gray-400">info@matchpro.ai</p>
+                  <p className="text-sm text-gray-400">support@matchpro.ai</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">
-                <Phone className="h-6 w-6 text-primary" />
+                <Phone className="h-6 w-6 text-[#4d79ff]" />
                 <div>
-                  <h4 className="font-medium">Phone</h4>
-                  <p className="text-sm text-gray-500">+1 (555) 123-4567</p>
-                  <p className="text-sm text-gray-500">Monday - Friday, 9AM - 5PM EST</p>
+                  <h4 className="font-medium text-white">Phone</h4>
+                  <p className="text-sm text-gray-400">+1 (555) 123-4567</p>
+                  <p className="text-sm text-gray-400">Monday - Friday, 9AM - 5PM EST</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">
-                <MapPin className="h-6 w-6 text-primary" />
+                <MapPin className="h-6 w-6 text-[#4d79ff]" />
                 <div>
-                  <h4 className="font-medium">Office</h4>
-                  <p className="text-sm text-gray-500">
+                  <h4 className="font-medium text-white">Office</h4>
+                  <p className="text-sm text-gray-400">
                     123 Soccer Way<br />
                     Suite 100<br />
                     Boston, MA 02110
@@ -105,11 +131,11 @@ const LandingContact = () => {
               </div>
               
               <div className="pt-4">
-                <h4 className="font-medium mb-2">Follow Us</h4>
+                <h4 className="font-medium text-white mb-3">Follow Us</h4>
                 <div className="flex space-x-4">
                   <a 
                     href="#" 
-                    className="rounded-full bg-slate-100 p-2 text-gray-600 hover:bg-primary hover:text-white"
+                    className="rounded-full bg-[#1a1e36] p-2 text-gray-300 hover:bg-[#4d79ff] hover:text-white transition-colors"
                     aria-label="Twitter"
                   >
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -118,7 +144,7 @@ const LandingContact = () => {
                   </a>
                   <a 
                     href="#" 
-                    className="rounded-full bg-slate-100 p-2 text-gray-600 hover:bg-primary hover:text-white"
+                    className="rounded-full bg-[#1a1e36] p-2 text-gray-300 hover:bg-[#4d79ff] hover:text-white transition-colors"
                     aria-label="LinkedIn"
                   >
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -127,7 +153,7 @@ const LandingContact = () => {
                   </a>
                   <a 
                     href="#" 
-                    className="rounded-full bg-slate-100 p-2 text-gray-600 hover:bg-primary hover:text-white"
+                    className="rounded-full bg-[#1a1e36] p-2 text-gray-300 hover:bg-[#4d79ff] hover:text-white transition-colors"
                     aria-label="Facebook"
                   >
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -136,7 +162,7 @@ const LandingContact = () => {
                   </a>
                   <a 
                     href="#" 
-                    className="rounded-full bg-slate-100 p-2 text-gray-600 hover:bg-primary hover:text-white"
+                    className="rounded-full bg-[#1a1e36] p-2 text-gray-300 hover:bg-[#4d79ff] hover:text-white transition-colors"
                     aria-label="Instagram"
                   >
                     <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

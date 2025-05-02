@@ -48,14 +48,14 @@ const LandingFooter = () => {
   ];
 
   return (
-    <footer className="w-full bg-background border-t py-12">
+    <footer className="w-full bg-[#0a0c16] border-t border-[#1a1e36]/40 py-12">
       <div className="container px-4 md:px-6">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           <div className="flex flex-col">
             <div className="mb-4">
               <Link href="/" className="flex items-center">
                 <img 
-                  src="/public/logo.png" 
+                  src="/logo.png" 
                   alt="MatchPro.ai" 
                   className="h-8 w-auto"
                   onError={(e) => {
@@ -64,16 +64,16 @@ const LandingFooter = () => {
                     target.src = "https://raw.githubusercontent.com/replit/replit.github.io/main/static/images/logo.svg";
                   }} 
                 />
-                <span className="ml-2 text-lg font-bold">MatchPro.ai</span>
+                <span className="ml-2 text-lg font-bold text-white">MATCHPRO.AI</span>
               </Link>
             </div>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-gray-400 mb-4">
               Simplifying soccer tournament management with AI-powered tools and intuitive interfaces.
             </p>
             <div className="flex space-x-4">
               <a 
                 href="#" 
-                className="text-gray-600 hover:text-primary"
+                className="text-gray-400 hover:text-[#4d79ff]"
                 aria-label="Twitter"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -82,7 +82,7 @@ const LandingFooter = () => {
               </a>
               <a 
                 href="#" 
-                className="text-gray-600 hover:text-primary"
+                className="text-gray-400 hover:text-[#4d79ff]"
                 aria-label="LinkedIn"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -91,7 +91,7 @@ const LandingFooter = () => {
               </a>
               <a 
                 href="#" 
-                className="text-gray-600 hover:text-primary"
+                className="text-gray-400 hover:text-[#4d79ff]"
                 aria-label="Facebook"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -100,7 +100,7 @@ const LandingFooter = () => {
               </a>
               <a 
                 href="#" 
-                className="text-gray-600 hover:text-primary"
+                className="text-gray-400 hover:text-[#4d79ff]"
                 aria-label="Instagram"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -113,13 +113,13 @@ const LandingFooter = () => {
           {/* Footer Link Columns */}
           {footerLinks.map((column, index) => (
             <div key={index} className="space-y-4">
-              <h4 className="text-sm font-medium">{column.title}</h4>
+              <h4 className="text-sm font-medium text-white">{column.title}</h4>
               <ul className="space-y-2">
                 {column.links.map((link, linkIndex) => (
                   <li key={linkIndex}>
                     <Link 
                       href={link.href} 
-                      className="text-sm text-gray-500 hover:text-primary"
+                      className="text-sm text-gray-400 hover:text-[#4d79ff]"
                     >
                       {link.name}
                     </Link>
@@ -130,19 +130,19 @@ const LandingFooter = () => {
           ))}
         </div>
         
-        <div className="mt-12 border-t pt-6">
+        <div className="mt-12 border-t border-[#1a1e36]/40 pt-6">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400">
               &copy; {currentYear} MatchPro.ai. All rights reserved.
             </p>
             <div className="flex gap-4">
-              <Link href="/terms" className="text-xs text-gray-500 hover:underline">
+              <Link href="/terms" className="text-xs text-gray-400 hover:text-[#4d79ff]">
                 Terms of Service
               </Link>
-              <Link href="/privacy" className="text-xs text-gray-500 hover:underline">
+              <Link href="/privacy" className="text-xs text-gray-400 hover:text-[#4d79ff]">
                 Privacy Policy
               </Link>
-              <Link href="/cookies" className="text-xs text-gray-500 hover:underline">
+              <Link href="/cookies" className="text-xs text-gray-400 hover:text-[#4d79ff]">
                 Cookies Policy
               </Link>
             </div>
