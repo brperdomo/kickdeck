@@ -1,0 +1,66 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:9 Google Maps API key length: 0 characters
+env.ts:15 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /admin
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+RouteDebugger.tsx:15 Current pathname: /admin
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /admin
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+RouteDebugger.tsx:15 Current pathname: /admin
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:76 User data fetched: Object
+admin:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+admin:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_organization_settings
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_events
+use-permissions.ts:227 Permission check failed - permissions still loading or null: emulate_users
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_organization_settings
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_events
+use-permissions.ts:227 Permission check failed - permissions still loading or null: emulate_users
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_form_templates
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_events
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_teams
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_administrators
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_complexes
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_households
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_scheduling
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_reports
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_files
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_members
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_role_permissions
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_organization_settings
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_events
+use-permissions.ts:227 Permission check failed - permissions still loading or null: emulate_users
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_organization_settings
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_events
+use-permissions.ts:227 Permission check failed - permissions still loading or null: emulate_users
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_form_templates
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_events
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_teams
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_administrators
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_complexes
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_households
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_scheduling
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_reports
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_files
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_members
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_role_permissions
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_organization_settings
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_events
+use-permissions.ts:227 Permission check failed - permissions still loading or null: emulate_users
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_organization_settings
+use-permissions.ts:227 Permission check failed - permissions still loading or null: view_events
+use-permissions.ts:227 Permission check failed - permissions still loading or null: emulate_users
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_form_templates
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_events
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_teams
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_administrators
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_complexes
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_households
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_scheduling
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_reports
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_files
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_members
+2use-permissions.ts:227 Permission check failed - permissions still loading or null: view_role_permissions

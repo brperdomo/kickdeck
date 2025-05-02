@@ -4664,7 +4664,7 @@ interface AdminDashboardProps {
 
 function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   const { user, logout, isLoading: isUserLoading } = useUser();
-  const { hasPermission } = usePermissions();
+  const { hasPermission, hasRole } = usePermissions();
   const [location, navigate] = useLocation();
   const [activeView, setActiveView] = useState<View>(initialView);
   // Show welcome banner only once per login session
@@ -4786,9 +4786,23 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
       'members': 'view_members'
     };
     
-    // Check if user has permission to access the active view
+    // Get the required permission for the active view
     const permissionRequired = permissionMap[activeView as keyof typeof permissionMap];
-    if (permissionRequired && !hasPermission(permissionRequired)) {
+    
+    // If user is a super admin, skip permission check
+    if (user?.isAdmin && hasRole('super_admin')) {
+      // SUPER ADMIN BYPASS - Always render content for super admins
+      return renderViewContent(activeView);
+    }
+    
+    // Check if the view requires a permission check
+    if (permissionRequired) {
+      // If it's the account view or user doesn't need permission, render directly
+      if (activeView === 'account' || hasPermission(permissionRequired as any)) {
+        return renderViewContent(activeView);
+      }
+      
+      // Otherwise show restricted access message
       return (
         <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
           <Shield className="h-12 w-12 text-muted-foreground" />
@@ -4798,8 +4812,13 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
       );
     }
     
-    // If user has permission, render the appropriate view
-    switch (activeView) {
+    // If we got here with no permission check needed, render view
+    return renderViewContent(activeView);
+  };
+  
+  // Helper function to render the appropriate view content
+  const renderViewContent = (view: View) => {
+    switch (view) {
       case 'administrators':
         return <AdministratorsView />;
       case 'events':
@@ -5234,16 +5253,23 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
 }
 
 function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView }) {
-  const { hasPermission } = usePermissions();
+  const { hasPermission, hasRole } = usePermissions();
+  const { user } = useUser();
   
   // Permission mapping for different settings views
   const permissionMap = {
     'general': 'view_organization_settings'
   };
   
+  // Super admin always has access to all settings
+  if (user?.isAdmin && hasRole('super_admin')) {
+    // Render appropriate settings content based on active tab
+    return renderSettingsContent(activeSettingsView);
+  }
+  
   // Check if user has permission to access the requested settings view
   const requiredPermission = permissionMap[activeSettingsView as keyof typeof permissionMap];
-  if (requiredPermission && !hasPermission(requiredPermission)) {
+  if (requiredPermission && !hasPermission(requiredPermission as any)) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
         <Shield className="h-12 w-12 text-muted-foreground" />
@@ -5252,6 +5278,13 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
       </div>
     );
   }
+  
+  // If we made it here, render the appropriate settings content
+  return renderSettingsContent(activeSettingsView);
+}
+
+// Helper function to render settings content 
+function renderSettingsContent(settingsView: SettingsView) {
   
   switch (activeSettingsView) {
     case 'general':
