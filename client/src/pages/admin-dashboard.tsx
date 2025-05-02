@@ -5434,7 +5434,7 @@ function CouponManagement() {
   // Use PermissionGuard for consistent permission handling
   return (
     <PermissionGuard
-      permission="view_coupons" as any
+      permission={"view_coupons" as any}
       fallback={
         <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
           <Shield className="h-12 w-12 text-muted-foreground" />
