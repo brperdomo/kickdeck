@@ -99,8 +99,8 @@ router.get('/', async (req, res) => {
     const totalEvents = countResult[0]?.count || 0;
     
     // Execute the main query with pagination
-    // If searching, we might want to show all results on one page
-    const applyPagination = (!searchQuery && statusFilter === 'all') || totalEvents > pageSize;
+    // Always apply pagination to ensure consistent behavior
+    const applyPagination = true;
     
     let finalEventsQuery = eventsQuery.groupBy(events.id).orderBy(events.startDate);
     

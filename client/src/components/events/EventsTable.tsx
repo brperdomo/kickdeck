@@ -196,7 +196,7 @@ export function EventsTable() {
       
       // Force refetch all events data with the current filters
       queryClient.invalidateQueries({ 
-        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery]
+        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter]
       });
       
       toast({
@@ -231,7 +231,7 @@ export function EventsTable() {
     onSuccess: (data) => {
       // Force refetch all events data with the current filters
       queryClient.invalidateQueries({ 
-        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery]
+        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter]
       });
       
       // Log the data to help with debugging
@@ -387,7 +387,7 @@ export function EventsTable() {
         description: "The event was successfully deleted"
       });
 
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter] });
       setDeleteDialogOpen(false);
       setDeleteConfirmText("");
       setEventToDelete(null);
