@@ -53,8 +53,9 @@ export async function sendEmail(params: SendGridEmailParams): Promise<boolean> {
       message.templateId = params.templateId;
       message.dynamicTemplateData = params.dynamicTemplateData || {};
     } else {
-      message.text = params.text || '';
-      message.html = params.html || '';
+      // Ensure both text and html are strings with at least one character
+      message.text = params.text || 'Please view this email in a compatible email client.';
+      message.html = params.html || '<p>Please view this email in a compatible email client.</p>';
     }
 
     const response = await mailService.send(message);
