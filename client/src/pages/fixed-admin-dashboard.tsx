@@ -60,7 +60,7 @@ export default function AdminDashboard({ initialView = 'events' }: AdminDashboar
   // Handle logout
   const handleLogout = () => {
     logoutMutation.mutate();
-    navigate('/login');
+    navigate('/auth');
   };
 
   // Force show emergency mode for admin users
