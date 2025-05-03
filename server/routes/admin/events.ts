@@ -52,18 +52,6 @@ router.get('/', async (req, res) => {
       .from(events)
       .leftJoin(teams, eq(events.id, teams.eventId));
       
-    // Apply archive filter unless showArchived is true
-    if (!showArchived) {
-      eventsQuery = eventsQuery.where(eq(events.isArchived, false));
-    }
-    
-    // Apply search filter if search query is provided
-    if (searchQuery) {
-      eventsQuery = eventsQuery.where(
-        sql`LOWER(${events.name}) LIKE LOWER(${'%' + searchQuery + '%'})`
-      );
-    }
-    
     // Build where conditions
     let whereConditions = [];
     
