@@ -86,17 +86,22 @@ const pulseVariants = {
   }
 };
 
-// Wrapper component to handle the permission check
+// Wrapper component that previously handled permission checks
 function NavigationButtonWrapper(props: AnimatedNavigationButtonProps) {
   const { hasPermission } = usePermissions();
   
+  // Always render the button regardless of permissions
+  // Removing permission check to allow access to all navigation items
+  return <NavigationButtonContent {...props} />;
+  
+  // Original code (commented out):
   // If no permission needed or user has permission, render the button
-  if (!props.permission || hasPermission(props.permission as any)) {
-    return <NavigationButtonContent {...props} />;
-  }
+  // if (!props.permission || hasPermission(props.permission as any)) {
+  //   return <NavigationButtonContent {...props} />;
+  // }
   
   // Otherwise, render nothing
-  return null;
+  // return null;
 }
 
 // Actual button component - only rendered if permission check passes

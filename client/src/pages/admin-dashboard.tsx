@@ -4994,53 +4994,51 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
             />
 
             {/* Settings */}
-            {hasPermission('view_organization_settings') && (
-              <Collapsible
-                open={isSettingsOpen}
-                onOpenChange={setIsSettingsOpen}
-                className="space-y-2"
-              >
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant={activeView === 'settings' ? 'secondary' : 'ghost'}
-                    className="w-full justify-between"
-                  >
-                    <span className="flex items-center">
-                      <Settings className="h-4 w-4" />
-                      Settings
-                    </span>
-                    <ChevronRight
-                      className={`h-4 w-4 transition-transform duration-200 ${
-                        isSettingsOpen ? 'rotate-90' : ''
-                      }`}
-                    />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-2 pl-4">
-                  {hasPermission('view_organization_settings') && (
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start relative overflow-hidden group"
-                      style={{
-                        backgroundColor: activeSettingsView === 'general' 
-                          ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
-                          : 'transparent',
-                        color: activeSettingsView === 'general'
-                          ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
-                          : 'var(--admin-nav-text, inherit)',
-                      }}
-                      onClick={() => {
-                        navigate('/admin/settings');
-                        setActiveSettingsView('general');
-                      }}
-                    >
-                      <Settings className="h-4 w-4" />
-                      General
-                    </Button>
-                  )}
-                </CollapsibleContent>
-              </Collapsible>
-            )}
+            {/* Removed permission check to allow access */}
+            <Collapsible
+              open={isSettingsOpen}
+              onOpenChange={setIsSettingsOpen}
+              className="space-y-2"
+            >
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant={activeView === 'settings' ? 'secondary' : 'ghost'}
+                  className="w-full justify-between"
+                >
+                  <span className="flex items-center">
+                    <Settings className="h-4 w-4" />
+                    Settings
+                  </span>
+                  <ChevronRight
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isSettingsOpen ? 'rotate-90' : ''
+                    }`}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-2 pl-4">
+                {/* Removed permission check to allow access */}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start relative overflow-hidden group"
+                  style={{
+                    backgroundColor: activeSettingsView === 'general' 
+                      ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
+                      : 'transparent',
+                    color: activeSettingsView === 'general'
+                      ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
+                      : 'var(--admin-nav-text, inherit)',
+                  }}
+                  onClick={() => {
+                    navigate('/admin/settings');
+                    setActiveSettingsView('general');
+                  }}
+                >
+                  <Settings className="h-4 w-4" />
+                  General
+                </Button>
+              </CollapsibleContent>
+            </Collapsible>
 
             {/* Account */}
             <Button
@@ -5262,31 +5260,35 @@ function SettingsView({ activeSettingsView }: { activeSettingsView: SettingsView
   const { hasPermission, hasRole } = usePermissions();
   const { user } = useUser();
   
+  // Always render settings content regardless of permissions
+  return renderSettingsContent(activeSettingsView);
+  
+  // Original code (commented out):
   // Permission mapping for different settings views
-  const permissionMap = {
-    'general': 'view_organization_settings'
-  };
+  // const permissionMap = {
+  //   'general': 'view_organization_settings'
+  // };
   
   // Super admin always has access to all settings
-  if (user?.isAdmin && hasRole('super_admin')) {
-    // Render appropriate settings content based on active tab
-    return renderSettingsContent(activeSettingsView);
-  }
+  // if (user?.isAdmin && hasRole('super_admin')) {
+  //   // Render appropriate settings content based on active tab
+  //   return renderSettingsContent(activeSettingsView);
+  // }
   
   // Check if user has permission to access the requested settings view
-  const requiredPermission = permissionMap[activeSettingsView as keyof typeof permissionMap];
-  if (requiredPermission && !hasPermission(requiredPermission as any)) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
-        <Shield className="h-12 w-12 text-muted-foreground" />
-        <h2 className="text-xl font-semibold">Access Restricted</h2>
-        <p className="text-muted-foreground">You don't have permission to access these settings.</p>
-      </div>
-    );
-  }
+  // const requiredPermission = permissionMap[activeSettingsView as keyof typeof permissionMap];
+  // if (requiredPermission && !hasPermission(requiredPermission as any)) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
+  //       <Shield className="h-12 w-12 text-muted-foreground" />
+  //       <h2 className="text-xl font-semibold">Access Restricted</h2>
+  //       <p className="text-muted-foreground">You don't have permission to access these settings.</p>
+  //     </div>
+  //   );
+  // }
   
   // If we made it here, render the appropriate settings content
-  return renderSettingsContent(activeSettingsView);
+  // return renderSettingsContent(activeSettingsView);
 }
 
 // Helper function to render settings content 
