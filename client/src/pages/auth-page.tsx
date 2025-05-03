@@ -98,6 +98,8 @@ export default function AuthPage() {
   useEffect(() => {
     if (!user) return;
     
+    console.log("Auth page: User is logged in, redirecting...", user);
+    
     // First check URL params for redirect
     const searchParams = new URLSearchParams(window.location.search);
     const redirectParam = searchParams.get('redirect');
@@ -105,15 +107,26 @@ export default function AuthPage() {
     // Then check session storage (legacy method)
     const redirectPath = sessionStorage.getItem('redirectAfterAuth');
     
+    // Force admin status for specific emails (extra safety measure)
+    const adminEmails = [
+      'bperdomo@zoho.com',
+      'jesus.desantiagojr@gmail.com', 
+      'bryan@matchpro.ai'
+    ];
+    
+    const isAdminUser = user.isAdmin || (user.email && adminEmails.includes(user.email.toLowerCase()));
+    
     if (redirectParam) {
       // Decode the URL-encoded path
       const decodedPath = decodeURIComponent(redirectParam);
+      console.log("Redirecting to:", decodedPath);
       
       // Check if this looks like /register/event/ID and fix it
       if (decodedPath.includes('/register/event/')) {
         // Get the event ID
         const eventId = decodedPath.split('/register/event/')[1];
         if (eventId) {
+          console.log("Redirecting to event registration:", eventId);
           window.location.href = `/register/event/${eventId}`;
           return;
         }
@@ -121,14 +134,26 @@ export default function AuthPage() {
       
       window.location.href = decodedPath;
     } else if (redirectPath) {
+      console.log("Redirecting to stored path:", redirectPath);
       sessionStorage.removeItem('redirectAfterAuth');
       window.location.href = redirectPath;
-    } else if (user.isAdmin) {
-      window.location.href = '/admin';
+    } else if (isAdminUser) {
+      console.log("User is admin, redirecting to /admin dashboard");
+      // Use navigate to change routes within the application
+      setLocation('/admin');
+      
+      // Fallback to direct URL change if navigation fails
+      setTimeout(() => {
+        if (window.location.pathname !== '/admin') {
+          console.log("Fallback navigation to admin dashboard");
+          window.location.href = '/admin';
+        }
+      }, 100);
     } else {
+      console.log("Redirecting to user dashboard");
       window.location.href = '/dashboard';
     }
-  }, [user]);
+  }, [user, setLocation]);
 
   async function onSubmit(data: LoginFormData) {
     try {
