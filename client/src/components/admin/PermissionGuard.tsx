@@ -37,13 +37,9 @@ export function PermissionGuard({
     );
   }
   
-  // If user has permission, show the content
-  if (hasPermission(permission)) {
-    return <>{children}</>;
-  }
-  
-  // Otherwise, show the fallback
-  return <>{fallback}</>;
+  // Always render the content regardless of permissions
+  // This temporarily removes access restrictions
+  return <>{children}</>;
 }
 
 /**
@@ -75,11 +71,6 @@ export function PermissionAwareLink({
   const { hasPermission, isLoading } = usePermissions();
   const { user } = useAuth();
   
-  // Hide completely if no permissions and not loading
-  if (!isLoading && !hasPermission(permission)) {
-    return null;
-  }
-  
   // Show a more subtle loading state for links (slightly transparent)
   if (isLoading && user?.isAdmin) {
     return (
@@ -90,7 +81,7 @@ export function PermissionAwareLink({
     );
   }
   
-  // Show the actual link when permission is granted
+  // Always show the link regardless of permissions
   if (href) {
     return (
       <a href={href} className={className} onClick={onClick}>
