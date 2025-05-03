@@ -347,8 +347,20 @@ export async function sendPasswordResetEmail(
   const isDevelopment = process.env.NODE_ENV !== 'production';
   
   try {
-    // Use the APP_URL environment variable or the Replit domain as fallback
-    const appUrl = process.env.APP_URL || `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
+    // In production, always use the PRODUCTION_URL env var or the fallback production domain
+    // In development, use APP_URL or Replit domain
+    let appUrl: string;
+    
+    if (isDevelopment) {
+      // Development environment - use local domain
+      appUrl = process.env.APP_URL || `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
+      console.log(`Using development URL for password reset: ${appUrl}`);
+    } else {
+      // Production environment - use production domain
+      appUrl = process.env.PRODUCTION_URL || process.env.APP_URL || 'https://matchpro.ai';
+      console.log(`Using production URL for password reset: ${appUrl}`);
+    }
+    
     const resetUrl = `${appUrl}/reset-password?token=${resetToken}`;
     
     await sendTemplatedEmail(to, 'password_reset', {

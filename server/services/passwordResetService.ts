@@ -99,21 +99,22 @@ export async function initiatePasswordReset(email: string): Promise<boolean> {
     // Create a reset token
     const token = await createPasswordResetToken(user.id);
     
-    // Generate the reset URL
-    const appUrl = process.env.APP_URL || `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
-    const resetUrl = `${appUrl}/reset-password?token=${token}`;
-    
     // In development mode, log the reset link (but still send the email)
     if (isDevelopment) {
+      // For logging purposes only - the actual URL for the email will be handled in emailService
+      const appUrl = process.env.APP_URL || `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
+      const logResetUrl = `${appUrl}/reset-password?token=${token}`;
+      
       console.log('\n===== DEVELOPMENT MODE: PASSWORD RESET LINK =====');
       console.log(`User: ${user.username} (${user.email})`);
-      console.log(`Reset URL: ${resetUrl}`);
+      console.log(`Reset URL (dev): ${logResetUrl}`);
       console.log(`Token: ${token}`);
       console.log('Use this link to reset the password (valid for 24 hours)');
       console.log('==================================================\n');
     }
     
     // Always send the reset email, regardless of environment
+    // The emailService will determine the correct domain based on the environment
     await sendPasswordResetEmail(user.email, token, user.username);
     
     return true;
