@@ -187,16 +187,16 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
   const isDevelopment = process.env.NODE_ENV !== 'production';
   
   try {
+    // Log the email content in development mode for debugging
     if (isDevelopment) {
-      // In development mode, just log the email content
-      console.log('\n===== DEVELOPMENT MODE: EMAIL NOT ACTUALLY SENT =====');
+      console.log('\n===== DEVELOPMENT MODE: EMAIL CONTENT =====');
       console.log(`To: ${options.to}`);
       console.log(`Subject: ${options.subject}`);
       console.log(`From: ${options.from || 'default-sender'}`);
       console.log('Content:');
       console.log(options.html);
-      console.log('=====================================================\n');
-      return;
+      console.log('=============================================\n');
+      // Still proceed to send the email - don't return early
     }
     
     // Get the SendGrid provider
@@ -222,12 +222,13 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
     console.error('Error sending email:', error);
     
     if (isDevelopment) {
-      // In development, don't throw errors from email failures
+      // In development, still log but don't throw
       console.log('Email sending failed, but continuing in development mode');
+      console.error(error);
       return;
     }
     
-    // In production, log the error but don't crash the application
+    // In production, log error but don't crash the application
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error(`Failed to send email to ${options.to}: ${errorMessage}`);
     
