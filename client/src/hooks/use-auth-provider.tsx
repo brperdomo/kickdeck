@@ -1,6 +1,6 @@
 /**
- * RENAMED FILE: use-auth-provider.tsx 
- * This file should be renamed from use-auth.tsx to use-auth-provider.tsx
+ * Auth Provider Component
+ * This file provides the AuthProvider component and useAuth hook
  */
 import { createContext, useContext, ReactNode } from "react";
 import { useUser, User } from "@/hooks/use-user";
