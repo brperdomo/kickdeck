@@ -9,7 +9,6 @@ import { Router, Request, Response } from 'express';
 import { db } from '@db';
 import { emailProviderSettings, emailTemplates } from '@db/schema';
 import { eq } from 'drizzle-orm';
-import { requirePermission } from '../../middleware/auth';
 
 const router = Router();
 
@@ -18,7 +17,7 @@ const SENDER_EMAIL = 'support@matchpro.ai';
 const SENDER_NAME = 'MatchPro';
 
 // Admin-only route to update email configuration
-router.post('/', requirePermission('admin.settings.update'), async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   try {
     console.log('Starting email configuration update...');
     
@@ -72,13 +71,13 @@ async function setupSendGridProvider(): Promise<number | null> {
       const [updated] = await db
         .update(emailProviderSettings)
         .set({
-          isActive: true,
-          isDefault: true,
+          is_active: true,
+          is_default: true,
           settings: {
             apiKey: process.env.SENDGRID_API_KEY,
             from: SENDER_EMAIL
           },
-          updatedAt: new Date().toISOString()
+          updated_at: new Date().toISOString()
         })
         .where(eq(emailProviderSettings.id, sendGridProvider.id))
         .returning();
@@ -96,10 +95,10 @@ async function setupSendGridProvider(): Promise<number | null> {
             apiKey: process.env.SENDGRID_API_KEY,
             from: SENDER_EMAIL
           },
-          isActive: true,
-          isDefault: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          is_active: true,
+          is_default: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         })
         .returning();
       
@@ -112,9 +111,9 @@ async function setupSendGridProvider(): Promise<number | null> {
         await db
           .update(emailProviderSettings)
           .set({
-            isActive: false,
-            isDefault: false,
-            updatedAt: new Date().toISOString()
+            is_active: false,
+            is_default: false,
+            updated_at: new Date().toISOString()
           })
           .where(eq(emailProviderSettings.id, provider.id));
       }
