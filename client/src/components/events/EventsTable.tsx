@@ -106,6 +106,11 @@ export function EventsTable() {
 
     return () => clearTimeout(debounceTimer);
   }, [searchInput]);
+  
+  // Reset to page 1 when status filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter]);
 
   const queryClient = useQueryClient();
 
@@ -135,7 +140,7 @@ export function EventsTable() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter] });
       toast({
         title: "Success",
         description: "Event deleted successfully",
@@ -285,17 +290,12 @@ export function EventsTable() {
     return eventsQuery.data.pagination;
   }, [eventsQuery.data]);
 
-  // Memoize filtered events based on search and status filter
+  // Now all filtering happens on the server side including status filter
   const filteredEvents = useMemo(() => {
     if (!eventsWithStatus || eventsWithStatus.length === 0) return [];
-    const lowercaseQuery = searchQuery.toLowerCase();
-    return eventsWithStatus.filter((event: Event & { status: string }) => {
-      const matchesSearch = event.name.toLowerCase().includes(lowercaseQuery);
-      const matchesStatus = statusFilter === "all" || event.status === statusFilter;
-      // The server already filters archived events, so no need to filter them here again
-      return matchesSearch && matchesStatus;
-    });
-  }, [eventsWithStatus, searchQuery, statusFilter, showArchived]);
+    // Just pass through the events since filtering is handled server-side
+    return eventsWithStatus;
+  }, [eventsWithStatus]);
 
   // Memoize sorted events based on the filtered events and sort settings
   const sortedEvents = useMemo(() => {
