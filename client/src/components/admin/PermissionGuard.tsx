@@ -24,15 +24,25 @@ export function PermissionGuard({
   children, 
   fallback = null 
 }: PermissionGuardProps) {
+  const { hasPermission, isLoading } = usePermissions();
   const { user } = useAuth();
   
-  // EMERGENCY FIX: Always show content for admin users regardless of specific permissions
-  if (user?.isAdmin) {
-    console.log(`🚨 EMERGENCY BYPASS: Rendering admin content for ${permission} without permission check`);
+  // Special case: Admin users will see a loading indicator during the initial permissions load
+  if (isLoading && user?.isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[200px] p-4">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mb-2" />
+        <p className="text-sm text-muted-foreground">Checking permissions...</p>
+      </div>
+    );
+  }
+  
+  // If user has permission, show the content
+  if (hasPermission(permission)) {
     return <>{children}</>;
   }
   
-  // Only non-admin users will see the fallback
+  // Otherwise, show the fallback
   return <>{fallback}</>;
 }
 
@@ -62,26 +72,36 @@ export function PermissionAwareLink({
   onClick,
   href
 }: PermissionAwareLinkProps) {
+  const { hasPermission, isLoading } = usePermissions();
   const { user } = useAuth();
   
-  // EMERGENCY FIX: Always show navigation for admin users
-  if (user?.isAdmin) {
-    console.log(`🚨 EMERGENCY BYPASS: Showing navigation link for ${permission}`);
-    if (href) {
-      return (
-        <a href={href} className={className} onClick={onClick}>
-          {children}
-        </a>
-      );
-    }
-    
+  // Hide completely if no permissions and not loading
+  if (!isLoading && !hasPermission(permission)) {
+    return null;
+  }
+  
+  // Show a more subtle loading state for links (slightly transparent)
+  if (isLoading && user?.isAdmin) {
     return (
-      <button className={className} onClick={onClick}>
+      <div className={`${className} opacity-60 cursor-not-allowed flex items-center`}>
         {children}
-      </button>
+        <Loader2 className="ml-2 h-3 w-3 animate-spin" />
+      </div>
     );
   }
   
-  // Non-admins don't see the link at all
-  return null;
+  // Show the actual link when permission is granted
+  if (href) {
+    return (
+      <a href={href} className={className} onClick={onClick}>
+        {children}
+      </a>
+    );
+  }
+  
+  return (
+    <button className={className} onClick={onClick}>
+      {children}
+    </button>
+  );
 }

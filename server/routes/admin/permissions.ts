@@ -27,7 +27,7 @@ export async function getCurrentUserPermissions(req: Request, res: Response) {
       console.log('Granting super_admin permissions to main admin: bperdomo@zoho.com');
       
       // Get all permission values as an array of strings
-      const allPermissions = Object.values(PERMISSIONS).flat();
+      const allPermissions = Object.values(PERMISSIONS);
       
       // Return all permissions and super_admin role
       return res.json({
@@ -55,7 +55,7 @@ export async function getCurrentUserPermissions(req: Request, res: Response) {
       console.log('Granting super_admin permissions based on role');
       
       // Get all permission values as an array of strings
-      const allPermissions = Object.values(PERMISSIONS).flat();
+      const allPermissions = Object.values(PERMISSIONS);
       
       return res.json({
         roles: roleNames,
