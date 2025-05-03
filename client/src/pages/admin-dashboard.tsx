@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback, useRef } from "react";
-import React from 'react'; // Import React explicitly for React.createElement
 import { useLocation, Link } from "wouter";
 import { motion } from "framer-motion";
 import { 
@@ -4686,23 +4685,6 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   const [theme, setTheme] = useState(currentAppearance);
   const queryClient = useQueryClient();
   const { settings, isLoading: isSettingsLoading } = useOrganizationSettings();
-  
-  // Define navigation items for admin bypass
-  const navigationItems = [
-    { value: 'formTemplates', label: 'Form Templates', icon: FormInput },
-    { value: 'events', label: 'Events', icon: Calendar },
-    { value: 'teams', label: 'Teams', icon: Users },
-    { value: 'administrators', label: 'Administrators', icon: Shield },
-    { value: 'complexes', label: 'Field Complexes', icon: Building2 },
-    { value: 'households', label: 'MatchPro Client', icon: Home },
-    { value: 'scheduling', label: 'Scheduling', icon: CalendarDays },
-    { value: 'reports', label: 'Reports and Financials', icon: FileText },
-    { value: 'files', label: 'File Manager', icon: ImageIcon },
-    { value: 'members', label: 'Members', icon: Users },
-    { value: 'roles', label: 'Role Permissions', icon: KeyRound },
-    { value: 'settings', label: 'Settings', icon: Settings },
-    { value: 'account', label: 'My Account', icon: User }
-  ];
 
   // Track initial load completion
   useEffect(() => {
@@ -4788,20 +4770,51 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   };
 
   const renderView = () => {
-    // ***EMERGENCY BYPASS*** - Always render all views for admin users, ignore permissions
-    if (user?.isAdmin) {
-      console.log('🚨 EMERGENCY PERMISSION BYPASS - Rendering all admin views without permission checks');
+    // First verify permissions for the active view
+    const permissionMap = {
+      'administrators': 'view_administrators',
+      'events': 'view_events',
+      'teams': 'view_teams',
+      'complexes': 'view_complexes',
+      'households': 'view_households',
+      'scheduling': 'view_scheduling',
+      'settings': 'view_organization_settings',
+      'reports': 'view_reports',
+      'files': 'view_files',
+      'coupons': 'view_coupons',
+      'formTemplates': 'view_form_templates',
+      'roles': 'view_role_permissions',
+      'members': 'view_members'
+    };
+    
+    // Get the required permission for the active view
+    const permissionRequired = permissionMap[activeView as keyof typeof permissionMap];
+    
+    // If user is a super admin, skip permission check
+    if (user?.isAdmin && hasRole('super_admin')) {
+      // SUPER ADMIN BYPASS - Always render content for super admins
       return renderViewContent(activeView);
     }
     
-    // Fallback - Only show this if not an admin at all
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
-        <Shield className="h-12 w-12 text-muted-foreground" />
-        <h2 className="text-xl font-semibold">Admin Access Only</h2>
-        <p className="text-muted-foreground">This area is restricted to administrators only.</p>
-      </div>
-    );
+    // Check if the view requires a permission check
+    if (permissionRequired) {
+      // If it's the account view or user doesn't need permission, render directly
+      if (activeView === 'account' || hasPermission(permissionRequired as any)) {
+        return renderViewContent(activeView);
+      }
+      
+      // Otherwise show restricted access message
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[300px] space-y-4">
+          <Shield className="h-12 w-12 text-muted-foreground" />
+          <h2 className="text-xl font-semibold">Access Restricted</h2>
+          <p className="text-muted-foreground">You don't have permission to view this content.</p>
+        </div>
+      );
+    }
+    
+    // If we got here with no permission check needed, render view
+    return renderViewContent(activeView);
   };
   
   // Helper function to render the appropriate view content
@@ -4867,22 +4880,18 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar with EMERGENCY ADMIN BYPASS */}
+      {/* Sidebar */}
       <AnimatedSidebar title="Admin Dashboard" icon={<Calendar className="h-5 w-5 text-primary" />}>
-        {/* Use new simplified navigation bar that always shows items for admin users */}
-        <AdminNavigationBar 
-          activeView={activeView} 
-          onNavigate={(path) => {
-            if (path === '/admin/settings') {
-              setIsSettingsOpen(true);
-            } else if (path === '/admin/account') {
-              setActiveView('account');
-            } else {
-              navigate(path);
-            }
-            console.log(`🔐 Navigating to ${path}`);
-          }}
-        />
+        <div className="space-y-1">
+            <AnimatedNavigationButton
+              view="formTemplates"
+              activeView={activeView}
+              onClick={() => navigate('/admin/form-templates')}
+              icon={<FormInput className="h-4 w-4" />}
+              label="Form Templates"
+              permission="view_form_templates"
+              index={0}
+            />
             
             <AnimatedNavigationButton
               view="events"

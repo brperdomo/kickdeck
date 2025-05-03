@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { usePermissions } from "@/hooks/use-permissions";
-import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import { motion, useAnimation } from "framer-motion";
 import { ChevronRight } from "lucide-react";
@@ -90,15 +89,8 @@ const pulseVariants = {
 // Wrapper component to handle the permission check
 function NavigationButtonWrapper(props: AnimatedNavigationButtonProps) {
   const { hasPermission } = usePermissions();
-  const { user } = useAuth();
   
-  // EMERGENCY FIX: Always show navigation buttons for admin users
-  if (user?.isAdmin) {
-    console.log(`🚨 EMERGENCY BYPASS: Showing navigation button for ${props.permission}`);
-    return <NavigationButtonContent {...props} />;
-  }
-  
-  // Regular permission check for non-admin users
+  // If no permission needed or user has permission, render the button
   if (!props.permission || hasPermission(props.permission as any)) {
     return <NavigationButtonContent {...props} />;
   }

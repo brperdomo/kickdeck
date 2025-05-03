@@ -12,8 +12,7 @@ import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
 import AuthLoggedOut from "@/pages/auth-logged-out";
-// Use our fixed admin dashboard version instead of the original one that has syntax errors
-import AdminDashboard from "@/pages/fixed-admin-dashboard";
+import AdminDashboard from "@/pages/admin-dashboard";
 import CreateEvent from "@/pages/create-event";
 import CouponManagement from "@/pages/coupon-management";
 import AccountingCodeManagement from "@/pages/accounting-code-management";
@@ -40,7 +39,7 @@ import EventClubsPage from "@/pages/event-clubs";
 import RegistrationOrdersReport from "@/pages/registration-orders-report";
 import Checkout from "@/pages/checkout";
 import PaymentConfirmation from "@/pages/payment-confirmation";
-import { AuthProvider } from "@/lib/auth-provider";
+import { AuthProvider } from "@/hooks/use-auth";
 // Account page import
 import AccountPage from "./pages/account";
 import { LogoutHandler } from "@/components/LogoutHandler";
