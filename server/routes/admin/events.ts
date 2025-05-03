@@ -1,11 +1,33 @@
 import { Router } from 'express';
 import { db } from '../../../db';
 import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons, eventAgeGroupFees, teams } from '@db/schema';
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql, and, or, lt, gt, gte, lte } from 'drizzle-orm';
 import { z } from 'zod';
 import { hasEventAccess } from '../../middleware/event-access';
 
 const router = Router();
+
+// Build status filter condition based on status
+const getStatusFilterCondition = (statusFilter: string) => {
+  const now = new Date().toISOString();
+  
+  if (statusFilter === 'past') {
+    // Past events: end date is before today
+    return lt(events.endDate, now);
+  } else if (statusFilter === 'active') {
+    // Active events: start date <= today <= end date
+    return and(
+      lte(events.startDate, now),
+      gte(events.endDate, now)
+    );
+  } else if (statusFilter === 'upcoming') {
+    // Upcoming events: start date is after today
+    return gt(events.startDate, now);
+  }
+  
+  // If 'all' or invalid status, return undefined
+  return undefined;
+};
 
 // Get all events with optimization, pagination, and caching
 router.get('/', async (req, res) => {
@@ -15,6 +37,7 @@ router.get('/', async (req, res) => {
     const pageSize = parseInt(req.query.pageSize as string) || 5;
     const showArchived = req.query.showArchived === 'true';
     const searchQuery = req.query.search as string || '';
+    const statusFilter = req.query.statusFilter as string || 'all';
     
     // Calculate offset for pagination
     const offset = (page - 1) * pageSize;
@@ -41,6 +64,34 @@ router.get('/', async (req, res) => {
       );
     }
     
+    // Build where conditions
+    let whereConditions = [];
+    
+    // Add archive condition
+    if (!showArchived) {
+      whereConditions.push(eq(events.isArchived, false));
+    }
+    
+    // Add search condition
+    if (searchQuery) {
+      whereConditions.push(sql`LOWER(${events.name}) LIKE LOWER(${'%' + searchQuery + '%'})`);
+    }
+    
+    // Add status filter condition
+    if (statusFilter !== 'all') {
+      const statusCondition = getStatusFilterCondition(statusFilter);
+      if (statusCondition) {
+        whereConditions.push(statusCondition);
+      }
+    }
+    
+    // Apply where conditions to main query
+    if (whereConditions.length === 1) {
+      eventsQuery = eventsQuery.where(whereConditions[0]);
+    } else if (whereConditions.length > 1) {
+      eventsQuery = eventsQuery.where(and(...whereConditions));
+    }
+    
     // First get the total count for pagination
     let countQuery = db
       .select({
@@ -48,15 +99,11 @@ router.get('/', async (req, res) => {
       })
       .from(events);
     
-    // Apply the same filters to the count query
-    if (!showArchived) {
-      countQuery = countQuery.where(eq(events.isArchived, false));
-    }
-    
-    if (searchQuery) {
-      countQuery = countQuery.where(
-        sql`LOWER(${events.name}) LIKE LOWER(${'%' + searchQuery + '%'})`
-      );
+    // Apply the same where conditions to count query
+    if (whereConditions.length === 1) {
+      countQuery = countQuery.where(whereConditions[0]);
+    } else if (whereConditions.length > 1) {
+      countQuery = countQuery.where(and(...whereConditions));
     }
     
     const countResult = await countQuery;
@@ -65,11 +112,11 @@ router.get('/', async (req, res) => {
     
     // Execute the main query with pagination
     // If searching, we might want to show all results on one page
-    const applyPagination = !searchQuery || totalEvents > pageSize;
+    const applyPagination = (!searchQuery && statusFilter === 'all') || totalEvents > pageSize;
     
     let finalEventsQuery = eventsQuery.groupBy(events.id).orderBy(events.startDate);
     
-    // Apply pagination only if not searching or if there are more results than the page size
+    // Apply pagination only if not searching/filtering or if there are more results than the page size
     if (applyPagination) {
       finalEventsQuery = finalEventsQuery.limit(pageSize).offset(offset);
     }
