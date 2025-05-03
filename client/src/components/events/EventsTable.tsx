@@ -110,9 +110,9 @@ export function EventsTable() {
   const queryClient = useQueryClient();
 
   const eventsQuery = useQuery<EventsResponse>({
-    queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery],
+    queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events?page=${currentPage}&pageSize=${pageSize}&showArchived=${showArchived}&search=${encodeURIComponent(searchQuery)}`);
+      const response = await fetch(`/api/admin/events?page=${currentPage}&pageSize=${pageSize}&showArchived=${showArchived}&search=${encodeURIComponent(searchQuery)}&statusFilter=${statusFilter}`);
       if (!response.ok) {
         throw new Error("Failed to fetch events");
       }
