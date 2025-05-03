@@ -9,6 +9,7 @@ interface EmailOptions {
   to: string;
   subject: string;
   html: string;
+  text?: string;
   from?: string;
 }
 
@@ -209,8 +210,8 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
       to: options.to,
       from: from,
       subject: options.subject,
-      html: options.html,
-      text: options.html ? undefined : 'Please view this email in a compatible email client.'
+      html: options.html || '<p>Please view this email in a compatible email client.</p>',
+      text: options.text || 'Please view this email in a compatible email client.'
     });
     
     if (result) {
@@ -260,8 +261,13 @@ export async function sendTemplatedEmail(
     }
     
     try {
-      const subject = renderTemplate(emailTemplate.subject, context);
-      const html = renderTemplate(emailTemplate.content, context);
+      const subject = renderTemplate(emailTemplate.subject, context) || 'Notification';
+      let html = renderTemplate(emailTemplate.content, context);
+      
+      // Ensure html is never empty or undefined
+      if (!html || html.trim() === '') {
+        html = '<p>You have received a notification from MatchPro. Please check your account for more information.</p>';
+      }
       
       await sendEmail({
         to,
