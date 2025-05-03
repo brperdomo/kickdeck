@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback, useRef } from "react";
+import React from 'react'; // Import React explicitly for React.createElement
 import { useLocation, Link } from "wouter";
 import { motion } from "framer-motion";
 import { 
@@ -4685,6 +4686,23 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   const [theme, setTheme] = useState(currentAppearance);
   const queryClient = useQueryClient();
   const { settings, isLoading: isSettingsLoading } = useOrganizationSettings();
+  
+  // Define navigation items for admin bypass
+  const navigationItems = [
+    { value: 'formTemplates', label: 'Form Templates', icon: FormInput },
+    { value: 'events', label: 'Events', icon: Calendar },
+    { value: 'teams', label: 'Teams', icon: Users },
+    { value: 'administrators', label: 'Administrators', icon: Shield },
+    { value: 'complexes', label: 'Field Complexes', icon: Building2 },
+    { value: 'households', label: 'MatchPro Client', icon: Home },
+    { value: 'scheduling', label: 'Scheduling', icon: CalendarDays },
+    { value: 'reports', label: 'Reports and Financials', icon: FileText },
+    { value: 'files', label: 'File Manager', icon: ImageIcon },
+    { value: 'members', label: 'Members', icon: Users },
+    { value: 'roles', label: 'Role Permissions', icon: KeyRound },
+    { value: 'settings', label: 'Settings', icon: Settings },
+    { value: 'account', label: 'My Account', icon: User }
+  ];
 
   // Track initial load completion
   useEffect(() => {
@@ -4849,18 +4867,58 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar */}
+      {/* Sidebar with EMERGENCY ADMIN BYPASS */}
       <AnimatedSidebar title="Admin Dashboard" icon={<Calendar className="h-5 w-5 text-primary" />}>
         <div className="space-y-1">
-            <AnimatedNavigationButton
-              view="formTemplates"
-              activeView={activeView}
-              onClick={() => navigate('/admin/form-templates')}
-              icon={<FormInput className="h-4 w-4" />}
-              label="Form Templates"
-              permission="view_form_templates"
-              index={0}
-            />
+            {/* EMERGENCY FIX: Show all navigation items for admins without checking permissions */}
+            {user?.isAdmin && (
+              <>
+                <div className="p-2 mb-2 bg-red-100 rounded-md border-red-300 border text-sm text-red-700">
+                  🚨 Emergency Admin Mode Active
+                </div>
+                
+                {navigationItems.map((item, index) => (
+                  <Button
+                    key={item.value}
+                    variant="ghost"
+                    className={cn(
+                      "w-full justify-start relative overflow-hidden group mb-1",
+                      activeView === item.value ? "bg-primary/10 font-medium" : ""
+                    )}
+                    onClick={() => {
+                      if (item.value === 'settings') {
+                        setIsSettingsOpen(true);
+                      } else if (item.value === 'account') {
+                        setActiveView('account');
+                      } else {
+                        navigate(`/admin/${item.value}`);
+                      }
+                      console.log(`🔐 ADMIN BYPASS: Navigating to ${item.value}`);
+                    }}
+                  >
+                    <div className="flex items-center">
+                      <div className="w-5 h-5 mr-3">
+                        {React.createElement(item.icon, { size: 16 })}
+                      </div>
+                      <span>{item.label}</span>
+                    </div>
+                  </Button>
+                ))}
+              </>
+            )}
+            
+            {/* Only show permission-based navigation for non-admin users */}
+            {!user?.isAdmin && (
+              <div className="space-y-1">
+                <AnimatedNavigationButton
+                  view="formTemplates"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/form-templates')}
+                  icon={<FormInput className="h-4 w-4" />}
+                  label="Form Templates"
+                  permission="view_form_templates"
+                  index={0}
+                />
             
             <AnimatedNavigationButton
               view="events"
