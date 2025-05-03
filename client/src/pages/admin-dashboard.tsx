@@ -3354,10 +3354,34 @@ function TeamsView() {
               </motion.div>
 
               <Tabs defaultValue="registered">
-                <TabsList className="mb-4">
-                  <TabsTrigger value="registered">Pending Review</TabsTrigger>
-                  <TabsTrigger value="approved">Approved</TabsTrigger>
-                  <TabsTrigger value="rejected">Rejected</TabsTrigger>
+                <TabsList className="mb-4 bg-slate-100 p-2 rounded-lg border border-slate-200 gap-1">
+                  <TabsTrigger 
+                    value="registered" 
+                    className="data-[state=active]:bg-blue-500 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-md transition-all duration-200 px-4 py-2 rounded-md"
+                  >
+                    <span className="flex items-center gap-2">
+                      <ListFilter className="h-4 w-4" />
+                      Pending Review
+                    </span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="approved" 
+                    className="data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-md transition-all duration-200 px-4 py-2 rounded-md"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Check className="h-4 w-4" />
+                      Approved
+                    </span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="rejected" 
+                    className="data-[state=active]:bg-red-500 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-md transition-all duration-200 px-4 py-2 rounded-md"
+                  >
+                    <span className="flex items-center gap-2">
+                      <X className="h-4 w-4" />
+                      Rejected
+                    </span>
+                  </TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="registered">
