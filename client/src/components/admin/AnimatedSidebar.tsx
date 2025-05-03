@@ -66,71 +66,51 @@ export function AnimatedSidebar({
       {/* Header backdrop glow */}
       <div className="absolute top-0 left-0 right-0 h-20 bg-indigo-600/5 blur-xl rounded-full pointer-events-none"></div>
       
-      <div className="flex flex-col items-center gap-3 relative">
-        {/* Logo image */}
-        <motion.div
-          className="w-full flex justify-center items-center mb-2"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ 
-            delay: 0.3, 
-            type: "spring",
-            stiffness: 200 
-          }}
-        >
-          <img 
-            src="/uploads/MatchProAI_Linear_BlackNOBUFFER.png" 
-            alt="MatchPro Logo" 
-            className="h-12 object-contain"
-          />
-        </motion.div>
-        
-        <div className="flex items-center gap-3">
-          {icon && (
-            <motion.div
-              className="p-2.5 rounded-md bg-gradient-to-br from-indigo-900/80 to-indigo-800/80 shadow-lg shadow-indigo-900/30 border border-indigo-700/30"
-              initial={{ scale: 0.8, opacity: 0, rotate: -10 }}
-              animate={{ scale: 1, opacity: 1, rotate: 0 }}
-              transition={{ 
-                delay: 0.4, 
-                type: "spring",
-                stiffness: 200 
-              }}
-            >
-              {icon}
-            </motion.div>
-          )}
+      <div className="flex items-center gap-3 relative">
+        {icon && (
           <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 0.4 }}
+            className="p-2.5 rounded-md bg-gradient-to-br from-indigo-900/80 to-indigo-800/80 shadow-lg shadow-indigo-900/30 border border-indigo-700/30"
+            initial={{ scale: 0.8, opacity: 0, rotate: -10 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            transition={{ 
+              delay: 0.4, 
+              type: "spring",
+              stiffness: 200 
+            }}
           >
-            <h1 className="font-bold text-xl tracking-tight">
-              <span className="relative">
-                {/* Text with fancy gradient */}
-                <span className="bg-gradient-to-r from-indigo-300 via-purple-200 to-indigo-300 bg-clip-text text-transparent">
-                  {title}
-                </span>
-                
-                {/* Subtle highlight under text */}
-                <motion.span 
-                  className="absolute -bottom-1 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-500/0 via-indigo-500/50 to-indigo-500/0"
-                  initial={{ scaleX: 0, opacity: 0 }}
-                  animate={{ scaleX: 1, opacity: 1 }}
-                  transition={{ delay: 0.8, duration: 0.6 }}
-                ></motion.span>
-              </span>
-            </h1>
-            <motion.p 
-              className="text-xs text-indigo-300/70 mt-1.5"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-            >
-              Management Portal
-            </motion.p>
+            {icon}
           </motion.div>
-        </div>
+        )}
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.5, duration: 0.4 }}
+        >
+          <h1 className="font-bold text-xl tracking-tight">
+            <span className="relative">
+              {/* Text with fancy gradient */}
+              <span className="bg-gradient-to-r from-indigo-300 via-purple-200 to-indigo-300 bg-clip-text text-transparent">
+                {title}
+              </span>
+              
+              {/* Subtle highlight under text */}
+              <motion.span 
+                className="absolute -bottom-1 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-500/0 via-indigo-500/50 to-indigo-500/0"
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={{ scaleX: 1, opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+              ></motion.span>
+            </span>
+          </h1>
+          <motion.p 
+            className="text-xs text-indigo-300/70 mt-1.5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+          >
+            Management Portal
+          </motion.p>
+        </motion.div>
       </div>
     </div>
   );
