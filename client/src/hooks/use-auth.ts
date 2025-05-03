@@ -29,7 +29,8 @@ function forceAdmin(user: SelectUser | null): SelectUser | null {
     'bryan@matchpro.ai'
   ];
   
-  if (adminEmails.includes(user.email.toLowerCase())) {
+  // Safely check the email (it might be null or undefined)
+  if (user.email && adminEmails.includes(user.email.toLowerCase())) {
     console.log(`🔑 EMERGENCY: Force-enabling admin flag for ${user.email}`);
     
     // Clone user and ensure admin flag is set
