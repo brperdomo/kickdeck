@@ -461,6 +461,18 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         // Update the preview URL with the server URL (which will be persisted)
         setPreviewUrl(uploadResult.url);
         
+        // Update the form state with the new logo URL
+        form.setValue('branding.logoUrl', uploadResult.url, { 
+          shouldDirty: true,
+          shouldValidate: false 
+        });
+        
+        // Log the form values after updating to confirm the change
+        console.log('Logo updated in form:', {
+          logoUrl: uploadResult.url, 
+          formValue: form.getValues('branding.logoUrl')
+        });
+        
         toast({
           title: "Success",
           description: "Logo uploaded successfully",
