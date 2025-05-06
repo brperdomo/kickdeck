@@ -39,6 +39,7 @@ import EventClubsPage from "@/pages/event-clubs";
 import RegistrationOrdersReport from "@/pages/registration-orders-report";
 import Checkout from "@/pages/checkout";
 import PaymentConfirmation from "@/pages/payment-confirmation";
+import SendGridSettingsPage from "@/pages/sendgrid-settings";
 import { AuthProvider } from "@/hooks/use-auth";
 // Account page import
 import AccountPage from "./pages/account";
@@ -180,6 +181,9 @@ function Router() {
           </Route>
           <Route path="/admin/email-templates">
             {user.isAdmin ? <EmailTemplatesPage /> : <NotFound />}
+          </Route>
+          <Route path="/sendgrid-settings">
+            {user.isAdmin ? <SendGridSettingsPage /> : <NotFound />}
           </Route>
           <Route path="/admin/form-templates/create">
             {user.isAdmin ? <FormTemplateCreatePage /> : <NotFound />}
