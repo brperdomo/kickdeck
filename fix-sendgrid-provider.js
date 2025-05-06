@@ -41,11 +41,11 @@ async function fixSendGridProvider() {
       await pool.query(
         `UPDATE email_provider_settings
          SET is_active = true,
-             sender_email = $1,
-             sender_name = $2,
-             updated_at = $3
-         WHERE id = $4`,
-        [senderEmail, senderName, new Date().toISOString(), provider.id]
+             is_default = true,
+             settings = $1,
+             updated_at = $2
+         WHERE id = $3`,
+        [JSON.stringify({ from: senderEmail }), new Date().toISOString(), provider.id]
       );
 
       console.log('Updated existing SendGrid provider configuration');
@@ -53,9 +53,9 @@ async function fixSendGridProvider() {
       // Create new SendGrid provider
       await pool.query(
         `INSERT INTO email_provider_settings
-         (provider_type, provider_name, is_active, sender_email, sender_name, created_at, updated_at)
+         (provider_type, provider_name, is_active, is_default, settings, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        ['sendgrid', 'SendGrid', true, senderEmail, senderName, new Date().toISOString(), new Date().toISOString()]
+        ['sendgrid', 'SendGrid Provider', true, true, JSON.stringify({ from: senderEmail }), new Date().toISOString(), new Date().toISOString()]
       );
 
       console.log('Created new SendGrid provider configuration');
