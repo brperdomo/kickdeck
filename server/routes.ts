@@ -3946,11 +3946,15 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           eventData = req.body;
         }
         
-        // Add more detailed logging for branding colors
+        // Add more detailed logging for branding data
         if (eventData.branding) {
-          console.log('EVENT UPDATE - Received branding colors:');
+          console.log('EVENT UPDATE - Received branding data:');
           console.log('Primary:', eventData.branding.primaryColor);
           console.log('Secondary:', eventData.branding.secondaryColor);
+          console.log('Logo URL:', eventData.branding.logoUrl);
+          
+          // Log the entire event data for debugging
+          console.log('Full event data received:', JSON.stringify(eventData, null, 2));
         }
 
         // Start a transaction to update event and related records

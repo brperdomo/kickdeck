@@ -56,14 +56,23 @@ const upload = multer({
 router.post('/upload', (req, res) => {
   upload.single('file')(req, res, (err) => {
     if (err) {
+      console.error('File upload error:', err);
       return res.status(400).json({ error: err.message });
     }
 
     if (!req.file) {
+      console.error('No file in request');
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
     try {
+      console.log('File uploaded successfully:', {
+        originalname: req.file.originalname,
+        filename: req.file.filename,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      });
+      
       const fileUrl = `/uploads/${req.file.filename}`;
       const fileInfo = {
         id: uuidv4(),
@@ -74,6 +83,8 @@ router.post('/upload', (req, res) => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
+      
+      console.log('Returning file info to client:', fileInfo);
 
       res.setHeader('Content-Type', 'application/json');
       res.status(200).json(fileInfo);
