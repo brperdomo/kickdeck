@@ -28,11 +28,6 @@ export function MemberSidebar() {
       label: "My Household",
     },
     {
-      href: "/dashboard/my-account",
-      icon: <User className="h-5 w-5" />,
-      label: "My Account",
-    },
-    {
       href: "/dashboard/registrations",
       icon: <Calendar className="h-5 w-5" />,
       label: "My Registrations",
@@ -40,7 +35,7 @@ export function MemberSidebar() {
     {
       href: "/dashboard/my-account",
       icon: <Settings className="h-5 w-5" />,
-      label: "My Account",
+      label: "Account Settings",
     },
   ];
 
