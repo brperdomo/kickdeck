@@ -248,6 +248,13 @@ function Router() {
               {React.createElement(lazy(() => import('./pages/my-account')))}
             </Suspense>
           </Route>
+          <Route path="/dashboard/account-settings">
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>}>
+              {React.createElement(lazy(() => import('./pages/account-settings')))}
+            </Suspense>
+          </Route>
           <Route path="/dashboard/registrations">
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
