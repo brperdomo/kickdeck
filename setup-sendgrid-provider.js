@@ -5,7 +5,7 @@
  * to make SendGrid the primary and only email provider.
  */
 
-import { db } from './db/index.js';
+import { db } from './server/db/index.js';
 import { eq } from 'drizzle-orm';
 import dotenv from 'dotenv';
 
@@ -24,8 +24,8 @@ async function setupSendGridProvider() {
     // Check if SendGrid provider already exists
     const providers = await db
       .select()
-      .from({ e: 'email_providers' })
-      .where(eq('e.type', 'sendgrid'))
+      .from(db.schema.emailProviders)
+      .where(eq(db.schema.emailProviders.type, 'sendgrid'))
       .limit(1);
 
     const senderEmail = 'noreply@matchpro.ai'; // Replace with your verified sender
@@ -36,20 +36,20 @@ async function setupSendGridProvider() {
       const [provider] = providers;
 
       await db
-        .update({ e: 'email_providers' })
+        .update(db.schema.emailProviders)
         .set({
           isActive: true,
           senderEmail,
           senderName,
           updatedAt: new Date().toISOString()
         })
-        .where(eq('e.id', provider.id));
+        .where(eq(db.schema.emailProviders.id, provider.id));
 
       console.log('Updated existing SendGrid provider configuration');
     } else {
       // Create new SendGrid provider
       await db
-        .insert({ e: 'email_providers' })
+        .insert(db.schema.emailProviders)
         .values({
           type: 'sendgrid',
           name: 'SendGrid',
@@ -65,12 +65,12 @@ async function setupSendGridProvider() {
 
     // Disable all other email providers
     await db
-      .update({ e: 'email_providers' })
+      .update(db.schema.emailProviders)
       .set({
         isActive: false,
         updatedAt: new Date().toISOString()
       })
-      .where(eq('e.type', 'smtp'));
+      .where(eq(db.schema.emailProviders.type, 'smtp'));
 
     console.log('SendGrid is now set as the primary email provider');
     console.log(`Sender Email: ${senderEmail}`);
