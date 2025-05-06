@@ -1,62 +1,27 @@
 /**
- * Setup and Test Registration Receipt Email
- * 
- * This script:
- * 1. Creates the registration receipt template in the database
- * 2. Tests sending a registration receipt email
- * 
- * Usage:
- *   node setup-and-test-receipt.js recipient@example.com
+ * This script inserts the registration receipt email template
+ * into the database directly.
  */
 
-import { db } from './server/db/index.js';
-import { emailTemplates } from './server/db/schema.js';
-import { eq } from 'drizzle-orm';
-import { sendRegistrationReceiptEmail } from './server/services/emailService.js';
+const { db } = require('./server/db/index');
+const { emailTemplates } = require('./server/db/schema/emailTemplates');
+const { eq } = require('drizzle-orm');
 
-// Create the template function
-async function createRegistrationReceiptTemplate() {
-  console.log("Creating registration receipt email template...");
-  
+async function insertTemplate() {
   try {
     // Check if the template already exists
     const existingTemplates = await db
       .select()
       .from(emailTemplates)
       .where(eq(emailTemplates.type, 'registration_receipt'));
-    
+
     if (existingTemplates && existingTemplates.length > 0) {
       console.log("Registration receipt email template already exists");
-      return { success: true, message: "Template already exists" };
+      return;
     }
-    
-    // Create the registration receipt template
-    await db.insert(emailTemplates).values({
-      name: 'Registration Receipt',
-      description: 'Email receipt sent to registration submitters with transaction details',
-      type: 'registration_receipt',
-      subject: 'Your Registration Receipt for {{eventName}}',
-      senderName: 'MatchPro Registration',
-      senderEmail: 'support@matchpro.ai',
-      isActive: true,
-      variables: [
-        'teamName',
-        'eventName',
-        'submitterName',
-        'submitterEmail',
-        'registrationDate',
-        'totalAmount',
-        'paymentStatus',
-        'paymentDate',
-        'paymentMethod',
-        'cardLastFour',
-        'cardBrand',
-        'paymentId',
-        'selectedFees',
-        'loginLink',
-        'clubName'
-      ],
-      content: `
+
+    // Template HTML content
+    const templateContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -271,12 +236,12 @@ async function createRegistrationReceiptTemplate() {
             {{#each selectedFees}}
             <tr>
               <td>{{name}}</td>
-              <td class="amount">\${{amount}}</td>
+              <td class="amount">${{amount}}</td>
             </tr>
             {{/each}}
             <tr class="total-row">
               <td>Total</td>
-              <td class="amount">\${{totalAmount}}</td>
+              <td class="amount">${{totalAmount}}</td>
             </tr>
           </tbody>
         </table>
@@ -297,128 +262,59 @@ async function createRegistrationReceiptTemplate() {
     </div>
   </div>
 </body>
-</html>
-      `,
+</html>`;
+
+    // Insert the template
+    await db.insert(emailTemplates).values({
+      name: 'Registration Receipt',
+      description: 'Email receipt sent to registration submitters with transaction details',
+      type: 'registration_receipt',
+      subject: 'Your Registration Receipt for {{eventName}}',
+      senderName: 'MatchPro Registration',
+      senderEmail: 'support@matchpro.ai',
+      isActive: true,
+      variables: [
+        'teamName',
+        'eventName',
+        'submitterName',
+        'submitterEmail',
+        'registrationDate',
+        'totalAmount',
+        'paymentStatus',
+        'paymentDate',
+        'paymentMethod',
+        'cardLastFour',
+        'cardBrand',
+        'paymentId',
+        'selectedFees',
+        'loginLink',
+        'clubName'
+      ],
+      content: templateContent,
       createdAt: new Date(),
       updatedAt: new Date()
     });
     
-    console.log("Registration receipt email template created successfully");
-    return { success: true, message: "Template created successfully" };
+    console.log("Registration receipt email template created successfully!");
   } catch (error) {
-    console.error("Error creating registration receipt email template:", error);
-    return { success: false, error, message: "Failed to create template" };
-  }
-}
-
-// Test sending email function
-async function testRegistrationReceipt(recipientEmail) {
-  try {
-    console.log(`Testing registration receipt email with recipient: ${recipientEmail}`);
-    
-    // Create sample team and payment data for testing
-    const sampleTeamData = {
-      id: 12345,
-      name: 'Test Team',
-      eventId: 'event123',
-      submitterName: 'John Doe',
-      submitterEmail: recipientEmail,
-      managerName: 'Jane Smith',
-      managerEmail: 'jane@example.com',
-      createdAt: new Date().toISOString(),
-      totalAmount: 15000, // $150.00
-      paymentStatus: 'paid',
-      paymentDate: new Date().toISOString(),
-      paymentIntentId: 'pi_' + Math.random().toString(36).substring(2, 15),
-      cardBrand: 'visa',
-      cardLastFour: '4242',
-      clubName: 'Westside Soccer Club',
-      selectedFeeIds: '1,2,3'
-    };
-    
-    const samplePaymentData = {
-      id: 98765,
-      teamId: 12345,
-      status: 'paid',
-      amount: 15000,
-      paymentIntentId: sampleTeamData.paymentIntentId,
-      paymentDate: sampleTeamData.paymentDate,
-      cardBrand: 'visa',
-      cardLastFour: '4242',
-      paymentMethodType: 'card'
-    };
-    
-    const sampleEventName = 'Fall 2023 Soccer Tournament';
-    
-    // Send the registration receipt email
-    console.log('Sending registration receipt email...');
-    await sendRegistrationReceiptEmail(
-      recipientEmail,
-      sampleTeamData,
-      samplePaymentData,
-      sampleEventName
-    );
-    
-    console.log(`Registration receipt email sent to ${recipientEmail}`);
-    console.log('Check your inbox to verify the email was received correctly');
-    
-    return { success: true };
-  } catch (error) {
-    console.error('Error testing registration receipt email:', error);
-    return { success: false, error };
-  }
-}
-
-// Main function to run both steps
-async function setupAndTest() {
-  try {
-    if (process.argv.length < 3) {
-      console.error('Please provide a recipient email address');
-      console.error('Usage: node setup-and-test-receipt.js recipient@example.com');
-      process.exit(1);
-    }
-    
-    const recipientEmail = process.argv[2];
-    
-    // Step 1: Create template
-    console.log('STEP 1: Creating receipt email template...');
-    const templateResult = await createRegistrationReceiptTemplate();
-    console.log(templateResult.message);
-    
-    // Step 2: Test sending email
-    console.log('\nSTEP 2: Testing receipt email sending...');
-    const emailResult = await testRegistrationReceipt(recipientEmail);
-    
-    if (emailResult.success) {
-      console.log('\nSetup and test completed successfully!');
-      return { success: true };
-    } else {
-      console.error('\nTest failed:', emailResult.error);
-      return { success: false };
-    }
-  } catch (error) {
-    console.error('Error in setup and test:', error);
-    return { success: false, error };
+    console.error("Error inserting registration receipt template:", error);
   } finally {
     // Close the database connection
     try {
       await db.end();
     } catch (err) {
-      console.error('Error closing database connection:', err);
+      console.error("Error closing database connection:", err);
     }
   }
 }
 
-// Run if executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  setupAndTest()
-    .then(result => {
-      process.exit(result.success ? 0 : 1);
-    })
-    .catch(error => {
-      console.error('Unexpected error:', error);
-      process.exit(1);
-    });
-}
-
-export { setupAndTest, createRegistrationReceiptTemplate, testRegistrationReceipt };
+// Run the script if executed directly
+insertTemplate()
+  .then(() => {
+    console.log("Script completed.");
+    process.exit(0);
+  })
+  .catch(error => {
+    console.error("Unexpected error:", error);
+    process.exit(1);
+  });
