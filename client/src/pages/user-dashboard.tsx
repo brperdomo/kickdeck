@@ -7,7 +7,6 @@ import { FileManager } from "@/components/admin/FileManager.tsx";
 import UserRegistrationsView from "@/components/UserRegistrationsView";
 import { MemberLayout } from "@/components/layouts/MemberLayout";
 import { motion } from "framer-motion";
-import { RecentProductUpdates } from "@/components/RecentProductUpdates";
 import { Calendar, User, UserPlus, ExternalLink } from "lucide-react";
 import {
   Dialog,
@@ -105,18 +104,6 @@ export default function UserDashboard() {
             ))}
           </div>
         </div>
-        
-        {/* Product Updates - only visible to admins */}
-        {user?.isAdmin && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4 section-header">Product Updates</h2>
-            <Card className="member-card">
-              <CardContent className="pt-6">
-                <RecentProductUpdates limit={3} />
-              </CardContent>
-            </Card>
-          </div>
-        )}
         
         {/* User Registrations Section */}
         <div>
