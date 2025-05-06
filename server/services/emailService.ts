@@ -240,6 +240,8 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
 
 /**
  * Sends a templated email using a specific template type
+ * If the template has a SendGrid template ID, it will use SendGrid dynamic templates.
+ * Otherwise, it will render the template locally and send it as a regular email.
  */
 export async function sendTemplatedEmail(
   to: string,
@@ -261,22 +263,44 @@ export async function sendTemplatedEmail(
     }
     
     try {
-      const subject = renderTemplate(emailTemplate.subject, context) || 'Notification';
-      let html = renderTemplate(emailTemplate.content, context);
-      
-      // Ensure html is never empty or undefined
-      if (!html || html.trim() === '') {
-        html = '<p>You have received a notification from MatchPro. Please check your account for more information.</p>';
+      // Check if we should use SendGrid Dynamic Templates
+      if (emailTemplate.sendgrid_template_id) {
+        console.log(`Using SendGrid dynamic template for ${templateType} (ID: ${emailTemplate.sendgrid_template_id})`);
+        
+        const fromEmail = `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`;
+        
+        // Use SendGrid dynamic template
+        const result = await sendgridService.sendDynamicTemplateEmail({
+          to,
+          from: fromEmail,
+          templateId: emailTemplate.sendgrid_template_id,
+          dynamicTemplateData: context
+        });
+        
+        if (result) {
+          console.log(`SendGrid dynamic template email (${templateType}) sent to ${to}`);
+        } else {
+          throw new Error(`Failed to send SendGrid dynamic template email to ${to}`);
+        }
+      } else {
+        // Use regular template rendering
+        const subject = renderTemplate(emailTemplate.subject, context) || 'Notification';
+        let html = renderTemplate(emailTemplate.content, context);
+        
+        // Ensure html is never empty or undefined
+        if (!html || html.trim() === '') {
+          html = '<p>You have received a notification from MatchPro. Please check your account for more information.</p>';
+        }
+        
+        await sendEmail({
+          to,
+          subject,
+          html,
+          from: `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`
+        });
+        
+        console.log(`Templated email (${templateType}) sent to ${to}`);
       }
-      
-      await sendEmail({
-        to,
-        subject,
-        html,
-        from: `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`
-      });
-      
-      console.log(`Templated email (${templateType}) sent to ${to}`);
     } catch (renderError) {
       console.error(`Error rendering or sending email (${templateType}):`, renderError);
       // Don't throw here, even in development, to prevent API failures
