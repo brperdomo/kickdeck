@@ -56,21 +56,25 @@ export function MemberSidebar() {
 
   // Logo/header content for the sidebar
   const sidebarHeader = (
-    <div className="flex items-center gap-2 px-2">
-      <img
-        src={settings?.logoUrl || "/uploads/MatchProAI_Linear_BlackNOBUFFER.png"}
-        alt={settings?.name || "MatchPro"}
-        className="h-8"
-      />
+    <div className="flex flex-col items-center px-2 w-full">
+      <div className="w-full flex justify-center mb-2">
+        <img
+          src={settings?.logoUrl || "/uploads/MatchProAI_Linear_BlackNOBUFFER.png"}
+          alt={settings?.name || "MatchPro"}
+          className="w-full max-h-10 object-contain"
+        />
+      </div>
       {!isCollapsed && (
         <motion.div
-          className="flex flex-col"
+          className="flex flex-col items-center mt-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <span className="font-semibold text-lg text-primary">Member</span>
-          <span className="text-xs text-muted-foreground">Portal</span>
+          <div className="flex items-center">
+            <span className="font-semibold text-lg text-primary">Member</span>
+            <span className="font-medium text-lg text-muted-foreground ml-1">Portal</span>
+          </div>
         </motion.div>
       )}
     </div>
