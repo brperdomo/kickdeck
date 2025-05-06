@@ -7205,6 +7205,57 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
     
+    // SendGrid settings routes
+    app.get('/api/admin/sendgrid/settings', isAdmin, async (req, res) => {
+      try {
+        const { getSendGridSettings } = await import('./routes/sendgrid-settings');
+        await getSendGridSettings(req, res);
+      } catch (error) {
+        console.error('Error fetching SendGrid settings:', error);
+        res.status(500).send("Failed to fetch SendGrid settings");
+      }
+    });
+    
+    app.get('/api/admin/sendgrid/templates', isAdmin, async (req, res) => {
+      try {
+        const { getSendGridTemplates } = await import('./routes/sendgrid-settings');
+        await getSendGridTemplates(req, res);
+      } catch (error) {
+        console.error('Error fetching SendGrid templates:', error);
+        res.status(500).send("Failed to fetch SendGrid templates");
+      }
+    });
+    
+    app.get('/api/admin/sendgrid/template-mappings', isAdmin, async (req, res) => {
+      try {
+        const { getEmailTemplatesWithSendGridMapping } = await import('./routes/sendgrid-settings');
+        await getEmailTemplatesWithSendGridMapping(req, res);
+      } catch (error) {
+        console.error('Error fetching template mappings:', error);
+        res.status(500).send("Failed to fetch template mappings");
+      }
+    });
+    
+    app.post('/api/admin/sendgrid/template-mapping', isAdmin, async (req, res) => {
+      try {
+        const { updateSendGridTemplateMapping } = await import('./routes/sendgrid-settings');
+        await updateSendGridTemplateMapping(req, res);
+      } catch (error) {
+        console.error('Error updating template mapping:', error);
+        res.status(500).send("Failed to update template mapping");
+      }
+    });
+    
+    app.post('/api/admin/sendgrid/test-template', isAdmin, async (req, res) => {
+      try {
+        const { testSendGridTemplate } = await import('./routes/sendgrid-settings');
+        await testSendGridTemplate(req, res);
+      } catch (error) {
+        console.error('Error testing SendGrid template:', error);
+        res.status(500).send("Failed to test SendGrid template");
+      }
+    });
+    
     // Get single email template by ID
     app.get('/api/admin/email-templates/:id', isAdmin, async (req, res) => {
       try {

@@ -40,7 +40,9 @@ export async function getSendGridSettings(req: Request, res: Response) {
         sendgridTemplateId: emailTemplates.sendgridTemplateId
       })
       .from(emailTemplates)
-      .where(isNull(emailTemplates.sendgridTemplateId).not());
+      .where(
+        eq(isNull(emailTemplates.sendgridTemplateId), false)
+      );
     
     res.json({
       provider: provider ? {

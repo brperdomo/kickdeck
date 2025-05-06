@@ -116,7 +116,7 @@ export async function listEmailTemplatesWithSendGridMapping() {
         type: emailTemplates.type,
         subject: emailTemplates.subject,
         isActive: emailTemplates.isActive,
-        sendgridTemplateId: emailTemplates.sendgrid_template_id
+        sendgridTemplateId: emailTemplates.sendgridTemplateId
       })
       .from(emailTemplates);
     

@@ -10,56 +10,57 @@ import { sendTemplatedEmail } from './server/services/emailService.js';
 async function testWelcomeEmails() {
   try {
     // Get recipient email from command line arguments
-    const testEmail = process.argv[2];
+    const recipientEmail = process.argv[2];
     
-    if (!testEmail) {
-      console.error('Error: Test email address is required');
+    if (!recipientEmail) {
+      console.error('Error: Recipient email is required');
       console.log('Usage: node test-both-welcome-emails.js your-email@example.com');
       process.exit(1);
     }
-    
-    console.log(`\n==== Testing Welcome Email Templates ====\n`);
-    console.log(`Sending emails to: ${testEmail}\n`);
-    
+
+    console.log('\n=== Testing Both Welcome Email Templates ===\n');
+
     // Test member welcome email
-    console.log('1. Sending Member Welcome Email...');
+    console.log('Sending member welcome email...');
     
     await sendTemplatedEmail(
-      testEmail,
+      recipientEmail,
       'welcome',
       {
         firstName: 'Test',
         lastName: 'Member',
-        email: testEmail
+        email: recipientEmail,
+        loginLink: 'https://matchpro.ai/login'
       }
     );
     
-    console.log('Member welcome email sent successfully!\n');
+    console.log('✅ Member welcome email sent successfully!');
     
     // Test admin welcome email
-    console.log('2. Sending Admin Welcome Email...');
+    console.log('\nSending admin welcome email...');
     
     await sendTemplatedEmail(
-      testEmail,
+      recipientEmail,
       'admin_welcome',
       {
         firstName: 'Test',
         lastName: 'Admin',
-        email: testEmail,
-        role: 'Tournament Administrator'
+        email: recipientEmail,
+        role: 'Tournament Manager',
+        loginLink: 'https://matchpro.ai/login'
       }
     );
     
-    console.log('Admin welcome email sent successfully!\n');
+    console.log('✅ Admin welcome email sent successfully!');
     
-    console.log('========================================');
-    console.log('Both welcome emails sent successfully!');
-    console.log('Check your inbox for the welcome emails.');
-    console.log('It may take a few minutes for the emails to arrive.');
-    console.log('========================================\n');
+    console.log('\nCheck your inbox at', recipientEmail, 'for both welcome emails.');
+    console.log('Note: It might take a few minutes for the emails to arrive.');
+    
   } catch (error) {
     console.error('Error sending test welcome emails:', error);
+    process.exit(1);
   }
 }
 
+// Run the test function
 testWelcomeEmails();

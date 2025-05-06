@@ -336,7 +336,8 @@ function createFallbackTemplate(templateType: string, context: TemplateContext, 
       senderEmail: "support@matchpro.ai",
       isActive: true,
       type: templateType,
-      providerId: null
+      providerId: null,
+      sendgridTemplateId: null
     };
   } else {
     // In production, use a generic professional template
@@ -355,7 +356,8 @@ function createFallbackTemplate(templateType: string, context: TemplateContext, 
       senderEmail: "support@matchpro.ai",
       isActive: true,
       type: templateType,
-      providerId: null
+      providerId: null,
+      sendgridTemplateId: null
     };
   }
 }
