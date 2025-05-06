@@ -60,18 +60,19 @@ export function ComplexCard({
   
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg dark:bg-gray-900/60 border-l-4 border-l-primary relative">
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none rounded-r-lg"></div>
+      {/* Enhanced gradient overlay for better contrast */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800/80 pointer-events-none rounded-r-lg"></div>
       
-      <CardHeader className="p-4 pb-3 relative z-10">
+      <CardHeader className="p-4 pb-3 relative z-10 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900/90">
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center">
               <motion.h3 
-                className="text-xl font-bold text-white"
+                className="text-xl font-bold text-white px-2 py-0.5 rounded bg-primary/30 shadow-sm"
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
+                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}
               >
                 {complex.name}
               </motion.h3>
@@ -224,7 +225,10 @@ export function ComplexCard({
         {isViewingFields && (
           <div className="mt-4 border-t border-gray-700/50 pt-4">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-base font-medium text-indigo-300">Fields ({fields.length})</h3>
+              <h3 className="text-base font-medium text-white bg-gray-800 px-2 py-1 rounded inline-flex items-center">
+                <Users className="h-4 w-4 mr-1.5 text-indigo-400" />
+                Fields <span className="ml-1 bg-primary/30 text-white text-xs px-1.5 py-0.5 rounded-full">{fields.length}</span>
+              </h3>
               {onAddField && (
                 <Button 
                   onClick={onAddField} 
@@ -244,7 +248,7 @@ export function ComplexCard({
               </div>
             ) : fields.length === 0 ? (
               <div className="text-center py-6 bg-gray-800/50 rounded-md border border-gray-700/50">
-                <p className="text-sm text-gray-400">No fields available for this complex</p>
+                <p className="text-sm text-gray-200">No fields available for this complex</p>
                 {onAddField && (
                   <Button 
                     onClick={onAddField} 
@@ -267,7 +271,7 @@ export function ComplexCard({
                   >
                     <div>
                       <div className="flex items-center">
-                        <p className="font-medium text-gray-200">{field.name}</p>
+                        <p className="font-medium text-white px-1.5 py-0.5 rounded bg-primary/20 inline-block">{field.name}</p>
                         <Badge 
                           variant={field.isOpen ? "outline" : "destructive"} 
                           className={cn("ml-2", field.isOpen 
