@@ -38,9 +38,9 @@ export function MemberSidebar() {
       label: "My Registrations",
     },
     {
-      href: "/dashboard/account-settings",
+      href: "/dashboard/my-account",
       icon: <Settings className="h-5 w-5" />,
-      label: "Settings",
+      label: "My Account",
     },
   ];
 

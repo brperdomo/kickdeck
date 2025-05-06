@@ -4,13 +4,37 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUser } from "@/hooks/use-user";
-import { Loader2, Save, User, Lock, Phone, Mail } from "lucide-react";
+import { 
+  Loader2, 
+  Save, 
+  User, 
+  Lock, 
+  Phone, 
+  Mail, 
+  BellRing,
+  AlertTriangle,
+  InfoIcon
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { MemberLayout } from "@/components/layouts/MemberLayout";
+import { 
+  Form, 
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage 
+} from "@/components/ui/form";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Form validation schemas
 const profileFormSchema = z.object({
@@ -35,8 +59,20 @@ const passwordFormSchema = z.object({
   path: ["confirmPassword"],
 });
 
+// Communication preferences schema
+const communicationSchema = z.object({
+  emailNotifications: z.boolean().default(true),
+  smsNotifications: z.boolean().default(true),
+  marketingEmails: z.boolean().default(true),
+  eventUpdates: z.boolean().default(true),
+  paymentReceipts: z.boolean().default(true),
+  teamRegistrationAlerts: z.boolean().default(true),
+  dataOptOut: z.boolean().default(false)
+});
+
 type ProfileFormData = z.infer<typeof profileFormSchema>;
 type PasswordFormData = z.infer<typeof passwordFormSchema>;
+type CommunicationValues = z.infer<typeof communicationSchema>;
 
 // Phone number formatter
 const formatPhoneNumber = (value: string) => {
@@ -59,6 +95,8 @@ export default function MyAccount() {
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("personal");
+  const queryClient = useQueryClient();
 
   const { register, handleSubmit: handleProfileSubmit, formState: { errors: profileErrors }, setValue } = useForm<ProfileFormData>({
     resolver: zodResolver(profileFormSchema),
@@ -147,6 +185,57 @@ export default function MyAccount() {
     } finally {
       setIsChangingPassword(false);
     }
+  };
+  
+  // Form for communication preferences
+  const communicationForm = useForm<CommunicationValues>({
+    resolver: zodResolver(communicationSchema),
+    defaultValues: {
+      emailNotifications: true,
+      smsNotifications: true,
+      marketingEmails: true,
+      eventUpdates: true,
+      paymentReceipts: true,
+      teamRegistrationAlerts: true,
+      dataOptOut: false,
+    }
+  });
+  
+  // Mutation for updating preferences
+  const updatePreferencesMutation = useMutation({
+    mutationFn: async (data: CommunicationValues) => {
+      const response = await fetch('/api/user/preferences', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+      
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Preferences Updated",
+        description: "Your communication preferences have been updated successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Update Failed",
+        description: error instanceof Error ? error.message : "Failed to update preferences",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Handle communication preferences form submission
+  const onCommunicationSubmit = (data: CommunicationValues) => {
+    updatePreferencesMutation.mutate(data);
   };
 
   return (
@@ -379,6 +468,236 @@ export default function MyAccount() {
                   </Button>
                 </div>
               </form>
+            </CardContent>
+          </Card>
+        </motion.div>
+        
+        {/* Communication Preferences */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
+        >
+          <Card className="shadow-md">
+            <CardHeader className="border-b bg-muted/30">
+              <div className="flex items-center space-x-3">
+                <BellRing className="h-5 w-5 text-primary" />
+                <div>
+                  <CardTitle>Communication Preferences</CardTitle>
+                  <CardDescription>Manage how we contact you</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <Form {...communicationForm}>
+                <form onSubmit={communicationForm.handleSubmit(onCommunicationSubmit)} className="space-y-8">
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-medium text-base mb-3">Notification Settings</h3>
+                      
+                      <div className="space-y-4">
+                        <FormField
+                          control={communicationForm.control}
+                          name="emailNotifications"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base font-medium">
+                                  Email Notifications
+                                </FormLabel>
+                                <FormDescription className="text-sm text-muted-foreground">
+                                  Receive notifications via email
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={communicationForm.control}
+                          name="smsNotifications"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base font-medium">
+                                  SMS Notifications
+                                </FormLabel>
+                                <FormDescription className="text-sm text-muted-foreground">
+                                  Receive notifications via text message
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div>
+                      <h3 className="font-medium text-base mb-3">Email Preferences</h3>
+                      
+                      <div className="space-y-4">
+                        <FormField
+                          control={communicationForm.control}
+                          name="marketingEmails"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base font-medium">
+                                  Marketing Emails
+                                </FormLabel>
+                                <FormDescription className="text-sm text-muted-foreground">
+                                  Receive news, offers, and updates
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={communicationForm.control}
+                          name="eventUpdates"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base font-medium">
+                                  Event Updates
+                                </FormLabel>
+                                <FormDescription className="text-sm text-muted-foreground">
+                                  Receive information about upcoming events
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={communicationForm.control}
+                          name="paymentReceipts"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base font-medium">
+                                  Payment Receipts
+                                </FormLabel>
+                                <FormDescription className="text-sm text-muted-foreground">
+                                  Receive digital copies of your payment receipts
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={communicationForm.control}
+                          name="teamRegistrationAlerts"
+                          render={({ field }) => (
+                            <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base font-medium">
+                                  Team Registration Alerts
+                                </FormLabel>
+                                <FormDescription className="text-sm text-muted-foreground">
+                                  Receive notifications about team registration status
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div>
+                      <h3 className="font-medium text-base mb-3">Privacy Settings</h3>
+                      
+                      <div className="space-y-4">
+                        <FormField
+                          control={communicationForm.control}
+                          name="dataOptOut"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border p-4">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <div className="space-y-1 leading-none">
+                                <FormLabel className="text-base font-medium">
+                                  Data Analysis Opt-Out
+                                </FormLabel>
+                                <FormDescription className="text-sm text-muted-foreground">
+                                  Opt out of having your data used for performance analytics and AI-driven insights. 
+                                  Note that this may limit some features of the platform that rely on this data.
+                                </FormDescription>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <Button 
+                      type="submit" 
+                      disabled={updatePreferencesMutation.isPending}
+                      className="px-6"
+                    >
+                      {updatePreferencesMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Saving Preferences...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="mr-2 h-4 w-4" />
+                          Save Preferences
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
             </CardContent>
           </Card>
         </motion.div>
