@@ -805,13 +805,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   apiKey={TINYMCE_API_KEY}
                   value={field.value}
                   onEditorChange={(content) => field.onChange(content)}
-                  init={{
-                    height: 300,
-                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3',
-                    suffix: '.min'
-                  }}
+                  init={TINYMCE_HTML_CONFIG}
                 />
               </FormControl>
               <FormMessage />
@@ -830,13 +824,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   apiKey={TINYMCE_API_KEY}
                   value={field.value}
                   onEditorChange={(content) => field.onChange(content)}
-                  init={{
-                    height: 300,
-                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3',
-                    suffix: '.min'
-                  }}
+                  init={TINYMCE_HTML_CONFIG}
                 />
               </FormControl>
               <FormMessage />
@@ -855,13 +843,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   apiKey={TINYMCE_API_KEY}
                   value={field.value}
                   onEditorChange={(content) => field.onChange(content)}
-                  init={{
-                    height: 300,
-                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                    base_url: 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.3',
-                    suffix: '.min'
-                  }}
+                  init={TINYMCE_HTML_CONFIG}
                 />
               </FormControl>
               <FormMessage />
