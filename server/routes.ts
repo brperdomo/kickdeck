@@ -3984,6 +3984,39 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             console.log('Processing branding data in update:', eventData.branding);
             console.log('Secondary color from request:', eventData.branding.secondaryColor);
             
+            // First, clean up any misplaced settings (where the URL is used as the key)
+            // This fixes an issue where logo updates don't persist properly
+            try {
+              console.log(`Checking for misplaced settings (URL as key) for event ${eventId}...`);
+              
+              const misplacedSettings = await tx
+                .select()
+                .from(eventSettings)
+                .where(and(
+                  eq(eventSettings.eventId, eventId),
+                  sql`${eventSettings.settingKey} LIKE '/uploads/%'`
+                ));
+                
+              if (misplacedSettings.length > 0) {
+                console.log(`Found ${misplacedSettings.length} misplaced settings to clean up`);
+                
+                for (const setting of misplacedSettings) {
+                  console.log(`Deleting misplaced setting: ID=${setting.id}, Key="${setting.settingKey}"`);
+                  
+                  await tx
+                    .delete(eventSettings)
+                    .where(eq(eventSettings.id, setting.id));
+                }
+                
+                console.log('Misplaced settings cleanup complete');
+              } else {
+                console.log('No misplaced settings found');
+              }
+            } catch (cleanupError) {
+              console.error('Error cleaning up misplaced settings:', cleanupError);
+              // Continue with the update even if cleanup fails
+            }
+            
             // Process each branding property and save in event_settings
             // Use default values if not provided to ensure we always have colors set
             const brandingProps = [
