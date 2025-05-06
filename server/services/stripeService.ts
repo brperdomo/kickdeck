@@ -1,8 +1,9 @@
 import Stripe from 'stripe';
 import { db } from "../../db";
-import { teams, paymentTransactions } from "../../db/schema";
+import { teams, paymentTransactions, events } from "../../db/schema";
 import { eq } from 'drizzle-orm';
 import { log } from '../vite';
+import { sendRegistrationReceiptEmail } from './emailService';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -132,6 +133,45 @@ export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) 
       .where(eq(teams.id, teamIdNumber));
 
     console.log(`Payment recorded successfully for team ${teamId}`);
+    
+    // Send receipt email with payment details if submitter email is available
+    try {
+      if (existingTeam.submitterEmail) {
+        // Get the event name for the email
+        const [eventInfo] = await db
+          .select({ name: events.name })
+          .from(events)
+          .where(eq(events.id, existingTeam.eventId));
+        
+        // Create payment data object for receipt email
+        const paymentData = {
+          status: 'paid',
+          amount: paymentIntent.amount,
+          paymentIntentId: paymentIntent.id,
+          paymentDate: new Date().toISOString(),
+          cardBrand: cardDetails?.brand || null,
+          cardLastFour: cardDetails?.last4 || null,
+          paymentMethodType: 'card'
+        };
+        
+        console.log(`Sending payment receipt email to ${existingTeam.submitterEmail}`);
+        
+        // Send the receipt email asynchronously (don't await to avoid delaying the response)
+        sendRegistrationReceiptEmail(
+          existingTeam.submitterEmail,
+          existingTeam,
+          paymentData,
+          eventInfo?.name || 'Tournament Registration'
+        ).catch(emailError => {
+          // Log email errors but don't fail the payment processing
+          console.error('Error sending payment receipt email:', emailError);
+        });
+      }
+    } catch (emailError) {
+      // Log email errors but don't fail the payment processing
+      console.error('Error preparing payment receipt email:', emailError);
+    }
+    
     return true;
   } catch (error: any) {
     console.error("Error handling payment success:", error);
