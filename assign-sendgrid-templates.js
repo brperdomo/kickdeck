@@ -9,18 +9,25 @@
  *   node assign-sendgrid-templates.js assign     - Interactive tool to assign templates
  */
 
+import { db } from './db/index.js';
+import { emailTemplates } from './db/schema.js';
+import { eq } from 'drizzle-orm';
 import readline from 'readline';
-import { getTemplatesFromSendGrid, mapSendGridTemplateToEmailType, listEmailTemplatesWithSendGridMapping } from './server/services/sendgridTemplateService.js';
+import dotenv from 'dotenv';
 
-// Create readline interface for interactive mode
+dotenv.config();
+
+// Create readline interface for interactive prompting
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-// Promise-based readline question
+// Promisify readline question
 function question(query) {
-  return new Promise(resolve => rl.question(query, resolve));
+  return new Promise(resolve => {
+    rl.question(query, resolve);
+  });
 }
 
 /**
@@ -28,31 +35,46 @@ function question(query) {
  */
 async function listTemplates() {
   try {
-    console.log('\n=== SendGrid Dynamic Templates ===\n');
-    
-    const templates = await getTemplatesFromSendGrid();
-    
-    if (templates.length === 0) {
-      console.log('No dynamic templates found in your SendGrid account.\n');
-      console.log('Please create dynamic templates in SendGrid first.\n');
-      return;
+    if (!process.env.SENDGRID_API_KEY) {
+      console.error('ERROR: SENDGRID_API_KEY environment variable is not set');
+      process.exit(1);
     }
     
-    console.log(`Found ${templates.length} dynamic templates:\n`);
-    
-    templates.forEach((template, index) => {
-      const activeVersion = template.versions?.[0];
-      console.log(`${index + 1}. ${template.name}`);
-      console.log(`   ID: ${template.id}`);
-      console.log(`   Active Version: ${activeVersion?.id || 'None'}`);
-      console.log(`   Subject Line: ${activeVersion?.subject || 'Not available'}`);
-      console.log('');
+    const response = await fetch('https://api.sendgrid.com/v3/templates?generations=dynamic', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
     });
     
-    console.log('You can assign these templates to email types with:');
-    console.log('node assign-sendgrid-templates.js assign\n');
+    if (!response.ok) {
+      throw new Error(`SendGrid API returned ${response.status}: ${await response.text()}`);
+    }
+    
+    const data = await response.json();
+    const templates = data.templates || [];
+    
+    console.log('\nAvailable SendGrid Templates:');
+    console.log('===========================');
+    
+    if (templates.length === 0) {
+      console.log('No dynamic templates found in your SendGrid account.');
+      console.log('Please create templates in the SendGrid dashboard first.');
+      return [];
+    }
+    
+    templates.forEach((template, index) => {
+      console.log(`${index + 1}. ID: ${template.id}`);
+      console.log(`   Name: ${template.name}`);
+      console.log(`   Version ID: ${template.versions?.[0]?.id || 'N/A'}`);
+      console.log('---');
+    });
+    
+    return templates;
   } catch (error) {
-    console.error('Error listing templates:', error);
+    console.error('Error fetching SendGrid templates:', error);
+    return [];
   }
 }
 
@@ -61,26 +83,30 @@ async function listTemplates() {
  */
 async function listAppTemplates() {
   try {
-    console.log('\n=== Application Email Templates ===\n');
+    const templates = await db
+      .select()
+      .from(emailTemplates)
+      .orderBy(emailTemplates.name);
     
-    const templates = await listEmailTemplatesWithSendGridMapping();
+    console.log('\nApplication Email Templates:');
+    console.log('==========================');
     
     if (templates.length === 0) {
-      console.log('No email templates found in your application.\n');
-      return;
+      console.log('No email templates found in the application database.');
+      return [];
     }
     
-    console.log(`Found ${templates.length} application email templates:\n`);
-    
     templates.forEach((template, index) => {
-      console.log(`${index + 1}. ${template.name} (${template.type})`);
-      console.log(`   ID: ${template.id}`);
+      console.log(`${index + 1}. Type: ${template.type}`);
+      console.log(`   Name: ${template.name}`);
       console.log(`   SendGrid Template ID: ${template.sendgridTemplateId || 'Not assigned'}`);
-      console.log(`   Active: ${template.isActive ? 'Yes' : 'No'}`);
-      console.log('');
+      console.log('---');
     });
+    
+    return templates;
   } catch (error) {
-    console.error('Error listing application templates:', error);
+    console.error('Error fetching application templates:', error);
+    return [];
   }
 }
 
@@ -89,100 +115,74 @@ async function listAppTemplates() {
  */
 async function assignTemplates() {
   try {
-    // Step 1: List SendGrid templates
-    console.log('\n=== Assign SendGrid Templates ===\n');
-    console.log('Loading SendGrid templates...');
-    
-    const sendGridTemplates = await getTemplatesFromSendGrid();
-    
-    if (sendGridTemplates.length === 0) {
-      console.log('\nNo dynamic templates found in your SendGrid account.');
-      console.log('Please create dynamic templates in SendGrid first.\n');
-      return;
-    }
-    
-    console.log(`\nFound ${sendGridTemplates.length} SendGrid templates.`);
-    
-    // Step 2: List application templates
-    console.log('\nLoading application email templates...');
-    
-    const appTemplates = await listEmailTemplatesWithSendGridMapping();
-    
+    // List app templates first
+    const appTemplates = await listAppTemplates();
     if (appTemplates.length === 0) {
-      console.log('\nNo email templates found in your application.\n');
+      rl.close();
       return;
     }
     
-    console.log(`\nFound ${appTemplates.length} application templates.`);
-    
-    // Step 3: Show existing mappings
-    console.log('\n=== Current Template Mappings ===\n');
-    
-    appTemplates.forEach((template, index) => {
-      console.log(`${index + 1}. ${template.name} (${template.type})`);
-      console.log(`   SendGrid Template ID: ${template.sendgridTemplateId || 'Not assigned'}`);
-    });
-    
-    // Step 4: Interactive assignment
-    console.log('\n=== Assign Templates ===\n');
-    console.log('Enter the number of the application template you want to assign a SendGrid template to,');
-    console.log('or enter "q" to quit.');
-    
-    while (true) {
-      const appTemplateInput = await question('\nApplication template number (or q to quit): ');
-      
-      if (appTemplateInput.toLowerCase() === 'q') {
-        break;
-      }
-      
-      const appTemplateIndex = parseInt(appTemplateInput) - 1;
-      
-      if (isNaN(appTemplateIndex) || appTemplateIndex < 0 || appTemplateIndex >= appTemplates.length) {
-        console.log('Invalid template number. Please try again.');
-        continue;
-      }
-      
-      const selectedAppTemplate = appTemplates[appTemplateIndex];
-      
-      console.log(`\nYou selected: ${selectedAppTemplate.name} (${selectedAppTemplate.type})`);
-      console.log('\nAvailable SendGrid templates:');
-      
-      sendGridTemplates.forEach((template, index) => {
-        console.log(`${index + 1}. ${template.name} (${template.id})`);
-      });
-      
-      const sendGridTemplateInput = await question('\nSendGrid template number (or 0 to remove mapping): ');
-      
-      if (sendGridTemplateInput === '0') {
-        await mapSendGridTemplateToEmailType(selectedAppTemplate.type, null);
-        console.log(`\nRemoved SendGrid template mapping from ${selectedAppTemplate.name}.`);
-        continue;
-      }
-      
-      const sendGridTemplateIndex = parseInt(sendGridTemplateInput) - 1;
-      
-      if (isNaN(sendGridTemplateIndex) || sendGridTemplateIndex < 0 || sendGridTemplateIndex >= sendGridTemplates.length) {
-        console.log('Invalid template number. Please try again.');
-        continue;
-      }
-      
-      const selectedSendGridTemplate = sendGridTemplates[sendGridTemplateIndex];
-      
-      // Confirm the assignment
-      const confirm = await question(`\nAssign SendGrid template "${selectedSendGridTemplate.name}" to "${selectedAppTemplate.name}"? (y/n): `);
-      
-      if (confirm.toLowerCase() === 'y') {
-        await mapSendGridTemplateToEmailType(selectedAppTemplate.type, selectedSendGridTemplate.id);
-        console.log(`\nSuccessfully assigned SendGrid template to ${selectedAppTemplate.name}.`);
-        
-        // Update the local app templates array to reflect the change
-        appTemplates[appTemplateIndex].sendgridTemplateId = selectedSendGridTemplate.id;
-      }
+    // List SendGrid templates
+    const sendgridTemplates = await listTemplates();
+    if (sendgridTemplates.length === 0) {
+      rl.close();
+      return;
     }
     
-    console.log('\nTemplate assignment complete. The changes have been saved to the database.\n');
+    console.log('\nTemplate Assignment:');
+    console.log('===================');
+    
+    // Ask which app template to update
+    const appTemplateIndex = parseInt(await question('\nEnter the number of the application template to update: ')) - 1;
+    if (isNaN(appTemplateIndex) || appTemplateIndex < 0 || appTemplateIndex >= appTemplates.length) {
+      console.error('Invalid template selection');
+      rl.close();
+      return;
+    }
+    
+    // Ask which SendGrid template to assign
+    const sendgridTemplateIndex = parseInt(await question('Enter the number of the SendGrid template to assign: ')) - 1;
+    if (isNaN(sendgridTemplateIndex) || sendgridTemplateIndex < 0 || sendgridTemplateIndex >= sendgridTemplates.length) {
+      console.error('Invalid template selection');
+      rl.close();
+      return;
+    }
+    
+    const appTemplate = appTemplates[appTemplateIndex];
+    const sendgridTemplate = sendgridTemplates[sendgridTemplateIndex];
+    
+    // Confirm the assignment
+    console.log(`\nAssigning SendGrid template "${sendgridTemplate.name}" to app template "${appTemplate.name}"`);
+    const confirm = await question('Confirm? (yes/no): ');
+    
+    if (confirm.toLowerCase() !== 'yes' && confirm.toLowerCase() !== 'y') {
+      console.log('Operation cancelled');
+      rl.close();
+      return;
+    }
+    
+    // Update the template in the database
+    await db
+      .update(emailTemplates)
+      .set({ 
+        sendgridTemplateId: sendgridTemplate.id,
+        updatedAt: new Date().toISOString()
+      })
+      .where(eq(emailTemplates.id, appTemplate.id));
+    
+    console.log(`\nSuccess! The template assignment has been updated.`);
+    console.log(`App Template: ${appTemplate.name} (${appTemplate.type})`);
+    console.log(`SendGrid Template: ${sendgridTemplate.name} (${sendgridTemplate.id})`);
+    
+    // Ask if the user wants to assign another template
+    const assignAnother = await question('\nAssign another template? (yes/no): ');
+    if (assignAnother.toLowerCase() === 'yes' || assignAnother.toLowerCase() === 'y') {
+      await assignTemplates();
+    }
   } catch (error) {
-    console.error('Error assigning templates:', error);
+    console.error('Error assigning template:', error);
+  } finally {
+    rl.close();
   }
 }
 
@@ -190,32 +190,31 @@ async function assignTemplates() {
  * Main function to handle command line arguments
  */
 async function main() {
-  try {
-    const command = process.argv[2]?.toLowerCase() || 'help';
-    
-    switch (command) {
-      case 'list':
-        await listTemplates();
-        await listAppTemplates();
-        break;
-      
-      case 'assign':
-        await assignTemplates();
-        break;
-      
-      case 'help':
-      default:
-        console.log('\nSendGrid Template Assignment Tool\n');
-        console.log('Usage:');
-        console.log('  node assign-sendgrid-templates.js list     - Lists all SendGrid templates');
-        console.log('  node assign-sendgrid-templates.js assign   - Interactive tool to assign templates\n');
-        break;
-    }
-  } catch (error) {
-    console.error('An error occurred:', error);
-  } finally {
+  const command = process.argv[2] || 'help';
+  
+  switch (command) {
+    case 'list':
+      await listTemplates();
+      await listAppTemplates();
+      break;
+    case 'assign':
+      await assignTemplates();
+      break;
+    case 'help':
+    default:
+      console.log('Usage:');
+      console.log('  node assign-sendgrid-templates.js list   - Lists all templates');
+      console.log('  node assign-sendgrid-templates.js assign - Interactive tool to assign templates');
+      break;
+  }
+  
+  // Make sure to close readline if not closed already
+  if (rl.listenerCount('line') > 0) {
     rl.close();
   }
 }
 
-main();
+main().catch(err => {
+  console.error('Unhandled error:', err);
+  process.exit(1);
+});

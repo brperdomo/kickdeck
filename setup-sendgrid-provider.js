@@ -6,105 +6,82 @@
  */
 
 import { db } from './db/index.js';
-import { emailProviderSettings } from './db/schema/index.js';
 import { eq } from 'drizzle-orm';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 async function setupSendGridProvider() {
   try {
+    if (!process.env.SENDGRID_API_KEY) {
+      console.error('ERROR: SENDGRID_API_KEY is not set in environment variables');
+      console.log('Please set SENDGRID_API_KEY in your .env file and try again');
+      process.exit(1);
+    }
+
     console.log('Setting up SendGrid as the primary email provider...');
-    
-    // First, check if we already have a SendGrid provider
-    const existingProviders = await db
+
+    // Check if SendGrid provider already exists
+    const providers = await db
       .select()
-      .from(emailProviderSettings);
-    
-    console.log(`Found ${existingProviders.length} existing providers`);
-    
-    // Look for an existing SendGrid provider
-    const sendGridProvider = existingProviders.find(p => p.providerType === 'sendgrid');
-    
-    if (sendGridProvider) {
-      console.log('Updating existing SendGrid provider...');
-      // Update it to be active and default
+      .from({ e: 'email_providers' })
+      .where(eq('e.type', 'sendgrid'))
+      .limit(1);
+
+    const senderEmail = 'noreply@matchpro.ai'; // Replace with your verified sender
+    const senderName = 'MatchPro'; // Replace with your organization name
+
+    if (providers && providers.length > 0) {
+      // Update existing SendGrid provider
+      const [provider] = providers;
+
       await db
-        .update(emailProviderSettings)
+        .update({ e: 'email_providers' })
         .set({
           isActive: true,
-          isDefault: true,
-          settings: {
-            apiKey: process.env.SENDGRID_API_KEY,
-            from: 'support@matchpro.ai'
-          },
+          senderEmail,
+          senderName,
           updatedAt: new Date().toISOString()
         })
-        .where(eq(emailProviderSettings.id, sendGridProvider.id));
-        
-      // Deactivate all other providers
-      for (const provider of existingProviders) {
-        if (provider.id !== sendGridProvider.id) {
-          await db
-            .update(emailProviderSettings)
-            .set({
-              isActive: false,
-              isDefault: false,
-              updatedAt: new Date().toISOString()
-            })
-            .where(eq(emailProviderSettings.id, provider.id));
-        }
-      }
-      
-      console.log('SendGrid provider updated successfully!');
+        .where(eq('e.id', provider.id));
+
+      console.log('Updated existing SendGrid provider configuration');
     } else {
-      console.log('Creating new SendGrid provider...');
-      // Create a new SendGrid provider
+      // Create new SendGrid provider
       await db
-        .insert(emailProviderSettings)
+        .insert({ e: 'email_providers' })
         .values({
-          providerType: 'sendgrid',
-          providerName: 'SendGrid Email Service',
-          settings: {
-            apiKey: process.env.SENDGRID_API_KEY,
-            from: 'support@matchpro.ai'
-          },
+          type: 'sendgrid',
+          name: 'SendGrid',
           isActive: true,
-          isDefault: true,
+          senderEmail,
+          senderName,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         });
-        
-      // Deactivate all other providers
-      for (const provider of existingProviders) {
-        await db
-          .update(emailProviderSettings)
-          .set({
-            isActive: false,
-            isDefault: false,
-            updatedAt: new Date().toISOString()
-          })
-          .where(eq(emailProviderSettings.id, provider.id));
-      }
-      
-      console.log('SendGrid provider created successfully!');
+
+      console.log('Created new SendGrid provider configuration');
     }
-    
-    // Verify the changes
-    const updatedProviders = await db
-      .select()
-      .from(emailProviderSettings);
-      
-    console.log('Updated providers:');
-    for (const provider of updatedProviders) {
-      console.log(`- ${provider.providerName} (${provider.providerType}): Active=${provider.isActive}, Default=${provider.isDefault}`);
-    }
-    
-    console.log('SendGrid is now set as the primary email provider!');
+
+    // Disable all other email providers
+    await db
+      .update({ e: 'email_providers' })
+      .set({
+        isActive: false,
+        updatedAt: new Date().toISOString()
+      })
+      .where(eq('e.type', 'smtp'));
+
+    console.log('SendGrid is now set as the primary email provider');
+    console.log(`Sender Email: ${senderEmail}`);
+    console.log(`Sender Name: ${senderName}`);
+    console.log('\nIMPORTANT: Make sure to verify this sender in your SendGrid account!');
+
+    process.exit(0);
   } catch (error) {
     console.error('Error setting up SendGrid provider:', error);
+    process.exit(1);
   }
 }
 
-// Run the function
-setupSendGridProvider()
-  .then(() => console.log('Done!'))
-  .catch(err => console.error('Unhandled error:', err))
-  .finally(() => process.exit(0));
+setupSendGridProvider();
