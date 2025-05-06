@@ -363,6 +363,100 @@ function createFallbackTemplate(templateType: string, context: TemplateContext, 
 }
 
 /**
+ * Helper function to get the application URL for email links
+ */
+function getAppUrl(isDevelopment: boolean = process.env.NODE_ENV !== 'production'): string {
+  if (isDevelopment) {
+    // Development environment - use local domain
+    return process.env.APP_URL || `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
+  } else {
+    // Production environment - use production domain
+    return process.env.PRODUCTION_URL || process.env.APP_URL || 'https://matchpro.ai';
+  }
+}
+
+/**
+ * Sends a registration receipt email with transaction details
+ */
+export async function sendRegistrationReceiptEmail(
+  to: string,
+  teamData: any, // Team registration data
+  paymentData: any, // Payment transaction data
+  eventName: string
+): Promise<void> {
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  
+  try {
+    const appUrl = getAppUrl(isDevelopment);
+    const loginLink = `${appUrl}/dashboard`;
+    
+    // Format numbers and dates consistently
+    const formatCurrency = (amount: number) => {
+      return (amount / 100).toFixed(2);
+    };
+    
+    const formatDate = (dateString: string) => {
+      if (!dateString) return '';
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    };
+    
+    // Format payment date if it exists
+    const paymentDate = paymentData?.paymentDate || teamData?.paymentDate;
+    const formattedPaymentDate = paymentDate ? formatDate(paymentDate) : '';
+    
+    // Format selected fees if they exist
+    let selectedFees: any[] = [];
+    if (teamData.selectedFeeIds) {
+      // This would normally be populated by a database query to get fee details
+      // This is a placeholder - actual implementation would fetch fee info
+      selectedFees = [{ name: 'Registration Fee', amount: formatCurrency(teamData.totalAmount || teamData.registrationFee || 0) }];
+    }
+    
+    // Prepare template context data
+    const context = {
+      teamName: teamData.name || 'Team Registration',
+      eventName: eventName || 'Event Registration',
+      submitterName: teamData.submitterName || teamData.managerName || '',
+      submitterEmail: teamData.submitterEmail || teamData.managerEmail || '',
+      registrationDate: formatDate(teamData.createdAt),
+      totalAmount: formatCurrency(teamData.totalAmount || teamData.registrationFee || 0),
+      paymentStatus: paymentData?.status || teamData.paymentStatus || 'pending',
+      paymentDate: formattedPaymentDate,
+      paymentMethod: paymentData?.paymentMethodType || 'card',
+      cardLastFour: paymentData?.cardLastFour || teamData.cardLastFour || '',
+      cardBrand: paymentData?.cardBrand || teamData.cardBrand || '',
+      paymentId: paymentData?.paymentIntentId || teamData.paymentIntentId || '',
+      selectedFees: selectedFees,
+      loginLink: loginLink,
+      clubName: teamData.clubName || '',
+      currentYear: new Date().getFullYear()
+    };
+    
+    // Send the email using the registration_receipt template
+    await sendTemplatedEmail(to, 'registration_receipt', context);
+    
+    console.log(`Registration receipt email sent to ${to}`);
+  } catch (error) {
+    console.error('Error sending registration receipt email:', error);
+    
+    if (isDevelopment) {
+      // Rethrow errors in development mode for easier debugging
+      throw error;
+    }
+    
+    // In production, log error but don't crash the application
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`Failed to send registration receipt email to ${to}: ${errorMessage}`);
+  }
+}
+
+/**
  * Sends a password reset email
  */
 export async function sendPasswordResetEmail(
@@ -373,19 +467,8 @@ export async function sendPasswordResetEmail(
   const isDevelopment = process.env.NODE_ENV !== 'production';
   
   try {
-    // In production, always use the PRODUCTION_URL env var or the fallback production domain
-    // In development, use APP_URL or Replit domain
-    let appUrl: string;
-    
-    if (isDevelopment) {
-      // Development environment - use local domain
-      appUrl = process.env.APP_URL || `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
-      console.log(`Using development URL for password reset: ${appUrl}`);
-    } else {
-      // Production environment - use production domain
-      appUrl = process.env.PRODUCTION_URL || process.env.APP_URL || 'https://matchpro.ai';
-      console.log(`Using production URL for password reset: ${appUrl}`);
-    }
+    const appUrl = getAppUrl(isDevelopment);
+    console.log(`Using URL for password reset: ${appUrl}`);
     
     const resetUrl = `${appUrl}/reset-password?token=${resetToken}`;
     
