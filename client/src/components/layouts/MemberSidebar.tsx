@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { LogOut, User, Home, Calendar, Bell, UserPlus, Settings } from "lucide-react";
+import { LogOut, User, Home, Calendar, Bell, UserPlus, Settings, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
 import { useOrganizationSettings } from "@/hooks/use-organization-settings";
+import { usePermissions } from "@/hooks/use-permissions";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { CollapsibleSidebar } from "@/components/ui/collapsible-sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 
 export function MemberSidebar() {
   const [location] = useLocation();
   const { user, logout } = useUser();
   const { settings } = useOrganizationSettings();
+  const { hasPermission } = usePermissions();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  // Check if user has admin access
+  const hasAdminAccess = hasPermission('access_admin_dashboard');
 
   // Navigation links
   const navLinks = [
@@ -144,6 +150,19 @@ export function MemberSidebar() {
             <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
           </div>
         </div>
+        {hasAdminAccess && (
+          <>
+            <Button
+              variant="outline"
+              className="w-full justify-start mb-2 hover:bg-primary/10 hover:text-primary touch-target transition-all duration-300"
+              onClick={() => window.location.href = "/admin"}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Go to Admin Dashboard
+            </Button>
+            <Separator className="my-2" />
+          </>
+        )}
         <Button
           variant="outline"
           className="w-full justify-start text-destructive hover:text-destructive-foreground hover:bg-destructive touch-target transition-all duration-300"

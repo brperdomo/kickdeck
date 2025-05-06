@@ -241,7 +241,7 @@ export default function RegistrationsPage() {
   // For demonstration purposes, let's add payLater flag to some registrations
   // This is for UI testing only - will be removed once the backend provides this data
   if (registrations.length > 0) {
-    registrations = registrations.map((reg, index) => {
+    registrations = registrations.map((reg: Registration, index: number) => {
       // Set payLater flag for some registrations with pending_payment or registered status
       if ((reg.status === 'pending_payment' || reg.status === 'registered') && index % 2 === 0) {
         return { ...reg, payLater: true };
