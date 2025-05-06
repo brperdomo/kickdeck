@@ -87,7 +87,7 @@ export function UserBanner() {
             transition={{ delay: 0.15 }}
           >
             <img 
-              src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"} 
+              src={settings?.logoUrl || "/uploads/MatchProAI_Linear_BlackNOBUFFER.png"} 
               alt={settings?.name || "MatchPro"} 
               className="h-8 mr-2"
             />

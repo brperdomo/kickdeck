@@ -58,7 +58,7 @@ export function MemberSidebar() {
   const sidebarHeader = (
     <div className="flex items-center gap-2 px-2">
       <img
-        src={settings?.logoUrl || "/attached_assets/MatchPro.ai_Stacked_Color.png"}
+        src={settings?.logoUrl || "/uploads/MatchProAI_Linear_BlackNOBUFFER.png"}
         alt={settings?.name || "MatchPro"}
         className="h-8"
       />
