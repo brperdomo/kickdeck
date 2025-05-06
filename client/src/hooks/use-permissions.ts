@@ -49,7 +49,8 @@ export type Permission =
   | 'edit_role_permissions'
   | 'view_members'
   | 'emulate_users'
-  | 'manage_system';
+  | 'manage_system'
+  | 'access_admin_dashboard';
 
 // Define a map of navigation sections to required permissions
 export const SECTION_PERMISSIONS: Record<string, Permission[]> = {

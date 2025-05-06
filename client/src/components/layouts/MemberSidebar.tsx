@@ -18,8 +18,8 @@ export function MemberSidebar() {
   const { hasPermission } = usePermissions();
   const [isCollapsed, setIsCollapsed] = useState(false);
   
-  // Check if user has admin access
-  const hasAdminAccess = hasPermission('access_admin_dashboard');
+  // Check if user has admin access - simplified check for now
+  const hasAdminAccess = user?.isAdmin;
 
   // Navigation links
   const navLinks = [
