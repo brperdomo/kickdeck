@@ -7,114 +7,164 @@
  */
 
 import fetch from 'node-fetch';
-import fs from 'fs';
+import fs from 'fs/promises';
+import dotenv from 'dotenv';
 
-// Helper for API requests with cookies
+dotenv.config();
+
+// Helper function for API requests
 async function apiRequest(endpoint, method = 'GET', body = null) {
-  const cookieContent = loadCookiesFromFile();
-  
-  const url = `http://localhost:5000${endpoint}`;
-  const options = {
-    method,
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: body ? JSON.stringify(body) : undefined
-  };
-  
-  // Only add cookies if they exist and are valid
-  if (cookieContent && !cookieContent.includes('# Netscape HTTP Cookie File')) {
-    options.headers.Cookie = cookieContent;
+  try {
+    const cookies = loadCookiesFromFile();
+    
+    const options = {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookies
+      }
+    };
+    
+    if (body) {
+      options.body = JSON.stringify(body);
+    }
+    
+    const baseUrl = process.env.APP_URL || 'http://localhost:5000';
+    const response = await fetch(`${baseUrl}${endpoint}`, options);
+    
+    // Get cookies from response
+    const setCookieHeader = response.headers.get('set-cookie');
+    if (setCookieHeader) {
+      saveCookiesToFile(setCookieHeader);
+    }
+    
+    const responseData = await response.json().catch(() => null);
+    
+    return {
+      ok: response.ok,
+      status: response.status,
+      data: responseData,
+      cookies: setCookieHeader
+    };
+  } catch (error) {
+    console.error(`API Request Error: ${error.message}`);
+    return { ok: false, error: error.message };
   }
-
-  console.log(`${method} ${url}`);
-  
-  const response = await fetch(url, options);
-  
-  // Save updated cookies
-  const setCookieHeader = response.headers.get('set-cookie');
-  if (setCookieHeader) {
-    saveCookiesToFile(setCookieHeader);
-  }
-  
-  // Parse the response
-  let data = null;
-  const contentType = response.headers.get('content-type') || '';
-  if (contentType.includes('application/json')) {
-    data = await response.json();
-  } else {
-    data = await response.text();
-  }
-  
-  return {
-    ok: response.ok,
-    status: response.status,
-    data
-  };
 }
 
 // Helper to load cookies from file
 function loadCookiesFromFile() {
   try {
-    if (fs.existsSync('./cookies.txt')) {
-      return fs.readFileSync('./cookies.txt', 'utf8');
-    }
-  } catch (err) {
-    console.error('Error loading cookies:', err);
+    return fs.readFileSync('./cookies.txt', 'utf8');
+  } catch (error) {
+    return '';
   }
-  return '';
 }
 
 // Helper to save cookies to file
 function saveCookiesToFile(cookieStr) {
   try {
-    fs.writeFileSync('./cookies.txt', cookieStr, 'utf8');
-  } catch (err) {
-    console.error('Error saving cookies:', err);
+    fs.writeFileSync('./cookies.txt', cookieStr);
+  } catch (error) {
+    console.error('Error saving cookies:', error);
   }
 }
 
-// Login to get authenticated
+// Login to get authentication cookies
 async function login() {
-  // Replace with actual credentials
-  const loginData = {
-    email: 'bperdomo@zoho.com',
+  const credentials = {
+    email: 'admin@example.com',
     password: 'password123'
   };
   
-  const loginResponse = await apiRequest('/api/auth/login', 'POST', loginData);
+  console.log('Logging in...');
+  const loginResponse = await apiRequest('/api/login', 'POST', credentials);
   
   if (!loginResponse.ok) {
-    console.error('Login failed:', loginResponse.status, loginResponse.data);
-    throw new Error('Login failed');
+    console.error('Login failed:', loginResponse.data);
+    process.exit(1);
   }
   
-  console.log('Login successful');
+  console.log('Login successful!');
   return loginResponse;
 }
 
-// Test the new email configuration endpoint
+// Test the email configuration endpoint
 async function testEmailConfig() {
   try {
-    // First, login to get authenticated
+    // First login to get authenticated
     await login();
     
-    // Call the email config endpoint to update all templates
-    const response = await apiRequest('/api/admin/email-config', 'POST');
+    // Check SendGrid settings endpoint
+    console.log('\nChecking SendGrid settings...');
+    const settingsResponse = await apiRequest('/api/admin/sendgrid/settings');
     
-    console.log('Response Status:', response.status);
-    console.log('Response Data:', JSON.stringify(response.data, null, 2));
-    
-    // If successful, test sending an email
-    if (response.ok) {
-      console.log('Email configuration updated successfully');
-    } else {
-      console.error('Failed to update email configuration');
+    if (!settingsResponse.ok) {
+      console.error('Failed to fetch SendGrid settings:', settingsResponse.data);
+      return;
     }
+    
+    console.log('SendGrid Configuration:');
+    console.log(JSON.stringify(settingsResponse.data, null, 2));
+    
+    // Check if SendGrid API key is configured
+    if (!settingsResponse.data.apiKeySet) {
+      console.error('\nERROR: SendGrid API key is not set in environment variables');
+      console.log('Please set the SENDGRID_API_KEY environment variable and try again');
+      return;
+    }
+    
+    // Check if API key is valid
+    if (!settingsResponse.data.apiKeyValid) {
+      console.error('\nERROR: SendGrid API key is invalid');
+      console.log('Please check your SendGrid API key and try again');
+      return;
+    }
+    
+    // Get template mappings
+    console.log('\nChecking template mappings...');
+    const mappingsResponse = await apiRequest('/api/admin/sendgrid/template-mappings');
+    
+    if (!mappingsResponse.ok) {
+      console.error('Failed to fetch template mappings:', mappingsResponse.data);
+      return;
+    }
+    
+    console.log('Template Mappings:');
+    
+    const templates = mappingsResponse.data;
+    const welcomeTemplate = templates.find(t => t.type === 'welcome');
+    const adminWelcomeTemplate = templates.find(t => t.type === 'admin_welcome');
+    
+    console.log(`\nMember Welcome Template: ${welcomeTemplate?.name}`);
+    console.log(`  SendGrid Template ID: ${welcomeTemplate?.sendgridTemplateId || 'Not assigned'}`);
+    
+    console.log(`\nAdmin Welcome Template: ${adminWelcomeTemplate?.name}`);
+    console.log(`  SendGrid Template ID: ${adminWelcomeTemplate?.sendgridTemplateId || 'Not assigned'}`);
+    
+    // Check if templates are assigned
+    const templatesNeedAssignment = [];
+    if (!welcomeTemplate?.sendgridTemplateId) {
+      templatesNeedAssignment.push('welcome');
+    }
+    if (!adminWelcomeTemplate?.sendgridTemplateId) {
+      templatesNeedAssignment.push('admin_welcome');
+    }
+    
+    if (templatesNeedAssignment.length > 0) {
+      console.log('\nSome templates need SendGrid template assignment:');
+      templatesNeedAssignment.forEach(type => {
+        console.log(`  - ${type}`);
+      });
+      console.log('\nUse the assign-sendgrid-templates.js script to assign SendGrid templates');
+    } else {
+      console.log('\nAll required templates are mapped to SendGrid templates!');
+      console.log('You can now test sending emails with test-both-welcome-emails.js');
+    }
+    
   } catch (error) {
-    console.error('Error during test:', error);
+    console.error('Error testing email configuration:', error);
   }
 }
 
-// Run the test
 testEmailConfig();

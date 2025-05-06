@@ -5,172 +5,107 @@
  * and the same sender email as the password reset template.
  */
 
-import { db } from './server/db/index.js';
-import { emailTemplates, emailProviderSettings, emailTemplateRouting } from './server/db/schema/index.js';
+import { db } from './db/index.js';
 import { eq } from 'drizzle-orm';
-import { config } from 'dotenv';
+import dotenv from 'dotenv';
 
-config(); // Load environment variables
-
-// Standard sender information
-const SENDER_NAME = 'MatchPro';
-const SENDER_EMAIL = 'support@matchpro.ai';
+dotenv.config();
 
 async function setupWelcomeEmailTemplate() {
-  console.log('Setting up welcome email templates with SendGrid provider...');
-  
   try {
-    // Find the SendGrid provider
-    console.log('Looking for SendGrid provider...');
-    const [sendGridProvider] = await db
+    console.log('Setting up welcome email templates with SendGrid...');
+
+    // Get SendGrid provider
+    const providers = await db
       .select()
-      .from(emailProviderSettings)
-      .where(
-        eq(emailProviderSettings.providerType, 'sendgrid')
-      );
-    
-    if (!sendGridProvider) {
-      console.error('SendGrid provider not found!');
-      console.log('Creating SendGrid provider...');
-      
-      // Create the SendGrid provider if it doesn't exist
-      const [newProvider] = await db
-        .insert(emailProviderSettings)
-        .values({
-          providerType: 'sendgrid',
-          providerName: 'SendGrid',
-          isActive: true,
-          isDefault: true,
-          settings: {
-            from: SENDER_EMAIL,
-            apiKey: process.env.SENDGRID_API_KEY || 'YOUR_SENDGRID_API_KEY'
-          },
-          createdAt: new Date(),
-          updatedAt: new Date()
-        })
-        .returning();
-      
-      console.log('SendGrid provider created:', newProvider.id);
-      
-      // Use the newly created provider
-      sendGridProvider = newProvider;
-    } else {
-      console.log('Found SendGrid provider:', sendGridProvider.id);
+      .from({ e: 'email_providers' })
+      .where(eq('e.type', 'sendgrid'))
+      .limit(1);
+
+    if (!providers || providers.length === 0) {
+      console.error('ERROR: SendGrid provider not found in the database');
+      console.log('Please run setup-sendgrid-provider.js first to set up the SendGrid provider');
+      process.exit(1);
     }
-    
-    // Check if welcome email template exists
-    console.log('Checking for welcome email template...');
-    const [welcomeTemplate] = await db
-      .select()
-      .from(emailTemplates)
-      .where(eq(emailTemplates.type, 'welcome'));
-    
-    if (welcomeTemplate) {
-      console.log('Found welcome email template:', welcomeTemplate.id);
-      
-      // Update the template with the correct sender and provider
-      console.log('Updating welcome email template...');
-      await db
-        .update(emailTemplates)
-        .set({
-          senderEmail: SENDER_EMAIL,
-          senderName: SENDER_NAME,
-          providerId: sendGridProvider.id,
-          updatedAt: new Date()
-        })
-        .where(eq(emailTemplates.id, welcomeTemplate.id));
-      
-      console.log('Welcome email template updated successfully!');
-    } else {
-      console.error('Welcome email template not found!');
-    }
-    
-    // Check if admin welcome email template exists
-    console.log('Checking for admin welcome email template...');
-    const [adminWelcomeTemplate] = await db
-      .select()
-      .from(emailTemplates)
-      .where(eq(emailTemplates.type, 'admin_welcome'));
-    
-    if (adminWelcomeTemplate) {
-      console.log('Found admin welcome email template:', adminWelcomeTemplate.id);
-      
-      // Update the template with the correct sender and provider
-      console.log('Updating admin welcome email template...');
-      await db
-        .update(emailTemplates)
-        .set({
-          senderEmail: SENDER_EMAIL,
-          senderName: SENDER_NAME,
-          providerId: sendGridProvider.id,
-          updatedAt: new Date()
-        })
-        .where(eq(emailTemplates.id, adminWelcomeTemplate.id));
-      
-      console.log('Admin welcome email template updated successfully!');
-    } else {
-      console.log('Admin welcome email template not found.');
-    }
-    
-    // Set up routing for welcome email templates
-    await setupEmailRouting('welcome', sendGridProvider.id);
-    await setupEmailRouting('admin_welcome', sendGridProvider.id);
-    
-    console.log('Email template setup completed successfully!');
+
+    const sendgridProvider = providers[0];
+    console.log(`Using SendGrid provider: ${sendgridProvider.name} (ID: ${sendgridProvider.id})`);
+
+    // Update welcome email template
+    await setupEmailRouting('welcome', sendgridProvider.id);
+    console.log('Updated member welcome email template');
+
+    // Update admin welcome email template
+    await setupEmailRouting('admin_welcome', sendgridProvider.id);
+    console.log('Updated admin welcome email template');
+
+    console.log('\nWelcome email templates are now configured to use SendGrid!');
+    console.log('NEXT STEPS:');
+    console.log('1. Create dynamic templates in SendGrid for both types of welcome emails');
+    console.log('2. Go to the admin panel and map SendGrid templates to email types');
+    console.log('3. Test the templates using the test-both-welcome-emails.js script');
+
+    process.exit(0);
   } catch (error) {
     console.error('Error setting up welcome email template:', error);
+    process.exit(1);
   }
 }
 
 async function setupEmailRouting(templateType, providerId) {
-  console.log(`Setting up routing for ${templateType} template...`);
-  
   try {
-    // Check if routing already exists
-    const [existingRouting] = await db
+    // Get template
+    const templates = await db
       .select()
-      .from(emailTemplateRouting)
-      .where(eq(emailTemplateRouting.templateType, templateType));
-    
-    if (existingRouting) {
-      console.log(`Found existing routing for ${templateType}:`, existingRouting.id);
-      
-      // Update the routing
-      await db
-        .update(emailTemplateRouting)
-        .set({
-          providerId: providerId,
-          fromEmail: SENDER_EMAIL,
-          fromName: SENDER_NAME,
-          isActive: true,
-          updatedAt: new Date()
-        })
-        .where(eq(emailTemplateRouting.id, existingRouting.id));
-      
-      console.log(`Routing for ${templateType} updated successfully!`);
+      .from({ t: 'email_templates' })
+      .where(eq('t.type', templateType))
+      .limit(1);
+
+    if (templates && templates.length > 0) {
+      const template = templates[0];
+
+      // Get current routing (if any)
+      const routings = await db
+        .select()
+        .from({ r: 'email_template_routings' })
+        .where(eq('r.templateId', template.id))
+        .limit(1);
+
+      if (routings && routings.length > 0) {
+        // Update existing routing
+        const routing = routings[0];
+
+        await db
+          .update({ r: 'email_template_routings' })
+          .set({
+            providerId,
+            isActive: true,
+            updatedAt: new Date().toISOString()
+          })
+          .where(eq('r.id', routing.id));
+
+        console.log(`Updated existing routing for ${templateType} email template`);
+      } else {
+        // Create new routing
+        await db
+          .insert({ r: 'email_template_routings' })
+          .values({
+            templateId: template.id,
+            providerId,
+            isActive: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+
+        console.log(`Created new routing for ${templateType} email template`);
+      }
     } else {
-      console.log(`No routing found for ${templateType}, creating one...`);
-      
-      // Create new routing
-      const [newRouting] = await db
-        .insert(emailTemplateRouting)
-        .values({
-          templateType: templateType,
-          providerId: providerId,
-          fromEmail: SENDER_EMAIL,
-          fromName: SENDER_NAME,
-          isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        })
-        .returning();
-      
-      console.log(`Routing for ${templateType} created successfully!`, newRouting.id);
+      console.error(`WARNING: ${templateType} email template not found`);
     }
   } catch (error) {
-    console.error(`Error setting up routing for ${templateType}:`, error);
+    console.error(`Error setting up ${templateType} email routing:`, error);
+    throw error;
   }
 }
 
-// Run the setup function
 setupWelcomeEmailTemplate();
