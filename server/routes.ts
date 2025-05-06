@@ -65,7 +65,7 @@ import {
 } from "./routes/admin/event-administrators";
 import userRouter from "./routes/user";
 import { sql, eq, and, or, inArray, notInArray } from "drizzle-orm";
-import { sendTemplatedEmail } from "./services/emailService";
+import { sendTemplatedEmail, sendRegistrationReceiptEmail } from "./services/emailService";
 import {
   users,
   organizationSettings,
@@ -1187,6 +1187,43 @@ export function registerRoutes(app: Express): Server {
           selectedFeeIds: result.team.selectedFeeIds,
           totalAmount: result.team.totalAmount
         } : null;
+        
+        // Send registration receipt email if submitter email is available
+        try {
+          if (result.team?.submitterEmail) {
+            // Get the event name for the email
+            const [eventInfo] = await db
+              .select({ name: events.name })
+              .from(events)
+              .where(eq(events.id, eventId));
+            
+            // Create a mock payment data object for the initial receipt
+            // This will be updated when actual payment is processed
+            const initialPaymentData = {
+              status: paymentMethod === 'pay_later' ? 'pending' : 'processing',
+              amount: result.team.totalAmount || result.team.registrationFee,
+              paymentIntentId: result.team.paymentIntentId,
+              paymentMethodType: paymentMethod || 'card'
+            };
+            
+            console.log(`Sending registration receipt email to ${result.team.submitterEmail}`);
+            
+            // Send the registration receipt email asynchronously
+            // We don't await this to avoid delaying the response to the client
+            sendRegistrationReceiptEmail(
+              result.team.submitterEmail,
+              result.team,
+              initialPaymentData,
+              eventInfo?.name || 'Event Registration'
+            ).catch(emailError => {
+              // Log email errors but don't fail the registration process
+              console.error('Error sending registration receipt email:', emailError);
+            });
+          }
+        } catch (emailError) {
+          // Log email errors but don't fail the registration process
+          console.error('Error preparing registration receipt email:', emailError);
+        }
         
         res.status(201).json({
           message: 'Team registered successfully',
