@@ -7,8 +7,9 @@
 
 import fetch from 'node-fetch';
 import { db } from '../../db/index.js';
-import { emailTemplates } from '../../db/schema.js';
-import { eq } from 'drizzle-orm';
+import { emailTemplates } from '../../db/schema/emailTemplates.js';
+import { emailProviderSettings } from '../../db/schema.js';
+import { eq, and, isNull, ne } from 'drizzle-orm';
 
 // Ensure the SendGrid API key is available
 if (!process.env.SENDGRID_API_KEY) {
@@ -19,7 +20,7 @@ if (!process.env.SENDGRID_API_KEY) {
  * Get all dynamic templates from SendGrid
  * @returns {Promise<Array>} Array of template objects
  */
-export async function getSendGridTemplates() {
+export async function getTemplatesFromSendGrid() {
   try {
     if (!process.env.SENDGRID_API_KEY) {
       throw new Error('SENDGRID_API_KEY environment variable is not set');
@@ -51,9 +52,12 @@ export async function getSendGridTemplates() {
  * Get all email templates with their SendGrid template mappings
  * @returns {Promise<Array>} Array of email templates with SendGrid mappings
  */
-export async function getEmailTemplatesWithMappings() {
+export async function listEmailTemplatesWithSendGridMapping() {
   try {
-    const templates = await db.query.emailTemplates.findMany();
+    const templates = await db
+      .select()
+      .from(emailTemplates)
+      .orderBy(emailTemplates.name);
     return templates;
   } catch (error) {
     console.error('Error fetching email templates with mappings:', error);
@@ -67,12 +71,13 @@ export async function getEmailTemplatesWithMappings() {
  * @param {string|null} sendgridTemplateId - SendGrid template ID or null to remove mapping
  * @returns {Promise<Object>} Updated template
  */
-export async function mapSendGridTemplate(templateType, sendgridTemplateId) {
+export async function mapSendGridTemplateToEmailType(templateType, sendgridTemplateId) {
   try {
     // Find all templates of this type
-    const templatesOfType = await db.query.emailTemplates.findMany({
-      where: eq(emailTemplates.type, templateType)
-    });
+    const templatesOfType = await db
+      .select()
+      .from(emailTemplates)
+      .where(eq(emailTemplates.type, templateType));
 
     if (templatesOfType.length === 0) {
       throw new Error(`No email templates found with type: ${templateType}`);
@@ -81,7 +86,10 @@ export async function mapSendGridTemplate(templateType, sendgridTemplateId) {
     // Update all templates of this type
     const updatePromises = templatesOfType.map(template => 
       db.update(emailTemplates)
-        .set({ sendgridTemplateId: sendgridTemplateId })
+        .set({ 
+          sendgridTemplateId: sendgridTemplateId,
+          updatedAt: new Date()
+        })
         .where(eq(emailTemplates.id, template.id))
         .returning()
     );
@@ -105,21 +113,22 @@ export async function mapSendGridTemplate(templateType, sendgridTemplateId) {
  */
 export async function getSendGridStatus() {
   try {
-    // Get SendGrid provider from email_providers table
-    const providers = await db.query.emailProviders.findMany({
-      where: eq(db.schema.emailProviders.name, 'SendGrid')
-    });
+    // Get SendGrid provider from email_provider_settings table
+    const providers = await db
+      .select()
+      .from(emailProviderSettings)
+      .where(and(
+        eq(emailProviderSettings.providerType, 'sendgrid'),
+        eq(emailProviderSettings.isActive, true)
+      ));
 
     const provider = providers.length > 0 ? providers[0] : null;
 
     // Get count of templates with SendGrid mappings
-    const templatesWithSendGrid = await db.query.emailTemplates.findMany({
-      where: (emailTemplates, { ne, and, isNotNull }) => 
-        and(
-          isNotNull(emailTemplates.sendgridTemplateId),
-          ne(emailTemplates.sendgridTemplateId, '')
-        )
-    });
+    const templatesWithSendGrid = await db
+      .select()
+      .from(emailTemplates)
+      .where(isNull(emailTemplates.sendgridTemplateId).not());
 
     return {
       provider,
@@ -137,9 +146,9 @@ export async function getSendGridStatus() {
  * @param {string} templateId - SendGrid template ID
  * @param {string} recipientEmail - Email address to send the test to
  * @param {Object} testData - Test data to use in the template
- * @returns {Promise<Object>} Response from SendGrid
+ * @returns {Promise<boolean>} True if email was sent successfully
  */
-export async function sendTestEmail(templateId, recipientEmail, testData) {
+export async function testSendGridTemplate(templateId, recipientEmail, testData) {
   try {
     if (!process.env.SENDGRID_API_KEY) {
       throw new Error('SENDGRID_API_KEY environment variable is not set');
@@ -152,10 +161,10 @@ export async function sendTestEmail(templateId, recipientEmail, testData) {
       personalizations: [
         {
           to: [{ email: recipientEmail }],
-          dynamic_template_data: testData
+          dynamic_template_data: testData || {}
         }
       ],
-      from: { email: senderEmail },
+      from: { email: senderEmail, name: 'MatchPro.ai' },
       template_id: templateId
     };
 
@@ -179,11 +188,7 @@ export async function sendTestEmail(templateId, recipientEmail, testData) {
       throw new Error(`SendGrid API returned ${response.status}: ${errorMessage}`);
     }
 
-    return {
-      success: true,
-      message: `Test email sent to ${recipientEmail}`,
-      statusCode: response.status
-    };
+    return true;
   } catch (error) {
     console.error('Error sending test email with SendGrid:', error);
     throw error;
