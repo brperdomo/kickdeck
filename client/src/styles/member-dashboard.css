@@ -1,0 +1,194 @@
+/* Member Dashboard Enhancements */
+
+/* Animated background gradient for cards */
+.member-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.member-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.member-card:hover::before {
+  opacity: 1;
+}
+
+/* Enhance section headers */
+.section-header-member {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  gap: 0.5rem;
+}
+
+.section-header-member .icon {
+  color: var(--primary);
+}
+
+.section-header-member .title {
+  font-weight: 600;
+  font-size: 1.25rem;
+  position: relative;
+}
+
+.section-header-member .title::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 2.5rem;
+  height: 2px;
+  background-color: var(--primary);
+  border-radius: 1px;
+}
+
+/* Card animations */
+@keyframes cardPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--primary-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0);
+  }
+}
+
+.pulse-on-hover:hover {
+  animation: cardPulse 1.5s infinite;
+}
+
+/* Welcome banner with gradient */
+.welcome-banner {
+  background-image: linear-gradient(to right, rgba(var(--primary-rgb), 0.1), rgba(var(--primary-rgb), 0.05));
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(var(--primary-rgb), 0.15) 0%, rgba(var(--primary-rgb), 0) 70%);
+  border-radius: 50%;
+}
+
+/* Custom scrollbar for member dashboard */
+.member-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.member-content::-webkit-scrollbar-track {
+  background: rgba(var(--primary-rgb), 0.05);
+  border-radius: 4px;
+}
+
+.member-content::-webkit-scrollbar-thumb {
+  background: rgba(var(--primary-rgb), 0.2);
+  border-radius: 4px;
+}
+
+.member-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--primary-rgb), 0.3);
+}
+
+/* Enhanced navigation icons */
+.nav-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: rgba(var(--primary-rgb), 0.1);
+  color: var(--primary);
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover .nav-icon-container {
+  transform: scale(1.1);
+  background-color: rgba(var(--primary-rgb), 0.2);
+}
+
+/* Quick stats cards */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-radius: var(--radius);
+  background-color: var(--card);
+  border: 1px solid rgba(var(--primary-rgb), 0.1);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card .stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.stat-card .stat-label {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+/* User profile section styling */
+.user-profile-section {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  background-color: rgba(var(--primary-rgb), 0.05);
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+}
+
+.user-profile-section .avatar-container {
+  position: relative;
+}
+
+.user-profile-section .avatar-outline {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  opacity: 0.3;
+}
+
+.user-profile-section .user-info {
+  flex: 1;
+}
+
+.user-profile-section .user-name {
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.user-profile-section .user-email {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
