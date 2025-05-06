@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -15,25 +21,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  AlertCircle,
-  Calendar,
-  FileText,
-} from "lucide-react";
-import { PaymentStatusBadge, TeamStatusBadge } from "@/components/ui/payment-status-badge";
-import { formatDistanceToNow } from "date-fns";
-import { MemberLayout } from "@/components/layouts/MemberLayout";
+import { AlertCircle, Calendar, CheckCircle, CreditCard, FileText, ShieldOff } from "lucide-react";
+import { format } from "date-fns";
 import { motion } from "framer-motion";
+import { MemberLayout } from "@/components/layouts/MemberLayout";
 
 interface Registration {
   id: number;
@@ -55,6 +56,144 @@ interface Registration {
     name: string;
     email: string;
   };
+}
+
+// Component to display the status of a team in a nice badge
+function TeamStatusBadge({ status }: { status: Registration['status'] }) {
+  switch (status) {
+    case 'approved':
+      return <Badge className="bg-green-500/90">Approved</Badge>;
+    case 'rejected':
+      return <Badge variant="destructive">Rejected</Badge>;
+    case 'paid':
+      return <Badge className="bg-blue-500/90">Paid</Badge>;
+    case 'pending_payment':
+      return <Badge variant="outline" className="text-amber-500 border-amber-500">Pending Payment</Badge>;
+    case 'registered':
+      return <Badge variant="outline">Registered</Badge>;
+    case 'withdrawn':
+      return <Badge variant="secondary">Withdrawn</Badge>;
+    case 'refunded':
+      return <Badge className="bg-purple-500/90">Refunded</Badge>;
+    default:
+      return <Badge variant="outline">Unknown</Badge>;
+  }
+}
+
+// Component to display the payment status
+function PaymentStatusBadge({ status }: { status?: string }) {
+  if (!status) return null;
+  
+  switch (status) {
+    case 'paid':
+      return <Badge className="bg-green-500/90">Payment Complete</Badge>;
+    case 'pending':
+      return <Badge variant="outline" className="text-amber-500 border-amber-500">Payment Pending</Badge>;
+    case 'failed':
+      return <Badge variant="destructive">Payment Failed</Badge>;
+    case 'refunded':
+      return <Badge className="bg-purple-500/90">Refunded</Badge>;
+    default:
+      return null;
+  }
+}
+
+// Component to display a list of registrations in an accordion
+function RegistrationsList({ registrations }: { registrations: Registration[] }) {
+  return (
+    <Accordion type="single" collapsible className="w-full">
+      {registrations.map((registration) => (
+        <AccordionItem key={registration.id} value={registration.id.toString()} className="border rounded-lg mb-4 overflow-hidden">
+          <AccordionTrigger className="px-4 py-2 hover:no-underline hover:bg-muted/30">
+            <div className="flex justify-between items-center w-full text-left">
+              <div>
+                <h3 className="font-semibold">{registration.teamName}</h3>
+                <p className="text-sm text-muted-foreground">{registration.eventName} - {registration.ageGroup}</p>
+              </div>
+              <div className="flex gap-2 items-center">
+                <TeamStatusBadge status={registration.status} />
+                <span className="text-sm font-medium">
+                  ${registration.amount.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4 pt-2">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-medium text-sm mb-1">Registration Date</h4>
+                  <p className="text-sm">
+                    {registration.registeredAt 
+                      ? format(new Date(registration.registeredAt), 'PPP') 
+                      : 'Not available'}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm mb-1">Status</h4>
+                  <div className="flex items-center gap-2">
+                    <TeamStatusBadge status={registration.status} />
+                    {registration.paymentStatus && (
+                      <PaymentStatusBadge status={registration.paymentStatus} />
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-medium text-sm mb-1">Payment Details</h4>
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-medium">Amount</TableCell>
+                      <TableCell>${registration.amount.toFixed(2)}</TableCell>
+                    </TableRow>
+                    {registration.paymentDate && (
+                      <TableRow>
+                        <TableCell className="font-medium">Payment Date</TableCell>
+                        <TableCell>{format(new Date(registration.paymentDate), 'PPP')}</TableCell>
+                      </TableRow>
+                    )}
+                    {registration.cardLastFour && (
+                      <TableRow>
+                        <TableCell className="font-medium">Card</TableCell>
+                        <TableCell>•••• {registration.cardLastFour}</TableCell>
+                      </TableRow>
+                    )}
+                    {registration.errorCode && (
+                      <TableRow>
+                        <TableCell className="font-medium">Error</TableCell>
+                        <TableCell className="text-destructive">
+                          <div className="flex items-center gap-2">
+                            <ShieldOff className="h-4 w-4" />
+                            {registration.errorMessage || "An error occurred with this payment"}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+                
+                <div className="flex justify-end gap-2 mt-4">
+                  {registration.status === 'pending_payment' && (
+                    <Button variant="default">
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Make Payment
+                    </Button>
+                  )}
+                  
+                  <Button variant="outline">
+                    <FileText className="mr-2 h-4 w-4" />
+                    View Details
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
 }
 
 export default function RegistrationsPage() {
@@ -85,102 +224,33 @@ export default function RegistrationsPage() {
     reg.status === 'rejected' || (reg.errorCode && reg.errorCode.length > 0)
   );
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return <Badge className="bg-green-500"><CheckCircle className="w-3 h-3 mr-1" /> Paid</Badge>;
-      case 'approved':
-        return <Badge className="bg-blue-500"><CheckCircle className="w-3 h-3 mr-1" /> Approved</Badge>;
-      case 'rejected':
-        return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" /> Rejected</Badge>;
-      case 'pending_payment':
-        return <Badge variant="outline" className="bg-amber-500/20 text-amber-700 border-amber-500">
-          <Clock className="w-3 h-3 mr-1" /> Payment Pending
-        </Badge>;
-      case 'withdrawn':
-        return <Badge variant="outline" className="border-slate-500 text-slate-700">
-          <XCircle className="w-3 h-3 mr-1" /> Withdrawn
-        </Badge>;
-      case 'refunded':
-        return <Badge variant="outline" className="border-purple-500 text-purple-700">
-          <CreditCard className="w-3 h-3 mr-1" /> Refunded
-        </Badge>;
-      case 'registered':
-      default:
-        return <Badge variant="outline" className="border-yellow-500 text-yellow-700">
-          <Clock className="w-3 h-3 mr-1" /> Pending
-        </Badge>;
-    }
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount / 100);
-  };
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return 'N/A';
-    
-    const date = new Date(dateString);
-    return `${date.toLocaleDateString()} · ${formatDistanceToNow(date, { addSuffix: true })}`;
-  };
-
-  // Render loading state
   if (isLoading) {
     return (
       <MemberLayout>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="container space-y-6 py-8"
-        >
-          <h1 className="text-3xl font-bold">My Registrations</h1>
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-8 w-1/3" />
-              <Skeleton className="h-4 w-1/4" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Skeleton className="h-10 w-full" />
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="space-y-2">
-                  <Skeleton className="h-16 w-full" />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </motion.div>
+        <div className="container py-8">
+          <h1 className="text-3xl font-bold mb-6">My Registrations</h1>
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-full max-w-md" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+        </div>
       </MemberLayout>
     );
   }
 
-  // Render error state
   if (error) {
     return (
       <MemberLayout>
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="container space-y-6 py-8"
-        >
-          <h1 className="text-3xl font-bold">My Registrations</h1>
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-10">
-              <AlertCircle className="h-12 w-12 text-destructive mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Error Loading Registrations</h3>
-              <p className="text-muted-foreground text-center max-w-md mb-6">
-                We encountered an error while loading your registrations. Please try again later.
-              </p>
-              <Button onClick={() => window.location.reload()}>
-                Retry
-              </Button>
-            </CardContent>
-          </Card>
-        </motion.div>
+        <div className="container py-8">
+          <h1 className="text-3xl font-bold mb-6">My Registrations</h1>
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              Failed to load your registrations. Please try again later.
+            </AlertDescription>
+          </Alert>
+        </div>
       </MemberLayout>
     );
   }
@@ -216,7 +286,7 @@ export default function RegistrationsPage() {
           </TabsList>
           
           <TabsContent value="all">
-            <Card>
+            <Card className="member-card shadow-md">
               <CardHeader>
                 <CardTitle>All Registrations</CardTitle>
                 <CardDescription>
@@ -240,7 +310,7 @@ export default function RegistrationsPage() {
           </TabsContent>
           
           <TabsContent value="pending">
-            <Card>
+            <Card className="member-card shadow-md">
               <CardHeader>
                 <CardTitle>Pending Payments</CardTitle>
                 <CardDescription>
@@ -264,20 +334,20 @@ export default function RegistrationsPage() {
           </TabsContent>
           
           <TabsContent value="completed">
-            <Card>
+            <Card className="member-card shadow-md">
               <CardHeader>
-                <CardTitle>Completed Payments</CardTitle>
+                <CardTitle>Completed Registrations</CardTitle>
                 <CardDescription>
-                  Successfully paid and approved registrations
+                  Registrations that have been paid and approved
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {completedPayments.length === 0 ? (
                   <div className="text-center py-10">
-                    <CreditCard className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium mb-2">No Completed Payments</h3>
+                    <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No Completed Registrations</h3>
                     <p className="text-muted-foreground">
-                      You don't have any completed payments yet.
+                      You don't have any completed registrations yet.
                     </p>
                   </div>
                 ) : (
@@ -288,20 +358,20 @@ export default function RegistrationsPage() {
           </TabsContent>
           
           <TabsContent value="issues">
-            <Card>
+            <Card className="member-card shadow-md">
               <CardHeader>
-                <CardTitle>Payment Issues</CardTitle>
+                <CardTitle>Registration Issues</CardTitle>
                 <CardDescription>
-                  Registrations with payment problems or rejections
+                  Registrations with payment issues or that have been rejected
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {problemPayments.length === 0 ? (
                   <div className="text-center py-10">
-                    <AlertCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium mb-2">No Payment Issues</h3>
+                    <CheckCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No Issues Found</h3>
                     <p className="text-muted-foreground">
-                      Great! You don't have any payment issues.
+                      All your registrations are in good standing.
                     </p>
                   </div>
                 ) : (
@@ -313,168 +383,5 @@ export default function RegistrationsPage() {
         </Tabs>
       </motion.div>
     </MemberLayout>
-  );
-}
-
-// Component to display registrations list with accordion for payment details
-function RegistrationsList({ registrations }: { registrations: Registration[] }) {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount / 100);
-  };
-
-  const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return 'N/A';
-    
-    const date = new Date(dateString);
-    return `${date.toLocaleDateString()} · ${formatDistanceToNow(date, { addSuffix: true })}`;
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return <Badge className="bg-green-500"><CheckCircle className="w-3 h-3 mr-1" /> Paid</Badge>;
-      case 'approved':
-        return <Badge className="bg-blue-500"><CheckCircle className="w-3 h-3 mr-1" /> Approved</Badge>;
-      case 'rejected':
-        return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" /> Rejected</Badge>;
-      case 'pending_payment':
-        return <Badge variant="outline" className="bg-amber-500/20 text-amber-700 border-amber-500">
-          <Clock className="w-3 h-3 mr-1" /> Payment Pending
-        </Badge>;
-      case 'withdrawn':
-        return <Badge variant="outline" className="border-slate-500 text-slate-700">
-          <XCircle className="w-3 h-3 mr-1" /> Withdrawn
-        </Badge>;
-      case 'refunded':
-        return <Badge variant="outline" className="border-purple-500 text-purple-700">
-          <CreditCard className="w-3 h-3 mr-1" /> Refunded
-        </Badge>;
-      case 'registered':
-      default:
-        return <Badge variant="outline" className="border-yellow-500 text-yellow-700">
-          <Clock className="w-3 h-3 mr-1" /> Pending
-        </Badge>;
-    }
-  };
-
-  return (
-    <div className="space-y-4">
-      <Accordion type="single" collapsible className="w-full">
-        {registrations.map((registration) => (
-          <AccordionItem key={registration.id} value={`registration-${registration.id}`}>
-            <AccordionTrigger className="hover:bg-muted/50 px-4 py-2 rounded-lg">
-              <div className="flex w-full justify-between items-center">
-                <div className="text-left">
-                  <p className="font-medium">{registration.teamName}</p>
-                  <p className="text-sm text-muted-foreground">{registration.eventName} - {registration.ageGroup}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  {getStatusBadge(registration.status)}
-                  <span className="font-semibold">{formatCurrency(registration.amount)}</span>
-                </div>
-              </div>
-            </AccordionTrigger>
-            
-            <AccordionContent className="px-4 pb-4">
-              <div className="bg-muted/30 p-4 rounded-lg space-y-6">
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                  <div>
-                    <h4 className="text-sm font-semibold mb-1">Registration Details</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Registered on: {formatDate(registration.registeredAt)}
-                    </p>
-                    {registration.submitter && (
-                      <p className="text-sm text-muted-foreground">
-                        Submitted by: {registration.submitter.name} ({registration.submitter.email})
-                      </p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <h4 className="text-sm font-semibold mb-1">Payment Details</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Amount: <span className="font-medium">{formatCurrency(registration.amount)}</span>
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Status: {getStatusBadge(registration.status)}
-                    </p>
-                  </div>
-                </div>
-                
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Payment ID</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Card</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Amount</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className="font-mono text-xs">
-                        {registration.paymentId || 'N/A'}
-                      </TableCell>
-                      <TableCell>
-                        {registration.paymentDate ? formatDate(registration.paymentDate) : 'Not paid yet'}
-                      </TableCell>
-                      <TableCell>
-                        {registration.cardLastFour ? (
-                          <span className="flex items-center">
-                            <CreditCard className="h-3 w-3 mr-1" />
-                            •••• {registration.cardLastFour}
-                          </span>
-                        ) : (
-                          'N/A'
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {registration.paymentStatus || registration.status}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {formatCurrency(registration.amount)}
-                      </TableCell>
-                    </TableRow>
-                    
-                    {/* Display error message if exists */}
-                    {registration.errorCode && (
-                      <TableRow className="bg-red-50">
-                        <TableCell colSpan={5} className="text-red-700">
-                          <div className="flex items-start gap-2">
-                            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                            <div>
-                              <span className="font-semibold">Error {registration.errorCode}:</span>{" "}
-                              {registration.errorMessage || "An error occurred with this payment"}
-                            </div>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-                
-                <div className="flex justify-end gap-2">
-                  {registration.status === 'pending_payment' && (
-                    <Button variant="default">
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Make Payment
-                    </Button>
-                  )}
-                  
-                  <Button variant="outline">
-                    <FileText className="mr-2 h-4 w-4" />
-                    View Details
-                  </Button>
-                </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
-    </div>
   );
 }

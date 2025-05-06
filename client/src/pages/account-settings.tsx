@@ -95,13 +95,13 @@ export default function AccountSettingsPage() {
   const communicationForm = useForm<CommunicationValues>({
     resolver: zodResolver(communicationSchema),
     defaultValues: {
-      emailNotifications: user?.preferences?.emailNotifications ?? true,
-      smsNotifications: user?.preferences?.smsNotifications ?? true,
-      marketingEmails: user?.preferences?.marketingEmails ?? true,
-      eventUpdates: user?.preferences?.eventUpdates ?? true,
-      paymentReceipts: user?.preferences?.paymentReceipts ?? true,
-      teamRegistrationAlerts: user?.preferences?.teamRegistrationAlerts ?? true,
-      dataOptOut: user?.preferences?.dataOptOut ?? false
+      emailNotifications: true,
+      smsNotifications: true,
+      marketingEmails: true,
+      eventUpdates: true,
+      paymentReceipts: true,
+      teamRegistrationAlerts: true,
+      dataOptOut: false
     },
   });
 
@@ -124,15 +124,16 @@ export default function AccountSettingsPage() {
         phone: user.phone || "",
       });
       
-      // Update communication preferences from user data
+      // For now, just use the default communication preferences
+      // In the future, we'll fetch these from the server once the API is implemented
       communicationForm.reset({
-        emailNotifications: user.preferences?.emailNotifications ?? true,
-        smsNotifications: user.preferences?.smsNotifications ?? true,
-        marketingEmails: user.preferences?.marketingEmails ?? true,
-        eventUpdates: user.preferences?.eventUpdates ?? true,
-        paymentReceipts: user.preferences?.paymentReceipts ?? true,
-        teamRegistrationAlerts: user.preferences?.teamRegistrationAlerts ?? true,
-        dataOptOut: user.preferences?.dataOptOut ?? false
+        emailNotifications: true,
+        smsNotifications: true,
+        marketingEmails: true,
+        eventUpdates: true,
+        paymentReceipts: true,
+        teamRegistrationAlerts: true,
+        dataOptOut: false
       });
     }
   }, [user, personalInfoForm, communicationForm]);
