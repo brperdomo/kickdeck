@@ -62,21 +62,21 @@ interface Registration {
 function TeamStatusBadge({ status }: { status: Registration['status'] }) {
   switch (status) {
     case 'approved':
-      return <Badge className="bg-green-500/90">Approved</Badge>;
+      return <Badge className="bg-green-500/90 whitespace-nowrap">Team Approved</Badge>;
     case 'rejected':
-      return <Badge variant="destructive">Rejected</Badge>;
+      return <Badge variant="destructive" className="whitespace-nowrap">Team Rejected</Badge>;
     case 'paid':
-      return <Badge className="bg-blue-500/90">Paid</Badge>;
+      return <Badge className="bg-blue-500/90 whitespace-nowrap">Team Paid</Badge>;
     case 'pending_payment':
-      return <Badge variant="outline" className="text-amber-500 border-amber-500">Pending Payment</Badge>;
+      return <Badge variant="outline" className="text-amber-500 border-amber-500 whitespace-nowrap">Payment Needed</Badge>;
     case 'registered':
-      return <Badge variant="outline">Registered</Badge>;
+      return <Badge variant="outline" className="whitespace-nowrap">Team Registered</Badge>;
     case 'withdrawn':
-      return <Badge variant="secondary">Withdrawn</Badge>;
+      return <Badge variant="secondary" className="whitespace-nowrap">Team Withdrawn</Badge>;
     case 'refunded':
-      return <Badge className="bg-purple-500/90">Refunded</Badge>;
+      return <Badge className="bg-purple-500/90 whitespace-nowrap">Payment Refunded</Badge>;
     default:
-      return <Badge variant="outline">Unknown</Badge>;
+      return <Badge variant="outline" className="whitespace-nowrap">Team Status Unknown</Badge>;
   }
 }
 
@@ -84,17 +84,24 @@ function TeamStatusBadge({ status }: { status: Registration['status'] }) {
 function PaymentStatusBadge({ status }: { status?: string }) {
   if (!status) return null;
   
-  switch (status) {
+  switch (status.toLowerCase()) {
     case 'paid':
-      return <Badge className="bg-green-500/90">Payment Complete</Badge>;
+    case 'succeeded':
+    case 'success':
+      return <Badge className="bg-green-500/90 whitespace-nowrap">Payment Complete</Badge>;
     case 'pending':
-      return <Badge variant="outline" className="text-amber-500 border-amber-500">Payment Pending</Badge>;
+      return <Badge variant="outline" className="text-amber-500 border-amber-500 whitespace-nowrap">Payment Pending</Badge>;
+    case 'processing':
+      return <Badge variant="outline" className="text-blue-500 border-blue-500 whitespace-nowrap">Payment Processing</Badge>;
     case 'failed':
-      return <Badge variant="destructive">Payment Failed</Badge>;
+    case 'error':
+      return <Badge variant="destructive" className="whitespace-nowrap">Payment Failed</Badge>;
     case 'refunded':
-      return <Badge className="bg-purple-500/90">Refunded</Badge>;
+      return <Badge className="bg-purple-500/90 whitespace-nowrap">Payment Refunded</Badge>;
     default:
-      return null;
+      return <Badge variant="outline" className="whitespace-nowrap">
+        Payment {status.charAt(0).toUpperCase() + status.slice(1)}
+      </Badge>;
   }
 }
 
@@ -111,10 +118,17 @@ function RegistrationsList({ registrations }: { registrations: Registration[] })
                 <p className="text-sm text-muted-foreground">{registration.eventName} - {registration.ageGroup}</p>
               </div>
               <div className="flex gap-2 items-center">
-                <TeamStatusBadge status={registration.status} />
-                <span className="text-sm font-medium">
-                  ${(registration.amount / 100).toFixed(2)}
-                </span>
+                <div className="flex flex-col items-end gap-1">
+                  <div className="flex gap-2 items-center">
+                    <TeamStatusBadge status={registration.status} />
+                    {registration.paymentStatus && (
+                      <PaymentStatusBadge status={registration.paymentStatus} />
+                    )}
+                  </div>
+                  <span className="text-sm font-medium">
+                    ${(registration.amount / 100).toFixed(2)}
+                  </span>
+                </div>
               </div>
             </div>
           </AccordionTrigger>
