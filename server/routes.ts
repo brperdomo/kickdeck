@@ -4441,23 +4441,24 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           ];
           
           for (const prop of brandingProperties) {
-            if (!prop.value) continue; // Skip undefined/null values
-            
+            // Always process all branding properties, even if value is null/undefined
+            // This is critical for logo updates where we might need to clear a logo
             const settingInDb = allBrandingSettings.find(s => s.settingKey === prop.key);
+            const valueToStore = prop.value !== undefined ? prop.value : ''; // Use empty string for undefined
             
             if (settingInDb) {
-              console.log(`VERIFICATION - ${prop.key} is now: ${settingInDb.settingValue}`);
+              console.log(`VERIFICATION - ${prop.key} current value: ${settingInDb.settingValue}`);
+              console.log(`VERIFICATION - ${prop.key} desired value: ${valueToStore}`);
               
-              // If the value doesn't match what was sent, force an update outside the transaction
-              if (settingInDb.settingValue !== prop.value) {
-                console.error(`ERROR - Verification failed: ${prop.key} not updated properly!`);
-                console.error(`Expected: ${prop.value}, Found: ${settingInDb.settingValue}`);
+              // For logoUrl, always update it to ensure the most recent upload is used
+              // For colors, only update if different
+              if (prop.key === 'branding.logoUrl' || settingInDb.settingValue !== valueToStore) {
+                console.log(`UPDATING ${prop.key} from "${settingInDb.settingValue}" to "${valueToStore}"`);
                 
-                // Force a direct SQL update outside the transaction as a fallback
-                console.log(`Attempting direct database update as fallback for ${prop.key}...`);
+                // Force a direct SQL update outside the transaction 
                 await db.execute(
                   sql`UPDATE event_settings 
-                      SET setting_value = ${prop.value}, 
+                      SET setting_value = ${valueToStore}, 
                           updated_at = ${new Date().toISOString()} 
                       WHERE id = ${settingInDb.id}`
                 );
@@ -4468,23 +4469,23 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
                   .from(eventSettings)
                   .where(eq(eventSettings.id, settingInDb.id));
                   
-                console.log(`Fallback update complete - ${prop.key} is now: ${recheck[0].settingValue}`);
+                console.log(`Update complete - ${prop.key} is now: ${recheck[0].settingValue}`);
               }
             } else {
               // Setting doesn't exist at all, create it
-              console.log(`Setting ${prop.key} doesn't exist, creating it now with value: ${prop.value}`);
+              console.log(`Setting ${prop.key} doesn't exist, creating it now with value: ${valueToStore}`);
               
               await db
                 .insert(eventSettings)
                 .values({
                   eventId,
                   settingKey: prop.key,
-                  settingValue: prop.value,
+                  settingValue: valueToStore,
                   createdAt: new Date().toISOString(),
                   updatedAt: new Date().toISOString()
                 });
                 
-              console.log(`Created new setting: ${prop.key} = ${prop.value}`);
+              console.log(`Created new setting: ${prop.key} = ${valueToStore}`);
             }
           }
         }
