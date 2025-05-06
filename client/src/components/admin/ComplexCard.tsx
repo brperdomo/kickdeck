@@ -68,7 +68,7 @@ export function ComplexCard({
           <div className="flex-1">
             <div className="flex items-center">
               <motion.h3 
-                className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300 dark:from-white dark:to-gray-400"
+                className="text-xl font-bold text-white"
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
@@ -84,9 +84,9 @@ export function ComplexCard({
                 {complex.isOpen ? "Open" : "Closed"}
               </Badge>
             </div>
-            <div className="flex items-center text-muted-foreground text-sm mt-1">
+            <div className="flex items-center text-sm mt-1">
               <MapPin className="h-3.5 w-3.5 mr-1 flex-shrink-0 text-indigo-400" />
-              <span className="truncate">{formatAddress(complex)}</span>
+              <span className="truncate text-gray-200">{formatAddress(complex)}</span>
             </div>
           </div>
           
@@ -147,7 +147,7 @@ export function ComplexCard({
             <Clock className="h-5 w-5 mr-2 text-indigo-400" />
             <div>
               <span className="text-sm font-medium text-gray-100">Operating Hours</span>
-              <p className="text-sm text-gray-400">{complex.openTime} - {complex.closeTime}</p>
+              <p className="text-sm text-gray-300">{complex.openTime} - {complex.closeTime}</p>
             </div>
           </motion.div>
           
@@ -159,7 +159,7 @@ export function ComplexCard({
             <Users className="h-5 w-5 mr-2 text-indigo-400" />
             <div>
               <span className="text-sm font-medium text-gray-100">Fields Available</span>
-              <p className="text-sm text-gray-400">{fieldCount} total fields</p>
+              <p className="text-sm text-gray-300">{fieldCount} total fields</p>
             </div>
           </motion.div>
         </div>
@@ -204,7 +204,7 @@ export function ComplexCard({
                 <MapPin className="h-4 w-4 mr-1 text-indigo-400" />
                 Directions
               </h4>
-              <p className="text-sm text-gray-400">{complex.directions}</p>
+              <p className="text-sm text-gray-300">{complex.directions}</p>
             </div>
           )}
           
@@ -215,7 +215,7 @@ export function ComplexCard({
                 <MapPin className="h-4 w-4 mr-1 text-indigo-400" />
                 Complex Rules
               </h4>
-              <p className="text-sm text-gray-400">{complex.rules}</p>
+              <p className="text-sm text-gray-300">{complex.rules}</p>
             </div>
           )}
         </motion.div>
@@ -277,7 +277,7 @@ export function ComplexCard({
                           {field.isOpen ? "Open" : "Closed"}
                         </Badge>
                       </div>
-                      <div className="flex flex-wrap gap-x-3 text-xs text-gray-400 mt-1">
+                      <div className="flex flex-wrap gap-x-3 text-xs text-gray-300 mt-1">
                         <span className="flex items-center">
                           <Clock className="h-3 w-3 mr-1 text-indigo-400" />
                           {field.openTime && field.closeTime 
@@ -311,7 +311,7 @@ export function ComplexCard({
                         </span>
                       </div>
                       {field.specialInstructions && (
-                        <p className="text-xs text-gray-400 mt-1.5 italic">
+                        <p className="text-xs text-gray-300 mt-1.5 italic">
                           <span className="font-medium not-italic text-indigo-400">Note:</span> {field.specialInstructions}
                         </p>
                       )}
