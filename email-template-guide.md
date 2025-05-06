@@ -1,204 +1,84 @@
-# Email Template Guide
+# Email Template Configuration Guide
 
-This document provides detailed information about the available template types and their merge fields. Use this as a reference when customizing email templates in the admin dashboard.
+## Accessing Email Templates
 
-## Available Template Types
+You can configure and customize all email templates in the MatchPro admin dashboard:
 
-### General Templates
+1. Log in to your MatchPro account as an admin
+2. Navigate to **Admin Dashboard**
+3. Go to **Settings** → **Email Templates**
 
-| Template Type | Description | Use Case |
-|---------------|-------------|----------|
-| welcome | Welcome email when a user signs up | Sent when a new user creates an account |
-| password_reset | Password reset notification | Sent when a user requests a password reset |
+## Available Email Templates
 
-### Team Registration Templates
+The system supports the following email template types:
 
-| Template Type | Description | Use Case |
-|---------------|-------------|----------|
-| team_status_update | General notification for status changes | Sent when a team's status is updated (general purpose) |
-| team_approved | Notification for team approval | Sent when a team is specifically approved |
-| team_rejected | Notification for team rejection | Sent when a team is specifically rejected |
-| team_withdrawn | Notification for team withdrawal | Sent when a team is specifically withdrawn |
-| payment_confirmation | Confirmation after successful payment | Sent when a payment is completed successfully |
-| payment_refunded | Notification when a payment is refunded | Sent when a refund has been processed |
+- **Welcome** - Sent when a new user creates an account
+- **Password Reset** - Sent when a user requests to reset their password
+- **Event Registration** - Sent to confirm event registrations
+- **Payment Confirmation** - Sent after successful payments
+- **Notification** - General notifications sent by the system
 
-## Merge Fields (Variables) By Template Type
+## Customizing Templates
 
-### Password Reset Template (password_reset)
+Each template can be fully customized with the following options:
 
-| Merge Field | Example Value | Description |
-|-------------|---------------|-------------|
-| {{reset_link}} | https://example.com/reset/token123 | The URL for resetting the password |
+### Basic Information
+- **Template Name** - Identifier for the template
+- **Subject Line** - Email subject that recipients will see
+- **Sender Name** - Name that appears in the "From" field
+- **Sender Email** - Email address that appears in the "From" field (must be verified in SendGrid)
 
-### Welcome Template (welcome)
+### Content
+- **HTML Content** - The rich HTML content of the email
+- **Text Content** - Plain text version for email clients that don't support HTML
 
-| Merge Field | Example Value | Description |
-|-------------|---------------|-------------|
-| {{username}} | john.smith | The user's username |
-| {{email}} | john.smith@example.com | The user's email address |
-| {{firstName}} | John | The user's first name |
-| {{lastName}} | Smith | The user's last name |
+### Variables
+You can use these variables in your templates, which will be automatically replaced with actual values:
 
-### Team Status Update Template (team_status_update)
+- `{{firstName}}` - Recipient's first name
+- `{{lastName}}` - Recipient's last name
+- `{{email}}` - Recipient's email address
+- `{{username}}` - Recipient's username
+- `{{resetLink}}` - Password reset link (for password reset emails)
+- `{{eventName}}` - Name of the event (for event-related emails)
+- `{{teamName}}` - Name of the team (for team-related emails)
+- `{{bracketName}}` - Name of the bracket (for bracket-related emails)
+- `{{paymentAmount}}` - Payment amount (for payment-related emails)
 
-| Merge Field | Example Value | Description |
-|-------------|---------------|-------------|
-| {{teamName}} | Seattle Sharks | The name of the team |
-| {{eventName}} | Spring Soccer Tournament 2025 | The name of the event |
-| {{status}} | approved | The new status of the team |
-| {{previousStatus}} | registered | The previous status of the team |
-| {{notes}} | Your team has been approved based on your application. | Additional notes from administrators |
-| {{loginLink}} | https://matchpro.ai/dashboard | Link to the user dashboard |
+## SendGrid Compatibility
 
-### Team Approved Template (team_approved)
+Our email system is fully integrated with SendGrid. To ensure your templates work correctly with SendGrid:
 
-| Merge Field | Example Value | Description |
-|-------------|---------------|-------------|
-| {{teamName}} | Seattle Sharks | The name of the team |
-| {{eventName}} | Spring Soccer Tournament 2025 | The name of the event |
-| {{notes}} | Please make sure all players have proper ID. | Additional notes from administrators |
-| {{loginLink}} | https://matchpro.ai/dashboard | Link to the user dashboard |
+1. **Use Mobile-Responsive Design** - SendGrid delivers emails to various devices, so ensure your templates are responsive
+2. **Keep HTML Simple** - Avoid complex CSS or JavaScript that might not be supported by email clients
+3. **Test Before Sending** - Use the preview function to test how your email looks before saving it
+4. **Verify Sender Domains** - Make sure your sender email domain is verified in SendGrid
+5. **Use Proper HTML Structure** - Include proper HTML tags and structure for best compatibility
 
-### Team Rejected Template (team_rejected)
+## Template Testing
 
-| Merge Field | Example Value | Description |
-|-------------|---------------|-------------|
-| {{teamName}} | Seattle Sharks | The name of the team |
-| {{eventName}} | Spring Soccer Tournament 2025 | The name of the event |
-| {{notes}} | Your team was rejected due to incomplete information. | Reason for rejection |
-| {{loginLink}} | https://matchpro.ai/dashboard | Link to the user dashboard |
+You can test your templates before using them in production:
 
-### Team Withdrawn Template (team_withdrawn)
+1. Click the **Preview** button on any template
+2. Enter test data for variables
+3. View how the email will appear to recipients
 
-| Merge Field | Example Value | Description |
-|-------------|---------------|-------------|
-| {{teamName}} | Seattle Sharks | The name of the team |
-| {{eventName}} | Spring Soccer Tournament 2025 | The name of the event |
-| {{notes}} | Your team has been withdrawn as requested. | Additional notes |
-| {{loginLink}} | https://matchpro.ai/dashboard | Link to the user dashboard |
+## Email Provider Settings
 
-### Payment Confirmation Template (payment_confirmation)
+To configure SendGrid as your email provider:
 
-| Merge Field | Example Value | Description |
-|-------------|---------------|-------------|
-| {{teamName}} | Seattle Sharks | The name of the team |
-| {{eventName}} | Spring Soccer Tournament 2025 | The name of the event |
-| {{registrationDate}} | 4/1/2025 | The date of registration |
-| {{amount}} | $250.00 | The payment amount |
-| {{ageGroup}} | U12 Boys | The age group |
-| {{paymentId}} | TEAM-123 | The payment ID |
-| {{receiptNumber}} | R-123-456789 | The receipt number |
-| {{status}} | approved | The status of the team |
-
-### Payment Refunded Template (payment_refunded)
-
-| Merge Field | Example Value | Description |
-|-------------|---------------|-------------|
-| {{teamName}} | Seattle Sharks | The name of the team |
-| {{eventName}} | Spring Soccer Tournament 2025 | The name of the event |
-| {{amount}} | 250.00 | The refunded amount |
-| {{reason}} | Tournament canceled due to weather | Reason for the refund |
-| {{refundDate}} | 4/15/2025 | The date of the refund |
-
-## Example Preview Data
-
-When testing email templates in the preview mode, you can use the following JSON data examples:
-
-### Password Reset Template Preview
-
-```json
-{
-  "reset_link": "https://example.com/reset/token123"
-}
-```
-
-### Team Status Update Template Preview
-
-```json
-{
-  "teamName": "Seattle Sharks",
-  "eventName": "Spring Soccer Tournament 2025",
-  "status": "approved",
-  "previousStatus": "registered",
-  "notes": "Your team has been approved based on your application.",
-  "loginLink": "https://matchpro.ai/dashboard"
-}
-```
-
-### Team Approved Template Preview
-
-```json
-{
-  "teamName": "Seattle Sharks",
-  "eventName": "Spring Soccer Tournament 2025",
-  "notes": "Please make sure all players have proper ID for check-in on the first day of the tournament.",
-  "loginLink": "https://matchpro.ai/dashboard"
-}
-```
-
-### Team Rejected Template Preview
-
-```json
-{
-  "teamName": "Seattle Sharks",
-  "eventName": "Spring Soccer Tournament 2025",
-  "notes": "Your team was rejected due to incomplete roster information. Please update your roster and reapply.",
-  "loginLink": "https://matchpro.ai/dashboard"
-}
-```
-
-### Team Withdrawn Template Preview
-
-```json
-{
-  "teamName": "Seattle Sharks",
-  "eventName": "Spring Soccer Tournament 2025",
-  "notes": "Your team has been withdrawn as requested. Refund will be processed within 5-7 business days.",
-  "loginLink": "https://matchpro.ai/dashboard"
-}
-```
-
-### Payment Confirmation Template Preview
-
-```json
-{
-  "teamName": "Seattle Sharks",
-  "eventName": "Spring Soccer Tournament 2025",
-  "registrationDate": "4/1/2025",
-  "amount": "$250.00",
-  "ageGroup": "U12 Boys",
-  "paymentId": "TEAM-123",
-  "receiptNumber": "R-123-456789",
-  "status": "approved"
-}
-```
-
-### Payment Refunded Template Preview
-
-```json
-{
-  "teamName": "Seattle Sharks",
-  "eventName": "Spring Soccer Tournament 2025",
-  "amount": "250.00",
-  "reason": "Tournament canceled due to weather conditions",
-  "refundDate": "4/15/2025"
-}
-```
-
-## Best Practices for Email Templates
-
-1. **Keep templates responsive** - Many users will read emails on mobile devices
-2. **Use a clear subject line** - Make it immediately clear what the email is about
-3. **Include a call-to-action** - Always give the user a clear next step
-4. **Test with real data** - Use the preview feature with example data before publishing
-5. **Keep branding consistent** - Use your brand colors and logo throughout
-6. **Provide contact information** - Make it easy for users to get help if needed
+1. Go to **Admin Dashboard** → **Settings** → **Email Providers**
+2. Select **SendGrid** as your provider
+3. Enter your SendGrid API key
+4. Set a default sender email address (must be verified in SendGrid)
+5. Test the configuration to ensure it works properly
 
 ## Troubleshooting
 
-If emails are not being sent correctly:
+If emails are not being delivered:
 
-1. Check that the template is marked as "Active" in the database
-2. Verify that all required merge fields are present in the template
-3. Ensure your SMTP settings are correctly configured
-4. Check server logs for any email sending errors
+1. Check that your SendGrid API key is valid and has proper permissions
+2. Verify that the sender email domain is verified in SendGrid
+3. Check SendGrid's activity log for possible delivery issues
+4. Ensure your template has valid HTML structure
+5. Check that your email templates are using the SendGrid provider configuration
