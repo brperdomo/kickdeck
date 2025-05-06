@@ -514,6 +514,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   
   // Handle redirection to auth pages with proper return URL
   const handleAuthRedirect = () => {
+    // Check if the user is already authenticated
+    if (user) {
+      console.log('User is already authenticated, advancing to personal details step');
+      setCurrentStep('personal');
+      return;
+    }
+    
     // Create the redirect URL with the current page as the return destination
     // Include the full URL with eventId to ensure proper return after auth
     const currentUrl = window.location.href;
@@ -714,11 +721,23 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     fetchEvent();
   }, [eventId]);
 
+  // Updated useEffect to properly handle authentication state
   useEffect(() => {
-    if (!authLoading && user) {
-      setCurrentStep('personal');
+    // If auth is not loading and we have a user, skip the auth step
+    if (!authLoading) {
+      if (user) {
+        // User is logged in, advance to personal details step
+        setCurrentStep('personal');
+        console.log('User is authenticated, advancing to personal details step');
+      } else {
+        // User is not logged in, ensure auth step is shown
+        if (!isPreview && currentStep !== 'auth') {
+          setCurrentStep('auth');
+          console.log('User is not authenticated, showing auth step');
+        }
+      }
     }
-  }, [authLoading, user]);
+  }, [authLoading, user, isPreview, currentStep]);
   
   // Fetch clubs for the current event
   useEffect(() => {
@@ -1516,7 +1535,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
           </CardHeader>
           <CardContent className="p-6 space-y-6">
             <AnimatePresence mode="wait">
-              {currentStep === 'auth' && !user && (
+              {currentStep === 'auth' && !authLoading && !user && (
                 <motion.div 
                   key="auth-step"
                   initial={{ opacity: 0, y: 20 }}
