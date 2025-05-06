@@ -333,14 +333,23 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       
       // Make sure branding colors get properly synced in settings
       console.log('Syncing branding settings before submit:', {
-        primaryColor, secondaryColor, logoUrl: previewUrl
+        primaryColor, 
+        secondaryColor, 
+        logoUrl: previewUrl,
+        formLogoUrl: form.getValues('branding.logoUrl')
       });
+      
+      // Ensure we use the form value for logo URL if it exists
+      const formLogoUrl = form.getValues('branding.logoUrl');
+      const finalLogoUrl = formLogoUrl || previewUrl;
+      
+      console.log('Logo URL being used for submission:', finalLogoUrl);
       
       // Update settings with current branding values
       findOrCreateSetting('branding.primaryColor', primaryColor);
       findOrCreateSetting('branding.secondaryColor', secondaryColor);
-      if (previewUrl) {
-        findOrCreateSetting('branding.logoUrl', previewUrl);
+      if (finalLogoUrl) {
+        findOrCreateSetting('branding.logoUrl', finalLogoUrl);
       }
       
       const submitData = {
@@ -359,7 +368,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         branding: {
           primaryColor,
           secondaryColor,
-          logoUrl: previewUrl || undefined,
+          logoUrl: finalLogoUrl || undefined,
         },
       };
 
