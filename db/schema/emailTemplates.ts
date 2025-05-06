@@ -13,6 +13,7 @@ export const emailTemplates = pgTable('email_templates', {
   isActive: boolean('is_active').default(true),
   variables: json('variables').$type<string[]>().default([]),
   providerId: integer('provider_id'),
+  sendgridTemplateId: text('sendgrid_template_id'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });

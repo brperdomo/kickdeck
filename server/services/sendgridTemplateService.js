@@ -89,7 +89,7 @@ export async function mapSendGridTemplateToEmailType(appTemplateType, sendgridTe
     const [updatedTemplate] = await db
       .update(emailTemplates)
       .set({
-        sendgrid_template_id: sendgridTemplateId,
+        sendgridTemplateId: sendgridTemplateId,
         updatedAt: new Date()
       })
       .where(eq(emailTemplates.id, existingTemplate.id))
@@ -123,6 +123,54 @@ export async function listEmailTemplatesWithSendGridMapping() {
     return templates;
   } catch (error) {
     console.error('Error listing email templates with SendGrid mappings:', error);
+    throw error;
+  }
+}
+
+/**
+ * Tests a SendGrid dynamic template by sending a test email
+ * @param {string} templateId The SendGrid template ID to test
+ * @param {string} recipientEmail The email address to send the test to
+ * @param {object} testData The test data to use in the template
+ * @returns {Promise<boolean>} Whether the test was successful
+ */
+export async function testSendGridTemplate(templateId, recipientEmail, testData = {}) {
+  try {
+    // Find the active SendGrid provider
+    const [sendGridProvider] = await db
+      .select()
+      .from(emailProviderSettings)
+      .where(and(
+        eq(emailProviderSettings.providerType, 'sendgrid'),
+        eq(emailProviderSettings.isActive, true)
+      ));
+    
+    if (!sendGridProvider) {
+      throw new Error('No active SendGrid provider found');
+    }
+    
+    const fromEmail = (sendGridProvider.settings?.from || 'support@matchpro.ai');
+    
+    // Add some default test data if not provided
+    const mergeData = {
+      firstName: 'Test',
+      lastName: 'User',
+      email: recipientEmail,
+      ...testData
+    };
+    
+    // Import the sendgridService directly
+    const sendgridService = await import('./sendgridService.js');
+    
+    // Send the test email using the dynamic template
+    return await sendgridService.sendDynamicTemplateEmail({
+      to: recipientEmail,
+      from: fromEmail,
+      templateId: templateId,
+      dynamicTemplateData: mergeData
+    });
+  } catch (error) {
+    console.error('Error testing SendGrid template:', error);
     throw error;
   }
 }

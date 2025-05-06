@@ -264,8 +264,8 @@ export async function sendTemplatedEmail(
     
     try {
       // Check if we should use SendGrid Dynamic Templates
-      if (emailTemplate.sendgrid_template_id) {
-        console.log(`Using SendGrid dynamic template for ${templateType} (ID: ${emailTemplate.sendgrid_template_id})`);
+      if (emailTemplate.sendgridTemplateId) {
+        console.log(`Using SendGrid dynamic template for ${templateType} (ID: ${emailTemplate.sendgridTemplateId})`);
         
         const fromEmail = `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`;
         
@@ -273,7 +273,7 @@ export async function sendTemplatedEmail(
         const result = await sendgridService.sendDynamicTemplateEmail({
           to,
           from: fromEmail,
-          templateId: emailTemplate.sendgrid_template_id,
+          templateId: emailTemplate.sendgridTemplateId,
           dynamicTemplateData: context
         });
         
