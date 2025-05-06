@@ -97,7 +97,12 @@ export function MemberSidebar() {
       sidebarStyles={{ 
         background: "var(--card)",
         boxShadow: "0 0 15px rgba(0, 0, 0, 0.2)",
-        zIndex: 40
+        zIndex: 40,
+        position: "sticky",
+        top: 0,
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column"
       }}
       className="member-sidebar border-r"
     >

@@ -113,7 +113,7 @@ function RegistrationsList({ registrations }: { registrations: Registration[] })
               <div className="flex gap-2 items-center">
                 <TeamStatusBadge status={registration.status} />
                 <span className="text-sm font-medium">
-                  ${registration.amount.toFixed(2)}
+                  ${(registration.amount / 100).toFixed(2)}
                 </span>
               </div>
             </div>
@@ -146,7 +146,7 @@ function RegistrationsList({ registrations }: { registrations: Registration[] })
                   <TableBody>
                     <TableRow>
                       <TableCell className="font-medium">Amount</TableCell>
-                      <TableCell>${registration.amount.toFixed(2)}</TableCell>
+                      <TableCell>${(registration.amount / 100).toFixed(2)}</TableCell>
                     </TableRow>
                     {registration.paymentDate && (
                       <TableRow>
