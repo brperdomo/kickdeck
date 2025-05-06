@@ -8,7 +8,7 @@ import UserRegistrationsView from "@/components/UserRegistrationsView";
 import { MemberLayout } from "@/components/layouts/MemberLayout";
 import { motion } from "framer-motion";
 import { RecentProductUpdates } from "@/components/RecentProductUpdates";
-import { Bell, Calendar, User, UserPlus, Settings, ExternalLink } from "lucide-react";
+import { Calendar, User, UserPlus, ExternalLink } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -40,12 +40,6 @@ export default function UserDashboard() {
       description: "View your current and past event registrations",
       icon: <Calendar className="h-8 w-8 text-primary" />,
       href: "/dashboard/registrations",
-    },
-    {
-      title: "Product Updates",
-      description: "Stay informed about new features and improvements",
-      icon: <Bell className="h-8 w-8 text-primary" />,
-      href: "/product-updates",
     },
   ];
 

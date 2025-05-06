@@ -38,11 +38,6 @@ export function MemberSidebar() {
       label: "My Registrations",
     },
     {
-      href: "/product-updates",
-      icon: <Bell className="h-5 w-5" />,
-      label: "Product Updates",
-    },
-    {
       href: "/dashboard/account-settings",
       icon: <Settings className="h-5 w-5" />,
       label: "Settings",
