@@ -195,7 +195,7 @@ export default function AuthPage() {
         if (matches && matches[1]) {
           const eventId = matches[1];
           console.log("Redirecting to event registration with ID:", eventId);
-          window.location.href = `/register/event/${eventId}`;
+          setLocation(`/register/event/${eventId}`);
           return true; // Redirect handled
         }
       }
@@ -214,7 +214,7 @@ export default function AuthPage() {
         
         // For other paths, redirect directly
         console.log("Redirecting using session storage path:", redirectPath);
-        window.location.href = redirectPath;
+        setLocation(redirectPath);
         return;
       } catch (error) {
         console.error("Error processing sessionStorage redirect:", error);
@@ -238,7 +238,7 @@ export default function AuthPage() {
         
         // For other valid paths, redirect directly
         console.log("Redirecting to URL parameter path:", decodedPath);
-        window.location.href = decodedPath;
+        setLocation(decodedPath);
         return;
       } catch (error) {
         console.error("Error processing redirect parameter:", error);
@@ -249,10 +249,10 @@ export default function AuthPage() {
     // We reach here only if no successful redirect was performed above
     if (user.isAdmin) {
       console.log("No redirect paths found or all redirects failed, user is admin, redirecting to admin dashboard");
-      window.location.href = '/admin';
+      setLocation('/admin');
     } else {
       console.log("No redirect paths found or all redirects failed, redirecting to dashboard");
-      window.location.href = '/dashboard';
+      setLocation('/dashboard');
     }
   }, [user]);
 
