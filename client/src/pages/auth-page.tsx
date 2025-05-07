@@ -45,20 +45,38 @@ export default function AuthPage() {
       sessionStorage.removeItem('logout_message');
     }
 
-    // Check for eventId in URL parameters and set redirectAfterAuth
+    // Check URL parameters for both eventId and from parameters
     const urlParams = new URLSearchParams(window.location.search);
     const eventId = urlParams.get('eventId');
+    const fromRegistration = urlParams.get('from') === 'registration';
     
-    if (eventId) {
-      console.log('Found eventId in URL parameters:', eventId);
+    console.log('URL parameters:', { 
+      eventId, 
+      fromRegistration,
+      allParams: Object.fromEntries(urlParams.entries())
+    });
+    
+    // Special case: When coming from event registration flow
+    if (eventId && fromRegistration) {
+      console.log('REGISTRATION FLOW: Found eventId in URL parameters:', eventId);
+      // Set redirect back to step 2 (personal details)
       const redirectUrl = `/register/event/${eventId}`;
       console.log('Setting redirectAfterAuth to:', redirectUrl);
       sessionStorage.setItem('redirectAfterAuth', redirectUrl);
+      return; // Exit early since we've handled this case
     }
     
-    // We need a valid eventId for registration; redirects without eventId aren't handled
-    // If we don't have an eventId, but we're coming from registration, try to parse other parameters
-    if (!sessionStorage.getItem('redirectAfterAuth') && window.location.href.includes('from=registration')) {
+    // Regular case: Just eventId without from=registration (direct link)
+    if (eventId && !fromRegistration) {
+      console.log('DIRECT LINK: Found eventId in URL parameters:', eventId);
+      const redirectUrl = `/register/event/${eventId}`;
+      console.log('Setting redirectAfterAuth to:', redirectUrl);
+      sessionStorage.setItem('redirectAfterAuth', redirectUrl);
+      return; // Exit early
+    }
+    
+    // If we don't have an eventId but we're coming from registration, try to parse other parameters
+    if (!eventId && fromRegistration) {
       console.log('Coming from registration flow without specific eventId in URL parameter...');
       
       // Check for eventId in the referrer URL, if available
@@ -82,14 +100,18 @@ export default function AuthPage() {
     }
   }, []);
 
-  // BACK TO BASICS APPROACH - MUCH SIMPLER
+  // BACK TO BASICS APPROACH - SIMPLIFIED REDIRECTION
   useEffect(() => {
     // Only process if we have user data and authentication is complete
     if (!user) return;
     
-    console.log("AUTH REDIRECT - ORIGINAL APPROACH: User logged in, now handling redirect", { 
-      user, 
+    console.log("AUTH REDIRECT - User logged in, checking for redirect path", { 
+      userId: user.id,
+      isAdmin: user.isAdmin,
+      allSessionStorageKeys: Object.keys(sessionStorage),
       redirectPath: sessionStorage.getItem('redirectAfterAuth'),
+      urlParams: window.location.search,
+      referrer: document.referrer
     });
     
     // Check for redirectAfterAuth in session storage (highest priority)
@@ -101,18 +123,30 @@ export default function AuthPage() {
       // Clear the stored redirect immediately to prevent future redirects
       sessionStorage.removeItem('redirectAfterAuth');
       
+      // Extra check to make sure the destination is valid and has an event ID if needed
+      if (redirectPath.includes('/register/event/') && !redirectPath.match(/\/register\/event\/\d+/)) {
+        console.error("Invalid redirect path detected (missing event ID):", redirectPath);
+        toast({
+          title: "Navigation Error",
+          description: "Could not return to registration due to missing event ID",
+          variant: "destructive"
+        });
+        
+        // Fall back to default destinations
+        window.location.href = user.isAdmin ? '/admin' : '/dashboard';
+        return;
+      }
+      
       // Use window.location for native navigation to ensure a clean slate
+      console.log(`✅ Redirecting to: ${redirectPath}`);
       window.location.href = redirectPath;
       return;
     }
     
     // Only if there's no explicit redirect path, go to default locations
-    if (user.isAdmin) {
-      window.location.href = '/admin';
-    } else {
-      window.location.href = '/dashboard';
-    }
-  }, [user]);
+    console.log(`No redirect path found, going to default location: ${user.isAdmin ? '/admin' : '/dashboard'}`);
+    window.location.href = user.isAdmin ? '/admin' : '/dashboard';
+  }, [user, toast]);
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
