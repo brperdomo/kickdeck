@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
@@ -17,21 +17,40 @@ export default function RegistrationAuthChecker({
   const { user, isLoading: authLoading } = useAuth();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [, setLocation] = useLocation();
+  const hasRedirectedRef = useRef(false);
   
+  // DIRECT CHECK METHOD - Simply check if user is logged in
+  // and redirect to auth page if not
   useEffect(() => {
+    // Skip if already redirected, already loading, or user is logged in
+    if (hasRedirectedRef.current || authLoading || user) {
+      return;
+    }
+    
+    // Only redirect if user is not authenticated and we're done loading
     if (!user && !authLoading) {
-      console.log("RegistrationAuthChecker: User not authenticated, redirecting to login");
+      console.log("RegistrationAuthChecker: User not authenticated, redirecting to login", {
+        eventId,
+        authStatus: { user: !!user, authLoading }
+      });
+      
+      // Set flag to prevent multiple redirects
+      hasRedirectedRef.current = true;
       setIsRedirecting(true);
       
-      // Store return URL in sessionStorage for post-login redirect
-      const redirectPath = `/register/event/${eventId}`;
-      sessionStorage.setItem('redirectAfterAuth', redirectPath);
+      // Store absolute URL in sessionStorage for more reliable post-login redirect
+      const redirectUrl = `/register/event/${eventId}`;
+      console.log("RegistrationAuthChecker: Setting redirect URL:", redirectUrl);
       
-      // Use setTimeout to ensure the state update happens before redirect
-      // Use the auth route instead of root to prevent admin redirects
-      // Also include the eventId as a query parameter to ensure it's captured on the auth page
+      // Clear any existing redirect first to avoid stale values
+      sessionStorage.removeItem('redirectAfterAuth');
+      
+      // Then set the new redirect path
+      sessionStorage.setItem('redirectAfterAuth', redirectUrl);
+      
+      // Navigate directly to the auth page with a clear flag
       setTimeout(() => {
-        window.location.href = `/auth?eventId=${eventId}&from=registration`;
+        window.location.href = `/auth?eventId=${eventId}&from=registration&t=${Date.now()}`;
       }, 100);
     }
   }, [user, authLoading, eventId, setLocation]);
