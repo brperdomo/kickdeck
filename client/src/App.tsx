@@ -177,9 +177,9 @@ function Router() {
             }}
           </Route>
           <Route path="/register" component={Register} />
+          <Route path="/register/event/:eventId" component={EventRegistration} />
           <Route path="/forgot-password" component={ForgotPassword} />
           <Route path="/reset-password" component={ResetPassword} />
-          <Route path="/register/event/:eventId" component={EventRegistration} />
           <Route path="/event/:eventId/register" component={EventRegistration} />
           <Route path="/dashboard">
             <AuthPage />
