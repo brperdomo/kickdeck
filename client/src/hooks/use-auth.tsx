@@ -139,6 +139,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: (data) => {
       queryClient.setQueryData(["/api/user"], data.user);
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      
+      // CRITICAL FIX: Check for redirectAfterAuth to log automatic redirection after login
+      const redirectPath = sessionStorage.getItem('redirectAfterAuth');
+      if (redirectPath) {
+        console.log('✅ Login successful - detected redirect path in sessionStorage:', redirectPath);
+        // Don't clear it here - we'll let the router components handle clearing it
+        // when they actually perform the redirect
+      } else {
+        console.log('Login successful - no redirect path detected in sessionStorage');
+      }
+      
       toast({
         title: "Success",
         description: "Successfully logged in",
