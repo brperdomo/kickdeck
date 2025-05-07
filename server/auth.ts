@@ -159,14 +159,19 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res, next) => {
     try {
+      console.log('Registration request received:', req.body.email);
+      
       const result = insertUserSchema.safeParse(req.body);
       if (!result.success) {
+        const errorMsg = "Invalid input: " + result.error.issues.map((i) => i.message).join(", ");
+        console.error('Registration validation error:', errorMsg);
         return res
           .status(400)
-          .send("Invalid input: " + result.error.issues.map((i) => i.message).join(", "));
+          .send(errorMsg);
       }
 
       const { username, password, firstName, lastName, email, phone, isParent } = result.data;
+      console.log('Processing registration for:', email);
 
       // Check if user exists by email or username
       const [existingUser] = await db
@@ -176,10 +181,12 @@ export function setupAuth(app: Express) {
         .limit(1);
 
       if (existingUser) {
+        console.log('Registration failed - user exists:', email);
         return res.status(400).send("User with this email or username already exists");
       }
 
       const hashedPassword = await crypto.hash(password);
+      console.log('Creating user account for:', email);
 
       // First, create the household
       const [household] = await db
@@ -194,6 +201,8 @@ export function setupAuth(app: Express) {
           createdAt: new Date().toISOString(),
         })
         .returning();
+      
+      console.log('Created household for new user:', household.id);
 
       // Then create the user with the household reference
       const [newUser] = await db
@@ -211,6 +220,8 @@ export function setupAuth(app: Express) {
           createdAt: new Date().toISOString(),
         })
         .returning();
+      
+      console.log('Created new user account:', newUser.id);
 
       // Cache the newly registered user
       userCache[newUser.id] = {
@@ -240,57 +251,77 @@ export function setupAuth(app: Express) {
         // Non-blocking - continue registration process even if email fails
       }
 
-      // Use a Promise to ensure proper session handling
-      const loginPromise = new Promise<void>((resolve, reject) => {
-        req.login(newUser, (err) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-          resolve();
-        });
-      });
-
+      // Log the user in directly - critical for session creation
+      console.log('Starting user login process after registration');
       try {
-        // Wait for login to complete
-        await loginPromise;
+        // More robust approach with explicit Promise
+        await new Promise<void>((resolve, reject) => {
+          req.login(newUser, (err) => {
+            if (err) {
+              console.error('Login error after registration:', err);
+              reject(err);
+              return;
+            }
+            console.log('Login successful after registration');
+            resolve();
+          });
+        });
         
-        // Add caching headers to ensure the response is fresh
-        res.set('Cache-Control', 'private, max-age=0, must-revalidate');
+        // Log the session to help with debugging
+        console.log('User logged in, session created:', req.isAuthenticated(), 'Session ID:', req.sessionID);
+        
+        // Apply strict no-cache headers to prevent browser caching
+        res.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
         res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
         
-        // Return success with the user data
+        // Add an additional header to ensure the browser makes a fresh request next time
+        res.set('X-Registration-Timestamp', Date.now().toString());
+        
+        // Return the newly created user data
         return res.status(200).json({
           message: "Registration successful",
           user: newUser,
-          timestamp: Date.now() // Add timestamp to prevent caching
+          timestamp: Date.now(), // Add timestamp to prevent caching
+          authenticated: req.isAuthenticated()
         });
       } catch (loginError) {
-        console.error('Login error after registration:', loginError);
-        // Even though login failed, return success since registration worked
-        res.status(200).json({
-          message: "Registration successful, but auto-login failed. Please log in.",
+        console.error('Failed to log in user after registration:', loginError);
+        
+        // Even if auto-login fails, we'll still return a 200 since the account was created
+        return res.status(200).json({
+          message: "Registration successful, but automatic login failed. Please log in manually.",
           registrationSuccess: true,
-          loginSuccess: false
+          loginSuccess: false,
+          user: newUser, // Still return the user data
+          timestamp: Date.now()
         });
       }
     } catch (error) {
+      console.error('Registration error:', error);
       next(error);
     }
   });
 
   app.post("/api/login", (req, res, next) => {
+    console.log('Login request received:', req.body.email);
+    
     passport.authenticate("local", (err: any, user: Express.User, info: IVerifyOptions) => {
       if (err) {
+        console.error('Authentication error:', err);
         return next(err);
       }
 
       if (!user) {
-        return res.status(400).send(info.message ?? "Login failed");
+        console.log('Login failed - invalid credentials:', info?.message);
+        return res.status(400).send(info?.message ?? "Login failed - invalid credentials");
       }
 
+      console.log('Authentication successful for user:', user.email);
+      
       req.logIn(user, async (err) => {
         if (err) {
+          console.error('Login session creation error:', err);
           return next(err);
         }
 
@@ -317,14 +348,24 @@ export function setupAuth(app: Express) {
           console.error('Failed to update last_login:', updateError);
         }
 
+        // Log the session information for debugging
+        console.log('User logged in, session created:', 
+          'Authenticated:', req.isAuthenticated(), 
+          'Session ID:', req.sessionID);
+
         // Add stricter caching headers to ensure freshness
-        res.set('Cache-Control', 'private, max-age=0, must-revalidate');
+        res.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
         res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+        res.set('X-Login-Timestamp', Date.now().toString());
         
+        // Return enhanced response with authentication status for debugging
         return res.json({
           message: "Login successful",
           user,
-          timestamp: Date.now() // Add timestamp to prevent caching
+          timestamp: Date.now(),
+          authenticated: req.isAuthenticated(),
+          sessionId: req.sessionID
         });
       });
     })(req, res, next);

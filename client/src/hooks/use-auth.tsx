@@ -124,27 +124,90 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
-      const res = await fetch("/api/login", {
+      console.log('Login mutation called with:', credentials.email);
+      
+      // Prepare request with credentials - using username field as Passport expects
+      const requestData = {
+        email: credentials.email,
+        password: credentials.password
+      };
+      
+      console.log('Sending login request with data:', { email: requestData.email, passwordLength: requestData.password.length });
+      
+      // Add cache-busting to avoid any caching issues
+      const timestamp = new Date().getTime();
+      const res = await fetch(`/api/login?t=${timestamp}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
+        headers: { 
+          "Content-Type": "application/json",
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        },
+        body: JSON.stringify(requestData),
         credentials: "include",
       });
+      
+      console.log('Login response status:', res.status);
+      
+      // Handle error responses
       if (!res.ok) {
-        const error = await res.text();
-        throw new Error(error);
+        let errorMessage;
+        try {
+          errorMessage = await res.text();
+        } catch (e) {
+          errorMessage = 'Login failed';
+        }
+        console.error('Login error response:', errorMessage);
+        throw new Error(errorMessage);
       }
-      return res.json();
+      
+      // Parse the successful response
+      const data = await res.json();
+      console.log('Login successful, received user data:', data ? 'Yes' : 'No');
+      
+      // Immediately fetch current user to ensure session is established
+      try {
+        console.log('Fetching current user after login');
+        const userRes = await fetch('/api/user', {
+          credentials: 'include',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'X-Cache-Bust': (timestamp + 1).toString()
+          }
+        });
+        
+        if (userRes.ok) {
+          const userData = await userRes.json();
+          console.log('User data fetched after login:', userData ? 'success' : 'not found');
+          // Add the freshly fetched user data to the response
+          data.freshUserData = userData;
+        } else {
+          console.warn('Failed to fetch user after login:', userRes.status);
+        }
+      } catch (e) {
+        console.error('Error fetching user after login:', e);
+      }
+      
+      return data;
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["/api/user"], data.user);
+      // Use the freshly fetched user data if available, otherwise fall back to the user from login response
+      const userData = data.freshUserData || data.user;
+      
+      // Set the user data in the cache
+      queryClient.setQueryData(["/api/user"], userData); 
+      
+      // Force a refetch to ensure we're using fresh data
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      
       toast({
         title: "Success",
         description: "Successfully logged in",
       });
     },
     onError: (error: Error) => {
+      console.error('Login mutation error:', error);
       toast({
         title: "Login failed",
         description: error.message,
