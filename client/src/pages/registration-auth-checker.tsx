@@ -28,9 +28,9 @@ export default function RegistrationAuthChecker({
       sessionStorage.setItem('redirectAfterAuth', redirectPath);
       
       // Use setTimeout to ensure the state update happens before redirect
-      // Use wouter's setLocation for client-side navigation instead of direct window manipulation
+      // Use direct navigation to root path for login, which was the original behavior
       setTimeout(() => {
-        setLocation('/auth');
+        window.location.href = '/';
       }, 100);
     }
   }, [user, authLoading, eventId, setLocation]);

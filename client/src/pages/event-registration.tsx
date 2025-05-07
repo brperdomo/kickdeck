@@ -1621,13 +1621,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           const storedValue = sessionStorage.getItem('redirectAfterAuth');
                           console.log('Auth redirect btn: Stored redirectAfterAuth in sessionStorage:', storedValue);
                           
-                          // Add eventId parameter to URL as a backup mechanism 
-                          const authUrl = `/auth?eventId=${eventId}`;
-                          
-                          // Use direct window.location for a guaranteed full page refresh 
-                          // This ensures we get a clean auth state and prevents any context issues
-                          console.log('Auth redirect btn: Using direct window.location to auth page:', authUrl);
-                          window.location.href = authUrl;
+                          // Directly go to the root URL (/) which will show the login screen
+                          // This was the original behavior that worked well
+                          console.log('Auth redirect btn: Using direct navigation to root page for login');
+                          window.location.href = '/';
                         }}
                       >
                         Sign In / Register
