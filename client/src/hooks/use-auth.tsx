@@ -202,12 +202,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Invalidate all queries to clear any remaining cache
         queryClient.invalidateQueries();
         
-        // Also clear browser storage to be extra safe
+        // Only clear logout-related storage items, but preserve redirectAfterAuth
         try {
+          // Save any redirectAfterAuth value before clearing
+          const redirectAfterAuth = sessionStorage.getItem('redirectAfterAuth');
+          
+          // Clear localStorage items (doesn't affect sessionStorage)
           localStorage.clear();
+          
+          // Selectively clear sessionStorage items except redirectAfterAuth
+          const itemsToKeep = ['redirectAfterAuth'];
+          const itemsToKeepValues: Record<string, string> = {};
+          
+          // Save values we want to keep
+          itemsToKeep.forEach(key => {
+            const value = sessionStorage.getItem(key);
+            if (value) {
+              itemsToKeepValues[key] = value;
+            }
+          });
+          
+          // Clear all sessionStorage
           sessionStorage.clear();
+          
+          // Restore items we want to keep
+          Object.entries(itemsToKeepValues).forEach(([key, value]) => {
+            sessionStorage.setItem(key, value as string);
+          });
+          
+          console.log('Preserved redirect path during auth state update:', redirectAfterAuth);
         } catch (storageError) {
-          console.error("Error clearing browser storage:", storageError);
+          console.error("Error managing browser storage:", storageError);
         }
         
         // Force a reload of the page to completely reset React state
@@ -229,8 +254,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         queryClient.clear();
         queryClient.setQueryData(["/api/user"], null);
+        
+        // Save any redirectAfterAuth value before clearing
+        const redirectAfterAuth = sessionStorage.getItem('redirectAfterAuth');
+        
+        // Clear localStorage items
         localStorage.clear();
+        
+        // Selectively clear sessionStorage items except redirectAfterAuth
+        const itemsToKeep = ['redirectAfterAuth'];
+        const itemsToKeepValues: Record<string, string> = {};
+        
+        // Save values we want to keep
+        itemsToKeep.forEach(key => {
+          const value = sessionStorage.getItem(key);
+          if (value) {
+            itemsToKeepValues[key] = value;
+          }
+        });
+        
+        // Clear all sessionStorage
         sessionStorage.clear();
+        
+        // Restore items we want to keep
+        Object.entries(itemsToKeepValues).forEach(([key, value]) => {
+          sessionStorage.setItem(key, value as string);
+        });
+        
+        console.log('Preserved redirect path during error handling:', redirectAfterAuth);
         
         // Also force redirect to auth page on error
         window.location.href = "/auth";
@@ -318,6 +369,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         // Just invalidate in case we couldn't get user data
         queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      }
+      
+      // Check for redirectAfterAuth to handle automatic redirection after registration
+      const redirectPath = sessionStorage.getItem('redirectAfterAuth');
+      if (redirectPath) {
+        console.log('Registration successful - redirecting to:', redirectPath);
+        // We'll let the automatic useEffect in auth-page.tsx handle this redirect
+        // So we don't need to do anything here, just log it for debugging
       }
       
       // Show success message
