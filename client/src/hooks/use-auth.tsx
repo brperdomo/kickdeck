@@ -137,68 +137,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return res.json();
     },
     onSuccess: (data) => {
-      // Update the cache with user data
       queryClient.setQueryData(["/api/user"], data.user);
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      
-      // CRITICAL FIX: Direct approach - check for redirectAfterAuth and forcefully redirect
-      const redirectPath = sessionStorage.getItem('redirectAfterAuth');
-      
-      // Also check for an eventId in the URL to handle direct navigation cases
-      let eventIdFromUrl = null;
-      if (typeof window !== 'undefined') {
-        const urlParams = new URLSearchParams(window.location.search);
-        eventIdFromUrl = urlParams.get('eventId');
-      }
-      
-      if (redirectPath) {
-        console.log('⚠️ FORCE REDIRECT: Login successful - redirecting directly to:', redirectPath);
-        
-        // Show toast quickly before redirecting
-        toast({
-          title: "Success",
-          description: "Redirecting to registration...",
-        });
-        
-        // Clear it immediately to prevent any possibility of redirect loops
-        sessionStorage.removeItem('redirectAfterAuth');
-        
-        // Use a small timeout to ensure the toast is visible before redirecting
-        setTimeout(() => {
-          // Force redirect - this bypasses any React Router logic
-          window.location.href = redirectPath;
-        }, 100);
-        
-        // End execution early to prevent default redirect
-        return;
-      } 
-      // Check if we're on auth page with eventId in URL but no redirectAfterAuth
-      else if (eventIdFromUrl && window.location.pathname.includes('/auth')) {
-        const registrationUrl = `/register/event/${eventIdFromUrl}`;
-        console.log('⚠️ DIRECT REDIRECT: Login successful with eventId in URL - redirecting to:', registrationUrl);
-        
-        toast({
-          title: "Success",
-          description: "Redirecting to registration...",
-        });
-        
-        // Use a small timeout to ensure toast appears
-        setTimeout(() => {
-          window.location.href = registrationUrl;
-        }, 100);
-        
-        // End execution early
-        return;
-      } 
-      else {
-        console.log('Login successful - no redirect path detected, normal flow continues');
-        
-        // Show regular success toast
-        toast({
-          title: "Success",
-          description: "Successfully logged in",
-        });
-      }
+      toast({
+        title: "Success",
+        description: "Successfully logged in",
+      });
     },
     onError: (error: Error) => {
       toast({
@@ -258,37 +202,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Invalidate all queries to clear any remaining cache
         queryClient.invalidateQueries();
         
-        // Only clear logout-related storage items, but preserve redirectAfterAuth
+        // Also clear browser storage to be extra safe
         try {
-          // Save any redirectAfterAuth value before clearing
-          const redirectAfterAuth = sessionStorage.getItem('redirectAfterAuth');
-          
-          // Clear localStorage items (doesn't affect sessionStorage)
           localStorage.clear();
-          
-          // Selectively clear sessionStorage items except redirectAfterAuth
-          const itemsToKeep = ['redirectAfterAuth'];
-          const itemsToKeepValues: Record<string, string> = {};
-          
-          // Save values we want to keep
-          itemsToKeep.forEach(key => {
-            const value = sessionStorage.getItem(key);
-            if (value) {
-              itemsToKeepValues[key] = value;
-            }
-          });
-          
-          // Clear all sessionStorage
           sessionStorage.clear();
-          
-          // Restore items we want to keep
-          Object.entries(itemsToKeepValues).forEach(([key, value]) => {
-            sessionStorage.setItem(key, value as string);
-          });
-          
-          console.log('Preserved redirect path during auth state update:', redirectAfterAuth);
         } catch (storageError) {
-          console.error("Error managing browser storage:", storageError);
+          console.error("Error clearing browser storage:", storageError);
         }
         
         // Force a reload of the page to completely reset React state
@@ -310,34 +229,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         queryClient.clear();
         queryClient.setQueryData(["/api/user"], null);
-        
-        // Save any redirectAfterAuth value before clearing
-        const redirectAfterAuth = sessionStorage.getItem('redirectAfterAuth');
-        
-        // Clear localStorage items
         localStorage.clear();
-        
-        // Selectively clear sessionStorage items except redirectAfterAuth
-        const itemsToKeep = ['redirectAfterAuth'];
-        const itemsToKeepValues: Record<string, string> = {};
-        
-        // Save values we want to keep
-        itemsToKeep.forEach(key => {
-          const value = sessionStorage.getItem(key);
-          if (value) {
-            itemsToKeepValues[key] = value;
-          }
-        });
-        
-        // Clear all sessionStorage
         sessionStorage.clear();
-        
-        // Restore items we want to keep
-        Object.entries(itemsToKeepValues).forEach(([key, value]) => {
-          sessionStorage.setItem(key, value as string);
-        });
-        
-        console.log('Preserved redirect path during error handling:', redirectAfterAuth);
         
         // Also force redirect to auth page on error
         window.location.href = "/auth";
@@ -427,64 +320,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       }
       
-      // CRITICAL FIX: Direct approach - check for redirectAfterAuth and forcefully redirect for registration too
-      const redirectPath = sessionStorage.getItem('redirectAfterAuth');
-      
-      // Also check for an eventId in the URL to handle direct navigation cases
-      let eventIdFromUrl = null;
-      if (typeof window !== 'undefined') {
-        const urlParams = new URLSearchParams(window.location.search);
-        eventIdFromUrl = urlParams.get('eventId');
-      }
-      
-      if (redirectPath) {
-        console.log('⚠️ FORCE REDIRECT: Registration successful - redirecting directly to:', redirectPath);
-        
-        // Show toast quickly before redirecting
-        toast({
-          title: "Success",
-          description: "Redirecting to registration...",
-        });
-        
-        // Clear it immediately to prevent any possibility of redirect loops
-        sessionStorage.removeItem('redirectAfterAuth');
-        
-        // Use a small timeout to ensure the toast is visible before redirecting
-        setTimeout(() => {
-          // Force redirect - this bypasses any React Router logic
-          window.location.href = redirectPath;
-        }, 100);
-        
-        // End execution early to prevent default redirect
-        return;
-      } 
-      // Check if we're on register page with eventId in URL but no redirectAfterAuth
-      else if (eventIdFromUrl && window.location.pathname.includes('/register')) {
-        const registrationUrl = `/register/event/${eventIdFromUrl}`;
-        console.log('⚠️ DIRECT REDIRECT: Registration successful with eventId in URL - redirecting to:', registrationUrl);
-        
-        toast({
-          title: "Success",
-          description: "Redirecting to registration...",
-        });
-        
-        // Use a small timeout to ensure toast appears
-        setTimeout(() => {
-          window.location.href = registrationUrl;
-        }, 100);
-        
-        // End execution early
-        return;
-      } 
-      else {
-        console.log('Registration successful - no redirect path detected, normal flow continues');
-        
-        // Show regular success toast
-        toast({
-          title: "Success",
-          description: "Registration successful",
-        });
-      }
+      // Show success message
+      toast({
+        title: "Success",
+        description: "Registration successful",
+      });
     },
     onError: (error: Error) => {
       toast({

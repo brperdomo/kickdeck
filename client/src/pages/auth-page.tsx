@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Link, useLocation } from "wouter";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 // Login schema
 const loginSchema = z.object({
@@ -34,9 +34,6 @@ export default function AuthPage() {
   const { loginMutation, user } = useAuth();
   const [location, setLocation] = useLocation();
   const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
-  
-  // Store redirectAfterAuth in a ref to preserve it between renders
-  const redirectPathRef = useRef<string | null>(null);
 
   // Check for logout message in session storage and handle eventId parameter
   useEffect(() => {
@@ -48,150 +45,49 @@ export default function AuthPage() {
       sessionStorage.removeItem('logout_message');
     }
 
-    // Check URL parameters for both eventId and from parameters
+    // Check for eventId in URL parameters and set redirectAfterAuth
     const urlParams = new URLSearchParams(window.location.search);
     const eventId = urlParams.get('eventId');
-    const fromRegistration = urlParams.get('from') === 'registration';
     
-    console.log('⚙️ AUTH-PAGE INIT - URL parameters:', { 
-      eventId, 
-      fromRegistration,
-      currentPath: window.location.pathname + window.location.search,
-      allParams: Object.fromEntries(urlParams.entries()),
-      currentSessionStorage: Object.fromEntries(
-        Object.keys(sessionStorage).map(key => [key, sessionStorage.getItem(key)])
-      ),
-      referrer: document.referrer
-    });
-    
-    // Special case: When coming from event registration flow
-    if (eventId && fromRegistration) {
-      console.log('REGISTRATION FLOW: Found eventId in URL parameters:', eventId);
-      // Set redirect back to step 2 (personal details)
+    if (eventId) {
+      console.log('Found eventId in URL parameters:', eventId);
       const redirectUrl = `/register/event/${eventId}`;
       console.log('Setting redirectAfterAuth to:', redirectUrl);
       sessionStorage.setItem('redirectAfterAuth', redirectUrl);
-      redirectPathRef.current = redirectUrl; // Also store in React ref
-      return; // Exit early since we've handled this case
-    }
-    
-    // Regular case: Just eventId without from=registration (direct link)
-    if (eventId && !fromRegistration) {
-      console.log('DIRECT LINK: Found eventId in URL parameters:', eventId);
-      const redirectUrl = `/register/event/${eventId}`;
-      console.log('Setting redirectAfterAuth to:', redirectUrl);
-      sessionStorage.setItem('redirectAfterAuth', redirectUrl);
-      redirectPathRef.current = redirectUrl; // Also store in React ref
-      return; // Exit early
-    }
-    
-    // If we don't have an eventId but we're coming from registration, try to parse other parameters
-    if (!eventId && fromRegistration) {
-      console.log('Coming from registration flow without specific eventId in URL parameter...');
-      
-      // Check for eventId in the referrer URL, if available
-      const referrer = document.referrer;
-      if (referrer && referrer.includes('/register/event/')) {
-        const matches = referrer.match(/\/register\/event\/(\d+)/);
-        if (matches && matches[1]) {
-          const eventIdFromReferrer = matches[1];
-          console.log('Found eventId in referrer URL:', eventIdFromReferrer);
-          const redirectUrl = `/register/event/${eventIdFromReferrer}`;
-          sessionStorage.setItem('redirectAfterAuth', redirectUrl);
-          redirectPathRef.current = redirectUrl; // Also store in React ref
-        } else {
-          // Default to dashboard if we can't get a specific eventId
-          console.log('No eventId found in referrer, redirecting to dashboard instead');
-          const dashboardUrl = '/dashboard';
-          sessionStorage.setItem('redirectAfterAuth', dashboardUrl);
-          redirectPathRef.current = dashboardUrl; // Also store in React ref
-        }
-      } else {
-        // Default to dashboard if no referrer
-        console.log('No referrer URL available, redirecting to dashboard instead');
-        const dashboardUrl = '/dashboard';
-        sessionStorage.setItem('redirectAfterAuth', dashboardUrl);
-        redirectPathRef.current = dashboardUrl; // Also store in React ref
-      }
     }
   }, []);
 
-  // SIMPLIFIED DIRECT NAVIGATION - If user is already logged in, redirect immediately
+  // BACK TO BASICS APPROACH - MUCH SIMPLER
   useEffect(() => {
-    // Skip if not logged in or still loading
+    // Only process if we have user data and authentication is complete
     if (!user) return;
     
-    console.log("CRITICAL AUTH CHECK: User is already logged in, preparing to redirect", { 
-      userId: user.id,
-      isAdmin: user.isAdmin,
-      urlParams: window.location.search
+    console.log("AUTH REDIRECT - ORIGINAL APPROACH: User logged in, now handling redirect", { 
+      user, 
+      redirectPath: sessionStorage.getItem('redirectAfterAuth'),
     });
     
-    // Check URL parameters first - highest priority
-    const urlParams = new URLSearchParams(window.location.search);
-    const eventIdFromUrl = urlParams.get('eventId');
-    const fromRegistration = urlParams.get('from') === 'registration';
+    // Check for redirectAfterAuth in session storage (highest priority)
+    const redirectPath = sessionStorage.getItem('redirectAfterAuth');
     
-    // Next check sessionStorage for redirectAfterAuth
-    const storedRedirectPath = sessionStorage.getItem('redirectAfterAuth');
-    
-    console.log("Available redirect options:", {
-      eventIdFromUrl,
-      fromRegistration,
-      storedRedirectPath,
-      referrer: document.referrer
-    });
-    
-    // Clear redirect path from storage regardless of what we do next
-    sessionStorage.removeItem('redirectAfterAuth');
-    
-    // OPTION 1: If we have a stored redirect path, use it
-    if (storedRedirectPath) {
-      console.log("✅ DIRECT NAVIGATION: Using stored redirect path:", storedRedirectPath);
+    if (redirectPath) {
+      console.log("Going to stored redirect path:", redirectPath);
       
-      // Simple validation to ensure it's a proper path with an event ID if needed
-      if (storedRedirectPath.includes('/register/event/') && 
-          !storedRedirectPath.match(/\/register\/event\/\d+/)) {
-        console.error("Invalid redirect path (missing event ID):", storedRedirectPath);
-        toast({
-          title: "Navigation issue",
-          description: "Could not return to registration. Missing event ID.",
-          variant: "destructive"
-        });
-        
-        // Navigate to default location
-        window.location.href = user.isAdmin ? '/admin' : '/dashboard';
-        return;
-      }
+      // Clear the stored redirect immediately to prevent future redirects
+      sessionStorage.removeItem('redirectAfterAuth');
       
-      // Valid redirect path, navigate
-      window.location.href = storedRedirectPath;
+      // Use window.location for native navigation to ensure a clean slate
+      window.location.href = redirectPath;
       return;
     }
     
-    // OPTION 2: If we have an event ID in the URL and coming from registration
-    if (eventIdFromUrl && fromRegistration) {
-      const registrationUrl = `/register/event/${eventIdFromUrl}`;
-      console.log("✅ DIRECT NAVIGATION: Using eventId from URL:", registrationUrl);
-      window.location.href = registrationUrl;
-      return;
-    } 
-    
-    // OPTION 3: If we just have an event ID (not explicitly from registration)
-    // but we're on the auth page, it's likely intended for registration
-    if (eventIdFromUrl) {
-      const registrationUrl = `/register/event/${eventIdFromUrl}`;
-      console.log("✅ DIRECT NAVIGATION: Using eventId from URL as best guess:", registrationUrl);
-      window.location.href = registrationUrl;
-      return;
+    // Only if there's no explicit redirect path, go to default locations
+    if (user.isAdmin) {
+      window.location.href = '/admin';
+    } else {
+      window.location.href = '/dashboard';
     }
-    
-    // OPTION 4: Default - go to admin or dashboard based on user role
-    console.log("➡️ DIRECT NAVIGATION: No special redirect info, going to default:", 
-      user.isAdmin ? '/admin' : '/dashboard');
-    window.location.href = user.isAdmin ? '/admin' : '/dashboard';
-    
-  }, [user, toast]);
+  }, [user]);
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -202,56 +98,11 @@ export default function AuthPage() {
   });
 
   async function onSubmit(data: LoginFormData) {
-    // Get parameters from URL to preserve for post-login
-    const urlParams = new URLSearchParams(window.location.search);
-    const eventIdFromUrl = urlParams.get('eventId');
-    const fromRegistration = urlParams.get('from') === 'registration';
-    
-    console.log('🔑 LOGIN SUBMIT - Critical Data Check:', {
-      // Primary source of truth - URL params
-      eventIdFromUrl,
-      fromRegistration,
-      
-      // Backup source of truth - sessionStorage
-      redirectAfterAuth: sessionStorage.getItem('redirectAfterAuth'),
-      
-      // Debug data - all session storage and ref state
-      redirectRef: redirectPathRef.current,
-      allStorageKeys: Object.keys(sessionStorage),
-    });
-
-    // PRIORITY ORDER FOR REDIRECT:
-    // 1. Stored redirectAfterAuth in sessionStorage (already set by RegistrationAuthChecker)
-    // 2. URL parameters (eventId + from=registration)
-    // 3. redirectPathRef as fallback
-    
-    // If no redirectAfterAuth in sessionStorage, but we have eventId in URL
-    if (!sessionStorage.getItem('redirectAfterAuth') && eventIdFromUrl && fromRegistration) {
-      const redirectPath = `/register/event/${eventIdFromUrl}`;
-      console.log('🛠️ Setting redirectAfterAuth from URL params:', redirectPath);
-      sessionStorage.setItem('redirectAfterAuth', redirectPath);
-    }
-    // If still no redirectAfterAuth but we have a ref value, use that
-    else if (!sessionStorage.getItem('redirectAfterAuth') && redirectPathRef.current) {
-      console.log('🛠️ Setting redirectAfterAuth from ref:', redirectPathRef.current);
-      sessionStorage.setItem('redirectAfterAuth', redirectPathRef.current);
-    }
-
     try {
       loginForm.clearErrors();
-      
-      // Store current redirect path value before login
-      const storedPath = sessionStorage.getItem('redirectAfterAuth');
-      
-      // Perform login
       await loginMutation.mutateAsync(data);
       
-      // Login success should be handled by the useEffect for redirects
-      // But add an immediate redirect as a backup if we have a path and auth succeeded
-      if (storedPath) {
-        console.log('🏃‍♂️ Immediate post-login redirect to:', storedPath);
-        window.location.href = storedPath;
-      }
+      // Login success is handled in useEffect for redirects
     } catch (error: any) {
       console.error('Login error:', error);
       

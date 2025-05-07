@@ -502,9 +502,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const { user, isLoading: authLoading } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
-  // Important: Do NOT use any authentication-based logic when initializing state
-  // This avoids any race conditions during initial render
-  const [currentStep, setCurrentStep] = useState<RegistrationStep>('auth');
+  // For initialization, check if user is already logged in to bypass auth step
+  // This ensures we start at the correct step even before the useEffect runs
+  const initialStep = isPreview ? 'personal' : (user ? 'personal' : 'auth');
+  console.log('Setting initial step based on auth status:', { initialStep, isLoggedIn: !!user });
+  const [currentStep, setCurrentStep] = useState<RegistrationStep>(initialStep);
   const [players, setPlayers] = useState<PlayerForm[]>([]);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup | null>(null);
   const [selectedBracket, setSelectedBracket] = useState<number | null>(null);
@@ -513,9 +515,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [clubLoading, setClubLoading] = useState(false);
   const [isNewClub, setIsNewClub] = useState(false);
   const [clubLogo, setClubLogo] = useState<File | null>(null);
-  
-  // The first render will always show 'auth', but we'll update it immediately after
-  // based on the actual authentication state - this prevents render cycle issues
   
   // We don't need the handleAuthRedirect function anymore since we're handling auth state
   // directly in the useEffect hooks. This was causing the redirect to /auth when unnecessary.
@@ -713,39 +712,71 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     fetchEvent();
   }, [eventId]);
 
-  // REMOVED the forced user data fetch to prevent infinite loop
-  // This was causing a conflict with the useAuth hook and
-  // creating an endless loop of authentication checks
-  
-  // SIMPLIFIED AUTH FLOW - Single source of truth
+  // COMPLETE REWRITE OF AUTHENTICATION APPROACH
+  // Let's simplify even more to avoid any possible conflicts
   useEffect(() => {
-    // Skip processing during loading or in preview mode
-    if (authLoading || isPreview) {
+    // Prevent doing anything if we're still loading
+    if (authLoading) {
+      console.log('Auth is still loading, not taking any action yet');
       return;
     }
     
-    // ONE-TIME AUTH STATE CHECK - not constantly calling API
-    // This works alongside the useAuth hook that already manages auth state
-    const isAuthenticated = !!user;
+    // Debug user state
+    console.log('AUTH DEBUG -----------------');
+    console.log('User state:', {
+      user,
+      authLoading,
+      currentStep,
+      isPreview,
+      isAuthenticated: !!user
+    });
+    console.log('User object:', JSON.stringify(user));
+    console.log('-------------------------');
     
-    // Move to personal details if authenticated and on auth step
-    if (isAuthenticated && currentStep === 'auth') {
-      console.log('User is authenticated, moving to personal details step');
-      setCurrentStep('personal');
+    // Don't do anything if in preview mode
+    if (isPreview) {
       return;
     }
     
-    // For anonymous users - always ensure they stay on auth step
-    if (!isAuthenticated && currentStep !== 'auth') {
-      console.log('User is not authenticated, returning to auth step');
+    // Based on authentication status, set the step
+    if (user) {
+      // User is authenticated - always show personal details regardless of current step
+      console.log('FIXED AUTH FLOW: User is authenticated, forcing to personal details step');
       
-      // Store the current page for post-login return
+      // ALWAYS set to personal step if authenticated, override any existing state
+      if (currentStep === 'auth') {
+        console.log('FIXED AUTH FLOW: Forcibly advancing from auth to personal step');
+        
+        // Add a small delay to ensure UI has time to render correctly first
+        setTimeout(() => {
+          console.log('FIXED AUTH FLOW: Changing step from auth to personal');
+          setCurrentStep('personal');
+        }, 800);
+      }
+      
+      // Clean the URL by removing query parameters no matter what
+      if (window.location.search) {
+        console.log('FIXED AUTH FLOW: Cleaning URL by removing parameters');
+        // Use regular location history API to rewrite the URL
+        window.history.replaceState(
+          { step: 'personal', eventId }, 
+          '', 
+          `/register/event/${eventId}`
+        );
+      }
+    } else {
+      // User is not authenticated - always show auth step
+      console.log('FIXED AUTH FLOW: User is not authenticated, showing auth step');
+      
+      // Simple approach: set the redirect and show auth component
+      console.log('Setting auth redirect:', `/register/event/${eventId}`);
       sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
-      
-      // Update UI to show auth step
       setCurrentStep('auth');
+      return;
     }
   }, [authLoading, user, isPreview, eventId, currentStep]);
+  
+  // We've removed the duplicate useEffect to avoid conflicts
   
   // Fetch clubs for the current event
   useEffect(() => {
@@ -1564,22 +1595,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       <p className="text-gray-600 mb-6">
                         You're already signed in. Proceeding to registration...
                       </p>
-                      <Button 
-                        size="lg"
-                        className="font-semibold px-8"
-                        style={{ 
-                          backgroundColor: event?.branding?.primaryColor || '#2C5282',
-                          color: primaryContrastColor,
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                        }}
-                        onClick={() => {
-                          console.log('Continue to personal details clicked');
-                          // Directly move to the next step since we're already authenticated
-                          setCurrentStep('personal');
-                        }}
-                      >
-                        Continue Registration
-                      </Button>
+                      {/* Empty placeholder - actual redirect happens in useEffect */}
                     </>
                   ) : (
                     /* User is not logged in - show sign in button */
@@ -1597,15 +1613,18 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                         }}
                         onClick={() => {
-                          console.log('Sign In/Register button clicked - going to auth page');
-                          
-                          // Store the redirect URL for after authentication
+                          // Extra safety check to ensure we capture this click
                           const returnUrl = `/register/event/${eventId}`;
                           sessionStorage.setItem('redirectAfterAuth', returnUrl);
-                          console.log('Auth redirect: stored target URL:', returnUrl);
                           
-                          // Always redirect to the auth page with clear parameters
-                          window.location.href = `/auth?eventId=${eventId}&from=registration`;
+                          // Double-check that the sessionStorage was set correctly
+                          const storedValue = sessionStorage.getItem('redirectAfterAuth');
+                          console.log('Auth redirect btn: Stored redirectAfterAuth in sessionStorage:', storedValue);
+                          
+                          // Directly go to the root URL (/) which will show the login screen
+                          // This was the original behavior that worked well
+                          console.log('Auth redirect btn: Using direct navigation to root page for login');
+                          window.location.href = '/';
                         }}
                       >
                         Sign In / Register

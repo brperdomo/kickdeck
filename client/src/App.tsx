@@ -126,10 +126,10 @@ function Router() {
       
       {/* Event registration routes - always available regardless of auth status */}
       <Route path="/register/event/:eventId">
-        {(params) => <EventRegistration eventIdOverride={params.eventId} />}
+        {(params) => <EventRegistration />}
       </Route>
       <Route path="/event/:eventId/register">
-        {(params) => <EventRegistration eventIdOverride={params.eventId} />}
+        {(params) => <EventRegistration />}
       </Route>
       
       {/* Handle other routes based on auth status */}
@@ -293,23 +293,7 @@ function Router() {
           </Route>
           {/* We'll enhance the main dashboard with animations directly */}
           <Route path="/admin">
-            {() => {
-              // CRITICAL FIX: Check for redirectAfterAuth before going to admin dashboard
-              const redirectPath = sessionStorage.getItem('redirectAfterAuth');
-              console.log('Admin route check - redirectAfterAuth =', redirectPath);
-              
-              if (redirectPath) {
-                console.log('⚠️ Detected redirectAfterAuth while going to admin, redirecting to:', redirectPath);
-                // Clear it immediately
-                sessionStorage.removeItem('redirectAfterAuth');
-                // Force redirect
-                window.location.href = redirectPath;
-                return <div>Redirecting to {redirectPath}...</div>;
-              }
-              
-              // Standard admin dashboard rendering
-              return user.isAdmin ? <AdminDashboard initialView="events" /> : <NotFound />;
-            }}
+            {user.isAdmin ? <AdminDashboard initialView="events" /> : <NotFound />}
           </Route>
 
           {/* User routes */}
@@ -350,47 +334,13 @@ function Router() {
           <Route path="/payment-confirmation">
             <PaymentConfirmation />
           </Route>
-          <Route path="/dashboard">
-            {() => {
-              // CRITICAL FIX: Check for redirectAfterAuth before going to user dashboard
-              const redirectPath = sessionStorage.getItem('redirectAfterAuth');
-              console.log('Dashboard route check - redirectAfterAuth =', redirectPath);
-              
-              if (redirectPath) {
-                console.log('⚠️ Detected redirectAfterAuth while going to dashboard, redirecting to:', redirectPath);
-                // Clear it immediately
-                sessionStorage.removeItem('redirectAfterAuth');
-                // Force redirect
-                window.location.href = redirectPath;
-                return <div>Redirecting to {redirectPath}...</div>;
-              }
-              
-              // Standard dashboard rendering
-              return <UserDashboard />;
-            }}
-          </Route>
+          <Route path="/dashboard" component={UserDashboard} />
 
           {/* Preview routes */}
 
           {/* Home route */}
           <Route path="/">
-            {() => {
-              // CRITICAL FIX: Check for redirectAfterAuth before going to root dashboard
-              const redirectPath = sessionStorage.getItem('redirectAfterAuth');
-              console.log('Root route check - redirectAfterAuth =', redirectPath);
-              
-              if (redirectPath) {
-                console.log('⚠️ Detected redirectAfterAuth while going to root, redirecting to:', redirectPath);
-                // Clear it immediately
-                sessionStorage.removeItem('redirectAfterAuth');
-                // Force redirect
-                window.location.href = redirectPath;
-                return <div>Redirecting to {redirectPath}...</div>;
-              }
-              
-              // Standard dashboard rendering based on user type
-              return user.isAdmin ? <AdminDashboard initialView="events" /> : <UserDashboard />;
-            }}
+            {user.isAdmin ? <AdminDashboard initialView="events" /> : <UserDashboard />}
           </Route>
 
           {/* 404 route */}
