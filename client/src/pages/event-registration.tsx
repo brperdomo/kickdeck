@@ -777,14 +777,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       // User is not authenticated - always show auth step
       console.log('FIXED AUTH FLOW: User is not authenticated, showing auth step');
       
-      // CRITICAL FIX: Do a hard redirect to the auth page with a special parameter
-      // This is the most reliable way to ensure proper login/redirect flow
+      // CRITICAL FIX: Use session storage approach without URL parameters
+      // Keep this simple and reliable approach that works with the router
       sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
       
-      // Force navigation to auth page with eventId parameter
-      // This will allow auth page to directly redirect back after login
-      window.location.href = `/auth?event_reg=${eventId}`;
-      return; // Exit early - we're handling navigation elsewhere
+      // Just show the auth component directly without a redirect
+      setCurrentStep('auth');
+      return;
     }
   }, [authLoading, user, isPreview, eventId]);
   
