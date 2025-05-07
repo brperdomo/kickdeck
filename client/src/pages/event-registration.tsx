@@ -517,6 +517,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [isNewClub, setIsNewClub] = useState(false);
   const [clubLogo, setClubLogo] = useState<File | null>(null);
   
+  // React to changes in authentication status
+  useEffect(() => {
+    // If the user becomes authenticated while on the auth step, move to personal details
+    if (user && currentStep === 'auth') {
+      console.log('Auth status changed: User authenticated, moving to personal details step');
+      setCurrentStep('personal');
+    }
+  }, [user, currentStep]);
+  
   // We don't need the handleAuthRedirect function anymore since we're handling auth state
   // directly in the useEffect hooks. This was causing the redirect to /auth when unnecessary.
   // Removing this function and direct redirections prevents circular redirects.
