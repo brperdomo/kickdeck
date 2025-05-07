@@ -364,6 +364,17 @@ function App() {
       const handleLogoutMessage = (event: MessageEvent) => {
         if (event.data && event.data.type === 'LOGOUT') {
           console.log('Received logout event from another tab/window');
+          
+          // Check if we're already in a logout process
+          const logoutInProgress = sessionStorage.getItem('logout_in_progress');
+          if (logoutInProgress) {
+            console.log('Logout already in progress, not initiating another one');
+            return;
+          }
+          
+          // Mark that we're starting a logout
+          sessionStorage.setItem('logout_in_progress', 'true');
+          sessionStorage.setItem('logout_initiated_at', Date.now().toString());
 
           // Force route to our dedicated logout handler
           window.location.href = '/logout';
