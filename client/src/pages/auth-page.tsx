@@ -35,6 +35,42 @@ export default function AuthPage() {
   const [location, setLocation] = useLocation();
   const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
 
+  // Check for an existing user session and redirect immediately if found
+  useEffect(() => {
+    // If the user is already authenticated when the auth page loads, handle redirect immediately
+    if (user) {
+      console.log("User is already logged in when auth page loaded, handling redirect immediately");
+      
+      // Get redirect params if present
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirectParam = searchParams.get('redirect');
+      
+      if (redirectParam) {
+        // Handle the redirect to either registration or another destination
+        const decodedPath = decodeURIComponent(redirectParam);
+        
+        // Special case for event registration
+        if (decodedPath.includes('/register/event/')) {
+          const eventId = decodedPath.split('/register/event/')[1];
+          if (eventId) {
+            console.log("Auth page: Already logged in, redirecting directly to event registration:", eventId);
+            window.location.href = `/register/event/${eventId}`;
+            return;
+          }
+        }
+        
+        console.log("Auth page: Already logged in, redirecting to:", decodedPath);
+        window.location.href = decodedPath;
+      } else if (user.isAdmin) {
+        // No redirect parameter - go to admin dashboard for admins
+        window.location.href = '/admin';
+      } else {
+        // No redirect parameter - go to regular dashboard
+        window.location.href = '/dashboard';
+      }
+    }
+  }, [user]);
+
   // Check for logout message from sessionStorage or URL params
   useEffect(() => {
     console.log("AuthPage useEffect - checking for logout params");
@@ -96,7 +132,10 @@ export default function AuthPage() {
 
   // Handle redirect after successful login
   useEffect(() => {
+    // Only process if we have user data and authentication is complete
     if (!user) return;
+    
+    console.log("Auth page detected logged in user, handling redirect", { user });
     
     // First check URL params for redirect
     const searchParams = new URLSearchParams(window.location.search);
@@ -106,26 +145,33 @@ export default function AuthPage() {
     const redirectPath = sessionStorage.getItem('redirectAfterAuth');
     
     if (redirectParam) {
+      console.log("Found redirect parameter:", redirectParam);
       // Decode the URL-encoded path
       const decodedPath = decodeURIComponent(redirectParam);
+      console.log("Decoded redirect path:", decodedPath);
       
       // Check if this looks like /register/event/ID and fix it
       if (decodedPath.includes('/register/event/')) {
         // Get the event ID
         const eventId = decodedPath.split('/register/event/')[1];
         if (eventId) {
+          console.log("Redirecting to event registration:", eventId);
           window.location.href = `/register/event/${eventId}`;
           return;
         }
       }
       
+      console.log("Redirecting to:", decodedPath);
       window.location.href = decodedPath;
     } else if (redirectPath) {
+      console.log("Redirecting using session storage path:", redirectPath);
       sessionStorage.removeItem('redirectAfterAuth');
       window.location.href = redirectPath;
     } else if (user.isAdmin) {
+      console.log("No redirect params found, user is admin, redirecting to admin dashboard");
       window.location.href = '/admin';
     } else {
+      console.log("No redirect params found, redirecting to dashboard");
       window.location.href = '/dashboard';
     }
   }, [user]);

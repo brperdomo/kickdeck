@@ -1,0 +1,120 @@
+Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+/register/event/1251362271:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+event-registration.tsx:652 Received event data: Object
+event-registration.tsx:660 Inspecting branding data for event: Object
+event-registration.tsx:692 Pay Later Feature enabled: true
+event-registration.tsx:697 Pay Later feature is enabled for this event
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+2framer-motion.js?v=045a30b4:252 You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+AnimatePresence @ framer-motion.js?v=045a30b4:252Understand this warning
+2chunk-RPCDYKBN.js?v=045a30b4:521 Warning: Encountered two children with the same key, `0`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at div
+    at div
+    at div
+    at MotionComponent (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=045a30b4:945:40)
+    at PresenceChild (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=045a30b4:121:24)
+    at AnimatePresence (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=045a30b4:210:26)
+    at div
+    at _c9 (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at EventRegistration (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/event-registration.tsx:561:45)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=045a30b4:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=045a30b4:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:64:31)
+    at div
+    at div
+    at MainLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/MainLayout.tsx:18:30)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=045a30b4:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=045a30b4:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=045a30b4:2829:3)
+    at App (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:791:3)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=045a30b4:2829:3)
+printWarning @ chunk-RPCDYKBN.js?v=045a30b4:521Understand this error
+AnimatedEventBackground.tsx:51 AnimatedEventBackground INITIALIZED with colors: Object
+AnimatedEventBackground.tsx:221 hexToRgb: Processing color "#7034a8"
+AnimatedEventBackground.tsx:250 hexToRgb: Converted "7034a8" to RGB: 112,52,168
+AnimatedEventBackground.tsx:221 hexToRgb: Processing color "#25cc50"
+AnimatedEventBackground.tsx:250 hexToRgb: Converted "25cc50" to RGB: 37,204,80
+AnimatedEventBackground.tsx:122 Creating particles animation with: Object
+AnimatedEventBackground.tsx:51 AnimatedEventBackground INITIALIZED with colors: Object
+AnimatedEventBackground.tsx:221 hexToRgb: Processing color "#7034a8"
+AnimatedEventBackground.tsx:250 hexToRgb: Converted "7034a8" to RGB: 112,52,168
+AnimatedEventBackground.tsx:221 hexToRgb: Processing color "#25cc50"
+AnimatedEventBackground.tsx:250 hexToRgb: Converted "25cc50" to RGB: 37,204,80
+AnimatedEventBackground.tsx:122 Creating particles animation with: Object
+event-registration.tsx:652 Received event data: Object
+event-registration.tsx:660 Inspecting branding data for event: Object
+event-registration.tsx:692 Pay Later Feature enabled: true
+event-registration.tsx:697 Pay Later feature is enabled for this event
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+2framer-motion.js?v=045a30b4:252 You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+AnimatePresence @ framer-motion.js?v=045a30b4:252Understand this warning
+2chunk-RPCDYKBN.js?v=045a30b4:521 Warning: Encountered two children with the same key, `0`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at div
+    at div
+    at div
+    at MotionComponent (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=045a30b4:945:40)
+    at PresenceChild (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=045a30b4:121:24)
+    at AnimatePresence (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=045a30b4:210:26)
+    at div
+    at _c9 (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at EventRegistration (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/event-registration.tsx:561:45)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=045a30b4:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=045a30b4:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:64:31)
+    at div
+    at div
+    at MainLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/MainLayout.tsx:18:30)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=045a30b4:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=045a30b4:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=045a30b4:2829:3)
+    at App (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:791:3)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=045a30b4:2829:3)
+printWarning @ chunk-RPCDYKBN.js?v=045a30b4:521Understand this error
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+2framer-motion.js?v=045a30b4:252 You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+AnimatePresence @ framer-motion.js?v=045a30b4:252Understand this warning
+2chunk-RPCDYKBN.js?v=045a30b4:521 Warning: Encountered two children with the same key, `0`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at div
+    at div
+    at div
+    at MotionComponent (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=045a30b4:945:40)
+    at PresenceChild (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=045a30b4:121:24)
+    at AnimatePresence (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=045a30b4:210:26)
+    at div
+    at _c9 (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at EventRegistration (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/event-registration.tsx:561:45)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=045a30b4:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=045a30b4:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:64:31)
+    at div
+    at div
+    at MainLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/MainLayout.tsx:18:30)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=045a30b4:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=045a30b4:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=045a30b4:2829:3)
+    at App (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:791:3)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=045a30b4:2829:3)

@@ -523,8 +523,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     
     // Create the redirect URL with the current page as the return destination
     // Include the full URL with eventId to ensure proper return after auth
-    const currentUrl = window.location.href;
-    const redirectUrl = encodeURIComponent(currentUrl);
+    // Don't use window.location.href as it includes query parameters that can cause confusion
+    const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+    const redirectUrl = encodeURIComponent(baseUrl);
+    
+    console.log('Redirecting to auth page with redirect parameter:', baseUrl);
     // Pass the current page URL as a redirect parameter
     setLocation(`/auth?redirect=${redirectUrl}`);
   };
