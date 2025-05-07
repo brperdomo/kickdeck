@@ -45,15 +45,43 @@ export default function AuthPage() {
       sessionStorage.removeItem('logout_message');
     }
 
-    // Check for eventId in URL parameters and set redirectAfterAuth
+    // Look for redirect in URL parameters
     const urlParams = new URLSearchParams(window.location.search);
+    const redirectParam = urlParams.get('redirect');
     const eventId = urlParams.get('eventId');
     
-    if (eventId) {
+    // Check for direct redirect parameter first (highest priority)
+    if (redirectParam) {
+      console.log('Found redirect parameter:', redirectParam);
+      const decodedRedirect = decodeURIComponent(redirectParam);
+      console.log('Setting redirectAfterAuth to:', decodedRedirect);
+      sessionStorage.setItem('redirectAfterAuth', decodedRedirect);
+    }
+    // Check for eventId as a fallback
+    else if (eventId) {
       console.log('Found eventId in URL parameters:', eventId);
       const redirectUrl = `/register/event/${eventId}`;
       console.log('Setting redirectAfterAuth to:', redirectUrl);
       sessionStorage.setItem('redirectAfterAuth', redirectUrl);
+    }
+    
+    // Check the referring page to catch event registration redirects that didn't include parameters
+    const referrer = document.referrer;
+    if (!redirectParam && !eventId && referrer) {
+      try {
+        const referrerUrl = new URL(referrer);
+        const path = referrerUrl.pathname;
+        
+        // If the referrer was a registration page, set it as the redirect
+        if ((path.includes('/register/') || path.includes('/event/')) && 
+            path !== '/register' && 
+            !path.includes('/reset-password')) {
+          console.log('Setting redirect based on referrer:', path);
+          sessionStorage.setItem('redirectAfterAuth', path);
+        }
+      } catch (e) {
+        console.error('Error parsing referrer URL:', e);
+      }
     }
   }, []);
 

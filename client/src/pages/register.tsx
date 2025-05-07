@@ -198,18 +198,24 @@ export default function Register() {
       sessionStorage.setItem('just_registered', 'true');
       sessionStorage.setItem('registration_time', Date.now().toString());
       
-      // Check if this is a registration from an event
+      // Priority 1: If we came from an event registration page, go back to finish registration
       if (decodedUrl.includes('/register/event/')) {
         const eventId = decodedUrl.split('/register/event/')[1];
         if (eventId) {
           console.log('Redirecting to event registration', eventId);
-          // Use a shorter timeout to improve UX - with wouter navigation
           window.location.href = `/register/event/${eventId}`;
           return;
         }
       }
       
-      // For all other URLs, redirect to dashboard instead of root
+      // Priority 2: If we came from any registration page, return to it
+      if (decodedUrl.includes('/register/') || decodedUrl.includes('/event/')) {
+        console.log('Redirecting back to registration page', decodedUrl);
+        window.location.href = decodedUrl;
+        return;
+      }
+      
+      // Priority 3: For all other URLs, redirect to dashboard
       console.log('Redirecting to dashboard after registration');
       window.location.href = '/dashboard';
       
