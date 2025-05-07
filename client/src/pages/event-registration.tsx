@@ -1675,8 +1675,31 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           color: primaryContrastColor,
                           boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                         }}
-                        onClick={() => {
-                          // Extra safety check to ensure we capture this click
+                        onClick={async () => {
+                          console.log('Sign In/Register button clicked, checking authentication status first');
+                          
+                          // First, attempt to directly check if user is already authenticated
+                          try {
+                            const response = await fetch('/api/user', {
+                              method: 'GET',
+                              credentials: 'include',
+                              headers: {
+                                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                                'Pragma': 'no-cache'
+                              }
+                            });
+                            
+                            if (response.ok) {
+                              // User is already authenticated, proceed directly to personal step
+                              console.log('User is already authenticated, moving straight to personal details');
+                              setCurrentStep('personal');
+                              return;
+                            }
+                          } catch (error) {
+                            console.error('Error checking auth status:', error);
+                          }
+                          
+                          // If we reach here, user is not authenticated, proceed with redirect
                           const returnUrl = `/register/event/${eventId}`;
                           sessionStorage.setItem('redirectAfterAuth', returnUrl);
                           
@@ -1687,7 +1710,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           // Use the /auth route instead of redirecting to root (/)
                           // This should help prevent admin users from being routed to dashboard
                           console.log('Auth redirect btn: Directing to /auth page for login');
-                          window.location.href = '/auth';
+                          window.location.href = `/auth?eventId=${eventId}&from=registration`;
                         }}
                       >
                         Sign In / Register
