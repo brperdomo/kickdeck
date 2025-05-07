@@ -543,6 +543,10 @@ export function EventsTable() {
                           <Ticket className="mr-2 h-4 w-4" />
                           Create Coupons
                         </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/event-financial-report/${event.id}`)}>
+                          <DollarSign className="mr-2 h-4 w-4" />
+                          Financial Report
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => navigate(`/admin/events/${event.id}/clubs`)}>
                           <Users className="mr-2 h-4 w-4" />
                           Participating Clubs

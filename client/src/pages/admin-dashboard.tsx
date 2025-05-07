@@ -975,6 +975,8 @@ function ReportsView() {
                 >
                   <option value="accounting-codes">Accounting Codes</option>
                   <option value="registration-orders">Registration Orders</option>
+                  <option value="financial-overview">Financial Overview</option>
+                  <option value="fees-analysis">Fees Analysis</option>
                   <option value="fees-by-event">Fees by Event</option>
                   <option value="fees-by-age-group">Fees by Age Group</option>
                 </select>
@@ -1099,6 +1101,44 @@ function ReportsView() {
                       <Button onClick={() => navigate('/registration-orders-report')} className="space-x-2">
                         <FileText className="w-4 h-4" />
                         <span>Open Registration Orders Report</span>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {selectedFinancialReport === 'financial-overview' && (
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle>Financial Overview Report</CardTitle>
+                    <CardDescription>Comprehensive analysis of your financial performance across all events</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex justify-center items-center py-4">
+                      <Button onClick={() => navigate('/financial-overview-report')} className="space-x-2">
+                        <BarChart2 className="w-4 h-4" />
+                        <span>Open Financial Overview</span>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {selectedFinancialReport === 'fees-analysis' && (
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle>Fees Analysis Report</CardTitle>
+                    <CardDescription>Analyze fee structure effectiveness and performance across events</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex justify-center items-center py-4">
+                      <Button onClick={() => navigate('/fees-analysis-report')} className="space-x-2">
+                        <DollarSign className="w-4 h-4" />
+                        <span>Open Fees Analysis</span>
                       </Button>
                     </div>
                   </CardContent>
