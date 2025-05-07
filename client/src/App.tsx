@@ -71,7 +71,20 @@ function Router() {
     return (
       <Switch>
         {/* Routes for the landing page */}
-        <Route path="/auth" component={AuthPage} />
+        <Route path="/auth">
+          {() => {
+            // Check if this is a logout scenario
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasLoggedOut = urlParams.get('logged_out') === 'true';
+            
+            if (hasLoggedOut) {
+              return <AuthLoggedOut />;
+            }
+            
+            return <AuthPage />;
+          }}
+        </Route>
+        <Route path="/auth-logged-out" component={AuthLoggedOut} />
         <Route path="/register" component={Register} />
         <Route path="/forgot-password" component={ForgotPassword} />
         <Route path="/reset-password" component={ResetPassword} />
@@ -108,17 +121,18 @@ function Router() {
             {() => {
               // This is a custom component to help debug the issue
               // Check URL params directly here to handle different states
-              const hasLoggedOut = window.location.search.includes('logged_out=true');
+              const urlParams = new URLSearchParams(window.location.search);
+              const hasLoggedOut = urlParams.get('logged_out') === 'true';
               
               console.log('Auth route accessed - params:', {
                 hasLoggedOut,
-                searchParams: window.location.search
+                searchParams: window.location.search,
+                urlParams: Object.fromEntries(urlParams.entries())
               });
               
-              // If this is the logout URL, redirect to our dedicated page
+              // If this is the logout URL, use the AuthLoggedOut component directly instead of redirecting
               if (hasLoggedOut) {
-                window.location.href = '/auth-logged-out';
-                return <div>Redirecting...</div>;
+                return <AuthLoggedOut />;
               }
               
               // Special case: If the user is already authenticated, we might need to handle redirect

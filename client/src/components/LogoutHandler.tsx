@@ -102,9 +102,9 @@ export function LogoutHandler() {
           setRedirectTimeoutActive(true);
           // Short timeout to ensure UI has time to update
           setTimeout(() => {
-            console.log("Redirecting to auth-logged-out page");
-            // Our special intermediary page that handles clean logout redirects
-            window.location.href = '/auth-logged-out';
+            console.log("Redirecting to auth page with logged_out parameter");
+            // Direct to the auth page with the logged_out parameter - this is now handled directly
+            window.location.href = '/auth?logged_out=true';
           }, 200);
         }
       } catch (error) {
@@ -121,7 +121,7 @@ export function LogoutHandler() {
           } catch (e) {
             console.error("Final cleanup failed:", e);
           }
-          window.location.href = '/auth-logged-out';
+          window.location.href = '/auth?logged_out=true';
         }
       }
     };
@@ -139,7 +139,7 @@ export function LogoutHandler() {
         } catch (e) {
           // Ignore errors here
         }
-        window.location.href = '/auth-logged-out';
+        window.location.href = '/auth?logged_out=true';
       }
     }, 3000);
     
