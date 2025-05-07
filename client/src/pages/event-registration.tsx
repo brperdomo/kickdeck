@@ -726,7 +726,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     fetchEvent();
   }, [eventId]);
 
-  // Updated useEffect to properly handle authentication state
+  // Updated useEffect to properly handle authentication state WITHOUT forced redirects
   useEffect(() => {
     // If auth is not loading, make a decision based on authentication status
     if (!authLoading) {
@@ -744,16 +744,17 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
           setCurrentStep('personal');
         }
       } else if (!isPreview) {
-        // Only redirect to auth page if not in preview mode
+        // Only set auth step if not in preview mode
         console.log('User is not authenticated, showing auth step');
-        // Use direct encoding in the URL parameter for simpler processing
-        const returnUrl = `/register/event/${eventId}`;
         
-        // Store return URL in sessionStorage for post-login redirect
+        // Store return URL in sessionStorage for post-login redirect button click
+        const returnUrl = `/register/event/${eventId}`;
         sessionStorage.setItem('redirectAfterAuth', returnUrl);
         
-        // Redirect to the auth page
-        window.location.href = `/auth`;
+        // Do NOT force redirect - let the component render the auth step UI
+        // This gives the user a chance to see what event they're registering for
+        // The Sign In button will have the proper redirect setup when clicked
+        setCurrentStep('auth');
       }
     }
   }, [authLoading, user, isPreview, currentStep, eventId]);
