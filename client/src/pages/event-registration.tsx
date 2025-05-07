@@ -1588,8 +1588,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       // Extra safety check to ensure we capture this click
                       const returnUrl = `/register/event/${eventId}`;
                       sessionStorage.setItem('redirectAfterAuth', returnUrl);
-                      console.log('Auth redirect: Setting sessionStorage redirect and proceeding to auth page');
-                      window.location.href = '/auth';
+                      console.log('Auth redirect: Setting sessionStorage redirect and using setLocation to auth page');
+                      // Use wouter navigation instead of direct window manipulation
+                      setLocation('/auth');
                     }}
                   >
                     Sign In / Register

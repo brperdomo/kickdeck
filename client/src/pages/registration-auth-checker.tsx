@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
+import { useLocation } from "wouter";
 
 /**
  * Component that handles authentication check for registration pages
@@ -15,6 +16,7 @@ export default function RegistrationAuthChecker({
 }) {
   const { user, isLoading: authLoading } = useAuth();
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [, setLocation] = useLocation();
   
   useEffect(() => {
     if (!user && !authLoading) {
@@ -26,11 +28,12 @@ export default function RegistrationAuthChecker({
       sessionStorage.setItem('redirectAfterAuth', redirectPath);
       
       // Use setTimeout to ensure the state update happens before redirect
+      // Use wouter's setLocation for client-side navigation instead of direct window manipulation
       setTimeout(() => {
-        window.location.href = '/auth';
+        setLocation('/auth');
       }, 100);
     }
-  }, [user, authLoading, eventId]);
+  }, [user, authLoading, eventId, setLocation]);
   
   // Show loading state while auth is being checked
   if (authLoading) {
