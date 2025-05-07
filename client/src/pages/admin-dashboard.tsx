@@ -5261,6 +5261,8 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
           
           // Use our dedicated logout page to ensure proper session clearing
           console.log("Redirecting to dedicated logout handler...");
+          // Set a flag to prevent potential infinite loops
+          sessionStorage.setItem('admin_logout_initiated', Date.now().toString());
           window.location.href = "/logout";
         }} />
       )}

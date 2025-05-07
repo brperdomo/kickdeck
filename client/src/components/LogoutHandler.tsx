@@ -9,9 +9,35 @@ export function LogoutHandler() {
   const [redirectTimeoutActive, setRedirectTimeoutActive] = useState(false);
 
   useEffect(() => {
+    // Check if we're being rate limited (429 error)
+    // This can happen if there's a redirect loop causing multiple logout attempts
+    const urlParams = new URLSearchParams(window.location.search);
+    const rateLimited = urlParams.get('rate_limited') === 'true';
+    
+    // If we detect rate limiting, skip the API call and just clear client state
+    if (rateLimited) {
+      console.log("Rate limit detected, skipping API call and proceeding with client-side logout");
+      // Set the flag to prevent multiple redirects
+      setRedirectTimeoutActive(true);
+      // Store the logout message directly
+      sessionStorage.setItem('logout_message', 'You have been logged out (rate limit detected)');
+      // Redirect to auth page without the rate_limited param to prevent loops
+      window.location.href = '/auth';
+      return;
+    }
+    
     // Enhanced direct logout with multi-tab/browser support
     const doLogout = async () => {
       try {
+        // Add a rate-limiting prevention gate
+        if (sessionStorage.getItem('logout_in_progress')) {
+          console.log("Logout already in progress, preventing duplicate");
+          setRedirectTimeoutActive(true);
+          window.location.href = '/auth?logged_out=true';
+          return;
+        }
+        sessionStorage.setItem('logout_in_progress', 'true');
+        
         // 0. Broadcast logout event to all tabs
         try {
           // Create a broadcast channel for cross-tab communication
@@ -29,7 +55,7 @@ export function LogoutHandler() {
         try {
           console.log("Initiating logout API call");
           const timestamp = Date.now(); // Add timestamp to prevent caching
-          await fetch(`/api/logout?_t=${timestamp}`, {
+          const response = await fetch(`/api/logout?_t=${timestamp}`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -39,7 +65,18 @@ export function LogoutHandler() {
               'X-Timestamp': timestamp.toString()
             }
           });
-          console.log("Logout API call completed");
+          
+          // Check for rate limiting - if detected, redirect to a special URL
+          if (response.status === 429) {
+            console.error("Rate limit detected during logout API call");
+            // Handle rate limiting specially
+            setRedirectTimeoutActive(true);
+            sessionStorage.setItem('logout_message', 'You have been logged out (rate limit detected)');
+            window.location.href = '/auth?rate_limited=true';
+            return;
+          }
+          
+          console.log("Logout API call completed with status:", response.status);
         } catch (e) {
           console.error("API call failed, continuing with client-side logout:", e);
         }
