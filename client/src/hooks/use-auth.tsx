@@ -144,6 +144,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // CRITICAL FIX: Direct approach - check for redirectAfterAuth and forcefully redirect
       const redirectPath = sessionStorage.getItem('redirectAfterAuth');
       
+      // Also check for an eventId in the URL to handle direct navigation cases
+      let eventIdFromUrl = null;
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        eventIdFromUrl = urlParams.get('eventId');
+      }
+      
       if (redirectPath) {
         console.log('⚠️ FORCE REDIRECT: Login successful - redirecting directly to:', redirectPath);
         
@@ -164,7 +171,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // End execution early to prevent default redirect
         return;
-      } else {
+      } 
+      // Check if we're on auth page with eventId in URL but no redirectAfterAuth
+      else if (eventIdFromUrl && window.location.pathname.includes('/auth')) {
+        const registrationUrl = `/register/event/${eventIdFromUrl}`;
+        console.log('⚠️ DIRECT REDIRECT: Login successful with eventId in URL - redirecting to:', registrationUrl);
+        
+        toast({
+          title: "Success",
+          description: "Redirecting to registration...",
+        });
+        
+        // Use a small timeout to ensure toast appears
+        setTimeout(() => {
+          window.location.href = registrationUrl;
+        }, 100);
+        
+        // End execution early
+        return;
+      } 
+      else {
         console.log('Login successful - no redirect path detected, normal flow continues');
         
         // Show regular success toast
@@ -404,6 +430,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // CRITICAL FIX: Direct approach - check for redirectAfterAuth and forcefully redirect for registration too
       const redirectPath = sessionStorage.getItem('redirectAfterAuth');
       
+      // Also check for an eventId in the URL to handle direct navigation cases
+      let eventIdFromUrl = null;
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        eventIdFromUrl = urlParams.get('eventId');
+      }
+      
       if (redirectPath) {
         console.log('⚠️ FORCE REDIRECT: Registration successful - redirecting directly to:', redirectPath);
         
@@ -424,7 +457,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // End execution early to prevent default redirect
         return;
-      } else {
+      } 
+      // Check if we're on register page with eventId in URL but no redirectAfterAuth
+      else if (eventIdFromUrl && window.location.pathname.includes('/register')) {
+        const registrationUrl = `/register/event/${eventIdFromUrl}`;
+        console.log('⚠️ DIRECT REDIRECT: Registration successful with eventId in URL - redirecting to:', registrationUrl);
+        
+        toast({
+          title: "Success",
+          description: "Redirecting to registration...",
+        });
+        
+        // Use a small timeout to ensure toast appears
+        setTimeout(() => {
+          window.location.href = registrationUrl;
+        }, 100);
+        
+        // End execution early
+        return;
+      } 
+      else {
         console.log('Registration successful - no redirect path detected, normal flow continues');
         
         // Show regular success toast

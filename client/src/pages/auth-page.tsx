@@ -81,6 +81,7 @@ export default function AuthPage() {
       const redirectUrl = `/register/event/${eventId}`;
       console.log('Setting redirectAfterAuth to:', redirectUrl);
       sessionStorage.setItem('redirectAfterAuth', redirectUrl);
+      redirectPathRef.current = redirectUrl; // Also store in React ref
       return; // Exit early
     }
     
@@ -95,16 +96,22 @@ export default function AuthPage() {
         if (matches && matches[1]) {
           const eventIdFromReferrer = matches[1];
           console.log('Found eventId in referrer URL:', eventIdFromReferrer);
-          sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventIdFromReferrer}`);
+          const redirectUrl = `/register/event/${eventIdFromReferrer}`;
+          sessionStorage.setItem('redirectAfterAuth', redirectUrl);
+          redirectPathRef.current = redirectUrl; // Also store in React ref
         } else {
           // Default to dashboard if we can't get a specific eventId
           console.log('No eventId found in referrer, redirecting to dashboard instead');
-          sessionStorage.setItem('redirectAfterAuth', '/dashboard');
+          const dashboardUrl = '/dashboard';
+          sessionStorage.setItem('redirectAfterAuth', dashboardUrl);
+          redirectPathRef.current = dashboardUrl; // Also store in React ref
         }
       } else {
         // Default to dashboard if no referrer
         console.log('No referrer URL available, redirecting to dashboard instead');
-        sessionStorage.setItem('redirectAfterAuth', '/dashboard');
+        const dashboardUrl = '/dashboard';
+        sessionStorage.setItem('redirectAfterAuth', dashboardUrl);
+        redirectPathRef.current = dashboardUrl; // Also store in React ref
       }
     }
   }, []);
@@ -170,10 +177,17 @@ export default function AuthPage() {
     console.log('🔑 LOGIN SUBMIT - Current session storage state:', {
       allSessionStorageKeys: Object.keys(sessionStorage),
       redirectAfterAuth: sessionStorage.getItem('redirectAfterAuth'),
+      redirectRef: redirectPathRef.current,
       fullState: Object.fromEntries(
         Object.keys(sessionStorage).map(key => [key, sessionStorage.getItem(key)])
       )
     });
+
+    // If we have a redirect in the ref but not in sessionStorage, restore it
+    if (redirectPathRef.current && !sessionStorage.getItem('redirectAfterAuth')) {
+      console.log('🛠️ Restoring redirectAfterAuth from ref:', redirectPathRef.current);
+      sessionStorage.setItem('redirectAfterAuth', redirectPathRef.current);
+    }
 
     try {
       loginForm.clearErrors();
