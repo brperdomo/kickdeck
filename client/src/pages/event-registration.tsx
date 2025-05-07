@@ -746,7 +746,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       // ALWAYS set to personal step if authenticated, override any existing state
       if (currentStep === 'auth') {
         console.log('FIXED AUTH FLOW: Forcibly advancing from auth to personal step');
-        setCurrentStep('personal');
+        
+        // Add a small delay to ensure UI has time to render correctly first
+        setTimeout(() => {
+          setCurrentStep('personal');
+        }, 800);
       }
       
       // Clean the URL by removing query parameters no matter what
@@ -1590,8 +1594,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       <p className="text-gray-600 mb-6">
                         You're already signed in. Proceeding to registration...
                       </p>
-                      {/* Force redirect to personal details step */}
-                      {setTimeout(() => setCurrentStep('personal'), 0)}
+                      {/* Empty placeholder - actual redirect happens in useEffect */}
                     </>
                   ) : (
                     /* User is not logged in - show sign in button */
