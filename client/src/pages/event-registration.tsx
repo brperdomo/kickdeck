@@ -743,6 +743,40 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       // User is authenticated - always show personal details regardless of current step
       console.log('FIXED AUTH FLOW: User is authenticated, forcing to personal details step');
       
+      // Check for a completed authentication/redirect by looking for the timestamp
+      const justRedirected = sessionStorage.getItem('authRedirectCompleted');
+      if (justRedirected) {
+        console.log('FIXED AUTH FLOW: Detected completed redirect with timestamp:', justRedirected);
+        // Remove the timestamp to prevent future false positives
+        sessionStorage.removeItem('authRedirectCompleted');
+        
+        // Force reload user data from server to ensure we have the latest
+        const fetchFreshUserData = async () => {
+          try {
+            console.log('FIXED AUTH FLOW: Fetching fresh user data after redirect');
+            const timestamp = Date.now();
+            const response = await fetch(`/api/user?t=${timestamp}`, {
+              credentials: 'include',
+              headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'X-Cache-Bust': timestamp.toString()
+              }
+            });
+            
+            if (response.ok) {
+              const userData = await response.json();
+              console.log('FIXED AUTH FLOW: Fresh user data fetched:', userData ? 'success' : 'not found');
+            }
+          } catch (e) {
+            console.error('Error fetching fresh user data:', e);
+          }
+        };
+        
+        // Execute the fetch
+        fetchFreshUserData();
+      }
+      
       // ALWAYS set to personal step if authenticated, override any existing state
       if (currentStep === 'auth') {
         console.log('FIXED AUTH FLOW: Forcibly advancing from auth to personal step');

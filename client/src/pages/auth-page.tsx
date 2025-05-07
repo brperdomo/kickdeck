@@ -73,6 +73,11 @@ export default function AuthPage() {
     if (redirectPath) {
       console.log("Going to stored redirect path:", redirectPath);
       
+      // Set a flag with timestamp to indicate authentication redirect is complete
+      // The registration page will detect this and force a fresh authentication check
+      sessionStorage.setItem('authRedirectCompleted', Date.now().toString());
+      console.log("Set authRedirectCompleted flag to:", sessionStorage.getItem('authRedirectCompleted'));
+      
       // Clear the stored redirect immediately to prevent future redirects
       sessionStorage.removeItem('redirectAfterAuth');
       
