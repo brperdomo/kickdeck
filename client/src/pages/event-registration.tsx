@@ -713,8 +713,64 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     fetchEvent();
   }, [eventId]);
 
-  // COMPLETE REWRITE OF AUTHENTICATION APPROACH
-  // Let's simplify even more to avoid any possible conflicts
+  // FORCED USER DATA FETCH - To solve authentication detection issues
+  useEffect(() => {
+    // Direct fetch of user data to ensure we have latest authentication status
+    const forceUserFetch = async () => {
+      try {
+        console.log('DIRECT AUTH CHECK: Manually fetching user data to verify authentication status');
+        const response = await fetch('/api/user', {
+          method: 'GET',
+          credentials: 'include', // Important: include cookies
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        
+        if (response.ok) {
+          const userData = await response.json();
+          console.log('DIRECT AUTH CHECK: Successfully fetched user data:', userData);
+          
+          // We have a logged-in user, move to personal step
+          if (currentStep !== 'personal') {
+            console.log('DIRECT AUTH CHECK: User is authenticated, forcing to personal details step');
+            setCurrentStep('personal');
+          }
+          
+          // Clean the URL by removing query parameters
+          if (window.location.search) {
+            window.history.replaceState(
+              { step: 'personal', eventId }, 
+              '', 
+              `/register/event/${eventId}`
+            );
+          }
+        } else if (response.status === 401) {
+          // User is not authenticated
+          console.log('DIRECT AUTH CHECK: User is not authenticated (401 status)');
+          
+          if (currentStep !== 'auth') {
+            sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
+            setCurrentStep('auth');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user data directly:', error);
+      }
+    };
+    
+    // Don't do anything if we're in preview mode
+    if (isPreview) {
+      return;
+    }
+    
+    // Execute the direct fetch
+    forceUserFetch();
+  }, [eventId, currentStep, isPreview]);
+  
+  // Original auth effect - now as a backup
   useEffect(() => {
     // Prevent doing anything if we're still loading
     if (authLoading) {
@@ -1619,10 +1675,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           const storedValue = sessionStorage.getItem('redirectAfterAuth');
                           console.log('Auth redirect btn: Stored redirectAfterAuth in sessionStorage:', storedValue);
                           
-                          // Directly go to the root URL (/) which will show the login screen
-                          // This was the original behavior that worked well
-                          console.log('Auth redirect btn: Using direct navigation to root page for login');
-                          window.location.href = '/';
+                          // Use the /auth route instead of redirecting to root (/)
+                          // This should help prevent admin users from being routed to dashboard
+                          console.log('Auth redirect btn: Directing to /auth page for login');
+                          window.location.href = '/auth';
                         }}
                       >
                         Sign In / Register

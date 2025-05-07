@@ -28,9 +28,9 @@ export default function RegistrationAuthChecker({
       sessionStorage.setItem('redirectAfterAuth', redirectPath);
       
       // Use setTimeout to ensure the state update happens before redirect
-      // Use direct navigation to root path for login, which was the original behavior
+      // Use the auth route instead of root to prevent admin redirects
       setTimeout(() => {
-        window.location.href = '/';
+        window.location.href = '/auth';
       }, 100);
     }
   }, [user, authLoading, eventId, setLocation]);
