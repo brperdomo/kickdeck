@@ -502,9 +502,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const { user, isLoading: authLoading } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
-  // Always start with 'auth' step in non-preview mode to ensure auth check happens
-  // This initial value will be immediately updated by the useEffect based on auth state
-  const [currentStep, setCurrentStep] = useState<RegistrationStep>(isPreview ? 'personal' : 'auth');
+  // For initialization, check if user is already logged in to bypass auth step
+  // This ensures we start at the correct step even before the useEffect runs
+  const initialStep = isPreview ? 'personal' : (user ? 'personal' : 'auth');
+  console.log('Setting initial step based on auth status:', { initialStep, isLoggedIn: !!user });
+  const [currentStep, setCurrentStep] = useState<RegistrationStep>(initialStep);
   const [players, setPlayers] = useState<PlayerForm[]>([]);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup | null>(null);
   const [selectedBracket, setSelectedBracket] = useState<number | null>(null);
@@ -764,10 +766,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     
     // Based on authentication status, set the step
     if (user) {
-      // User is authenticated - always show personal details
-      console.log('FIXED AUTH FLOW: User is authenticated, setting to personal details step');
-      // ALWAYS set to personal step if authenticated
-      setCurrentStep('personal');
+      // User is authenticated - always show personal details regardless of current step
+      console.log('FIXED AUTH FLOW: User is authenticated, forcing to personal details step');
+      
+      // ALWAYS set to personal step if authenticated, override any existing state
+      if (currentStep === 'auth') {
+        console.log('FIXED AUTH FLOW: Forcibly advancing from auth to personal step');
+        setCurrentStep('personal');
+      }
       
       // Clean the URL by removing query parameters no matter what
       if (window.location.search) {
@@ -789,7 +795,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       setCurrentStep('auth');
       return;
     }
-  }, [authLoading, user, isPreview, eventId]);
+  }, [authLoading, user, isPreview, eventId, currentStep]);
   
   // We've removed the duplicate useEffect to avoid conflicts
   
