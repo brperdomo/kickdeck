@@ -126,10 +126,10 @@ function Router() {
       
       {/* Event registration routes - always available regardless of auth status */}
       <Route path="/register/event/:eventId">
-        {(params) => <EventRegistration />}
+        {(params) => <EventRegistration eventIdOverride={params.eventId} />}
       </Route>
       <Route path="/event/:eventId/register">
-        {(params) => <EventRegistration />}
+        {(params) => <EventRegistration eventIdOverride={params.eventId} />}
       </Route>
       
       {/* Handle other routes based on auth status */}
