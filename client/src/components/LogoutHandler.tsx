@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 
 export function LogoutHandler() {
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [redirectTimeoutActive, setRedirectTimeoutActive] = useState(false);
 
@@ -103,8 +105,8 @@ export function LogoutHandler() {
           // Short timeout to ensure UI has time to update
           setTimeout(() => {
             console.log("Redirecting to auth page with logged_out parameter");
-            // Direct to the auth page with the logged_out parameter - this is now handled directly
-            window.location.href = '/auth?logged_out=true';
+            // Use wouter's setLocation for client-side navigation
+            setLocation('/auth?logged_out=true');
           }, 200);
         }
       } catch (error) {
@@ -121,7 +123,7 @@ export function LogoutHandler() {
           } catch (e) {
             console.error("Final cleanup failed:", e);
           }
-          window.location.href = '/auth?logged_out=true';
+          setLocation('/auth?logged_out=true');
         }
       }
     };
@@ -139,13 +141,13 @@ export function LogoutHandler() {
         } catch (e) {
           // Ignore errors here
         }
-        window.location.href = '/auth?logged_out=true';
+        setLocation('/auth?logged_out=true');
       }
     }, 3000);
     
     // Clean up the fallback timer
     return () => clearTimeout(fallbackTimer);
-  }, [queryClient]);
+  }, [queryClient, setLocation]);
   
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
