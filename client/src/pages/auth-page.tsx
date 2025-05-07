@@ -157,7 +157,7 @@ export default function AuthPage() {
     },
   });
 
-  // Handle redirect after successful login
+  // Handle redirect after successful login with improved reliability
   useEffect(() => {
     // Only process if we have user data and authentication is complete
     if (!user) return;
@@ -186,18 +186,21 @@ export default function AuthPage() {
     if (storedRedirectPath) {
       console.log("PRIORITY 1: Found stored redirect path:", storedRedirectPath);
       
-      // If it's an event registration path, use it immediately
+      // If it's an event registration path, use forcing hard redirect for reliability
       const eventId = extractEventId(storedRedirectPath);
       if (eventId) {
         console.log("Event registration detected in session storage, redirecting to:", `/register/event/${eventId}`);
         // Clear the session storage to avoid future redirects
         sessionStorage.removeItem('redirectAfterAuth');
         
-        // Perform redirect with a slight delay to ensure it works
-        setTimeout(() => {
-          console.log("REDIRECTING to event registration:", `/register/event/${eventId}`);
-          window.location.href = `/register/event/${eventId}`;
-        }, 50);
+        // IMPORTANT FIX: Set a flag in sessionStorage to indicate we've completed login
+        // This will be checked by the event registration page to force advancement
+        sessionStorage.setItem('registration_auth_complete', 'true');
+        
+        // Use hard redirect to ensure we get a full page reload
+        // This ensures all authentication state is properly loaded
+        console.log("HARD REDIRECTING to event registration:", `/register/event/${eventId}`);
+        window.location.href = `/register/event/${eventId}`;
         return;
       }
       
@@ -215,10 +218,14 @@ export default function AuthPage() {
     if (eventIdParam) {
       console.log("PRIORITY 2: Found event ID in URL params:", eventIdParam);
       
-      setTimeout(() => {
-        console.log("REDIRECTING to event registration from URL params:", `/register/event/${eventIdParam}`);
-        window.location.href = `/register/event/${eventIdParam}`;
-      }, 50);
+      // IMPORTANT FIX: Set a flag in sessionStorage to indicate we've completed login
+      // This will be checked by the event registration page to force advancement
+      sessionStorage.setItem('registration_auth_complete', 'true');
+      
+      // Use hard redirect with full URL
+      const registrationUrl = `/register/event/${eventIdParam}`;
+      console.log("HARD REDIRECTING to event registration from URL params:", registrationUrl);
+      window.location.href = registrationUrl;
       return;
     }
     

@@ -784,20 +784,37 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     }
   }, [authLoading, user, isPreview, currentStep, eventId]);
   
-  // Additional check to force immediate update when user state changes
+  // Enhanced check to force immediate update when user state changes
+  // This useEffect runs whenever the user or auth loading state changes
   useEffect(() => {
-    if (user && currentStep === 'auth') {
-      console.log('User authenticated detected, immediate advance to personal details');
-      setCurrentStep('personal');
-      
-      // Make sure to update history state here too for consistency
-      window.history.replaceState(
-        { step: 'personal', eventId }, 
-        '', 
-        `/register/event/${eventId}`
-      );
+    // Only proceed if we have authentication data loaded
+    if (!authLoading) {
+      // If user is logged in, force move to personal details step
+      if (user) {
+        console.log('User authenticated detected, forcing advance to personal details step');
+        
+        // IMPORTANT FIX: Check for the authentication completion flag
+        // This flag is set by the auth page when redirecting back here
+        const authComplete = sessionStorage.getItem('registration_auth_complete');
+        
+        if (authComplete) {
+          console.log('Registration auth complete flag detected, removing flag');
+          // Remove the flag to prevent future auto-advances
+          sessionStorage.removeItem('registration_auth_complete');
+        }
+        
+        // Force the current step to personal regardless of current state
+        setCurrentStep('personal');
+        
+        // Make sure to update history state here too for consistency
+        window.history.replaceState(
+          { step: 'personal', eventId }, 
+          '', 
+          `/register/event/${eventId}`
+        );
+      }
     }
-  }, [user, currentStep, eventId]);
+  }, [user, authLoading, eventId]);
   
   // Fetch clubs for the current event
   useEffect(() => {
