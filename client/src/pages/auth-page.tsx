@@ -167,77 +167,82 @@ export default function AuthPage() {
       isAdmin: user.isAdmin,
       sessionStorage: sessionStorage.getItem('redirectAfterAuth'),
       urlParams: window.location.search,
-      location: window.location.pathname
+      location: window.location.pathname,
+      referrer: document.referrer
     });
     
-    // Define redirectPath with null safety checks
-    const getAndClearRedirectPath = () => {
-      // Get the redirect path from session storage
-      const path = sessionStorage.getItem('redirectAfterAuth');
+    // Function to extract event ID from various patterns
+    const extractEventId = (path: string): string | null => {
+      const eventMatches = path.match(/\/register\/event\/(\d+)/);
+      if (eventMatches && eventMatches[1]) {
+        return eventMatches[1];
+      }
+      return null;
+    };
+    
+    // FIRST PRIORITY: Check for redirectAfterAuth in session storage
+    // This is the most reliable source
+    const storedRedirectPath = sessionStorage.getItem('redirectAfterAuth');
+    if (storedRedirectPath) {
+      console.log("PRIORITY 1: Found stored redirect path:", storedRedirectPath);
       
-      // Clear it if it exists
-      if (path) {
-        console.log("Found and clearing redirectPath from sessionStorage:", path);
+      // If it's an event registration path, use it immediately
+      const eventId = extractEventId(storedRedirectPath);
+      if (eventId) {
+        console.log("Event registration detected in session storage, redirecting to:", `/register/event/${eventId}`);
+        // Clear the session storage to avoid future redirects
         sessionStorage.removeItem('redirectAfterAuth');
+        
+        // Perform redirect with a slight delay to ensure it works
+        setTimeout(() => {
+          console.log("REDIRECTING to event registration:", `/register/event/${eventId}`);
+          window.location.href = `/register/event/${eventId}`;
+        }, 50);
+        return;
       }
       
-      return path;
-    };
-    
-    // First check session storage for the redirect path
-    const redirectPath = getAndClearRedirectPath();
-    
-    // Special handling for event registration redirect paths
-    const handleEventRegistrationRedirect = (path: string): boolean => {
-      // Check if this is an event registration path
-      if (path.includes('/register/event/')) {
-        const matches = path.match(/\/register\/event\/(\d+)/);
-        if (matches && matches[1]) {
-          const eventId = matches[1];
-          console.log("Redirecting to event registration with ID:", eventId);
-          setLocation(`/register/event/${eventId}`);
-          return true; // Redirect handled
-        }
-      }
-      return false; // Redirect not handled
-    };
-    
-    // Handle redirect based on session storage first
-    if (redirectPath) {
-      try {
-        console.log("Found redirect path in session storage:", redirectPath);
-        
-        // First, prioritize event registration paths
-        if (handleEventRegistrationRedirect(redirectPath)) {
-          return; // Redirect handled
-        }
-        
-        // For other paths, redirect directly
-        console.log("Redirecting using session storage path:", redirectPath);
-        setLocation(redirectPath);
-        return;
-      } catch (error) {
-        console.error("Error processing sessionStorage redirect:", error);
-      }
+      // For non-event paths, still redirect but keep the normal priority
+      console.log("Non-event redirect path found in session storage:", storedRedirectPath);
+      sessionStorage.removeItem('redirectAfterAuth');
+      setLocation(storedRedirectPath);
+      return;
     }
     
-    // Fallback to URL query parameter if session storage redirect failed or wasn't found
-    const searchParams = new URLSearchParams(window.location.search);
-    const redirectParam = searchParams.get('redirect');
+    // SECOND PRIORITY: Check URL query parameters for eventId
+    // This is a fallback if session storage fails
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventIdParam = urlParams.get('eventId');
+    if (eventIdParam) {
+      console.log("PRIORITY 2: Found event ID in URL params:", eventIdParam);
+      
+      setTimeout(() => {
+        console.log("REDIRECTING to event registration from URL params:", `/register/event/${eventIdParam}`);
+        window.location.href = `/register/event/${eventIdParam}`;
+      }, 50);
+      return;
+    }
     
+    // THIRD PRIORITY: Check for redirect param in URL
+    const redirectParam = urlParams.get('redirect');
     if (redirectParam) {
       try {
-        console.log("Found redirect parameter in URL:", redirectParam);
+        console.log("PRIORITY 3: Found redirect parameter in URL:", redirectParam);
         const decodedPath = decodeURIComponent(redirectParam);
-        console.log("Decoded redirect path:", decodedPath);
         
-        // First, prioritize event registration paths
-        if (handleEventRegistrationRedirect(decodedPath)) {
-          return; // Redirect handled
+        // Check if it's an event registration path
+        const eventId = extractEventId(decodedPath);
+        if (eventId) {
+          console.log("Event registration detected in URL redirect param:", `/register/event/${eventId}`);
+          
+          setTimeout(() => {
+            console.log("REDIRECTING to event registration from URL redirect param:", `/register/event/${eventId}`);
+            window.location.href = `/register/event/${eventId}`;
+          }, 50);
+          return;
         }
         
-        // For other valid paths, redirect directly
-        console.log("Redirecting to URL parameter path:", decodedPath);
+        // If not an event path, use the regular redirect
+        console.log("Setting location to decoded path:", decodedPath);
         setLocation(decodedPath);
         return;
       } catch (error) {
@@ -245,28 +250,39 @@ export default function AuthPage() {
       }
     }
     
-    // Before defaulting to admin/dashboard, check if we have an event ID in the current URL
-    // This is an additional safety measure to ensure event registration redirects work
-    const pathname = window.location.pathname;
-    if (pathname.includes('/auth') && window.location.search.includes('eventId=')) {
-      // Extract event ID from URL query params for event registration flow
-      const urlParams = new URLSearchParams(window.location.search);
-      const eventIdParam = urlParams.get('eventId');
-      if (eventIdParam) {
-        console.log("Found event ID in URL params, redirecting to event registration:", eventIdParam);
-        setLocation(`/register/event/${eventIdParam}`);
-        return;
+    // FOURTH PRIORITY: Check document.referrer for event registration path
+    // This helps catch cases where the user navigated directly to the auth page
+    if (document.referrer) {
+      try {
+        const referrerUrl = new URL(document.referrer);
+        const referrerPath = referrerUrl.pathname;
+        console.log("PRIORITY 4: Checking referrer path:", referrerPath);
+        
+        const eventId = extractEventId(referrerPath);
+        if (eventId) {
+          console.log("Event registration detected in referrer:", `/register/event/${eventId}`);
+          
+          setTimeout(() => {
+            console.log("REDIRECTING to event registration from referrer:", `/register/event/${eventId}`);
+            window.location.href = `/register/event/${eventId}`;
+          }, 50);
+          return;
+        }
+      } catch (error) {
+        console.error("Error processing referrer:", error);
       }
     }
     
-    // Default behavior if all else fails or no redirect info is available
-    // We reach here only if no successful redirect was performed above
+    // FINAL FALLBACK: Default to admin or dashboard
+    console.log("No redirect information found, using default redirect");
+    
     if (user.isAdmin) {
-      console.log("No redirect paths found or all redirects failed, user is admin, redirecting to admin dashboard");
-      setLocation('/admin');
+      console.log("User is admin, redirecting to admin dashboard");
+      // Direct window location to force a full page refresh
+      window.location.href = '/admin';
     } else {
-      console.log("No redirect paths found or all redirects failed, redirecting to dashboard");
-      setLocation('/dashboard');
+      console.log("User is not admin, redirecting to dashboard");
+      window.location.href = '/dashboard';
     }
   }, [user]);
 

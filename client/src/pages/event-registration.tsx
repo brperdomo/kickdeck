@@ -530,10 +530,18 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     const returnUrl = `/register/event/${eventId}`;
     sessionStorage.setItem('redirectAfterAuth', returnUrl);
     
-    // Use wouter navigation instead of direct window manipulation
-    // This maintains React component lifecycle properly
-    console.log('Using setLocation to navigate to auth page');
-    setLocation('/auth');
+    // Double-check that the sessionStorage was set correctly
+    const storedValue = sessionStorage.getItem('redirectAfterAuth');
+    console.log('Stored redirectAfterAuth in sessionStorage:', storedValue);
+    
+    // Also set the eventId in the URL as a fallback
+    // This helps if sessionStorage is cleared or not accessible
+    const authUrl = `/auth?eventId=${eventId}`;
+    
+    // Use direct window.location for a guaranteed full refresh
+    // This ensures a clean auth page state and prevents any React context issues
+    console.log('Using direct window.location to navigate to auth page:', authUrl);
+    window.location.href = authUrl;
   };
 
   // Helper function to parse user metadata
@@ -1613,9 +1621,18 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       // Extra safety check to ensure we capture this click
                       const returnUrl = `/register/event/${eventId}`;
                       sessionStorage.setItem('redirectAfterAuth', returnUrl);
-                      console.log('Auth redirect: Setting sessionStorage redirect and using setLocation to auth page');
-                      // Use wouter navigation instead of direct window manipulation
-                      setLocation('/auth');
+                      
+                      // Double-check that the sessionStorage was set correctly
+                      const storedValue = sessionStorage.getItem('redirectAfterAuth');
+                      console.log('Auth redirect btn: Stored redirectAfterAuth in sessionStorage:', storedValue);
+                      
+                      // Add eventId parameter to URL as a backup mechanism 
+                      const authUrl = `/auth?eventId=${eventId}`;
+                      
+                      // Use direct window.location for a guaranteed full page refresh 
+                      // This ensures we get a clean auth state and prevents any context issues
+                      console.log('Auth redirect btn: Using direct window.location to auth page:', authUrl);
+                      window.location.href = authUrl;
                     }}
                   >
                     Sign In / Register
