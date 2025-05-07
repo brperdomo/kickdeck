@@ -502,6 +502,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const { user, isLoading: authLoading } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
+  // Always start with 'auth' step in non-preview mode to ensure auth check happens
+  // This initial value will be immediately updated by the useEffect based on auth state
   const [currentStep, setCurrentStep] = useState<RegistrationStep>(isPreview ? 'personal' : 'auth');
   const [players, setPlayers] = useState<PlayerForm[]>([]);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup | null>(null);
