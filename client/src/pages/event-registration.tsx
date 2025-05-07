@@ -777,11 +777,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       // User is not authenticated - always show auth step
       console.log('FIXED AUTH FLOW: User is not authenticated, showing auth step');
       
-      // CRITICAL FIX: Use session storage approach without URL parameters
-      // Keep this simple and reliable approach that works with the router
+      // Simple approach: set the redirect and show auth component
+      console.log('Setting auth redirect:', `/register/event/${eventId}`);
       sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
-      
-      // Just show the auth component directly without a redirect
       setCurrentStep('auth');
       return;
     }

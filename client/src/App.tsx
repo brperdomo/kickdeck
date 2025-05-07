@@ -123,16 +123,7 @@ function Router() {
       <Route path="/logout" component={LogoutHandler} />
       
       {/* Public routes that don't require authentication */}
-      {/* Define event registration routes BEFORE the auth check
-          This ensures they work consistently regardless of auth state */}
-      <Route path="/register/event/:eventId">
-        {(params) => <EventRegistration eventIdOverride={params.eventId} />}
-      </Route>
-      <Route path="/event/:eventId/register">
-        {(params) => <EventRegistration eventIdOverride={params.eventId} />}
-      </Route>
-
-      {/* Now handle all other routes based on auth status */}
+      {/* Handle all routes based on auth status */}
       {!user ? (
         <>
           {/* Create a separate route for auth-logged-out to handle the redirect */}
@@ -188,6 +179,12 @@ function Router() {
           <Route path="/register" component={Register} />
           <Route path="/forgot-password" component={ForgotPassword} />
           <Route path="/reset-password" component={ResetPassword} />
+          <Route path="/register/event/:eventId">
+            {(params) => <EventRegistration eventIdOverride={params.eventId} />}
+          </Route>
+          <Route path="/event/:eventId/register">
+            {(params) => <EventRegistration eventIdOverride={params.eventId} />}
+          </Route>
           <Route path="/dashboard">
             <AuthPage />
           </Route>
@@ -321,6 +318,7 @@ function Router() {
             </Suspense>
           </Route>
           <Route path="/chat" component={ChatPage} />
+
           <Route path="/product-updates">
             {user.isAdmin ? <ProductUpdatesPage /> : <NotFound />}
           </Route>
