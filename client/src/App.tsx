@@ -109,12 +109,43 @@ function Router() {
               // This is a custom component to help debug the issue
               // Check URL params directly here to handle different states
               const hasLoggedOut = window.location.search.includes('logged_out=true');
-              console.log('Auth route accessed with logged_out param:', hasLoggedOut);
+              const redirectParam = new URLSearchParams(window.location.search).get('redirect');
+              
+              console.log('Auth route accessed - params:', {
+                hasLoggedOut,
+                redirect: redirectParam,
+                searchParams: window.location.search
+              });
               
               // If this is the logout URL, redirect to our dedicated page
               if (hasLoggedOut) {
                 window.location.href = '/auth-logged-out';
                 return <div>Redirecting...</div>;
+              }
+              
+              // Special case: Handle user already being authenticated with redirect param
+              if (user && redirectParam) {
+                try {
+                  const decodedPath = decodeURIComponent(redirectParam);
+                  console.log('Auth component: User already authenticated, redirecting to:', decodedPath);
+                  
+                  // Handle event registration redirects
+                  if (decodedPath.includes('/register/event/')) {
+                    const eventIdMatch = decodedPath.match(/\/register\/event\/(\d+)/);
+                    if (eventIdMatch && eventIdMatch[1]) {
+                      const eventId = eventIdMatch[1];
+                      console.log('Auth component: Detected event registration redirect for event:', eventId);
+                      window.location.href = `/register/event/${eventId}`;
+                      return <div>Redirecting to event registration...</div>;
+                    }
+                  }
+                  
+                  // Default redirect for other cases
+                  window.location.href = decodedPath;
+                  return <div>Redirecting...</div>;
+                } catch (e) {
+                  console.error('Error processing redirect URL in auth component:', e);
+                }
               }
               
               // Otherwise render the normal login page

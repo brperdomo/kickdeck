@@ -726,21 +726,38 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
 
   // Updated useEffect to properly handle authentication state
   useEffect(() => {
-    // If auth is not loading and we have a user, skip the auth step
+    // If auth is not loading, make a decision based on authentication status
     if (!authLoading) {
+      console.log('Auth state determined:', { 
+        user: user ? `User #${user.id} (${user.email})` : 'Not logged in', 
+        isPreview, 
+        currentStep 
+      });
+      
       if (user) {
-        // User is logged in, advance to personal details step
-        setCurrentStep('personal');
-        console.log('User is authenticated, advancing to personal details step');
+        // Force setting personal details step if the user is authenticated
+        // This needs to happen regardless of current step to fix the auth flow issue
+        if (currentStep === 'auth') {
+          console.log('User is authenticated, forcibly advancing from auth step to personal details');
+          setCurrentStep('personal');
+        }
       } else {
         // User is not logged in, ensure auth step is shown
         if (!isPreview && currentStep !== 'auth') {
-          setCurrentStep('auth');
           console.log('User is not authenticated, showing auth step');
+          setCurrentStep('auth');
         }
       }
     }
   }, [authLoading, user, isPreview, currentStep]);
+  
+  // Additional check to force immediate update when user state changes
+  useEffect(() => {
+    if (user && currentStep === 'auth') {
+      console.log('User authenticated detected, immediate advance to personal details');
+      setCurrentStep('personal');
+    }
+  }, [user, currentStep]);
   
   // Fetch clubs for the current event
   useEffect(() => {
