@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 
 // This is a redirect component to handle the special case of auth?logged_out=true
 export default function AuthLoggedOut() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   
   useEffect(() => {
     console.log('Auth-logged-out page loaded, setting logout message and redirecting');
@@ -12,12 +12,13 @@ export default function AuthLoggedOut() {
     
     // Redirect to the main auth page WITHOUT the logged_out parameter
     // This prevents the redirect loop
-    if (window.location.search.includes('logged_out=true')) {
-      window.location.href = '/auth'; // Use window.location to ensure a full page reload
+    if (location.includes('logged_out=true')) {
+      // We still want fresh auth state, so reset sessionStorage and navigate
+      setLocation('/auth');
     } else {
       setLocation('/auth');
     }
-  }, [setLocation]);
+  }, [setLocation, location]);
   
   // Simple loading state while redirect happens
   return (

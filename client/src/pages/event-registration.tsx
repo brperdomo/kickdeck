@@ -530,8 +530,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     const returnUrl = `/register/event/${eventId}`;
     sessionStorage.setItem('redirectAfterAuth', returnUrl);
     
-    // Go to the auth page - no URL parameters needed as we're using sessionStorage
-    window.location.href = '/auth';
+    // Use wouter navigation instead of direct window manipulation
+    // This maintains React component lifecycle properly
+    console.log('Using setLocation to navigate to auth page');
+    setLocation('/auth');
   };
 
   // Helper function to parse user metadata

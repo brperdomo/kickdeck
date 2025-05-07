@@ -46,7 +46,8 @@ export default function AuthPage() {
       if (sessionRedirect) {
         console.log("Found redirect in session storage:", sessionRedirect);
         sessionStorage.removeItem('redirectAfterAuth'); // Clear it to prevent future redirects
-        window.location.href = sessionRedirect;
+        // Use setLocation for client-side navigation instead of window.location
+        setLocation(sessionRedirect);
         return;
       }
       
@@ -75,24 +76,24 @@ export default function AuthPage() {
           // If we found a valid event ID, redirect to the registration page
           if (eventId) {
             console.log("Auth page: Already logged in, redirecting to event registration with ID:", eventId);
-            window.location.href = `/register/event/${eventId}`;
+            setLocation(`/register/event/${eventId}`);
             return;
           }
           
           // Default case: redirect to the provided path
           console.log("Auth page: Already logged in, redirecting to:", decodedPath);
-          window.location.href = decodedPath;
+          setLocation(decodedPath);
         } catch (e) {
           console.error("Error processing redirect URL:", e);
           // Fallback to dashboard if there's an error
-          window.location.href = user.isAdmin ? '/admin' : '/dashboard';
+          setLocation(user.isAdmin ? '/admin' : '/dashboard');
         }
       } else if (user.isAdmin) {
         // No redirect parameter - go to admin dashboard for admins
-        window.location.href = '/admin';
+        setLocation('/admin');
       } else {
         // No redirect parameter - go to regular dashboard
-        window.location.href = '/dashboard';
+        setLocation('/dashboard');
       }
     }
   }, [user]);
