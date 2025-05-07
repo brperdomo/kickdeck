@@ -525,11 +525,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     
     console.log('User is not authenticated, redirecting to auth page');
     
-    // Use direct encoding in the URL parameter for simpler processing
+    // Store return URL in sessionStorage for post-login redirect
+    // This is more reliable than URL parameters
     const returnUrl = `/register/event/${eventId}`;
+    sessionStorage.setItem('redirectAfterAuth', returnUrl);
     
-    // Go to the auth page with the redirect parameter
-    window.location.href = `/auth?redirect=${encodeURIComponent(returnUrl)}`;
+    // Go to the auth page - no URL parameters needed as we're using sessionStorage
+    window.location.href = '/auth';
   };
 
   // Helper function to parse user metadata
@@ -741,15 +743,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
           console.log('User is authenticated, forcibly advancing from auth step to personal details');
           setCurrentStep('personal');
         }
-      } else {
-        // User is not logged in, ensure auth step is shown
-        if (!isPreview && currentStep !== 'auth') {
-          console.log('User is not authenticated, showing auth step');
-          setCurrentStep('auth');
-        }
+      } else if (!isPreview) {
+        // Only redirect to auth page if not in preview mode
+        console.log('User is not authenticated, showing auth step');
+        // Use direct encoding in the URL parameter for simpler processing
+        const returnUrl = `/register/event/${eventId}`;
+        
+        // Store return URL in sessionStorage for post-login redirect
+        sessionStorage.setItem('redirectAfterAuth', returnUrl);
+        
+        // Redirect to the auth page
+        window.location.href = `/auth`;
       }
     }
-  }, [authLoading, user, isPreview, currentStep]);
+  }, [authLoading, user, isPreview, currentStep, eventId]);
   
   // Additional check to force immediate update when user state changes
   useEffect(() => {
