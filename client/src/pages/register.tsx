@@ -175,17 +175,17 @@ export default function Register() {
       if (decodedUrl.includes('/register/event/')) {
         const eventId = decodedUrl.split('/register/event/')[1];
         if (eventId) {
-          // Use a shorter timeout to improve UX
+          // Use a shorter timeout to improve UX - with wouter navigation
           setTimeout(() => {
-            window.location.href = `/register/event/${eventId}`;
+            setLocation(`/register/event/${eventId}`);
           }, 500);
           return;
         }
       }
       
-      // For all other URLs, use the standard redirect
+      // For all other URLs, use the standard redirect with wouter
       setTimeout(() => {
-        window.location.href = decodedUrl;
+        setLocation(decodedUrl);
       }, 500);
     } catch (error: any) {
       toast({
