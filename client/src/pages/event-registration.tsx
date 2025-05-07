@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
-import { useAuth } from "@/hooks/use-auth";
+import { useUser } from "@/hooks/use-user";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
@@ -499,7 +499,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   // Use the eventIdOverride prop if provided (for preview mode), otherwise use the URL parameter
   const eventId = eventIdOverride || params.eventId;
   const [, setLocation] = useLocation();
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useUser();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   // Always start with 'auth' step in non-preview mode to ensure auth check happens
@@ -745,11 +745,17 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       return;
     }
     
-    console.log('FIXED AUTH FLOW: Auth loaded, determining step', {
-      isAuthenticated: !!user,
+    // Debug user state
+    console.log('AUTH DEBUG -----------------');
+    console.log('User state:', {
+      user,
+      authLoading,
       currentStep,
-      currentUrl: window.location.href,
+      isPreview,
+      isAuthenticated: !!user
     });
+    console.log('User object:', JSON.stringify(user));
+    console.log('-------------------------');
     
     // Don't do anything if in preview mode
     if (isPreview) {
