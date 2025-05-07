@@ -722,124 +722,37 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     fetchEvent();
   }, [eventId]);
 
-  // FORCED USER DATA FETCH - To solve authentication detection issues
-  useEffect(() => {
-    // Direct fetch of user data to ensure we have latest authentication status
-    const forceUserFetch = async () => {
-      try {
-        console.log('DIRECT AUTH CHECK: Manually fetching user data to verify authentication status');
-        const response = await fetch('/api/user', {
-          method: 'GET',
-          credentials: 'include', // Important: include cookies
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          }
-        });
-        
-        if (response.ok) {
-          const userData = await response.json();
-          console.log('DIRECT AUTH CHECK: Successfully fetched user data:', userData);
-          
-          // We have a logged-in user, move to personal step
-          if (currentStep !== 'personal') {
-            console.log('DIRECT AUTH CHECK: User is authenticated, forcing to personal details step');
-            setCurrentStep('personal');
-          }
-          
-          // Clean the URL by removing query parameters
-          if (window.location.search) {
-            window.history.replaceState(
-              { step: 'personal', eventId }, 
-              '', 
-              `/register/event/${eventId}`
-            );
-          }
-        } else if (response.status === 401) {
-          // User is not authenticated
-          console.log('DIRECT AUTH CHECK: User is not authenticated (401 status)');
-          
-          if (currentStep !== 'auth') {
-            sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
-            setCurrentStep('auth');
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching user data directly:', error);
-      }
-    };
-    
-    // Don't do anything if we're in preview mode
-    if (isPreview) {
-      return;
-    }
-    
-    // Execute the direct fetch
-    forceUserFetch();
-  }, [eventId, currentStep, isPreview]);
+  // REMOVED the forced user data fetch to prevent infinite loop
+  // This was causing a conflict with the useAuth hook and
+  // creating an endless loop of authentication checks
   
-  // Original auth effect - now as a backup
+  // SIMPLIFIED AUTH FLOW - Single source of truth
   useEffect(() => {
-    // Prevent doing anything if we're still loading
-    if (authLoading) {
-      console.log('Auth is still loading, not taking any action yet');
+    // Prevent doing anything if we're still loading or in preview mode
+    if (authLoading || isPreview) {
       return;
     }
     
-    // Debug user state
-    console.log('AUTH DEBUG -----------------');
-    console.log('User state:', {
-      user,
-      authLoading,
-      currentStep,
-      isPreview,
-      isAuthenticated: !!user
-    });
-    console.log('User object:', JSON.stringify(user));
-    console.log('-------------------------');
+    // Simplified debugging
+    console.log('AUTH STATUS:', !!user ? 'LOGGED IN' : 'NOT LOGGED IN');
     
-    // Don't do anything if in preview mode
-    if (isPreview) {
-      return;
-    }
-    
-    // Based on authentication status, set the step
+    // For logged-in users - always go to personal step
     if (user) {
-      // User is authenticated - always show personal details regardless of current step
-      console.log('FIXED AUTH FLOW: User is authenticated, forcing to personal details step');
-      
-      // ALWAYS set to personal step if authenticated, override any existing state
-      if (currentStep !== 'personal') {
-        console.log('FIXED AUTH FLOW: Forcibly advancing to personal step');
-        
-        // Set it immediately to avoid flickering of auth step
+      if (currentStep === 'auth') {
+        console.log('User is authenticated, moving to personal details step');
         setCurrentStep('personal');
       }
-      
-      // Clean the URL by removing query parameters no matter what
-      if (window.location.search) {
-        console.log('FIXED AUTH FLOW: Cleaning URL by removing parameters');
-        // Use regular location history API to rewrite the URL
-        window.history.replaceState(
-          { step: 'personal', eventId }, 
-          '', 
-          `/register/event/${eventId}`
-        );
-      }
-    } else {
-      // User is not authenticated - always show auth step
-      console.log('FIXED AUTH FLOW: User is not authenticated, showing auth step');
-      
+      return;
+    } 
+    
+    // For anonymous users - always stay on auth step
+    if (currentStep !== 'auth') {
+      console.log('User is not authenticated, showing auth step');
       // Simple approach: set the redirect and show auth component
-      console.log('Setting auth redirect:', `/register/event/${eventId}`);
       sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
       setCurrentStep('auth');
-      return;
     }
   }, [authLoading, user, isPreview, eventId, currentStep]);
-  
-  // We've removed the duplicate useEffect to avoid conflicts
   
   // Fetch clubs for the current event
   useEffect(() => {
@@ -1675,41 +1588,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           color: primaryContrastColor,
                           boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                         }}
-                        onClick={async () => {
-                          console.log('Sign In/Register button clicked, checking authentication status first');
+                        onClick={() => {
+                          console.log('Sign In/Register button clicked');
                           
-                          // First, attempt to directly check if user is already authenticated
-                          try {
-                            const response = await fetch('/api/user', {
-                              method: 'GET',
-                              credentials: 'include',
-                              headers: {
-                                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                                'Pragma': 'no-cache'
-                              }
-                            });
-                            
-                            if (response.ok) {
-                              // User is already authenticated, proceed directly to personal step
-                              console.log('User is already authenticated, moving straight to personal details');
-                              setCurrentStep('personal');
-                              return;
-                            }
-                          } catch (error) {
-                            console.error('Error checking auth status:', error);
-                          }
-                          
-                          // If we reach here, user is not authenticated, proceed with redirect
+                          // Store the redirect URL for after authentication
                           const returnUrl = `/register/event/${eventId}`;
                           sessionStorage.setItem('redirectAfterAuth', returnUrl);
+                          console.log('Auth redirect: stored target URL:', returnUrl);
                           
-                          // Double-check that the sessionStorage was set correctly
-                          const storedValue = sessionStorage.getItem('redirectAfterAuth');
-                          console.log('Auth redirect btn: Stored redirectAfterAuth in sessionStorage:', storedValue);
-                          
-                          // Use the /auth route instead of redirecting to root (/)
-                          // This should help prevent admin users from being routed to dashboard
-                          console.log('Auth redirect btn: Directing to /auth page for login');
+                          // Always redirect to the auth page with clear parameters
                           window.location.href = `/auth?eventId=${eventId}&from=registration`;
                         }}
                       >
