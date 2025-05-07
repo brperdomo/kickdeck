@@ -502,12 +502,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const { user, isLoading: authLoading } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
-  // For initialization, check if user is already logged in to bypass auth step
-  // This ensures we start at the correct step even before the useEffect runs
-  // Always go to personal step if user is already logged in or in preview mode
-  const initialStep = isPreview || user ? 'personal' : 'auth';
-  console.log('Setting initial step based on auth status:', { initialStep, isLoggedIn: !!user, isPreview });
-  const [currentStep, setCurrentStep] = useState<RegistrationStep>(initialStep);
+  // Important: Do NOT use any authentication-based logic when initializing state
+  // This avoids any race conditions during initial render
+  const [currentStep, setCurrentStep] = useState<RegistrationStep>('auth');
   const [players, setPlayers] = useState<PlayerForm[]>([]);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup | null>(null);
   const [selectedBracket, setSelectedBracket] = useState<number | null>(null);
@@ -517,14 +514,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [isNewClub, setIsNewClub] = useState(false);
   const [clubLogo, setClubLogo] = useState<File | null>(null);
   
-  // React to changes in authentication status
-  useEffect(() => {
-    // If the user becomes authenticated while on the auth step, move to personal details
-    if (user && currentStep === 'auth') {
-      console.log('Auth status changed: User authenticated, moving to personal details step');
-      setCurrentStep('personal');
-    }
-  }, [user, currentStep]);
+  // The first render will always show 'auth', but we'll update it immediately after
+  // based on the actual authentication state - this prevents render cycle issues
   
   // We don't need the handleAuthRedirect function anymore since we're handling auth state
   // directly in the useEffect hooks. This was causing the redirect to /auth when unnecessary.

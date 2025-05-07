@@ -1,0 +1,19 @@
+DIRECT AUTH CHECK: Manually fetching user data to verify authentication status
+event-registration.tsx:791 AUTH DEBUG -----------------
+event-registration.tsx:792 User state: {user: null, authLoading: false, currentStep: 'auth', isPreview: false, isAuthenticated: false}
+event-registration.tsx:799 User object: null
+event-registration.tsx:800 -------------------------
+event-registration.tsx:832 FIXED AUTH FLOW: User is not authenticated, showing auth step
+event-registration.tsx:835 Setting auth redirect: /register/event/1251362271
+event-registration.tsx:509 Setting initial step based on auth status: {initialStep: 'auth', isLoggedIn: false, isPreview: false}
+event-registration.tsx:509 Setting initial step based on auth status: {initialStep: 'auth', isLoggedIn: false, isPreview: false}
+event-registration.tsx:743 DIRECT AUTH CHECK: Successfully fetched user data: {id: 74, email: 'bryan@matchpro.ai', username: 'bryan@matchpro.ai', password: '5f213ad618f5d1514e4ca01e301d7fad513fed9d4a0f4069a3…9eab378c292c4219.2091067aa090771f5bf52096b62440f6', firstName: 'Bryan', …}
+event-registration.tsx:747 DIRECT AUTH CHECK: User is authenticated, forcing to personal details step
+event-registration.tsx:509 Setting initial step based on auth status: {initialStep: 'auth', isLoggedIn: false, isPreview: false}
+event-registration.tsx:509 Setting initial step based on auth status: {initialStep: 'auth', isLoggedIn: false, isPreview: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+event-registration.tsx:730 DIRECT AUTH CHECK: Manually fetching user data to verify authentication status
+event-registration.tsx:791 AUTH DEBUG -----------------
+event-registration.tsx:792 User state: {user: null, authLoading: false, currentStep: 'personal', isPreview: false, isAuthenticated: false}
+event-registration.tsx:799 User object: null
