@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Link, useLocation } from "wouter";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 // Login schema
 const loginSchema = z.object({
@@ -34,6 +34,9 @@ export default function AuthPage() {
   const { loginMutation, user } = useAuth();
   const [location, setLocation] = useLocation();
   const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
+  
+  // Store redirectAfterAuth in a ref to preserve it between renders
+  const redirectPathRef = useRef<string | null>(null);
 
   // Check for logout message in session storage and handle eventId parameter
   useEffect(() => {
@@ -50,10 +53,15 @@ export default function AuthPage() {
     const eventId = urlParams.get('eventId');
     const fromRegistration = urlParams.get('from') === 'registration';
     
-    console.log('URL parameters:', { 
+    console.log('⚙️ AUTH-PAGE INIT - URL parameters:', { 
       eventId, 
       fromRegistration,
-      allParams: Object.fromEntries(urlParams.entries())
+      currentPath: window.location.pathname + window.location.search,
+      allParams: Object.fromEntries(urlParams.entries()),
+      currentSessionStorage: Object.fromEntries(
+        Object.keys(sessionStorage).map(key => [key, sessionStorage.getItem(key)])
+      ),
+      referrer: document.referrer
     });
     
     // Special case: When coming from event registration flow
@@ -63,6 +71,7 @@ export default function AuthPage() {
       const redirectUrl = `/register/event/${eventId}`;
       console.log('Setting redirectAfterAuth to:', redirectUrl);
       sessionStorage.setItem('redirectAfterAuth', redirectUrl);
+      redirectPathRef.current = redirectUrl; // Also store in React ref
       return; // Exit early since we've handled this case
     }
     
@@ -157,6 +166,15 @@ export default function AuthPage() {
   });
 
   async function onSubmit(data: LoginFormData) {
+    // Log session storage state right before login submission
+    console.log('🔑 LOGIN SUBMIT - Current session storage state:', {
+      allSessionStorageKeys: Object.keys(sessionStorage),
+      redirectAfterAuth: sessionStorage.getItem('redirectAfterAuth'),
+      fullState: Object.fromEntries(
+        Object.keys(sessionStorage).map(key => [key, sessionStorage.getItem(key)])
+      )
+    });
+
     try {
       loginForm.clearErrors();
       await loginMutation.mutateAsync(data);

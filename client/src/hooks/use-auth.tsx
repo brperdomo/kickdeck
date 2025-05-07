@@ -137,23 +137,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return res.json();
     },
     onSuccess: (data) => {
+      // Update the cache with user data
       queryClient.setQueryData(["/api/user"], data.user);
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       
-      // CRITICAL FIX: Check for redirectAfterAuth to log automatic redirection after login
+      // CRITICAL FIX: Direct approach - check for redirectAfterAuth and forcefully redirect
       const redirectPath = sessionStorage.getItem('redirectAfterAuth');
-      if (redirectPath) {
-        console.log('✅ Login successful - detected redirect path in sessionStorage:', redirectPath);
-        // Don't clear it here - we'll let the router components handle clearing it
-        // when they actually perform the redirect
-      } else {
-        console.log('Login successful - no redirect path detected in sessionStorage');
-      }
       
-      toast({
-        title: "Success",
-        description: "Successfully logged in",
-      });
+      if (redirectPath) {
+        console.log('⚠️ FORCE REDIRECT: Login successful - redirecting directly to:', redirectPath);
+        
+        // Show toast quickly before redirecting
+        toast({
+          title: "Success",
+          description: "Redirecting to registration...",
+        });
+        
+        // Clear it immediately to prevent any possibility of redirect loops
+        sessionStorage.removeItem('redirectAfterAuth');
+        
+        // Use a small timeout to ensure the toast is visible before redirecting
+        setTimeout(() => {
+          // Force redirect - this bypasses any React Router logic
+          window.location.href = redirectPath;
+        }, 100);
+        
+        // End execution early to prevent default redirect
+        return;
+      } else {
+        console.log('Login successful - no redirect path detected, normal flow continues');
+        
+        // Show regular success toast
+        toast({
+          title: "Success",
+          description: "Successfully logged in",
+        });
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -382,19 +401,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       }
       
-      // Check for redirectAfterAuth to handle automatic redirection after registration
+      // CRITICAL FIX: Direct approach - check for redirectAfterAuth and forcefully redirect for registration too
       const redirectPath = sessionStorage.getItem('redirectAfterAuth');
-      if (redirectPath) {
-        console.log('Registration successful - redirecting to:', redirectPath);
-        // We'll let the automatic useEffect in auth-page.tsx handle this redirect
-        // So we don't need to do anything here, just log it for debugging
-      }
       
-      // Show success message
-      toast({
-        title: "Success",
-        description: "Registration successful",
-      });
+      if (redirectPath) {
+        console.log('⚠️ FORCE REDIRECT: Registration successful - redirecting directly to:', redirectPath);
+        
+        // Show toast quickly before redirecting
+        toast({
+          title: "Success",
+          description: "Redirecting to registration...",
+        });
+        
+        // Clear it immediately to prevent any possibility of redirect loops
+        sessionStorage.removeItem('redirectAfterAuth');
+        
+        // Use a small timeout to ensure the toast is visible before redirecting
+        setTimeout(() => {
+          // Force redirect - this bypasses any React Router logic
+          window.location.href = redirectPath;
+        }, 100);
+        
+        // End execution early to prevent default redirect
+        return;
+      } else {
+        console.log('Registration successful - no redirect path detected, normal flow continues');
+        
+        // Show regular success toast
+        toast({
+          title: "Success",
+          description: "Registration successful",
+        });
+      }
     },
     onError: (error: Error) => {
       toast({
