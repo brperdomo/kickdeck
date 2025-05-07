@@ -55,6 +55,12 @@ export default function AuthPage() {
       console.log('Setting redirectAfterAuth to:', redirectUrl);
       sessionStorage.setItem('redirectAfterAuth', redirectUrl);
     }
+    
+    // If we already have a redirect saved, don't overwrite it - it takes priority
+    if (!sessionStorage.getItem('redirectAfterAuth') && window.location.href.includes('from=registration')) {
+      console.log('Coming from registration flow without specific eventId, setting generic redirect');
+      sessionStorage.setItem('redirectAfterAuth', '/register/event');
+    }
   }, []);
 
   // BACK TO BASICS APPROACH - MUCH SIMPLER

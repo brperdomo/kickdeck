@@ -29,8 +29,9 @@ export default function RegistrationAuthChecker({
       
       // Use setTimeout to ensure the state update happens before redirect
       // Use the auth route instead of root to prevent admin redirects
+      // Also include the eventId as a query parameter to ensure it's captured on the auth page
       setTimeout(() => {
-        window.location.href = '/auth';
+        window.location.href = `/auth?eventId=${eventId}&from=registration`;
       }, 100);
     }
   }, [user, authLoading, eventId, setLocation]);
