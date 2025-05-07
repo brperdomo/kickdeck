@@ -736,54 +736,49 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     fetchEvent();
   }, [eventId]);
 
-  // SIMPLIFIED AUTHENTICATION APPROACH - DIRECT SOLUTION
+  // COMPLETE REWRITE OF AUTHENTICATION APPROACH
+  // Let's simplify even more to avoid any possible conflicts
   useEffect(() => {
-    // First, check if the URL has the auth=required parameter
-    // If it does, and the user is authenticated, remove it 
-    const url = new URL(window.location.href);
-    const hasAuthParam = url.searchParams.has('auth');
-    
-    if (hasAuthParam && user) {
-      // User is already authenticated and there's an auth parameter
-      // Remove all parameters and force to personal step
-      console.log('AUTH REDIRECT FIX: User is logged in but auth parameter exists, clearing URL');
-      window.history.replaceState(
-        { step: 'personal', eventId }, 
-        '', 
-        `/register/event/${eventId}`
-      );
-      setCurrentStep('personal');
+    // Prevent doing anything if we're still loading
+    if (authLoading) {
+      console.log('Auth is still loading, not taking any action yet');
       return;
     }
     
-    // Regular authentication check - much simpler now
-    if (!authLoading) {
-      if (user) {
-        // User is authenticated, always go to personal details
-        console.log('User is authenticated, setting to personal details step');
-        
-        // CRITICAL FIX: Always set to personal step regardless of current step
-        // This overrides any URL parameters or redirects
-        setCurrentStep('personal');
-        
-        // Clear any auth parameters from URL to prevent future issues
-        if (url.searchParams.has('auth') || url.searchParams.has('eventId')) {
-          window.history.replaceState(
-            { step: 'personal', eventId }, 
-            '', 
-            `/register/event/${eventId}`
-          );
-        }
-      } else if (!isPreview) {
-        // User is not logged in
-        console.log('User is not authenticated, showing auth step');
-        
-        // Store return URL for after login
-        sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
-        
-        // Always set to auth step
-        setCurrentStep('auth');
+    console.log('FIXED AUTH FLOW: Auth loaded, determining step', {
+      isAuthenticated: !!user,
+      currentStep,
+      currentUrl: window.location.href,
+    });
+    
+    // Don't do anything if in preview mode
+    if (isPreview) {
+      return;
+    }
+    
+    // Based on authentication status, set the step
+    if (user) {
+      // User is authenticated - always show personal details
+      console.log('FIXED AUTH FLOW: User is authenticated, setting to personal details step');
+      // ALWAYS set to personal step if authenticated
+      setCurrentStep('personal');
+      
+      // Clean the URL by removing query parameters no matter what
+      if (window.location.search) {
+        console.log('FIXED AUTH FLOW: Cleaning URL by removing parameters');
+        // Use regular location history API to rewrite the URL
+        window.history.replaceState(
+          { step: 'personal', eventId }, 
+          '', 
+          `/register/event/${eventId}`
+        );
       }
+    } else {
+      // User is not authenticated - always show auth step
+      console.log('FIXED AUTH FLOW: User is not authenticated, showing auth step');
+      // Store the redirect for AuthPage to use later
+      sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
+      setCurrentStep('auth');
     }
   }, [authLoading, user, isPreview, eventId]);
   
