@@ -163,37 +163,55 @@ export default function AuthPage() {
     
     console.log("Auth page detected logged in user, handling redirect", { user });
     
-    // First check URL params for redirect
+    // Get the redirect URL from query parameters - primary method
     const searchParams = new URLSearchParams(window.location.search);
     const redirectParam = searchParams.get('redirect');
     
-    // Then check session storage (legacy method)
+    // Then check session storage as fallback/legacy method
     const redirectPath = sessionStorage.getItem('redirectAfterAuth');
     
     if (redirectParam) {
-      console.log("Found redirect parameter:", redirectParam);
-      // Decode the URL-encoded path
-      const decodedPath = decodeURIComponent(redirectParam);
-      console.log("Decoded redirect path:", decodedPath);
-      
-      // Check if this looks like /register/event/ID and fix it
-      if (decodedPath.includes('/register/event/')) {
-        // Get the event ID
-        const eventId = decodedPath.split('/register/event/')[1];
-        if (eventId) {
-          console.log("Redirecting to event registration:", eventId);
-          window.location.href = `/register/event/${eventId}`;
-          return;
+      try {
+        console.log("Found redirect parameter:", redirectParam);
+        // Properly decode the URL-encoded path
+        const decodedPath = decodeURIComponent(redirectParam);
+        console.log("Decoded redirect path:", decodedPath);
+        
+        // Check if this is an event registration path with the correct format
+        if (decodedPath.includes('/register/event/')) {
+          // Extract the event ID from the path - this is more reliable
+          const matches = decodedPath.match(/\/register\/event\/(\d+)/);
+          if (matches && matches[1]) {
+            const eventId = matches[1];
+            console.log("Redirecting to event registration:", eventId);
+            window.location.href = `/register/event/${eventId}`;
+            return;
+          }
         }
+        
+        // For other valid paths, redirect directly
+        console.log("Redirecting to:", decodedPath);
+        window.location.href = decodedPath;
+      } catch (error) {
+        console.error("Error processing redirect parameter:", error);
+        // Fallback to default dashboards
+        window.location.href = user.isAdmin ? '/admin' : '/dashboard';
       }
-      
-      console.log("Redirecting to:", decodedPath);
-      window.location.href = decodedPath;
-    } else if (redirectPath) {
-      console.log("Redirecting using session storage path:", redirectPath);
-      sessionStorage.removeItem('redirectAfterAuth');
-      window.location.href = redirectPath;
-    } else if (user.isAdmin) {
+    } 
+    // Fallback to sessionStorage if URL param isn't available
+    else if (redirectPath) {
+      try {
+        console.log("Redirecting using session storage path:", redirectPath);
+        sessionStorage.removeItem('redirectAfterAuth'); // Clear it to prevent future redirects
+        window.location.href = redirectPath;
+      } catch (error) {
+        console.error("Error processing sessionStorage redirect:", error);
+        // Fallback to default dashboards
+        window.location.href = user.isAdmin ? '/admin' : '/dashboard';
+      }
+    } 
+    // Default behavior if no redirect info is available
+    else if (user.isAdmin) {
       console.log("No redirect params found, user is admin, redirecting to admin dashboard");
       window.location.href = '/admin';
     } else {

@@ -523,15 +523,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       return;
     }
     
-    console.log('User is not authenticated, redirecting directly to server login endpoint');
+    console.log('User is not authenticated, redirecting to auth page');
     
-    // Instead of redirecting to auth page with complex URL parameters, 
-    // store the current location in sessionStorage and use a simpler redirect method
+    // Use direct encoding in the URL parameter for simpler processing
     const returnUrl = `/register/event/${eventId}`;
-    sessionStorage.setItem('redirectAfterAuth', returnUrl);
     
-    // Redirect directly to auth page without complex URL parameters
-    window.location.href = '/auth';
+    // Go to the auth page with the redirect parameter
+    window.location.href = `/auth?redirect=${encodeURIComponent(returnUrl)}`;
   };
 
   // Helper function to parse user metadata
