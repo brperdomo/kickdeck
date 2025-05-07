@@ -719,28 +719,30 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   
   // SIMPLIFIED AUTH FLOW - Single source of truth
   useEffect(() => {
-    // Prevent doing anything if we're still loading or in preview mode
+    // Skip processing during loading or in preview mode
     if (authLoading || isPreview) {
       return;
     }
     
-    // Simplified debugging
-    console.log('AUTH STATUS:', !!user ? 'LOGGED IN' : 'NOT LOGGED IN');
+    // ONE-TIME AUTH STATE CHECK - not constantly calling API
+    // This works alongside the useAuth hook that already manages auth state
+    const isAuthenticated = !!user;
     
-    // For logged-in users - always go to personal step
-    if (user) {
-      if (currentStep === 'auth') {
-        console.log('User is authenticated, moving to personal details step');
-        setCurrentStep('personal');
-      }
+    // Move to personal details if authenticated and on auth step
+    if (isAuthenticated && currentStep === 'auth') {
+      console.log('User is authenticated, moving to personal details step');
+      setCurrentStep('personal');
       return;
-    } 
+    }
     
-    // For anonymous users - always stay on auth step
-    if (currentStep !== 'auth') {
-      console.log('User is not authenticated, showing auth step');
-      // Simple approach: set the redirect and show auth component
+    // For anonymous users - always ensure they stay on auth step
+    if (!isAuthenticated && currentStep !== 'auth') {
+      console.log('User is not authenticated, returning to auth step');
+      
+      // Store the current page for post-login return
       sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
+      
+      // Update UI to show auth step
       setCurrentStep('auth');
     }
   }, [authLoading, user, isPreview, eventId, currentStep]);
@@ -1562,7 +1564,22 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       <p className="text-gray-600 mb-6">
                         You're already signed in. Proceeding to registration...
                       </p>
-                      {/* Empty placeholder - actual redirect happens in useEffect */}
+                      <Button 
+                        size="lg"
+                        className="font-semibold px-8"
+                        style={{ 
+                          backgroundColor: event?.branding?.primaryColor || '#2C5282',
+                          color: primaryContrastColor,
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        }}
+                        onClick={() => {
+                          console.log('Continue to personal details clicked');
+                          // Directly move to the next step since we're already authenticated
+                          setCurrentStep('personal');
+                        }}
+                      >
+                        Continue Registration
+                      </Button>
                     </>
                   ) : (
                     /* User is not logged in - show sign in button */
@@ -1580,7 +1597,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                         }}
                         onClick={() => {
-                          console.log('Sign In/Register button clicked');
+                          console.log('Sign In/Register button clicked - going to auth page');
                           
                           // Store the redirect URL for after authentication
                           const returnUrl = `/register/event/${eventId}`;
