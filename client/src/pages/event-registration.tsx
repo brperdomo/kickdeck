@@ -747,10 +747,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       });
       
       if (user) {
-        // Force setting personal details step if the user is authenticated
-        // This needs to happen regardless of current step to fix the auth flow issue
+        // User is already authenticated, skip auth step entirely
         if (currentStep === 'auth') {
-          console.log('User is authenticated, forcibly advancing from auth step to personal details');
+          console.log('User is already authenticated, advancing to personal details');
           setCurrentStep('personal');
           
           // Store this navigation in window history for potential back button support
@@ -761,7 +760,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
           );
         }
       } else if (!isPreview) {
-        // Only set auth step if not in preview mode
+        // Only set auth step if not in preview mode and user is not authenticated
         console.log('User is not authenticated, showing auth step');
         
         // Store return URL in sessionStorage for post-login redirect button click
