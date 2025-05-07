@@ -1583,7 +1583,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       color: primaryContrastColor,
                       boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                     }}
-                    onClick={handleAuthRedirect}
+                    onClick={() => {
+                      // Extra safety check to ensure we capture this click
+                      const returnUrl = `/register/event/${eventId}`;
+                      sessionStorage.setItem('redirectAfterAuth', returnUrl);
+                      console.log('Auth redirect: Setting sessionStorage redirect and proceeding to auth page');
+                      window.location.href = '/auth';
+                    }}
                   >
                     Sign In / Register
                   </Button>
