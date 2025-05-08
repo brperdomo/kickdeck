@@ -511,11 +511,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   
   // Setup registration save state hook
   const { 
-    savedState, 
-    saveRegistrationState, 
-    clearSavedRegistration, 
-    hasSavedRegistration 
-  } = useRegistrationSaveState(eventId);
+    savedData, 
+    saveRegistrationData, 
+    clearSavedData, 
+    hasSavedData,
+    lastSaved
+  } = useSavedRegistration(eventId);
   
   // For initialization, check if user is already logged in to bypass auth step
   // This ensures we start at the correct step even before the useEffect runs
@@ -528,6 +529,80 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   
   // Flag to track auto-saving
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+  
+  // Function to save the current registration state
+  const saveCurrentState = () => {
+    if (!autoSaveEnabled) return false;
+    
+    try {
+      // Collect form data from various stages
+      const registrationData = {
+        personalDetails: form.getValues(),
+        teamDetails: teamForm?.getValues() || null,
+        selectedAgeGroup,
+        selectedBracket,
+        players,
+        isNewClub,
+        selectedFees,
+        currentStep
+      };
+      
+      return saveRegistrationData(registrationData);
+    } catch (error) {
+      console.error('Error saving registration state:', error);
+      return false;
+    }
+  };
+  
+  // Function to load saved state and populate forms
+  const loadSavedState = () => {
+    if (!savedData) return false;
+    
+    try {
+      // Check if we have data to restore
+      if (savedData.personalDetails) {
+        form.reset(savedData.personalDetails);
+      }
+      
+      if (savedData.teamDetails && teamForm) {
+        teamForm.reset(savedData.teamDetails);
+      }
+      
+      if (savedData.selectedAgeGroup) {
+        setSelectedAgeGroup(savedData.selectedAgeGroup);
+      }
+      
+      if (savedData.selectedBracket) {
+        setSelectedBracket(savedData.selectedBracket);
+      }
+      
+      if (savedData.players && savedData.players.length > 0) {
+        setPlayers(savedData.players);
+      }
+      
+      if (savedData.isNewClub !== undefined) {
+        setIsNewClub(savedData.isNewClub);
+      }
+      
+      if (savedData.selectedFees) {
+        setSelectedFees(savedData.selectedFees);
+      }
+      
+      // Only set current step if it makes sense in the flow
+      // (e.g., don't set to payment if we're not ready for payment)
+      if (savedData.currentStep && 
+          (savedData.currentStep === 'personal' || 
+           savedData.currentStep === 'team' || 
+           (savedData.currentStep === 'payment' && savedData.teamDetails))) {
+        setCurrentStep(savedData.currentStep);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error loading saved registration state:', error);
+      return false;
+    }
+  };
   
   // Special handling for admin users who may have session recognition issues
   useEffect(() => {
