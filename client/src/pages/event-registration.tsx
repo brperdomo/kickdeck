@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BracketSelector } from "@/components/registration/BracketSelector";
 import { useToast } from "@/hooks/use-toast";
+import { useRegistrationSaveState } from "@/hooks/use-registration-save-state";
+import { SavedRegistrationAlert } from "@/components/registration/SavedRegistrationAlert";
+import { SaveForLaterButton } from "@/components/registration/SaveForLaterButton";
 import { 
   Loader2, 
   CheckCircle2, 
@@ -17,7 +20,8 @@ import {
   FileUp,
   Download,
   AlertCircle,
-  FileText
+  FileText,
+  Save
 } from "lucide-react";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
@@ -492,6 +496,8 @@ interface EventRegistrationProps {
   eventIdOverride?: string;
 }
 
+// We'll use the types defined below
+
 export default function EventRegistration({ isPreview = false, eventIdOverride }: EventRegistrationProps) {
   const params = useParams();
   const { toast } = useToast();
@@ -502,11 +508,26 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const { user, isLoading: authLoading } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Setup registration save state hook
+  const { 
+    savedState, 
+    saveRegistrationState, 
+    clearSavedRegistration, 
+    hasSavedRegistration 
+  } = useRegistrationSaveState(eventId);
+  
   // For initialization, check if user is already logged in to bypass auth step
   // This ensures we start at the correct step even before the useEffect runs
   const initialStep = isPreview ? 'personal' : (user ? 'personal' : 'auth');
   console.log('Setting initial step based on auth status:', { initialStep, isLoggedIn: !!user, isAdmin: user?.isAdmin });
   const [currentStep, setCurrentStep] = useState<RegistrationStep>(initialStep);
+  
+  // Track if we've shown the saved registration alert
+  const [showSavedRegistrationAlert, setShowSavedRegistrationAlert] = useState(false);
+  
+  // Flag to track auto-saving
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   
   // Special handling for admin users who may have session recognition issues
   useEffect(() => {
