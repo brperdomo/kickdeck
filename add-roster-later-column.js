@@ -4,10 +4,10 @@
  * This script adds the add_roster_later column to the teams table to support
  * the feature allowing teams to register without players and add them later.
  */
-const { drizzle } = require('drizzle-orm/postgres-js');
-const { migrate } = require('drizzle-orm/postgres-js/migrator');
-const postgres = require('postgres');
-const dotenv = require('dotenv');
+import { drizzle } from 'drizzle-orm/postgres-js';
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
+import postgres from 'postgres';
+import dotenv from 'dotenv';
 
 // Load environment variables
 dotenv.config();
