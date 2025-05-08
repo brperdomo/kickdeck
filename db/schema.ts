@@ -312,8 +312,6 @@ export const teams = pgTable("teams", {
   termsAcknowledged: boolean("terms_acknowledged").default(false),
   termsAcknowledgedAt: timestamp("terms_acknowledged_at"),
   termsAcknowledgementRecord: text("terms_acknowledgement_record"), // Path to PDF or record ID
-  // Flag to indicate if roster will be added later
-  addRosterLater: boolean("add_roster_later").default(false),
   // Notes field for admin comments
   notes: text("notes")
 });
