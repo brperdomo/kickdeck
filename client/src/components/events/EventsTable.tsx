@@ -115,9 +115,9 @@ export function EventsTable() {
   const queryClient = useQueryClient();
 
   const eventsQuery = useQuery<EventsResponse>({
-    queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter],
+    queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter, sortField, sortDirection],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events?page=${currentPage}&pageSize=${pageSize}&showArchived=${showArchived}&search=${encodeURIComponent(searchQuery)}&statusFilter=${statusFilter}`);
+      const response = await fetch(`/api/admin/events?page=${currentPage}&pageSize=${pageSize}&showArchived=${showArchived}&search=${encodeURIComponent(searchQuery)}&statusFilter=${statusFilter}&sortField=${sortField}&sortDirection=${sortDirection}`);
       if (!response.ok) {
         throw new Error("Failed to fetch events");
       }
@@ -140,7 +140,7 @@ export function EventsTable() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter, sortField, sortDirection] });
       toast({
         title: "Success",
         description: "Event deleted successfully",
@@ -196,7 +196,7 @@ export function EventsTable() {
       
       // Force refetch all events data with the current filters
       queryClient.invalidateQueries({ 
-        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter]
+        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter, sortField, sortDirection]
       });
       
       toast({
@@ -231,7 +231,7 @@ export function EventsTable() {
     onSuccess: (data) => {
       // Force refetch all events data with the current filters
       queryClient.invalidateQueries({ 
-        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter]
+        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter, sortField, sortDirection]
       });
       
       // Log the data to help with debugging

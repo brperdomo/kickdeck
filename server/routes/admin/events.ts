@@ -29,7 +29,7 @@ const getStatusFilterCondition = (statusFilter: string) => {
   return undefined;
 };
 
-// Get all events with optimization, pagination, and caching
+// Get all events with optimization, pagination, sorting, and caching
 router.get('/', async (req, res) => {
   try {
     // Parse pagination parameters
@@ -38,6 +38,10 @@ router.get('/', async (req, res) => {
     const showArchived = req.query.showArchived === 'true';
     const searchQuery = req.query.search as string || '';
     const statusFilter = req.query.statusFilter as string || 'all';
+    
+    // Parse sorting parameters
+    const sortField = req.query.sortField as string || 'date';
+    const sortDirection = req.query.sortDirection as string || 'desc';
     
     // Calculate offset for pagination
     const offset = (page - 1) * pageSize;
@@ -98,16 +102,42 @@ router.get('/', async (req, res) => {
     
     const totalEvents = countResult[0]?.count || 0;
     
-    // Execute the main query with pagination
-    // Always apply pagination to ensure consistent behavior
-    const applyPagination = true;
+    // Apply the correct sorting based on the sort field
+    let finalEventsQuery = eventsQuery.groupBy(events.id);
     
-    let finalEventsQuery = eventsQuery.groupBy(events.id).orderBy(events.startDate);
-    
-    // Apply pagination only if not searching/filtering or if there are more results than the page size
-    if (applyPagination) {
-      finalEventsQuery = finalEventsQuery.limit(pageSize).offset(offset);
+    // Apply sorting based on the specified field and direction
+    switch (sortField) {
+      case 'name':
+        finalEventsQuery = sortDirection === 'asc' 
+          ? finalEventsQuery.orderBy(events.name) 
+          : finalEventsQuery.orderBy(sql`${events.name} DESC`);
+        break;
+      case 'date':
+        finalEventsQuery = sortDirection === 'asc' 
+          ? finalEventsQuery.orderBy(events.startDate) 
+          : finalEventsQuery.orderBy(sql`${events.startDate} DESC`);
+        break;
+      case 'applications':
+        // For applications count, we need to use SQL expression since it's an aggregated value
+        finalEventsQuery = sortDirection === 'asc' 
+          ? finalEventsQuery.orderBy(sql`count(distinct ${teams.id})`) 
+          : finalEventsQuery.orderBy(sql`count(distinct ${teams.id}) DESC`);
+        break;
+      case 'deadline':
+        finalEventsQuery = sortDirection === 'asc' 
+          ? finalEventsQuery.orderBy(events.applicationDeadline) 
+          : finalEventsQuery.orderBy(sql`${events.applicationDeadline} DESC`);
+        break;
+      // Status sorting is a special case and will be handled client-side since it's a calculated field
+      default:
+        // Default sort by start date
+        finalEventsQuery = sortDirection === 'asc' 
+          ? finalEventsQuery.orderBy(events.startDate) 
+          : finalEventsQuery.orderBy(sql`${events.startDate} DESC`);
     }
+    
+    // Apply pagination
+    finalEventsQuery = finalEventsQuery.limit(pageSize).offset(offset);
     
     const eventsList = await finalEventsQuery;
 
