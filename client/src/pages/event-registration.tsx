@@ -827,6 +827,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       // Simple approach: set the redirect and show auth component
       console.log('Setting auth redirect:', `/register/event/${eventId}`);
       sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
+      // Also set a flag to indicate we're in a registration process
+      sessionStorage.setItem('in_registration_process', 'true');
       setCurrentStep('auth');
       return;
     }
