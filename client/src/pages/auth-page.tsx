@@ -101,18 +101,32 @@ export default function AuthPage() {
     if (redirectPath) {
       console.log("Going to stored redirect path:", redirectPath);
       
+      // Check if this is a registration process
+      const isRegistrationProcess = 
+        redirectPath.includes('/register/event/') || 
+        redirectPath.includes('/event/') || 
+        sessionStorage.getItem('in_registration_process') === 'true';
+      
       // Set a flag with timestamp to indicate authentication redirect is complete
       // The registration page will detect this and force a fresh authentication check
       sessionStorage.setItem('authRedirectCompleted', Date.now().toString());
       console.log("Set authRedirectCompleted flag to:", sessionStorage.getItem('authRedirectCompleted'));
       
+      // For event registrations, ensure we keep the in_registration_process flag
+      if (isRegistrationProcess) {
+        console.log("This is a registration process, keeping that flag active");
+        sessionStorage.setItem('in_registration_process', 'true');
+      }
+      
       // Clear the stored redirect immediately to prevent future redirects
+      // But keep it in memory for now
+      const storedRedirectPath = redirectPath;
       sessionStorage.removeItem('redirectAfterAuth');
       
       // Add a parameter to indicate that this is a redirect completion
       // This helps the registration page detect the redirect in production environments
-      const separator = redirectPath.includes('?') ? '&' : '?';
-      const redirectPathWithParam = `${redirectPath}${separator}redirect=done`;
+      const separator = storedRedirectPath.includes('?') ? '&' : '?';
+      const redirectPathWithParam = `${storedRedirectPath}${separator}redirect=done`;
       
       // Use window.location for native navigation to ensure a clean slate
       window.location.href = redirectPathWithParam;

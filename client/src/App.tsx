@@ -352,7 +352,38 @@ function Router() {
 
           {/* Home route */}
           <Route path="/">
-            {user.isAdmin ? <AdminDashboard initialView="events" /> : <UserDashboard />}
+            {() => {
+              // If there's an in-progress registration, redirect back to it
+              const inRegistrationProcess = sessionStorage.getItem('in_registration_process') === 'true';
+              const redirectAfterAuth = sessionStorage.getItem('redirectAfterAuth');
+              
+              if (inRegistrationProcess && redirectAfterAuth) {
+                console.log('Detected in-progress registration. Redirecting to:', redirectAfterAuth);
+                
+                // Clean up the session storage variables
+                sessionStorage.removeItem('in_registration_process');
+                sessionStorage.removeItem('redirectAfterAuth');
+                
+                // Using a small timeout to ensure React state updates properly
+                setTimeout(() => {
+                  window.location.href = redirectAfterAuth;
+                }, 100);
+                
+                // Return loading indicator while redirecting
+                return (
+                  <div className="flex items-center justify-center min-h-screen">
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
+                      <p className="text-lg font-medium">Returning to registration process...</p>
+                      <p className="text-sm text-muted-foreground mt-2">One moment please</p>
+                    </div>
+                  </div>
+                );
+              }
+              
+              // Otherwise show the regular dashboard
+              return user.isAdmin ? <AdminDashboard initialView="events" /> : <UserDashboard />;
+            }}
           </Route>
 
           {/* 404 route */}
