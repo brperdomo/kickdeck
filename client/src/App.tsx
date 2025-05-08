@@ -37,6 +37,9 @@ import FormEditorPage from "@/pages/form-editor";
 import CouponManagerPage from "@/pages/coupon-manager";
 import EventClubsPage from "@/pages/event-clubs";
 import RegistrationOrdersReport from "@/pages/registration-orders-report";
+import FinancialOverviewReport from "@/pages/financial-overview-report";
+import EventFinancialReport from "@/pages/event-financial-report";
+import FeesAnalysisReport from "@/pages/fees-analysis-report";
 import Checkout from "@/pages/checkout";
 import PaymentConfirmation from "@/pages/payment-confirmation";
 import SendGridSettingsPage from "@/pages/sendgrid-settings";
@@ -327,6 +330,15 @@ function Router() {
           </Route>
           <Route path="/registration-orders-report">
             {user.isAdmin ? <RegistrationOrdersReport /> : <NotFound />}
+          </Route>
+          <Route path="/financial-overview-report">
+            {user.isAdmin ? <FinancialOverviewReport /> : <NotFound />}
+          </Route>
+          <Route path="/event-financial-report/:eventId">
+            {(params) => user.isAdmin ? <EventFinancialReport eventId={params.eventId} /> : <NotFound />}
+          </Route>
+          <Route path="/fees-analysis-report">
+            {user.isAdmin ? <FeesAnalysisReport /> : <NotFound />}
           </Route>
           <Route path="/checkout">
             <Checkout />

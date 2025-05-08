@@ -1,746 +1,1017 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { AdminLayout } from "@/components/layouts/AdminLayout.tsx";
-import { usePermissions } from "@/hooks/use-permissions";
-import { useLocation, useRoute } from "wouter";
+import { useLocation } from "wouter";
 import { 
-  Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription, 
+  CardFooter 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, PieChart, Pie, Cell, LineChart, 
-  Line, Legend 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  PieChart, 
+  Pie, 
+  Cell,
+  LineChart,
+  Line
 } from "recharts";
 import { 
-  ArrowLeft, RefreshCw, CalendarRange, DollarSign, 
-  Users, ClipboardCheck, BarChart2, AlertCircle, 
-  Download, Info, Lightbulb
+  ArrowLeft, 
+  BarChart2, 
+  CalendarDays,
+  DollarSign, 
+  Download, 
+  FileText, 
+  Loader2,
+  Users,
+  RefreshCw
 } from "lucide-react";
-import { formatDistanceToNow, format } from "date-fns";
+import { toast } from "@/hooks/use-toast";
+import { formatCurrency } from "@/lib/formatters";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { 
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 
-// Format currency values
-const formatCurrency = (amount) => {
-  if (amount === null || amount === undefined) return 'N/A';
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0
-  }).format(amount / 100); // Convert cents to dollars
+// Define color palette that matches our UI
+const CHART_COLORS = [
+  "#4f46e5", // Primary Indigo
+  "#60a5fa", // Light Blue
+  "#34d399", // Green
+  "#f97316", // Orange
+  "#a855f7", // Purple
+  "#ec4899", // Pink
+  "#f43f5e", // Rose
+  "#0891b2", // Cyan
+  "#84cc16", // Lime
+  "#ca8a04", // Yellow
+];
+
+// Define gender color mapping
+const GENDER_COLORS = {
+  "Male": "#60a5fa",
+  "Female": "#ec4899",
+  "Mixed": "#a855f7",
+  "Unknown": "#9ca3af",
 };
 
-// Format date values
-const formatDate = (dateString) => {
-  if (!dateString) return 'N/A';
-  return format(new Date(dateString), 'MMM d, yyyy');
-};
+interface EventFinancialReportProps {
+  eventId: string;
+}
 
-// Color palette for charts
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
-
-export default function EventFinancialReport() {
-  const { hasPermission } = usePermissions();
-  const canViewFinancialReports = hasPermission('view_financial_reports');
-  const [_location, navigate] = useLocation();
-  const [matched, params] = useRoute("/event-financial-report/:eventId");
+export default function EventFinancialReport({ eventId }: EventFinancialReportProps) {
+  const [_, navigate] = useLocation();
   const [includeAI, setIncludeAI] = useState(true);
-  const [activeTab, setActiveTab] = useState('summary');
-  const eventId = params?.eventId;
-
-  // Fetch event financial data
-  const { 
-    data: reportData, 
-    isLoading, 
-    isError, 
-    error,
-    refetch 
-  } = useQuery({
-    queryKey: ['event-financial', eventId, includeAI],
+  
+  // Query event financial data
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ['eventFinancialReport', eventId, includeAI],
     queryFn: async () => {
-      const response = await apiRequest('GET', `/api/reports/events/${eventId}/financial?includeAI=${includeAI}`);
+      const response = await fetch(`/api/reports/events/${eventId}/financial?includeAI=${includeAI}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch event financial report');
+      }
       return response.json();
     },
-    enabled: !!eventId && canViewFinancialReports,
-    refetchOnWindowFocus: false
   });
+  
+  const reportData = data?.data;
+  const aiInsights = data?.aiInsights;
 
-  if (!canViewFinancialReports) {
+  // Handle export function
+  const handleExport = () => {
+    if (!reportData) return;
+    
+    try {
+      // Convert data to CSV format
+      const headers = ["Category", "Value"];
+      
+      const rows = [
+        ["Event Name", reportData.event.name],
+        ["Start Date", new Date(reportData.event.start_date).toLocaleDateString()],
+        ["End Date", new Date(reportData.event.end_date).toLocaleDateString()],
+        ["Application Deadline", reportData.event.application_deadline ? new Date(reportData.event.application_deadline).toLocaleDateString() : "N/A"],
+        ["Event Status", reportData.event.is_archived ? "Archived" : "Active"],
+        ["", ""],
+        ["Financial Summary", ""],
+        ["Total Revenue", formatCurrency(reportData.financials.totalRevenue)],
+        ["Transaction Count", reportData.financials.transactionCount],
+        ["Average Transaction Amount", formatCurrency(reportData.financials.avgTransactionAmount)],
+        ["", ""],
+        ["Refund Data", ""],
+        ["Total Refunds", reportData.refunds.totalRefunds],
+        ["Total Refund Amount", formatCurrency(reportData.refunds.totalRefundAmount)],
+        ["", ""],
+        ["Registrations", ""],
+        ["Total Teams", reportData.registrations.totalTeams],
+        ["Paid Teams", reportData.registrations.paidTeams],
+        ["Pending Teams", reportData.registrations.pendingTeams],
+      ];
+
+      // Add revenue by age group
+      rows.push(["", ""]);
+      rows.push(["Revenue by Age Group", ""]);
+      rows.push(["Age Group", "Gender", "Revenue", "Team Count"]);
+      
+      if (reportData.ageGroupRevenue) {
+        reportData.ageGroupRevenue.forEach((item: any) => {
+          rows.push([
+            item.age_group,
+            item.gender || "Unknown",
+            formatCurrency(item.total_revenue),
+            item.team_count
+          ]);
+        });
+      }
+      
+      // Add daily revenue
+      rows.push(["", ""]);
+      rows.push(["Daily Revenue and Registration Trend", ""]);
+      rows.push(["Date", "Revenue", "Registrations"]);
+      
+      if (reportData.dailyRevenue) {
+        reportData.dailyRevenue.forEach((item: any) => {
+          rows.push([
+            new Date(item.day).toLocaleDateString(),
+            formatCurrency(item.daily_revenue),
+            item.daily_registrations
+          ]);
+        });
+      }
+      
+      // Convert rows to CSV
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row => row.join(","))
+      ].join("\n");
+      
+      // Create download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `event-financial-report-${eventId}-${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Export Successful",
+        description: "Event financial report has been exported to CSV",
+        variant: "default",
+      });
+    } catch (err) {
+      console.error("Export error:", err);
+      toast({
+        title: "Export Failed",
+        description: "There was an error exporting the event financial report",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Formats date for display
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  if (isLoading) {
     return (
-      <AdminLayout>
-        <Card>
-          <CardHeader>
-            <CardTitle>Access Denied</CardTitle>
-            <CardDescription>
-              You do not have permission to view financial reports.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </AdminLayout>
+      <div className="flex flex-col space-y-4 p-6">
+        <div className="flex items-center justify-between">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/registration-orders-report')}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Reports
+          </Button>
+        </div>
+        <div className="flex items-center justify-center min-h-[70vh]">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            <p className="text-muted-foreground text-lg">Loading event financial report...</p>
+          </div>
+        </div>
+      </div>
     );
   }
 
-  if (!eventId) {
+  if (isError) {
     return (
-      <AdminLayout>
-        <Card>
-          <CardHeader>
-            <CardTitle>Invalid Event</CardTitle>
-            <CardDescription>
-              No event ID was provided. Please select an event to view its financial report.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button onClick={() => navigate('/admin-dashboard')}>
-              Go to Dashboard
-            </Button>
-          </CardFooter>
-        </Card>
-      </AdminLayout>
+      <div className="flex flex-col space-y-4 p-6">
+        <div className="flex items-center justify-between">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/registration-orders-report')}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Reports
+          </Button>
+        </div>
+        <Alert variant="destructive" className="my-4">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            {error instanceof Error ? error.message : 'Failed to load event financial report. Please try again.'}
+          </AlertDescription>
+        </Alert>
+        <Button onClick={() => refetch()} className="w-full max-w-xs mx-auto">
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Retry
+        </Button>
+      </div>
     );
   }
-
-  // Handler for AI insights toggle
-  const handleAIToggle = () => {
-    setIncludeAI(!includeAI);
-  };
-
-  // Format data for age group revenue chart
-  const formatAgeGroupData = (data) => {
-    if (!data || !data.ageGroupRevenue) return [];
-    
-    return data.ageGroupRevenue.map(item => ({
-      name: `${item.age_group} ${item.gender}`,
-      revenue: parseInt(item.total_revenue) / 100, // Convert cents to dollars
-      teams: parseInt(item.team_count)
-    }));
-  };
-
-  // Format data for daily revenue chart
-  const formatDailyRevenueData = (data) => {
-    if (!data || !data.dailyRevenue) return [];
-    
-    return data.dailyRevenue.map(item => ({
-      day: formatDate(item.day),
-      revenue: parseInt(item.daily_revenue) / 100, // Convert cents to dollars
-      registrations: parseInt(item.daily_registrations)
-    }));
-  };
-
-  // Calculate registration completion rate
-  const calculateCompletionRate = (data) => {
-    if (!data || !data.registrations) return 0;
-    
-    const { totalTeams, paidTeams } = data.registrations;
-    if (!totalTeams) return 0;
-    
-    return Math.round((paidTeams / totalTeams) * 100);
-  };
 
   return (
-    <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={() => navigate('/admin-dashboard')}
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold">
-                {isLoading ? 'Loading Event...' : 
-                 reportData?.data?.event?.name || 'Event Financial Report'}
-              </h1>
-              <p className="text-muted-foreground">
-                Financial performance and registration metrics
-              </p>
+    <div className="flex flex-col space-y-6 p-6">
+      {/* Header and Controls */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <div>
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/financial-overview-report')}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Reports
+          </Button>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-2xl font-bold">
+              {reportData?.event.name || 'Event'} Financial Report
+            </h1>
+            {reportData?.event.is_archived && (
+              <Badge variant="outline" className="ml-2">Archived</Badge>
+            )}
+          </div>
+          <p className="text-muted-foreground">
+            Detailed financial analysis for this event
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="ai-insights-toggle" className="flex items-center justify-between">
+              AI Insights
+            </Label>
+            <div className="flex items-center space-x-2 h-10 px-3 py-2 border rounded-md">
+              <Switch 
+                id="ai-insights-toggle"
+                checked={includeAI}
+                onCheckedChange={setIncludeAI}
+              />
+              <span className="text-sm">
+                {includeAI ? 'Enabled' : 'Disabled'}
+              </span>
             </div>
           </div>
-          
-          <div className="flex gap-2">
-            <div className="flex items-center space-x-2">
-              <Switch id="ai-toggle" checked={includeAI} onCheckedChange={handleAIToggle} />
-              <Label htmlFor="ai-toggle">AI Insights</Label>
-            </div>
-            
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => refetch()}
-              title="Refresh data"
+          <div className="flex flex-col justify-end">
+            <Button 
+              variant="outline" 
+              onClick={handleExport}
+              className="h-10 mt-6"
             >
-              <RefreshCw className="h-4 w-4" />
+              <Download className="h-4 w-4 mr-2" />
+              Export Report
             </Button>
           </div>
         </div>
+      </div>
 
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      {/* Event Info Card */}
+      <Card className="bg-white">
+        <CardHeader className="pb-2">
+          <CardTitle>Event Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-6">
+            <div className="flex items-start gap-3">
+              <div className="rounded-full w-10 h-10 flex items-center justify-center bg-primary/10 shrink-0">
+                <CalendarDays className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Event Dates</p>
+                <p className="text-sm mt-1">
+                  {formatDate(reportData?.event.start_date)} - {formatDate(reportData?.event.end_date)}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="rounded-full w-10 h-10 flex items-center justify-center bg-primary/10 shrink-0">
+                <FileText className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Application Deadline</p>
+                <p className="text-sm mt-1">
+                  {formatDate(reportData?.event.application_deadline)}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="rounded-full w-10 h-10 flex items-center justify-center bg-primary/10 shrink-0">
+                <Users className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Team Registrations</p>
+                <p className="text-sm mt-1">
+                  {reportData?.registrations.totalTeams || 0} teams 
+                  ({reportData?.registrations.paidTeams || 0} paid, {reportData?.registrations.pendingTeams || 0} pending)
+                </p>
+              </div>
+            </div>
           </div>
-        ) : isError ? (
+        </CardContent>
+      </Card>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-white">
+          <CardContent className="pt-6 flex flex-col">
+            <div className="rounded-full w-12 h-12 flex items-center justify-center bg-primary/10 mb-4">
+              <DollarSign className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-2xl font-bold mb-1">
+              {formatCurrency(reportData?.financials.totalRevenue || 0)}
+            </div>
+            <p className="text-muted-foreground text-sm">Total Revenue</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white">
+          <CardContent className="pt-6 flex flex-col">
+            <div className="rounded-full w-12 h-12 flex items-center justify-center bg-primary/10 mb-4">
+              <FileText className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-2xl font-bold mb-1">
+              {reportData?.financials.transactionCount || 0}
+            </div>
+            <p className="text-muted-foreground text-sm">Total Transactions</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white">
+          <CardContent className="pt-6 flex flex-col">
+            <div className="rounded-full w-12 h-12 flex items-center justify-center bg-primary/10 mb-4">
+              <BarChart2 className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-2xl font-bold mb-1">
+              {formatCurrency(reportData?.financials.avgTransactionAmount || 0)}
+            </div>
+            <p className="text-muted-foreground text-sm">Avg Transaction</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white">
+          <CardContent className="pt-6 flex flex-col">
+            <div className="rounded-full w-12 h-12 flex items-center justify-center bg-primary/10 mb-4">
+              <Users className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-2xl font-bold mb-1">
+              {reportData?.registrations.paidTeams || 0}
+            </div>
+            <p className="text-muted-foreground text-sm">
+              Paid Teams ({reportData?.registrations.totalTeams ? 
+                Math.round((reportData.registrations.paidTeams / reportData.registrations.totalTeams) * 100) + '%' 
+                : '0%'})
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content Tabs */}
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="age-groups">Age Groups</TabsTrigger>
+          <TabsTrigger value="trends">Revenue Trends</TabsTrigger>
+          {includeAI && aiInsights && <TabsTrigger value="ai-insights">AI Insights</TabsTrigger>}
+        </TabsList>
+
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Age Group Revenue Distribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue by Age Group</CardTitle>
+                <CardDescription>Distribution of revenue across age groups</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[350px]">
+                {reportData?.ageGroupRevenue?.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={reportData.ageGroupRevenue.map((item: any) => ({
+                        name: item.age_group,
+                        revenue: item.total_revenue,
+                        teams: item.team_count,
+                        color: GENDER_COLORS[item.gender as keyof typeof GENDER_COLORS] || GENDER_COLORS.Unknown
+                      }))}
+                      margin={{ top: 20, right: 30, left: 30, bottom: 30 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                      <YAxis 
+                        tickFormatter={(value) => `$${(value).toLocaleString()}`}
+                        tick={{ fontSize: 12 }}
+                      />
+                      <Tooltip 
+                        formatter={(value, name) => {
+                          if (name === 'revenue') return [`$${Number(value).toLocaleString()}`, 'Revenue'];
+                          return [value, 'Teams'];
+                        }}
+                      />
+                      <Legend />
+                      <Bar 
+                        dataKey="revenue" 
+                        name="Revenue" 
+                        fill={CHART_COLORS[0]}
+                        barSize={30}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <p className="text-muted-foreground">No age group data available</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Daily Revenue and Registration Trend */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Daily Revenue Trend</CardTitle>
+                <CardDescription>Revenue and registration pattern over time</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[350px]">
+                {reportData?.dailyRevenue?.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                      data={reportData.dailyRevenue.map((item: any) => ({
+                        date: new Date(item.day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                        revenue: item.daily_revenue,
+                        registrations: item.daily_registrations,
+                      }))}
+                      margin={{ top: 20, right: 30, left: 20, bottom: 30 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                      <YAxis 
+                        yAxisId="left"
+                        tickFormatter={(value) => `$${(value).toLocaleString()}`}
+                        tick={{ fontSize: 12 }}
+                      />
+                      <YAxis 
+                        yAxisId="right" 
+                        orientation="right" 
+                        tickFormatter={(value) => value.toLocaleString()}
+                        tick={{ fontSize: 12 }}
+                      />
+                      <Tooltip 
+                        formatter={(value, name) => {
+                          if (name === 'revenue') return [`$${Number(value).toLocaleString()}`, 'Revenue'];
+                          return [value, 'Teams Registered'];
+                        }}
+                      />
+                      <Legend />
+                      <Line 
+                        yAxisId="left"
+                        type="monotone" 
+                        dataKey="revenue" 
+                        stroke={CHART_COLORS[0]} 
+                        name="Revenue"
+                        strokeWidth={2}
+                        dot={{ r: 3 }}
+                        activeDot={{ r: 5 }}
+                      />
+                      <Line 
+                        yAxisId="right"
+                        type="monotone" 
+                        dataKey="registrations" 
+                        stroke={CHART_COLORS[1]} 
+                        name="Teams Registered" 
+                        strokeWidth={2}
+                        dot={{ r: 3 }}
+                        activeDot={{ r: 5 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <p className="text-muted-foreground">No daily revenue data available</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Financial Summary and Refunds */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-destructive">Error Loading Report</CardTitle>
+              <CardTitle>Financial Summary</CardTitle>
+              <CardDescription>Overview of revenue and refund metrics</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-2 text-destructive">
-                <AlertCircle className="h-5 w-5" />
-                <p>{error instanceof Error ? error.message : "Failed to load event financial data"}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-muted-foreground">Revenue Metrics</h3>
+                  <div className="space-y-1">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Total Revenue</span>
+                      <span className="text-sm font-medium">{formatCurrency(reportData?.financials.totalRevenue || 0)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Transaction Count</span>
+                      <span className="text-sm font-medium">{reportData?.financials.transactionCount || 0}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Avg Transaction Value</span>
+                      <span className="text-sm font-medium">{formatCurrency(reportData?.financials.avgTransactionAmount || 0)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Revenue per Team</span>
+                      <span className="text-sm font-medium">
+                        {reportData?.registrations.paidTeams ?
+                          formatCurrency(reportData.financials.totalRevenue / reportData.registrations.paidTeams) :
+                          '$0.00'
+                        }
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-muted-foreground">Refund Data</h3>
+                  <div className="space-y-1">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Total Refunds</span>
+                      <span className="text-sm font-medium">{reportData?.refunds.totalRefunds || 0}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Total Refund Amount</span>
+                      <span className="text-sm font-medium">{formatCurrency(reportData?.refunds.totalRefundAmount || 0)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Refund Rate</span>
+                      <span className="text-sm font-medium">
+                        {reportData?.financials.transactionCount ?
+                          ((reportData.refunds.totalRefunds / reportData.financials.transactionCount) * 100).toFixed(1) + '%' :
+                          '0%'
+                        }
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Net Revenue</span>
+                      <span className="text-sm font-medium">
+                        {formatCurrency((reportData?.financials.totalRevenue || 0) - (reportData?.refunds.totalRefundAmount || 0))}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
-        ) : reportData?.data ? (
-          <div className="space-y-6">
-            {/* Event Details Card */}
+          
+          {/* AI Insights Preview */}
+          {includeAI && aiInsights && (
             <Card>
-              <CardHeader className="pb-2">
-                <CardTitle>Event Details</CardTitle>
+              <CardHeader>
+                <CardTitle>AI-Generated Insights</CardTitle>
                 <CardDescription>
-                  {formatDate(reportData.data.event.startDate)} - {formatDate(reportData.data.event.endDate)}
+                  Key insights and recommendations based on financial analysis
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-muted-foreground">Registration Deadline</span>
-                    <span className="font-medium">{formatDate(reportData.data.event.applicationDeadline)}</span>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Key Insights */}
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-sm">Key Insights</h3>
+                    <ul className="space-y-1">
+                      {aiInsights?.keyInsights ? (
+                        aiInsights.keyInsights.slice(0, 3).map((insight: string, index: number) => (
+                          <li key={index} className="flex text-sm">
+                            <span className="text-primary mr-2">•</span>
+                            <span>{insight}</span>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-muted-foreground">No insights available</li>
+                      )}
+                    </ul>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-muted-foreground">Status</span>
-                    <Badge variant={reportData.data.event.isArchived ? "secondary" : "outline"}>
-                      {reportData.data.event.isArchived ? "Archived" : "Active"}
-                    </Badge>
+                  
+                  {/* Recommendations */}
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-sm">Recommendations</h3>
+                    <ul className="space-y-1">
+                      {aiInsights?.recommendations ? (
+                        aiInsights.recommendations.slice(0, 3).map((recommendation: string, index: number) => (
+                          <li key={index} className="flex text-sm">
+                            <span className="text-primary mr-2">•</span>
+                            <span>{recommendation}</span>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-muted-foreground">No recommendations available</li>
+                      )}
+                    </ul>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-muted-foreground">Total Revenue</span>
-                    <span className="font-medium">{formatCurrency(reportData.data.financials.totalRevenue)}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-muted-foreground">Registration Completion</span>
-                    <span className="font-medium">{calculateCompletionRate(reportData.data)}%</span>
-                  </div>
+                </div>
+                
+                <div className="text-center pt-2">
+                  <Button variant="link" size="sm" onClick={() => document.querySelector('button[value="ai-insights"]')?.click()}>
+                    View all AI insights
+                  </Button>
                 </div>
               </CardContent>
             </Card>
-            
-            {/* Key Metrics Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Total Teams
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">
-                      {reportData.data.registrations.totalTeams}
-                    </div>
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {reportData.data.registrations.paidTeams} paid / {reportData.data.registrations.pendingTeams} pending
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Total Revenue
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">
-                      {formatCurrency(reportData.data.financials.totalRevenue)}
-                    </div>
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Avg. {formatCurrency(reportData.data.financials.avgTransactionAmount)} per team
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Transactions
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">
-                      {reportData.data.financials.transactionCount}
-                    </div>
-                    <BarChart2 className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Payment transactions processed
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Refunds
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">
-                      {reportData.data.refunds.totalRefunds || 0}
-                    </div>
-                    <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {formatCurrency(reportData.data.refunds.totalRefundAmount || 0)} total refunded
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-            
-            {/* Tabs for different views */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-              <TabsList>
-                <TabsTrigger value="summary">Summary</TabsTrigger>
-                <TabsTrigger value="age-groups">Age Groups</TabsTrigger>
-                <TabsTrigger value="timeline">Timeline</TabsTrigger>
-                <TabsTrigger value="insights">AI Insights</TabsTrigger>
-              </TabsList>
-              
-              {/* Summary Tab */}
-              <TabsContent value="summary" className="space-y-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <Card className="col-span-1">
-                    <CardHeader>
-                      <CardTitle>Revenue by Age Group</CardTitle>
-                      <CardDescription>Distribution across age groups</CardDescription>
-                    </CardHeader>
-                    <CardContent className="h-80">
-                      {formatAgeGroupData(reportData.data).length > 0 ? (
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart
-                            data={formatAgeGroupData(reportData.data)}
-                            margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
-                          >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis 
-                              dataKey="name" 
-                              angle={-45} 
-                              textAnchor="end" 
-                              height={70}
-                            />
-                            <YAxis
-                              tickFormatter={(value) => `$${value.toLocaleString()}`}
-                            />
-                            <Tooltip
-                              formatter={(value, name) => {
-                                if (name === 'revenue') return [`$${value.toLocaleString()}`, 'Revenue'];
-                                if (name === 'teams') return [value, 'Teams'];
-                                return [value, name];
-                              }}
-                            />
-                            <Bar 
-                              dataKey="revenue" 
-                              fill="#0088FE" 
-                              name="revenue"
-                            />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      ) : (
-                        <div className="flex justify-center items-center h-full">
-                          <p className="text-muted-foreground">No age group revenue data available</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="col-span-1">
-                    <CardHeader>
-                      <CardTitle>Registration Timeline</CardTitle>
-                      <CardDescription>Daily registration and revenue</CardDescription>
-                    </CardHeader>
-                    <CardContent className="h-80">
-                      {formatDailyRevenueData(reportData.data).length > 0 ? (
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart
-                            data={formatDailyRevenueData(reportData.data)}
-                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                          >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis 
-                              dataKey="day" 
-                              angle={-45} 
-                              textAnchor="end" 
-                              height={70}
-                            />
-                            <YAxis
-                              yAxisId="left"
-                              tickFormatter={(value) => `$${value.toLocaleString()}`}
-                            />
-                            <YAxis
-                              yAxisId="right"
-                              orientation="right"
-                              tickFormatter={(value) => `${value} reg.`}
-                            />
-                            <Tooltip
-                              formatter={(value, name) => {
-                                if (name === 'revenue') return [`$${value.toLocaleString()}`, 'Revenue'];
-                                if (name === 'registrations') return [value, 'Registrations'];
-                                return [value, name];
-                              }}
-                            />
-                            <Line
-                              yAxisId="left"
-                              type="monotone"
-                              dataKey="revenue"
-                              stroke="#0088FE"
-                              activeDot={{ r: 8 }}
-                              name="revenue"
-                            />
-                            <Line
-                              yAxisId="right"
-                              type="monotone"
-                              dataKey="registrations"
-                              stroke="#82ca9d"
-                              name="registrations"
-                            />
-                          </LineChart>
-                        </ResponsiveContainer>
-                      ) : (
-                        <div className="flex justify-center items-center h-full">
-                          <p className="text-muted-foreground">No daily revenue data available</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
-              
-              {/* Age Groups Tab */}
-              <TabsContent value="age-groups" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Age Group Revenue Analysis</CardTitle>
-                    <CardDescription>Detailed breakdown by age group</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {formatAgeGroupData(reportData.data).length > 0 ? (
-                      <div className="space-y-6">
-                        <div className="h-96">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                              data={formatAgeGroupData(reportData.data)}
-                              margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
-                            >
-                              <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis 
-                                dataKey="name" 
-                                angle={-45} 
-                                textAnchor="end" 
-                                height={70}
-                              />
-                              <YAxis
-                                yAxisId="left"
-                                tickFormatter={(value) => `$${value.toLocaleString()}`}
-                              />
-                              <YAxis
-                                yAxisId="right"
-                                orientation="right"
-                                tickFormatter={(value) => `${value} teams`}
-                              />
-                              <Tooltip
-                                formatter={(value, name) => {
-                                  if (name === 'revenue') return [`$${value.toLocaleString()}`, 'Revenue'];
-                                  if (name === 'teams') return [value, 'Teams'];
-                                  return [value, name];
-                                }}
-                              />
-                              <Legend />
-                              <Bar 
-                                yAxisId="left" 
-                                dataKey="revenue" 
-                                fill="#0088FE" 
-                                name="Revenue"
-                              />
-                              <Bar 
-                                yAxisId="right" 
-                                dataKey="teams" 
-                                fill="#82ca9d" 
-                                name="Teams"
-                              />
-                            </BarChart>
-                          </ResponsiveContainer>
-                        </div>
-                        
-                        <div className="overflow-x-auto">
-                          <table className="w-full border-collapse">
-                            <thead>
-                              <tr className="border-b">
-                                <th className="text-left py-2 px-4">Age Group</th>
-                                <th className="text-right py-2 px-4">Teams</th>
-                                <th className="text-right py-2 px-4">Revenue</th>
-                                <th className="text-right py-2 px-4">Avg. Per Team</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {formatAgeGroupData(reportData.data).map((item, index) => (
-                                <tr key={index} className="border-b hover:bg-muted">
-                                  <td className="py-2 px-4">{item.name}</td>
-                                  <td className="text-right py-2 px-4">{item.teams}</td>
-                                  <td className="text-right py-2 px-4">{formatCurrency(item.revenue * 100)}</td>
-                                  <td className="text-right py-2 px-4">
-                                    {item.teams > 0 ? formatCurrency((item.revenue * 100) / item.teams) : 'N/A'}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex justify-center items-center py-8">
-                        <p className="text-muted-foreground">No age group data available</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              {/* Timeline Tab */}
-              <TabsContent value="timeline" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Registration Timeline</CardTitle>
-                    <CardDescription>Daily registration activity over time</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {formatDailyRevenueData(reportData.data).length > 0 ? (
-                      <div className="space-y-6">
-                        <div className="h-96">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <LineChart
-                              data={formatDailyRevenueData(reportData.data)}
-                              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                            >
-                              <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis dataKey="day" />
-                              <YAxis
-                                yAxisId="left"
-                                tickFormatter={(value) => `$${value.toLocaleString()}`}
-                              />
-                              <YAxis
-                                yAxisId="right"
-                                orientation="right"
-                                tickFormatter={(value) => `${value} reg.`}
-                              />
-                              <Tooltip
-                                formatter={(value, name) => {
-                                  if (name === 'revenue') return [`$${value.toLocaleString()}`, 'Revenue'];
-                                  if (name === 'registrations') return [value, 'Registrations'];
-                                  return [value, name];
-                                }}
-                              />
-                              <Legend />
-                              <Line
-                                yAxisId="left"
-                                type="monotone"
-                                dataKey="revenue"
-                                stroke="#0088FE"
-                                activeDot={{ r: 8 }}
-                                name="Revenue"
-                              />
-                              <Line
-                                yAxisId="right"
-                                type="monotone"
-                                dataKey="registrations"
-                                stroke="#82ca9d"
-                                name="Registrations"
-                              />
-                            </LineChart>
-                          </ResponsiveContainer>
-                        </div>
-                        
-                        <div className="overflow-x-auto">
-                          <table className="w-full border-collapse">
-                            <thead>
-                              <tr className="border-b">
-                                <th className="text-left py-2 px-4">Date</th>
-                                <th className="text-right py-2 px-4">Registrations</th>
-                                <th className="text-right py-2 px-4">Revenue</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {formatDailyRevenueData(reportData.data).map((item, index) => (
-                                <tr key={index} className="border-b hover:bg-muted">
-                                  <td className="py-2 px-4">{item.day}</td>
-                                  <td className="text-right py-2 px-4">{item.registrations}</td>
-                                  <td className="text-right py-2 px-4">{formatCurrency(item.revenue * 100)}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex justify-center items-center py-8">
-                        <p className="text-muted-foreground">No timeline data available</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              {/* AI Insights Tab */}
-              <TabsContent value="insights" className="space-y-4">
-                {reportData.aiInsights ? (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <Card className="col-span-1 lg:col-span-2">
-                      <CardHeader>
-                        <CardTitle>AI Analysis Summary</CardTitle>
-                        <CardDescription>Financial insights powered by AI</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          {reportData.aiInsights.keyInsights && (
-                            <div>
-                              <h3 className="text-lg font-semibold mb-2">Key Insights</h3>
-                              <ul className="list-disc pl-5 space-y-1">
-                                {reportData.aiInsights.keyInsights.map((insight, index) => (
-                                  <li key={index}>{insight}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                          
-                          <Separator />
-                          
-                          {reportData.aiInsights.recommendations && (
-                            <div>
-                              <h3 className="text-lg font-semibold mb-2">Recommendations</h3>
-                              <ul className="list-disc pl-5 space-y-1">
-                                {reportData.aiInsights.recommendations.map((recommendation, index) => (
-                                  <li key={index}>{recommendation}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    {reportData.aiInsights.visualizationCaptions && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Chart Analysis</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            {reportData.aiInsights.visualizationCaptions.ageGroupRevenue && (
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                  <BarChart2 className="h-5 w-5 text-primary" />
-                                  <h3 className="font-medium">Age Group Revenue Analysis</h3>
-                                </div>
-                                <p className="text-sm text-muted-foreground">
-                                  {reportData.aiInsights.visualizationCaptions.ageGroupRevenue}
-                                </p>
-                              </div>
-                            )}
-                            
-                            {reportData.aiInsights.visualizationCaptions.dailyRevenue && (
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                  <Lightbulb className="h-5 w-5 text-primary" />
-                                  <h3 className="font-medium">Registration Timeline Analysis</h3>
-                                </div>
-                                <p className="text-sm text-muted-foreground">
-                                  {reportData.aiInsights.visualizationCaptions.dailyRevenue}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-                    
-                    {reportData.aiInsights.growthOpportunities && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Growth Opportunities</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="list-disc pl-5 space-y-1">
-                            {reportData.aiInsights.growthOpportunities.map((opportunity, index) => (
-                              <li key={index}>{opportunity}</li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-                ) : (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>AI Insights</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-col items-center justify-center text-center p-6">
-                        <AlertCircle className="h-10 w-10 text-muted-foreground mb-4" />
-                        <h3 className="text-lg font-semibold">No AI insights available</h3>
-                        <p className="text-muted-foreground mt-2">
-                          {includeAI ? 
-                            "We couldn't generate AI insights for this event. This could be due to insufficient data." : 
-                            "Enable AI insights to view AI-powered analysis of this event's financial data."}
-                        </p>
-                        {!includeAI && (
-                          <Button 
-                            variant="outline" 
-                            className="mt-4"
-                            onClick={handleAIToggle}
-                          >
-                            Enable AI Insights
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </TabsContent>
-            </Tabs>
-            
-            <div className="flex justify-end">
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/registration-orders-report')}
-              >
-                View All Registration Orders
-              </Button>
-            </div>
-          </div>
-        ) : (
+          )}
+        </TabsContent>
+
+        {/* Age Groups Tab */}
+        <TabsContent value="age-groups" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>No Data Available</CardTitle>
+              <CardTitle>Age Group Financial Analysis</CardTitle>
+              <CardDescription>Detailed breakdown of revenue by age group and gender</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>No financial data is available for this event.</p>
+              {reportData?.ageGroupRevenue?.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Age Group</TableHead>
+                        <TableHead>Gender</TableHead>
+                        <TableHead className="text-right">Teams</TableHead>
+                        <TableHead className="text-right">Total Revenue</TableHead>
+                        <TableHead className="text-right">Avg Revenue per Team</TableHead>
+                        <TableHead className="text-right">% of Total Revenue</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {reportData.ageGroupRevenue.map((group: any, index: number) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{group.age_group}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center">
+                              <div 
+                                className="h-3 w-3 rounded-full mr-2" 
+                                style={{ 
+                                  backgroundColor: GENDER_COLORS[group.gender as keyof typeof GENDER_COLORS] || GENDER_COLORS.Unknown 
+                                }}
+                              />
+                              {group.gender || "Unknown"}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">{group.team_count}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(group.total_revenue)}</TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrency(group.team_count ? group.total_revenue / group.team_count : 0)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {reportData.financials.totalRevenue ? 
+                              ((group.total_revenue / reportData.financials.totalRevenue) * 100).toFixed(1) + '%' : 
+                              '0%'
+                            }
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <p className="text-muted-foreground">No age group data available</p>
+                </div>
+              )}
             </CardContent>
           </Card>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Age Group Revenue Distribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue by Age Group</CardTitle>
+                <CardDescription>Visual distribution of revenue</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[400px]">
+                {reportData?.ageGroupRevenue?.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={reportData.ageGroupRevenue.map((item: any) => ({
+                          name: item.age_group,
+                          value: Number(item.total_revenue),
+                          gender: item.gender
+                        }))}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={130}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                      >
+                        {reportData.ageGroupRevenue.map((entry: any, index: number) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={GENDER_COLORS[entry.gender as keyof typeof GENDER_COLORS] || CHART_COLORS[index % CHART_COLORS.length]} 
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Revenue']} />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <p className="text-muted-foreground">No age group data available</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Age Group Team Count */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Team Count by Age Group</CardTitle>
+                <CardDescription>Distribution of teams registered</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[400px]">
+                {reportData?.ageGroupRevenue?.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={reportData.ageGroupRevenue.map((item: any) => ({
+                        name: item.age_group,
+                        teams: item.team_count,
+                        gender: item.gender
+                      }))}
+                      margin={{ top: 20, right: 30, left: 30, bottom: 50 }}
+                      layout="vertical"
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis type="number" />
+                      <YAxis 
+                        type="category" 
+                        dataKey="name" 
+                        tick={{ fontSize: 12 }}
+                        width={120}
+                      />
+                      <Tooltip formatter={(value) => [value, 'Teams']} />
+                      <Legend />
+                      <Bar 
+                        dataKey="teams" 
+                        name="Teams" 
+                        fill={CHART_COLORS[1]} 
+                        barSize={20}
+                        radius={[0, 4, 4, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <p className="text-muted-foreground">No team count data available</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Revenue Trends Tab */}
+        <TabsContent value="trends" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Daily Revenue and Registration Trend</CardTitle>
+              <CardDescription>Transaction and registration pattern over time</CardDescription>
+            </CardHeader>
+            <CardContent className="h-[450px]">
+              {reportData?.dailyRevenue?.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={reportData.dailyRevenue.map((item: any) => ({
+                      date: new Date(item.day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                      revenue: item.daily_revenue,
+                      registrations: item.daily_registrations,
+                      fullDate: new Date(item.day).toLocaleDateString()
+                    }))}
+                    margin={{ top: 20, right: 30, left: 30, bottom: 30 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                    <YAxis 
+                      yAxisId="left"
+                      tickFormatter={(value) => `$${(value).toLocaleString()}`}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <YAxis 
+                      yAxisId="right" 
+                      orientation="right" 
+                      tickFormatter={(value) => value.toLocaleString()}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <Tooltip 
+                      formatter={(value, name, props) => {
+                        if (name === 'revenue') return [`$${Number(value).toLocaleString()}`, 'Revenue'];
+                        return [value, 'Teams Registered'];
+                      }}
+                      labelFormatter={(label, payload) => {
+                        if (payload && payload.length > 0) {
+                          return payload[0].payload.fullDate;
+                        }
+                        return label;
+                      }}
+                    />
+                    <Legend />
+                    <Line 
+                      yAxisId="left"
+                      type="monotone" 
+                      dataKey="revenue" 
+                      stroke={CHART_COLORS[0]} 
+                      name="Revenue"
+                      strokeWidth={2}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 5 }}
+                    />
+                    <Line 
+                      yAxisId="right"
+                      type="monotone" 
+                      dataKey="registrations" 
+                      stroke={CHART_COLORS[1]} 
+                      name="Teams Registered" 
+                      strokeWidth={2}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 5 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center">
+                  <p className="text-muted-foreground">No daily revenue data available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Registration Timeline</CardTitle>
+              <CardDescription>Detailed breakdown of revenue and registrations by day</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {reportData?.dailyRevenue?.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead className="text-right">Teams Registered</TableHead>
+                        <TableHead className="text-right">Revenue</TableHead>
+                        <TableHead className="text-right">Avg Revenue per Team</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {reportData.dailyRevenue.map((day: any, index: number) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">
+                            {new Date(day.day).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell className="text-right">{day.daily_registrations}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(day.daily_revenue)}</TableCell>
+                          <TableCell className="text-right">
+                            {formatCurrency(day.daily_registrations ? day.daily_revenue / day.daily_registrations : 0)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <p className="text-muted-foreground">No daily revenue data available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* AI Insights Tab */}
+        {includeAI && aiInsights && (
+          <TabsContent value="ai-insights" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>AI-Generated Event Analysis</CardTitle>
+                <CardDescription>
+                  Automated financial analysis powered by OpenAI
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Key Insights */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Key Insights</h3>
+                  <ul className="space-y-2">
+                    {aiInsights.keyInsights?.length > 0 ? (
+                      aiInsights.keyInsights.map((insight: string, index: number) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-primary mr-2 mt-1">•</span>
+                          <span>{insight}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-muted-foreground">No insights available</li>
+                    )}
+                  </ul>
+                </div>
+                
+                {/* Recommendations */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Recommendations</h3>
+                  <ul className="space-y-2">
+                    {aiInsights.recommendations?.length > 0 ? (
+                      aiInsights.recommendations.map((recommendation: string, index: number) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-primary mr-2 mt-1">•</span>
+                          <span>{recommendation}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-muted-foreground">No recommendations available</li>
+                    )}
+                  </ul>
+                </div>
+
+                {/* Visualization Captions */}
+                {aiInsights.visualizationCaptions && Object.keys(aiInsights.visualizationCaptions).length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Chart Interpretations</h3>
+                    <div className="space-y-3">
+                      {Object.entries(aiInsights.visualizationCaptions).map(([chartName, caption]: [string, any], index: number) => (
+                        <div key={index} className="bg-muted/30 p-3 rounded-md">
+                          <h4 className="font-medium mb-1">{chartName}</h4>
+                          <p className="text-sm">{caption}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Growth Opportunities */}
+                {aiInsights.growthOpportunities?.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Growth Opportunities</h3>
+                    <ul className="space-y-2">
+                      {aiInsights.growthOpportunities.map((opportunity: string, index: number) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-primary mr-2 mt-1">•</span>
+                          <span>{opportunity}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </CardContent>
+              <CardFooter className="border-t pt-6">
+                <p className="text-xs text-muted-foreground">
+                  This analysis is generated using AI and should be considered advisory. Always verify important insights with additional data.
+                </p>
+              </CardFooter>
+            </Card>
+          </TabsContent>
         )}
-      </div>
-    </AdminLayout>
+      </Tabs>
+    </div>
   );
 }

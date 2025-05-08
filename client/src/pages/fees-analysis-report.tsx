@@ -1,647 +1,886 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { AdminLayout } from "@/components/layouts/AdminLayout.tsx";
-import { usePermissions } from "@/hooks/use-permissions";
+import { useLocation } from "wouter";
 import { 
-  Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription, 
+  CardFooter 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  PieChart, 
+  Pie, 
+  Cell
+} from "recharts";
+import { 
+  ArrowLeft, 
+  BarChart2, 
+  DollarSign, 
+  Download, 
+  FileText, 
+  Loader2, 
+  RefreshCw, 
+  Tag,
+  ToggleLeft
+} from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { formatCurrency } from "@/lib/formatters";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, PieChart, Pie, Cell, Legend 
-} from "recharts";
-import { 
-  ArrowLeft, RefreshCw, BarChart2, AlertCircle, PieChart as PieChartIcon,
-  DollarSign, PackageCheck, GaugeCircle
-} from "lucide-react";
-import { useLocation } from "wouter";
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
+} from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 
-// Format currency values
-const formatCurrency = (amount) => {
-  if (amount === null || amount === undefined) return 'N/A';
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0
-  }).format(amount / 100); // Convert cents to dollars
-};
-
-// Color palette for charts
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+// Define color palette that matches our UI
+const CHART_COLORS = [
+  "#4f46e5", // Primary Indigo
+  "#60a5fa", // Light Blue
+  "#34d399", // Green
+  "#f97316", // Orange
+  "#a855f7", // Purple
+  "#ec4899", // Pink
+  "#f43f5e", // Rose
+  "#0891b2", // Cyan
+  "#84cc16", // Lime
+  "#ca8a04", // Yellow
+];
 
 export default function FeesAnalysisReport() {
-  const { hasPermission } = usePermissions();
-  const canViewFinancialReports = hasPermission('view_financial_reports');
-  const [_location, navigate] = useLocation();
+  const [_, navigate] = useLocation();
   const [includeAI, setIncludeAI] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
-
-  // Fetch fees analysis data
-  const { 
-    data: reportData, 
-    isLoading, 
-    isError, 
-    error,
-    refetch 
-  } = useQuery({
-    queryKey: ['fees-analysis', includeAI],
+  
+  // Query fees analysis data
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ['feesAnalysisReport', includeAI],
     queryFn: async () => {
-      const response = await apiRequest('GET', `/api/reports/fees-analysis?includeAI=${includeAI}`);
+      const response = await fetch(`/api/reports/fees-analysis?includeAI=${includeAI}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch fees analysis report');
+      }
       return response.json();
     },
-    enabled: canViewFinancialReports,
-    refetchOnWindowFocus: false
   });
+  
+  const reportData = data?.data;
+  const aiInsights = data?.aiInsights;
 
-  if (!canViewFinancialReports) {
+  // Handle export function
+  const handleExport = () => {
+    if (!reportData) return;
+    
+    try {
+      // Convert data to CSV format
+      const headers = ["Category", "Value"];
+      
+      const rows = [
+        ["Fee Statistics", ""],
+        ["Total Fees", reportData.feeStatistics.totalFees],
+        ["Total Events with Fees", reportData.feeStatistics.totalEvents],
+        ["Average Fee Amount", formatCurrency(reportData.feeStatistics.avgFeeAmount)],
+        ["", ""],
+      ];
+
+      // Add fee type distribution
+      rows.push(["Fee Type Distribution", ""]);
+      rows.push(["Fee Type", "Count", "Average Amount"]);
+      
+      if (reportData.feeTypeDistribution) {
+        reportData.feeTypeDistribution.forEach((item: any) => {
+          rows.push([
+            item.feeType || "Unknown",
+            item.count,
+            formatCurrency(item.avgAmount)
+          ]);
+        });
+      }
+      
+      // Add required vs optional fees
+      rows.push(["", ""]);
+      rows.push(["Required vs Optional Fees", ""]);
+      rows.push(["Is Required", "Fee Count", "Average Amount", "Total Potential Value"]);
+      
+      if (reportData.requiredVsOptional) {
+        reportData.requiredVsOptional.forEach((item: any) => {
+          rows.push([
+            item.is_required ? "Required" : "Optional",
+            item.fee_count,
+            formatCurrency(item.avg_amount),
+            formatCurrency(item.total_potential_value)
+          ]);
+        });
+      }
+      
+      // Add top performing fees
+      rows.push(["", ""]);
+      rows.push(["Top Performing Fees", ""]);
+      rows.push(["Fee Name", "Fee Type", "Event Name", "Amount", "Transactions", "Total Revenue"]);
+      
+      if (reportData.topPerformingFees) {
+        reportData.topPerformingFees.forEach((item: any) => {
+          rows.push([
+            item.name,
+            item.fee_type,
+            item.event_name,
+            formatCurrency(item.amount),
+            item.transactions,
+            formatCurrency(item.total_revenue)
+          ]);
+        });
+      }
+      
+      // Convert rows to CSV
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row => row.join(","))
+      ].join("\n");
+      
+      // Create download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `fees-analysis-report-${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Export Successful",
+        description: "Fees analysis report has been exported to CSV",
+        variant: "default",
+      });
+    } catch (err) {
+      console.error("Export error:", err);
+      toast({
+        title: "Export Failed",
+        description: "There was an error exporting the fees analysis report",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (isLoading) {
     return (
-      <AdminLayout>
-        <Card>
-          <CardHeader>
-            <CardTitle>Access Denied</CardTitle>
-            <CardDescription>
-              You do not have permission to view financial reports.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </AdminLayout>
+      <div className="flex flex-col space-y-4 p-6">
+        <div className="flex items-center justify-between">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/financial-overview-report')}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Reports
+          </Button>
+        </div>
+        <div className="flex items-center justify-center min-h-[70vh]">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            <p className="text-muted-foreground text-lg">Loading fees analysis report...</p>
+          </div>
+        </div>
+      </div>
     );
   }
 
-  // Handler for AI insights toggle
-  const handleAIToggle = () => {
-    setIncludeAI(!includeAI);
-  };
-
-  // Format data for fee type distribution chart
-  const formatFeeTypeData = (data) => {
-    if (!data || !data.feeTypeDistribution) return [];
-    
-    return data.feeTypeDistribution.map(item => ({
-      name: item.feeType || 'Unknown',
-      count: item.count,
-      avgAmount: item.avgAmount / 100 // Convert cents to dollars
-    }));
-  };
-
-  // Format data for top performing fees chart
-  const formatTopFeesData = (data) => {
-    if (!data || !data.topPerformingFees) return [];
-    
-    return data.topPerformingFees.slice(0, 5).map(item => ({
-      name: `${item.name}`,
-      revenue: parseInt(item.total_revenue) / 100, // Convert cents to dollars
-      transactions: parseInt(item.transactions),
-      feeAmount: parseInt(item.amount) / 100, // Convert cents to dollars
-      eventName: item.event_name,
-      feeType: item.fee_type
-    }));
-  };
-
-  // Format data for required vs optional fees chart
-  const formatRequiredVsOptionalData = (data) => {
-    if (!data || !data.requiredVsOptional) return [];
-    
-    return data.requiredVsOptional.map(item => ({
-      name: item.is_required ? 'Required' : 'Optional',
-      count: parseInt(item.fee_count),
-      avgAmount: parseInt(item.avg_amount) / 100, // Convert cents to dollars
-      totalPotential: parseInt(item.total_potential_value) / 100 // Convert cents to dollars
-    }));
-  };
-
-  // Calculate total revenue from top performing fees
-  const calculateTotalRevenue = (data) => {
-    if (!data || !data.topPerformingFees) return 0;
-    
-    return data.topPerformingFees.reduce((sum, item) => {
-      return sum + (parseInt(item.total_revenue) / 100);
-    }, 0);
-  };
+  if (isError) {
+    return (
+      <div className="flex flex-col space-y-4 p-6">
+        <div className="flex items-center justify-between">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/financial-overview-report')}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Reports
+          </Button>
+        </div>
+        <Alert variant="destructive" className="my-4">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            {error instanceof Error ? error.message : 'Failed to load fees analysis report. Please try again.'}
+          </AlertDescription>
+        </Alert>
+        <Button onClick={() => refetch()} className="w-full max-w-xs mx-auto">
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Retry
+        </Button>
+      </div>
+    );
+  }
 
   return (
-    <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={() => navigate('/admin-dashboard')}
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold">Fees Analysis Report</h1>
-              <p className="text-muted-foreground">
-                Analyze fee structure effectiveness and performance
-              </p>
+    <div className="flex flex-col space-y-6 p-6">
+      {/* Header and Controls */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <div>
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/financial-overview-report')}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Reports
+          </Button>
+          <h1 className="text-2xl font-bold mb-1">Fees Analysis Report</h1>
+          <p className="text-muted-foreground">
+            Comprehensive analysis of fee structures and performance
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="ai-insights-toggle" className="flex items-center justify-between">
+              AI Insights
+            </Label>
+            <div className="flex items-center space-x-2 h-10 px-3 py-2 border rounded-md">
+              <Switch 
+                id="ai-insights-toggle"
+                checked={includeAI}
+                onCheckedChange={setIncludeAI}
+              />
+              <span className="text-sm">
+                {includeAI ? 'Enabled' : 'Disabled'}
+              </span>
             </div>
           </div>
-          
-          <div className="flex gap-2">
-            <div className="flex items-center space-x-2">
-              <Switch id="ai-toggle" checked={includeAI} onCheckedChange={handleAIToggle} />
-              <Label htmlFor="ai-toggle">AI Insights</Label>
-            </div>
-            
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => refetch()}
-              title="Refresh data"
+          <div className="flex flex-col justify-end">
+            <Button 
+              variant="outline" 
+              onClick={handleExport}
+              className="h-10 mt-6"
             >
-              <RefreshCw className="h-4 w-4" />
+              <Download className="h-4 w-4 mr-2" />
+              Export Report
             </Button>
           </div>
         </div>
-
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        ) : isError ? (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-destructive">Error Loading Report</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2 text-destructive">
-                <AlertCircle className="h-5 w-5" />
-                <p>{error instanceof Error ? error.message : "Failed to load fees analysis data"}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ) : reportData?.data ? (
-          <div className="space-y-6">
-            {/* Key Metrics Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Total Fees Created
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">
-                      {reportData.data.feeStatistics.totalFees}
-                    </div>
-                    <PackageCheck className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Across {reportData.data.feeStatistics.totalEvents} events
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Average Fee Amount
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">
-                      {formatCurrency(reportData.data.feeStatistics.avgFeeAmount)}
-                    </div>
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Per fee across all events
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Fee Types
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">
-                      {reportData.data.feeTypeDistribution.length}
-                    </div>
-                    <BarChart2 className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Different fee types in use
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Top Fee Revenue
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">
-                      {formatCurrency(calculateTotalRevenue(reportData.data) * 100)}
-                    </div>
-                    <GaugeCircle className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Generated by top fees
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-            
-            {/* Tabs for different views */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-              <TabsList>
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="fee-types">Fee Types</TabsTrigger>
-                <TabsTrigger value="top-fees">Top Performing</TabsTrigger>
-                <TabsTrigger value="insights">AI Insights</TabsTrigger>
-              </TabsList>
-              
-              {/* Overview Tab */}
-              <TabsContent value="overview" className="space-y-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <Card className="col-span-1">
-                    <CardHeader>
-                      <CardTitle>Fee Type Distribution</CardTitle>
-                      <CardDescription>By number of fees configured</CardDescription>
-                    </CardHeader>
-                    <CardContent className="h-80">
-                      {formatFeeTypeData(reportData.data).length > 0 ? (
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie
-                              data={formatFeeTypeData(reportData.data)}
-                              cx="50%"
-                              cy="50%"
-                              labelLine={false}
-                              outerRadius={80}
-                              fill="#8884d8"
-                              dataKey="count"
-                              nameKey="name"
-                              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                            >
-                              {formatFeeTypeData(reportData.data).map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                              ))}
-                            </Pie>
-                            <Tooltip 
-                              formatter={(value, name, props) => {
-                                if (name === 'count') return [value, 'Number of Fees'];
-                                return [value, name];
-                              }}
-                            />
-                            <Legend />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      ) : (
-                        <div className="flex justify-center items-center h-full">
-                          <p className="text-muted-foreground">No fee type data available</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="col-span-1">
-                    <CardHeader>
-                      <CardTitle>Required vs Optional Fees</CardTitle>
-                      <CardDescription>Comparison of fee types</CardDescription>
-                    </CardHeader>
-                    <CardContent className="h-80">
-                      {formatRequiredVsOptionalData(reportData.data).length > 0 ? (
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart
-                            data={formatRequiredVsOptionalData(reportData.data)}
-                            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                          >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis
-                              yAxisId="left"
-                              tickFormatter={(value) => `$${value.toLocaleString()}`}
-                            />
-                            <YAxis
-                              yAxisId="right"
-                              orientation="right"
-                              tickFormatter={(value) => `${value} fees`}
-                            />
-                            <Tooltip
-                              formatter={(value, name) => {
-                                if (name === 'avgAmount') return [`$${value.toLocaleString()}`, 'Average Amount'];
-                                if (name === 'count') return [value, 'Number of Fees'];
-                                if (name === 'totalPotential') return [`$${value.toLocaleString()}`, 'Total Potential Value'];
-                                return [value, name];
-                              }}
-                            />
-                            <Legend />
-                            <Bar
-                              yAxisId="left" 
-                              dataKey="avgAmount" 
-                              fill="#0088FE" 
-                              name="avgAmount"
-                            />
-                            <Bar
-                              yAxisId="right" 
-                              dataKey="count" 
-                              fill="#82ca9d" 
-                              name="count"
-                            />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      ) : (
-                        <div className="flex justify-center items-center h-full">
-                          <p className="text-muted-foreground">No required vs optional data available</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
-              
-              {/* Fee Types Tab */}
-              <TabsContent value="fee-types" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Fee Type Analysis</CardTitle>
-                    <CardDescription>Detailed breakdown by fee type</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {formatFeeTypeData(reportData.data).length > 0 ? (
-                      <div className="space-y-6">
-                        <div className="h-96">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                              data={formatFeeTypeData(reportData.data)}
-                              margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
-                              layout="vertical"
-                            >
-                              <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis 
-                                type="number"
-                                tickFormatter={(value) => `$${value.toLocaleString()}`}
-                              />
-                              <YAxis 
-                                dataKey="name" 
-                                type="category"
-                                width={150}
-                              />
-                              <Tooltip
-                                formatter={(value, name) => {
-                                  if (name === 'avgAmount') return [`$${value.toLocaleString()}`, 'Average Amount'];
-                                  if (name === 'count') return [value, 'Number of Fees'];
-                                  return [value, name];
-                                }}
-                              />
-                              <Legend />
-                              <Bar 
-                                dataKey="avgAmount" 
-                                fill="#0088FE" 
-                                name="avgAmount"
-                              />
-                            </BarChart>
-                          </ResponsiveContainer>
-                        </div>
-                        
-                        <div className="overflow-x-auto">
-                          <table className="w-full border-collapse">
-                            <thead>
-                              <tr className="border-b">
-                                <th className="text-left py-2 px-4">Fee Type</th>
-                                <th className="text-right py-2 px-4">Count</th>
-                                <th className="text-right py-2 px-4">Average Amount</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {formatFeeTypeData(reportData.data).map((item, index) => (
-                                <tr key={index} className="border-b hover:bg-muted">
-                                  <td className="py-2 px-4">{item.name}</td>
-                                  <td className="text-right py-2 px-4">{item.count}</td>
-                                  <td className="text-right py-2 px-4">{formatCurrency(item.avgAmount * 100)}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex justify-center items-center py-8">
-                        <p className="text-muted-foreground">No fee type data available</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              {/* Top Performing Fees Tab */}
-              <TabsContent value="top-fees" className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Top Performing Fees</CardTitle>
-                    <CardDescription>Fees generating the most revenue</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {formatTopFeesData(reportData.data).length > 0 ? (
-                      <div className="space-y-6">
-                        <div className="h-96">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <BarChart
-                              data={formatTopFeesData(reportData.data)}
-                              margin={{ top: a
-                                llo=20, right: 30, left: 20, bottom: 70 }}
-                              layout="vertical"
-                            >
-                              <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis 
-                                type="number"
-                                tickFormatter={(value) => `$${value.toLocaleString()}`}
-                              />
-                              <YAxis 
-                                dataKey="name" 
-                                type="category"
-                                width={150}
-                              />
-                              <Tooltip
-                                formatter={(value, name) => {
-                                  if (name === 'revenue') return [`$${value.toLocaleString()}`, 'Revenue'];
-                                  if (name === 'transactions') return [value, 'Transactions'];
-                                  return [value, name];
-                                }}
-                              />
-                              <Legend />
-                              <Bar 
-                                dataKey="revenue" 
-                                fill="#0088FE" 
-                                name="revenue"
-                              />
-                            </BarChart>
-                          </ResponsiveContainer>
-                        </div>
-                        
-                        <div className="overflow-x-auto">
-                          <table className="w-full border-collapse">
-                            <thead>
-                              <tr className="border-b">
-                                <th className="text-left py-2 px-4">Fee Name</th>
-                                <th className="text-left py-2 px-4">Event</th>
-                                <th className="text-left py-2 px-4">Type</th>
-                                <th className="text-right py-2 px-4">Amount</th>
-                                <th className="text-right py-2 px-4">Transactions</th>
-                                <th className="text-right py-2 px-4">Revenue</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {formatTopFeesData(reportData.data).map((item, index) => (
-                                <tr key={index} className="border-b hover:bg-muted">
-                                  <td className="py-2 px-4">{item.name}</td>
-                                  <td className="py-2 px-4">{item.eventName}</td>
-                                  <td className="py-2 px-4">
-                                    <Badge variant="outline">{item.feeType}</Badge>
-                                  </td>
-                                  <td className="text-right py-2 px-4">{formatCurrency(item.feeAmount * 100)}</td>
-                                  <td className="text-right py-2 px-4">{item.transactions}</td>
-                                  <td className="text-right py-2 px-4">{formatCurrency(item.revenue * 100)}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex justify-center items-center py-8">
-                        <p className="text-muted-foreground">No top fee data available</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              {/* AI Insights Tab */}
-              <TabsContent value="insights" className="space-y-4">
-                {reportData.aiInsights ? (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <Card className="col-span-1 lg:col-span-2">
-                      <CardHeader>
-                        <CardTitle>AI Analysis Summary</CardTitle>
-                        <CardDescription>Fee structure insights powered by AI</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          {reportData.aiInsights.keyInsights && (
-                            <div>
-                              <h3 className="text-lg font-semibold mb-2">Key Insights</h3>
-                              <ul className="list-disc pl-5 space-y-1">
-                                {reportData.aiInsights.keyInsights.map((insight, index) => (
-                                  <li key={index}>{insight}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                          
-                          <Separator />
-                          
-                          {reportData.aiInsights.recommendations && (
-                            <div>
-                              <h3 className="text-lg font-semibold mb-2">Recommendations</h3>
-                              <ul className="list-disc pl-5 space-y-1">
-                                {reportData.aiInsights.recommendations.map((recommendation, index) => (
-                                  <li key={index}>{recommendation}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    {reportData.aiInsights.paymentMethodTrends && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Fee Type Trends</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            {reportData.aiInsights.paymentMethodTrends.map((trend, index) => (
-                              <div key={index} className="flex justify-between items-center">
-                                <div>
-                                  <p className="font-medium">{trend.method}</p>
-                                  <p className="text-sm text-muted-foreground">{trend.trend}</p>
-                                </div>
-                                <Badge variant="outline">{trend.percentage}%</Badge>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-                    
-                    {reportData.aiInsights.seasonalPatterns && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Seasonal Patterns</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <ul className="list-disc pl-5 space-y-1">
-                            {reportData.aiInsights.seasonalPatterns.map((pattern, index) => (
-                              <li key={index}>
-                                <span className="font-medium">{pattern.season}:</span> {pattern.pattern}
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-                ) : (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>AI Insights</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-col items-center justify-center text-center p-6">
-                        <AlertCircle className="h-10 w-10 text-muted-foreground mb-4" />
-                        <h3 className="text-lg font-semibold">No AI insights available</h3>
-                        <p className="text-muted-foreground mt-2">
-                          {includeAI ? 
-                            "We couldn't generate AI insights for this data. This could be due to insufficient fee data." : 
-                            "Enable AI insights to view AI-powered analysis of your fee structure."}
-                        </p>
-                        {!includeAI && (
-                          <Button 
-                            variant="outline" 
-                            className="mt-4"
-                            onClick={handleAIToggle}
-                          >
-                            Enable AI Insights
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </TabsContent>
-            </Tabs>
-          </div>
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>No Data Available</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>No fee analysis data is available.</p>
-            </CardContent>
-          </Card>
-        )}
       </div>
-    </AdminLayout>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="bg-white">
+          <CardContent className="pt-6 flex flex-col">
+            <div className="rounded-full w-12 h-12 flex items-center justify-center bg-primary/10 mb-4">
+              <DollarSign className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-2xl font-bold mb-1">
+              {reportData?.feeStatistics.totalFees || 0}
+            </div>
+            <p className="text-muted-foreground text-sm">Total Fees</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white">
+          <CardContent className="pt-6 flex flex-col">
+            <div className="rounded-full w-12 h-12 flex items-center justify-center bg-primary/10 mb-4">
+              <FileText className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-2xl font-bold mb-1">
+              {reportData?.feeStatistics.totalEvents || 0}
+            </div>
+            <p className="text-muted-foreground text-sm">Events with Fees</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white">
+          <CardContent className="pt-6 flex flex-col">
+            <div className="rounded-full w-12 h-12 flex items-center justify-center bg-primary/10 mb-4">
+              <BarChart2 className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-2xl font-bold mb-1">
+              {formatCurrency(reportData?.feeStatistics.avgFeeAmount || 0)}
+            </div>
+            <p className="text-muted-foreground text-sm">Average Fee Amount</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white">
+          <CardContent className="pt-6 flex flex-col">
+            <div className="rounded-full w-12 h-12 flex items-center justify-center bg-primary/10 mb-4">
+              <Tag className="h-6 w-6 text-primary" />
+            </div>
+            <div className="text-2xl font-bold mb-1">
+              {reportData?.feeTypeDistribution?.length || 0}
+            </div>
+            <p className="text-muted-foreground text-sm">Fee Types</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content Tabs */}
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="fee-types">Fee Types</TabsTrigger>
+          <TabsTrigger value="top-fees">Top Performing Fees</TabsTrigger>
+          {includeAI && aiInsights && <TabsTrigger value="ai-insights">AI Insights</TabsTrigger>}
+        </TabsList>
+
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Fee Type Distribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Fee Type Distribution</CardTitle>
+                <CardDescription>Breakdown of fees by type</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[300px]">
+                {reportData?.feeTypeDistribution?.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={reportData.feeTypeDistribution.map((item: any) => ({
+                          name: item.feeType || 'Unknown',
+                          value: Number(item.count)
+                        }))}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        paddingAngle={2}
+                        dataKey="value"
+                        label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                        labelLine={false}
+                      >
+                        {reportData.feeTypeDistribution.map((entry: any, index: number) => (
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => [value, 'Count']} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <p className="text-muted-foreground">No fee type data available</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Required vs Optional Fees */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Required vs Optional Fees</CardTitle>
+                <CardDescription>Analysis of required and optional fees</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[300px]">
+                {reportData?.requiredVsOptional?.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={reportData.requiredVsOptional.map((item: any) => ({
+                        name: item.is_required ? 'Required' : 'Optional',
+                        count: item.fee_count,
+                        avgAmount: item.avg_amount,
+                        totalValue: item.total_potential_value
+                      }))}
+                      margin={{ top: 20, right: 30, left: 30, bottom: 20 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="name" />
+                      <YAxis 
+                        yAxisId="left"
+                        orientation="left"
+                        tickFormatter={(value) => value}
+                        label={{ value: 'Count', angle: -90, position: 'insideLeft' }}
+                      />
+                      <YAxis 
+                        yAxisId="right"
+                        orientation="right"
+                        tickFormatter={(value) => `$${(value).toLocaleString()}`}
+                        label={{ value: 'Amount', angle: 90, position: 'insideRight' }}
+                      />
+                      <Tooltip 
+                        formatter={(value, name) => {
+                          if (name === 'count') return [value, 'Fee Count'];
+                          if (name === 'avgAmount') return [`$${Number(value).toLocaleString()}`, 'Avg Amount'];
+                          return [`$${Number(value).toLocaleString()}`, 'Total Value'];
+                        }}
+                      />
+                      <Legend />
+                      <Bar yAxisId="left" dataKey="count" fill={CHART_COLORS[0]} name="Fee Count" />
+                      <Bar yAxisId="right" dataKey="avgAmount" fill={CHART_COLORS[1]} name="Avg Amount" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <p className="text-muted-foreground">No required vs optional fee data available</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Required vs Optional Fees Analysis */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Required vs Optional Fees Analysis</CardTitle>
+              <CardDescription>Detailed comparison of required and optional fees</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {reportData?.requiredVsOptional?.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Type</TableHead>
+                        <TableHead className="text-right">Count</TableHead>
+                        <TableHead className="text-right">Average Amount</TableHead>
+                        <TableHead className="text-right">Total Potential Value</TableHead>
+                        <TableHead className="text-right">% of Total</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {reportData.requiredVsOptional.map((item: any, index: number) => {
+                        const totalFees = reportData.requiredVsOptional.reduce((sum: number, fee: any) => sum + fee.fee_count, 0);
+                        const totalValue = reportData.requiredVsOptional.reduce((sum: number, fee: any) => sum + fee.total_potential_value, 0);
+                        
+                        return (
+                          <TableRow key={index}>
+                            <TableCell className="font-medium">
+                              <Badge variant={item.is_required ? "default" : "outline"}>
+                                {item.is_required ? "Required" : "Optional"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">{item.fee_count}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(item.avg_amount)}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(item.total_potential_value)}</TableCell>
+                            <TableCell className="text-right">
+                              {totalValue ? ((item.total_potential_value / totalValue) * 100).toFixed(1) + '%' : '0%'}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <p className="text-muted-foreground">No required vs optional fee data available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          
+          {/* AI Insights Preview */}
+          {includeAI && aiInsights && (
+            <Card>
+              <CardHeader>
+                <CardTitle>AI-Generated Fee Insights</CardTitle>
+                <CardDescription>
+                  Key insights and recommendations for fee structure optimization
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Key Insights */}
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-sm">Key Insights</h3>
+                    <ul className="space-y-1">
+                      {aiInsights?.keyInsights ? (
+                        aiInsights.keyInsights.slice(0, 3).map((insight: string, index: number) => (
+                          <li key={index} className="flex text-sm">
+                            <span className="text-primary mr-2">•</span>
+                            <span>{insight}</span>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-muted-foreground">No insights available</li>
+                      )}
+                    </ul>
+                  </div>
+                  
+                  {/* Recommendations */}
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-sm">Recommendations</h3>
+                    <ul className="space-y-1">
+                      {aiInsights?.recommendations ? (
+                        aiInsights.recommendations.slice(0, 3).map((recommendation: string, index: number) => (
+                          <li key={index} className="flex text-sm">
+                            <span className="text-primary mr-2">•</span>
+                            <span>{recommendation}</span>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-muted-foreground">No recommendations available</li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="text-center pt-2">
+                  <Button variant="link" size="sm" onClick={() => document.querySelector('button[value="ai-insights"]')?.click()}>
+                    View all AI insights
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* Fee Types Tab */}
+        <TabsContent value="fee-types" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Fee Type Analysis</CardTitle>
+              <CardDescription>Detailed analysis of fees by type</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {reportData?.feeTypeDistribution?.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Fee Type</TableHead>
+                        <TableHead className="text-right">Count</TableHead>
+                        <TableHead className="text-right">% of Total</TableHead>
+                        <TableHead className="text-right">Average Amount</TableHead>
+                        <TableHead className="text-right">Estimated Total Value</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {reportData.feeTypeDistribution.map((item: any, index: number) => {
+                        const totalCount = reportData.feeTypeDistribution.reduce((sum: number, fee: any) => sum + fee.count, 0);
+                        return (
+                          <TableRow key={index}>
+                            <TableCell className="font-medium">
+                              {item.feeType || "Unknown"}
+                            </TableCell>
+                            <TableCell className="text-right">{item.count}</TableCell>
+                            <TableCell className="text-right">
+                              {totalCount ? ((item.count / totalCount) * 100).toFixed(1) + '%' : '0%'}
+                            </TableCell>
+                            <TableCell className="text-right">{formatCurrency(item.avgAmount)}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(item.avgAmount * item.count)}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <p className="text-muted-foreground">No fee type data available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Fee Type Count */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Fee Type Count Distribution</CardTitle>
+                <CardDescription>Number of fees by type</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[350px]">
+                {reportData?.feeTypeDistribution?.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={reportData.feeTypeDistribution.map((item: any) => ({
+                        name: item.feeType || 'Unknown',
+                        count: item.count
+                      }))}
+                      margin={{ top: 20, right: 30, left: 30, bottom: 60 }}
+                      layout="vertical"
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis type="number" />
+                      <YAxis 
+                        type="category" 
+                        dataKey="name"
+                        width={120}
+                        tick={{ fontSize: 12 }}
+                      />
+                      <Tooltip formatter={(value) => [value, 'Count']} />
+                      <Legend />
+                      <Bar 
+                        dataKey="count" 
+                        name="Count" 
+                        fill={CHART_COLORS[0]} 
+                        barSize={30}
+                        radius={[0, 4, 4, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <p className="text-muted-foreground">No fee type data available</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Fee Type Average Amount */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Average Fee Amount by Type</CardTitle>
+                <CardDescription>Average amount per fee type</CardDescription>
+              </CardHeader>
+              <CardContent className="h-[350px]">
+                {reportData?.feeTypeDistribution?.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={reportData.feeTypeDistribution.map((item: any) => ({
+                        name: item.feeType || 'Unknown',
+                        avgAmount: item.avgAmount
+                      }))}
+                      margin={{ top: 20, right: 30, left: 30, bottom: 60 }}
+                      layout="vertical"
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis 
+                        type="number"
+                        tickFormatter={(value) => `$${value}`}
+                      />
+                      <YAxis 
+                        type="category" 
+                        dataKey="name"
+                        width={120}
+                        tick={{ fontSize: 12 }}
+                      />
+                      <Tooltip 
+                        formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Average Amount']}
+                      />
+                      <Legend />
+                      <Bar 
+                        dataKey="avgAmount" 
+                        name="Average Amount" 
+                        fill={CHART_COLORS[1]} 
+                        barSize={30}
+                        radius={[0, 4, 4, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <p className="text-muted-foreground">No fee type data available</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Top Fees Tab */}
+        <TabsContent value="top-fees" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Top Performing Fees</CardTitle>
+              <CardDescription>Fees that generate the most revenue</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {reportData?.topPerformingFees?.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Fee Name</TableHead>
+                        <TableHead>Fee Type</TableHead>
+                        <TableHead>Event Name</TableHead>
+                        <TableHead className="text-right">Fee Amount</TableHead>
+                        <TableHead className="text-right">Transactions</TableHead>
+                        <TableHead className="text-right">Total Revenue</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {reportData.topPerformingFees.map((fee: any, index: number) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{fee.name}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="capitalize">
+                              {fee.fee_type}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{fee.event_name}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(fee.amount)}</TableCell>
+                          <TableCell className="text-right">{fee.transactions}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(fee.total_revenue)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center py-12">
+                  <p className="text-muted-foreground">No top performing fees data available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Top Fee Revenue Visualization</CardTitle>
+              <CardDescription>Visual comparison of top performing fees</CardDescription>
+            </CardHeader>
+            <CardContent className="h-[400px]">
+              {reportData?.topPerformingFees?.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={reportData.topPerformingFees.slice(0, 10).map((fee: any) => ({
+                      name: fee.name,
+                      revenue: fee.total_revenue,
+                      transactions: fee.transactions,
+                      event: fee.event_name,
+                      feeType: fee.fee_type
+                    }))}
+                    margin={{ top: 20, right: 30, left: 30, bottom: 60 }}
+                    layout="vertical"
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      type="number"
+                      tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                    />
+                    <YAxis 
+                      type="category" 
+                      dataKey="name"
+                      width={150}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <Tooltip 
+                      formatter={(value, name) => {
+                        if (name === 'revenue') return [`$${Number(value).toLocaleString()}`, 'Revenue'];
+                        return [value, 'Transactions'];
+                      }}
+                      labelFormatter={(label) => {
+                        // Find the fee from the data using the label (name)
+                        const fee = reportData.topPerformingFees.find((f: any) => f.name === label);
+                        if (fee) {
+                          return `${label} (${fee.event_name})`;
+                        }
+                        return label;
+                      }}
+                    />
+                    <Legend />
+                    <Bar 
+                      dataKey="revenue" 
+                      name="Revenue" 
+                      fill={CHART_COLORS[0]} 
+                      barSize={30}
+                      radius={[0, 4, 4, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center">
+                  <p className="text-muted-foreground">No top performing fees data available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* AI Insights Tab */}
+        {includeAI && aiInsights && (
+          <TabsContent value="ai-insights" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>AI-Generated Fee Structure Analysis</CardTitle>
+                <CardDescription>
+                  Automated analysis of fee structure patterns and opportunities
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Key Insights */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Key Insights</h3>
+                  <ul className="space-y-2">
+                    {aiInsights.keyInsights?.length > 0 ? (
+                      aiInsights.keyInsights.map((insight: string, index: number) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-primary mr-2 mt-1">•</span>
+                          <span>{insight}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-muted-foreground">No insights available</li>
+                    )}
+                  </ul>
+                </div>
+                
+                {/* Recommendations */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Recommendations</h3>
+                  <ul className="space-y-2">
+                    {aiInsights.recommendations?.length > 0 ? (
+                      aiInsights.recommendations.map((recommendation: string, index: number) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-primary mr-2 mt-1">•</span>
+                          <span>{recommendation}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-muted-foreground">No recommendations available</li>
+                    )}
+                  </ul>
+                </div>
+
+                {/* Payment Method Trends */}
+                {aiInsights.paymentMethodTrends?.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Payment Method Trends</h3>
+                    <ul className="space-y-2">
+                      {aiInsights.paymentMethodTrends.map((trend: string, index: number) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-primary mr-2 mt-1">•</span>
+                          <span>{trend}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {/* Seasonal Patterns */}
+                {aiInsights.seasonalPatterns?.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Seasonal Patterns</h3>
+                    <ul className="space-y-2">
+                      {aiInsights.seasonalPatterns.map((pattern: string, index: number) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-primary mr-2 mt-1">•</span>
+                          <span>{pattern}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </CardContent>
+              <CardFooter className="border-t pt-6">
+                <p className="text-xs text-muted-foreground">
+                  This analysis is generated using AI and should be considered advisory. Always verify important insights with additional data.
+                </p>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+        )}
+      </Tabs>
+    </div>
   );
 }
