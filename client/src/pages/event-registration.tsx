@@ -3067,7 +3067,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   ...teamForm.getValues(),
                                   selectedFeeIds: allSelectedFeeIds,
                                   totalAmount: parseFloat(calculateTotalAmount()) * 100, // in cents
-                                  paymentMethod: 'pay_later'
+                                  paymentMethod: 'pay_later',
+                                  addRosterLater // Include the flag to indicate roster will be added later
                                 });
                               }}
                               disabled={registerTeamMutation.isPending}
@@ -3114,7 +3115,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 ...teamForm.getValues(),
                                 selectedFeeIds: allSelectedFeeIds,
                                 totalAmount: parseFloat(calculateTotalAmount()) * 100, // in cents
-                                paymentMethod: 'card'
+                                paymentMethod: 'card',
+                                addRosterLater // Include the flag to indicate roster will be added later
                               });
                             }}
                             isProcessing={registerTeamMutation.isPending}

@@ -937,6 +937,8 @@ export function registerRoutes(app: Express): Server {
           bracketId,
           // New fields for registration status and terms
           termsAcknowledged,
+          // Flag to indicate if roster will be added later
+          addRosterLater,
           termsAcknowledgedAt,
           // Fee-related fields
           registrationFee,
@@ -954,9 +956,10 @@ export function registerRoutes(app: Express): Server {
           });
         }
         
-        if (!Array.isArray(players) || players.length === 0) {
+        // Skip player validation if addRosterLater flag is set to true
+        if (!addRosterLater && (!Array.isArray(players) || players.length === 0)) {
           return res.status(400).json({ 
-            error: 'At least one player is required to register a team.' 
+            error: 'At least one player is required to register a team, or select the "Add Roster Later" option.' 
           });
         }
         
@@ -1032,6 +1035,8 @@ export function registerRoutes(app: Express): Server {
               totalAmount: totalAmount || null, // Total amount in cents including all fees
               termsAcknowledged: termsAcknowledged || false,  // Use camelCase as defined in the schema
               termsAcknowledgedAt: termsAcknowledgedAt ? new Date(termsAcknowledgedAt) : new Date(),  // Use camelCase as defined in the schema
+              // Add flag to indicate if roster will be added later
+              addRosterLater: addRosterLater || false,
               createdAt: new Date().toISOString() // Use camelCase as defined in the schema
             })
             .returning();
