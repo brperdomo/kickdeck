@@ -546,16 +546,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     const autoSaveTimer = setInterval(() => {
       if (currentStep !== 'auth' && currentStep !== 'complete') {
         console.log('Auto-saving registration data...');
-        saveCurrentState();
+        // Save silently (don't show toast notifications)
+        saveCurrentState(true);
       }
     }, 30000); // 30 seconds
-    
-    // Save on form changes
-    const formSubscription = form.watch(() => {
-      if (currentStep === 'personal') {
-        saveCurrentState();
-      }
-    });
     
     // Cleanup
     return () => {
@@ -564,7 +558,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   }, [autoSaveEnabled, isPreview, currentStep]);
   
   // Function to save the current registration state
-  const saveCurrentState = () => {
+  const saveCurrentState = (silent = false) => {
     if (!autoSaveEnabled) return false;
     
     try {
@@ -580,7 +574,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         currentStep
       };
       
-      return saveRegistrationData(registrationData);
+      return saveRegistrationData(registrationData, silent);
     } catch (error) {
       console.error('Error saving registration state:', error);
       return false;

@@ -50,7 +50,7 @@ export function useSavedRegistration(eventId: string) {
 
   // Save registration data to localStorage
   const saveRegistrationData = useCallback(
-    (data: any) => {
+    (data: any, silent: boolean = false) => {
       try {
         const timestamp = Date.now();
         const dataToSave = {
@@ -59,9 +59,14 @@ export function useSavedRegistration(eventId: string) {
         };
         
         localStorage.setItem(storageKey, JSON.stringify(dataToSave));
-        setLastSaved(timestamp);
-        setSavedData(data);
-        setHasSavedData(true);
+        
+        // Only update the state if not in silent mode
+        // This prevents UI notifications from appearing
+        if (!silent) {
+          setLastSaved(timestamp);
+          setSavedData(data);
+          setHasSavedData(true);
+        }
         
         return true;
       } catch (error) {
