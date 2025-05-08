@@ -198,7 +198,29 @@ export default function Register() {
       sessionStorage.setItem('just_registered', 'true');
       sessionStorage.setItem('registration_time', Date.now().toString());
       
-      // Priority 1: If we came from an event registration page, go back to finish registration
+      // Check if we should also store a registration return flag
+      const isFromEventRegistration = 
+        decodedUrl.includes('/register/event/') || 
+        decodedUrl.includes('/event/') || 
+        sessionStorage.getItem('redirectAfterAuth')?.includes('/register/event/') || 
+        sessionStorage.getItem('redirectAfterAuth')?.includes('/event/');
+      
+      if (isFromEventRegistration) {
+        console.log('Setting in-registration flag to true');
+        sessionStorage.setItem('in_registration_process', 'true');
+      }
+      
+      // Priority 1: If redirectAfterAuth is set in session storage, use that first (highest priority)
+      const storedRedirectUrl = sessionStorage.getItem('redirectAfterAuth');
+      if (storedRedirectUrl) {
+        console.log('Redirecting to stored redirect URL from session storage:', storedRedirectUrl);
+        // Clear the redirect to prevent loops
+        sessionStorage.removeItem('redirectAfterAuth');
+        window.location.href = storedRedirectUrl;
+        return;
+      }
+      
+      // Priority 2: If we came from an event registration page, go back to finish registration
       if (decodedUrl.includes('/register/event/')) {
         const eventId = decodedUrl.split('/register/event/')[1];
         if (eventId) {
@@ -208,14 +230,14 @@ export default function Register() {
         }
       }
       
-      // Priority 2: If we came from any registration page, return to it
+      // Priority 3: If we came from any registration page, return to it
       if (decodedUrl.includes('/register/') || decodedUrl.includes('/event/')) {
         console.log('Redirecting back to registration page', decodedUrl);
         window.location.href = decodedUrl;
         return;
       }
       
-      // Priority 3: For all other URLs, redirect to dashboard
+      // Priority 4: For all other URLs, redirect to dashboard
       console.log('Redirecting to dashboard after registration');
       window.location.href = '/dashboard';
       
