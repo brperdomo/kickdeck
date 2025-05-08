@@ -109,8 +109,13 @@ export default function AuthPage() {
       // Clear the stored redirect immediately to prevent future redirects
       sessionStorage.removeItem('redirectAfterAuth');
       
+      // Add a parameter to indicate that this is a redirect completion
+      // This helps the registration page detect the redirect in production environments
+      const separator = redirectPath.includes('?') ? '&' : '?';
+      const redirectPathWithParam = `${redirectPath}${separator}redirect=done`;
+      
       // Use window.location for native navigation to ensure a clean slate
-      window.location.href = redirectPath;
+      window.location.href = redirectPathWithParam;
       return;
     }
     
