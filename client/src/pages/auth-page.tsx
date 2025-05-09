@@ -258,7 +258,7 @@ export default function AuthPage() {
                             <Input
                               type="email"
                               autoComplete="username email"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="h-11 text-base px-4 bg-white/90 text-gray-900 border-white/50 focus:border-white focus:ring-white/50"
                               {...field}
                             />
                           </FormControl>
@@ -276,7 +276,7 @@ export default function AuthPage() {
                             <Input
                               type="password"
                               autoComplete="current-password"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="h-11 text-base px-4 bg-white/90 text-gray-900 border-white/50 focus:border-white focus:ring-white/50"
                               {...field}
                             />
                           </FormControl>
