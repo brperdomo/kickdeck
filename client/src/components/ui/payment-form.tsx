@@ -204,12 +204,15 @@ export const PaymentForm = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Complete Payment</CardTitle>
+        <CardTitle>Complete Payment Information</CardTitle>
         <CardDescription>
           {teamName && eventName 
             ? `Register ${teamName} for ${eventName}`
-            : 'Process your registration payment securely'}
+            : 'Provide your payment information securely'}
         </CardDescription>
+        <div className="mt-2 py-2 px-3 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
+          <p><strong>Important:</strong> Your payment method will be securely stored but not charged at this time. Payment will only be processed after your team registration is approved by the event administrators.</p>
+        </div>
       </CardHeader>
       <CardContent>
         <Elements 

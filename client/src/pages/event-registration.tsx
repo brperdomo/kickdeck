@@ -3012,7 +3012,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               className="font-semibold"
                               style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                             >Payment Information</h4>
-                            <p className="text-sm text-gray-600 mb-4">Please provide your payment details to complete registration</p>
+                            <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
+                            <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
+                              <p className="flex items-start">
+                                <InfoIcon className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                                <span>
+                                  <strong>Two-step payment process:</strong> Your payment information will be securely stored, but your card will only be charged after your team registration is reviewed and approved by event administrators.
+                                </span>
+                              </p>
+                            </div>
                             
                             <StripeProvider>
                               <PaymentForm 
@@ -3103,7 +3111,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           className="font-semibold"
                           style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                         >Payment Information</h4>
-                        <p className="text-sm text-gray-600 mb-4">Please provide your payment details to complete registration</p>
+                        <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
+                        <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
+                          <p className="flex items-start">
+                            <InfoIcon className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                            <span>
+                              <strong>Two-step payment process:</strong> Your payment information will be securely stored, but your card will only be charged after your team registration is reviewed and approved by event administrators.
+                            </span>
+                          </p>
+                        </div>
                         
                         <StripeProvider>
                           <PaymentForm 
