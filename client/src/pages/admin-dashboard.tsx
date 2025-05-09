@@ -5,7 +5,7 @@ import {
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
-  Trophy, WandSparkles
+  Trophy, WandSparkles, CheckCircle2
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -161,6 +161,7 @@ import { Toggle } from '@/components/ui/toggle';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // CSV Uploader Component
 function CsvUploader({ onUploadSuccess, teamId }: { onUploadSuccess: (players: any[]) => void, teamId: number }) {
@@ -2169,10 +2170,13 @@ function SchedulingView() {
           gamesPerDay: constraints.maxGamesPerDay || 3,
           minutesPerGame: 60,
           breakBetweenGames: 15,
-          minRestPeriod: constraints.minRest || 2,
+          minRestPeriod: constraints.minRest || 30, // Now in minutes instead of hours
           resolveCoachConflicts: constraints.resolveCoachConflicts,
           optimizeFieldUsage: constraints.optimizeFieldUsage,
-          tournamentFormat: constraints.tournamentFormat || 'round_robin_knockout'
+          tournamentFormat: constraints.tournamentFormat || 'round_robin_knockout',
+          selectedAgeGroups: constraints.selectedAgeGroups || [], // Add age groups filter
+          selectedBrackets: constraints.selectedBrackets || [], // Add brackets filter
+          previewMode: constraints.previewMode || false // Add preview mode
         })
       });
       
@@ -2184,6 +2188,22 @@ function SchedulingView() {
       // Parse the response from our enhanced backend
       const data = await response.json();
       console.log('Schedule generation response:', data);
+      
+      // If we're in preview mode, show the preview games and keep the modal open
+      if (constraints.previewMode) {
+        setPreviewGames(data.previewGames || []);
+        
+        // Show the preview in a toast or dialog
+        toast({
+          title: "Schedule Preview",
+          description: `Generated ${data.previewGames?.length || 0} sample games. Review and confirm to generate the full schedule.`,
+          variant: "default",
+          duration: 5000,
+        });
+        
+        // Keep the dialog open for preview mode
+        return;
+      }
       
       // Set the quality score and conflicts from the AI response
       setScheduleQuality(data.qualityScore || 85);
@@ -2655,7 +2675,7 @@ function SchedulingView() {
       
       {/* AI Schedule Generation Dialog */}
       <Dialog open={aiSchedulingModalOpen} onOpenChange={setAiSchedulingModalOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[650px]">
           <DialogHeader>
             <DialogTitle>AI Schedule Generator</DialogTitle>
             <DialogDescription>
@@ -2663,99 +2683,315 @@ function SchedulingView() {
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <h4 className="font-medium">Schedule Constraints</h4>
+          {/* Preview Games UI */}
+          {previewMode && previewGames.length > 0 ? (
+            <div className="space-y-4 py-4">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium">Schedule Preview</h4>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setPreviewGames([])}
+                >
+                  <X className="h-4 w-4 mr-1" /> Close Preview
+                </Button>
+              </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="min-rest">Minimum Rest Period</Label>
-                  <div className="flex items-center space-x-2">
-                    <Input id="min-rest" type="number" defaultValue="2" min="1" max="12" />
-                    <span className="text-sm text-muted-foreground">hours</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Minimum time between games for the same team</p>
-                </div>
+              <div className="border rounded-md p-3">
+                <p className="text-sm mb-3">
+                  Here's a preview of 5 games from your schedule. If these look good, you can proceed with generating the full schedule.
+                </p>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="max-games">Max Games Per Day</Label>
-                  <Input id="max-games" type="number" defaultValue="3" min="1" max="6" />
-                  <p className="text-xs text-muted-foreground">Maximum number of games a team can play in one day</p>
-                </div>
+                <ScrollArea className="h-[300px]">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Time</TableHead>
+                        <TableHead>Teams</TableHead>
+                        <TableHead>Field</TableHead>
+                        <TableHead>Division</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {previewGames.map((game, index) => (
+                        <TableRow key={index}>
+                          <TableCell>
+                            {new Date(game.startTime).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </TableCell>
+                          <TableCell>
+                            {game.homeTeam?.name || 'TBD'} vs {game.awayTeam?.name || 'TBD'}
+                          </TableCell>
+                          <TableCell>{game.fieldName || game.field}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span>{game.ageGroup}</span>
+                              <span className="text-xs text-muted-foreground">{game.bracket}</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </ScrollArea>
+              </div>
+              
+              <div className="flex justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setPreviewGames([]);
+                    setPreviewMode(false);
+                  }}
+                >
+                  Adjust Settings
+                </Button>
+                <Button 
+                  onClick={() => {
+                    // Get values from form fields
+                    const minRestEl = document.getElementById('min-rest') as HTMLInputElement;
+                    const maxGamesEl = document.getElementById('max-games') as HTMLInputElement;
+                    const resolveCoachConflictsEl = document.getElementById('resolve-coach-conflicts') as HTMLInputElement;
+                    const fieldOptimizationEl = document.getElementById('field-optimization') as HTMLInputElement;
+                    
+                    // Get tournament format from radio group
+                    const tournamentFormatEl = document.querySelector('input[name="round-robin-knockout"]:checked') as HTMLInputElement;
+                    const tournamentFormat = tournamentFormatEl?.value || 'round-robin-knockout';
+                    
+                    // Close modal and generate full schedule
+                    setAiSchedulingModalOpen(false);
+                    
+                    // Call the generate schedule function with the same parameters but without preview mode
+                    generateSchedule({
+                      minRest: parseInt(minRestEl?.value || '30', 10),
+                      maxGamesPerDay: parseInt(maxGamesEl?.value || '3', 10),
+                      resolveCoachConflicts: resolveCoachConflictsEl?.checked || true,
+                      optimizeFieldUsage: fieldOptimizationEl?.checked || true,
+                      tournamentFormat: tournamentFormat,
+                      selectedAgeGroups: selectedAgeGroups,
+                      selectedBrackets: selectedBrackets,
+                      previewMode: false // Generate full schedule
+                    });
+                  }}
+                >
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  Generate Full Schedule
+                </Button>
               </div>
             </div>
-            
-            <div className="space-y-2">
-              <h4 className="font-medium">Coach Conflict Resolution</h4>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="resolve-coach-conflicts" defaultChecked />
-                <Label htmlFor="resolve-coach-conflicts">Automatically resolve coach conflicts</Label>
+          ) : (
+            <div className="space-y-5 py-4">
+              <div className="space-y-2">
+                <h4 className="font-medium">Schedule Constraints</h4>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="min-rest">Minimum Rest Period</Label>
+                    <div className="flex items-center space-x-2">
+                      <Input 
+                        id="min-rest" 
+                        type="number" 
+                        defaultValue="30" 
+                        min="10" 
+                        max="240" 
+                      />
+                      <span className="text-sm text-muted-foreground">minutes</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Minimum time between games for the same team</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="max-games">Max Games Per Day</Label>
+                    <Input 
+                      id="max-games" 
+                      type="number" 
+                      defaultValue="3" 
+                      min="1" 
+                      max="6" 
+                    />
+                    <p className="text-xs text-muted-foreground">Maximum number of games a team can play in one day</p>
+                  </div>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                The AI will ensure coaches with multiple teams don't have overlapping games
-              </p>
-            </div>
-            
-            <div className="space-y-2">
-              <h4 className="font-medium">Field Utilization</h4>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="field-optimization" defaultChecked />
-                <Label htmlFor="field-optimization">Optimize field usage</Label>
+              
+              {/* Age Groups Selection */}
+              <div className="space-y-2">
+                <h4 className="font-medium">Age Groups</h4>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Select age groups to include in the schedule (leave empty to include all)
+                </p>
+                
+                {gamesQuery.data?.ageGroups && gamesQuery.data.ageGroups.length > 0 ? (
+                  <ScrollArea className="h-24 border rounded-md p-2">
+                    <div className="space-y-2">
+                      {gamesQuery.data.ageGroups.map((ageGroup) => (
+                        <div key={ageGroup} className="flex items-center space-x-2">
+                          <Checkbox 
+                            id={`age-group-${ageGroup}`}
+                            checked={selectedAgeGroups.includes(ageGroup)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedAgeGroups([...selectedAgeGroups, ageGroup]);
+                              } else {
+                                setSelectedAgeGroups(
+                                  selectedAgeGroups.filter((ag) => ag !== ageGroup)
+                                );
+                              }
+                            }}
+                          />
+                          <Label htmlFor={`age-group-${ageGroup}`}>{ageGroup}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                ) : (
+                  <div className="text-sm text-muted-foreground italic">
+                    No age groups available
+                  </div>
+                )}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Distribute games evenly across available fields to minimize downtime
-              </p>
+              
+              {/* Brackets Selection */}
+              <div className="space-y-2">
+                <h4 className="font-medium">Brackets</h4>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Select brackets to include in the schedule (leave empty to include all)
+                </p>
+                
+                {/* We'll query brackets in a real implementation */}
+                <ScrollArea className="h-24 border rounded-md p-2">
+                  <div className="space-y-2">
+                    {['Competitive', 'Recreational', 'Premier', 'Elite'].map((bracket) => (
+                      <div key={bracket} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`bracket-${bracket}`}
+                          checked={selectedBrackets.includes(bracket)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedBrackets([...selectedBrackets, bracket]);
+                            } else {
+                              setSelectedBrackets(
+                                selectedBrackets.filter((b) => b !== bracket)
+                              );
+                            }
+                          }}
+                        />
+                        <Label htmlFor={`bracket-${bracket}`}>{bracket}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+              
+              <div className="space-y-2">
+                <h4 className="font-medium">Coach Conflict Resolution</h4>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="resolve-coach-conflicts" defaultChecked />
+                  <Label htmlFor="resolve-coach-conflicts">Automatically resolve coach conflicts</Label>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  The AI will ensure coaches with multiple teams don't have overlapping games
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <h4 className="font-medium">Field Utilization</h4>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="field-optimization" defaultChecked />
+                  <Label htmlFor="field-optimization">Optimize field usage</Label>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Distribute games evenly across available fields to minimize downtime
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <h4 className="font-medium">Tournament Format</h4>
+                <RadioGroup defaultValue="round-robin-knockout">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="round-robin-knockout" id="round-robin-knockout" />
+                    <Label htmlFor="round-robin-knockout">Group stage + knockout</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="double-elimination" id="double-elimination" />
+                    <Label htmlFor="double-elimination">Double elimination</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="single-elimination" id="single-elimination" />
+                    <Label htmlFor="single-elimination">Single elimination</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              
+              {/* Preview Mode Toggle */}
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="preview-mode" 
+                    checked={previewMode}
+                    onCheckedChange={(checked) => setPreviewMode(!!checked)}
+                  />
+                  <Label htmlFor="preview-mode">Preview mode (show 5 sample games before generating full schedule)</Label>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Preview a small sample of the schedule before committing to the full generation
+                </p>
+              </div>
             </div>
-            
-            <div className="space-y-2">
-              <h4 className="font-medium">Tournament Format</h4>
-              <RadioGroup defaultValue="round-robin-knockout">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="round-robin-knockout" id="round-robin-knockout" />
-                  <Label htmlFor="round-robin-knockout">Group stage + knockout</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="double-elimination" id="double-elimination" />
-                  <Label htmlFor="double-elimination">Double elimination</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="single-elimination" id="single-elimination" />
-                  <Label htmlFor="single-elimination">Single elimination</Label>
-                </div>
-              </RadioGroup>
-            </div>
-          </div>
+          )}
           
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAiSchedulingModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button 
-              onClick={() => {
-                setAiSchedulingModalOpen(false);
-                generateSchedule({
-                  minRest: 2,
-                  maxGamesPerDay: 3,
-                  resolveCoachConflicts: true,
-                  optimizeFieldUsage: true,
-                  tournamentFormat: 'round-robin-knockout'
-                });
-              }}
-              disabled={isGenerating}
-            >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Wand2 className="mr-2 h-4 w-4" />
-                  Generate Schedule
-                </>
-              )}
-            </Button>
-          </DialogFooter>
+          {!previewGames.length && (
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setAiSchedulingModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => {
+                  // Get values from form fields
+                  const minRestEl = document.getElementById('min-rest') as HTMLInputElement;
+                  const maxGamesEl = document.getElementById('max-games') as HTMLInputElement;
+                  const resolveCoachConflictsEl = document.getElementById('resolve-coach-conflicts') as HTMLInputElement;
+                  const fieldOptimizationEl = document.getElementById('field-optimization') as HTMLInputElement;
+                  
+                  // Get tournament format from radio group
+                  const tournamentFormatEl = document.querySelector('input[name="round-robin-knockout"]:checked') as HTMLInputElement;
+                  const tournamentFormat = tournamentFormatEl?.value || 'round-robin-knockout';
+                  
+                  // Close the modal only if not in preview mode
+                  if (!previewMode) {
+                    setAiSchedulingModalOpen(false);
+                  }
+                  
+                  // Call the generate schedule function with the form values
+                  generateSchedule({
+                    minRest: parseInt(minRestEl?.value || '30', 10),
+                    maxGamesPerDay: parseInt(maxGamesEl?.value || '3', 10),
+                    resolveCoachConflicts: resolveCoachConflictsEl?.checked || true,
+                    optimizeFieldUsage: fieldOptimizationEl?.checked || true,
+                    tournamentFormat: tournamentFormat,
+                    selectedAgeGroups: selectedAgeGroups,
+                    selectedBrackets: selectedBrackets,
+                    previewMode: previewMode
+                  });
+                }}
+                disabled={isGenerating}
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {previewMode ? 'Generating Preview...' : 'Generating...'}
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="mr-2 h-4 w-4" />
+                    {previewMode ? 'Generate Preview' : 'Generate Schedule'}
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          )}
         </DialogContent>
       </Dialog>
       
