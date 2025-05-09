@@ -965,11 +965,11 @@ function ReportsView() {
       case 'financial':
         return (
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 rounded-lg shadow-sm">
               <div className="flex items-center gap-4">
-                <h3 className="text-lg font-semibold">Financial Management</h3>
+                <h3 className="text-lg font-semibold text-indigo-900 dark:text-blue-100">Financial Management</h3>
                 <select 
-                  className="border rounded px-2 py-1"
+                  className="border border-indigo-200 rounded-md px-4 py-2 bg-white text-indigo-900 font-medium shadow-sm focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-blue-100"
                   value={selectedFinancialReport}
                   onChange={(e) => setSelectedFinancialReport(e.target.value)}
                 >
@@ -984,7 +984,10 @@ function ReportsView() {
               </div>
               <div className="flex gap-2">
                 {selectedFinancialReport === 'accounting-codes' && (
-                  <Button onClick={() => setIsAccountingCodeModalOpen(true)}>
+                  <Button 
+                    onClick={() => setIsAccountingCodeModalOpen(true)}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                  >
                     <Plus className="mr-2 h-4 w-4" />
                     Add Accounting Code
                   </Button>
@@ -992,6 +995,7 @@ function ReportsView() {
                 <Button
                   onClick={() => startExport('financial')}
                   disabled={isExporting}
+                  className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:text-blue-100 dark:border-gray-600"
                 >
                   {isExporting ? (
                     <>
@@ -1181,11 +1185,17 @@ function ReportsView() {
       case 'manager':
         return (
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Manager Reports</h3>
+            <div className="flex justify-between items-center bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 rounded-lg shadow-sm">
+              <div className="space-y-1">
+                <h3 className="text-lg font-semibold text-indigo-900 dark:text-blue-100">Manager Reports</h3>
+                <p className="text-sm text-indigo-700 dark:text-blue-200">
+                  Generate reports for all team managers
+                </p>
+              </div>
               <Button
                 onClick={() => startExport('manager')}
                 disabled={isExporting !== 'manager'}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white"
               >
                 {isExporting === 'manager' ? (
                   <>
@@ -1307,15 +1317,15 @@ function ReportsView() {
 
       <div className="grid grid-cols-4 gap-6">
         {/* Report Navigation */}
-        <Card className="col-span-1">
-          <CardHeader>
-            <CardTitle>Report Types</CardTitle>
-          </CardHeader>
-          <CardContent className="p-3">
+        <div className="col-span-1 rounded-xl border overflow-hidden shadow-md bg-gradient-to-b from-white to-indigo-50/20 dark:from-gray-800 dark:to-indigo-950/20">
+          <div className="p-5 border-b bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
+            <h3 className="text-lg font-semibold text-indigo-900 dark:text-blue-100">Report Types</h3>
+          </div>
+          <div className="p-4">
             <div className="space-y-2">
               <Button
                 variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
+                className={`w-full justify-start ${selectedReport === 'financial' ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800' : ''}`}
                 onClick={() => setSelectedReport('financial')}
                 disabled={isExporting !== null}
               >
@@ -1324,7 +1334,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
+                className={`w-full justify-start ${selectedReport === 'manager' ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800' : ''}`}
                 onClick={() => setSelectedReport('manager')}
                 disabled={isExporting !== null}
               >
@@ -1333,7 +1343,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'player' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
+                className={`w-full justify-start ${selectedReport === 'player' ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800' : ''}`}
                 onClick={() => setSelectedReport('player')}
                 disabled={isExporting !== null}
               >
@@ -1342,7 +1352,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'schedule' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
+                className={`w-full justify-start ${selectedReport === 'schedule' ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800' : ''}`}
                 onClick={() => setSelectedReport('schedule')}
                 disabled={isExporting !== null}
               >
@@ -1351,7 +1361,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'guest-player' ? 'secondary' : 'ghost'}
-                className="w-full justify-start"
+                className={`w-full justify-start ${selectedReport === 'guest-player' ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800' : ''}`}
                 onClick={() => setSelectedReport('guest-player')}
                 disabled={isExporting !== null}
               >
@@ -1359,8 +1369,8 @@ function ReportsView() {
                 Guest Player Reports
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Report Content */}
         <div className="col-span-3">
