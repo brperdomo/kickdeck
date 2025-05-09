@@ -5219,10 +5219,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             maxGamesPerDay: gamesPerDay || 3,
             minutesPerGame: minutesPerGame || 60,
             breakBetweenGames: breakBetweenGames || 15,
-            minRestPeriod: minRestPeriod || 2,
+            minRestPeriod: minRestPeriod || 120, // In minutes for more precision
             resolveCoachConflicts: resolveCoachConflicts || true,
             optimizeFieldUsage: optimizeFieldUsage || true,
-            tournamentFormat: tournamentFormat || 'round_robin_knockout'
+            tournamentFormat: tournamentFormat || 'round_robin_knockout',
+            selectedAgeGroups: selectedAgeGroups || [],
+            selectedBrackets: selectedBrackets || []
           });
 
           // Save the AI-generated schedule to the database within a transaction
@@ -5453,7 +5455,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const {
           resolveCoachConflicts,
           optimizeFieldUsage,
-          minimizeTravel
+          minimizeTravel,
+          selectedAgeGroups,
+          selectedBrackets
         } = req.body;
         
         // Import the OpenAI service
@@ -5463,7 +5467,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const optimizationResult = await SoccerSchedulerAI.optimizeSchedule(eventId, {
           resolveCoachConflicts: resolveCoachConflicts || true,
           optimizeFieldUsage: optimizeFieldUsage || true,
-          minimizeTravel: minimizeTravel || false
+          minimizeTravel: minimizeTravel || false,
+          selectedAgeGroups: selectedAgeGroups || [],
+          selectedBrackets: selectedBrackets || []
         });
         
         // Return the optimized schedule
