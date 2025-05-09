@@ -927,8 +927,20 @@ export default function BookkeepingReport() {
                   </Table>
                 </div>
               ) : (
-                <div className="text-center py-10">
+                <div className="text-center py-10 space-y-4">
                   <p className="text-muted-foreground">No pending payments found for the selected filters.</p>
+                  <div className="max-w-md mx-auto text-sm text-muted-foreground space-y-2">
+                    <p>Pending payments are created when teams choose the "Pay Later" option during registration.</p>
+                    <div className="bg-muted/30 p-4 rounded-md">
+                      <h4 className="font-medium mb-2">Pending Payment Follow-up:</h4>
+                      <ul className="list-disc list-inside space-y-1 text-left">
+                        <li>Contact teams regularly about outstanding balances</li>
+                        <li>Consider setting payment deadlines before event</li>
+                        <li>Maintain detailed records of all communications</li>
+                        <li>Teams with pending payments can be found in the "Teams" dashboard</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               )}
             </CardContent>
