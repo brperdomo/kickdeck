@@ -28,6 +28,7 @@ import { TeamModal } from "@/components/teams/TeamModal";
 import { TeamCsvUploader } from "@/components/teams/TeamCsvUploader";
 import { BracketAssignmentModal } from "@/components/BracketAssignmentModal";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
+import BracketSelector from "@/components/admin/scheduling/BracketSelector";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -2857,32 +2858,25 @@ function SchedulingView() {
               <div className="space-y-2">
                 <h4 className="font-medium">Brackets</h4>
                 <p className="text-xs text-muted-foreground mb-2">
-                  Select brackets to include in the schedule (leave empty to include all)
+                  {selectedAgeGroups.length === 0 
+                    ? "Please select age groups to see available brackets" 
+                    : "Select brackets to include in the schedule (leave empty to include all)"}
                 </p>
                 
-                {/* We'll query brackets in a real implementation */}
-                <ScrollArea className="h-24 border rounded-md p-2">
-                  <div className="space-y-2">
-                    {['Competitive', 'Recreational', 'Premier', 'Elite'].map((bracket) => (
-                      <div key={bracket} className="flex items-center space-x-2">
-                        <Checkbox 
-                          id={`bracket-${bracket}`}
-                          checked={selectedBrackets.includes(bracket)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              setSelectedBrackets([...selectedBrackets, bracket]);
-                            } else {
-                              setSelectedBrackets(
-                                selectedBrackets.filter((b) => b !== bracket)
-                              );
-                            }
-                          }}
-                        />
-                        <Label htmlFor={`bracket-${bracket}`}>{bracket}</Label>
-                      </div>
-                    ))}
+                {selectedAgeGroups.length === 0 ? (
+                  <div className="flex items-center justify-center h-24 border rounded-md p-2 bg-muted/20">
+                    <p className="text-sm text-muted-foreground">
+                      Select one or more age groups above to view available brackets
+                    </p>
                   </div>
-                </ScrollArea>
+                ) : (
+                  <BracketSelector 
+                    eventId={selectedEvent}
+                    selectedAgeGroups={selectedAgeGroups}
+                    selectedBrackets={selectedBrackets}
+                    onBracketsChange={setSelectedBrackets}
+                  />
+                )}
               </div>
               
               <div className="space-y-2">

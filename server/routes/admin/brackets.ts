@@ -29,6 +29,7 @@ router.get('/events/:eventId/brackets', hasEventAccess, async (req, res) => {
 router.get('/events/:eventId/age-groups/:ageGroupId/brackets', hasEventAccess, async (req, res) => {
   try {
     const { eventId, ageGroupId } = req.params;
+    const includeTeamCount = req.query.includeTeamCount === 'true';
     
     // Get all brackets for the specific age group
     const brackets = await db
@@ -41,6 +42,49 @@ router.get('/events/:eventId/age-groups/:ageGroupId/brackets', hasEventAccess, a
         )
       )
       .orderBy(eventBrackets.sortOrder);
+    
+    // If team count is requested, get team counts for each bracket
+    if (includeTeamCount) {
+      const bracketIds = brackets.map(bracket => bracket.id);
+      
+      // Skip team count query if there are no brackets
+      if (bracketIds.length === 0) {
+        return res.json(brackets.map(bracket => ({
+          ...bracket,
+          teamCount: 0
+        })));
+      }
+      
+      // Get team counts for all brackets in one query
+      const teamCounts = await db
+        .select({
+          bracketId: teams.bracketId,
+          count: db.sql<number>`count(${teams.id})::int`
+        })
+        .from(teams)
+        .where(
+          and(
+            eq(teams.eventId, eventId),
+            inArray(teams.bracketId, bracketIds),
+            eq(teams.status, 'approved')
+          )
+        )
+        .groupBy(teams.bracketId);
+      
+      // Create a map of bracket ID to team count
+      const countMap = teamCounts.reduce((map, item) => {
+        map[item.bracketId] = item.count;
+        return map;
+      }, {});
+      
+      // Add team counts to brackets
+      const bracketsWithCount = brackets.map(bracket => ({
+        ...bracket,
+        teamCount: countMap[bracket.id] || 0
+      }));
+      
+      return res.json(bracketsWithCount);
+    }
     
     res.json(brackets);
   } catch (error) {
