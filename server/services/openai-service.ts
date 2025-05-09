@@ -174,6 +174,166 @@ export class SoccerSchedulerAI {
    * @param options - Optimization options
    * @returns The optimized schedule
    */
+  /**
+   * Generates a preview of an AI schedule for the tournament with only a sample of games
+   * @param eventId - The ID of the event
+   * @param constraints - Scheduling constraints including age groups and brackets
+   * @returns A preview of 5 games from the potential schedule with quality score and conflicts
+   */
+  static async generateSchedulePreview(eventId: string | number, constraints: ScheduleConstraints) {
+    console.log(`Starting schedule preview generation for event ID: ${eventId}`);
+    console.log(`Preview constraints: ${JSON.stringify(constraints)}`);
+    
+    try {
+      // 1. Fetch all necessary data for scheduling
+      console.log("Fetching event data for preview...");
+      const eventData = await this.getEventData(eventId);
+      console.log("Event data fetched successfully");
+      
+      console.log("Fetching teams data for preview...");
+      const teamsData = await this.getTeamsData(eventId, constraints.selectedAgeGroups, constraints.selectedBrackets);
+      console.log(`Teams data fetched successfully. Found ${teamsData.length} teams.`);
+      
+      // Check if we have enough teams to generate a schedule
+      if (teamsData.length < 2) {
+        console.log(`Not enough teams (${teamsData.length}) to generate a schedule preview`);
+        throw new Error(`Not enough teams to generate a schedule preview. Found only ${teamsData.length} approved teams.`);
+      }
+      
+      // 2. Prepare prompt for OpenAI
+      console.log("Generating scheduling preview prompt...");
+      const prompt = this.generateSchedulingPreviewPrompt(eventData, teamsData, constraints);
+      console.log("Preview prompt generated successfully");
+      
+      try {
+        // 3. Call OpenAI API with a request for just a sample of games
+        console.log("Making OpenAI API call for preview...");
+        const previewResponse = await openai.chat.completions.create({
+          model: MODEL,
+          messages: [
+            {
+              role: "system",
+              content: "You are an advanced sports tournament scheduling assistant. Generate a small sample of 5 representative games that would appear in a complete schedule, following all given constraints."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          response_format: { type: "json_object" },
+          max_tokens: 2000,
+          temperature: 0.2 // Lower temperature for more consistent results
+        });
+        
+        console.log("OpenAI API preview response received");
+        
+        if (!previewResponse.choices || previewResponse.choices.length === 0) {
+          throw new Error("OpenAI API returned empty preview response");
+        }
+        
+        // 4. Parse and validate the preview schedule
+        console.log("Parsing preview API response...");
+        const responseContent = previewResponse.choices[0].message.content;
+        
+        if (!responseContent) {
+          throw new Error("OpenAI API returned empty content");
+        }
+        
+        let scheduleData;
+        try {
+          scheduleData = JSON.parse(responseContent);
+        } catch (e) {
+          console.error("Error parsing OpenAI response JSON:", e);
+          throw new Error("Failed to parse schedule response from AI");
+        }
+        
+        // Process schedule data to ensure proper format
+        const previewGames = scheduleData.games || [];
+        const qualityScore = scheduleData.qualityScore || 85;
+        const conflicts = scheduleData.conflicts || [];
+        
+        console.log(`Retrieved ${previewGames.length} preview games from API response`);
+        
+        return {
+          previewGames: previewGames.slice(0, 5), // Ensure we return no more than 5 games for preview
+          qualityScore,
+          conflicts
+        };
+      } catch (error) {
+        console.error("Error during OpenAI API call for preview:", error);
+        throw new Error(`Failed to generate schedule preview: ${error.message}`);
+      }
+    } catch (error) {
+      console.error("Error generating schedule preview:", error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Generates a prompt specifically for preview scheduling with OpenAI
+   */
+  private static generateSchedulingPreviewPrompt(
+    eventData: any, 
+    teamsData: any[], 
+    constraints: ScheduleConstraints
+  ): string {
+    return `
+    Create a preview of 5 representative games for a soccer tournament schedule with the following parameters:
+    
+    EVENT INFORMATION:
+    - Name: ${eventData.name}
+    - Date range: ${eventData.startDate} to ${eventData.endDate}
+    - Available fields: ${eventData.fields.length}
+    
+    TEAMS:
+    ${teamsData.map(team => `- ID: ${team.id}, Name: ${team.name}, Bracket: ${team.bracket || 'Unknown'}, Coach: ${team.coach || 'Unknown'}`).join('\n')}
+    
+    CONSTRAINTS:
+    - Maximum games per day for a team: ${constraints.maxGamesPerDay || 3}
+    - Game duration: ${constraints.minutesPerGame || 60} minutes
+    - Break between games: ${constraints.breakBetweenGames || 15} minutes
+    - Minimum rest period for teams: ${constraints.minRestPeriod || 120} minutes
+    - Resolve coach conflicts: ${constraints.resolveCoachConflicts ? 'Yes' : 'No'}
+    - Optimize field usage: ${constraints.optimizeFieldUsage ? 'Yes' : 'No'}
+    - Tournament format: ${constraints.tournamentFormat || 'round_robin_knockout'}
+    
+    Please generate ONLY 5 sample games that would be part of the full schedule. For each game, include:
+    1. Game ID
+    2. Home team
+    3. Away team
+    4. Start time and date
+    5. End time and date
+    6. Field assignment
+    7. Bracket and round information
+
+    Your response should be a valid JSON object with this structure:
+    {
+      "games": [
+        {
+          "id": "game_1",
+          "homeTeam": { "id": "101", "name": "Team A", "coach": "Coach Name" },
+          "awayTeam": { "id": "102", "name": "Team B", "coach": "Coach Name" },
+          "startTime": "2025-05-01T09:00:00Z",
+          "endTime": "2025-05-01T10:00:00Z",
+          "field": { "id": 1, "name": "Field 1" },
+          "bracket": "U10 Boys",
+          "round": "Group Stage"
+        },
+        ... (4 more games)
+      ],
+      "qualityScore": 85,
+      "conflicts": [
+        {
+          "type": "rest_period",
+          "description": "Team A has insufficient rest between Game 1 and Game 3",
+          "severity": "medium",
+          "affectedGames": ["game_1", "game_3"]
+        }
+      ]
+    }
+    `;
+  }
+
   static async optimizeSchedule(eventId: string | number, options: OptimizationOptions) {
     console.log(`Starting schedule optimization for event ID: ${eventId}`);
     console.log(`Options: ${JSON.stringify(options)}`);
@@ -687,11 +847,22 @@ export class SoccerSchedulerAI {
    * @param eventId - The event ID
    * @returns Teams data
    */
-  private static async getTeamsData(eventId: string | number) {
+  private static async getTeamsData(
+    eventId: string | number, 
+    selectedAgeGroups?: string[], 
+    selectedBrackets?: string[]
+  ) {
     try {
       // Get all teams for this event with approved status
       const eventIdStr = eventId.toString();
       
+      // Build the query conditions
+      const conditions = [
+        eq(teams.eventId, eventIdStr),
+        eq(teams.status, 'approved')
+      ];
+      
+      // Get all approved teams for this event
       const teamsData = await db
         .select()
         .from(teams)
@@ -702,7 +873,56 @@ export class SoccerSchedulerAI {
           )
         );
         
-      return teamsData;
+      // Apply filtering by age groups and brackets if specified
+      let filteredTeamsData = [...teamsData];
+      
+      // Filter by age groups if specified
+      if (selectedAgeGroups && selectedAgeGroups.length > 0) {
+        console.log(`Filtering teams by age groups: ${selectedAgeGroups.join(', ')}`);
+        
+        // Get all brackets for the selected age groups
+        const ageGroupIds = selectedAgeGroups.map(ag => parseInt(ag));
+        const bracketsForAgeGroups = await db
+          .select()
+          .from(eventBrackets)
+          .where(
+            and(
+              eq(eventBrackets.eventId, eventIdStr),
+              inArray(eventBrackets.ageGroupId, ageGroupIds)
+            )
+          );
+          
+        const bracketIds = bracketsForAgeGroups.map(b => b.id);
+        console.log(`Found ${bracketIds.length} brackets for selected age groups`);
+        
+        // Filter teams by the found bracket IDs
+        if (bracketIds.length > 0) {
+          filteredTeamsData = filteredTeamsData.filter(team => 
+            team.bracketId && bracketIds.includes(team.bracketId)
+          );
+        }
+      }
+      
+      // Further filter by brackets if specified
+      if (selectedBrackets && selectedBrackets.length > 0) {
+        console.log(`Filtering teams by brackets: ${selectedBrackets.join(', ')}`);
+        const bracketIds = selectedBrackets.map(b => parseInt(b));
+        
+        filteredTeamsData = filteredTeamsData.filter(team => 
+          team.bracketId && bracketIds.includes(team.bracketId)
+        );
+      }
+      
+      console.log(`After filtering: ${filteredTeamsData.length} teams of ${teamsData.length} total`);
+      
+      // If no teams match the filters, return all teams 
+      // to avoid empty schedules
+      if (filteredTeamsData.length < 2 && teamsData.length >= 2) {
+        console.log(`Too few teams after filtering (${filteredTeamsData.length}), using all teams`);
+        return teamsData;
+      }
+      
+      return filteredTeamsData;
     } catch (error) {
       console.error("Error fetching teams data:", error);
       throw error;
@@ -981,6 +1201,8 @@ interface ScheduleConstraints {
   resolveCoachConflicts?: boolean;
   optimizeFieldUsage?: boolean;
   tournamentFormat?: string;
+  selectedAgeGroups?: string[];
+  selectedBrackets?: string[];
 }
 
 /**
