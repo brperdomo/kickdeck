@@ -5226,10 +5226,25 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
             optimizeFieldUsage: optimizeFieldUsage || true,
             tournamentFormat: tournamentFormat || 'round_robin_knockout',
             selectedAgeGroups: selectedAgeGroups || [],
-            selectedBrackets: selectedBrackets || []
+            selectedBrackets: selectedBrackets || [],
+            previewMode: previewMode || false
           });
 
-          // Save the AI-generated schedule to the database within a transaction
+          // If we're in preview mode, just return sample games without saving to DB
+          if (previewMode) {
+            console.log(`Preview mode enabled, returning 5 sample games without saving to database`);
+            // Get a sample of 5 games from the generated schedule
+            const previewGames = aiScheduleResult.schedule.slice(0, 5);
+            
+            return res.json({
+              message: "Preview schedule generated successfully",
+              previewGames: previewGames,
+              qualityScore: aiScheduleResult.qualityScore,
+              previewMode: true
+            });
+          }
+          
+          // If not in preview mode, save the AI-generated schedule to the database
           await db.transaction(async (tx) => {
             console.log(`Saving ${aiScheduleResult.schedule.length} AI-generated games to database for event ${eventId}`);
             

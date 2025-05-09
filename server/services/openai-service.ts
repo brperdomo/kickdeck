@@ -47,6 +47,12 @@ export class SoccerSchedulerAI {
     console.log(`Starting schedule generation for event ID: ${eventId}`);
     console.log(`Constraints: ${JSON.stringify(constraints)}`);
     
+    // If preview mode is enabled, delegate to preview function
+    if (constraints.previewMode) {
+      console.log("Preview mode enabled, generating sample games only");
+      return this.generateSchedulePreview(eventId, constraints);
+    }
+    
     try {
       // 1. Fetch all necessary data for scheduling
       console.log("Fetching event data...");
@@ -255,9 +261,10 @@ export class SoccerSchedulerAI {
         console.log(`Retrieved ${previewGames.length} preview games from API response`);
         
         return {
-          previewGames: previewGames.slice(0, 5), // Ensure we return no more than 5 games for preview
+          schedule: previewGames.slice(0, 5), // Ensure we return no more than 5 games for preview
           qualityScore,
-          conflicts
+          conflicts,
+          previewMode: true
         };
       } catch (error) {
         console.error("Error during OpenAI API call for preview:", error);
@@ -1212,6 +1219,7 @@ interface ScheduleConstraints {
   tournamentFormat?: string;
   selectedAgeGroups?: string[];
   selectedBrackets?: string[];
+  previewMode?: boolean;
 }
 
 /**
