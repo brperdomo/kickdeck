@@ -5128,6 +5128,60 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
+    // API endpoint for previewing a schedule without saving to database
+    app.post('/api/admin/events/:id/preview-schedule', hasEventAccess, async (req, res) => {
+      try {
+        console.log(`Schedule preview endpoint called for event ID: ${req.params.id}`);
+        console.log('Preview request body:', JSON.stringify(req.body));
+        
+        const eventId = req.params.id;
+        const { 
+          gamesPerDay, 
+          minutesPerGame, 
+          breakBetweenGames,
+          minRestPeriod,
+          resolveCoachConflicts,
+          optimizeFieldUsage,
+          tournamentFormat,
+          selectedAgeGroups,
+          selectedBrackets
+        } = req.body;
+
+        // Import the OpenAI service
+        const { SoccerSchedulerAI } = await import('./services/openai-service');
+
+        // Call the AI service to generate a preview of the schedule
+        const previewResult = await SoccerSchedulerAI.generateSchedulePreview(eventId, {
+          maxGamesPerDay: gamesPerDay || 3,
+          minutesPerGame: minutesPerGame || 60,
+          breakBetweenGames: breakBetweenGames || 15,
+          minRestPeriod: minRestPeriod || 120, // In minutes for more precision
+          resolveCoachConflicts: resolveCoachConflicts || true,
+          optimizeFieldUsage: optimizeFieldUsage || true,
+          tournamentFormat: tournamentFormat || 'round_robin_knockout',
+          selectedAgeGroups: selectedAgeGroups || [],
+          selectedBrackets: selectedBrackets || []
+        });
+        
+        // Return just a sample of games as preview (don't save to DB)
+        return res.json({
+          previewGames: previewResult.previewGames,
+          qualityScore: previewResult.qualityScore,
+          conflicts: previewResult.conflicts
+        });
+      } catch (error) {
+        console.error('Error generating schedule preview:', error);
+        console.error("Error details:", error);
+        
+        // Return a more informative error
+        res.status(500).json({
+          error: 'Schedule Preview Failed',
+          message: error.message || 'An unknown error occurred',
+          stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
+      }
+    });
+
     app.post('/api/admin/events/:id/generate-schedule', hasEventAccess, async (req, res) => {
       try {
         console.log(`Schedule generation endpoint called for event ID: ${req.params.id}`);
@@ -5143,7 +5197,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           resolveCoachConflicts,
           optimizeFieldUsage,
           tournamentFormat,
-          useAI: useAIFromBody
+          useAI: useAIFromBody,
+          selectedAgeGroups,
+          selectedBrackets
         } = req.body;
 
         // Check if we should use AI to generate the schedule
@@ -5151,6 +5207,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         console.log(`Using AI for schedule generation: ${useAI}`);
         console.log(`Request parameters: gamesPerDay=${gamesPerDay}, minutesPerGame=${minutesPerGame}, breakBetweenGames=${breakBetweenGames}, minRestPeriod=${minRestPeriod}`);
         console.log(`Request parameters: resolveCoachConflicts=${resolveCoachConflicts}, optimizeFieldUsage=${optimizeFieldUsage}, tournamentFormat=${tournamentFormat}`);
+        console.log(`Filtering by age groups: ${JSON.stringify(selectedAgeGroups)}`);
+        console.log(`Filtering by brackets: ${JSON.stringify(selectedBrackets)}`);
 
         if (useAI) {
           // Import the OpenAI service
