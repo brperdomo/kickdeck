@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { db } from "../../db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { 
   teams, 
   events, 
@@ -737,17 +737,26 @@ export class SoccerSchedulerAI {
         const game1End = new Date(game1.endTime).getTime();
         const game2Start = new Date(game2.startTime).getTime();
         
-        // Convert rest period to milliseconds (2 hours = 7,200,000 ms)
-        const minRestPeriod = 2 * 60 * 60 * 1000;
+        // Get the minimum rest period from event data or use default (120 minutes)
+        const minRestMinutes = eventData?.minRestPeriod || 120; 
+        // Convert rest period to milliseconds
+        const minRestPeriod = minRestMinutes * 60 * 1000;
         
         if (game2Start - game1End < minRestPeriod) {
           const teamName = game1.homeTeam.id === teamId 
             ? game1.homeTeam.name 
             : game1.awayTeam.name;
             
+          // Format the rest period for the message (show as hours and minutes)
+          const hours = Math.floor(minRestMinutes / 60);
+          const minutes = minRestMinutes % 60;
+          const restPeriodText = hours > 0 
+            ? `${hours} hour${hours > 1 ? 's' : ''}${minutes > 0 ? ` ${minutes} minute${minutes > 1 ? 's' : ''}` : ''}` 
+            : `${minutes} minute${minutes > 1 ? 's' : ''}`;
+            
           conflicts.push({
             type: 'rest_period',
-            description: `Team ${teamName} has less than 2 hours between games`,
+            description: `Team ${teamName} has less than ${restPeriodText} between games`,
             severity: 'medium',
             affectedGames: [game1.id, game2.id]
           });
@@ -1040,7 +1049,7 @@ SCHEDULING CONSTRAINTS:
 - Maximum Games Per Day: ${constraints.maxGamesPerDay || 3}
 - Minutes Per Game: ${constraints.minutesPerGame || 60}
 - Break Between Games: ${constraints.breakBetweenGames || 15} minutes
-- Minimum Rest Period: ${constraints.minRestPeriod || 2} hours between games for the same team
+- Minimum Rest Period: ${constraints.minRestPeriod || 120} minutes between games for the same team
 - Resolve Coach Conflicts: ${constraints.resolveCoachConflicts ? 'Yes' : 'No'}
 - Optimize Field Usage: ${constraints.optimizeFieldUsage ? 'Yes' : 'No'}
 - Tournament Format: ${constraints.tournamentFormat || 'round_robin_knockout'}
@@ -1212,6 +1221,8 @@ interface OptimizationOptions {
   resolveCoachConflicts?: boolean;
   optimizeFieldUsage?: boolean;
   minimizeTravel?: boolean;
+  selectedAgeGroups?: string[];
+  selectedBrackets?: string[];
 }
 
 /**
