@@ -415,7 +415,7 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
       .set({
         paymentIntentId: paymentIntent.id,
         paymentStatus: paymentIntent.status,
-        paymentDate: new Date().toISOString()
+        paymentDate: new Date()  // Use Date object directly for timestamp fields
       })
       .where(eq(teams.id, teamId));
     
@@ -428,10 +428,10 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
       setupIntentId: team.setupIntentId,
       eventId: team.eventId,
       teamId: teamId,
-      paymentDate: new Date(),
       cardBrand: team.cardBrand,
       cardLast4: team.cardLast4,
-      description: `Team registration payment for ${team.name} (approved by admin)`,
+      // Note: paymentDate field was removed as it's not in the schema
+      // We have createdAt which is automatically set
     });
     
     return {
@@ -484,7 +484,7 @@ export async function updatePaymentIntentStatus(paymentIntentId: string, status:
     await db.update(teams)
       .set({
         paymentStatus: status,
-        paymentDate: new Date().toISOString(),
+        paymentDate: new Date(),  // Use Date object directly for timestamp fields
       })
       .where(eq(teams.id, team.id));
       
@@ -629,7 +629,7 @@ export async function handleRefund(charge: Stripe.Charge, refund: Stripe.Refund)
       paymentIntentId: paymentIntentId,
       amount: -refund.amount, // negative amount for refund
       status: 'refunded',
-      paymentDate: new Date(),
+      transactionType: 'refund',
       cardBrand: team.cardBrand,
       cardLast4: team.cardLast4,
     });
@@ -638,7 +638,7 @@ export async function handleRefund(charge: Stripe.Charge, refund: Stripe.Refund)
     await db.update(teams)
       .set({
         paymentStatus: 'refunded',
-        refundDate: new Date().toISOString(),
+        refundDate: new Date(),  // Use Date object directly for timestamp fields
       })
       .where(eq(teams.id, team.id));
 
