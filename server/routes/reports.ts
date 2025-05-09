@@ -748,7 +748,6 @@ export async function getBookkeepingReport(req: Request, res: Response) {
           pt.status, 
           pt.created_at,
           pt.payment_intent_id,
-          pt.refunded_at,
           pt.transaction_type,
           -- Estimate Stripe fee (2.9% + 30 cents for standard pricing)
           CASE
