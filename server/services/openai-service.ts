@@ -54,7 +54,7 @@ export class SoccerSchedulerAI {
       console.log("Event data fetched successfully");
       
       console.log("Fetching teams data...");
-      const teamsData = await this.getTeamsData(eventId);
+      const teamsData = await this.getTeamsData(eventId, constraints.selectedAgeGroups, constraints.selectedBrackets);
       console.log(`Teams data fetched successfully. Found ${teamsData.length} teams.`);
       
       // Check if we have enough teams to generate a schedule
@@ -346,7 +346,7 @@ export class SoccerSchedulerAI {
       
       // 2. Get teams and fields data
       console.log("Fetching teams data...");
-      const teamsData = await this.getTeamsData(eventId);
+      const teamsData = await this.getTeamsData(eventId, options.selectedAgeGroups, options.selectedBrackets);
       console.log(`Teams data fetched successfully. Found ${teamsData.length} teams.`);
       
       console.log("Fetching event data...");
