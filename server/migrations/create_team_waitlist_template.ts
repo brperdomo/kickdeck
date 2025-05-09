@@ -1,16 +1,4 @@
 /**
- * Create Waitlist Email Template Script
- * 
- * This script creates the team waitlist email template
- * for when teams are added to the waitlist.
- */
-
-import { spawnSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
-
-// Create the migration file
-const migrationContent = `/**
  * Create Team Waitlist Email Template Migration
  */
 import { db } from "@db";
@@ -46,7 +34,7 @@ export async function createTeamWaitlistTemplate() {
         'notes',
         'loginLink'
       ],
-      content: \`
+      content: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -112,7 +100,7 @@ export async function createTeamWaitlistTemplate() {
   </div>
 </body>
 </html>
-      \`
+      `
     };
     
     // Insert the template into the database
@@ -150,25 +138,3 @@ createTeamWaitlistTemplate().then(result => {
   console.error("Unexpected error:", error);
   process.exit(1);
 });
-`;
-
-const migrationFilePath = path.join('server', 'migrations', 'create_team_waitlist_template.ts');
-
-// Create the migration file
-fs.writeFileSync(migrationFilePath, migrationContent);
-console.log(`Created migration file: ${migrationFilePath}`);
-
-// Run the migration
-console.log('Running migration to create the waitlist email template...');
-const tsc = spawnSync('npx', ['tsx', migrationFilePath]);
-
-// Display the output
-if (tsc.stdout) {
-  console.log(tsc.stdout.toString());
-}
-
-if (tsc.stderr) {
-  console.error(tsc.stderr.toString());
-}
-
-console.log(`Migration completed with status: ${tsc.status === 0 ? 'Success' : 'Failed'}`);
