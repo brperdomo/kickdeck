@@ -301,6 +301,114 @@ export async function createRefund(paymentIntentId: string, amount?: number) {
 }
 
 /**
+ * Creates a Setup Intent for collecting payment details without charging
+ * This allows us to collect card information during registration and only charge upon approval
+ */
+export async function createSetupIntent(teamId: number | string, metadata?: Record<string, string>) {
+  try {
+    log(`Creating setup intent for team: ${teamId}`);
+    
+    const setupIntent = await stripe.setupIntents.create({
+      usage: 'off_session', // This allows for future use without customer being present
+      metadata: {
+        teamId: teamId.toString(),
+        ...metadata
+      }
+    });
+
+    // Only update the team in the database if it's a numeric ID (not a temp ID)
+    if (typeof teamId === 'number' || !teamId.toString().startsWith('temp-')) {
+      try {
+        const numericTeamId = typeof teamId === 'number' ? teamId : parseInt(teamId.toString());
+        // Update the team with the setup intent ID
+        await db.update(teams)
+          .set({
+            setup_intent_id: setupIntent.id,
+            payment_status: 'payment_info_provided'
+          })
+          .where(eq(teams.id, numericTeamId));
+      } catch (dbError) {
+        console.warn(`Could not update team record with setup intent ID, likely a temporary team: ${dbError.message}`);
+      }
+    }
+
+    return { 
+      clientSecret: setupIntent.client_secret,
+      setupIntentId: setupIntent.id
+    };
+  } catch (error: any) {
+    console.error("Error creating setup intent:", error);
+    throw new Error(`Error creating setup intent: ${error.message}`);
+  }
+}
+
+/**
+ * Processes a payment for a team using a saved payment method
+ * This is used when an admin approves a team that provided payment information during registration
+ */
+export async function processPaymentForApprovedTeam(teamId: number, amount: number) {
+  try {
+    log(`Processing payment for approved team: ${teamId}`);
+    
+    // Find the team
+    const team = await db.query.teams.findFirst({
+      where: eq(teams.id, teamId)
+    });
+    
+    if (!team) {
+      throw new Error(`Team with ID ${teamId} not found`);
+    }
+    
+    if (!team.payment_method_id) {
+      throw new Error(`Team ${teamId} has no saved payment method`);
+    }
+    
+    // Create a payment intent with the saved payment method
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Convert to cents
+      currency: "usd",
+      payment_method: team.payment_method_id,
+      confirm: true, // Immediately attempt to confirm the payment
+      off_session: true, // Since the customer is not present
+      metadata: {
+        teamId: teamId.toString(),
+        eventId: team.eventId.toString(),
+        description: `Team registration payment for ${team.name}`
+      }
+    });
+    
+    // Update the team with the payment intent ID
+    await db.update(teams)
+      .set({
+        payment_intent_id: paymentIntent.id,
+        payment_status: paymentIntent.status,
+        payment_date: new Date().toISOString()
+      })
+      .where(eq(teams.id, teamId));
+    
+    return {
+      success: true,
+      paymentIntentId: paymentIntent.id,
+      status: paymentIntent.status
+    };
+  } catch (error: any) {
+    // Handle specific Stripe errors
+    console.error("Error processing payment for approved team:", error);
+    
+    // Update the team with the error information
+    await db.update(teams)
+      .set({
+        payment_status: 'failed',
+        error_code: error.code || null,
+        error_message: error.message || 'Payment processing failed'
+      })
+      .where(eq(teams.id, teamId));
+    
+    throw new Error(`Error processing payment: ${error.message}`);
+  }
+}
+
+/**
  * Updates a payment intent status (for testing purpose only)
  * This function should ONLY be used in development to simulate status changes
  */
@@ -339,6 +447,62 @@ export async function updatePaymentIntentStatus(paymentIntentId: string, status:
   } catch (error: any) {
     console.error("Error updating payment intent status:", error);
     throw new Error(`Error updating payment intent status: ${error.message}`);
+  }
+}
+
+/**
+ * Handle a successful setup intent completion (when payment method is attached)
+ */
+export async function handleSetupIntentSuccess(setupIntent: Stripe.SetupIntent) {
+  try {
+    const teamId = setupIntent.metadata.teamId;
+    if (!teamId) {
+      console.error("No teamId found in setup intent metadata");
+      return;
+    }
+
+    // Check if this is a temporary team ID (for new registrations)
+    if (teamId.toString().startsWith('temp-')) {
+      console.log(`Setup intent completed for temporary team ID: ${teamId}. This will be handled by the frontend registration flow.`);
+      return;
+    }
+
+    const paymentMethodId = setupIntent.payment_method as string;
+    if (!paymentMethodId) {
+      console.error("No payment method attached to setup intent");
+      return;
+    }
+
+    // Find the team
+    const teamIdNumber = parseInt(teamId);
+    const existingTeam = await db.query.teams.findFirst({
+      where: eq(teams.id, teamIdNumber)
+    });
+
+    if (!existingTeam) {
+      console.error(`Team with ID ${teamId} not found`);
+      return;
+    }
+
+    // Get payment method details
+    const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+    const cardDetails = paymentMethod.card;
+
+    // Update team with payment method details
+    await db.update(teams)
+      .set({
+        payment_method_id: paymentMethodId,
+        payment_status: 'payment_info_provided',
+        card_brand: cardDetails?.brand || null,
+        card_last_four: cardDetails?.last4 || null,
+      })
+      .where(eq(teams.id, teamIdNumber));
+
+    console.log(`Payment method saved successfully for team ${teamId}`);
+    return true;
+  } catch (error: any) {
+    console.error("Error handling setup intent success:", error);
+    throw new Error(`Error handling setup intent success: ${error.message}`);
   }
 }
 
