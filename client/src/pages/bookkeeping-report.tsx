@@ -125,7 +125,11 @@ export default function BookkeepingReport() {
     },
   });
   
-  const transactions = data?.transactions || [];
+  // Ensure transactions is always an array
+  const transactions = Array.isArray(data?.transactions) 
+    ? data.transactions 
+    : (data?.transactions?.count > 0 ? data.transactions.rows : []);
+  
   const events = eventsData?.events || [];
   
   // Calculate summary statistics
@@ -137,7 +141,7 @@ export default function BookkeepingReport() {
   };
 
   // Apply client-side filters (beyond the date range and tab filters)
-  const filteredTransactions = transactions.filter((transaction: any) => {
+  const filteredTransactions = Array.isArray(transactions) ? transactions.filter((transaction: any) => {
     // Text search
     const searchTerms = searchQuery.toLowerCase().split(' ');
     const searchFields = [
@@ -166,16 +170,18 @@ export default function BookkeepingReport() {
     const matchesEvent = !selectedEventId || transaction.event_id === selectedEventId;
     
     return matchesSearch && matchesStatus && matchesPaymentMethod && matchesEvent;
-  });
+  }) : [];
 
   // Get unique payment methods and statuses for filters
   const statusMap: Record<string, boolean> = {};
   const paymentMethodMap: Record<string, boolean> = {};
   
-  transactions.forEach((t: any) => {
-    if (t.status) statusMap[t.status] = true;
-    if (t.payment_method) paymentMethodMap[t.payment_method] = true;
-  });
+  if (Array.isArray(transactions)) {
+    transactions.forEach((t: any) => {
+      if (t.status) statusMap[t.status] = true;
+      if (t.payment_method) paymentMethodMap[t.payment_method] = true;
+    });
+  }
   
   const uniqueStatuses = Object.keys(statusMap);
   const uniquePaymentMethods = Object.keys(paymentMethodMap);
