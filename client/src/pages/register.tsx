@@ -296,7 +296,7 @@ export default function Register() {
                           <FormControl>
                             <Input
                               autoComplete="given-name"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="h-11 text-base px-4 bg-white/90 text-gray-900 border-white/50 focus:border-white focus:ring-white/50"
                               {...field}
                             />
                           </FormControl>
@@ -313,7 +313,7 @@ export default function Register() {
                           <FormControl>
                             <Input
                               autoComplete="family-name"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="h-11 text-base px-4 bg-white/90 text-gray-900 border-white/50 focus:border-white focus:ring-white/50"
                               {...field}
                             />
                           </FormControl>
@@ -332,7 +332,7 @@ export default function Register() {
                               <Input
                                 type="email"
                                 autoComplete="email"
-                                className={`h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50 ${
+                                className={`h-11 text-base px-4 bg-white/90 text-gray-900 border-white/50 focus:border-white focus:ring-white/50 ${
                                   emailAvailability?.available === false
                                     ? "border-red-500 focus:ring-red-500"
                                     : emailAvailability?.available
@@ -362,7 +362,7 @@ export default function Register() {
                             <Input
                               type="password"
                               autoComplete="new-password"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="h-11 text-base px-4 bg-white/90 text-gray-900 border-white/50 focus:border-white focus:ring-white/50"
                               {...field}
                             />
                           </FormControl>
@@ -384,7 +384,7 @@ export default function Register() {
                             <Input
                               type="password"
                               autoComplete="new-password"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              className="h-11 text-base px-4 bg-white/90 text-gray-900 border-white/50 focus:border-white focus:ring-white/50"
                               {...field}
                             />
                           </FormControl>
