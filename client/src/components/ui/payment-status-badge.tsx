@@ -35,6 +35,8 @@ export function TeamStatusBadge({ status }: { status: string | undefined | null 
       return <Badge className="bg-red-500"><XCircle className="w-3 h-3 mr-1" /> Rejected</Badge>;
     case 'withdrawn':
       return <Badge className="bg-slate-500"><XCircle className="w-3 h-3 mr-1" /> Withdrawn</Badge>;
+    case 'waitlisted':
+      return <Badge className="bg-amber-500"><Clock className="w-3 h-3 mr-1" /> Waitlisted</Badge>;
     case 'registered':
     default:
       return <Badge className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" /> Pending Approval</Badge>;
