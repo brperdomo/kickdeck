@@ -299,9 +299,11 @@ export const teams = pgTable("teams", {
   selectedFeeIds: text("selected_fee_ids"), // Comma-separated list of fee IDs
   totalAmount: integer("total_amount"), // Store total amount in cents (includes all fees)
   // Payment status and details
-  paymentStatus: text("payment_status").default("pending"), // pending, paid, failed, refunded
+  paymentStatus: text("payment_status").default("pending"), // pending, paid, failed, refunded, payment_info_provided
   paymentDate: timestamp("payment_date"), // When the payment was processed
   paymentIntentId: text("payment_intent_id"), // Stripe payment intent ID
+  setupIntentId: text("setup_intent_id"), // Stripe setup intent ID for two-step payment flow
+  paymentMethodId: text("payment_method_id"), // Stored payment method ID for two-step payment flow
   cardBrand: text("card_brand"), // Card brand (Visa, Mastercard, etc.)
   cardLast4: text("card_last_4"), // Last 4 digits of the card
   paymentMethodType: text("payment_method_type"), // Type of payment method
@@ -344,8 +346,9 @@ export const paymentTransactions = pgTable("payment_transactions", {
   teamId: integer("team_id").references(() => teams.id),
   eventId: bigint("event_id", { mode: "number" }).references(() => events.id),
   userId: integer("user_id").references(() => users.id),
-  paymentIntentId: text("payment_intent_id"),
-  transactionType: text("transaction_type").notNull(), // payment, refund, chargeback, etc.
+  paymentIntentId: text("payment_intent_id"), // For payment intents
+  setupIntentId: text("setup_intent_id"), // For setup intents (when just saving payment method)
+  transactionType: text("transaction_type").notNull(), // payment, refund, chargeback, payment_info_collected, etc.
   amount: integer("amount").notNull(), // Amount in cents, positive for payments, negative for refunds
   status: text("status").notNull(), // succeeded, failed, pending, etc.
   cardBrand: text("card_brand"), // Visa, Mastercard, etc.
@@ -378,7 +381,7 @@ export const insertGameTimeSlotSchema = createInsertSchema(gameTimeSlots);
 export const insertTournamentGroupSchema = createInsertSchema(tournamentGroups);
 export const insertTeamSchema = createInsertSchema(teams);
 export const insertPaymentTransactionSchema = createInsertSchema(paymentTransactions, {
-  transactionType: z.enum(['payment', 'refund', 'partial_refund', 'chargeback', 'credit', 'onsite_payment']),
+  transactionType: z.enum(['payment', 'refund', 'partial_refund', 'chargeback', 'credit', 'onsite_payment', 'payment_info_collected']),
   status: z.enum(['succeeded', 'failed', 'pending', 'processing', 'canceled']),
   amount: z.number().int(),
 });
