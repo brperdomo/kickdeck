@@ -664,30 +664,30 @@ export default function BookkeepingReport() {
         
         {/* All Transactions Tab */}
         <TabsContent value="all-transactions">
-          <Card>
-            <CardHeader>
-              <CardTitle>All Transactions</CardTitle>
-              <CardDescription>
+          <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
+            <div className="p-6 bg-gradient-to-r from-indigo-50/30 to-white">
+              <h3 className="text-lg font-medium">All Transactions</h3>
+              <p className="text-sm text-muted-foreground mt-1">
                 All financial transactions for the selected date range
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {filteredTransactions.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Transaction ID</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Team</TableHead>
-                        <TableHead>Event</TableHead>
-                        <TableHead>Gross Amount</TableHead>
-                        <TableHead>Stripe Fee</TableHead>
-                        <TableHead>Net Amount</TableHead>
-                        <TableHead>Payment Method</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Settlement Date</TableHead>
-                      </TableRow>
+              </p>
+            </div>
+            
+            {filteredTransactions.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Transaction ID</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Date</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Team</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Gross Amount</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Stripe Fee</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Net Amount</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Payment Method</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Status</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Settlement Date</TableHead>
+                    </TableRow>
                     </TableHeader>
                     <TableBody>
                       {filteredTransactions.map((transaction: any) => {
@@ -731,40 +731,39 @@ export default function BookkeepingReport() {
                   </div>
                 </div>
               )}
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {filteredTransactions.length} of {transactions.length} total transactions
-              </p>
-            </CardFooter>
-          </Card>
+              <div className="flex justify-between pt-4">
+                <p className="text-sm text-muted-foreground">
+                  Showing {filteredTransactions.length} of {transactions.length} total transactions
+                </p>
+              </div>
+            </div>
         </TabsContent>
         
         {/* Refunds Tab */}
         <TabsContent value="refunds">
-          <Card>
-            <CardHeader>
-              <CardTitle>Refund Transactions</CardTitle>
-              <CardDescription>
+          <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
+            <div className="p-6 bg-gradient-to-r from-indigo-50/30 to-white">
+              <h3 className="text-lg font-medium">Refund Transactions</h3>
+              <p className="text-sm text-muted-foreground mt-1">
                 All refunds issued for the selected date range
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {filteredTransactions.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Refund ID</TableHead>
-                        <TableHead>Original Payment</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Team</TableHead>
-                        <TableHead>Event</TableHead>
-                        <TableHead>Refund Amount</TableHead>
-                        <TableHead>Refund Type</TableHead>
-                        <TableHead>Original Amount</TableHead>
-                        <TableHead>Reason</TableHead>
-                      </TableRow>
+              </p>
+            </div>
+            
+            {filteredTransactions.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Refund ID</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Original Payment</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Date</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Team</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Refund Amount</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Refund Type</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Original Amount</TableHead>
+                      <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Reason</TableHead>
+                    </TableRow>
                     </TableHeader>
                     <TableBody>
                       {filteredTransactions.map((transaction: any) => (
@@ -804,30 +803,29 @@ export default function BookkeepingReport() {
                   </div>
                 </div>
               )}
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {filteredTransactions.length} of {transactions.length} total refunds
-              </p>
-            </CardFooter>
-          </Card>
+              <div className="flex justify-between pt-4 p-6">
+                <p className="text-sm text-muted-foreground">
+                  Showing {filteredTransactions.length} of {transactions.length} total refunds
+                </p>
+              </div>
+            </div>
         </TabsContent>
         
         {/* Chargebacks Tab */}
         <TabsContent value="chargebacks">
-          <Card>
-            <CardHeader>
-              <CardTitle>Chargeback Transactions</CardTitle>
-              <CardDescription>
+          <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
+            <div className="p-6 bg-gradient-to-r from-indigo-50/30 to-white">
+              <h3 className="text-lg font-medium">Chargeback Transactions</h3>
+              <p className="text-sm text-muted-foreground mt-1">
                 All chargebacks received for the selected date range
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {filteredTransactions.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
+              </p>
+            </div>
+            
+            {filteredTransactions.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
                         <TableHead>Chargeback ID</TableHead>
                         <TableHead>Original Payment</TableHead>
                         <TableHead>Date</TableHead>
