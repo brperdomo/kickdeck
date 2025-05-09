@@ -1918,6 +1918,10 @@ function SchedulingView() {
   const [scheduleQuality, setScheduleQuality] = useState<number | null>(null);
   const [conflicts, setConflicts] = useState<any[]>([]);
   const [bracketSuggestions, setBracketSuggestions] = useState<any[]>([]);
+  const [selectedAgeGroups, setSelectedAgeGroups] = useState<string[]>([]);
+  const [selectedBrackets, setSelectedBrackets] = useState<string[]>([]);
+  const [previewMode, setPreviewMode] = useState<boolean>(false);
+  const [previewGames, setPreviewGames] = useState<any[]>([]);
   const { toast } = useToast();
   
   // Mock data until we implement the backend
