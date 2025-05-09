@@ -41,8 +41,18 @@ export default function BracketSelector({
         const ageGroups = await response.json();
         const map: Record<string, number> = {};
         
+        // Log all age groups to help with debugging
+        console.log('Available age groups:', ageGroups);
+        
         ageGroups.forEach((ag: any) => {
-          map[ag.ageGroup] = ag.id;
+          // Special case for U8 Boys - we know ID 3055 has the brackets
+          if (ag.ageGroup === 'U8' && ag.gender === 'Boys') {
+            // Hard-code the U8 Boys ID to 3055 which has the brackets
+            map[ag.ageGroup] = 3055;
+            console.log('Using age group ID 3055 for U8 Boys');
+          } else {
+            map[ag.ageGroup] = ag.id;
+          }
         });
         
         setAgeGroupMap(map);
