@@ -6,7 +6,7 @@ import { log } from '../../vite';
 import { sendTemplatedEmail } from '../../services/emailService';
 import { createRefund, createTestPaymentIntent } from '../../services/stripeService';
 
-type TeamStatus = 'registered' | 'approved' | 'rejected' | 'paid' | 'withdrawn' | 'refunded';
+type TeamStatus = 'registered' | 'approved' | 'rejected' | 'paid' | 'withdrawn' | 'refunded' | 'waitlisted';
 
 /**
  * Get all team registrations with filtering options
@@ -128,7 +128,7 @@ export async function updateTeamStatus(req: Request, res: Response) {
     
     log(`Processing team status update. TeamID: ${teamId}, Status: ${status}, Notes: ${notes ? 'provided' : 'none'}`, 'admin');
     
-    const validStatuses: TeamStatus[] = ['registered', 'approved', 'rejected', 'paid', 'withdrawn', 'refunded'];
+    const validStatuses: TeamStatus[] = ['registered', 'approved', 'rejected', 'paid', 'withdrawn', 'refunded', 'waitlisted'];
     
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ 
@@ -246,6 +246,7 @@ export async function updateTeamStatus(req: Request, res: Response) {
       if (status === 'approved') emailTemplate = 'team_approved';
       if (status === 'rejected') emailTemplate = 'team_rejected';
       if (status === 'withdrawn') emailTemplate = 'team_withdrawn';
+      if (status === 'waitlisted') emailTemplate = 'team_waitlisted';
       
       log(`Using email template: ${emailTemplate} for notification`, 'admin');
       
