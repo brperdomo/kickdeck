@@ -40,6 +40,7 @@ import RegistrationOrdersReport from "@/pages/registration-orders-report";
 import FinancialOverviewReport from "@/pages/financial-overview-report";
 import EventFinancialReport from "@/pages/event-financial-report";
 import FeesAnalysisReport from "@/pages/fees-analysis-report";
+import BookkeepingReport from "@/pages/bookkeeping-report";
 import Checkout from "@/pages/checkout";
 import PaymentConfirmation from "@/pages/payment-confirmation";
 import SendGridSettingsPage from "@/pages/sendgrid-settings";
@@ -339,6 +340,9 @@ function Router() {
           </Route>
           <Route path="/fees-analysis-report">
             {user.isAdmin ? <FeesAnalysisReport /> : <NotFound />}
+          </Route>
+          <Route path="/bookkeeping-report">
+            {user.isAdmin ? <BookkeepingReport /> : <NotFound />}
           </Route>
           <Route path="/checkout">
             <Checkout />
