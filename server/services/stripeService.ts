@@ -323,11 +323,11 @@ export async function createSetupIntent(teamId: number | string, metadata?: Reco
         // Update the team with the setup intent ID
         await db.update(teams)
           .set({
-            setup_intent_id: setupIntent.id,
-            payment_status: 'payment_info_provided'
+            setupIntentId: setupIntent.id,
+            paymentStatus: 'payment_info_provided'
           })
           .where(eq(teams.id, numericTeamId));
-      } catch (dbError) {
+      } catch (dbError: any) {
         console.warn(`Could not update team record with setup intent ID, likely a temporary team: ${dbError.message}`);
       }
     }
@@ -359,7 +359,7 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
       throw new Error(`Team with ID ${teamId} not found`);
     }
     
-    if (!team.payment_method_id) {
+    if (!team.paymentMethodId) {
       throw new Error(`Team ${teamId} has no saved payment method`);
     }
     
@@ -367,7 +367,7 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
       currency: "usd",
-      payment_method: team.payment_method_id,
+      payment_method: team.paymentMethodId,
       confirm: true, // Immediately attempt to confirm the payment
       off_session: true, // Since the customer is not present
       metadata: {
@@ -380,9 +380,9 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
     // Update the team with the payment intent ID
     await db.update(teams)
       .set({
-        payment_intent_id: paymentIntent.id,
-        payment_status: paymentIntent.status,
-        payment_date: new Date().toISOString()
+        paymentIntentId: paymentIntent.id,
+        paymentStatus: paymentIntent.status,
+        paymentDate: new Date().toISOString()
       })
       .where(eq(teams.id, teamId));
     
@@ -398,9 +398,9 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
     // Update the team with the error information
     await db.update(teams)
       .set({
-        payment_status: 'failed',
-        error_code: error.code || null,
-        error_message: error.message || 'Payment processing failed'
+        paymentStatus: 'failed',
+        errorCode: error.code || null,
+        errorMessage: error.message || 'Payment processing failed'
       })
       .where(eq(teams.id, teamId));
     
@@ -425,7 +425,7 @@ export async function updatePaymentIntentStatus(paymentIntentId: string, status:
     
     // Find the team associated with this payment intent
     const team = await db.query.teams.findFirst({
-      where: eq(teams.payment_intent_id, paymentIntentId)
+      where: eq(teams.paymentIntentId, paymentIntentId)
     });
     
     if (!team) {
@@ -435,8 +435,8 @@ export async function updatePaymentIntentStatus(paymentIntentId: string, status:
     // Update the team payment status
     await db.update(teams)
       .set({
-        payment_status: status,
-        payment_date: new Date().toISOString(),
+        paymentStatus: status,
+        paymentDate: new Date().toISOString(),
       })
       .where(eq(teams.id, team.id));
       
@@ -491,10 +491,10 @@ export async function handleSetupIntentSuccess(setupIntent: Stripe.SetupIntent) 
     // Update team with payment method details
     await db.update(teams)
       .set({
-        payment_method_id: paymentMethodId,
-        payment_status: 'payment_info_provided',
-        card_brand: cardDetails?.brand || null,
-        card_last_four: cardDetails?.last4 || null,
+        paymentMethodId: paymentMethodId,
+        paymentStatus: 'payment_info_provided',
+        cardBrand: cardDetails?.brand || null,
+        cardLast4: cardDetails?.last4 || null,
       })
       .where(eq(teams.id, teamIdNumber));
 
@@ -516,7 +516,7 @@ export async function handleRefund(charge: Stripe.Charge, refund: Stripe.Refund)
 
     // Find the team with this payment intent
     const team = await db.query.teams.findFirst({
-      where: eq(teams.payment_intent_id, paymentIntentId)
+      where: eq(teams.paymentIntentId, paymentIntentId)
     });
 
     if (!team) {
@@ -526,20 +526,20 @@ export async function handleRefund(charge: Stripe.Charge, refund: Stripe.Refund)
 
     // Record payment transaction for the refund
     await db.insert(paymentTransactions).values({
-      team_id: team.id,
-      payment_intent_id: paymentIntentId,
+      teamId: team.id,
+      paymentIntentId: paymentIntentId,
       amount: -refund.amount, // negative amount for refund
       status: 'refunded',
-      payment_date: new Date(),
-      card_brand: team.card_brand,
-      card_last_four: team.card_last_four,
+      paymentDate: new Date(),
+      cardBrand: team.cardBrand,
+      cardLast4: team.cardLast4,
     });
 
     // Update team payment status
     await db.update(teams)
       .set({
-        payment_status: 'refunded',
-        refund_date: new Date().toISOString(),
+        paymentStatus: 'refunded',
+        refundDate: new Date().toISOString(),
       })
       .where(eq(teams.id, team.id));
 
