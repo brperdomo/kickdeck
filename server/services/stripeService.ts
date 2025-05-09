@@ -56,7 +56,7 @@ export async function createPaymentIntent(amount: number, teamId: number | strin
         // Update the team with the payment intent ID
         await db.update(teams)
           .set({
-            payment_intent_id: paymentIntent.id
+            paymentIntentId: paymentIntent.id
           })
           .where(eq(teams.id, numericTeamId));
       } catch (dbError) {
@@ -113,22 +113,22 @@ export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) 
 
     // Record payment transaction
     await db.insert(paymentTransactions).values({
-      team_id: teamIdNumber,
-      payment_intent_id: paymentIntent.id,
+      teamId: teamIdNumber,
+      paymentIntentId: paymentIntent.id,
       amount: paymentIntent.amount,
       status: 'paid',
-      payment_date: new Date(),
-      card_brand: cardDetails?.brand || null,
-      card_last_four: cardDetails?.last4 || null,
+      paymentDate: new Date(),
+      cardBrand: cardDetails?.brand || null,
+      cardLast4: cardDetails?.last4 || null,
     });
 
     // Update team payment status and card details
     await db.update(teams)
       .set({
-        payment_status: 'paid',
-        payment_date: new Date().toISOString(),
-        card_brand: cardDetails?.brand || null,
-        card_last_four: cardDetails?.last4 || null,
+        paymentStatus: 'paid',
+        paymentDate: new Date().toISOString(),
+        cardBrand: cardDetails?.brand || null,
+        cardLast4: cardDetails?.last4 || null,
       })
       .where(eq(teams.id, teamIdNumber));
 
@@ -201,21 +201,21 @@ export async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) 
     
     // Record payment transaction
     await db.insert(paymentTransactions).values({
-      team_id: teamIdNumber,
-      payment_intent_id: paymentIntent.id,
+      teamId: teamIdNumber,
+      paymentIntentId: paymentIntent.id,
       amount: paymentIntent.amount,
       status: 'failed',
-      payment_date: new Date(),
-      error_code: paymentIntent.last_payment_error?.code || null,
-      error_message: paymentIntent.last_payment_error?.message || null,
+      paymentDate: new Date(),
+      errorCode: paymentIntent.last_payment_error?.code || null,
+      errorMessage: paymentIntent.last_payment_error?.message || null,
     });
 
     // Update team payment status
     await db.update(teams)
       .set({
-        payment_status: 'failed',
-        error_code: paymentIntent.last_payment_error?.code || null,
-        error_message: paymentIntent.last_payment_error?.message || null,
+        paymentStatus: 'failed',
+        errorCode: paymentIntent.last_payment_error?.code || null,
+        errorMessage: paymentIntent.last_payment_error?.message || null,
       })
       .where(eq(teams.id, teamIdNumber));
 
@@ -278,18 +278,18 @@ export async function createRefund(paymentIntentId: string, amount?: number) {
       // Update the team status
       await db.update(teams)
         .set({
-          payment_status: 'refunded',
-          refund_date: new Date().toISOString(),
+          paymentStatus: 'refunded',
+          refundDate: new Date().toISOString(),
         })
         .where(eq(teams.id, teamIdNumber));
       
       // Record the refund transaction
       await db.insert(paymentTransactions).values({
-        team_id: teamIdNumber,
-        payment_intent_id: paymentIntentId,
+        teamId: teamIdNumber,
+        paymentIntentId: paymentIntentId,
         amount: -(amount || paymentIntent.amount), // Negative amount for refund
         status: 'refunded',
-        payment_date: new Date(),
+        paymentDate: new Date(),
       });
     }
     
