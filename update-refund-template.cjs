@@ -2,9 +2,9 @@
  * Quick script to update the refund email template
  * to support partial refunds
  */
-import { db } from './db/index.js';
-import { emailTemplates } from './db/schema.js';
-import { eq } from 'drizzle-orm';
+const { db } = require('./db');
+const { emailTemplates } = require('./db/schema');
+const { eq } = require('drizzle-orm');
 
 async function updateRefundTemplate() {
   try {
