@@ -344,11 +344,11 @@ export default function BookkeepingReport() {
         <div className="flex items-center justify-between">
           <Button 
             variant="outline" 
-            onClick={() => navigate('/admin-dashboard')}
+            onClick={() => navigate('/admin/reports')}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+            Back to Reports
           </Button>
         </div>
         <div className="flex items-center justify-center min-h-[70vh]">
@@ -367,11 +367,11 @@ export default function BookkeepingReport() {
         <div className="flex items-center justify-between">
           <Button 
             variant="outline" 
-            onClick={() => navigate('/admin-dashboard')}
+            onClick={() => navigate('/admin/reports')}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+            Back to Reports
           </Button>
         </div>
         <Alert variant="destructive" className="my-4">
@@ -395,11 +395,11 @@ export default function BookkeepingReport() {
         <div>
           <Button 
             variant="outline" 
-            onClick={() => navigate('/admin-dashboard')}
+            onClick={() => navigate('/admin/reports')}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+            Back to Reports
           </Button>
           <h1 className="text-2xl font-bold mb-1">Bookkeeping Report</h1>
           <p className="text-muted-foreground">
