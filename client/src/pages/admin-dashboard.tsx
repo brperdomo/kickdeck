@@ -5,7 +5,7 @@ import {
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
-  Trophy, WandSparkles, BarChart2
+  Trophy, WandSparkles
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -965,11 +965,11 @@ function ReportsView() {
       case 'financial':
         return (
           <div className="space-y-4">
-            <div className="flex justify-between items-center bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 rounded-lg shadow-sm">
+            <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <h3 className="text-lg font-semibold text-indigo-900 dark:text-blue-100">Financial Management</h3>
+                <h3 className="text-lg font-semibold">Financial Management</h3>
                 <select 
-                  className="border border-indigo-200 rounded-md px-4 py-2 bg-white text-indigo-900 font-medium shadow-sm focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-blue-100"
+                  className="border rounded px-2 py-1"
                   value={selectedFinancialReport}
                   onChange={(e) => setSelectedFinancialReport(e.target.value)}
                 >
@@ -984,10 +984,7 @@ function ReportsView() {
               </div>
               <div className="flex gap-2">
                 {selectedFinancialReport === 'accounting-codes' && (
-                  <Button 
-                    onClick={() => setIsAccountingCodeModalOpen(true)}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                  >
+                  <Button onClick={() => setIsAccountingCodeModalOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" />
                     Add Accounting Code
                   </Button>
@@ -995,7 +992,6 @@ function ReportsView() {
                 <Button
                   onClick={() => startExport('financial')}
                   disabled={isExporting}
-                  className="border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:text-blue-100 dark:border-gray-600"
                 >
                   {isExporting ? (
                     <>
@@ -1185,17 +1181,11 @@ function ReportsView() {
       case 'manager':
         return (
           <div className="space-y-4">
-            <div className="flex justify-between items-center bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 rounded-lg shadow-sm">
-              <div className="space-y-1">
-                <h3 className="text-lg font-semibold text-indigo-900 dark:text-blue-100">Manager Reports</h3>
-                <p className="text-sm text-indigo-700 dark:text-blue-200">
-                  Generate reports for all team managers
-                </p>
-              </div>
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Manager Reports</h3>
               <Button
                 onClick={() => startExport('manager')}
                 disabled={isExporting !== 'manager'}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white"
               >
                 {isExporting === 'manager' ? (
                   <>
@@ -1210,36 +1200,21 @@ function ReportsView() {
                 )}
               </Button>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-indigo-100 dark:border-gray-700">
-              <div className="bg-gradient-to-r from-indigo-50/50 to-blue-50/50 dark:from-gray-800 dark:to-gray-700 p-4 border-b border-indigo-100 dark:border-gray-700">
-                <h4 className="text-base font-medium text-indigo-900 dark:text-blue-100">Manager Information</h4>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-center p-6 text-center">
-                  <div className="space-y-3">
-                    <BarChart2 className="mx-auto h-12 w-12 text-indigo-300 dark:text-indigo-400" />
-                    <p className="text-indigo-700 dark:text-indigo-300">Manager report content will be implemented here</p>
-                    <p className="text-sm text-indigo-500 dark:text-indigo-400">Track and manage team managers across all tournaments</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Manager report content will be implemented here</p>
+              </CardContent>
+            </Card>
           </div>
         );
       case 'player':
         return (
           <div className="space-y-4">
-            <div className="flex justify-between items-center bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 rounded-lg shadow-sm">
-              <div className="space-y-1">
-                <h3 className="text-lg font-semibold text-indigo-900 dark:text-blue-100">Player Reports</h3>
-                <p className="text-sm text-indigo-700 dark:text-blue-200">
-                  View and export all registered player information
-                </p>
-              </div>
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Player Reports</h3>
               <Button
                 onClick={() => startExport('player')}
                 disabled={isExporting !== 'player'}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white"
               >
                 {isExporting === 'player' ? (
                   <>
@@ -1254,36 +1229,21 @@ function ReportsView() {
                 )}
               </Button>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-indigo-100 dark:border-gray-700">
-              <div className="bg-gradient-to-r from-indigo-50/50 to-blue-50/50 dark:from-gray-800 dark:to-gray-700 p-4 border-b border-indigo-100 dark:border-gray-700">
-                <h4 className="text-base font-medium text-indigo-900 dark:text-blue-100">Player Information</h4>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-center p-6 text-center">
-                  <div className="space-y-3">
-                    <Users className="mx-auto h-12 w-12 text-indigo-300 dark:text-indigo-400" />
-                    <p className="text-indigo-700 dark:text-indigo-300">Player report content will be implemented here</p>
-                    <p className="text-sm text-indigo-500 dark:text-indigo-400">View and manage player information for all registered teams</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Player report content will be implemented here</p>
+              </CardContent>
+            </Card>
           </div>
         );
       case 'schedule':
         return (
           <div className="space-y-4">
-            <div className="flex justify-between items-center bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 rounded-lg shadow-sm">
-              <div className="space-y-1">
-                <h3 className="text-lg font-semibold text-indigo-900 dark:text-blue-100">Schedule Reports</h3>
-                <p className="text-sm text-indigo-700 dark:text-blue-200">
-                  Generate and export tournament schedules and match information
-                </p>
-              </div>
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Schedule Reports</h3>
               <Button
                 onClick={() => startExport('schedule')}
                 disabled={isExporting !== 'schedule'}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white"
               >
                 {isExporting === 'schedule' ? (
                   <>
@@ -1298,36 +1258,21 @@ function ReportsView() {
                 )}
               </Button>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-indigo-100 dark:border-gray-700">
-              <div className="bg-gradient-to-r from-indigo-50/50 to-blue-50/50 dark:from-gray-800 dark:to-gray-700 p-4 border-b border-indigo-100 dark:border-gray-700">
-                <h4 className="text-base font-medium text-indigo-900 dark:text-blue-100">Schedule Information</h4>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-center p-6 text-center">
-                  <div className="space-y-3">
-                    <Calendar className="mx-auto h-12 w-12 text-indigo-300 dark:text-indigo-400" />
-                    <p className="text-indigo-700 dark:text-indigo-300">Schedule report content will be implemented here</p>
-                    <p className="text-sm text-indigo-500 dark:text-indigo-400">View and export tournament schedules and match information</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Schedule report content will be implemented here</p>
+              </CardContent>
+            </Card>
           </div>
         );
       case 'guest-player':
         return (
           <div className="space-y-4">
-            <div className="flex justify-between items-center bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-4 rounded-lg shadow-sm">
-              <div className="space-y-1">
-                <h3 className="text-lg font-semibold text-indigo-900 dark:text-blue-100">Guest Player Reports</h3>
-                <p className="text-sm text-indigo-700 dark:text-blue-200">
-                  Track and analyze guest player registrations across events
-                </p>
-              </div>
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Guest Player Reports</h3>
               <Button
                 onClick={() => startExport('guest-player')}
                 disabled={isExporting !== 'guest-player'}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white"
               >
                 {isExporting === 'guest-player' ? (
                   <>
@@ -1342,20 +1287,11 @@ function ReportsView() {
                 )}
               </Button>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-indigo-100 dark:border-gray-700">
-              <div className="bg-gradient-to-r from-indigo-50/50 to-blue-50/50 dark:from-gray-800 dark:to-gray-700 p-4 border-b border-indigo-100 dark:border-gray-700">
-                <h4 className="text-base font-medium text-indigo-900 dark:text-blue-100">Guest Player Information</h4>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-center p-6 text-center">
-                  <div className="space-y-3">
-                    <UserPlus className="mx-auto h-12 w-12 text-indigo-300 dark:text-indigo-400" />
-                    <p className="text-indigo-700 dark:text-indigo-300">Guest player report content will be implemented here</p>
-                    <p className="text-sm text-indigo-500 dark:text-indigo-400">Track and analyze guest player registrations across events</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-muted-foreground">Guest player report content will be implemented here</p>
+              </CardContent>
+            </Card>
           </div>
         );
       default:
@@ -1371,15 +1307,15 @@ function ReportsView() {
 
       <div className="grid grid-cols-4 gap-6">
         {/* Report Navigation */}
-        <div className="col-span-1 rounded-xl border overflow-hidden shadow-md bg-gradient-to-b from-white to-indigo-50/20 dark:from-gray-800 dark:to-indigo-950/20">
-          <div className="p-5 border-b bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
-            <h3 className="text-lg font-semibold text-indigo-900 dark:text-blue-100">Report Types</h3>
-          </div>
-          <div className="p-4">
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Report Types</CardTitle>
+          </CardHeader>
+          <CardContent className="p-3">
             <div className="space-y-2">
               <Button
                 variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
-                className={`w-full justify-start ${selectedReport === 'financial' ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800' : ''}`}
+                className="w-full justify-start"
                 onClick={() => setSelectedReport('financial')}
                 disabled={isExporting !== null}
               >
@@ -1388,7 +1324,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
-                className={`w-full justify-start ${selectedReport === 'manager' ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800' : ''}`}
+                className="w-full justify-start"
                 onClick={() => setSelectedReport('manager')}
                 disabled={isExporting !== null}
               >
@@ -1397,7 +1333,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'player' ? 'secondary' : 'ghost'}
-                className={`w-full justify-start ${selectedReport === 'player' ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800' : ''}`}
+                className="w-full justify-start"
                 onClick={() => setSelectedReport('player')}
                 disabled={isExporting !== null}
               >
@@ -1406,7 +1342,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'schedule' ? 'secondary' : 'ghost'}
-                className={`w-full justify-start ${selectedReport === 'schedule' ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800' : ''}`}
+                className="w-full justify-start"
                 onClick={() => setSelectedReport('schedule')}
                 disabled={isExporting !== null}
               >
@@ -1415,7 +1351,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'guest-player' ? 'secondary' : 'ghost'}
-                className={`w-full justify-start ${selectedReport === 'guest-player' ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:text-indigo-900 dark:bg-indigo-900 dark:text-indigo-100 dark:hover:bg-indigo-800' : ''}`}
+                className="w-full justify-start"
                 onClick={() => setSelectedReport('guest-player')}
                 disabled={isExporting !== null}
               >
@@ -1423,8 +1359,8 @@ function ReportsView() {
                 Guest Player Reports
               </Button>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Report Content */}
         <div className="col-span-3">
