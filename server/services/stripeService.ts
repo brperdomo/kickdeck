@@ -451,6 +451,58 @@ export async function updatePaymentIntentStatus(paymentIntentId: string, status:
 }
 
 /**
+ * Create a test payment method and attach it to a setup intent (testing only)
+ * This simulates a customer entering their card details
+ */
+export async function attachTestPaymentMethodToSetupIntent(setupIntentId: string) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('This function is only available in development mode');
+  }
+
+  try {
+    log(`Attaching test payment method to setup intent: ${setupIntentId}`);
+    
+    // Create a test payment method (test card token)
+    const paymentMethod = await stripe.paymentMethods.create({
+      type: 'card',
+      card: {
+        number: '4242424242424242',
+        exp_month: 12,
+        exp_year: 2030,
+        cvc: '123',
+      },
+    });
+    
+    log(`Created test payment method: ${paymentMethod.id}`);
+    
+    // Attach the payment method to the setup intent
+    const setupIntent = await stripe.setupIntents.update(setupIntentId, {
+      payment_method: paymentMethod.id,
+    });
+    
+    // Confirm the setup intent to complete it
+    const confirmedIntent = await stripe.setupIntents.confirm(setupIntentId, {
+      payment_method: paymentMethod.id,
+    });
+    
+    log(`Confirmed setup intent: ${confirmedIntent.id} with status: ${confirmedIntent.status}`);
+    
+    // Process the successful setup intent
+    await handleSetupIntentSuccess(confirmedIntent);
+    
+    return {
+      success: true,
+      setupIntentId: setupIntentId,
+      paymentMethodId: paymentMethod.id,
+      status: confirmedIntent.status
+    };
+  } catch (error: any) {
+    console.error("Error attaching test payment method to setup intent:", error);
+    throw new Error(`Error attaching payment method: ${error.message}`);
+  }
+}
+
+/**
  * Handle a successful setup intent completion (when payment method is attached)
  */
 export async function handleSetupIntentSuccess(setupIntent: Stripe.SetupIntent) {

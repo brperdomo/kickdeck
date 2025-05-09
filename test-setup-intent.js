@@ -9,107 +9,120 @@
  * 2. Simulate successful completion of the setup intent
  * 3. Check that team's payment method details were updated
  */
+import 'dotenv/config';
+import fetch from 'node-fetch';
+import pg from 'pg';
+const { Client } = pg;
 
-require('dotenv').config();
-const axios = require('axios');
-const Stripe = require('stripe');
-
-// Initialize Stripe with the secret key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16"
-});
-
-const API_URL = 'http://localhost:3000';
+// Server URL - assuming local development
+const API_URL = 'http://localhost:5000/api';
 
 async function testSetupIntent() {
+  console.log('Starting setup intent test');
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+  });
+  
   try {
-    console.log('Testing Setup Intent functionality...');
+    // Connect to database
+    await client.connect();
+    console.log('Connected to database');
     
-    // Create a fake team ID for testing (this would normally come from the database)
-    const testTeamId = Math.floor(Math.random() * 100000);
-    console.log(`Using test team ID: ${testTeamId}`);
+    // Step 1: Find a test team to use
+    const teamQuery = `
+      SELECT id, name, payment_status 
+      FROM teams
+      WHERE name LIKE '%Test%'
+      LIMIT 1;
+    `;
     
-    // Step 1: Create a setup intent for the team
+    const teamResult = await client.query(teamQuery);
+    if (teamResult.rows.length === 0) {
+      throw new Error('No test team found. Create a team with "Test" in the name first.');
+    }
+    
+    const testTeam = teamResult.rows[0];
+    console.log(`Using test team: ${testTeam.name} (ID: ${testTeam.id})`);
+    
+    // Step 2: Create a setup intent for the team
     console.log('Creating setup intent...');
-    const setupIntentResponse = await axios.post(`${API_URL}/api/payments/create-setup-intent`, {
-      teamId: testTeamId,
-      metadata: {
-        eventId: '12345',
-        teamName: 'Test Soccer Team'
-      }
+    const setupIntentResponse = await fetch(`${API_URL}/payments/create-setup-intent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        teamId: testTeam.id,
+        metadata: {
+          testMode: 'true',
+          teamName: testTeam.name
+        }
+      })
     });
     
-    if (!setupIntentResponse.data.setupIntentId || !setupIntentResponse.data.clientSecret) {
-      throw new Error('Failed to create setup intent');
+    if (!setupIntentResponse.ok) {
+      const error = await setupIntentResponse.text();
+      throw new Error(`Failed to create setup intent: ${error}`);
     }
     
-    const setupIntentId = setupIntentResponse.data.setupIntentId;
-    console.log(`Setup intent created with ID: ${setupIntentId}`);
+    const setupIntentData = await setupIntentResponse.json();
+    console.log(`Setup intent created with ID: ${setupIntentData.setupIntentId}`);
+    console.log(`Client secret: ${setupIntentData.clientSecret}`);
     
-    // In a real application, the client would use the client secret to collect payment info
-    // We'll simulate this by using the Stripe API directly to attach a test payment method
-    
-    // Create a test payment method
-    console.log('Creating test payment method...');
-    const paymentMethod = await stripe.paymentMethods.create({
-      type: 'card',
-      card: {
-        number: '4242424242424242',
-        exp_month: 12,
-        exp_year: 2030,
-        cvc: '123'
-      },
-      billing_details: {
-        email: 'test@example.com',
-        name: 'Test Customer'
-      }
+    // Step 3: Simulate the successful completion of the setup intent
+    console.log('Simulating webhook for setup intent completion...');
+    const webhookResponse = await fetch(`${API_URL}/payments/simulate-webhook`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        setupIntentId: setupIntentData.setupIntentId
+      })
     });
     
-    console.log(`Created test payment method with ID: ${paymentMethod.id}`);
-    
-    // Attach the payment method to the setup intent
-    console.log('Attaching payment method to setup intent...');
-    await stripe.setupIntents.update(setupIntentId, {
-      payment_method: paymentMethod.id
-    });
-    
-    // Confirm the setup intent to simulate client-side confirmation
-    console.log('Confirming setup intent...');
-    await stripe.setupIntents.confirm(setupIntentId);
-    
-    // Step 2: Check the setup intent status
-    const updatedSetupIntent = await stripe.setupIntents.retrieve(setupIntentId);
-    console.log(`Setup intent status: ${updatedSetupIntent.status}`);
-    
-    if (updatedSetupIntent.status !== 'succeeded') {
-      throw new Error(`Setup intent is not in succeeded state: ${updatedSetupIntent.status}`);
+    if (!webhookResponse.ok) {
+      const error = await webhookResponse.text();
+      throw new Error(`Failed to simulate webhook: ${error}`);
     }
     
-    // Step 3: Simulate the webhook event
-    console.log('Simulating webhook event...');
-    const webhookResponse = await axios.post(`${API_URL}/api/payments/simulate-webhook`, {
-      setupIntentId: setupIntentId
-    });
+    const webhookResult = await webhookResponse.json();
+    console.log(`Webhook simulation result: ${JSON.stringify(webhookResult)}`);
     
-    console.log('Webhook simulation response:', webhookResponse.data);
+    // Step 4: Verify team was updated with payment method details
+    console.log('Verifying team payment method details...');
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Small delay to ensure DB is updated
     
-    // Now we would check the database to verify that the team's payment method was updated
-    // For this test, we'll just consider it successful if the webhook simulation succeeded
-    console.log('\nSUCCESS: Setup intent test completed successfully!');
-    console.log('In a real scenario, the following would have happened:');
-    console.log('1. Team ID', testTeamId, 'would have payment method', paymentMethod.id, 'attached');
-    console.log('2. Team would have a payment status of "payment_info_provided"');
-    console.log('3. Team would have card brand and last 4 digits stored securely');
-    console.log('\nTo complete the flow, an admin would approve the team and trigger a charge using:');
-    console.log('POST /api/payments/process-approved-payment');
-    console.log('With body: { teamId:', testTeamId, ', amount: <registration fee amount> }');
+    const verifyQuery = `
+      SELECT id, name, payment_status, setup_intent_id, payment_method_id, card_brand, card_last_4
+      FROM teams
+      WHERE id = $1;
+    `;
+    
+    const verifyResult = await client.query(verifyQuery, [testTeam.id]);
+    const updatedTeam = verifyResult.rows[0];
+    
+    console.log('Team payment details after setup intent:');
+    console.log(`  Payment Status: ${updatedTeam.payment_status}`);
+    console.log(`  Setup Intent ID: ${updatedTeam.setup_intent_id}`);
+    console.log(`  Payment Method ID: ${updatedTeam.payment_method_id}`);
+    console.log(`  Card Brand: ${updatedTeam.card_brand}`);
+    console.log(`  Card Last 4: ${updatedTeam.card_last_4}`);
+    
+    if (updatedTeam.payment_status !== 'payment_info_provided') {
+      throw new Error(`Expected payment_status to be 'payment_info_provided', but got '${updatedTeam.payment_status}'`);
+    }
+    
+    if (!updatedTeam.payment_method_id) {
+      throw new Error('Expected payment_method_id to be set, but it was not');
+    }
+    
+    console.log('✅ Test completed successfully! The setup intent functionality is working properly.');
     
   } catch (error) {
-    console.error('ERROR:', error.message);
-    if (error.response) {
-      console.error('Response data:', error.response.data);
-    }
+    console.error('❌ Test failed:', error);
+  } finally {
+    // Close the database connection
+    await client.end();
+    console.log('Database connection closed');
   }
 }
 
+// Run the test
 testSetupIntent();
