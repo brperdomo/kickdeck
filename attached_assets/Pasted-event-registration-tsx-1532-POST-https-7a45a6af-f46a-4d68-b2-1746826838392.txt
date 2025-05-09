@@ -1,0 +1,45 @@
+event-registration.tsx:1532 
+            
+            
+           POST https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/events/1251362271/register-team 400 (Bad Request)
+mutationFn @ event-registration.tsx:1532
+fn @ @tanstack_react-query.js?v=8e1f054b:1188
+run @ @tanstack_react-query.js?v=8e1f054b:493
+start @ @tanstack_react-query.js?v=8e1f054b:535
+execute @ @tanstack_react-query.js?v=8e1f054b:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=8e1f054b:2649
+(anonymous) @ @tanstack_react-query.js?v=8e1f054b:3320
+onSuccess @ event-registration.tsx:3032
+handleSubmit @ event-registration.tsx:383
+await in handleSubmit
+callCallback2 @ chunk-RPCDYKBN.js?v=8e1f054b:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=8e1f054b:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=8e1f054b:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=8e1f054b:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=8e1f054b:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=8e1f054b:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=8e1f054b:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=8e1f054b:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=8e1f054b:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=8e1f054b:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=8e1f054b:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=8e1f054b:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=8e1f054b:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=8e1f054b:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=8e1f054b:5449Understand this error
+event-registration.tsx:534 Setting initial step based on auth status: {initialStep: 'personal', isLoggedIn: true, isAdmin: false}
+event-registration.tsx:534 Setting initial step based on auth status: {initialStep: 'personal', isLoggedIn: true, isAdmin: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+97AnimatedEventBackground.tsx:162 Animation frame running, particles: 297 Canvas size: 1156 x 871
+event-registration.tsx:534 Setting initial step based on auth status: {initialStep: 'personal', isLoggedIn: true, isAdmin: false}
+event-registration.tsx:534 Setting initial step based on auth status: {initialStep: 'personal', isLoggedIn: true, isAdmin: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+23AnimatedEventBackground.tsx:162 Animation frame running, particles: 297 Canvas size: 1156 x 871
+event-registration.tsx:534 Setting initial step based on auth status: {initialStep: 'personal', isLoggedIn: true, isAdmin: false}
+event-registration.tsx:534 Setting initial step based on auth status: {initialStep: 'personal', isLoggedIn: true, isAdmin: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+180AnimatedEventBackground.tsx:162 Animation frame running, particles: 297 Canvas size: 1156 x 871
