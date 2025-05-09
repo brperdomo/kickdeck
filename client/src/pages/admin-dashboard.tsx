@@ -1305,7 +1305,7 @@ function ReportsView() {
         <h2 className="text-2xl font-bold">Reports and Financials</h2>
       </div>
 
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-4 gap-6" data-section="reports">
         {/* Report Navigation */}
         <Card className="col-span-1">
           <CardHeader>
