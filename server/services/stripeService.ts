@@ -309,6 +309,12 @@ export async function createSetupIntent(teamId: number | string, metadata?: Reco
     log(`Creating setup intent for team: ${teamId}`);
     
     const setupIntent = await stripe.setupIntents.create({
+      // Use automatic_payment_methods instead of payment_method_types
+      // This is the recommended approach by Stripe
+      automatic_payment_methods: {
+        enabled: true,
+        allow_redirects: 'never' // Prevent redirect-based payment methods in test environment
+      },
       usage: 'off_session', // This allows for future use without customer being present
       metadata: {
         teamId: teamId.toString(),
@@ -481,6 +487,7 @@ export async function attachTestPaymentMethodToSetupIntent(setupIntentId: string
     // Confirm the setup intent to complete it
     const confirmedIntent = await stripe.setupIntents.confirm(setupIntentId, {
       payment_method: paymentMethod.id,
+      return_url: 'https://example.com/setup-complete', // Dummy URL for testing purposes
     });
     
     log(`Confirmed setup intent: ${confirmedIntent.id} with status: ${confirmedIntent.status}`);
