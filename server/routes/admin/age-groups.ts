@@ -35,12 +35,44 @@ router.get('/:eventId', async (req, res) => {
     
     for (const group of groups) {
       // Create a unique key based on division code or gender+ageGroup
-      const key = group.divisionCode || 
-                 `${group.gender.charAt(0)}${group.birthYear || group.ageGroup.replace(/\D/g, '')}`;
+      let key = '';
       
-      if (!uniqueMap.has(key)) {
-        uniqueMap.set(key, true);
-        uniqueGroups.push(group);
+      // First check if the group has a division code
+      if (group.divisionCode) {
+        key = group.divisionCode;
+      } else {
+        // If not, use gender + ageGroup as a fallback
+        key = `${group.gender}-${group.ageGroup}`;
+      }
+      
+      // Special handling for U8 age groups - always include them
+      // This ensures we don't filter out U8 in deduplication
+      if (group.ageGroup === 'U8') {
+        if (!uniqueMap.has(`${key}-${group.id}`)) {
+          uniqueMap.set(`${key}-${group.id}`, true);
+          
+          // Ensure this U8 age group record always has the division code set
+          if (!group.divisionCode) {
+            if (group.gender === 'Boys') {
+              group.divisionCode = 'B2017';
+            } else if (group.gender === 'Girls') {
+              group.divisionCode = 'G2017';
+            }
+          }
+          
+          // For U8, we want to prioritize the age group that has brackets defined
+          if (group.id === 3055) { // This is the U8 Boys age group that has brackets
+            uniqueGroups.unshift(group); // Add to beginning of array to prioritize
+          } else {
+            uniqueGroups.push(group);
+          }
+        }
+      } else {
+        // Regular handling for non-U8 age groups
+        if (!uniqueMap.has(key)) {
+          uniqueMap.set(key, true);
+          uniqueGroups.push(group);
+        }
       }
     }
     
