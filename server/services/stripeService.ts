@@ -369,16 +369,43 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
       throw new Error(`Team ${teamId} has no saved payment method`);
     }
     
+    // First, create a Stripe customer or use existing one
+    let customerId = team.stripeCustomerId;
+    
+    if (!customerId) {
+      log(`Creating Stripe customer for team: ${teamId}`);
+      const customer = await stripe.customers.create({
+        name: team.name || `Team ${teamId}`,
+        email: team.submitterEmail || `team-${teamId}@example.com`,
+        metadata: {
+          teamId: teamId.toString(),
+          eventId: team.eventId?.toString() || '',
+        }
+      });
+      customerId = customer.id;
+      
+      // Save the customer ID to the team record
+      await db.update(teams)
+        .set({ stripeCustomerId: customerId })
+        .where(eq(teams.id, teamId));
+      
+      // Attach the payment method to the customer
+      await stripe.paymentMethods.attach(team.paymentMethodId, {
+        customer: customerId,
+      });
+    }
+    
     // Create a payment intent with the saved payment method
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
       currency: "usd",
+      customer: customerId,
       payment_method: team.paymentMethodId,
       confirm: true, // Immediately attempt to confirm the payment
       off_session: true, // Since the customer is not present
       metadata: {
         teamId: teamId.toString(),
-        eventId: team.eventId.toString(),
+        eventId: team.eventId?.toString() || '',
         description: `Team registration payment for ${team.name}`
       }
     });
@@ -391,6 +418,21 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
         paymentDate: new Date().toISOString()
       })
       .where(eq(teams.id, teamId));
+    
+    // Create a payment transaction record
+    await db.insert(paymentTransactions).values({
+      status: paymentIntent.status,
+      transactionType: 'registration_payment',
+      amount: amount,
+      paymentIntentId: paymentIntent.id,
+      setupIntentId: team.setupIntentId,
+      eventId: team.eventId,
+      teamId: teamId,
+      paymentDate: new Date(),
+      cardBrand: team.cardBrand,
+      cardLast4: team.cardLast4,
+      description: `Team registration payment for ${team.name} (approved by admin)`,
+    });
     
     return {
       success: true,
