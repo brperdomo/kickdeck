@@ -42,7 +42,7 @@ import EventFinancialReport from "@/pages/event-financial-report";
 import FeesAnalysisReport from "@/pages/fees-analysis-report";
 import BookkeepingReport from "@/pages/bookkeeping-report";
 import Checkout from "@/pages/checkout";
-import PaymentSuccess from "@/pages/payment-success";
+import PaymentConfirmation from "@/pages/payment-confirmation";
 import SendGridSettingsPage from "@/pages/sendgrid-settings";
 import { AuthProvider } from "@/hooks/use-auth";
 // Account page import
@@ -127,14 +127,6 @@ function Router() {
       <Route path="/logout" component={LogoutHandler} />
 
       {/* Public routes that don't require authentication */}
-      
-      {/* Payment routes */}
-      <Route path="/checkout/:amount?">
-        {(params) => <Checkout />}
-      </Route>
-      <Route path="/payment-success">
-        <PaymentSuccess />
-      </Route>
       
       {/* Event registration routes - always available regardless of auth status */}
       <Route path="/register/event/:eventId">
@@ -356,7 +348,7 @@ function Router() {
             <Checkout />
           </Route>
           <Route path="/payment-confirmation">
-            <PaymentSuccess />
+            <PaymentConfirmation />
           </Route>
           <Route path="/dashboard" component={UserDashboard} />
 
