@@ -2636,9 +2636,9 @@ function SchedulingView() {
                   }))}
                   conflicts={conflicts}
                   qualityScore={scheduleQuality || undefined}
-                  onDeleteGame={canDeleteGames ? handleDeleteGame : undefined}
-                  onBulkDeleteGames={canDeleteGames ? handleBulkDeleteGames : undefined}
-                  allowEditing={canEditSchedule}
+                  onDeleteGame={handleDeleteGame}
+                  onBulkDeleteGames={handleBulkDeleteGames}
+                  allowEditing={true}
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center h-64 space-y-4">
