@@ -1,7 +1,15 @@
 import express from 'express';
 import Stripe from 'stripe';
 import bodyParser from 'body-parser';
-import { createPaymentIntent, handlePaymentSuccess, handlePaymentFailure, handleRefund } from '../services/stripeService';
+import { 
+  createPaymentIntent, 
+  createSetupIntent,
+  handlePaymentSuccess, 
+  handlePaymentFailure, 
+  handleRefund,
+  handleSetupIntentSuccess,
+  processPaymentForApprovedTeam
+} from '../services/stripeService';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -60,6 +68,57 @@ router.get('/status/:paymentIntentId', async (req, res) => {
   }
 });
 
+// Create a setup intent (collect payment info without charging)
+router.post('/create-setup-intent', async (req, res) => {
+  try {
+    const { teamId, metadata } = req.body;
+    
+    if (!teamId) {
+      return res.status(400).json({ error: 'TeamId is required' });
+    }
+    
+    const result = await createSetupIntent(teamId, metadata);
+    res.json(result);
+  } catch (error: any) {
+    console.error('Error creating setup intent:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Process payment for an approved team using saved payment method
+router.post('/process-approved-payment', async (req, res) => {
+  try {
+    const { teamId, amount } = req.body;
+    
+    if (!teamId || !amount) {
+      return res.status(400).json({ error: 'TeamId and amount are required' });
+    }
+    
+    const result = await processPaymentForApprovedTeam(Number(teamId), Number(amount));
+    res.json(result);
+  } catch (error: any) {
+    console.error('Error processing payment for approved team:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get setup intent status
+router.get('/setup-status/:setupIntentId', async (req, res) => {
+  try {
+    const { setupIntentId } = req.params;
+    const setupIntent = await stripe.setupIntents.retrieve(setupIntentId);
+    
+    res.json({
+      status: setupIntent.status,
+      paymentMethod: setupIntent.payment_method,
+      metadata: setupIntent.metadata,
+    });
+  } catch (error: any) {
+    console.error('Error retrieving setup intent:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Webhook for Stripe events
 router.post('/webhook', stripeWebhookMiddleware, async (req, res) => {
   const sig = req.headers['stripe-signature'];
@@ -87,6 +146,9 @@ router.post('/webhook', stripeWebhookMiddleware, async (req, res) => {
       case 'payment_intent.payment_failed':
         await handlePaymentFailure(event.data.object as Stripe.PaymentIntent);
         break;
+      case 'setup_intent.succeeded':
+        await handleSetupIntentSuccess(event.data.object as Stripe.SetupIntent);
+        break;
       case 'charge.refunded':
         const charge = event.data.object as Stripe.Charge;
         if (charge.refunds && charge.refunds.data && charge.refunds.data.length > 0) {
@@ -113,18 +175,27 @@ router.post('/simulate-webhook', async (req, res) => {
   }
   
   try {
-    const { paymentIntentId } = req.body;
-    if (!paymentIntentId) {
-      return res.status(400).json({ error: 'Payment intent ID is required' });
+    const { paymentIntentId, setupIntentId } = req.body;
+    
+    if (paymentIntentId) {
+      // Retrieve the payment intent to simulate a webhook event
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      
+      // Simulate the webhook event handler
+      await handlePaymentSuccess(paymentIntent);
+      
+      res.json({ success: true, message: 'Successfully simulated payment success webhook' });
+    } else if (setupIntentId) {
+      // Retrieve the setup intent to simulate a webhook event
+      const setupIntent = await stripe.setupIntents.retrieve(setupIntentId);
+      
+      // Simulate the webhook event handler
+      await handleSetupIntentSuccess(setupIntent);
+      
+      res.json({ success: true, message: 'Successfully simulated setup intent success webhook' });
+    } else {
+      return res.status(400).json({ error: 'Either paymentIntentId or setupIntentId is required' });
     }
-    
-    // Retrieve the payment intent to simulate a webhook event
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-    
-    // Simulate the webhook event handler
-    await handlePaymentSuccess(paymentIntent);
-    
-    res.json({ success: true, message: 'Successfully simulated payment success webhook' });
   } catch (error: any) {
     console.error('Error simulating webhook:', error);
     res.status(500).json({ error: error.message });
