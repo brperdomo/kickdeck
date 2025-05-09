@@ -826,14 +826,14 @@ export default function BookkeepingReport() {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
-                        <TableHead>Chargeback ID</TableHead>
-                        <TableHead>Original Payment</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Team</TableHead>
-                        <TableHead>Event</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Dispute Reason</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Chargeback ID</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Original Payment</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Date</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Team</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Amount</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Status</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Dispute Reason</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -873,38 +873,36 @@ export default function BookkeepingReport() {
                   </div>
                 </div>
               )}
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {filteredTransactions.length} of {transactions.length} total chargebacks
-              </p>
-            </CardFooter>
-          </Card>
+              <div className="flex justify-between pt-4 p-6">
+                <p className="text-sm text-muted-foreground">
+                  Showing {filteredTransactions.length} of {transactions.length} total chargebacks
+                </p>
+              </div>
+            </div>
         </TabsContent>
         
         {/* Pending Payments Tab */}
         <TabsContent value="pending-payments">
-          <Card>
-            <CardHeader>
-              <CardTitle>Pending Payments</CardTitle>
-              <CardDescription>
+          <div className="shadow-md rounded-xl overflow-hidden border border-gray-200">
+            <div className="p-6 bg-gradient-to-r from-indigo-50/30 to-white">
+              <h3 className="text-lg font-medium">Pending Payments</h3>
+              <p className="text-sm text-muted-foreground mt-1">
                 All registrations with pending payments (Pay Later submissions)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
+            </div>
               {filteredTransactions.length > 0 ? (
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead>Team ID</TableHead>
-                        <TableHead>Registration Date</TableHead>
-                        <TableHead>Team Name</TableHead>
-                        <TableHead>Event</TableHead>
-                        <TableHead>Amount Due</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Manager</TableHead>
-                        <TableHead>Contact</TableHead>
+                      <TableRow className="bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Team ID</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registration Date</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Team Name</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Amount Due</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Status</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Manager</TableHead>
+                        <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Contact</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -947,13 +945,12 @@ export default function BookkeepingReport() {
                   </div>
                 </div>
               )}
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <p className="text-sm text-muted-foreground">
-                Showing {filteredTransactions.length} of {transactions.length} total pending payments
-              </p>
-            </CardFooter>
-          </Card>
+              <div className="flex justify-between pt-4 p-6">
+                <p className="text-sm text-muted-foreground">
+                  Showing {filteredTransactions.length} of {transactions.length} total pending payments
+                </p>
+              </div>
+            </div>
         </TabsContent>
       </Tabs>
     </div>
