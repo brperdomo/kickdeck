@@ -6,11 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/use-theme";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Moon, Sun } from "lucide-react";
-import { Toggle } from "@/components/ui/toggle";
+import { Save } from "lucide-react";
 
 export function ThemeEditor() {
-  const { setColor, setAppearance, currentAppearance } = useTheme();
+  const { setColor } = useTheme();
   const { toast } = useToast();
   const [theme, setTheme] = useState({
     backgroundColor: '#F2F2F7',
@@ -22,23 +21,6 @@ export function ThemeEditor() {
 
   const handleColorChange = (colorKey: string, value: string) => {
     setTheme(prev => ({ ...prev, [colorKey]: value }));
-  };
-
-  const handleAppearanceToggle = async () => {
-    const newAppearance = currentAppearance === 'dark' ? 'light' : 'dark';
-    try {
-      await setAppearance(newAppearance);
-      toast({
-        title: "Success",
-        description: `Switched to ${newAppearance} mode`
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update appearance",
-        variant: "destructive"
-      });
-    }
   };
 
   const handleApplyTheme = async () => {
@@ -61,18 +43,6 @@ export function ThemeEditor() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Theme Editor</h2>
-        <Toggle
-          pressed={currentAppearance === 'dark'}
-          onPressedChange={handleAppearanceToggle}
-          aria-label="Toggle dark mode"
-          className="p-2"
-        >
-          {currentAppearance === 'dark' ? (
-            <Moon className="h-5 w-5" />
-          ) : (
-            <Sun className="h-5 w-5" />
-          )}
-        </Toggle>
       </div>
 
       <Card>

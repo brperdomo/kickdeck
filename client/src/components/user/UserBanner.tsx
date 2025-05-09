@@ -115,21 +115,11 @@ export function UserBanner() {
           {user?.isAdmin && (
             <ViewToggle />
           )}
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleDarkMode}
-            className="rounded-full w-9 h-9 p-0 text-white hover:bg-white/10"
-            aria-label="Toggle dark mode"
-          >
-            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
           
           <Button 
             variant="ghost" 
             asChild 
-            className="text-white hover:bg-white/10 rounded-full transition-all duration-200 px-4"
+            className="rounded-full transition-all duration-200 px-4"
           >
             <Link href="/logout">
               <LogOut className="mr-2 h-4 w-4" />
