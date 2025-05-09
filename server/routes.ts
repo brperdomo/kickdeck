@@ -5233,13 +5233,14 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           // If we're in preview mode, just return sample games without saving to DB
           if (previewMode) {
             console.log(`Preview mode enabled, returning 5 sample games without saving to database`);
-            // Get a sample of 5 games from the generated schedule
-            const previewGames = aiScheduleResult.schedule.slice(0, 5);
             
             return res.json({
               message: "Preview schedule generated successfully",
-              previewGames: previewGames,
+              scheduleData: aiScheduleResult.schedule,
+              previewGames: aiScheduleResult.schedule,
               qualityScore: aiScheduleResult.qualityScore,
+              conflicts: aiScheduleResult.conflicts || [],
+              bracketSchedules: aiScheduleResult.bracketSchedules || [],
               previewMode: true
             });
           }
