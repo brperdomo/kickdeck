@@ -6,7 +6,7 @@
  * 
  * It performs the following steps:
  * 1. Create a setup intent for a team
- * 2. Simulate successful completion of the setup intent
+ * 2. Attach a test payment method to the setup intent and confirm it
  * 3. Check that team's payment method details were updated
  */
 import 'dotenv/config';
@@ -67,9 +67,9 @@ async function testSetupIntent() {
     console.log(`Setup intent created with ID: ${setupIntentData.setupIntentId}`);
     console.log(`Client secret: ${setupIntentData.clientSecret}`);
     
-    // Step 3: Simulate the successful completion of the setup intent
-    console.log('Simulating webhook for setup intent completion...');
-    const webhookResponse = await fetch(`${API_URL}/payments/simulate-webhook`, {
+    // Step 3: Attach a test payment method to the setup intent
+    console.log('Attaching test payment method to setup intent...');
+    const attachResponse = await fetch(`${API_URL}/payments/test-attach-payment-method`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -77,13 +77,13 @@ async function testSetupIntent() {
       })
     });
     
-    if (!webhookResponse.ok) {
-      const error = await webhookResponse.text();
-      throw new Error(`Failed to simulate webhook: ${error}`);
+    if (!attachResponse.ok) {
+      const error = await attachResponse.text();
+      throw new Error(`Failed to attach test payment method: ${error}`);
     }
     
-    const webhookResult = await webhookResponse.json();
-    console.log(`Webhook simulation result: ${JSON.stringify(webhookResult)}`);
+    const attachResult = await attachResponse.json();
+    console.log(`Payment method attachment result: ${JSON.stringify(attachResult)}`);
     
     // Step 4: Verify team was updated with payment method details
     console.log('Verifying team payment method details...');

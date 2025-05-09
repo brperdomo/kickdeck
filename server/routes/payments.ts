@@ -8,7 +8,8 @@ import {
   handlePaymentFailure, 
   handleRefund,
   handleSetupIntentSuccess,
-  processPaymentForApprovedTeam
+  processPaymentForApprovedTeam,
+  attachTestPaymentMethodToSetupIntent
 } from '../services/stripeService';
 
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -198,6 +199,27 @@ router.post('/simulate-webhook', async (req, res) => {
     }
   } catch (error: any) {
     console.error('Error simulating webhook:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Test endpoint to attach payment method to setup intent (test only)
+router.post('/test-attach-payment-method', async (req, res) => {
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(403).json({ error: 'This endpoint is only available in development' });
+  }
+  
+  try {
+    const { setupIntentId } = req.body;
+    
+    if (!setupIntentId) {
+      return res.status(400).json({ error: 'Setup intent ID is required' });
+    }
+    
+    const result = await attachTestPaymentMethodToSetupIntent(setupIntentId);
+    res.json(result);
+  } catch (error: any) {
+    console.error('Error attaching test payment method:', error);
     res.status(500).json({ error: error.message });
   }
 });

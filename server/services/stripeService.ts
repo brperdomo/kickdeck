@@ -462,14 +462,12 @@ export async function attachTestPaymentMethodToSetupIntent(setupIntentId: string
   try {
     log(`Attaching test payment method to setup intent: ${setupIntentId}`);
     
-    // Create a test payment method (test card token)
+    // Use a test token instead of raw card data for testing
+    // This avoids the direct card API access restriction in Stripe
     const paymentMethod = await stripe.paymentMethods.create({
       type: 'card',
       card: {
-        number: '4242424242424242',
-        exp_month: 12,
-        exp_year: 2030,
-        cvc: '123',
+        token: 'tok_visa', // Standard test token for a Visa card
       },
     });
     
