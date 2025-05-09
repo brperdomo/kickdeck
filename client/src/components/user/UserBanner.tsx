@@ -1,7 +1,7 @@
 import { Link } from "wouter";
-import { Home, User, LogOut, Moon, Sun } from "lucide-react";
+import { Home, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ViewToggle } from "@/components/ViewToggle";
 import { useUser } from "@/hooks/use-user";
 import { motion } from "framer-motion";
@@ -14,32 +14,16 @@ import { useOrganizationSettings } from "@/hooks/use-organization-settings";
 export function UserBanner() {
   const { user } = useUser();
   const { settings } = useOrganizationSettings();
-  // Using local state for dark mode preference
-  const [isDarkMode, setIsDarkMode] = useState(
-    typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false
-  );
   
-  // Toggle function that only updates the DOM and localStorage
-  const toggleDarkMode = (e: React.MouseEvent) => {
-    // Prevent default button behavior
-    e.preventDefault();
-    e.stopPropagation();
+  // Ensure light mode is always applied
+  useEffect(() => {
+    // Always remove dark mode class
+    document.documentElement.classList.remove('dark');
     
-    // Toggle the state
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
+    // Always store light mode in localStorage
+    localStorage.setItem('theme-appearance', 'light');
     
-    // Update the document class directly
-    if (newMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    
-    // Update localStorage for persistence
-    localStorage.setItem('theme-appearance', newMode ? 'dark' : 'light');
-    
-    // Silently update theme on the server
+    // Silently update theme on the server to light mode
     setTimeout(() => {
       fetch('/api/theme', {
         method: 'POST',
@@ -47,12 +31,12 @@ export function UserBanner() {
         body: JSON.stringify({
           variant: 'professional',
           primary: localStorage.getItem('theme-primary') || 'hsl(221.2 83.2% 53.3%)',
-          appearance: newMode ? 'dark' : 'light',
+          appearance: 'light',
           radius: 0.5
         })
       }).catch(err => console.error('Background theme update failed:', err));
     }, 500);
-  };
+  }, []);
 
   return (
     <motion.div 

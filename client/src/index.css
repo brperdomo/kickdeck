@@ -131,26 +131,26 @@ body {
     --table-border: var(--border, #E5E7EB);
   }
 
-  /* Ensure proper theme variables for all themes */
+  /* Force light theme variables for all themes */
   .dark {
-    --background: 240 20% 9%;
-    --foreground: 0 0% 95%;
-    --card: 240 25% 12%;
-    --card-foreground: 0 0% 90%;
-    --popover: 240 25% 12%;
-    --popover-foreground: 0 0% 90%;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
     --primary: 240 70% 58%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 30% 18%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 240 25% 16%;
-    --muted-foreground: 0 0% 65%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 243 50% 65%;
-    --accent-foreground: 0 0% 95%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 60% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 20% 25%;
-    --input: 240 20% 20%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
     --ring: 240 70% 65%;
     --chart-1: 240 70% 58%;
     --chart-2: 47 80% 60%;
@@ -158,14 +158,14 @@ body {
     --chart-4: 243 50% 65%;
     --chart-5: 145 65% 45%;
     
-    /* Table styling variables that match the theme */
-    --table-header-bg: hsl(240 25% 10%);
-    --table-header-text: hsl(0 0% 80%);
-    --table-header-border: hsl(240 20% 25%);
-    --table-row-hover: hsl(240 30% 18%);
+    /* Table styling variables in light mode */
+    --table-header-bg: hsl(0 0% 100%);
+    --table-header-text: hsl(222.2 47.4% 11.2%);
+    --table-header-border: hsl(214.3 31.8% 91.4%);
+    --table-row-hover: hsl(210 40% 96.1%);
     --table-row-selected: hsl(240 70% 58%);
     --table-row-selected-text: hsl(0 0% 100%);
-    --table-border: hsl(240 20% 25%);
+    --table-border: hsl(214.3 31.8% 91.4%);
   }
 
   * {
