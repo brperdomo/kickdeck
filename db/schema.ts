@@ -310,6 +310,7 @@ export const teams = pgTable("teams", {
   paymentErrorCode: text("payment_error_code"), // Error code if payment failed
   paymentErrorMessage: text("payment_error_message"), // Error message if payment failed
   refundDate: timestamp("refund_date"), // When a refund was processed
+  stripeCustomerId: text("stripe_customer_id"), // Stripe customer ID for the team
   // Terms acknowledgement
   termsAcknowledged: boolean("terms_acknowledged").default(false),
   termsAcknowledgedAt: timestamp("terms_acknowledged_at"),
