@@ -1,7 +1,8 @@
 import express from 'express';
 import Stripe from 'stripe';
 import bodyParser from 'body-parser';
-import { createPaymentIntent, handlePaymentSuccess, handlePaymentFailure, handleRefund } from '../services/stripeService';
+import { createPaymentIntent, handlePaymentSuccess, handlePaymentFailure, handleRefund, createRefund } from '../services/stripeService';
+import { createGeneralPaymentIntent } from './payments/create-payment-intent';
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
@@ -25,6 +26,9 @@ router.get('/config', (req, res) => {
   });
 });
 
+// Route for standalone general-purpose payment intent (used by checkout page)
+router.post('/create-payment-intent', createGeneralPaymentIntent);
+
 // Create a payment intent for a registration
 router.post('/create-intent', async (req, res) => {
   try {
@@ -39,6 +43,45 @@ router.post('/create-intent', async (req, res) => {
   } catch (error: any) {
     console.error('Error creating payment intent:', error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Process refund endpoint
+router.post('/process-refund', async (req, res) => {
+  try {
+    if (!req.isAuthenticated() || !req.user?.isAdmin) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+    
+    const { paymentIntentId, amount, isPartial } = req.body;
+    
+    if (!paymentIntentId) {
+      return res.status(400).json({ error: "Payment ID is required" });
+    }
+    
+    // For partial refunds, amount is required
+    if (isPartial && (!amount || isNaN(amount) || amount <= 0)) {
+      return res.status(400).json({ error: "Valid amount is required for partial refunds" });
+    }
+    
+    // Process the refund using our stripeService
+    const parsedAmount = isPartial ? Math.round(amount * 100) : undefined;
+    const refund = await createRefund(paymentIntentId, parsedAmount);
+    
+    res.json({
+      success: true,
+      refund: {
+        id: refund.id,
+        amount: refund.amount,
+        status: refund.status,
+        created: refund.created
+      }
+    });
+  } catch (error: any) {
+    console.error("Error processing refund:", error);
+    res.status(500).json({ 
+      error: error.message || "Failed to process refund" 
+    });
   }
 });
 

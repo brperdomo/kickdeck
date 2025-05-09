@@ -42,7 +42,7 @@ import EventFinancialReport from "@/pages/event-financial-report";
 import FeesAnalysisReport from "@/pages/fees-analysis-report";
 import BookkeepingReport from "@/pages/bookkeeping-report";
 import Checkout from "@/pages/checkout";
-import PaymentConfirmation from "@/pages/payment-confirmation";
+import PaymentSuccess from "@/pages/payment-success";
 import SendGridSettingsPage from "@/pages/sendgrid-settings";
 import { AuthProvider } from "@/hooks/use-auth";
 // Account page import
