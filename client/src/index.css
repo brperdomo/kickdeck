@@ -215,6 +215,34 @@ body {
     color: hsl(var(--card-foreground)) !important;
     border-color: hsl(var(--border)) !important;
   }
+  
+  /* Apply theme to report buttons */
+  .dark [data-section="reports"] button {
+    color: hsl(var(--card-foreground)) !important;
+  }
+  
+  .dark [data-section="reports"] button[data-variant="secondary"] {
+    background-color: hsl(var(--secondary)) !important;
+    color: hsl(var(--secondary-foreground)) !important;
+  }
+  
+  .dark [data-section="reports"] button[data-variant="ghost"]:hover {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+  }
+  
+  /* Apply theme to report headings */
+  .dark [data-section="reports"] h2,
+  .dark [data-section="reports"] h3,
+  .dark [data-section="reports"] .card-title {
+    color: hsl(var(--foreground)) !important;
+  }
+  
+  /* Apply theme to report text */
+  .dark [data-section="reports"] p,
+  .dark [data-section="reports"] span {
+    color: hsl(var(--card-foreground)) !important;
+  }
 
   /* Force light mode for tables */
   .dark table tbody tr {

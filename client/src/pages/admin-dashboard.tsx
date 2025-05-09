@@ -1315,6 +1315,7 @@ function ReportsView() {
             <div className="space-y-2">
               <Button
                 variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
+                data-variant={selectedReport === 'financial' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
                 onClick={() => setSelectedReport('financial')}
                 disabled={isExporting !== null}
@@ -1324,6 +1325,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
+                data-variant={selectedReport === 'manager' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
                 onClick={() => setSelectedReport('manager')}
                 disabled={isExporting !== null}
@@ -1333,6 +1335,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'player' ? 'secondary' : 'ghost'}
+                data-variant={selectedReport === 'player' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
                 onClick={() => setSelectedReport('player')}
                 disabled={isExporting !== null}
@@ -1342,6 +1345,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'schedule' ? 'secondary' : 'ghost'}
+                data-variant={selectedReport === 'schedule' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
                 onClick={() => setSelectedReport('schedule')}
                 disabled={isExporting !== null}
@@ -1351,6 +1355,7 @@ function ReportsView() {
               </Button>
               <Button
                 variant={selectedReport === 'guest-player' ? 'secondary' : 'ghost'}
+                data-variant={selectedReport === 'guest-player' ? 'secondary' : 'ghost'}
                 className="w-full justify-start"
                 onClick={() => setSelectedReport('guest-player')}
                 disabled={isExporting !== null}
