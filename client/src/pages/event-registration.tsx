@@ -283,7 +283,7 @@ const fadeInUp = {
   transition: { duration: 0.3 }
 };
 
-// Payment component for handling Stripe checkout
+// Payment component for handling Stripe checkout with Setup Intent
 function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPreview = false, teamId = null }: { 
   amount: number; 
   onSuccess: () => void; 
@@ -301,14 +301,14 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
     
     // In preview mode, simulate a successful payment without calling Stripe
     if (isPreview) {
-      console.log('Preview mode: Simulating payment for amount:', amount);
+      console.log('Preview mode: Simulating payment info collection for amount:', amount);
       setIsProcessing(true);
       
       // Simulate a brief delay for the "processing" state
       setTimeout(() => {
         toast({
-          title: "Preview: Payment Successful",
-          description: "This is a simulated payment in preview mode",
+          title: "Preview: Payment Information Saved",
+          description: "This is a simulated payment setup in preview mode",
         });
         setIsProcessing(false);
         onSuccess();
@@ -334,32 +334,36 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
       // We'll use a temporary ID that will be replaced once registration is complete
       const tempTeamId = teamId || `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       
-      // First create a payment intent on the server
-      const response = await fetch('/api/payments/create-intent', {
+      // Create a setup intent instead of a payment intent
+      const response = await fetch('/api/payments/create-setup-intent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount, // amount is in cents
           teamId: tempTeamId, // Include teamId to satisfy the server requirement
-          currency: 'usd',
-          description: 'Team Registration Fee with Additional Services',
+          expectedAmount: amount, // amount is in cents - but we're not charging yet
           metadata: {
-            isNewRegistration: teamId ? 'false' : 'true' // Flag if this is a new registration
+            isNewRegistration: teamId ? 'false' : 'true', // Flag if this is a new registration
+            expectedAmount: amount.toString()
           }
         }),
       });
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create payment intent');
+        const errorText = await response.text();
+        try {
+          const errorData = JSON.parse(errorText);
+          throw new Error(errorData.error || 'Failed to create setup intent');
+        } catch (jsonError) {
+          throw new Error(errorText || 'Failed to create setup intent');
+        }
       }
       
-      const { clientSecret } = await response.json();
+      const { clientSecret, setupIntentId } = await response.json();
       
-      // Use the client secret to confirm the payment
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      // Use the client secret to confirm the setup
+      const { error, setupIntent } = await stripe.confirmCardSetup(clientSecret, {
         payment_method: {
           card: elements.getElement('card')!,
         }
@@ -367,26 +371,26 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
 
       if (error) {
         toast({
-          title: "Payment Failed",
-          description: error.message || "An error occurred during payment processing",
+          title: "Payment Setup Failed",
+          description: error.message || "An error occurred saving your payment information",
           variant: "destructive",
         });
         setIsProcessing(false);
         return;
       }
 
-      if (paymentIntent && paymentIntent.status === 'succeeded') {
+      if (setupIntent && setupIntent.status === 'succeeded') {
         toast({
-          title: "Payment Successful",
-          description: "Your payment has been processed successfully",
+          title: "Payment Information Saved",
+          description: "Your payment information has been securely stored for future processing",
         });
         onSuccess();
       }
     } catch (e) {
-      console.error("Payment error:", e);
+      console.error("Payment setup error:", e);
       toast({
-        title: "Payment Error",
-        description: e instanceof Error ? e.message : "An unexpected error occurred during payment processing",
+        title: "Payment Setup Error",
+        description: e instanceof Error ? e.message : "An unexpected error occurred saving payment information",
         variant: "destructive",
       });
     } finally {
@@ -423,12 +427,12 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
           {isProcessing ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
+              Saving Payment Information...
             </>
           ) : (
             <>
               <CreditCard className="mr-2 h-4 w-4" />
-              Pay ${(amount / 100).toFixed(2)}
+              Save Payment Method
             </>
           )}
         </Button>
@@ -3116,7 +3120,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           <p className="flex items-start">
                             <InfoIcon className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
                             <span>
-                              <strong>Two-step payment process:</strong> Your payment information will be securely stored, but your card will only be charged after your team registration is reviewed and approved by event administrators.
+                              <strong>Two-step payment process:</strong> Your payment information will be securely stored by Stripe, but your card will only be charged after your team registration is reviewed and approved by event administrators. The total amount of ${(parseFloat(calculateTotalAmount())).toFixed(2)} will be charged at that time.
                             </span>
                           </p>
                         </div>
