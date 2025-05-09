@@ -3136,6 +3136,9 @@ function TeamsView() {
         } else if (teamData.paymentIntentId && teamData.paymentDate) {
           // If the team has payment details, assume it's paid
           paymentStatus = 'paid';
+        } else if (teamData.status === 'approved' || teamData.status === 'waitlisted') {
+          // For team registration flow, approved and waitlisted teams have already paid
+          paymentStatus = 'paid';
         }
       }
       
