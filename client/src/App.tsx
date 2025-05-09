@@ -351,6 +351,9 @@ function Router() {
           <Route path="/payment-confirmation">
             <PaymentConfirmation />
           </Route>
+          <Route path="/payment-setup-confirmation">
+            <PaymentSetupConfirmation />
+          </Route>
           <Route path="/dashboard" component={UserDashboard} />
 
           {/* Preview routes */}
