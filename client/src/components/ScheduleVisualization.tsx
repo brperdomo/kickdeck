@@ -29,7 +29,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 
 interface Game {
   id: string;
@@ -75,6 +75,7 @@ export function ScheduleVisualization({
   onBulkDeleteGames,
   allowEditing = false
 }: ScheduleVisualizationProps) {
+  const { toast } = useToast();
   const [selectedGames, setSelectedGames] = React.useState<{ [key: string]: boolean }>({});
   const [showBulkActions, setShowBulkActions] = React.useState(false);
   
@@ -118,13 +119,21 @@ export function ScheduleVisualization({
     
     try {
       await onBulkDeleteGames(selectedIds);
-      toast.success(`Successfully deleted ${selectedIds.length} games`);
+      toast({
+        title: "Success",
+        description: `Successfully deleted ${selectedIds.length} games`,
+        variant: "default",
+      });
       // Reset selections after successful delete
       setSelectedGames({});
       setShowBulkActions(false);
     } catch (error) {
       console.error('Error bulk deleting games:', error);
-      toast.error('Failed to delete selected games');
+      toast({
+        title: "Error",
+        description: "Failed to delete selected games",
+        variant: "destructive",
+      });
     }
   };
   if (!games || games.length === 0) {
@@ -447,10 +456,18 @@ export function ScheduleVisualization({
                                 onClick={async () => {
                                   try {
                                     await onDeleteGame(game.id);
-                                    toast.success('Game successfully deleted');
+                                    toast({
+                                      title: "Success",
+                                      description: "Game successfully deleted",
+                                      variant: "default",
+                                    });
                                   } catch (error) {
                                     console.error('Error deleting game:', error);
-                                    toast.error('Failed to delete game');
+                                    toast({
+                                      title: "Error",
+                                      description: "Failed to delete game",
+                                      variant: "destructive",
+                                    });
                                   }
                                 }}
                               >
