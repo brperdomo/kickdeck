@@ -322,9 +322,10 @@ export async function processRefund(req: Request, res: Response) {
   
   try {
     const { teamId } = req.params;
-    const { reason } = req.body;
+    const { reason, amount } = req.body;
+    const isPartialRefund = amount !== undefined && amount !== null;
     
-    log(`Processing refund for team ID: ${teamId}. Reason: ${reason || 'Not provided'}`, 'admin');
+    log(`Processing ${isPartialRefund ? 'partial' : 'full'} refund for team ID: ${teamId}. ${isPartialRefund ? `Amount: $${amount/100}` : ''} Reason: ${reason || 'Not provided'}`, 'admin');
     
     // Get team details
     const teamResult = await db
@@ -374,10 +375,14 @@ export async function processRefund(req: Request, res: Response) {
     if (team.paymentIntentId) {
       try {
         // Process the refund via Stripe
-        const refund = await createRefund(team.paymentIntentId, reason);
+        // If amount is provided, use it for partial refund
+        const refund = await createRefund(
+          team.paymentIntentId, 
+          isPartialRefund ? amount : undefined
+        );
         refundId = refund.id;
         stripeRefundStatus = 'success';
-        log(`Stripe refund processed successfully. Refund ID: ${refundId}`, 'admin');
+        log(`Stripe ${isPartialRefund ? 'partial' : 'full'} refund processed successfully. Refund ID: ${refundId}`, 'admin');
       } catch (stripeError) {
         stripeRefundStatus = 'failed';
         log(`Stripe refund failed: ${stripeError}. Proceeding with manual refund tracking.`, 'admin');
@@ -478,19 +483,26 @@ export async function processRefund(req: Request, res: Response) {
       // Send notification to all recipients
       for (const recipient of emailRecipients) {
         if (recipient) {
+          // Calculate the refund amount - use the provided amount for partial refunds
+          const refundAmountValue = isPartialRefund 
+            ? (amount / 100).toFixed(2)
+            : ((team.totalAmount || team.registrationFee || 0) / 100).toFixed(2);
+            
           await sendTemplatedEmail(
             recipient,
             'payment_refunded',
             {
               teamName: team.name || 'your team',
               eventName: event?.name || 'the event',
-              amount: (((team.totalAmount || team.registrationFee || 0) / 100).toFixed(2)),
+              amount: refundAmountValue,
               reason: reason || 'Team registration was refunded',
-              refundDate: new Date().toLocaleDateString()
+              refundDate: new Date().toLocaleDateString(),
+              isPartial: isPartialRefund ? 'true' : 'false',
+              originalAmount: ((team.totalAmount || team.registrationFee || 0) / 100).toFixed(2)
             }
           );
           
-          log(`Refund notification email sent to ${recipient}`, 'admin');
+          log(`${isPartialRefund ? 'Partial' : 'Full'} refund notification email sent to ${recipient}`, 'admin');
         }
       }
       
@@ -501,6 +513,11 @@ export async function processRefund(req: Request, res: Response) {
       emailStatus = 'failed';
     }
     
+    // Calculate the refund amount for the response
+    const responseRefundAmount = isPartialRefund 
+      ? (amount / 100).toFixed(2)
+      : ((team.totalAmount || team.registrationFee || 0) / 100).toFixed(2);
+
     // Return a consistent JSON response format with detailed status info
     return res.json({
       status: 'success',
@@ -509,7 +526,9 @@ export async function processRefund(req: Request, res: Response) {
       refund: {
         id: refundId,
         stripeStatus: stripeRefundStatus,
-        amount: ((team.totalAmount || team.registrationFee || 0) / 100).toFixed(2),
+        amount: responseRefundAmount,
+        isPartial: isPartialRefund,
+        originalAmount: isPartialRefund ? ((team.totalAmount || team.registrationFee || 0) / 100).toFixed(2) : undefined,
         date: new Date().toISOString()
       },
       notification: {

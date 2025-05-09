@@ -2743,6 +2743,8 @@ function TeamsView() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
   const [refundReason, setRefundReason] = useState("");
+  const [isPartialRefund, setIsPartialRefund] = useState(false);
+  const [refundAmount, setRefundAmount] = useState<string>("");
   const [isPlayerDialogOpen, setIsPlayerDialogOpen] = useState(false);
   const [isDeletePlayerDialogOpen, setIsDeletePlayerDialogOpen] = useState(false);
   const [isCsvUploadDialogOpen, setIsCsvUploadDialogOpen] = useState(false);
@@ -2856,11 +2858,11 @@ function TeamsView() {
 
   // Mutation for processing refunds
   const processRefundMutation = useMutation({
-    mutationFn: async ({ teamId, reason }: { teamId: number, reason: string }) => {
+    mutationFn: async ({ teamId, reason, amount }: { teamId: number, reason: string, amount?: number | null }) => {
       const response = await fetch(`/api/admin/teams/${teamId}/refund`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason })
+        body: JSON.stringify({ reason, amount })
       });
       
       if (!response.ok) throw new Error('Failed to process refund');
@@ -3104,9 +3106,16 @@ function TeamsView() {
   const confirmRefund = () => {
     if (!selectedTeam) return;
     
+    // Calculate the refund amount based on whether it's a partial refund or not
+    const amount = isPartialRefund ? 
+      // Convert string dollar amount to cents
+      Math.round(parseFloat(refundAmount) * 100) : 
+      null;
+    
     processRefundMutation.mutate({
       teamId: selectedTeam.id,
-      reason: refundReason
+      reason: refundReason,
+      amount
     });
   };
 
@@ -3884,11 +3893,72 @@ function TeamsView() {
             </DialogDescription>
           </DialogHeader>
           
-          <Textarea 
-            placeholder="Reason for refund (for internal records)"
-            value={refundReason}
-            onChange={(e) => setRefundReason(e.target.value)}
-          />
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="partial-refund" 
+                checked={isPartialRefund}
+                onCheckedChange={(checked) => {
+                  setIsPartialRefund(!!checked);
+                  if (!checked) {
+                    setRefundAmount("");
+                  }
+                }}
+              />
+              <Label htmlFor="partial-refund" className="cursor-pointer">
+                Process partial refund
+              </Label>
+            </div>
+            
+            {isPartialRefund && (
+              <div className="space-y-2">
+                <Label htmlFor="refund-amount">Refund Amount ($)</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                  <Input
+                    id="refund-amount"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="0.00"
+                    className="pl-7"
+                    value={refundAmount}
+                    onChange={(e) => {
+                      // Ensure the value is positive and not greater than the registration fee
+                      const value = e.target.value;
+                      const numValue = parseFloat(value);
+                      
+                      if (!value) {
+                        setRefundAmount("");
+                      } else if (!isNaN(numValue) && numValue > 0) {
+                        const maxAmount = selectedTeam ? (selectedTeam.registrationFee || 0) / 100 : 0;
+                        if (numValue <= maxAmount) {
+                          setRefundAmount(value);
+                        } else {
+                          setRefundAmount(maxAmount.toString());
+                        }
+                      }
+                    }}
+                  />
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {isPartialRefund && refundAmount && !isNaN(parseFloat(refundAmount)) ? (
+                    <span>
+                      Refunding <strong>${parseFloat(refundAmount).toFixed(2)}</strong> of {selectedTeam ? formatCurrency(selectedTeam.registrationFee || 0) : '$0.00'}
+                    </span>
+                  ) : (
+                    <span>Enter an amount to refund</span>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            <Textarea 
+              placeholder="Reason for refund (for internal records)"
+              value={refundReason}
+              onChange={(e) => setRefundReason(e.target.value)}
+            />
+          </div>
           
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsRefundDialogOpen(false)}>
@@ -3896,11 +3966,19 @@ function TeamsView() {
             </Button>
             <Button 
               onClick={confirmRefund}
-              disabled={processRefundMutation.isPending}
+              disabled={processRefundMutation.isPending || (isPartialRefund && (!refundAmount || isNaN(parseFloat(refundAmount))))}
               className="team-status-button team-edit-button"
             >
-              {processRefundMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Process Refund
+              {processRefundMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : isPartialRefund ? (
+                'Process Partial Refund'
+              ) : (
+                'Process Full Refund'
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
