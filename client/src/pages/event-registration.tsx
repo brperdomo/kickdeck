@@ -41,6 +41,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PaymentElement, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import StripeProvider from "@/components/StripeProvider";
+import { SetupPaymentForm } from "@/components/payment/SetupPaymentForm";
+import { SetupPaymentProvider } from "@/components/payment/SetupPaymentProvider";
 import { Footer } from "@/components/ui/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -3125,11 +3127,16 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           </p>
                         </div>
                         
-                        <StripeProvider>
-                          <PaymentForm 
-                            amount={parseFloat(calculateTotalAmount()) * 100} // Convert back to cents for payment processing
-                            isPreview={isPreview}
-                            onSuccess={() => {
+                        <SetupPaymentProvider clientSecret={null}>
+                          <SetupPaymentForm 
+                            teamId={0} // This will be replaced by the real team ID after registration
+                            expectedAmount={parseFloat(calculateTotalAmount()) * 100} // Convert back to cents for payment processing
+                            teamName={teamForm.getValues().name}
+                            eventName={event?.name || 'tournament'}
+                            returnUrl={window.location.origin + '/payment-setup-confirmation'}
+                            onSuccess={(setupIntentId, paymentMethodId) => {
+                              console.log(`Setup intent created successfully: ${setupIntentId}, Payment method: ${paymentMethodId}`);
+                              
                               // Make sure to sync the latest players array with form data
                               teamForm.setValue('players', players);
                               
@@ -3139,19 +3146,26 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 ...requiredFees.map(fee => fee.id)
                               ];
                               
-                              // Then submit the form values along with player data and selected fees
+                              // Then submit the form values along with player data, selected fees, and payment method info
                               registerTeamMutation.mutate({
                                 ...teamForm.getValues(),
                                 selectedFeeIds: allSelectedFeeIds,
                                 totalAmount: parseFloat(calculateTotalAmount()) * 100, // in cents
                                 paymentMethod: 'card',
-                                addRosterLater // Include the flag to indicate roster will be added later
+                                addRosterLater, // Include the flag to indicate roster will be added later
+                                setupIntentId, // Include the setup intent ID
+                                paymentMethodId // Include the payment method ID
                               });
                             }}
-                            isProcessing={registerTeamMutation.isPending}
-                            setIsProcessing={() => {}} // This is a mock function since we can't directly control mutation state
+                            onError={(error) => {
+                              toast({
+                                title: "Payment Setup Error",
+                                description: error.message || "There was a problem setting up your payment method",
+                                variant: "destructive"
+                              });
+                            }}
                           />
-                        </StripeProvider>
+                        </SetupPaymentProvider>
                       </div>
                     )}
                   </div>

@@ -120,6 +120,33 @@ router.get('/setup-status/:setupIntentId', async (req, res) => {
   }
 });
 
+// Get payment method details
+router.get('/payment-method/:paymentMethodId', async (req, res) => {
+  try {
+    const { paymentMethodId } = req.params;
+    
+    // Retrieve the payment method from Stripe
+    const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+    
+    // Return masked payment information only (last4, brand, etc)
+    // Never return full card details
+    res.json({
+      id: paymentMethod.id,
+      type: paymentMethod.type,
+      card: paymentMethod.card ? {
+        brand: paymentMethod.card.brand,
+        last4: paymentMethod.card.last4,
+        exp_month: paymentMethod.card.exp_month,
+        exp_year: paymentMethod.card.exp_year,
+      } : null,
+      created: paymentMethod.created,
+    });
+  } catch (error: any) {
+    console.error('Error retrieving payment method:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Webhook for Stripe events
 router.post('/webhook', stripeWebhookMiddleware, async (req, res) => {
   const sig = req.headers['stripe-signature'];
