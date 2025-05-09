@@ -49,6 +49,56 @@ export async function createPaymentIntent(amount: number, teamId: number, metada
 }
 
 /**
+ * Creates a setup intent for collecting payment information without charging
+ * This is used for the "collect now, charge later" approach
+ * @param teamId The ID of the team being registered
+ * @param metadata Additional metadata to include with the setup intent
+ */
+export async function createSetupIntent(teamId: number, metadata: Record<string, string> = {}) {
+  try {
+    const response = await fetch('/api/payments/create-setup-intent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        teamId,
+        metadata
+      }),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to create setup intent');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating setup intent:', error);
+    throw error;
+  }
+}
+
+/**
+ * Confirms a setup intent with the Stripe Elements
+ * @param elements The Stripe Elements instance
+ * @param clientSecret The setup intent client secret
+ * @param returnUrl The URL to redirect to after setup is complete
+ */
+export async function confirmSetup(elements: StripeElements, clientSecret: string, returnUrl: string) {
+  const stripe = await getStripe();
+  if (!stripe) {
+    throw new Error('Stripe failed to load');
+  }
+  
+  return await stripe.confirmSetup({
+    elements,
+    confirmParams: {
+      return_url: returnUrl,
+    },
+  });
+}
+
+/**
  * Confirms a payment intent with the Stripe Elements
  * @param elements The Stripe Elements instance
  * @param clientSecret The payment intent client secret
@@ -101,6 +151,25 @@ export async function getPaymentStatus(paymentIntentId: string) {
     return await response.json();
   } catch (error) {
     console.error('Error getting payment status:', error);
+    throw error;
+  }
+}
+
+/**
+ * Gets a setup intent status
+ * @param setupIntentId The ID of the setup intent
+ */
+export async function getSetupStatus(setupIntentId: string) {
+  try {
+    const response = await fetch(`/api/payments/setup-status/${setupIntentId}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to get setup intent status');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error getting setup intent status:', error);
     throw error;
   }
 }
