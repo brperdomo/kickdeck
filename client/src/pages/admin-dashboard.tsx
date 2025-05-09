@@ -5,8 +5,7 @@ import {
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
-  Trophy, WandSparkles, FileText, Edit, Trash, Download, ImageIcon,
-  BarChart2, FileBarChart, Users, Calendar, UserPlus
+  Trophy, WandSparkles, BarChart2
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -1218,7 +1217,7 @@ function ReportsView() {
               <div className="p-6">
                 <div className="flex items-center justify-center p-6 text-center">
                   <div className="space-y-3">
-                    <FileBarChart className="mx-auto h-12 w-12 text-indigo-300 dark:text-indigo-400" />
+                    <BarChart2 className="mx-auto h-12 w-12 text-indigo-300 dark:text-indigo-400" />
                     <p className="text-indigo-700 dark:text-indigo-300">Manager report content will be implemented here</p>
                     <p className="text-sm text-indigo-500 dark:text-indigo-400">Track and manage team managers across all tournaments</p>
                   </div>
@@ -1343,11 +1342,20 @@ function ReportsView() {
                 )}
               </Button>
             </div>
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-muted-foreground">Guest player report content will be implemented here</p>
-              </CardContent>
-            </Card>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-indigo-100 dark:border-gray-700">
+              <div className="bg-gradient-to-r from-indigo-50/50 to-blue-50/50 dark:from-gray-800 dark:to-gray-700 p-4 border-b border-indigo-100 dark:border-gray-700">
+                <h4 className="text-base font-medium text-indigo-900 dark:text-blue-100">Guest Player Information</h4>
+              </div>
+              <div className="p-6">
+                <div className="flex items-center justify-center p-6 text-center">
+                  <div className="space-y-3">
+                    <UserPlus className="mx-auto h-12 w-12 text-indigo-300 dark:text-indigo-400" />
+                    <p className="text-indigo-700 dark:text-indigo-300">Guest player report content will be implemented here</p>
+                    <p className="text-sm text-indigo-500 dark:text-indigo-400">Track and analyze guest player registrations across events</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         );
       default:
