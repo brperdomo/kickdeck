@@ -23,7 +23,8 @@ import {
   FileText,
   Save,
   Clock,
-  ArrowRight
+  ArrowRight,
+  Info
 } from "lucide-react";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
@@ -3020,7 +3021,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
                             <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
                               <p className="flex items-start">
-                                <InfoIcon className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                                <Info className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
                                 <span>
                                   <strong>Two-step payment process:</strong> Your payment information will be securely stored, but your card will only be charged after your team registration is reviewed and approved by event administrators.
                                 </span>
@@ -3119,7 +3120,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
                         <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
                           <p className="flex items-start">
-                            <InfoIcon className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                            <Info className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
                             <span>
                               <strong>Two-step payment process:</strong> Your payment information will be securely stored by Stripe, but your card will only be charged after your team registration is reviewed and approved by event administrators. The total amount of ${(parseFloat(calculateTotalAmount())).toFixed(2)} will be charged at that time.
                             </span>
