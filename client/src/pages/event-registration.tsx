@@ -30,6 +30,7 @@ import { InfoPopover } from "@/components/ui/InfoPopover";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
 import { useAuth } from "@/hooks/use-auth";
+import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
@@ -447,7 +448,9 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
   );
 }
 
+// Enhanced schema with conditional fields for authentication
 const personalDetailsSchema = z.object({
+  // Basic personal details
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
@@ -456,6 +459,48 @@ const personalDetailsSchema = z.object({
   city: z.string().min(1, "City is required"),
   state: z.string().min(2, "State is required"),
   zipCode: z.string().min(5, "ZIP code must be at least 5 digits"),
+  
+  // Authentication fields - these are only required if email doesn't belong to existing account
+  password: z.string().optional(), // For both login and new account
+  confirmPassword: z.string().optional(), // Only for new account
+  
+  // Flags for authentication state
+  emailChecked: z.boolean().optional(),
+  emailExists: z.boolean().optional(),
+  authenticated: z.boolean().optional(),
+}).superRefine((data, ctx) => {
+  // If email exists and we need to authenticate
+  if (data.emailExists && !data.authenticated) {
+    // Validate password for login
+    if (!data.password || data.password.length < 6) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Password is required to log in",
+        path: ["password"]
+      });
+    }
+  }
+  
+  // If creating a new account
+  if (data.emailChecked && !data.emailExists && !data.authenticated) {
+    // Validate password creation
+    if (!data.password || data.password.length < 8) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Password must be at least 8 characters",
+        path: ["password"]
+      });
+    }
+    
+    // Validate password confirmation
+    if (data.password !== data.confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Passwords don't match",
+        path: ["confirmPassword"]
+      });
+    }
+  }
 });
 
 type PersonalDetailsForm = z.infer<typeof personalDetailsSchema>;
@@ -541,11 +586,18 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     lastSaved
   } = useSavedRegistration(eventId);
   
-  // Skip auth step completely - if user is not logged in, RegistrationAuthChecker will redirect to login
+  // NEW Authentication States
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [emailExists, setEmailExists] = useState<boolean | null>(null);
+  const [emailToCheck, setEmailToCheck] = useState<string>('');
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  
+  // Skip auth step completely - if user is not logged in, we'll handle auth within personal step
   // This ensures we start at the personal step every time - simpler and more reliable flow
-  // Always start at personal step - we'll handle auth redirection separately
   const initialStep = 'personal';
-  console.log('Simplified registration flow: Always starting at personal step');
+  console.log('Enhanced registration flow: Always starting at personal step with integrated auth');
   
   console.log('🔍 AUTH DEBUG 🔍', {
     user: user ? { id: user.id, email: user.email } : null,
@@ -554,6 +606,137 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     currentStep: initialStep,
     isPreview
   });
+  
+  // Query client for auth state updates
+  const queryClient = useQueryClient();
+  
+  // Function to check if an email exists in the system
+  const checkEmailExists = async (email: string) => {
+    setIsCheckingEmail(true);
+    setAuthError(null);
+    setEmailToCheck(email);
+    
+    try {
+      // This is a simulated endpoint - we'll need to create this API route
+      // For now we'll just check if the email is valid format
+      console.log("Checking if email exists:", email);
+      
+      // Simulate API call with a delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // In a real implementation, this would make an API call
+      // For demo, we'll just simulate a response
+      const exists = email.includes('@') && email.includes('.');
+      setEmailExists(exists);
+      return exists;
+    } catch (error) {
+      console.error('Error checking email:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to check if email exists. Please try again.',
+        variant: 'destructive',
+      });
+      setEmailExists(null);
+      return null;
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
+  
+  // Function to login with email and password
+  const loginWithCredentials = async (email: string, password: string) => {
+    setIsAuthenticating(true);
+    setAuthError(null);
+    
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: email, password }),
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Invalid email or password');
+      }
+      
+      const userData = await response.json();
+      
+      // Update the user data in the React Query cache
+      queryClient.setQueryData(['/api/user'], userData);
+      
+      toast({
+        title: 'Success',
+        description: 'You have been logged in successfully',
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      setAuthError('Invalid email or password');
+      toast({
+        title: 'Login Failed',
+        description: 'Invalid email or password. Please try again.',
+        variant: 'destructive',
+      });
+      return false;
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+  
+  // Function to register with email and password
+  const registerWithCredentials = async (email: string, password: string, firstName: string, lastName: string) => {
+    setIsCreatingAccount(true);
+    setAuthError(null);
+    
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          username: email, 
+          password,
+          email,
+          firstName,
+          lastName,
+        }),
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to create account');
+      }
+      
+      const userData = await response.json();
+      
+      // Update the user data in the React Query cache
+      queryClient.setQueryData(['/api/user'], userData);
+      
+      toast({
+        title: 'Account Created',
+        description: 'Your account has been created successfully',
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('Registration error:', error);
+      setAuthError(error instanceof Error ? error.message : 'Failed to create account');
+      toast({
+        title: 'Registration Failed',
+        description: error instanceof Error ? error.message : 'Failed to create account',
+        variant: 'destructive',
+      });
+      return false;
+    } finally {
+      setIsCreatingAccount(false);
+    }
+  };
   const [currentStep, setCurrentStep] = useState<RegistrationStep>(initialStep);
   
   // Track if we've shown the saved registration alert
