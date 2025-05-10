@@ -22,7 +22,8 @@ import {
   AlertCircle,
   FileText,
   Save,
-  Clock
+  Clock,
+  ArrowRight
 } from "lucide-react";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
@@ -746,6 +747,22 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     }
   }, [user, form]);
 
+  // Direct step navigation function as a workaround
+  const handleDirectStepNavigation = (step: RegistrationStep) => {
+    console.log(`Direct navigation requested to step: ${step}`);
+    setCurrentStep(step);
+    
+    // Store the step in session storage
+    try {
+      const savedData = JSON.parse(sessionStorage.getItem('registrationData') || '{}');
+      savedData.currentStep = step;
+      sessionStorage.setItem('registrationData', JSON.stringify(savedData));
+      console.log(`Updated session storage with step: ${step}`);
+    } catch (e) {
+      console.error('Failed to update session storage:', e);
+    }
+  };
+
   const updatePersonalDetailsMutation = useMutation({
     mutationFn: async (data: PersonalDetailsForm) => {
       console.log('Starting personal details update with data:', data);
@@ -782,17 +799,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       
       toast({
         title: "Success",
-        description: "Personal details updated successfully",
+        description: "Personal details updated successfully - click Continue to proceed",
       });
       
-      console.log('Advancing to team step from', currentStep);
-      setCurrentStep('team');
+      console.log('Will NOT automatically advance to team step due to state issue');
       
-      // Force the step change with a slight delay to ensure state updates
-      setTimeout(() => {
-        console.log('Forced step change to team from setTimeout');
-        setCurrentStep('team');
-      }, 100);
+      // Do NOT automatically change the step as it seems to be causing issues
+      // Instead, we've added a manual Continue button as a workaround
     },
     onError: (error: Error) => {
       console.error('Personal details update failed:', error);
@@ -2030,6 +2043,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       >
                         Back
                       </Button>
+                      
+                      {/* Original submit button just saves but doesn't advance */}
                       <Button 
                         type="submit"
                         className="font-medium"
@@ -2046,9 +2061,26 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             Saving...
                           </>
                         ) : (
-                          'Next'
+                          'Save Details'
                         )}
                       </Button>
+                      
+                      {/* Manual continue button as a workaround */}
+                      {updatePersonalDetailsMutation.isSuccess && (
+                        <Button 
+                          type="button"
+                          className="font-medium ml-2 animate-pulse"
+                          onClick={() => handleDirectStepNavigation('team')}
+                          style={{ 
+                            backgroundColor: event?.branding?.secondaryColor || '#48BB78',
+                            color: 'white',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
+                          }}
+                        >
+                          Continue to Team Information
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </form>
