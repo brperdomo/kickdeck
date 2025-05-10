@@ -95,6 +95,17 @@ export default function AuthPage() {
     // Check for redirectAfterAuth in session storage
     const redirectPath = sessionStorage.getItem('redirectAfterAuth');
     
+    // Check if we're in the middle of an event registration flow
+    const isDirectEventRegistration = window.location.pathname.includes('/register/event/') || 
+                                      window.location.pathname.includes('/event/') && 
+                                      window.location.pathname.includes('/register');
+                                      
+    // If we're already on a registration page, don't redirect anywhere
+    if (isDirectEventRegistration) {
+      console.log("Already on event registration page - not redirecting to dashboard");
+      return;
+    }
+    
     if (redirectPath) {
       console.log("Found redirect path:", redirectPath);
       
@@ -122,9 +133,16 @@ export default function AuthPage() {
     }
     
     // No redirect path found, go to default location
-    const defaultPath = user.isAdmin ? '/admin' : '/dashboard';
-    console.log("No redirect path, going to:", defaultPath);
-    window.location.href = defaultPath;
+    // But first check if we're on the auth page directly (not from a registration flow)
+    const isDirectAuthPage = window.location.pathname === '/auth';
+    
+    if (isDirectAuthPage) {
+      const defaultPath = user.isAdmin ? '/admin' : '/dashboard';
+      console.log("No redirect path, going to:", defaultPath);
+      window.location.href = defaultPath;
+    } else {
+      console.log("On a non-auth page while logged in, not redirecting");
+    }
   }, [user]);
 
   const loginForm = useForm<LoginFormData>({
