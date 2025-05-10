@@ -2553,9 +2553,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>First Name</FormLabel>
+                          <FormLabel className="enhanced-label">First Name</FormLabel>
                           <FormControl>
                             <Input 
+                              className="enhanced-input"
                               {...field} 
                               placeholder={emailExists && redactedUserData?.firstName ? "●●●●●●●●" : undefined}
                               disabled={emailExists && !form.getValues().authenticated}
@@ -2575,9 +2576,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Last Name</FormLabel>
+                          <FormLabel className="enhanced-label">Last Name</FormLabel>
                           <FormControl>
                             <Input 
+                              className="enhanced-input"
                               {...field} 
                               placeholder={emailExists && redactedUserData?.lastName ? "●●●●●●●●" : undefined}
                               disabled={emailExists && !form.getValues().authenticated}
@@ -2592,9 +2594,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel className="enhanced-label">Email</FormLabel>
                           <FormControl>
                             <Input 
+                              className="enhanced-input"
                               {...field} 
                               type="email"
                               onChange={(e) => {
@@ -2619,13 +2622,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             />
                           </FormControl>
                           {isCheckingEmail && (
-                            <div className="text-sm text-muted-foreground flex items-center mt-1">
+                            <div className="enhanced-message">
                               <Loader2 className="h-3 w-3 animate-spin mr-2" />
                               Checking email...
                             </div>
                           )}
                           {emailExists && redactedUserData && (
-                            <div className="text-sm text-primary mt-1">
+                            <div className="enhanced-message" style={{ color: '#2563eb' }}>
+                              <CheckCircle className="h-4 w-4 mr-1.5" />
                               Existing account found. Please enter your password to continue.
                             </div>
                           )}
