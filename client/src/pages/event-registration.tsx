@@ -30,6 +30,7 @@ import { InfoPopover } from "@/components/ui/InfoPopover";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
 import { useAuth } from "@/hooks/use-auth";
+import { useHouseholdDetails } from "@/hooks/use-household-details";
 import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -648,14 +649,25 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       
       // If user exists, set the redacted data
       if (data.exists && data.redactedUserData) {
+        // If household data is available, use that for address data
+        // Otherwise use the redacted data from the API
+        const addressData = household ? {
+          address: household.address || '',
+          city: household.city || '',
+          state: household.state || '',
+          zipCode: household.zipCode || ''
+        } : {
+          address: data.redactedUserData.address || '',
+          city: data.redactedUserData.city || '',
+          state: data.redactedUserData.state || '',
+          zipCode: data.redactedUserData.zipCode || ''
+        };
+        
         setRedactedUserData({
           firstName: data.redactedUserData.firstName,
           lastName: data.redactedUserData.lastName,
           phone: data.redactedUserData.phone || '',
-          address: data.redactedUserData.address || '',
-          city: data.redactedUserData.city || '',
-          state: data.redactedUserData.state || '',
-          zipCode: data.redactedUserData.zipCode || '',
+          ...addressData,
           userId: data.redactedUserData.userId
         });
       } else {
@@ -956,25 +968,16 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   // directly in the useEffect hooks. This was causing the redirect to /auth when unnecessary.
   // Removing this function and direct redirections prevents circular redirects.
 
-  // Helper function to parse user metadata
-  const getUserAddressData = () => {
-    if (!user?.metadata) return { address: '', city: '', state: '', zipCode: '' };
-    
-    try {
-      const parsedMetadata = JSON.parse(user.metadata);
-      return {
-        address: parsedMetadata.address || '',
-        city: parsedMetadata.city || '',
-        state: parsedMetadata.state || '',
-        zipCode: parsedMetadata.zipCode || '',
-      };
-    } catch (e) {
-      console.error("Error parsing user metadata:", e);
-      return { address: '', city: '', state: '', zipCode: '' };
-    }
-  };
+  // Get household details for address information
+  const { household, isLoading: householdLoading } = useHouseholdDetails();
   
-  const addressData = getUserAddressData();
+  // Get address data from household information
+  const addressData = {
+    address: household?.address || '',
+    city: household?.city || '',
+    state: household?.state || '',
+    zipCode: household?.zipCode || ''
+  };
   
   const form = useForm<PersonalDetailsForm>({
     resolver: zodResolver(personalDetailsSchema),
@@ -1005,6 +1008,17 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     setEmailToCheck(watchedEmail);
   }, [watchedEmail]);
   
+  // Update form with household details when they load
+  useEffect(() => {
+    if (household && !householdLoading) {
+      console.log('Updating form with household address data:', household);
+      form.setValue('address', household.address || '');
+      form.setValue('city', household.city || '');
+      form.setValue('state', household.state || '');
+      form.setValue('zipCode', household.zipCode || '');
+    }
+  }, [household, householdLoading, form]);
+  
 
   
   // Verify existing account with password
@@ -1032,10 +1046,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
           form.setValue('firstName', redactedUserData.firstName);
           form.setValue('lastName', redactedUserData.lastName);
           form.setValue('phone', redactedUserData.phone);
-          form.setValue('address', redactedUserData.address);
-          form.setValue('city', redactedUserData.city);
-          form.setValue('state', redactedUserData.state);
-          form.setValue('zipCode', redactedUserData.zipCode);
+          
+          // Use household data if available, otherwise use redacted data
+          if (household) {
+            console.log('Using household data for address fields after verification');
+            form.setValue('address', household.address || '');
+            form.setValue('city', household.city || '');
+            form.setValue('state', household.state || '');
+            form.setValue('zipCode', household.zipCode || '');
+          } else {
+            form.setValue('address', redactedUserData.address);
+            form.setValue('city', redactedUserData.city);
+            form.setValue('state', redactedUserData.state);
+            form.setValue('zipCode', redactedUserData.zipCode);
+          }
         }
         
         toast({
