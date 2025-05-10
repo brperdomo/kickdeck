@@ -2124,7 +2124,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     }
     
     // Skip player validation if the user chose to add roster later
-  if (players.length === 0 && !addRosterLater) {
+    if (players.length === 0 && !addRosterLater) {
       toast({
         title: "Error",
         description: "Please add at least one player to the roster or select the 'Add Roster Later' option",
@@ -2132,6 +2132,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       });
       return;
     }
+    
+    // Make sure teamForm has the correct addRosterLater value
+    teamForm.setValue('addRosterLater', addRosterLater);
     
     // Only validate players if we're not using the "add roster later" option
     if (!addRosterLater && players.length > 0) {

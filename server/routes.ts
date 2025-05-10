@@ -1063,12 +1063,13 @@ export function registerRoutes(app: Express): Server {
         const isFreeModeRegistration = paymentMethod === 'free';
         
         // For free registrations with no fees, automatically set addRosterLater to true
-        if (hasNoFees && isFreeModeRegistration) {
-          addRosterLater = true;
-        }
+        // Make sure we treat addRosterLater correctly as a boolean
+        const useAddRosterLater = addRosterLater === true || addRosterLater === 'true';
+        
+        console.log('Registration validation - addRosterLater value:', addRosterLater, 'interpreted as:', useAddRosterLater);
         
         // Skip player validation if addRosterLater flag is set to true
-        if (!addRosterLater && (!Array.isArray(players) || players.length === 0)) {
+        if (!useAddRosterLater && (!Array.isArray(players) || players.length === 0)) {
           return res.status(400).json({ 
             error: 'At least one player is required to register a team, or select the "Add Roster Later" option.' 
           });
