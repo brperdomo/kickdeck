@@ -48,6 +48,7 @@ import { SetupPaymentForm } from "@/components/payment/SetupPaymentForm";
 import { SetupPaymentProvider } from "@/components/payment/SetupPaymentProvider";
 import { Footer } from "@/components/ui/Footer";
 import { motion, AnimatePresence } from "framer-motion";
+import RegistrationAuthChecker from "@/pages/registration-auth-checker";
 import { 
   Dialog,
   DialogContent,
@@ -1862,16 +1863,18 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     </>
                   )}
                 </motion.div>
+              </RegistrationAuthChecker>
               )}
 
-            {currentStep === 'personal' && user && (
-              <motion.div
-                key="personal-step"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
+            {currentStep === 'personal' && (
+              <RegistrationAuthChecker eventId={eventId}>
+                <motion.div
+                  key="personal-step"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmitPersonalDetails)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
