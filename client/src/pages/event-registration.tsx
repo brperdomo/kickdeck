@@ -48,7 +48,7 @@ import { SetupPaymentForm } from "@/components/payment/SetupPaymentForm";
 import { SetupPaymentProvider } from "@/components/payment/SetupPaymentProvider";
 import { Footer } from "@/components/ui/Footer";
 import { motion, AnimatePresence } from "framer-motion";
-import RegistrationAuthChecker from "@/pages/registration-auth-checker";
+import RegistrationAuthChecker from "@/components/RegistrationAuthChecker";
 import { 
   Dialog,
   DialogContent,
@@ -3356,8 +3356,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
               </motion.div>
             )}
             
-              {/* Close the RegistrationAuthChecker */}
-              </RegistrationAuthChecker>
             )}
             </AnimatePresence>
           </CardContent>
