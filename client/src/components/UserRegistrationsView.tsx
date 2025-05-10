@@ -169,20 +169,10 @@ export default function UserRegistrationsView() {
               <div className="flex flex-col w-full gap-2">
                 <div className="flex justify-between gap-2">
                   <Button variant="outline" size="sm" className="w-full" asChild>
-                    <Link href={`/events/${registration.eventId}`}>View Event</Link>
+                    <Link href={`/events/${registration.eventId}/details`}>View Event</Link>
                   </Button>
                   
-                  {/* Only show payment button if payment is still pending AND user hasn't provided card yet */}
-                  {(registration.paymentStatus === 'pending' || !registration.paymentStatus) && 
-                    registration.amount > 0 && 
-                    !registration.setupIntentId && // Don't show if card details already provided
-                    !registration.payLater && // Don't show if they selected pay later
-                    (
-                      <Button variant="default" size="sm" className="w-full" asChild>
-                        <Link href={`/events/${registration.eventId}/pay/${registration.id}`}>Pay Now</Link>
-                      </Button>
-                    )
-                  }
+                  {/* Payment buttons removed - admins handle all payment approvals */}
                 </div>
                 
                 {/* Show card info if it exists */}
