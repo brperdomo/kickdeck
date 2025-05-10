@@ -540,7 +540,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   // For initialization, check if user is already logged in to bypass auth step
   // This ensures we start at the correct step even before the useEffect runs
   const initialStep = isPreview ? 'personal' : (user ? 'personal' : 'auth');
-  console.log('Setting initial step based on auth status:', { initialStep, isLoggedIn: !!user, isAdmin: user?.isAdmin });
+  console.log('Setting initial step based on auth status:', { initialStep, isLoggedIn: !!user, isAdmin: user?.isAdmin, userId: user?.id });
+  
+  console.log('🔍 AUTH DEBUG 🔍', {
+    user: user ? { id: user.id, email: user.email } : null,
+    isLoggedIn: !!user,
+    urlParams: window.location.search,
+    currentStep: initialStep,
+    isPreview
+  });
   const [currentStep, setCurrentStep] = useState<RegistrationStep>(initialStep);
   
   // Track if we've shown the saved registration alert
@@ -561,6 +569,36 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       setCurrentStep('personal');
     }
   }, [user, currentStep, isPreview]);
+  
+  // Additional auth handling for URL parameters and redirects
+  useEffect(() => {
+    // Check URL parameters for auth completion signal
+    const params = new URLSearchParams(window.location.search);
+    const authComplete = params.get('auth_complete') === 'true';
+    
+    // Handle auth_complete parameter - make a fresh user check
+    if (authComplete && currentStep === 'auth') {
+      console.log('🔐 Auth complete parameter detected, checking auth status and forcing refresh');
+      
+      // Force a refresh of the user state from the backend
+      fetch('/api/user', { 
+        credentials: 'include',
+        headers: { 'Cache-Control': 'no-cache' }
+      })
+        .then(res => res.status === 200 ? res.json() : null)
+        .then(userData => {
+          console.log('🔓 Manual auth check result:', !!userData);
+          
+          if (userData) {
+            console.log('🔑 User is authenticated, advancing to personal step', userData);
+            setCurrentStep('personal');
+          }
+        })
+        .catch(err => {
+          console.error('Error checking auth status:', err);
+        });
+    }
+  }, [currentStep, window.location.search]);
   
   // Check for saved data on component mount
   useEffect(() => {

@@ -1,0 +1,41 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:9 Google Maps API key length: 0 characters
+env.ts:15 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /register/event/1251362271
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/register/event/1251362271?auth_complete=true
+RouteDebugger.tsx:15 Current pathname: /register/event/1251362271
+RouteDebugger.tsx:16 Current search: ?auth_complete=true
+use-user.ts:59 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /register/event/1251362271
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/register/event/1251362271?auth_complete=true
+RouteDebugger.tsx:15 Current pathname: /register/event/1251362271
+RouteDebugger.tsx:16 Current search: ?auth_complete=true
+use-user.ts:76 User data fetched: Object
+event-registration.tsx:543 Setting initial step based on auth status: Object
+event-registration.tsx:543 Setting initial step based on auth status: Object
+event-registration.tsx:849 Fetching event details for ID: 1251362271
+event-registration.tsx:938 AUTH DEBUG (radical) -----------------
+event-registration.tsx:939 URL auth_complete parameter: true
+event-registration.tsx:940 Is authenticated: false
+event-registration.tsx:941 Current step: auth
+event-registration.tsx:942 ----------------------------------------
+event-registration.tsx:849 Fetching event details for ID: 1251362271
+event-registration.tsx:938 AUTH DEBUG (radical) -----------------
+event-registration.tsx:939 URL auth_complete parameter: true
+event-registration.tsx:940 Is authenticated: false
+event-registration.tsx:941 Current step: auth
+event-registration.tsx:942 ----------------------------------------
+event-registration.tsx:543 Setting initial step based on auth status: Object
+event-registration.tsx:543 Setting initial step based on auth status: Object
+event-registration.tsx:543 Setting initial step based on auth status: Object
+event-registration.tsx:543 Setting initial step based on auth status: Object
+event-registration.tsx:543 Setting initial step based on auth status: Object
+event-registration.tsx:543 Setting initial step based on auth status: Object
+event-registration.tsx:855 Received event data: Object
+event-registration.tsx:863 Inspecting branding data for event: Object
+event-registration.tsx:895 Pay Later Feature enabled: true
+event-registration.tsx:900 Pay Later feature is enabled for this event
+event-registration.tsx:543 Setting initial step based on auth status: Object
+event-registration.tsx:543 Setting initial step based on auth status: Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
