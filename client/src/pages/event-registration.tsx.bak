@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BracketSelector } from "@/components/registration/BracketSelector";
 import { useToast } from "@/hooks/use-toast";
+import { useSavedRegistration } from "@/hooks/use-saved-registration";
+import { SavedRegistrationNotice } from "@/components/registration/SavedRegistrationNotice";
+import { SaveForLaterButton } from "@/components/registration/SaveForLaterButton";
 import { 
   Loader2, 
   CheckCircle2, 
@@ -17,8 +20,13 @@ import {
   FileUp,
   Download,
   AlertCircle,
-  FileText
+  FileText,
+  Save,
+  Clock,
+  ArrowRight,
+  Info
 } from "lucide-react";
+import { InfoPopover } from "@/components/ui/InfoPopover";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
 import { useAuth } from "@/hooks/use-auth";
@@ -36,8 +44,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PaymentElement, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import StripeProvider from "@/components/StripeProvider";
+import { SetupPaymentForm } from "@/components/payment/SetupPaymentForm";
+import { SetupPaymentProvider } from "@/components/payment/SetupPaymentProvider";
 import { Footer } from "@/components/ui/Footer";
 import { motion, AnimatePresence } from "framer-motion";
+import RegistrationAuthChecker from "@/pages/registration-auth-checker";
 import { 
   Dialog,
   DialogContent,
@@ -278,7 +289,7 @@ const fadeInUp = {
   transition: { duration: 0.3 }
 };
 
-// Payment component for handling Stripe checkout
+// Payment component for handling Stripe checkout with Setup Intent
 function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPreview = false, teamId = null }: { 
   amount: number; 
   onSuccess: () => void; 
@@ -296,14 +307,14 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
     
     // In preview mode, simulate a successful payment without calling Stripe
     if (isPreview) {
-      console.log('Preview mode: Simulating payment for amount:', amount);
+      console.log('Preview mode: Simulating payment info collection for amount:', amount);
       setIsProcessing(true);
       
       // Simulate a brief delay for the "processing" state
       setTimeout(() => {
         toast({
-          title: "Preview: Payment Successful",
-          description: "This is a simulated payment in preview mode",
+          title: "Preview: Payment Information Saved",
+          description: "This is a simulated payment setup in preview mode",
         });
         setIsProcessing(false);
         onSuccess();
@@ -329,32 +340,36 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
       // We'll use a temporary ID that will be replaced once registration is complete
       const tempTeamId = teamId || `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       
-      // First create a payment intent on the server
-      const response = await fetch('/api/payments/create-intent', {
+      // Create a setup intent instead of a payment intent
+      const response = await fetch('/api/payments/create-setup-intent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount, // amount is in cents
           teamId: tempTeamId, // Include teamId to satisfy the server requirement
-          currency: 'usd',
-          description: 'Team Registration Fee with Additional Services',
+          expectedAmount: amount, // amount is in cents - but we're not charging yet
           metadata: {
-            isNewRegistration: teamId ? 'false' : 'true' // Flag if this is a new registration
+            isNewRegistration: teamId ? 'false' : 'true', // Flag if this is a new registration
+            expectedAmount: amount.toString()
           }
         }),
       });
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create payment intent');
+        const errorText = await response.text();
+        try {
+          const errorData = JSON.parse(errorText);
+          throw new Error(errorData.error || 'Failed to create setup intent');
+        } catch (jsonError) {
+          throw new Error(errorText || 'Failed to create setup intent');
+        }
       }
       
-      const { clientSecret } = await response.json();
+      const { clientSecret, setupIntentId } = await response.json();
       
-      // Use the client secret to confirm the payment
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      // Use the client secret to confirm the setup
+      const { error, setupIntent } = await stripe.confirmCardSetup(clientSecret, {
         payment_method: {
           card: elements.getElement('card')!,
         }
@@ -362,26 +377,26 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
 
       if (error) {
         toast({
-          title: "Payment Failed",
-          description: error.message || "An error occurred during payment processing",
+          title: "Payment Setup Failed",
+          description: error.message || "An error occurred saving your payment information",
           variant: "destructive",
         });
         setIsProcessing(false);
         return;
       }
 
-      if (paymentIntent && paymentIntent.status === 'succeeded') {
+      if (setupIntent && setupIntent.status === 'succeeded') {
         toast({
-          title: "Payment Successful",
-          description: "Your payment has been processed successfully",
+          title: "Payment Information Saved",
+          description: "Your payment information has been securely stored for future processing",
         });
         onSuccess();
       }
     } catch (e) {
-      console.error("Payment error:", e);
+      console.error("Payment setup error:", e);
       toast({
-        title: "Payment Error",
-        description: e instanceof Error ? e.message : "An unexpected error occurred during payment processing",
+        title: "Payment Setup Error",
+        description: e instanceof Error ? e.message : "An unexpected error occurred saving payment information",
         variant: "destructive",
       });
     } finally {
@@ -418,12 +433,12 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
           {isProcessing ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
+              Saving Payment Information...
             </>
           ) : (
             <>
               <CreditCard className="mr-2 h-4 w-4" />
-              Pay ${(amount / 100).toFixed(2)}
+              Save Payment Method
             </>
           )}
         </Button>
@@ -474,7 +489,16 @@ const teamRegistrationSchema = z.object({
   managerName: z.string().min(1, "Manager name is required"),
   managerEmail: z.string().email("Invalid email address"),
   managerPhone: z.string().min(10, "Phone number must be at least 10 digits"),
-  players: z.array(playerSchema).min(1, "At least one player is required"),
+  // Add Roster Later flag allows submitting without players
+  addRosterLater: z.boolean().optional().default(false),
+  // Only validate players if addRosterLater is false
+  players: z.array(playerSchema).refine(
+    (data) => {
+      // This is a custom refine function that will be checked later in the form logic
+      return true;
+    },
+    { message: "At least one player is required unless 'Add Roster Later' is selected" }
+  ),
   // Add fields for fee processing
   selectedFeeIds: z.array(z.number()).optional(),
   totalAmount: z.number().optional(),
@@ -492,6 +516,8 @@ interface EventRegistrationProps {
   eventIdOverride?: string;
 }
 
+// We'll use the types defined below
+
 export default function EventRegistration({ isPreview = false, eventIdOverride }: EventRegistrationProps) {
   const params = useParams();
   const { toast } = useToast();
@@ -502,11 +528,193 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const { user, isLoading: authLoading } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
-  // For initialization, check if user is already logged in to bypass auth step
-  // This ensures we start at the correct step even before the useEffect runs
-  const initialStep = isPreview ? 'personal' : (user ? 'personal' : 'auth');
-  console.log('Setting initial step based on auth status:', { initialStep, isLoggedIn: !!user });
+  
+  // Setup registration save state hook
+  const { 
+    savedData, 
+    saveRegistrationData, 
+    clearSavedData, 
+    hasSavedData,
+    lastSaved
+  } = useSavedRegistration(eventId);
+  
+  // Skip auth step completely - if user is not logged in, RegistrationAuthChecker will redirect to login
+  // This ensures we start at the personal step every time - simpler and more reliable flow
+  // Always start at personal step - we'll handle auth redirection separately
+  const initialStep = 'personal';
+  console.log('Simplified registration flow: Always starting at personal step');
+  
+  console.log('🔍 AUTH DEBUG 🔍', {
+    user: user ? { id: user.id, email: user.email } : null,
+    isLoggedIn: !!user,
+    urlParams: window.location.search,
+    currentStep: initialStep,
+    isPreview
+  });
   const [currentStep, setCurrentStep] = useState<RegistrationStep>(initialStep);
+  
+  // Track if we've shown the saved registration alert
+  const [showSavedRegistrationAlert, setShowSavedRegistrationAlert] = useState(false);
+  
+  // Flag to track auto-saving
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
+  
+  // Critical effect to update steps when user auth state changes
+  // We've simplified the flow - just ensure we're at personal step if we have a user
+  // The RegistrationAuthChecker will handle redirecting to login if no user is present
+  useEffect(() => {
+    // If not authenticated and not in loading state, the RegistrationAuthChecker 
+    // component will handle redirecting to login
+    if (user) {
+      console.log('🔑 User authenticated, confirming personal step', { userId: user.id, email: user.email });
+    }
+  }, [user]);
+  
+  // Create ref outside the effect for auth check tracking
+  const authCheckRef = useRef(false);
+  
+  // Handle any URL parameters like auth_complete just to clean up the URL
+  // Our simplified approach doesn't need these anymore, but clean up for completeness
+  useEffect(() => {
+    // Only run once per component mount
+    if (authCheckRef.current) return;
+    authCheckRef.current = true;
+    
+    // Clean up any auth-related URL parameters to keep URLs clean
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('auth_complete')) {
+        console.log('Cleaning up auth_complete parameter from URL');
+        url.searchParams.delete('auth_complete');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch (e) {
+      console.error('Failed to clean URL:', e);
+    }
+  }, []);
+  
+  // Check for saved data on component mount
+  useEffect(() => {
+    if (hasSavedData && !showSavedRegistrationAlert && !isPreview) {
+      console.log('Found saved registration data from:', new Date(lastSaved || 0).toLocaleString());
+      setShowSavedRegistrationAlert(true);
+    }
+  }, [hasSavedData, lastSaved, isPreview]);
+  
+  // Setup auto-saving
+  useEffect(() => {
+    if (!autoSaveEnabled || isPreview) return;
+    
+    // Save the state every 30 seconds if enabled
+    const autoSaveTimer = setInterval(() => {
+      if (currentStep !== 'auth' && currentStep !== 'complete') {
+        console.log('Auto-saving registration data...');
+        // Save silently (don't show toast notifications)
+        saveCurrentState(true);
+      }
+    }, 30000); // 30 seconds
+    
+    // Cleanup
+    return () => {
+      clearInterval(autoSaveTimer);
+    };
+  }, [autoSaveEnabled, isPreview, currentStep]);
+  
+  // Function to save the current registration state
+  const saveCurrentState = (silent = false) => {
+    if (!autoSaveEnabled) return false;
+    
+    try {
+      // Collect form data from various stages
+      const registrationData = {
+        personalDetails: form.getValues(),
+        teamDetails: teamForm?.getValues() || null,
+        selectedAgeGroup,
+        selectedBracket,
+        players,
+        isNewClub,
+        selectedFees,
+        currentStep
+      };
+      
+      return saveRegistrationData(registrationData, silent);
+    } catch (error) {
+      console.error('Error saving registration state:', error);
+      return false;
+    }
+  };
+  
+  // Function to load saved state and populate forms
+  const loadSavedState = () => {
+    if (!savedData) return false;
+    
+    try {
+      // Check if we have data to restore
+      if (savedData.personalDetails) {
+        form.reset(savedData.personalDetails);
+      }
+      
+      if (savedData.teamDetails && teamForm) {
+        teamForm.reset(savedData.teamDetails);
+      }
+      
+      if (savedData.selectedAgeGroup) {
+        setSelectedAgeGroup(savedData.selectedAgeGroup);
+      }
+      
+      if (savedData.selectedBracket) {
+        setSelectedBracket(savedData.selectedBracket);
+      }
+      
+      if (savedData.players && savedData.players.length > 0) {
+        setPlayers(savedData.players);
+      }
+      
+      if (savedData.isNewClub !== undefined) {
+        setIsNewClub(savedData.isNewClub);
+      }
+      
+      if (savedData.selectedFees) {
+        setSelectedFees(savedData.selectedFees);
+      }
+      
+      // Only set current step if it makes sense in the flow
+      // (e.g., don't set to payment if we're not ready for payment)
+      if (savedData.currentStep && 
+          (savedData.currentStep === 'personal' || 
+           savedData.currentStep === 'team' || 
+           (savedData.currentStep === 'payment' && savedData.teamDetails))) {
+        setCurrentStep(savedData.currentStep);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error loading saved registration state:', error);
+      return false;
+    }
+  };
+  
+  // Special handling for admin users who may have session recognition issues
+  useEffect(() => {
+    // Only run this for admin users and only when we're at the auth step but actually have a user
+    if (user && user.isAdmin && currentStep === 'auth') {
+      console.log('Admin user detected but still at auth step, forcing step advancement');
+      
+      // Force reload the page with a special parameter to trigger auth refresh
+      // Only do this if we haven't already tried (to avoid infinite loops)
+      const hasForceParam = window.location.search.includes('force_refresh=true');
+      if (!hasForceParam) {
+        console.log('Adding force_refresh parameter to URL and reloading');
+        const separator = window.location.search ? '&' : '?';
+        window.location.href = `${window.location.pathname}${window.location.search}${separator}force_refresh=true`;
+        return;
+      }
+      
+      // If we already have the force param, just advance the step
+      console.log('Force parameter detected, advancing to personal step');
+      setCurrentStep('personal');
+    }
+  }, [user, currentStep]);
   const [players, setPlayers] = useState<PlayerForm[]>([]);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup | null>(null);
   const [selectedBracket, setSelectedBracket] = useState<number | null>(null);
@@ -515,6 +723,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [clubLoading, setClubLoading] = useState(false);
   const [isNewClub, setIsNewClub] = useState(false);
   const [clubLogo, setClubLogo] = useState<File | null>(null);
+  const [selectedFees, setSelectedFees] = useState<Fee[]>([]);
+  const [addRosterLater, setAddRosterLater] = useState<boolean>(false);
   
   // We don't need the handleAuthRedirect function anymore since we're handling auth state
   // directly in the useEffect hooks. This was causing the redirect to /auth when unnecessary.
@@ -583,8 +793,26 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     }
   }, [user, form]);
 
+  // Direct step navigation function as a workaround
+  const handleDirectStepNavigation = (step: RegistrationStep) => {
+    console.log(`Direct navigation requested to step: ${step}`);
+    setCurrentStep(step);
+    
+    // Store the step in session storage
+    try {
+      const savedData = JSON.parse(sessionStorage.getItem('registrationData') || '{}');
+      savedData.currentStep = step;
+      sessionStorage.setItem('registrationData', JSON.stringify(savedData));
+      console.log(`Updated session storage with step: ${step}`);
+    } catch (e) {
+      console.error('Failed to update session storage:', e);
+    }
+  };
+
   const updatePersonalDetailsMutation = useMutation({
     mutationFn: async (data: PersonalDetailsForm) => {
+      console.log('Starting personal details update with data:', data);
+      
       // In preview mode, don't actually call the API
       if (isPreview) {
         console.log('Preview mode: Simulating profile update with data:', data);
@@ -599,20 +827,35 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         },
         body: JSON.stringify(data),
       });
+
+      console.log('Profile update response status:', response.status);
+      
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('Error updating profile:', errorText);
         throw new Error(errorText || 'Failed to update profile');
       }
-      return response.json();
+      
+      const responseData = await response.json();
+      console.log('Profile update successful, response:', responseData);
+      return responseData;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Personal details update onSuccess triggered with data:', data);
+      
       toast({
         title: "Success",
-        description: "Personal details updated successfully",
+        description: "Personal details updated successfully - click Continue to proceed",
       });
-      setCurrentStep('team');
+      
+      console.log('Will NOT automatically advance to team step due to state issue');
+      
+      // Do NOT automatically change the step as it seems to be causing issues
+      // Instead, we've added a manual Continue button as a workaround
     },
     onError: (error: Error) => {
+      console.error('Personal details update failed:', error);
+      
       toast({
         title: "Error",
         description: error.message,
@@ -712,66 +955,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     fetchEvent();
   }, [eventId]);
 
-  // COMPLETE REWRITE OF AUTHENTICATION APPROACH
-  // Let's simplify even more to avoid any possible conflicts
+  // Add a simple effect to force redirect authenticated users from auth step to personal step
   useEffect(() => {
-    // Prevent doing anything if we're still loading
-    if (authLoading) {
-      console.log('Auth is still loading, not taking any action yet');
-      return;
+    // If user is logged in and on auth step, redirect to personal step
+    if (user && currentStep === 'auth') {
+      console.log('Auth bypass effect triggered - user is logged in, redirecting to personal step');
+      setCurrentStep('personal');
     }
-    
-    // Debug user state
-    console.log('AUTH DEBUG -----------------');
-    console.log('User state:', {
-      user,
-      authLoading,
-      currentStep,
-      isPreview,
-      isAuthenticated: !!user
-    });
-    console.log('User object:', JSON.stringify(user));
-    console.log('-------------------------');
-    
-    // Don't do anything if in preview mode
-    if (isPreview) {
-      return;
-    }
-    
-    // Based on authentication status, set the step
-    if (user) {
-      // User is authenticated - always show personal details regardless of current step
-      console.log('FIXED AUTH FLOW: User is authenticated, forcing to personal details step');
-      
-      // ALWAYS set to personal step if authenticated, override any existing state
-      if (currentStep === 'auth') {
-        console.log('FIXED AUTH FLOW: Forcibly advancing from auth to personal step');
-        setCurrentStep('personal');
-      }
-      
-      // Clean the URL by removing query parameters no matter what
-      if (window.location.search) {
-        console.log('FIXED AUTH FLOW: Cleaning URL by removing parameters');
-        // Use regular location history API to rewrite the URL
-        window.history.replaceState(
-          { step: 'personal', eventId }, 
-          '', 
-          `/register/event/${eventId}`
-        );
-      }
-    } else {
-      // User is not authenticated - always show auth step
-      console.log('FIXED AUTH FLOW: User is not authenticated, showing auth step');
-      
-      // Simple approach: set the redirect and show auth component
-      console.log('Setting auth redirect:', `/register/event/${eventId}`);
-      sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
-      setCurrentStep('auth');
-      return;
-    }
-  }, [authLoading, user, isPreview, eventId, currentStep]);
-  
-  // We've removed the duplicate useEffect to avoid conflicts
+  }, [user, currentStep]);
   
   // Fetch clubs for the current event
   useEffect(() => {
@@ -1427,41 +1618,45 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       return;
     }
     
-    if (players.length === 0) {
+    // Skip player validation if the user chose to add roster later
+  if (players.length === 0 && !addRosterLater) {
       toast({
         title: "Error",
-        description: "Please add at least one player to the roster",
+        description: "Please add at least one player to the roster or select the 'Add Roster Later' option",
         variant: "destructive",
       });
       return;
     }
     
-    // Validate each player has required fields
-    const invalidPlayers = players.filter(player => 
-      !player.firstName || !player.lastName || !player.dateOfBirth
-    );
-    
-    if (invalidPlayers.length > 0) {
-      toast({
-        title: "Incomplete Player Information",
-        description: "Please complete all required player fields (First Name, Last Name, Date of Birth)",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Check for missing emergency contact information
-    const missingEmergency = players.filter(player => 
-      !player.emergencyContactName || !player.emergencyContactPhone
-    );
-    
-    if (missingEmergency.length > 0) {
-      toast({
-        title: "Missing Emergency Contact",
-        description: "Please provide emergency contact information for all players",
-        variant: "destructive",
-      });
-      return;
+    // Only validate players if we're not using the "add roster later" option
+    if (!addRosterLater && players.length > 0) {
+      // Validate each player has required fields
+      const invalidPlayers = players.filter(player => 
+        !player.firstName || !player.lastName || !player.dateOfBirth
+      );
+      
+      if (invalidPlayers.length > 0) {
+        toast({
+          title: "Incomplete Player Information",
+          description: "Please complete all required player fields (First Name, Last Name, Date of Birth)",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Check for missing emergency contact information
+      const missingEmergency = players.filter(player => 
+        !player.emergencyContactName || !player.emergencyContactPhone
+      );
+      
+      if (missingEmergency.length > 0) {
+        toast({
+          title: "Missing Emergency Contact",
+          description: "Please provide emergency contact information for all players",
+          variant: "destructive",
+        });
+        return;
+      }
     }
     
     // Now proceed to the payment step instead of submitting right away
@@ -1568,6 +1763,40 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
+            {/* Show saved registration notice if available */}
+            {showSavedRegistrationAlert && hasSavedData && lastSaved && (
+              <SavedRegistrationNotice 
+                lastSaved={lastSaved}
+                eventName={event?.name || 'this event'}
+                onResume={() => {
+                  // Load the saved state and hide the notice
+                  const success = loadSavedState();
+                  if (success) {
+                    toast({
+                      title: "Registration Restored",
+                      description: "Your saved registration has been loaded successfully.",
+                    });
+                  } else {
+                    toast({
+                      title: "Error",
+                      description: "Failed to restore your registration. Please try again.",
+                      variant: "destructive"
+                    });
+                  }
+                  setShowSavedRegistrationAlert(false);
+                }}
+                onDiscard={() => {
+                  // Clear the saved data and hide the notice
+                  clearSavedData();
+                  setShowSavedRegistrationAlert(false);
+                  toast({
+                    title: "Registration Discarded",
+                    description: "Starting a fresh registration.",
+                  });
+                }}
+              />
+            )}
+            
             <AnimatePresence mode="wait">
               {currentStep === 'auth' && !authLoading && (
                 <motion.div 
@@ -1579,8 +1808,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   className="text-center"
                 >
                   {user ? (
-                    /* Show a different message if user is already logged in */
-                    <>
+                    // If user is authenticated, force redirect to personal step
+                    <div className="flex flex-col gap-3">
                       <div className="flex justify-center mb-4">
                         <Loader2 className="w-8 h-8 animate-spin text-primary" />
                       </div>
@@ -1588,13 +1817,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         Already Signed In
                       </h3>
                       <p className="text-gray-600 mb-6">
-                        You're already signed in. Proceeding to registration...
+                        Redirecting to registration form...
                       </p>
-                      {/* Force redirect to personal details step */}
-                      {setTimeout(() => setCurrentStep('personal'), 0)}
-                    </>
+                      <Button 
+                        onClick={() => {
+                          console.log("MANUAL STEP ADVANCE - Moving to personal details step");
+                          setCurrentStep('personal');
+                        }}
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        Continue to Registration
+                      </Button>
+                    </div>
                   ) : (
-                    /* User is not logged in - show sign in button */
+                    // User is not logged in - show sign in button
                     <>
                       <h3 className="text-xl font-semibold mb-4">Sign In Required</h3>
                       <p className="text-gray-600 mb-6">
@@ -1617,13 +1853,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           const storedValue = sessionStorage.getItem('redirectAfterAuth');
                           console.log('Auth redirect btn: Stored redirectAfterAuth in sessionStorage:', storedValue);
                           
-                          // Add eventId parameter to URL as a backup mechanism 
-                          const authUrl = `/auth?eventId=${eventId}`;
-                          
-                          // Use direct window.location for a guaranteed full page refresh 
-                          // This ensures we get a clean auth state and prevents any context issues
-                          console.log('Auth redirect btn: Using direct window.location to auth page:', authUrl);
-                          window.location.href = authUrl;
+                          // Directly go to the root URL (/) which will show the login screen
+                          console.log('Auth redirect btn: Using direct navigation to root page for login');
+                          window.location.href = '/';
                         }}
                       >
                         Sign In / Register
@@ -1633,14 +1865,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 </motion.div>
               )}
 
-            {currentStep === 'personal' && user && (
-              <motion.div
-                key="personal-step"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
+              {currentStep === 'personal' && (
+                <RegistrationAuthChecker eventId={eventId!}>
+                  <motion.div
+                    key="personal-step"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmitPersonalDetails)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1752,33 +1985,66 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     </div>
                   </div>
 
-                  <div className="flex justify-end space-x-4 pt-6">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setCurrentStep('auth')}
-                    >
-                      Back
-                    </Button>
-                    <Button 
-                      type="submit"
-                      className="font-medium"
-                      style={{ 
-                        backgroundColor: event?.branding?.primaryColor || '#2C5282',
-                        color: primaryContrastColor,
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
-                      }}
-                      disabled={updatePersonalDetailsMutation.isPending}
-                    >
-                      {updatePersonalDetailsMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Saving...
-                        </>
-                      ) : (
-                        'Next'
+                  <div className="flex justify-between pt-6">
+                    <SaveForLaterButton 
+                      onSave={saveCurrentState} 
+                      variant="ghost"
+                    />
+                    
+                    <div className="flex space-x-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setCurrentStep('auth')}
+                      >
+                        Back
+                      </Button>
+                      
+                      {/* Original submit button just saves but doesn't advance */}
+                      <Button 
+                        type="submit"
+                        className="font-medium"
+                        style={{ 
+                          backgroundColor: event?.branding?.primaryColor || '#2C5282',
+                          color: primaryContrastColor,
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
+                        }}
+                        disabled={updatePersonalDetailsMutation.isPending}
+                      >
+                        {updatePersonalDetailsMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          'Save Details'
+                        )}
+                      </Button>
+                      
+                      {/* Enhanced continue button that's more visible */}
+                      {updatePersonalDetailsMutation.isSuccess && (
+                        <Button 
+                          type="button"
+                          className="font-medium ml-2 relative"
+                          onClick={() => handleDirectStepNavigation('team')}
+                          style={{ 
+                            backgroundColor: event?.branding?.secondaryColor || '#48BB78',
+                            color: 'white',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                            borderWidth: '2px',
+                            borderColor: 'white',
+                            fontWeight: 'bold',
+                            transform: 'scale(1.1)'
+                          }}
+                        >
+                          <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs animate-bounce">
+                            !
+                          </span>
+                          Continue to Team Information
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
                       )}
-                    </Button>
+                    </div>
                   </div>
                 </form>
               </Form>
@@ -2133,12 +2399,36 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   
                   <div className="space-y-4 border-t pt-4">
                     <div className="flex justify-between items-center">
-                      <h3 
-                        className="text-xl font-semibold"
-                        style={{ color: event?.branding?.primaryColor || '#2C5282' }}
-                      >
-                        Player Roster
-                      </h3>
+                      <div className="flex items-center gap-4">
+                        <h3 
+                          className="text-xl font-semibold"
+                          style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                        >
+                          Player Roster
+                        </h3>
+                        
+                        {/* Add Roster Later Checkbox */}
+                        <div className="flex items-center">
+                          <Checkbox 
+                            id="add-roster-later" 
+                            checked={addRosterLater}
+                            onCheckedChange={(checked) => {
+                              setAddRosterLater(checked === true);
+                            }}
+                            className="mr-2"
+                          />
+                          <label
+                            htmlFor="add-roster-later"
+                            className="text-sm font-medium text-muted-foreground leading-none cursor-pointer flex gap-1 items-center"
+                          >
+                            Add roster later
+                            <span title="Complete registration now and add your players later from your dashboard">
+                              <AlertCircle className="h-3 w-3 text-muted-foreground" />
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      
                       <div className="flex gap-2">
                         <Button
                           type="button"
@@ -2146,6 +2436,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           size="sm"
                           onClick={addPlayer}
                           className="flex items-center"
+                          disabled={addRosterLater}
                         >
                           <PlusCircle className="w-4 h-4 mr-2" />
                           Add Player
@@ -2157,6 +2448,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               variant="outline"
                               size="sm"
                               className="flex items-center"
+                              disabled={addRosterLater}
                             >
                               <Upload className="w-4 h-4 mr-2" />
                               CSV Upload
@@ -2198,10 +2490,37 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       </div>
                     </div>
                     
-                    {players.length === 0 ? (
+                    {addRosterLater ? (
+                      <div className="text-center p-8 border border-dashed rounded-md bg-amber-50">
+                        <Clock className="w-12 h-12 mx-auto text-amber-500 mb-2" />
+                        <h4 className="font-medium text-amber-800">Add Roster Later</h4>
+                        <p className="text-amber-700 mt-2">
+                          You've chosen to complete your roster later. After registration, 
+                          you'll be able to add players from your dashboard or via CSV upload.
+                        </p>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          className="mt-4 text-amber-700 border-amber-300"
+                          onClick={() => setAddRosterLater(false)}
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Cancel & Add Players Now
+                        </Button>
+                      </div>
+                    ) : players.length === 0 ? (
                       <div className="text-center p-8 border border-dashed rounded-md">
                         <UserRoundPlus className="w-12 h-12 mx-auto text-gray-300 mb-2" />
                         <p className="text-gray-500">No players added yet. Click "Add Player" or "CSV Upload" to begin building your roster.</p>
+                        <Button
+                          type="button"
+                          variant="link"
+                          className="mt-4 text-blue-600"
+                          onClick={() => setAddRosterLater(true)}
+                        >
+                          <Clock className="w-4 h-4 mr-2" />
+                          Do This Later - Add Roster After Registration
+                        </Button>
                       </div>
                     ) : (
                       <div className="space-y-6">
@@ -2423,29 +2742,36 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     )}
                   </div>
                   
-                  <div className="flex justify-end space-x-4 pt-6">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setCurrentStep('personal')}
-                    >
-                      Back
-                    </Button>
-                    <Button 
-                      type="submit"
-                      className="text-white"
-                      style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
-                      disabled={registerTeamMutation.isPending}
-                    >
-                      {registerTeamMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Registering...
-                        </>
-                      ) : (
-                        'Continue to Next Step'
-                      )}
-                    </Button>
+                  <div className="flex justify-between pt-6">
+                    <SaveForLaterButton 
+                      onSave={saveCurrentState} 
+                      variant="ghost"
+                    />
+                    
+                    <div className="flex space-x-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setCurrentStep('personal')}
+                      >
+                        Back
+                      </Button>
+                      <Button 
+                        type="submit"
+                        className="text-white"
+                        style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
+                        disabled={registerTeamMutation.isPending}
+                      >
+                        {registerTeamMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Registering...
+                          </>
+                        ) : (
+                          'Continue to Next Step'
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </form>
               </Form>
@@ -2661,18 +2987,70 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 </div>
                 
                 {/* Payment Options */}
-                {termsAgreed && registrationFee && (
+                {termsAgreed && (
                   <div className="border rounded-lg p-4 space-y-6">
                     <div>
                       <h4 
                         className="font-semibold"
                         style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                       >Payment Options</h4>
-                      <p className="text-sm text-gray-600">Select how you would like to proceed with payment</p>
+                      {registrationFee ? (
+                        <p className="text-sm text-gray-600">Select how you would like to proceed with payment</p>
+                      ) : (
+                        <p className="text-sm text-gray-600">
+                          No registration fee is configured for this age group. You can register without payment at this time.
+                        </p>
+                      )}
                     </div>
                     
-                    {/* Payment Method Selection */}
-                    {isPayLaterShown ? (
+                    {/* No Fee Case - Show direct registration button */}
+                    {!registrationFee && (
+                      <div className="mt-4">
+                        <Button 
+                          type="button" 
+                          className="w-full text-white"
+                          style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
+                          onClick={() => {
+                            // Make sure to sync the latest players array with form data
+                            teamForm.setValue('players', players);
+                            
+                            // For no-fee registrations, we need to set addRosterLater to true
+                            // if they don't have any players (to bypass the server validation)
+                            const shouldAddRosterLater = addRosterLater || players.length === 0;
+                            
+                            // If players array is empty and addRosterLater isn't already set,
+                            // update the addRosterLater state for UI consistency
+                            if (players.length === 0 && !addRosterLater) {
+                              setAddRosterLater(true);
+                            }
+                            
+                            // Submit registration without payment info
+                            registerTeamMutation.mutate({
+                              ...teamForm.getValues(),
+                              selectedFeeIds: [],
+                              totalAmount: 0, // No amount
+                              paymentMethod: 'free',
+                              addRosterLater: shouldAddRosterLater // Always true if no players
+                            });
+                          }}
+                          disabled={registerTeamMutation.isPending}
+                        >
+                          {registerTeamMutation.isPending ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              Complete Registration
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                    
+                    {/* Payment Method Selection - Only show if there are fees */}
+                    {registrationFee && isPayLaterShown ? (
                       <div className="space-y-4">
                         <div className="flex flex-col space-y-3">
                           <label className="flex items-center space-x-3 p-3 border rounded-md cursor-pointer hover:bg-blue-50 transition-colors">
@@ -2713,7 +3091,19 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               className="font-semibold"
                               style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                             >Payment Information</h4>
-                            <p className="text-sm text-gray-600 mb-4">Please provide your payment details to complete registration</p>
+                            <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
+                            <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
+                              <p className="flex items-start">
+                                <InfoPopover content={
+                                  <div>
+                                    Two-step payment process: Your payment information will be securely stored, but your card will only be charged after your team registration is reviewed and approved by event administrators.
+                                  </div>
+                                } />
+                                <span>
+                                  <strong>Two-step payment process:</strong> Your payment information will be securely stored, but your card will only be charged after your team registration is reviewed and approved by event administrators.
+                                </span>
+                              </p>
+                            </div>
                             
                             <StripeProvider>
                               <PaymentForm 
@@ -2777,7 +3167,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   ...teamForm.getValues(),
                                   selectedFeeIds: allSelectedFeeIds,
                                   totalAmount: parseFloat(calculateTotalAmount()) * 100, // in cents
-                                  paymentMethod: 'pay_later'
+                                  paymentMethod: 'pay_later',
+                                  addRosterLater // Include the flag to indicate roster will be added later
                                 });
                               }}
                               disabled={registerTeamMutation.isPending}
@@ -2799,44 +3190,78 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     ) : (
                       // Regular Payment Flow (Pay Later not enabled)
                       <div>
-                        <h4 
-                          className="font-semibold"
-                          style={{ color: event?.branding?.primaryColor || '#2C5282' }}
-                        >Payment Information</h4>
-                        <p className="text-sm text-gray-600 mb-4">Please provide your payment details to complete registration</p>
-                        
-                        <StripeProvider>
-                          <PaymentForm 
-                            amount={parseFloat(calculateTotalAmount()) * 100} // Convert back to cents for payment processing
-                            isPreview={isPreview}
-                            onSuccess={() => {
-                              // Make sure to sync the latest players array with form data
-                              teamForm.setValue('players', players);
-                              
-                              // Include all applicable fee IDs in the submission
-                              const allSelectedFeeIds = [
-                                ...(selectedFee ? [selectedFee.id] : []),
-                                ...requiredFees.map(fee => fee.id)
-                              ];
-                              
-                              // Then submit the form values along with player data and selected fees
-                              registerTeamMutation.mutate({
-                                ...teamForm.getValues(),
-                                selectedFeeIds: allSelectedFeeIds,
-                                totalAmount: parseFloat(calculateTotalAmount()) * 100, // in cents
-                                paymentMethod: 'card'
-                              });
-                            }}
-                            isProcessing={registerTeamMutation.isPending}
-                            setIsProcessing={() => {}} // This is a mock function since we can't directly control mutation state
-                          />
-                        </StripeProvider>
+                        {registrationFee && (
+                          <>
+                            <h4 
+                              className="font-semibold"
+                              style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                            >Payment Information</h4>
+                            <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
+                            <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
+                              <p className="flex items-start">
+                                <InfoPopover content={
+                                  <div>
+                                    Two-step payment process: Your payment information will be securely stored by Stripe, but your card will only be charged after your team registration is reviewed and approved by event administrators. The total amount will be charged at that time.
+                                  </div>
+                                } />
+                                <span>
+                                  <strong>Two-step payment process:</strong> Your payment information will be securely stored by Stripe, but your card will only be charged after your team registration is reviewed and approved by event administrators. The total amount of ${(parseFloat(calculateTotalAmount())).toFixed(2)} will be charged at that time.
+                                </span>
+                              </p>
+                            </div>
+                            
+                            <SetupPaymentProvider clientSecret={null}>
+                              <SetupPaymentForm 
+                                teamId={0} // This will be replaced by the real team ID after registration
+                                expectedAmount={parseFloat(calculateTotalAmount()) * 100} // Convert back to cents for payment processing
+                                teamName={teamForm.getValues().name}
+                                eventName={event?.name || 'tournament'}
+                                returnUrl={window.location.origin + '/payment-setup-confirmation'}
+                                onSuccess={(setupIntentId, paymentMethodId) => {
+                                  console.log(`Setup intent created successfully: ${setupIntentId}, Payment method: ${paymentMethodId}`);
+                                  
+                                  // Make sure to sync the latest players array with form data
+                                  teamForm.setValue('players', players);
+                                  
+                                  // Include all applicable fee IDs in the submission
+                                  const allSelectedFeeIds = [
+                                    ...(selectedFee ? [selectedFee.id] : []),
+                                    ...requiredFees.map(fee => fee.id)
+                                  ];
+                                  
+                                  // Then submit the form values along with player data, selected fees, and payment method info
+                                  registerTeamMutation.mutate({
+                                    ...teamForm.getValues(),
+                                    selectedFeeIds: allSelectedFeeIds,
+                                    totalAmount: parseFloat(calculateTotalAmount()) * 100, // in cents
+                                    paymentMethod: 'card',
+                                    addRosterLater, // Include the flag to indicate roster will be added later
+                                    setupIntentId, // Include the setup intent ID
+                                    paymentMethodId // Include the payment method ID
+                                  });
+                                }}
+                                onError={(error) => {
+                                  toast({
+                                    title: "Payment Setup Error",
+                                    description: error.message || "There was a problem setting up your payment method",
+                                    variant: "destructive"
+                                  });
+                                }}
+                              />
+                            </SetupPaymentProvider>
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
                 )}
                 
                 <div className="flex justify-between pt-6">
+                  <SaveForLaterButton 
+                    onSave={saveCurrentState} 
+                    variant="ghost"
+                  />
+                  
                   <Button
                     type="button"
                     variant="outline"
@@ -2929,6 +3354,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   </div>
                 )}
               </motion.div>
+            )}
+            
+              {/* Close the RegistrationAuthChecker */}
+              </RegistrationAuthChecker>
             )}
             </AnimatePresence>
           </CardContent>
