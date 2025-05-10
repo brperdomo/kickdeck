@@ -622,7 +622,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   // Query client for auth state updates
   const queryClient = useQueryClient();
   
-  // Function to check if an email exists in the system
+  // Function to check if an email exists in the system and update form with redacted data
   const checkEmailExists = async (email: string) => {
     setIsCheckingEmail(true);
     setAuthError(null);
@@ -671,6 +671,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         variant: 'destructive',
       });
       setEmailExists(null);
+      form.setValue('emailChecked', true);
+      form.setValue('emailExists', false);
+      setRedactedUserData(null);
       return null;
     } finally {
       setIsCheckingEmail(false);
@@ -999,45 +1002,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     setEmailToCheck(watchedEmail);
   }, [watchedEmail]);
   
-  // Check if email exists and fetch redacted user data
-  const checkEmailExists = async (email: string) => {
-    try {
-      const response = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to check email');
-      }
-      
-      const data = await response.json();
-      
-      setEmailExists(data.exists);
-      form.setValue('emailChecked', true);
-      form.setValue('emailExists', data.exists);
-      
-      if (data.exists && data.redactedUserData) {
-        setRedactedUserData({
-          firstName: data.redactedUserData.firstName,
-          lastName: data.redactedUserData.lastName,
-          phone: data.redactedUserData.phone || '',
-          address: data.redactedUserData.address || '',
-          city: data.redactedUserData.city || '',
-          state: data.redactedUserData.state || '',
-          zipCode: data.redactedUserData.zipCode || '',
-          userId: data.redactedUserData.userId
-        });
-      } else {
-        setRedactedUserData(null);
-      }
-    } catch (error) {
-      console.error('Error checking email:', error);
-      setEmailExists(false);
-      form.setValue('emailChecked', true);
-      form.setValue('emailExists', false);
-      setRedactedUserData(null);
-    } finally {
-      setIsCheckingEmail(false);
-    }
-  };
+
   
   // Verify existing account with password
   const verifyExistingAccount = async () => {
