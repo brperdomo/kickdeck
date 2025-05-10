@@ -1833,9 +1833,25 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         Already Signed In
                       </h3>
                       <p className="text-gray-600 mb-6">
-                        You're already signed in. Proceeding to registration...
+                        You're already signed in. If you're not automatically redirected, click the button below.
                       </p>
-                      {/* Empty placeholder - actual redirect happens in useEffect */}
+                      
+                      {/* Emergency Button to manually go to next step */}
+                      <div className="flex flex-col gap-3">
+                        <Button 
+                          onClick={() => {
+                            console.log("MANUAL STEP ADVANCE - Moving to personal details step");
+                            setCurrentStep('personal');
+                          }}
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          Continue to Personal Details
+                        </Button>
+                        
+                        <div className="text-xs text-gray-500 italic text-center">
+                          Current Step: {currentStep} | User Authenticated: {user ? 'Yes' : 'No'}
+                        </div>
+                      </div>
                     </>
                   ) : (
                     /* User is not logged in - show sign in button */
