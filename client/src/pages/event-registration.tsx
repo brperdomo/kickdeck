@@ -793,17 +793,27 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     }
   }, [user, form]);
 
-  // Direct step navigation function as a workaround
+  // Direct step navigation function with registration state preservation
   const handleDirectStepNavigation = (step: RegistrationStep) => {
     console.log(`Direct navigation requested to step: ${step}`);
+    
+    // Set a flag indicating we're in the registration flow to prevent unwanted redirects
+    sessionStorage.setItem('inRegistrationFlow', 'true');
+    console.log('Setting inRegistrationFlow flag to prevent dashboard redirects');
+    
+    // Also set a timestamp to help with debugging
+    sessionStorage.setItem('registrationFlowTimestamp', Date.now().toString());
+    
+    // Update the current step
     setCurrentStep(step);
     
     // Store the step in session storage
     try {
       const savedData = JSON.parse(sessionStorage.getItem('registrationData') || '{}');
       savedData.currentStep = step;
+      savedData.preventRedirect = true; // Extra flag to be super explicit
       sessionStorage.setItem('registrationData', JSON.stringify(savedData));
-      console.log(`Updated session storage with step: ${step}`);
+      console.log(`Updated session storage with step: ${step} and preventRedirect flag`);
     } catch (e) {
       console.error('Failed to update session storage:', e);
     }

@@ -95,6 +95,41 @@ export default function RegistrationAuthChecker({
     }
   }, []);
   
+  // Add a dedicated effect to track registration state consistently
+  useEffect(() => {
+    console.log("Setting additional registration state tracking flags");
+    
+    // Always store flags to indicate we're in the registration flow
+    sessionStorage.setItem('inRegistrationFlow', 'true');
+    sessionStorage.setItem('registrationEventId', eventId);
+    sessionStorage.setItem('registrationTimestamp', Date.now().toString());
+    
+    // Also store in registrationData object for redundancy
+    try {
+      const savedData = JSON.parse(sessionStorage.getItem('registrationData') || '{}');
+      savedData.preventRedirect = true;
+      savedData.inRegistrationFlow = true;
+      savedData.eventId = eventId;
+      savedData.timestamp = Date.now();
+      sessionStorage.setItem('registrationData', JSON.stringify(savedData));
+    } catch (e) {
+      console.error('Failed to update registration data:', e);
+      // Create a new one if parsing failed
+      sessionStorage.setItem('registrationData', JSON.stringify({
+        preventRedirect: true,
+        inRegistrationFlow: true,
+        eventId,
+        timestamp: Date.now()
+      }));
+    }
+    
+    return () => {
+      // We intentionally don't clear the flags on unmount
+      // They should persist throughout the registration process
+      console.log("RegistrationAuthChecker unmounting, keeping registration flow flags");
+    };
+  }, [eventId]);
+  
   // Show loading state while auth is being checked
   if (authLoading) {
     return (
