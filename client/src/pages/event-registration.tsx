@@ -1225,6 +1225,17 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const handleDirectStepNavigation = (step: RegistrationStep) => {
     console.log(`Direct navigation requested to step: ${step}`);
     
+    // Check if moving from profile step to team step while an account exists but isn't verified
+    if (currentStep === 'profile' && step === 'team' && emailExists && !form.getValues('authenticated')) {
+      console.log('Attempting to continue without authenticating an existing account - blocking progress');
+      toast({
+        title: "Account Verification Required",
+        description: "You must verify your existing account with your password before continuing.",
+        variant: "destructive"
+      });
+      return; // Block navigation
+    }
+    
     // Set a flag indicating we're in the registration flow to prevent unwanted redirects
     sessionStorage.setItem('inRegistrationFlow', 'true');
     console.log('Setting inRegistrationFlow flag to prevent dashboard redirects');
@@ -2808,6 +2819,16 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           type="button"
                           className="font-medium ml-2 relative"
                           onClick={() => {
+                            // Check if an account exists but isn't verified
+                            if (emailExists && !form.getValues('authenticated')) {
+                              toast({
+                                title: "Account Verification Required",
+                                description: "You must verify your existing account with your password before continuing.",
+                                variant: "destructive"
+                              });
+                              return;
+                            }
+                            
                             // Set a flag to indicate we're in the registration flow
                             sessionStorage.setItem('inRegistrationFlow', 'true');
                             // Navigate to the team step
