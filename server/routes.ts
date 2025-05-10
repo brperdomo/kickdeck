@@ -201,6 +201,35 @@ export function registerRoutes(app: Express): Server {
     // Authentication is already set up in index.ts, no need to call setupAuth again
     log("Using existing authentication middleware");
     
+    // Email check endpoint for contextual authentication flow
+    app.get("/api/auth/check-email", async (req: Request, res: Response) => {
+      try {
+        const email = req.query.email as string;
+        
+        if (!email) {
+          return res.status(400).json({ 
+            error: 'Email parameter is required' 
+          });
+        }
+        
+        // Check if user exists with this email
+        const [existingUser] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
+        
+        return res.json({ 
+          exists: !!existingUser 
+        });
+      } catch (error) {
+        console.error('Error checking email existence:', error);
+        return res.status(500).json({ 
+          error: 'Failed to check email' 
+        });
+      }
+    });
+    
     // WebSocket server setup
     setupWebSocketServer(httpServer);
     
