@@ -619,14 +619,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     try {
       console.log("Checking if email exists:", email);
       
-      // Make the actual API call to the backend
-      const response = await fetch('/api/auth/check-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
+      // Make the actual API call to the backend using GET request with query parameters
+      const response = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`);
       
       if (!response.ok) {
         throw new Error('Failed to check email existence');
