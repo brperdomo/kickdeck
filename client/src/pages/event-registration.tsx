@@ -539,6 +539,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   
   // Skip auth step completely - if user is not logged in, RegistrationAuthChecker will redirect to login
   // This ensures we start at the personal step every time - simpler and more reliable flow
+  // Always start at personal step - we'll handle auth redirection separately
   const initialStep = 'personal';
   console.log('Simplified registration flow: Always starting at personal step');
   
@@ -953,9 +954,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     fetchEvent();
   }, [eventId]);
 
-  // Removed old authentication effect - we've completely redesigned the auth flow 
-  // to start at the personal step and rely on RegistrationAuthChecker
-  // for redirecting to login if needed
+  // Add a simple effect to force redirect authenticated users from auth step to personal step
+  useEffect(() => {
+    // If user is logged in and on auth step, redirect to personal step
+    if (user && currentStep === 'auth') {
+      console.log('Auth bypass effect triggered - user is logged in, redirecting to personal step');
+      setCurrentStep('personal');
+    }
+  }, [user, currentStep]);
   
   // Fetch clubs for the current event
   useEffect(() => {
@@ -1801,8 +1807,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   className="text-center"
                 >
                   {user ? (
-                    /* Show a different message if user is already logged in */
-                    <>
+                    // If user is authenticated, force redirect to personal step
+                    <div className="flex flex-col gap-3">
                       <div className="flex justify-center mb-4">
                         <Loader2 className="w-8 h-8 animate-spin text-primary" />
                       </div>
@@ -1810,28 +1816,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         Already Signed In
                       </h3>
                       <p className="text-gray-600 mb-6">
-                        You're already signed in. If you're not automatically redirected, click the button below.
+                        Redirecting to registration form...
                       </p>
-                      
-                      {/* Emergency Button to manually go to next step */}
-                      <div className="flex flex-col gap-3">
-                        <Button 
-                          onClick={() => {
-                            console.log("MANUAL STEP ADVANCE - Moving to personal details step");
-                            setCurrentStep('personal');
-                          }}
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                        >
-                          Continue to Personal Details
-                        </Button>
-                        
-                        <div className="text-xs text-gray-500 italic text-center">
-                          Current Step: {currentStep} | User Authenticated: {user ? 'Yes' : 'No'}
-                        </div>
-                      </div>
-                    </>
+                      <Button 
+                        onClick={() => {
+                          console.log("MANUAL STEP ADVANCE - Moving to personal details step");
+                          setCurrentStep('personal');
+                        }}
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        Continue to Registration
+                      </Button>
+                    </div>
                   ) : (
-                    /* User is not logged in - show sign in button */
+                    // User is not logged in - show sign in button
                     <>
                       <h3 className="text-xl font-semibold mb-4">Sign In Required</h3>
                       <p className="text-gray-600 mb-6">
@@ -1855,7 +1853,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           console.log('Auth redirect btn: Stored redirectAfterAuth in sessionStorage:', storedValue);
                           
                           // Directly go to the root URL (/) which will show the login screen
-                          // This was the original behavior that worked well
                           console.log('Auth redirect btn: Using direct navigation to root page for login');
                           window.location.href = '/';
                         }}
