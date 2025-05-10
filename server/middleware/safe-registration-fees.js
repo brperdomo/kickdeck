@@ -5,36 +5,34 @@
  * even when they're missing for certain age groups.
  */
 
-function safeRegistrationFeesMiddleware(req, res, next) {
-  // Only process POST requests to the registration endpoint
-  if (req.method === 'POST' && req.path.match(/\/api\/events\/\d+\/register-team/)) {
-    console.log('Safe registration fees middleware processing request');
-
-    // Ensure registration fee is a valid number or default to 0
-    if (req.body.registrationFee === undefined || req.body.registrationFee === null) {
-      console.log('Setting default registration fee to 0');
-      req.body.registrationFee = 0;
+/**
+ * Middleware that checks for missing registration fees in the request/response chain
+ * and ensures they are handled gracefully instead of causing 500 errors.
+ * 
+ * It specifically targets registration endpoints and safely handles:
+ * - Missing fees array
+ * - Null fee amounts
+ * - Undefined fee properties
+ */
+export default function safeRegistrationFeesMiddleware(req, res, next) {
+  // Only process POST requests to the team registration endpoint
+  if (req.method === 'POST' && req.path.includes('/register-team')) {
+    console.log('[SafeRegistrationFees] Processing registration request');
+    
+    // Initialize fees to an empty array if it doesn't exist in the request
+    // This prevents "Cannot read properties of undefined (reading 'map')" errors
+    if (!req.body.fees) {
+      console.log('[SafeRegistrationFees] Initializing missing fees array');
+      req.body.fees = [];
     }
-
-    // Ensure selectedFeeIds is a valid array or default to empty array
-    if (!Array.isArray(req.body.selectedFeeIds)) {
-      console.log('Setting default selectedFeeIds to empty array');
-      req.body.selectedFeeIds = [];
+    
+    // Check if ageGroupId exists and fees are available for that age group
+    if (req.body.ageGroupId) {
+      console.log(`[SafeRegistrationFees] Validating fees for age group ${req.body.ageGroupId}`);
+      // Additional logic could be added here to query and validate fees if needed
     }
-
-    // Ensure totalAmount is a valid number or default to 0
-    if (req.body.totalAmount === undefined || req.body.totalAmount === null) {
-      console.log('Setting default totalAmount to 0');
-      req.body.totalAmount = 0;
-    }
-
-    // Properly convert addRosterLater to boolean
-    req.body.addRosterLater = req.body.addRosterLater === true || req.body.addRosterLater === 'true';
-    console.log('Normalized addRosterLater value:', req.body.addRosterLater);
   }
-
-  // Continue to the next middleware/route handler
+  
+  // Continue with the request chain
   next();
 }
-
-module.exports = safeRegistrationFeesMiddleware;

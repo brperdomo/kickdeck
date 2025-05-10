@@ -8,7 +8,8 @@ import { db } from "@db";
 import { coupons, emailTemplates } from "@db/schema";
 import { eq } from "drizzle-orm";
 import { isAdmin, hasEventAccess } from "./middleware";
-import { safeRegistrationFeesMiddleware } from "./middleware/index.js";
+// Import the safe registration fees middleware directly
+import safeRegistrationFeesMiddleware from "./middleware/safe-registration-fees.js";
 import seasonalScopesRouter from "./routes/seasonal-scopes";
 import uploadRouter from "./routes/upload";
 import filesRouter from "./routes/files";
@@ -276,6 +277,9 @@ export function registerRoutes(app: Express): Server {
     
     // Add organization identification middleware
     app.use(identifyOrganization);
+    
+    // Add middleware to handle registration fees safely (fixing 500 errors with missing fees)
+    app.use(safeRegistrationFeesMiddleware);
 
     // Register admin routes
     app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
