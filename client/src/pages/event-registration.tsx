@@ -2371,7 +2371,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <FormItem>
                           <FormLabel>Last Name</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input 
+                              {...field} 
+                              placeholder={emailExists && redactedUserData?.lastName ? "●●●●●●●●" : undefined}
+                              disabled={emailExists && !form.getValues().authenticated}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -2430,7 +2434,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input {...field} type="tel" />
+                            <Input 
+                              {...field} 
+                              type="tel"
+                              placeholder={emailExists && redactedUserData?.phone ? "(***) ***-****" : undefined}
+                              disabled={emailExists && !form.getValues().authenticated}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -2443,7 +2452,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <FormItem className="col-span-2">
                           <FormLabel>Street Address</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input 
+                              {...field} 
+                              placeholder={emailExists && redactedUserData?.address ? "●●●●●●●●●●●●●●●●●●●●" : undefined}
+                              disabled={emailExists && !form.getValues().authenticated}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -2456,7 +2469,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <FormItem>
                           <FormLabel>City</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input 
+                              {...field} 
+                              placeholder={emailExists && redactedUserData?.city ? "●●●●●●●●" : undefined}
+                              disabled={emailExists && !form.getValues().authenticated}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -2470,7 +2487,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           <FormItem>
                             <FormLabel>State</FormLabel>
                             <FormControl>
-                              <Input {...field} maxLength={2} />
+                              <Input 
+                                {...field} 
+                                maxLength={2}
+                                placeholder={emailExists && redactedUserData?.state ? "**" : undefined}
+                                disabled={emailExists && !form.getValues().authenticated}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
