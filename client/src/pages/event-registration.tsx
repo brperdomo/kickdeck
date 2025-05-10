@@ -911,13 +911,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     fetchEvent();
   }, [eventId]);
 
-  // EXTREMELY SIMPLIFIED AUTH APPROACH
-  // Completely rewritten to avoid any loops or redirect confusion
+  // ENHANCED AUTH APPROACH WITH FORCED STEP PROGRESSION
   useEffect(() => {
-    // Only worry about the basic auth state
-    console.log('AUTH DEBUG (simplified) -----------------');
+    // Add more detailed logging
+    console.log('AUTH DEBUG (enhanced) -----------------');
     console.log('Is authenticated:', !!user);
     console.log('Current step:', currentStep);
+    console.log('User data:', user);
     console.log('----------------------------------------');
     
     // Skip in preview mode
@@ -925,9 +925,23 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       return;
     }
     
-    // No complicated checks, no redirects, just simple auth state management
+    // CRITICAL FIX: Check if we just came back from auth page
+    // If we did, we need to ensure the step advances properly
+    const justLoggedIn = sessionStorage.getItem('authRedirectCompleted');
+    
+    if (justLoggedIn && user) {
+      console.log('User just logged in and redirected back. Forcing personal details step.');
+      // Remove the flag since we're handling it now
+      sessionStorage.removeItem('authRedirectCompleted');
+      
+      // Force the step to personal details regardless of current step
+      setCurrentStep('personal');
+      return;
+    }
+    
+    // Normal flow management after ensuring redirects are handled properly
     if (user) {
-      // User is logged in, show personal details step ONLY if we're on auth step
+      // User is logged in, show personal details step if we're on auth step
       if (currentStep === 'auth') {
         console.log('User is authenticated and on auth step, moving to personal details step');
         setCurrentStep('personal');
@@ -938,7 +952,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       // Clear all potential session storage flags to be safe
       sessionStorage.removeItem('in_registration_process');
       sessionStorage.removeItem('redirectAfterAuth');
-      sessionStorage.removeItem('authRedirectCompleted');
     } else {
       // User is not logged in, ensure they see auth step
       if (currentStep !== 'auth') {
