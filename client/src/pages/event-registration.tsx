@@ -2994,13 +2994,23 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             // Make sure to sync the latest players array with form data
                             teamForm.setValue('players', players);
                             
+                            // For no-fee registrations, we need to set addRosterLater to true
+                            // if they don't have any players (to bypass the server validation)
+                            const shouldAddRosterLater = addRosterLater || players.length === 0;
+                            
+                            // If players array is empty and addRosterLater isn't already set,
+                            // update the addRosterLater state for UI consistency
+                            if (players.length === 0 && !addRosterLater) {
+                              setAddRosterLater(true);
+                            }
+                            
                             // Submit registration without payment info
                             registerTeamMutation.mutate({
                               ...teamForm.getValues(),
                               selectedFeeIds: [],
                               totalAmount: 0, // No amount
                               paymentMethod: 'free',
-                              addRosterLater // Include the flag to indicate roster will be added later
+                              addRosterLater: shouldAddRosterLater // Always true if no players
                             });
                           }}
                           disabled={registerTeamMutation.isPending}
