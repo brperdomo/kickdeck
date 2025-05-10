@@ -842,22 +842,19 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       form.setValue('phone', user.phone || '');
       form.setValue('authenticated', true);
       
-      // When we have household data available, also update the address fields
-      if (household && !householdLoading) {
-        console.log('User authenticated - applying household address data immediately', household);
-        // Use requestAnimationFrame to ensure DOM updates before we modify form values
-        window.requestAnimationFrame(() => {
-          form.setValue('address', household.address || '');
-          form.setValue('city', household.city || '');
-          form.setValue('state', household.state || '');
-          form.setValue('zipCode', household.zipCode || '');
-          
-          // Additional validation trigger to ensure form reflects the changes
-          form.trigger(['address', 'city', 'state', 'zipCode']);
+      // Use our helper function to apply household data consistently
+      const addressApplied = applyHouseholdData(form);
+      
+      if (addressApplied) {
+        // Show a concise toast notification
+        toast({
+          title: "Account Data Loaded",
+          description: "Your profile information has been applied.",
+          duration: 3000, // Short duration so it doesn't block UI
         });
       }
     }
-  }, [user, household, householdLoading, form]);
+  }, [user, form, applyHouseholdData, toast]);
   
   // Create ref outside the effect for auth check tracking
   const authCheckRef = useRef(false);
@@ -1043,6 +1040,29 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   // Track whether household data has been applied to the form
   const [householdDataApplied, setHouseholdDataApplied] = useState(false);
   
+  // Helper function to apply household data consistently
+  const applyHouseholdData = useCallback((formRef: any) => {
+    if (household && !householdLoading) {
+      console.log('🏠 Applying household data helper called:', household);
+      
+      // Force immediate update of address fields with household data
+      window.requestAnimationFrame(() => {
+        formRef.setValue('address', household.address || '');
+        formRef.setValue('city', household.city || '');
+        formRef.setValue('state', household.state || '');
+        formRef.setValue('zipCode', household.zipCode || '');
+        
+        // Force form validation to update
+        formRef.trigger(['address', 'city', 'state', 'zipCode']);
+        
+        console.log('✅ Household data applied successfully');
+        setHouseholdDataApplied(true);
+      });
+      return true;
+    }
+    return false;
+  }, [household, householdLoading]);
+  
   // Get address data from household information
   const addressData = {
     address: household?.address || '',
@@ -1082,38 +1102,25 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   
   // Update form with household details when they load
   useEffect(() => {
-    if (household && !householdLoading && !householdDataApplied) {
-      console.log('Updating form with household address data:', household);
+    // Only try to apply data if we haven't already and if the household data is now available
+    if (!householdDataApplied && household && !householdLoading) {
+      console.log('Household data available but not yet applied, using helper function');
       
-      // First, reset the form values to ensure any existing values are cleared
-      form.setValue('address', '');
-      form.setValue('city', '');
-      form.setValue('state', '');
-      form.setValue('zipCode', '');
+      // Use our helper to apply the household data consistently
+      const addressApplied = applyHouseholdData(form);
       
-      // Then set a timeout to apply household address data with a slight delay
-      // This helps ensure React has fully processed the form reset
-      setTimeout(() => {
-        console.log('Applying household address data with timeout');
-        form.setValue('address', household.address || '');
-        form.setValue('city', household.city || '');
-        form.setValue('state', household.state || '');
-        form.setValue('zipCode', household.zipCode || '');
-        
-        // Additional validation trigger to ensure form reflects the changes
-        form.trigger(['address', 'city', 'state', 'zipCode']);
-        
-        // Mark household data as applied to prevent multiple applications
-        setHouseholdDataApplied(true);
-        
-        // Show a toast notification that the address data has been loaded
-        toast({
-          title: "Address Loaded",
-          description: "Your saved address information has been applied."
-        });
-      }, 100);
+      if (addressApplied) {
+        // Only show a notification if it wasn't shown from the user authentication effect
+        if (!user) {
+          toast({
+            title: "Address Loaded",
+            description: "Your saved address information has been applied.",
+            duration: 3000
+          });
+        }
+      }
     }
-  }, [household, householdLoading, form, householdDataApplied, toast]);
+  }, [household, householdLoading, form, householdDataApplied, applyHouseholdData, toast, user]);
   
 
   
