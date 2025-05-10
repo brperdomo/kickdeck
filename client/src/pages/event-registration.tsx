@@ -537,11 +537,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     lastSaved
   } = useSavedRegistration(eventId);
   
-  // For initialization, check if user is already logged in to bypass auth step
-  // This ensures we start at the correct step even before the useEffect runs
-  // Start with auth only if definitely not authenticated, otherwise wait for confirmation
-  const initialStep = isPreview ? 'personal' : (user ? 'personal' : (authLoading ? 'personal' : 'auth'));
-  console.log('Setting initial step based on auth status:', { initialStep, isLoggedIn: !!user, isLoading: authLoading, isAdmin: user?.isAdmin, userId: user?.id });
+  // Skip auth step completely - if user is not logged in, RegistrationAuthChecker will redirect to login
+  // This ensures we start at the personal step every time - simpler and more reliable flow
+  const initialStep = 'personal';
+  console.log('Simplified registration flow: Always starting at personal step');
   
   console.log('🔍 AUTH DEBUG 🔍', {
     user: user ? { id: user.id, email: user.email } : null,
@@ -559,65 +558,38 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   
   // Critical effect to update steps when user auth state changes
-  // This is the primary fix for the login loop issue
+  // We've simplified the flow - just ensure we're at personal step if we have a user
+  // The RegistrationAuthChecker will handle redirecting to login if no user is present
   useEffect(() => {
-    // Skip check for preview mode since it's always personal step
-    if (isPreview) return;
-    
-    // If user exists, always advance to personal step regardless of current step
-    // This ensures we never show the auth step when user is already logged in
+    // If not authenticated and not in loading state, the RegistrationAuthChecker 
+    // component will handle redirecting to login
     if (user) {
-      console.log('🔑 Auth state detected: User is logged in, ensuring we are at personal step', { userId: user.id, email: user.email });
-      if (currentStep === 'auth') {
-        setCurrentStep('personal');
-      }
+      console.log('🔑 User authenticated, confirming personal step', { userId: user.id, email: user.email });
     }
-  }, [user, currentStep, isPreview]);
+  }, [user]);
   
   // Create ref outside the effect for auth check tracking
   const authCheckRef = useRef(false);
   
-  // Additional auth handling for URL parameters and redirects
+  // Handle any URL parameters like auth_complete just to clean up the URL
+  // Our simplified approach doesn't need these anymore, but clean up for completeness
   useEffect(() => {
-    // Check URL parameters for auth completion signal only once per component mount
+    // Only run once per component mount
     if (authCheckRef.current) return;
     authCheckRef.current = true;
     
-    const params = new URLSearchParams(window.location.search);
-    const authComplete = params.get('auth_complete') === 'true';
-    
-    // Only do this check when auth_complete param exists and we're on auth step
-    if (authComplete && currentStep === 'auth') {
-      console.log('🔐 Auth complete parameter detected, checking auth status once');
-      
-      // Force a single refresh of the user state from the backend
-      fetch('/api/user', { 
-        credentials: 'include',
-        headers: { 'Cache-Control': 'no-cache' }
-      })
-        .then(res => res.status === 200 ? res.json() : null)
-        .then(userData => {
-          console.log('🔓 Manual auth check result:', !!userData);
-          
-          if (userData) {
-            console.log('🔑 User is authenticated, advancing to personal step', userData);
-            setCurrentStep('personal');
-            
-            // Clean up the URL by removing the auth_complete parameter
-            try {
-              const newUrl = new URL(window.location.href);
-              newUrl.searchParams.delete('auth_complete');
-              window.history.replaceState({}, '', newUrl.toString());
-            } catch (e) {
-              console.error('Failed to clean URL:', e);
-            }
-          }
-        })
-        .catch(err => {
-          console.error('Error checking auth status:', err);
-        });
+    // Clean up any auth-related URL parameters to keep URLs clean
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('auth_complete')) {
+        console.log('Cleaning up auth_complete parameter from URL');
+        url.searchParams.delete('auth_complete');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch (e) {
+      console.error('Failed to clean URL:', e);
     }
-  }, [currentStep]);
+  }, []);
   
   // Check for saved data on component mount
   useEffect(() => {

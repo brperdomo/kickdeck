@@ -7,6 +7,10 @@ import { useQueryClient } from "@tanstack/react-query";
 /**
  * Component that handles authentication check for registration pages
  * It will automatically redirect to login if needed
+ * 
+ * SIMPLIFIED VERSION: This component now handles a simpler flow
+ * - If user is not logged in: redirect to login page
+ * - If user is logged in: simply render children (no step management)
  */
 export default function RegistrationAuthChecker({ 
   children, 
@@ -17,70 +21,54 @@ export default function RegistrationAuthChecker({
 }) {
   const { user, isLoading: authLoading } = useAuth();
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const initialCheckDone = useRef(false);
   
-  // Force a fresh user data fetch on mount to ensure we have the latest auth status
+  // Force a fresh user data fetch on mount
   useEffect(() => {
     if (!initialCheckDone.current) {
       initialCheckDone.current = true;
       
-      // Force a fresh fetch of user data by invalidating the query cache
+      // Force a fresh fetch of user data
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       
-      // Make a direct fetch to ensure the server session is recognized
-      const fetchUserData = async () => {
-        try {
-          const timestamp = Date.now();
-          const response = await fetch(`/api/user?t=${timestamp}`, {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-              'Cache-Control': 'no-cache, no-store, must-revalidate',
-              'Pragma': 'no-cache',
-              'Expires': '0',
-              'X-Cache-Bust': timestamp.toString()
-            }
-          });
-          
-          if (response.ok) {
-            const userData = await response.json();
-            console.log("RegistrationAuthChecker: Initial user data check:", userData ? 'authenticated' : 'not authenticated');
-            
-            // Update the query cache with fresh data
-            if (userData) {
-              queryClient.setQueryData(["/api/user"], userData);
-            }
-          }
-        } catch (e) {
-          console.error('RegistrationAuthChecker: Error fetching initial user data:', e);
+      // Make a direct fetch with cache-busting to ensure we get fresh data
+      fetch('/api/user', {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 
+          'Cache-Control': 'no-cache',
+          'X-Cache-Bust': Date.now().toString()
         }
-      };
-      
-      fetchUserData();
+      })
+      .then(res => res.ok ? res.json() : null)
+      .then(userData => {
+        if (userData) {
+          console.log("Registration: User is authenticated", userData.email);
+          queryClient.setQueryData(["/api/user"], userData);
+        }
+      })
+      .catch(e => {
+        console.error('Error checking auth status:', e);
+      });
     }
   }, [queryClient]);
   
-  // Effect to handle redirecting to login when not authenticated
+  // Simple redirect to login if not authenticated
   useEffect(() => {
-    // Only redirect if we're certain the user isn't authenticated
-    // Wait for authLoading to be false before making this decision
-    if (!user && !authLoading && initialCheckDone.current) {
-      console.log("RegistrationAuthChecker: User not authenticated, redirecting to login");
+    // Wait until loading is complete and we've done our initial check
+    if (!authLoading && initialCheckDone.current && !user) {
+      console.log("Registration: User not authenticated, redirecting to login");
       setIsRedirecting(true);
       
-      // Store return URL in sessionStorage for post-login redirect
+      // Store return URL for post-login redirect
       const redirectPath = `/register/event/${eventId}`;
       sessionStorage.setItem('redirectAfterAuth', redirectPath);
       
-      // Use setTimeout to ensure the state update happens before redirect
-      // Use direct navigation to root path for login, which was the original behavior
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 100);
+      // Redirect to login page
+      window.location.href = '/';
     }
-  }, [user, authLoading, eventId, setLocation]);
+  }, [user, authLoading, eventId]);
   
   // Effect to handle the case where we've just returned from login
   useEffect(() => {
