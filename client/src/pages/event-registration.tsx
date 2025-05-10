@@ -1335,100 +1335,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   };
 
   // The handleAuthRedirect function is already defined above
-  
-  // Helper function to check if an email exists in the system
-  const checkEmailExists = async (email: string): Promise<boolean> => {
-    try {
-      const response = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to check email');
-      }
-      
-      const result = await response.json();
-      return result.exists;
-    } catch (error) {
-      console.error('Error checking email:', error);
-      // Default to false if there's an error checking
-      return false;
-    }
-  };
-  
-  // Helper function to handle login with credentials
-  const loginWithCredentials = async (email: string, password: string): Promise<boolean> => {
-    try {
-      setAuthError(null);
-      
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: email, password }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        setAuthError(errorData.message || 'Invalid username or password');
-        return false;
-      }
-      
-      // Update auth context after successful login
-      await queryClient.invalidateQueries({ queryKey: ['/api/user'] });
-      
-      return true;
-    } catch (error) {
-      console.error('Login error:', error);
-      setAuthError('An error occurred during login. Please try again.');
-      return false;
-    }
-  };
-  
-  // Helper function to handle registration with credentials
-  const registerWithCredentials = async (
-    email: string, 
-    password: string, 
-    firstName: string, 
-    lastName: string
-  ): Promise<boolean> => {
-    try {
-      setAuthError(null);
-      
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          username: email, 
-          password,
-          firstName,
-          lastName,
-          email,
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        setAuthError(errorData.message || 'Failed to create account');
-        return false;
-      }
-      
-      // Update auth context after successful registration
-      await queryClient.invalidateQueries({ queryKey: ['/api/user'] });
-      
-      return true;
-    } catch (error) {
-      console.error('Registration error:', error);
-      setAuthError('An error occurred during account creation. Please try again.');
-      return false;
-    }
-  };
 
   const onSubmitPersonalDetails = async (data: PersonalDetailsForm) => {
     try {
@@ -1448,7 +1354,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         // Set loading state
         form.setValue('emailChecked', true);
         
-        // Check if email exists
+        // Use the existing checkEmailExists function
         const exists = await checkEmailExists(data.email);
         console.log('Email check result:', exists);
         
@@ -1476,14 +1382,35 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
           return;
         }
         
-        const success = await loginWithCredentials(data.email, data.password);
-        
-        if (success) {
+        setAuthError(null);
+        try {
+          // Login using the existing API
+          const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              username: data.email, 
+              password: data.password 
+            }),
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            setAuthError(errorData.message || 'Invalid username or password');
+            return;
+          }
+          
+          // Update auth context after successful login
+          await queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+          
           console.log('Login successful, continuing with registration');
           form.setValue('authenticated', true);
           updatePersonalDetailsMutation.mutate(data);
-        } else {
-          // Login failed, show error (this is handled in loginWithCredentials)
+        } catch (loginError) {
+          console.error('Login error:', loginError);
+          setAuthError('An error occurred during login. Please try again.');
           return;
         }
       } else {
@@ -1506,19 +1433,38 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
           return;
         }
         
-        const success = await registerWithCredentials(
-          data.email, 
-          data.password, 
-          data.firstName, 
-          data.lastName
-        );
-        
-        if (success) {
+        setAuthError(null);
+        try {
+          // Registration using the existing API
+          const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              username: data.email, 
+              password: data.password,
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+            }),
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            setAuthError(errorData.message || 'Failed to create account');
+            return;
+          }
+          
+          // Update auth context after successful registration
+          await queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+          
           console.log('Registration successful, continuing with registration');
           form.setValue('authenticated', true);
           updatePersonalDetailsMutation.mutate(data);
-        } else {
-          // Registration failed, show error (this is handled in registerWithCredentials)
+        } catch (registerError) {
+          console.error('Registration error:', registerError);
+          setAuthError('An error occurred during account creation. Please try again.');
           return;
         }
       }
