@@ -909,110 +909,44 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     fetchEvent();
   }, [eventId]);
 
-  // COMPLETE REWRITE OF AUTHENTICATION APPROACH
-  // Let's simplify even more to avoid any possible conflicts
+  // EXTREMELY SIMPLIFIED AUTH APPROACH
+  // Completely rewritten to avoid any loops or redirect confusion
   useEffect(() => {
-    // Prevent doing anything if we're still loading
-    if (authLoading) {
-      console.log('Auth is still loading, not taking any action yet');
-      return;
-    }
+    // Only worry about the basic auth state
+    console.log('AUTH DEBUG (simplified) -----------------');
+    console.log('Is authenticated:', !!user);
+    console.log('Current step:', currentStep);
+    console.log('----------------------------------------');
     
-    // Debug user state
-    console.log('AUTH DEBUG -----------------');
-    console.log('User state:', {
-      user,
-      authLoading,
-      currentStep,
-      isPreview,
-      isAuthenticated: !!user
-    });
-    console.log('User object:', JSON.stringify(user));
-    console.log('-------------------------');
-    
-    // Don't do anything if in preview mode
+    // Skip in preview mode
     if (isPreview) {
       return;
     }
     
-    // Based on authentication status, set the step
+    // No complicated checks, no redirects, just simple auth state management
     if (user) {
-      // User is authenticated - always show personal details regardless of current step
-      console.log('FIXED AUTH FLOW: User is authenticated, forcing to personal details step');
-      
-      // Check for a completed authentication/redirect by looking for the timestamp
-      const justRedirected = sessionStorage.getItem('authRedirectCompleted');
-      if (justRedirected) {
-        console.log('FIXED AUTH FLOW: Detected completed redirect with timestamp:', justRedirected);
-        // Remove the timestamp to prevent future false positives
-        sessionStorage.removeItem('authRedirectCompleted');
-        
-        // Force reload user data from server to ensure we have the latest
-        const fetchFreshUserData = async () => {
-          try {
-            console.log('FIXED AUTH FLOW: Fetching fresh user data after redirect');
-            const timestamp = Date.now();
-            const response = await fetch(`/api/user?t=${timestamp}`, {
-              credentials: 'include',
-              headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache',
-                'X-Cache-Bust': timestamp.toString()
-              }
-            });
-            
-            if (response.ok) {
-              const userData = await response.json();
-              console.log('FIXED AUTH FLOW: Fresh user data fetched:', userData ? 'success' : 'not found');
-            }
-          } catch (e) {
-            console.error('Error fetching fresh user data:', e);
-          }
-        };
-        
-        // Execute the fetch
-        fetchFreshUserData();
+      // User is logged in, show personal details step ONLY if we're on auth step
+      if (currentStep === 'auth') {
+        console.log('User is authenticated and on auth step, moving to personal details step');
+        setCurrentStep('personal');
+      } else {
+        console.log('User is authenticated and on step:', currentStep, '- not changing step');
       }
       
-      // ALWAYS set to personal step if authenticated, override any existing state
-      console.log('FIXED AUTH FLOW: Forcibly advancing to personal step');
-      
-      // Always force step to personal when user is authenticated
-      // Regardless of current step to break any possible loop
-      console.log('FIXED AUTH FLOW: Changing step to personal');
-      setCurrentStep('personal');
-      
-      // Additional debug to help diagnose the issue
-      console.log('Current location:', window.location.href);
-      console.log('Current step after setCurrentStep:', currentStep);
-      
-      // Clean the URL by removing query parameters no matter what
-      if (window.location.search) {
-        console.log('FIXED AUTH FLOW: Cleaning URL by removing parameters');
-        // Use regular location history API to rewrite the URL
-        window.history.replaceState(
-          { step: 'personal', eventId }, 
-          '', 
-          `/register/event/${eventId}`
-        );
-      }
-      
-      // Also remove any possible session storage items that might cause redirect loops
+      // Clear all potential session storage flags to be safe
       sessionStorage.removeItem('in_registration_process');
       sessionStorage.removeItem('redirectAfterAuth');
+      sessionStorage.removeItem('authRedirectCompleted');
     } else {
-      // User is not authenticated - always show auth step
-      console.log('FIXED AUTH FLOW: User is not authenticated, showing auth step');
-      
-      // Simple approach: set the redirect and show auth component
-      console.log('Setting auth redirect:', `/register/event/${eventId}`);
-      sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
-      // Also set a flag to indicate we're in a registration process
-      sessionStorage.setItem('in_registration_process', 'true');
-      setCurrentStep('auth');
-      return;
+      // User is not logged in, ensure they see auth step
+      if (currentStep !== 'auth') {
+        console.log('User is not authenticated, showing auth step');
+        // Set a simple redirect path
+        sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
+        setCurrentStep('auth');
+      }
     }
-  }, [authLoading, user, isPreview, eventId, currentStep]);
+  }, [user, isPreview, eventId, currentStep]);
   
   // We've removed the duplicate useEffect to avoid conflicts
   
@@ -2065,20 +1999,27 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         )}
                       </Button>
                       
-                      {/* Manual continue button as a workaround */}
+                      {/* Enhanced continue button that's more visible */}
                       {updatePersonalDetailsMutation.isSuccess && (
                         <Button 
                           type="button"
-                          className="font-medium ml-2 animate-pulse"
+                          className="font-medium ml-2 relative"
                           onClick={() => handleDirectStepNavigation('team')}
                           style={{ 
                             backgroundColor: event?.branding?.secondaryColor || '#48BB78',
                             color: 'white',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                            borderWidth: '2px',
+                            borderColor: 'white',
+                            fontWeight: 'bold',
+                            transform: 'scale(1.1)'
                           }}
                         >
+                          <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs animate-bounce">
+                            !
+                          </span>
                           Continue to Team Information
-                          <ArrowRight className="ml-2 h-4 w-4" />
+                          <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
                       )}
                     </div>
