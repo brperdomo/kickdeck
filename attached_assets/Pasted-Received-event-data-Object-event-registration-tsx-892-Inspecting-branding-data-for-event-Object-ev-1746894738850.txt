@@ -1,0 +1,48 @@
+Received event data: Object
+event-registration.tsx:892 Inspecting branding data for event: Object
+event-registration.tsx:924 Pay Later Feature enabled: true
+event-registration.tsx:929 Pay Later feature is enabled for this event
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+2framer-motion.js?v=8e1f054b:252 You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+AnimatePresence @ framer-motion.js?v=8e1f054b:252Understand this warning
+2chunk-RPCDYKBN.js?v=8e1f054b:521 Warning: Encountered two children with the same key, `0`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at div
+    at div
+    at div
+    at MotionComponent (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=8e1f054b:945:40)
+    at PresenceChild (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=8e1f054b:121:24)
+    at AnimatePresence (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=8e1f054b:210:26)
+    at div
+    at _c9 (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at EventRegistration (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/event-registration.tsx:580:45)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=8e1f054b:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=8e1f054b:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:70:31)
+    at div
+    at div
+    at MainLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/MainLayout.tsx:18:30)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=8e1f054b:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=8e1f054b:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=8e1f054b:2829:3)
+    at App (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:931:3)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=8e1f054b:2829:3)
+printWarning @ chunk-RPCDYKBN.js?v=8e1f054b:521Understand this error
+2AnimatedEventBackground.tsx:162 Animation frame running, particles: 297 Canvas size: 1708 x 871
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 ObjectcurrentStep: "personal"isLoggedIn: falseisPreview: falseurlParams: ""user: null[[Prototype]]: Object
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 ObjectcurrentStep: "personal"isLoggedIn: falseisPreview: falseurlParams: ""user: null[[Prototype]]: Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object

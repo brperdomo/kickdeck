@@ -953,74 +953,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     fetchEvent();
   }, [eventId]);
 
-  // RADICALLY SIMPLIFIED AUTH APPROACH
-  useEffect(() => {
-    // Check for the auth_complete URL parameter that the auth page now appends
-    const urlParams = new URLSearchParams(window.location.search);
-    const authComplete = urlParams.get('auth_complete');
-    
-    // Skip in preview mode
-    if (isPreview) {
-      return;
-    }
-
-    console.log('AUTH DEBUG (radical) -----------------');
-    console.log('URL auth_complete parameter:', authComplete);
-    console.log('Is authenticated:', !!user);
-    console.log('Current step:', currentStep);
-    console.log('----------------------------------------');
-    
-    // HIGHEST PRIORITY: If URL has auth_complete=true, user just came from successful login
-    if (authComplete === 'true' && user) {
-      console.log('AUTH SOLUTION: Detected auth_complete parameter + logged in user. Forcing personal details step.');
-      
-      // Remove the authRedirectCompleted flag as we're using URL parameter now
-      sessionStorage.removeItem('authRedirectCompleted');
-      
-      // Force step to personal details
-      setCurrentStep('personal');
-      
-      // Clean up URL to avoid keeping the parameter if page is refreshed
-      const newUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, newUrl);
-      return;
-    }
-    
-    // SECOND PRIORITY: Check session storage as fallback
-    const justLoggedIn = sessionStorage.getItem('authRedirectCompleted');
-    if (justLoggedIn && user) {
-      console.log('User just logged in via session storage check. Forcing personal details step.');
-      // Remove the flag since we're handling it now
-      sessionStorage.removeItem('authRedirectCompleted');
-      
-      // Force the step to personal details regardless of current step
-      setCurrentStep('personal');
-      return;
-    }
-    
-    // THIRD PRIORITY: Normal flow
-    if (user) {
-      // User is logged in, show personal details step if we're on auth step
-      if (currentStep === 'auth') {
-        console.log('User is authenticated and on auth step, moving to personal details step');
-        setCurrentStep('personal');
-      }
-      
-      // Clear all potential session storage flags to be safe
-      sessionStorage.removeItem('in_registration_process');
-      sessionStorage.removeItem('redirectAfterAuth');
-    } else {
-      // User is not logged in, ensure they see auth step
-      if (currentStep !== 'auth') {
-        console.log('User is not authenticated, showing auth step');
-        // Set a simple redirect path
-        sessionStorage.setItem('redirectAfterAuth', `/register/event/${eventId}`);
-        setCurrentStep('auth');
-      }
-    }
-  }, [user, isPreview, eventId, currentStep, window.location.search]);
-  
-  // We've removed the duplicate useEffect to avoid conflicts
+  // Removed old authentication effect - we've completely redesigned the auth flow 
+  // to start at the personal step and rely on RegistrationAuthChecker
+  // for redirecting to login if needed
   
   // Fetch clubs for the current event
   useEffect(() => {

@@ -1,0 +1,94 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:9 Google Maps API key length: 0 characters
+env.ts:15 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /register/event/1683911827
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/register/event/1683911827?auth_complete=true
+RouteDebugger.tsx:15 Current pathname: /register/event/1683911827
+RouteDebugger.tsx:16 Current search: ?auth_complete=true
+use-user.ts:59 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /register/event/1683911827
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/register/event/1683911827?auth_complete=true
+RouteDebugger.tsx:15 Current pathname: /register/event/1683911827
+RouteDebugger.tsx:16 Current search: ?auth_complete=true
+use-user.ts:76 User data fetched: Object
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:585 Cleaning up auth_complete parameter from URL
+event-registration.tsx:878 Fetching event details for ID: 1683911827
+event-registration.tsx:967 AUTH DEBUG (radical) -----------------
+event-registration.tsx:968 URL auth_complete parameter: null
+event-registration.tsx:969 Is authenticated: false
+event-registration.tsx:970 Current step: personal
+event-registration.tsx:971 ----------------------------------------
+event-registration.tsx:1015 User is not authenticated, showing auth step
+event-registration.tsx:878 Fetching event details for ID: 1683911827
+event-registration.tsx:967 AUTH DEBUG (radical) -----------------
+event-registration.tsx:968 URL auth_complete parameter: null
+event-registration.tsx:969 Is authenticated: false
+event-registration.tsx:970 Current step: personal
+event-registration.tsx:971 ----------------------------------------
+event-registration.tsx:1015 User is not authenticated, showing auth step
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:967 AUTH DEBUG (radical) -----------------
+event-registration.tsx:968 URL auth_complete parameter: null
+event-registration.tsx:969 Is authenticated: false
+event-registration.tsx:970 Current step: auth
+event-registration.tsx:971 ----------------------------------------
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:884 Received event data: Object
+event-registration.tsx:892 Inspecting branding data for event: Object
+event-registration.tsx:924 Pay Later Feature enabled: false
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+2framer-motion.js?v=8e1f054b:252 You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+AnimatePresence @ framer-motion.js?v=8e1f054b:252Understand this warning
+1683911827:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+1683911827:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+AnimatedEventBackground.tsx:51 AnimatedEventBackground INITIALIZED with colors: Object
+AnimatedEventBackground.tsx:221 hexToRgb: Processing color "#007AFF"
+AnimatedEventBackground.tsx:250 hexToRgb: Converted "007AFF" to RGB: 0,122,255
+AnimatedEventBackground.tsx:221 hexToRgb: Processing color "#34C759"
+AnimatedEventBackground.tsx:250 hexToRgb: Converted "34C759" to RGB: 52,199,89
+AnimatedEventBackground.tsx:122 Creating particles animation with: Object
+AnimatedEventBackground.tsx:162 Animation frame running, particles: 297 Canvas size: 1708 x 871
+AnimatedEventBackground.tsx:51 AnimatedEventBackground INITIALIZED with colors: Object
+AnimatedEventBackground.tsx:221 hexToRgb: Processing color "#007AFF"
+AnimatedEventBackground.tsx:250 hexToRgb: Converted "007AFF" to RGB: 0,122,255
+AnimatedEventBackground.tsx:221 hexToRgb: Processing color "#34C759"
+AnimatedEventBackground.tsx:250 hexToRgb: Converted "34C759" to RGB: 52,199,89
+AnimatedEventBackground.tsx:122 Creating particles animation with: Object
+12AnimatedEventBackground.tsx:162 Animation frame running, particles: 297 Canvas size: 1708 x 871
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+2framer-motion.js?v=8e1f054b:252 You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+AnimatePresence @ framer-motion.js?v=8e1f054b:252Understand this warning
+2AnimatedEventBackground.tsx:162 Animation frame running, particles: 297 Canvas size: 1708 x 871
+event-registration.tsx:884 Received event data: Object
+event-registration.tsx:892 Inspecting branding data for event: Object
+event-registration.tsx:924 Pay Later Feature enabled: false
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:543 Simplified registration flow: Always starting at personal step
+event-registration.tsx:545 🔍 AUTH DEBUG 🔍 Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: Object
