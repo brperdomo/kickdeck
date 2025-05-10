@@ -411,6 +411,38 @@ export function registerRoutes(app: Express): Server {
       hasEventAccess(req, res, next);
     }, deleteCoupon);
 
+    // Email check endpoint for registration authentication
+    app.post('/api/auth/check-email', async (req, res) => {
+      try {
+        const { email } = req.body;
+        
+        if (!email) {
+          return res.status(400).json({ error: 'Email is required' });
+        }
+        
+        // Check if the email exists in our database
+        const [user] = await db
+          .select({
+            id: users.id,
+            email: users.email,
+            exists: sql`true`.as('exists')
+          })
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
+          
+        // Return whether the email exists (but no other user details)
+        if (user) {
+          return res.status(200).json({ exists: true });
+        } else {
+          return res.status(200).json({ exists: false });
+        }
+      } catch (error) {
+        console.error('Error checking email:', error);
+        return res.status(500).json({ error: 'Failed to check email existence' });
+      }
+    });
+
     // Public event endpoint
     app.get('/api/events/:id', async (req, res) => {
       try {

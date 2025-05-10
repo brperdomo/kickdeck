@@ -617,18 +617,27 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     setEmailToCheck(email);
     
     try {
-      // This is a simulated endpoint - we'll need to create this API route
-      // For now we'll just check if the email is valid format
       console.log("Checking if email exists:", email);
       
-      // Simulate API call with a delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Make the actual API call to the backend
+      const response = await fetch('/api/auth/check-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
       
-      // In a real implementation, this would make an API call
-      // For demo, we'll just simulate a response
-      const exists = email.includes('@') && email.includes('.');
-      setEmailExists(exists);
-      return exists;
+      if (!response.ok) {
+        throw new Error('Failed to check email existence');
+      }
+      
+      const data = await response.json();
+      console.log('Email check response:', data);
+      
+      // Set the state based on the response
+      setEmailExists(data.exists);
+      return data.exists;
     } catch (error) {
       console.error('Error checking email:', error);
       toast({
