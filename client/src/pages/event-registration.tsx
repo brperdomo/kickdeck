@@ -2878,7 +2878,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <div className="text-sm pt-2 border-t border-gray-100 mt-2">
                           <span className="text-muted-foreground">Don't remember your password? </span>
                           <a 
-                            href="/auth/reset-password" 
+                            href="/forgot-password" 
                             target="_blank" 
                             className="text-primary font-medium hover:underline"
                           >
