@@ -399,7 +399,21 @@ export async function getCurrentUserRegistrations(req: Request, res: Response) {
         cardLastFour: reg.team.cardLastFour || undefined,
         paymentStatus: reg.team.paymentStatus || undefined,
         errorCode: reg.team.paymentErrorCode || undefined,
-        errorMessage: reg.team.paymentErrorMessage || undefined
+        errorMessage: reg.team.paymentErrorMessage || undefined,
+        
+        // Improved payment method tracking
+        payLater: reg.team.payLater || false,
+        setupIntentId: reg.team.setupIntentId || undefined,
+        paymentMethodId: reg.team.paymentMethodId || undefined,
+        stripeCustomerId: reg.team.stripeCustomerId || undefined,
+        
+        // Card details from database if available
+        cardDetails: {
+          brand: reg.team.cardBrand || undefined,
+          last4: reg.team.cardLastFour || undefined,
+          expMonth: reg.team.cardExpMonth || undefined,
+          expYear: reg.team.cardExpYear || undefined
+        }
       };
 
       // Try to extract submitter information
