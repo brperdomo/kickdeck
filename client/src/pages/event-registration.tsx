@@ -956,7 +956,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       city: addressData.city,
       state: addressData.state,
       zipCode: addressData.zipCode,
+      // Authentication related fields with sensible defaults
+      password: '',
+      confirmPassword: '',
+      emailChecked: false,
+      emailExists: false,
+      authenticated: !!user, // If user is logged in, we're already authenticated
     },
+    mode: 'onChange', // Enable validation as the user types for better feedback
   });
 
   useEffect(() => {
@@ -983,7 +990,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         lastName: user.lastName || '',
         email: user.email || '',
         phone: user.phone || '',
-        ...addressData
+        ...addressData,
+        // Authentication related fields
+        authenticated: true, // User is authenticated
+        emailChecked: true,  // Email has been checked
+        emailExists: true,   // Email exists (since we have a user)
       });
     }
   }, [user, form]);
@@ -1325,8 +1336,106 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
 
   // The handleAuthRedirect function is already defined above
 
-  const onSubmitPersonalDetails = (data: PersonalDetailsForm) => {
-    updatePersonalDetailsMutation.mutate(data);
+  const onSubmitPersonalDetails = async (data: PersonalDetailsForm) => {
+    try {
+      console.log('Personal details submitted with data:', data);
+      
+      // If we're already authenticated, just update the profile
+      if (user || data.authenticated) {
+        console.log('User is already authenticated, updating profile data');
+        updatePersonalDetailsMutation.mutate(data);
+        return;
+      }
+      
+      // First time seeing this form submission, check if email exists
+      if (!data.emailChecked) {
+        console.log('First submission, checking if email exists:', data.email);
+        
+        // Set loading state
+        form.setValue('emailChecked', true);
+        
+        // Check if email exists
+        const exists = await checkEmailExists(data.email);
+        console.log('Email check result:', exists);
+        
+        // Update form state with email check result
+        form.setValue('emailExists', exists);
+        
+        // Force re-render with the updated form state
+        // This will show either login or signup fields
+        form.trigger();
+        
+        // Don't proceed further until authentication is completed
+        return;
+      }
+      
+      // Handle authentication based on whether email exists
+      if (data.emailExists) {
+        // Attempt login with provided credentials
+        console.log('Attempting login with existing account');
+        
+        if (!data.password) {
+          form.setError('password', { 
+            type: 'manual', 
+            message: 'Password is required to log in' 
+          });
+          return;
+        }
+        
+        const success = await loginWithCredentials(data.email, data.password);
+        
+        if (success) {
+          console.log('Login successful, continuing with registration');
+          form.setValue('authenticated', true);
+          updatePersonalDetailsMutation.mutate(data);
+        } else {
+          // Login failed, show error (this is handled in loginWithCredentials)
+          return;
+        }
+      } else {
+        // Create a new account with provided credentials
+        console.log('Creating new account for registration');
+        
+        if (!data.password) {
+          form.setError('password', { 
+            type: 'manual', 
+            message: 'Password is required to create an account' 
+          });
+          return;
+        }
+        
+        if (data.password !== data.confirmPassword) {
+          form.setError('confirmPassword', { 
+            type: 'manual', 
+            message: 'Passwords don\'t match' 
+          });
+          return;
+        }
+        
+        const success = await registerWithCredentials(
+          data.email, 
+          data.password, 
+          data.firstName, 
+          data.lastName
+        );
+        
+        if (success) {
+          console.log('Registration successful, continuing with registration');
+          form.setValue('authenticated', true);
+          updatePersonalDetailsMutation.mutate(data);
+        } else {
+          // Registration failed, show error (this is handled in registerWithCredentials)
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error in personal details submission:', error);
+      toast({
+        title: 'Error',
+        description: 'There was a problem processing your information. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   const teamForm = useForm<TeamRegistrationForm>({
@@ -2086,6 +2195,103 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   >
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmitPersonalDetails)} className="space-y-6">
+                  {/* Authentication status message */}
+                  {user && (
+                    <div className="bg-green-50 border border-green-200 rounded-md p-3 mb-4">
+                      <div className="flex items-center">
+                        <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                        <p className="text-green-700 text-sm">
+                          You're signed in as <strong>{user.email}</strong>
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Display authentication related fields conditionally */}
+                  {!user && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
+                      <h3 className="text-lg font-medium text-blue-800 mb-2">
+                        Account Verification
+                      </h3>
+                      <p className="text-blue-700 mb-2">
+                        {form.getValues().emailChecked 
+                          ? (form.getValues().emailExists 
+                              ? "This email is already registered. Please enter your password to continue." 
+                              : "Create a password to register your account.")
+                          : "We'll check if you already have an account when you submit the form."}
+                      </p>
+                      
+                      {/* Show login fields if email exists */}
+                      {form.getValues().emailChecked && form.getValues().emailExists && (
+                        <div className="pt-2">
+                          <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    type="password" 
+                                    placeholder="Enter your password" 
+                                    {...field} 
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          {authError && (
+                            <p className="text-red-500 text-sm mt-2">{authError}</p>
+                          )}
+                        </div>
+                      )}
+                      
+                      {/* Show registration fields if email is new */}
+                      {form.getValues().emailChecked && !form.getValues().emailExists && (
+                        <div className="space-y-4 pt-2">
+                          <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Create Password</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    type="password" 
+                                    placeholder="Create a password (min 8 characters)" 
+                                    {...field} 
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="confirmPassword"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Confirm Password</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    type="password" 
+                                    placeholder="Confirm your password" 
+                                    {...field} 
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          {authError && (
+                            <p className="text-red-500 text-sm mt-2">{authError}</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
