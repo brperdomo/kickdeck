@@ -2349,8 +2349,17 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <FormItem>
                           <FormLabel>First Name</FormLabel>
                           <FormControl>
-                            <Input {...field} />
+                            <Input 
+                              {...field} 
+                              placeholder={emailExists && redactedUserData?.firstName ? "●●●●●●●●" : undefined}
+                              disabled={emailExists && !form.getValues().authenticated}
+                            />
                           </FormControl>
+                          {emailExists && redactedUserData?.firstName && !form.getValues().authenticated && (
+                            <div className="text-xs text-muted-foreground">
+                              Enter your password to continue with saved information
+                            </div>
+                          )}
                           <FormMessage />
                         </FormItem>
                       )}
@@ -2375,8 +2384,41 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input {...field} type="email" />
+                            <Input 
+                              {...field} 
+                              type="email"
+                              onChange={(e) => {
+                                field.onChange(e); // Handle default change
+                                
+                                // Clear any previous timeout
+                                if (debounceTimeout) {
+                                  clearTimeout(debounceTimeout);
+                                  setDebounceTimeout(null);
+                                }
+                                
+                                // Setup debounce validation
+                                if (e.target.value && e.target.value.includes('@')) {
+                                  const newTimeout = setTimeout(() => {
+                                    checkEmailExists(e.target.value);
+                                  }, 800); // 800ms delay for debounce
+                                  
+                                  setDebounceTimeout(newTimeout);
+                                }
+                              }}
+                              disabled={isCheckingEmail}
+                            />
                           </FormControl>
+                          {isCheckingEmail && (
+                            <div className="text-sm text-muted-foreground flex items-center mt-1">
+                              <Loader2 className="h-3 w-3 animate-spin mr-2" />
+                              Checking email...
+                            </div>
+                          )}
+                          {emailExists && redactedUserData && (
+                            <div className="text-sm text-primary mt-1">
+                              Existing account found. Please enter your password to continue.
+                            </div>
+                          )}
                           <FormMessage />
                         </FormItem>
                       )}
