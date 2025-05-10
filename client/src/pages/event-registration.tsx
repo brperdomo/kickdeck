@@ -871,8 +871,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
           });
         }
       }
-      // Still show the notice to inform the user
+      // Show the notice to inform the user (will automatically dismiss after 5 seconds)
       setShowSavedRegistrationAlert(true);
+      
+      // Automatically hide the notice after 5 seconds
+      const timer = setTimeout(() => {
+        setShowSavedRegistrationAlert(false);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
     }
   }, [hasSavedData, lastSaved, savedData, isPreview]);
   
@@ -2381,32 +2388,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
               <SavedRegistrationNotice 
                 lastSaved={lastSaved}
                 eventName={event?.name || 'this event'}
-                onResume={() => {
-                  // Load the saved state and hide the notice
-                  const success = loadSavedState();
-                  if (success) {
-                    toast({
-                      title: "Registration Restored",
-                      description: "Your saved registration has been loaded successfully.",
-                    });
-                  } else {
-                    toast({
-                      title: "Error",
-                      description: "Failed to restore your registration. Please try again.",
-                      variant: "destructive"
-                    });
-                  }
-                  setShowSavedRegistrationAlert(false);
-                }}
-                onDiscard={() => {
-                  // Clear the saved data and hide the notice
-                  clearSavedData();
-                  setShowSavedRegistrationAlert(false);
-                  toast({
-                    title: "Registration Discarded",
-                    description: "Starting a fresh registration.",
-                  });
-                }}
+                onResume={() => {}} // Not used anymore since we auto-load, but kept for interface compatibility
               />
             )}
             

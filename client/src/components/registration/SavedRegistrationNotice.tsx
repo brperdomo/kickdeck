@@ -29,17 +29,6 @@ export function SavedRegistrationNotice({
           You have a saved registration in progress for {eventName} from {timeAgo}.
           We've automatically loaded your saved progress.
         </p>
-        <div className="flex gap-3 mt-3">
-          <Button 
-            variant="default" 
-            size="sm" 
-            className="flex items-center" 
-            onClick={onResume}
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Continue Registration
-          </Button>
-        </div>
       </AlertDescription>
     </Alert>
   );

@@ -32,17 +32,6 @@ export function SavedRegistrationAlert({
           You have an unfinished registration for {eventName || 'this event'} that was saved {timeAgo}.
           We've automatically loaded your saved progress.
         </p>
-        <div className="flex space-x-3 mt-4">
-          <Button 
-            variant="default" 
-            size="sm" 
-            className="space-x-1" 
-            onClick={onResume}
-          >
-            <RefreshCw className="h-4 w-4 mr-1" /> 
-            Continue Registration
-          </Button>
-        </div>
       </AlertDescription>
     </Alert>
   );
