@@ -2049,6 +2049,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 </form>
               </Form>
               </motion.div>
+                </RegistrationAuthChecker>
             )}
 
             {currentStep === 'team' && user && (
