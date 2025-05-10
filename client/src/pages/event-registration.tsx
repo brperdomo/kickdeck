@@ -1525,7 +1525,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ 
-              username: data.email, 
+              email: data.email,
               password: data.password 
             }),
           });
