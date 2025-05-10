@@ -14,10 +14,12 @@ import { useQueryClient } from "@tanstack/react-query";
  */
 export default function RegistrationAuthChecker({ 
   children, 
-  eventId 
+  eventId,
+  allowUnauthenticated = false // New parameter to allow bypassing auth
 }: { 
   children: React.ReactNode;
   eventId: string;
+  allowUnauthenticated?: boolean; // Optional flag to allow viewing without auth
 }) {
   const { user, isLoading: authLoading } = useAuth();
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -54,10 +56,10 @@ export default function RegistrationAuthChecker({
     }
   }, [queryClient]);
   
-  // Simple redirect to login if not authenticated
+  // Simple redirect to login if not authenticated, unless allowUnauthenticated
   useEffect(() => {
     // Wait until loading is complete and we've done our initial check
-    if (!authLoading && initialCheckDone.current && !user) {
+    if (!authLoading && initialCheckDone.current && !user && !allowUnauthenticated) {
       console.log("Registration: User not authenticated, redirecting to login");
       setIsRedirecting(true);
       
@@ -68,7 +70,7 @@ export default function RegistrationAuthChecker({
       // Redirect to login page
       window.location.href = '/';
     }
-  }, [user, authLoading, eventId]);
+  }, [user, authLoading, eventId, allowUnauthenticated]);
   
   // Handle redirect parameters and cleanup after login
   useEffect(() => {
