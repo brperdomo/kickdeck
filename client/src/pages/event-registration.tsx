@@ -2741,9 +2741,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   
                   {/* Password verification section when existing account is found */}
                   {emailExists && redactedUserData && !form.getValues().authenticated && (
-                    <div className="mt-6 p-5 border border-dashed border-primary rounded-md bg-primary/5 shadow-sm animate-fadeIn">
-                      <h3 className="text-lg font-semibold text-primary mb-2">Existing Account Found</h3>
-                      <p className="text-sm mb-4">
+                    <div className="mt-6 p-6 border border-dashed border-primary/60 rounded-md bg-primary/5 shadow-md animate-fadeIn">
+                      <div className="flex items-center space-x-2 mb-3">
+                        <UserCircle className="h-5 w-5 text-primary" />
+                        <h3 className="text-lg font-semibold text-primary">Existing Account Found</h3>
+                      </div>
+                      
+                      <p className="text-sm mb-5 text-gray-600">
                         We found your information in our system. Please enter your password to continue with your saved information.
                       </p>
                       
@@ -2756,7 +2760,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               <FormLabel className="enhanced-label">Password</FormLabel>
                               <FormControl>
                                 <Input 
-                                  className="enhanced-input" 
+                                  className="enhanced-input h-11" 
                                   {...field} 
                                   type="password" 
                                   placeholder="Enter your password" />
@@ -2769,9 +2773,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <Button 
                           type="button" 
                           variant="default" 
-                          className="w-full transition-all duration-300 hover:scale-[1.02]"
+                          className="w-full transition-all duration-300 hover:scale-[1.02] bg-primary hover:bg-primary/90 text-white h-11 shadow-md"
                           onClick={verifyExistingAccount}
                           disabled={isVerifyingPassword}
+                          size="lg"
                         >
                           {isVerifyingPassword ? (
                             <>
@@ -2783,7 +2788,16 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           )}
                         </Button>
                         
-                        {/* Removed "Continue without using saved data" button per requirements */}
+                        <div className="text-sm pt-2 border-t border-gray-100 mt-2">
+                          <span className="text-muted-foreground">Don't remember your password? </span>
+                          <a 
+                            href="/auth/reset-password" 
+                            target="_blank" 
+                            className="text-primary font-medium hover:underline"
+                          >
+                            Reset Password
+                          </a>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -2792,6 +2806,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     <SaveForLaterButton 
                       onSave={saveCurrentState} 
                       variant="ghost"
+                      className="transition-all hover:bg-primary/5"
                     />
                     
                     <div className="flex space-x-4">
@@ -2799,6 +2814,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         type="button"
                         variant="outline"
                         onClick={() => setCurrentStep('auth')}
+                        className="border-gray-300 hover:border-gray-400 transition-all hover:bg-gray-50"
                       >
                         Back
                       </Button>
@@ -2806,11 +2822,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       {/* Original submit button just saves but doesn't advance */}
                       <Button 
                         type="submit"
-                        className="font-medium"
+                        className="font-medium shadow-md transition-all duration-300 hover:shadow-lg h-10"
                         style={{ 
                           backgroundColor: event?.branding?.primaryColor || '#2C5282',
-                          color: primaryContrastColor,
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
+                          color: primaryContrastColor
                         }}
                         disabled={updatePersonalDetailsMutation.isPending}
                       >
@@ -2820,7 +2835,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             Saving...
                           </>
                         ) : (
-                          'Save Details'
+                          <>
+                            <Save className="mr-2 h-4 w-4" />
+                            Save Details
+                          </>
                         )}
                       </Button>
                       
@@ -2828,7 +2846,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       {updatePersonalDetailsMutation.isSuccess && (
                         <Button 
                           type="button"
-                          className="font-medium ml-2 relative"
+                          className="font-medium ml-2 relative shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02] h-10"
                           onClick={() => {
                             // Check if an account exists but isn't verified
                             if (emailExists && !form.getValues('authenticated')) {
@@ -2847,19 +2865,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           }}
                           style={{ 
                             backgroundColor: event?.branding?.secondaryColor || '#48BB78',
-                            color: 'white',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                            borderWidth: '2px',
-                            borderColor: 'white',
-                            fontWeight: 'bold',
-                            transform: 'scale(1.1)'
+                            color: getContrastColor(event?.branding?.secondaryColor || '#48BB78')
                           }}
                         >
-                          <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs animate-bounce">
-                            !
-                          </span>
-                          Continue to Team Information
-                          <ArrowRight className="ml-2 h-5 w-5" />
+                          Continue <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       )}
                     </div>
