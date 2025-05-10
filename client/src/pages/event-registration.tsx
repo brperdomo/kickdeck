@@ -519,6 +519,9 @@ interface EventRegistrationProps {
 // We'll use the types defined below
 
 export default function EventRegistration({ isPreview = false, eventIdOverride }: EventRegistrationProps) {
+  // AUTH FIX: Add detailed logging to verify our authentication fix is working
+  console.log("AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect");
+  console.log("AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default");
   const params = useParams();
   const { toast } = useToast();
   

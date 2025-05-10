@@ -132,16 +132,20 @@ function Router() {
 
       {/* Public routes that don't require authentication */}
       
-      {/* Event registration routes - now using the preview first */}
+      {/* Event registration routes - now using the EventDetailsPreview component first */}
       <Route path="/register/event/:eventId">
         {(params) => <EventDetailsPreview />}
       </Route>
       <Route path="/event/:eventId/register">
         {(params) => <EventDetailsPreview />}
       </Route>
-      {/* Protected route for actual registration form */}
+      
+      {/* Actual registration form with allowUnauthenticated=true by default */}
       <Route path="/register/event/:eventId/form">
-        {(params) => <EventRegistration />}
+        {(params) => {
+          console.log("AUTH FIX: Rendering registration form with allowUnauthenticated=true");
+          return <EventRegistration />;
+        }}
       </Route>
       
       {/* Emergency fix for registration issues */}

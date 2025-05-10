@@ -64,29 +64,29 @@ export default function EventDetailsPreview() {
   
   // Handle registration button click
   const handleRegisterClick = () => {
-    // Set flags to indicate we're in a registration flow
-    sessionStorage.setItem('inRegistrationFlow', 'true');
+    console.log("AUTH FIX: User clicked register button", user ? "User is logged in" : "User not logged in");
     
-    // Create a registration data object
+    // Set flags to indicate we're in a registration flow (use multiple redundant flags)
+    sessionStorage.setItem('inRegistrationFlow', 'true');
+    sessionStorage.setItem('registrationEventId', eventId);
+    sessionStorage.setItem('registrationTimestamp', Date.now().toString());
+    sessionStorage.setItem('allowUnauthenticatedAccess', 'true');
+    
+    // Create a registration data object with plenty of redundancy
     const registrationData = {
       preventRedirect: true,
       inRegistrationFlow: true,
       eventId: eventId,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      allowUnauthenticatedAccess: true
     };
     
     // Store this data
     sessionStorage.setItem('registrationData', JSON.stringify(registrationData));
     
-    // If user is already logged in, go directly to registration
-    if (user) {
-      window.location.href = `/register/event/${eventId}`;
-    } else {
-      // Otherwise, redirect to auth with return path
-      const redirectPath = `/register/event/${eventId}`;
-      sessionStorage.setItem('redirectAfterAuth', redirectPath);
-      window.location.href = '/auth';
-    }
+    // Always go directly to registration form, regardless of auth status
+    // Because we've set allowUnauthenticated=true, it won't immediately redirect
+    window.location.href = `/register/event/${eventId}/form`;
   };
   
   // Render loading state
