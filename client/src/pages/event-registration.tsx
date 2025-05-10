@@ -832,7 +832,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   useEffect(() => {
     // If not authenticated and not in loading state, the RegistrationAuthChecker 
     // component will handle redirecting to login
-    if (user) {
+    if (user && form) {
       console.log('🔑 User authenticated, confirming personal step', { userId: user.id, email: user.email });
       
       // Always update the form with user details when logged in
@@ -843,18 +843,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       form.setValue('authenticated', true);
       
       // Use our helper function to apply household data consistently
-      const addressApplied = applyHouseholdData(form);
-      
-      if (addressApplied) {
-        // Show a concise toast notification
-        toast({
-          title: "Account Data Loaded",
-          description: "Your profile information has been applied.",
-          duration: 3000, // Short duration so it doesn't block UI
-        });
+      if (household && !householdLoading) {
+        const addressApplied = applyHouseholdData(form);
+        
+        if (addressApplied) {
+          // Show a concise toast notification
+          toast({
+            title: "Account Data Loaded",
+            description: "Your profile information has been applied.",
+            duration: 3000, // Short duration so it doesn't block UI
+          });
+        }
       }
     }
-  }, [user, form, applyHouseholdData, toast]);
+  }, [user, form, household, householdLoading, applyHouseholdData, toast]);
   
   // Create ref outside the effect for auth check tracking
   const authCheckRef = useRef(false);
@@ -1103,7 +1105,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   // Update form with household details when they load
   useEffect(() => {
     // Only try to apply data if we haven't already and if the household data is now available
-    if (!householdDataApplied && household && !householdLoading) {
+    if (!householdDataApplied && household && !householdLoading && form) {
       console.log('Household data available but not yet applied, using helper function');
       
       // Use our helper to apply the household data consistently

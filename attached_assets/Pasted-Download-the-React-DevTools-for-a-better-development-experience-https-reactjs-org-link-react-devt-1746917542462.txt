@@ -1,0 +1,90 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:9 Google Maps API key length: 0 characters
+env.ts:15 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /register/event/1251362271/form
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/register/event/1251362271/form
+RouteDebugger.tsx:15 Current pathname: /register/event/1251362271/form
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /register/event/1251362271/form
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/register/event/1251362271/form
+RouteDebugger.tsx:15 Current pathname: /register/event/1251362271/form
+RouteDebugger.tsx:16 Current search: 
+/api/user:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+2App.tsx:146 AUTH FIX: Rendering registration form with allowUnauthenticated=true
+event-registration.tsx:572 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:573 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:616 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:618 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:572 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:573 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:616 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:618 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:857 Uncaught ReferenceError: Cannot access 'form' before initialization
+    at EventRegistration (event-registration.tsx:857:13)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=8e1f054b:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=8e1f054b:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=8e1f054b:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=8e1f054b:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=8e1f054b:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=8e1f054b:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=8e1f054b:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=8e1f054b:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=8e1f054b:19137:13)Understand this error
+2App.tsx:146 AUTH FIX: Rendering registration form with allowUnauthenticated=true
+event-registration.tsx:572 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:573 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:616 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:618 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:572 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:573 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:616 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:618 🔍 AUTH DEBUG 🔍 Object
+event-registration.tsx:857 Uncaught ReferenceError: Cannot access 'form' before initialization
+    at EventRegistration (event-registration.tsx:857:13)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=8e1f054b:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=8e1f054b:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=8e1f054b:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=8e1f054b:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=8e1f054b:3699:24)
+    at invokeGuardedCallback (chunk-RPCDYKBN.js?v=8e1f054b:3733:39)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=8e1f054b:19765:15)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=8e1f054b:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=8e1f054b:19137:13)Understand this error
+chunk-RPCDYKBN.js?v=8e1f054b:14032 The above error occurred in the <EventRegistration> component:
+
+    at EventRegistration (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/event-registration.tsx:623:45)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=8e1f054b:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=8e1f054b:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:71:31)
+    at div
+    at div
+    at MainLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/MainLayout.tsx:18:30)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=8e1f054b:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=8e1f054b:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=8e1f054b:2829:3)
+    at App (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx:944:3)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=8e1f054b:2829:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-RPCDYKBN.js?v=8e1f054b:14032Understand this error
+chunk-RPCDYKBN.js?v=8e1f054b:9129 Uncaught ReferenceError: Cannot access 'form' before initialization
+    at EventRegistration (event-registration.tsx:857:13)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=8e1f054b:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=8e1f054b:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=8e1f054b:15914:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=8e1f054b:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=8e1f054b:19198:20)
+    at workLoopSync (chunk-RPCDYKBN.js?v=8e1f054b:19137:13)
+    at renderRootSync (chunk-RPCDYKBN.js?v=8e1f054b:19116:15)
+    at recoverFromConcurrentError (chunk-RPCDYKBN.js?v=8e1f054b:18736:28)
+    at performSyncWorkOnRoot (chunk-RPCDYKBN.js?v=8e1f054b:18879:28)Understand this error
+/api/user:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 (Unauthorized)
