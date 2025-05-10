@@ -2049,6 +2049,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 </form>
               </Form>
               </motion.div>
+                </RegistrationAuthChecker>
             )}
 
             {currentStep === 'team' && user && (
@@ -3356,8 +3357,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
               </motion.div>
             )}
             
-              {/* Close the RegistrationAuthChecker */}
-              </RegistrationAuthChecker>
             )}
             </AnimatePresence>
           </CardContent>
