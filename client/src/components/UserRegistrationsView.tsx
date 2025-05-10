@@ -114,7 +114,7 @@ export default function UserRegistrationsView() {
                   <TeamStatusBadge 
                     status={registration.status} 
                     payLater={registration.payLater} 
-                    hasPaymentMethod={!!registration.setupIntentId} 
+                    setupIntentId={registration.setupIntentId} 
                   />
                   <PaymentStatusBadge status={registration.paymentStatus} />
                 </div>

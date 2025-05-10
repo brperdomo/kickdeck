@@ -26,6 +26,7 @@ export function PaymentStatusBadge({ status }: PaymentStatusBadgeProps) {
 type TeamStatusBadgeProps = {
   status: string | undefined | null;
   payLater?: boolean;
+  setupIntentId?: string | null;
   hasPaymentMethod?: boolean;
 };
 
@@ -36,6 +37,7 @@ type TeamStatusBadgeProps = {
 export function TeamStatusBadge({ 
   status, 
   payLater = false, 
+  setupIntentId = null,
   hasPaymentMethod = false 
 }: TeamStatusBadgeProps) {
   switch (status) {
@@ -49,13 +51,13 @@ export function TeamStatusBadge({
       return <Badge className="bg-amber-500"><Clock className="w-3 h-3 mr-1" /> Waitlisted</Badge>;
     case 'registered':
     case 'pending_payment':
-      if (payLater) {
-        return <Badge variant="outline" className="text-amber-600 border-amber-400 whitespace-nowrap font-medium">
-          <AlertCircle className="w-3 h-3 mr-1" /> Pay Later Selected
-        </Badge>;
-      } else if (hasPaymentMethod) {
+      if (setupIntentId) {
         return <Badge variant="outline" className="text-blue-600 border-blue-400 whitespace-nowrap font-medium">
           <CreditCard className="w-3 h-3 mr-1" /> Card Info Provided
+        </Badge>;
+      } else if (payLater) {
+        return <Badge variant="outline" className="text-amber-600 border-amber-400 whitespace-nowrap font-medium">
+          <AlertCircle className="w-3 h-3 mr-1" /> Pay Later Selected
         </Badge>;
       } else {
         return <Badge className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" /> Pending Approval</Badge>;
