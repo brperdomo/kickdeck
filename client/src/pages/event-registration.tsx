@@ -748,6 +748,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
 
   const updatePersonalDetailsMutation = useMutation({
     mutationFn: async (data: PersonalDetailsForm) => {
+      console.log('Starting personal details update with data:', data);
+      
       // In preview mode, don't actually call the API
       if (isPreview) {
         console.log('Preview mode: Simulating profile update with data:', data);
@@ -762,20 +764,39 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         },
         body: JSON.stringify(data),
       });
+
+      console.log('Profile update response status:', response.status);
+      
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('Error updating profile:', errorText);
         throw new Error(errorText || 'Failed to update profile');
       }
-      return response.json();
+      
+      const responseData = await response.json();
+      console.log('Profile update successful, response:', responseData);
+      return responseData;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Personal details update onSuccess triggered with data:', data);
+      
       toast({
         title: "Success",
         description: "Personal details updated successfully",
       });
+      
+      console.log('Advancing to team step from', currentStep);
       setCurrentStep('team');
+      
+      // Force the step change with a slight delay to ensure state updates
+      setTimeout(() => {
+        console.log('Forced step change to team from setTimeout');
+        setCurrentStep('team');
+      }, 100);
     },
     onError: (error: Error) => {
+      console.error('Personal details update failed:', error);
+      
       toast({
         title: "Error",
         description: error.message,
