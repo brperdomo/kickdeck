@@ -1065,19 +1065,22 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   
   // Debounced email check effect
   useEffect(() => {
-    // Only run the check when email has at least 5 characters and contains @
-    if (emailToCheck && emailToCheck.length > 5 && emailToCheck.includes('@')) {
-      setIsCheckingEmail(true);
+    // Only run the check when email has at least 5 characters, contains @ and .
+    // Also requires a pause in typing (debounce)
+    if (emailToCheck && emailToCheck.length > 5 && emailToCheck.includes('@') && emailToCheck.includes('.')) {
+      // Only set checking state when we're actually going to check
+      // This prevents UI flickering during normal typing
       
       // Clear any existing timeout
       if (debounceTimeout) {
         clearTimeout(debounceTimeout);
       }
       
-      // Set a new timeout to check if email exists
+      // Set a new timeout to check if email exists after typing stops
       const timeout = setTimeout(() => {
+        setIsCheckingEmail(true);
         checkEmailExists(emailToCheck);
-      }, 500); // 500ms debounce
+      }, 1000); // Increased to 1000ms (1 second) debounce
       
       setDebounceTimeout(timeout);
     } else {
@@ -2384,35 +2387,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       <p className="text-blue-700 mb-2">
                         {form.getValues().emailChecked 
                           ? (form.getValues().emailExists 
-                              ? "This email is already registered. Please enter your password to continue." 
+                              ? "This email is already registered. You'll be prompted to verify your account below." 
                               : "Create a password to register your account.")
-                          : "We'll check if you already have an account when you submit the form."}
+                          : "We'll check if you already have an account when you enter your email."}
                       </p>
                       
-                      {/* Show login fields if email exists */}
-                      {form.getValues().emailChecked && form.getValues().emailExists && (
-                        <div className="pt-2">
-                          <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                  <Input 
-                                    type="password" 
-                                    placeholder="Enter your password" 
-                                    {...field} 
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          {authError && (
-                            <p className="text-red-500 text-sm mt-2">{authError}</p>
-                          )}
-                        </div>
+                      {/* Show any authentication errors */}
+                      {authError && (
+                        <p className="text-red-500 text-sm mt-2">{authError}</p>
                       )}
                       
                       {/* Show registration fields if email is new */}
