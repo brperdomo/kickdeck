@@ -49,10 +49,14 @@ interface Registration {
   // Added payment details
   paymentDate?: string;
   cardLastFour?: string;
+  cardBrand?: string;
   errorCode?: string;
   errorMessage?: string;
   paymentStatus?: string;
   payLater?: boolean;
+  setupIntentId?: string;
+  paymentMethodId?: string;
+  stripeCustomerId?: string;
   submitter?: {
     name: string;
     email: string;
@@ -60,7 +64,14 @@ interface Registration {
 }
 
 // Component to display the status of a team in a nice badge
-function TeamStatusBadge({ status, payLater }: { status: Registration['status'], payLater?: boolean }) {
+function TeamStatusBadge({ status, payLater, setupIntentId }: { 
+  status: Registration['status'], 
+  payLater?: boolean,
+  setupIntentId?: string 
+}) {
+  // If we have a setupIntentId, the user has provided card info (but hasn't been charged yet)
+  const hasPaymentMethod = !!setupIntentId;
+
   switch (status) {
     case 'approved':
       return <Badge className="bg-green-500/90 whitespace-nowrap">Team Approved</Badge>;
@@ -69,13 +80,29 @@ function TeamStatusBadge({ status, payLater }: { status: Registration['status'],
     case 'paid':
       return <Badge className="bg-blue-500/90 whitespace-nowrap">Team Paid</Badge>;
     case 'pending_payment':
-      return payLater 
-        ? <Badge variant="outline" className="text-orange-500 border-orange-500 whitespace-nowrap font-medium">Pay Later Selected</Badge>
-        : <Badge variant="outline" className="text-amber-500 border-amber-500 whitespace-nowrap">Payment Needed</Badge>;
+      if (hasPaymentMethod) {
+        return <Badge variant="outline" className="text-blue-600 border-blue-400 whitespace-nowrap font-medium">
+          <CreditCard className="w-3 h-3 mr-1" /> Card Info Provided
+        </Badge>;
+      } else if (payLater) {
+        return <Badge variant="outline" className="text-orange-500 border-orange-500 whitespace-nowrap font-medium">
+          <AlertCircle className="w-3 h-3 mr-1" /> Pay Later Selected
+        </Badge>;
+      } else {
+        return <Badge variant="outline" className="text-amber-500 border-amber-500 whitespace-nowrap">Payment Needed</Badge>;
+      }
     case 'registered':
-      return payLater
-        ? <Badge variant="outline" className="text-orange-500 border-orange-500 whitespace-nowrap font-medium">Pay Later Selected</Badge>
-        : <Badge variant="outline" className="whitespace-nowrap">Team Registered</Badge>;
+      if (hasPaymentMethod) {
+        return <Badge variant="outline" className="text-blue-600 border-blue-400 whitespace-nowrap font-medium">
+          <CreditCard className="w-3 h-3 mr-1" /> Card Info Provided
+        </Badge>;
+      } else if (payLater) {
+        return <Badge variant="outline" className="text-orange-500 border-orange-500 whitespace-nowrap font-medium">
+          <AlertCircle className="w-3 h-3 mr-1" /> Pay Later Selected
+        </Badge>;
+      } else {
+        return <Badge variant="outline" className="whitespace-nowrap">Team Registered</Badge>;
+      }
     case 'withdrawn':
       return <Badge variant="secondary" className="whitespace-nowrap">Team Withdrawn</Badge>;
     case 'refunded':
@@ -125,7 +152,11 @@ function RegistrationsList({ registrations }: { registrations: Registration[] })
               <div className="flex gap-2 items-center">
                 <div className="flex flex-col items-end gap-1">
                   <div className="flex gap-2 items-center">
-                    <TeamStatusBadge status={registration.status} payLater={registration.payLater} />
+                    <TeamStatusBadge 
+                      status={registration.status} 
+                      payLater={registration.payLater}
+                      setupIntentId={registration.setupIntentId}
+                    />
                     {registration.paymentStatus && (
                       <PaymentStatusBadge status={registration.paymentStatus} />
                     )}
@@ -151,7 +182,11 @@ function RegistrationsList({ registrations }: { registrations: Registration[] })
                 <div>
                   <h4 className="font-medium text-sm mb-1">Status</h4>
                   <div className="flex items-center gap-2">
-                    <TeamStatusBadge status={registration.status} payLater={registration.payLater} />
+                    <TeamStatusBadge 
+                      status={registration.status} 
+                      payLater={registration.payLater}
+                      setupIntentId={registration.setupIntentId}
+                    />
                     {registration.paymentStatus && (
                       <PaymentStatusBadge status={registration.paymentStatus} />
                     )}
@@ -167,10 +202,18 @@ function RegistrationsList({ registrations }: { registrations: Registration[] })
                       <TableCell className="font-medium">Amount</TableCell>
                       <TableCell>${(registration.amount / 100).toFixed(2)}</TableCell>
                     </TableRow>
-                    {registration.payLater && (
+                    {registration.payLater && !registration.setupIntentId && (
                       <TableRow>
                         <TableCell className="font-medium">Payment Option</TableCell>
                         <TableCell className="text-orange-500 font-medium">Pay Later Selected</TableCell>
+                      </TableRow>
+                    )}
+                    {registration.setupIntentId && !registration.paymentId && (
+                      <TableRow>
+                        <TableCell className="font-medium">Payment Status</TableCell>
+                        <TableCell className="text-blue-600 font-medium">
+                          <CreditCard className="w-4 h-4 inline-block mr-1" /> Card Info Provided
+                        </TableCell>
                       </TableRow>
                     )}
                     {registration.paymentDate && (
@@ -182,7 +225,12 @@ function RegistrationsList({ registrations }: { registrations: Registration[] })
                     {registration.cardLastFour && (
                       <TableRow>
                         <TableCell className="font-medium">Card</TableCell>
-                        <TableCell>•••• {registration.cardLastFour}</TableCell>
+                        <TableCell>
+                          {registration.cardBrand && (
+                            <span className="capitalize">{registration.cardBrand} </span>
+                          )}
+                          •••• {registration.cardLastFour}
+                        </TableCell>
                       </TableRow>
                     )}
                     {registration.errorCode && (
