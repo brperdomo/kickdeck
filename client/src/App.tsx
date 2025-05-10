@@ -49,6 +49,8 @@ import { AuthProvider } from "@/hooks/use-auth";
 // Account page import
 import AccountPage from "./pages/account";
 import { LogoutHandler } from "@/components/LogoutHandler";
+// Emergency fix for registration
+import EmergencyRegistrationFix from "@/pages/emergency-registration-fix";
 
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
@@ -135,6 +137,11 @@ function Router() {
       </Route>
       <Route path="/event/:eventId/register">
         {(params) => <EventRegistration />}
+      </Route>
+      
+      {/* Emergency fix for registration issues */}
+      <Route path="/register/fix">
+        <EmergencyRegistrationFix />
       </Route>
       
       {/* Handle other routes based on auth status */}
