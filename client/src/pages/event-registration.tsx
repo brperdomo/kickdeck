@@ -1094,6 +1094,65 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     }
   }, [household, householdLoading, form, householdDataApplied, applyHouseholdData, toast, user]);
   
+  // Critical effect to update steps when user auth state changes
+  // We've simplified the flow - just ensure we're at personal step if we have a user
+  // The RegistrationAuthChecker will handle redirecting to login if no user is present
+  useEffect(() => {
+    // If not authenticated and not in loading state, the RegistrationAuthChecker 
+    // component will handle redirecting to login
+    if (user && form) {
+      console.log('🔑 User authenticated, confirming personal step', { userId: user.id, email: user.email });
+      
+      // Always update the form with user details when logged in
+      form.setValue('firstName', user.firstName || '');
+      form.setValue('lastName', user.lastName || '');
+      form.setValue('email', user.email || '');
+      form.setValue('phone', user.phone || '');
+      form.setValue('authenticated', true);
+      
+      // Use our helper function to apply household data consistently
+      if (household && !householdLoading) {
+        const addressApplied = applyHouseholdData(form);
+        
+        if (addressApplied) {
+          // Show a concise toast notification
+          toast({
+            title: "Account Data Loaded",
+            description: "Your profile information has been applied.",
+            duration: 3000, // Short duration so it doesn't block UI
+          });
+        }
+      }
+    }
+  }, [user, form, household, householdLoading, applyHouseholdData, toast]);
+  
+  // Check for saved data on component mount and automatically load it
+  useEffect(() => {
+    // Only try to load saved data when the form is initialized
+    if (hasSavedData && !isPreview && form) {
+      console.log('Found saved registration data from:', new Date(lastSaved || 0).toLocaleString());
+      // Automatically load saved data without asking user
+      if (savedData) {
+        const success = loadSavedState(); // Use the existing loadSavedState function
+        if (success) {
+          toast({
+            title: "Registration Restored",
+            description: "Your saved registration has been loaded automatically.",
+          });
+        }
+      }
+      // Show the notice to inform the user (will automatically dismiss after 5 seconds)
+      setShowSavedRegistrationAlert(true);
+      
+      // Automatically hide the notice after 5 seconds
+      const timer = setTimeout(() => {
+        setShowSavedRegistrationAlert(false);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [hasSavedData, lastSaved, savedData, isPreview, form, toast, loadSavedState]);
+  
 
   
   // Verify existing account with password
