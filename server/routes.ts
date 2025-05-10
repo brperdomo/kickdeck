@@ -957,6 +957,9 @@ export function registerRoutes(app: Express): Server {
         }
         
         // Skip player validation if addRosterLater flag is set to true
+        console.log('addRosterLater value:', addRosterLater, 'typeof:', typeof addRosterLater);
+        console.log('players array:', players);
+        
         if (!addRosterLater && (!Array.isArray(players) || players.length === 0)) {
           return res.status(400).json({ 
             error: 'At least one player is required to register a team, or select the "Add Roster Later" option.' 
