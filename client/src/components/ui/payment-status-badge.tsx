@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, XCircle, CreditCard } from "lucide-react";
+import { CheckCircle, Clock, XCircle, CreditCard, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 type PaymentStatusBadgeProps = {
@@ -23,11 +23,21 @@ export function PaymentStatusBadge({ status }: PaymentStatusBadgeProps) {
   }
 }
 
+type TeamStatusBadgeProps = {
+  status: string | undefined | null;
+  payLater?: boolean;
+  hasPaymentMethod?: boolean;
+};
+
 /**
  * A consistent badge component for displaying team status
  * This ensures team status display is uniform across all views
  */
-export function TeamStatusBadge({ status }: { status: string | undefined | null }) {
+export function TeamStatusBadge({ 
+  status, 
+  payLater = false, 
+  hasPaymentMethod = false 
+}: TeamStatusBadgeProps) {
   switch (status) {
     case 'approved':
       return <Badge className="bg-blue-500"><CheckCircle className="w-3 h-3 mr-1" /> Approved</Badge>;
@@ -38,6 +48,18 @@ export function TeamStatusBadge({ status }: { status: string | undefined | null 
     case 'waitlisted':
       return <Badge className="bg-amber-500"><Clock className="w-3 h-3 mr-1" /> Waitlisted</Badge>;
     case 'registered':
+    case 'pending_payment':
+      if (payLater) {
+        return <Badge variant="outline" className="text-amber-600 border-amber-400 whitespace-nowrap font-medium">
+          <AlertCircle className="w-3 h-3 mr-1" /> Pay Later Selected
+        </Badge>;
+      } else if (hasPaymentMethod) {
+        return <Badge variant="outline" className="text-blue-600 border-blue-400 whitespace-nowrap font-medium">
+          <CreditCard className="w-3 h-3 mr-1" /> Card Info Provided
+        </Badge>;
+      } else {
+        return <Badge className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" /> Pending Approval</Badge>;
+      }
     default:
       return <Badge className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" /> Pending Approval</Badge>;
   }

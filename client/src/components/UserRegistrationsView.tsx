@@ -3,7 +3,7 @@ import { Link } from 'wouter';
 import { formatDate } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, CreditCard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { PaymentStatusBadge, TeamStatusBadge } from '@/components/ui/payment-status-badge';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,14 @@ interface Registration {
   cardLastFour?: string;
   errorCode?: string;
   errorMessage?: string;
+  payLater?: boolean;
+  setupIntentId?: string; // If this exists, the user has provided payment info
+  cardDetails?: {
+    brand?: string;
+    last4?: string;
+    expMonth?: number;
+    expYear?: number;
+  };
 }
 
 export default function UserRegistrationsView() {
@@ -103,7 +111,11 @@ export default function UserRegistrationsView() {
                   </CardDescription>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <TeamStatusBadge status={registration.status} />
+                  <TeamStatusBadge 
+                    status={registration.status} 
+                    payLater={registration.payLater} 
+                    hasPaymentMethod={!!registration.setupIntentId} 
+                  />
                   <PaymentStatusBadge status={registration.paymentStatus} />
                 </div>
               </div>
@@ -159,12 +171,24 @@ export default function UserRegistrationsView() {
                   <Link href={`/events/${registration.eventId}`}>View Event</Link>
                 </Button>
                 
-                {/* Only show payment button if payment is still pending */}
+                {/* Only show payment button if payment is still pending AND user hasn't provided card yet */}
                 {(registration.paymentStatus === 'pending' || !registration.paymentStatus) && 
-                  registration.amount > 0 && (
-                  <Button variant="default" size="sm" className="w-full" asChild>
-                    <Link href={`/events/${registration.eventId}/pay/${registration.id}`}>Pay Now</Link>
-                  </Button>
+                  registration.amount > 0 && 
+                  !registration.setupIntentId && // Don't show if card details already provided
+                  !registration.payLater && // Don't show if they selected pay later
+                  (
+                    <Button variant="default" size="sm" className="w-full" asChild>
+                      <Link href={`/events/${registration.eventId}/pay/${registration.id}`}>Pay Now</Link>
+                    </Button>
+                  )
+                }
+                
+                {/* Show card info if it exists */}
+                {registration.setupIntentId && registration.cardDetails?.last4 && (
+                  <div className="text-sm text-center text-muted-foreground mt-1 border rounded p-2 flex items-center justify-center">
+                    <CreditCard className="h-3.5 w-3.5 mr-2 text-primary/70" />
+                    Card on file: ••••{registration.cardDetails.last4}
+                  </div>
                 )}
               </div>
             </CardFooter>
