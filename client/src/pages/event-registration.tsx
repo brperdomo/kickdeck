@@ -2761,16 +2761,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           )}
                         </Button>
                         
-                        <div className="text-sm text-center text-muted-foreground">
-                          <Button 
-                            type="button" 
-                            variant="link" 
-                            onClick={useNewAccountInstead}
-                            className="h-auto p-0 text-xs"
-                          >
-                            Continue without using saved data
-                          </Button>
-                        </div>
+                        {/* Removed "Continue without using saved data" button per requirements */}
                       </div>
                     </div>
                   )}
