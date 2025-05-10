@@ -136,13 +136,31 @@ export default function AuthPage() {
     // But first check if we're on the auth page directly (not from a registration flow)
     const isDirectAuthPage = window.location.pathname === '/auth';
     
-    // Check if we're in the middle of registration and should not redirect
+    // Check all possible flags that indicate we're in a registration flow
     const inRegistrationFlow = sessionStorage.getItem('inRegistrationFlow') === 'true';
     
-    if (inRegistrationFlow) {
+    // Also check the registrationData object which may contain more detailed state
+    let registrationData = null;
+    try {
+      registrationData = JSON.parse(sessionStorage.getItem('registrationData') || '{}');
+    } catch (e) {
+      console.error('Failed to parse registrationData:', e);
+    }
+    
+    const preventRedirectFromData = registrationData && registrationData.preventRedirect === true;
+    const hasRegistrationStep = registrationData && registrationData.currentStep;
+    
+    // If any flag indicates we're in registration, don't redirect
+    if (inRegistrationFlow || preventRedirectFromData || hasRegistrationStep) {
       console.log("AUTH: User is in registration flow, not redirecting to dashboard");
-      // Clear the flag after using it to avoid issues with future navigation
-      sessionStorage.removeItem('inRegistrationFlow');
+      console.log("Registration state flags:", { 
+        inRegistrationFlow, 
+        preventRedirectFromData, 
+        currentStep: hasRegistrationStep ? registrationData.currentStep : null,
+        timestamp: sessionStorage.getItem('registrationFlowTimestamp')
+      });
+      
+      // DO NOT clear these flags - they need to persist throughout the process
       return;
     }
     
