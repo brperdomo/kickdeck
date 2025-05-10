@@ -1059,10 +1059,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   useEffect(() => {
     if (household && !householdLoading) {
       console.log('Updating form with household address data:', household);
-      form.setValue('address', household.address || '');
-      form.setValue('city', household.city || '');
-      form.setValue('state', household.state || '');
-      form.setValue('zipCode', household.zipCode || '');
+      // Force immediate update of address fields with household data
+      setTimeout(() => {
+        form.setValue('address', household.address || '');
+        form.setValue('city', household.city || '');
+        form.setValue('state', household.state || '');
+        form.setValue('zipCode', household.zipCode || '');
+      }, 0);
     }
   }, [household, householdLoading, form]);
   
