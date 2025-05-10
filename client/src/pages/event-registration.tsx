@@ -549,6 +549,19 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   // Flag to track auto-saving
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   
+  // Critical effect to update steps when user auth state changes
+  // This is the primary fix for the login loop issue
+  useEffect(() => {
+    // Skip check for preview mode since it's always personal step
+    if (isPreview) return;
+    
+    // If we're on the auth step and user becomes authenticated, advance to personal step
+    if (currentStep === 'auth' && user) {
+      console.log('🔑 Auth state changed: User logged in, advancing to personal step', { userId: user.id, email: user.email });
+      setCurrentStep('personal');
+    }
+  }, [user, currentStep, isPreview]);
+  
   // Check for saved data on component mount
   useEffect(() => {
     if (hasSavedData && !showSavedRegistrationAlert && !isPreview) {
