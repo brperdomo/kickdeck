@@ -643,10 +643,21 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       
       // Set the state based on the response
       setEmailExists(data.exists);
+      form.setValue('emailChecked', true);
+      form.setValue('emailExists', data.exists);
       
       // If user exists, set the redacted data
-      if (data.exists && data.redactedData) {
-        setRedactedUserData(data.redactedData);
+      if (data.exists && data.redactedUserData) {
+        setRedactedUserData({
+          firstName: data.redactedUserData.firstName,
+          lastName: data.redactedUserData.lastName,
+          phone: data.redactedUserData.phone || '',
+          address: data.redactedUserData.address || '',
+          city: data.redactedUserData.city || '',
+          state: data.redactedUserData.state || '',
+          zipCode: data.redactedUserData.zipCode || '',
+          userId: data.redactedUserData.userId
+        });
       } else {
         setRedactedUserData(null);
       }
@@ -979,6 +990,144 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     },
     mode: 'onChange', // Enable validation as the user types for better feedback
   });
+  
+  // Watch the email field to handle checking for existing accounts
+  const watchedEmail = form.watch('email');
+  
+  // Update emailToCheck whenever the email field changes
+  useEffect(() => {
+    setEmailToCheck(watchedEmail);
+  }, [watchedEmail]);
+  
+  // Check if email exists and fetch redacted user data
+  const checkEmailExists = async (email: string) => {
+    try {
+      const response = await fetch(`/api/auth/check-email?email=${encodeURIComponent(email)}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to check email');
+      }
+      
+      const data = await response.json();
+      
+      setEmailExists(data.exists);
+      form.setValue('emailChecked', true);
+      form.setValue('emailExists', data.exists);
+      
+      if (data.exists && data.redactedUserData) {
+        setRedactedUserData({
+          firstName: data.redactedUserData.firstName,
+          lastName: data.redactedUserData.lastName,
+          phone: data.redactedUserData.phone || '',
+          address: data.redactedUserData.address || '',
+          city: data.redactedUserData.city || '',
+          state: data.redactedUserData.state || '',
+          zipCode: data.redactedUserData.zipCode || '',
+          userId: data.redactedUserData.userId
+        });
+      } else {
+        setRedactedUserData(null);
+      }
+    } catch (error) {
+      console.error('Error checking email:', error);
+      setEmailExists(false);
+      form.setValue('emailChecked', true);
+      form.setValue('emailExists', false);
+      setRedactedUserData(null);
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
+  
+  // Verify existing account with password
+  const verifyExistingAccount = async () => {
+    const email = form.getValues('email');
+    const password = form.getValues('password');
+    
+    if (!email || !password || !redactedUserData) {
+      return;
+    }
+    
+    setIsVerifyingPassword(true);
+    
+    try {
+      const success = await loginWithCredentials(email, password);
+      
+      if (success) {
+        // Set authenticated flag in form data
+        form.setValue('authenticated', true);
+        
+        // Populate form with complete user data
+        if (redactedUserData) {
+          form.setValue('firstName', redactedUserData.firstName);
+          form.setValue('lastName', redactedUserData.lastName);
+          form.setValue('phone', redactedUserData.phone);
+          form.setValue('address', redactedUserData.address);
+          form.setValue('city', redactedUserData.city);
+          form.setValue('state', redactedUserData.state);
+          form.setValue('zipCode', redactedUserData.zipCode);
+        }
+        
+        toast({
+          title: "Account Verified",
+          description: "You're now using your saved information.",
+        });
+      }
+    } catch (error) {
+      console.error('Error verifying account:', error);
+      toast({
+        title: "Verification Failed",
+        description: "Could not verify your account. Please check your password.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsVerifyingPassword(false);
+    }
+  };
+  
+  // Continue registration without using saved account data
+  const useNewAccountInstead = () => {
+    // Just clear the redacted data and continue with current form values
+    setRedactedUserData(null);
+    form.setValue('authenticated', false);
+    form.setValue('emailExists', false);
+    
+    toast({
+      title: "Using New Information",
+      description: "You're continuing without using your saved account information.",
+    });
+  };
+  
+  // Debounced email check effect
+  useEffect(() => {
+    // Only run the check when email has at least 5 characters and contains @
+    if (emailToCheck && emailToCheck.length > 5 && emailToCheck.includes('@')) {
+      setIsCheckingEmail(true);
+      
+      // Clear any existing timeout
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+      }
+      
+      // Set a new timeout to check if email exists
+      const timeout = setTimeout(() => {
+        checkEmailExists(emailToCheck);
+      }, 500); // 500ms debounce
+      
+      setDebounceTimeout(timeout);
+    } else {
+      // Reset when email is too short or invalid
+      setEmailExists(null);
+      setRedactedUserData(null);
+    }
+    
+    // Cleanup timeout on unmount
+    return () => {
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+      }
+    };
+  }, [emailToCheck]);
 
   useEffect(() => {
     if (user) {

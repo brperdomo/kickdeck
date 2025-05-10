@@ -222,13 +222,39 @@ export function registerRoutes(app: Express): Server {
         if (existingUser) {
           // Return redacted data if the user exists
           // Only return the pattern of the data, not the actual values
+          // Extract address fields from metadata if available
+          let addressData = {
+            address: "",
+            city: "",
+            state: "",
+            zipCode: ""
+          };
+          
+          if (existingUser.metadata) {
+            try {
+              const parsedMetadata = JSON.parse(existingUser.metadata);
+              addressData = {
+                address: parsedMetadata.address || "",
+                city: parsedMetadata.city || "",
+                state: parsedMetadata.state || "",
+                zipCode: parsedMetadata.zipCode || ""
+              };
+            } catch (error) {
+              console.error("Error parsing user metadata:", error);
+            }
+          }
+          
           return res.json({ 
             exists: true,
-            redactedData: {
+            redactedUserData: {
+              userId: existingUser.id,
               firstName: existingUser.firstName ? "●".repeat(Math.min(existingUser.firstName.length, 8)) : "",
               lastName: existingUser.lastName ? "●".repeat(Math.min(existingUser.lastName.length, 8)) : "",
               phone: existingUser.phone ? "●".repeat(Math.min(existingUser.phone.length, 10)) : "",
-              address: existingUser.address ? "●".repeat(Math.min(existingUser.address ? existingUser.address.length : 0, 10)) : ""
+              address: addressData.address ? "●".repeat(Math.min(addressData.address.length, 10)) : "",
+              city: addressData.city ? "●".repeat(Math.min(addressData.city.length, 6)) : "",
+              state: addressData.state ? "●".repeat(Math.min(addressData.state.length, 2)) : "",
+              zipCode: addressData.zipCode ? "●".repeat(Math.min(addressData.zipCode.length, 5)) : ""
             }
           });
         } else {
