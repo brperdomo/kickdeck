@@ -30,7 +30,7 @@ export function SavedRegistrationAlert({
       <AlertDescription className="mt-2">
         <p className="mb-2">
           You have an unfinished registration for {eventName || 'this event'} that was saved {timeAgo}.
-          Would you like to resume where you left off?
+          We've automatically loaded your saved progress.
         </p>
         <div className="flex space-x-3 mt-4">
           <Button 
@@ -40,16 +40,7 @@ export function SavedRegistrationAlert({
             onClick={onResume}
           >
             <RefreshCw className="h-4 w-4 mr-1" /> 
-            Resume Registration
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="space-x-1" 
-            onClick={onDiscard}
-          >
-            <X className="h-4 w-4 mr-1" /> 
-            Start Fresh
+            Continue Registration
           </Button>
         </div>
       </AlertDescription>
