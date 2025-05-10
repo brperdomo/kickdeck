@@ -594,11 +594,16 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isVerifyingPassword, setIsVerifyingPassword] = useState(false);
   const [redactedUserData, setRedactedUserData] = useState<{
     firstName: string;
     lastName: string;
     phone: string;
     address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    userId: number;
   } | null>(null);
   
   // Skip auth step completely - if user is not logged in, we'll handle auth within personal step
@@ -2505,7 +2510,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                           <FormItem>
                             <FormLabel>ZIP Code</FormLabel>
                             <FormControl>
-                              <Input {...field} maxLength={5} />
+                              <Input 
+                                {...field} 
+                                maxLength={5}
+                                placeholder={emailExists && redactedUserData?.zipCode ? "*****" : undefined}
+                                disabled={emailExists && !form.getValues().authenticated}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -2513,6 +2523,60 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       />
                     </div>
                   </div>
+                  
+                  {/* Password verification section when existing account is found */}
+                  {emailExists && redactedUserData && !form.getValues().authenticated && (
+                    <div className="mt-6 p-4 border border-dashed border-primary rounded-md bg-primary/5">
+                      <h3 className="text-lg font-semibold text-primary mb-2">Existing Account Found</h3>
+                      <p className="text-sm mb-4">
+                        We found your information in our system. Please enter your password to continue with your saved information.
+                      </p>
+                      
+                      <div className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="password"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Password</FormLabel>
+                              <FormControl>
+                                <Input {...field} type="password" placeholder="Enter your password" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={verifyExistingAccount}
+                          disabled={isVerifyingPassword}
+                        >
+                          {isVerifyingPassword ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Verifying...
+                            </>
+                          ) : (
+                            'Continue with Existing Account'
+                          )}
+                        </Button>
+                        
+                        <div className="text-sm text-center text-muted-foreground">
+                          <Button 
+                            type="button" 
+                            variant="link" 
+                            onClick={useNewAccountInstead}
+                            className="h-auto p-0 text-xs"
+                          >
+                            Continue without using saved data
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="flex justify-between pt-6">
                     <SaveForLaterButton 
