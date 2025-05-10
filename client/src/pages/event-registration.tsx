@@ -3158,66 +3158,70 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         )}
                       </div>
                     ) : (
-                      // Regular Payment Flow (Pay Later not enabled) - Only show if there are fees
-                      registrationFee ? <div>
-                        <h4 
-                          className="font-semibold"
-                          style={{ color: event?.branding?.primaryColor || '#2C5282' }}
-                        >Payment Information</h4>
-                        <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
-                        <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
-                          <p className="flex items-start">
-                            <InfoPopover content={
-                              <div>
-                                Two-step payment process: Your payment information will be securely stored by Stripe, but your card will only be charged after your team registration is reviewed and approved by event administrators. The total amount will be charged at that time.
-                              </div>
-                            } />
-                            <span>
-                              <strong>Two-step payment process:</strong> Your payment information will be securely stored by Stripe, but your card will only be charged after your team registration is reviewed and approved by event administrators. The total amount of ${(parseFloat(calculateTotalAmount())).toFixed(2)} will be charged at that time.
-                            </span>
-                          </p>
-                        </div>
-                        
-                        <SetupPaymentProvider clientSecret={null}>
-                          <SetupPaymentForm 
-                            teamId={0} // This will be replaced by the real team ID after registration
-                            expectedAmount={parseFloat(calculateTotalAmount()) * 100} // Convert back to cents for payment processing
-                            teamName={teamForm.getValues().name}
-                            eventName={event?.name || 'tournament'}
-                            returnUrl={window.location.origin + '/payment-setup-confirmation'}
-                            onSuccess={(setupIntentId, paymentMethodId) => {
-                              console.log(`Setup intent created successfully: ${setupIntentId}, Payment method: ${paymentMethodId}`);
-                              
-                              // Make sure to sync the latest players array with form data
-                              teamForm.setValue('players', players);
-                              
-                              // Include all applicable fee IDs in the submission
-                              const allSelectedFeeIds = [
-                                ...(selectedFee ? [selectedFee.id] : []),
-                                ...requiredFees.map(fee => fee.id)
-                              ];
-                              
-                              // Then submit the form values along with player data, selected fees, and payment method info
-                              registerTeamMutation.mutate({
-                                ...teamForm.getValues(),
-                                selectedFeeIds: allSelectedFeeIds,
-                                totalAmount: parseFloat(calculateTotalAmount()) * 100, // in cents
-                                paymentMethod: 'card',
-                                addRosterLater, // Include the flag to indicate roster will be added later
-                                setupIntentId, // Include the setup intent ID
-                                paymentMethodId // Include the payment method ID
-                              });
-                            }}
-                            onError={(error) => {
-                              toast({
-                                title: "Payment Setup Error",
-                                description: error.message || "There was a problem setting up your payment method",
-                                variant: "destructive"
-                              });
-                            }}
-                          />
-                        </SetupPaymentProvider>
-                      </div> : null
+                      // Regular Payment Flow (Pay Later not enabled)
+                      <div>
+                        {registrationFee && (
+                          <>
+                            <h4 
+                              className="font-semibold"
+                              style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                            >Payment Information</h4>
+                            <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
+                            <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
+                              <p className="flex items-start">
+                                <InfoPopover content={
+                                  <div>
+                                    Two-step payment process: Your payment information will be securely stored by Stripe, but your card will only be charged after your team registration is reviewed and approved by event administrators. The total amount will be charged at that time.
+                                  </div>
+                                } />
+                                <span>
+                                  <strong>Two-step payment process:</strong> Your payment information will be securely stored by Stripe, but your card will only be charged after your team registration is reviewed and approved by event administrators. The total amount of ${(parseFloat(calculateTotalAmount())).toFixed(2)} will be charged at that time.
+                                </span>
+                              </p>
+                            </div>
+                            
+                            <SetupPaymentProvider clientSecret={null}>
+                              <SetupPaymentForm 
+                                teamId={0} // This will be replaced by the real team ID after registration
+                                expectedAmount={parseFloat(calculateTotalAmount()) * 100} // Convert back to cents for payment processing
+                                teamName={teamForm.getValues().name}
+                                eventName={event?.name || 'tournament'}
+                                returnUrl={window.location.origin + '/payment-setup-confirmation'}
+                                onSuccess={(setupIntentId, paymentMethodId) => {
+                                  console.log(`Setup intent created successfully: ${setupIntentId}, Payment method: ${paymentMethodId}`);
+                                  
+                                  // Make sure to sync the latest players array with form data
+                                  teamForm.setValue('players', players);
+                                  
+                                  // Include all applicable fee IDs in the submission
+                                  const allSelectedFeeIds = [
+                                    ...(selectedFee ? [selectedFee.id] : []),
+                                    ...requiredFees.map(fee => fee.id)
+                                  ];
+                                  
+                                  // Then submit the form values along with player data, selected fees, and payment method info
+                                  registerTeamMutation.mutate({
+                                    ...teamForm.getValues(),
+                                    selectedFeeIds: allSelectedFeeIds,
+                                    totalAmount: parseFloat(calculateTotalAmount()) * 100, // in cents
+                                    paymentMethod: 'card',
+                                    addRosterLater, // Include the flag to indicate roster will be added later
+                                    setupIntentId, // Include the setup intent ID
+                                    paymentMethodId // Include the payment method ID
+                                  });
+                                }}
+                                onError={(error) => {
+                                  toast({
+                                    title: "Payment Setup Error",
+                                    description: error.message || "There was a problem setting up your payment method",
+                                    variant: "destructive"
+                                  });
+                                }}
+                              />
+                            </SetupPaymentProvider>
+                          </>
+                        )}
+                      </div>
                     )}
                   </div>
                 )}
