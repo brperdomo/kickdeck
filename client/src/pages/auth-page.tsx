@@ -101,11 +101,23 @@ export default function AuthPage() {
       // Set a simple flag to indicate auth is complete
       sessionStorage.setItem('authRedirectCompleted', 'true');
       
+      // Set a timestamp to ensure we can track when this redirect happened
+      sessionStorage.setItem('authRedirectTime', Date.now().toString());
+      
       // Clear the redirect path
       sessionStorage.removeItem('redirectAfterAuth');
       
-      // Just navigate directly to the path without any parameters
-      window.location.href = redirectPath;
+      // Ensure we add a special query parameter to force the event registration page
+      // to recognize we're coming from login and move to the next step
+      if (redirectPath.includes('/register/event/')) {
+        // Special handling for event registration to ensure step advancement
+        const eventPath = redirectPath + (redirectPath.includes('?') ? '&' : '?') + 'auth_complete=true';
+        console.log("Enhanced event registration redirect path:", eventPath);
+        window.location.href = eventPath;
+      } else {
+        // Standard redirect for other paths
+        window.location.href = redirectPath;
+      }
       return;
     }
     
