@@ -3,11 +3,13 @@ import { Link } from 'wouter';
 import { formatDate } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, CreditCard } from 'lucide-react';
+import { AlertCircle, CreditCard, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { PaymentStatusBadge, TeamStatusBadge } from '@/components/ui/payment-status-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { useState } from 'react';
 
 interface Registration {
   id: number;
@@ -35,6 +37,9 @@ interface Registration {
 }
 
 export default function UserRegistrationsView() {
+  const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['user', 'registrations'],
     queryFn: async () => {
@@ -48,6 +53,12 @@ export default function UserRegistrationsView() {
   
   // Extract registrations array from the response
   const registrations = data?.registrations || [];
+  
+  // Function to show registration details
+  const showRegistrationDetails = (registration: Registration) => {
+    setSelectedRegistration(registration);
+    setDetailsDialogOpen(true);
+  };
 
   if (isLoading) {
     return (
@@ -168,8 +179,13 @@ export default function UserRegistrationsView() {
             <CardFooter className="pt-2">
               <div className="flex flex-col w-full gap-2">
                 <div className="flex justify-between gap-2">
-                  <Button variant="outline" size="sm" className="w-full" asChild>
-                    <Link href={`/registrations/${registration.id}/details`}>View Registration Details</Link>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full" 
+                    onClick={() => showRegistrationDetails(registration)}
+                  >
+                    View Registration Details
                   </Button>
                 </div>
                 
