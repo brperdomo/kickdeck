@@ -30,6 +30,7 @@ import FormTemplateEditPage from "@/pages/form-template-edit";
 import ProductUpdatesPage from "@/pages/product-updates";
 import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
+import EventDetailsPreview from "./pages/event-details-preview";
 import MainLayout from "@/components/layouts/MainLayout";
 import { FeeManagement } from "@/components/events/FeeManagement";
 import FeeManagementPage from "@/pages/fee-management";
@@ -131,11 +132,15 @@ function Router() {
 
       {/* Public routes that don't require authentication */}
       
-      {/* Event registration routes - always available regardless of auth status */}
+      {/* Event registration routes - now using the preview first */}
       <Route path="/register/event/:eventId">
-        {(params) => <EventRegistration />}
+        {(params) => <EventDetailsPreview />}
       </Route>
       <Route path="/event/:eventId/register">
+        {(params) => <EventDetailsPreview />}
+      </Route>
+      {/* Protected route for actual registration form */}
+      <Route path="/register/event/:eventId/form">
         {(params) => <EventRegistration />}
       </Route>
       
