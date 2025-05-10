@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
@@ -19,10 +19,54 @@ export default function RegistrationAuthChecker({
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
+  const initialCheckDone = useRef(false);
+  
+  // Force a fresh user data fetch on mount to ensure we have the latest auth status
+  useEffect(() => {
+    if (!initialCheckDone.current) {
+      initialCheckDone.current = true;
+      
+      // Force a fresh fetch of user data by invalidating the query cache
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      
+      // Make a direct fetch to ensure the server session is recognized
+      const fetchUserData = async () => {
+        try {
+          const timestamp = Date.now();
+          const response = await fetch(`/api/user?t=${timestamp}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+              'Expires': '0',
+              'X-Cache-Bust': timestamp.toString()
+            }
+          });
+          
+          if (response.ok) {
+            const userData = await response.json();
+            console.log("RegistrationAuthChecker: Initial user data check:", userData ? 'authenticated' : 'not authenticated');
+            
+            // Update the query cache with fresh data
+            if (userData) {
+              queryClient.setQueryData(["/api/user"], userData);
+            }
+          }
+        } catch (e) {
+          console.error('RegistrationAuthChecker: Error fetching initial user data:', e);
+        }
+      };
+      
+      fetchUserData();
+    }
+  }, [queryClient]);
   
   // Effect to handle redirecting to login when not authenticated
   useEffect(() => {
-    if (!user && !authLoading) {
+    // Only redirect if we're certain the user isn't authenticated
+    // Wait for authLoading to be false before making this decision
+    if (!user && !authLoading && initialCheckDone.current) {
       console.log("RegistrationAuthChecker: User not authenticated, redirecting to login");
       setIsRedirecting(true);
       

@@ -539,8 +539,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   
   // For initialization, check if user is already logged in to bypass auth step
   // This ensures we start at the correct step even before the useEffect runs
-  const initialStep = isPreview ? 'personal' : (user ? 'personal' : 'auth');
-  console.log('Setting initial step based on auth status:', { initialStep, isLoggedIn: !!user, isAdmin: user?.isAdmin, userId: user?.id });
+  // Start with auth only if definitely not authenticated, otherwise wait for confirmation
+  const initialStep = isPreview ? 'personal' : (user ? 'personal' : (authLoading ? 'personal' : 'auth'));
+  console.log('Setting initial step based on auth status:', { initialStep, isLoggedIn: !!user, isLoading: authLoading, isAdmin: user?.isAdmin, userId: user?.id });
   
   console.log('🔍 AUTH DEBUG 🔍', {
     user: user ? { id: user.id, email: user.email } : null,
@@ -563,10 +564,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     // Skip check for preview mode since it's always personal step
     if (isPreview) return;
     
-    // If we're on the auth step and user becomes authenticated, advance to personal step
-    if (currentStep === 'auth' && user) {
-      console.log('🔑 Auth state changed: User logged in, advancing to personal step', { userId: user.id, email: user.email });
-      setCurrentStep('personal');
+    // If user exists, always advance to personal step regardless of current step
+    // This ensures we never show the auth step when user is already logged in
+    if (user) {
+      console.log('🔑 Auth state detected: User is logged in, ensuring we are at personal step', { userId: user.id, email: user.email });
+      if (currentStep === 'auth') {
+        setCurrentStep('personal');
+      }
     }
   }, [user, currentStep, isPreview]);
   
