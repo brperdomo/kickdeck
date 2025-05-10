@@ -72,9 +72,15 @@ export default function RegistrationAuthChecker({
   
   // Handle redirect parameters and cleanup after login
   useEffect(() => {
+    console.log("RegistrationAuthChecker: Checking registration URL parameters");
+    
     // Check for any post-login redirect parameters and clean them up
     const params = new URLSearchParams(window.location.search);
-    if (params.has('redirect') || params.has('force_refresh') || params.has('auth_complete')) {
+    
+    // Don't redirect if we're already in the registration flow with auth_complete
+    const isAuthComplete = params.has('auth_complete');
+    
+    if (params.has('redirect') || params.has('force_refresh') || isAuthComplete) {
       console.log('Cleaning up auth-related URL parameters');
       
       // Clear any auth-related session storage items
@@ -83,6 +89,9 @@ export default function RegistrationAuthChecker({
       // Clean up the URL by removing parameters
       const cleanUrl = window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
+      
+      // Store a flag to prevent further redirects while in registration
+      sessionStorage.setItem('inRegistrationFlow', 'true');
     }
   }, []);
   

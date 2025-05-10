@@ -960,6 +960,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     // If user is logged in and on auth step, redirect to personal step
     if (user && currentStep === 'auth') {
       console.log('Auth bypass effect triggered - user is logged in, redirecting to personal step');
+      
+      // Set a flag to indicate we're in the registration flow to prevent unwanted redirects
+      sessionStorage.setItem('inRegistrationFlow', 'true');
+      
+      // Move to personal step since we're already logged in
       setCurrentStep('personal');
     }
   }, [user, currentStep]);
@@ -2026,7 +2031,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <Button 
                           type="button"
                           className="font-medium ml-2 relative"
-                          onClick={() => handleDirectStepNavigation('team')}
+                          onClick={() => {
+                            // Set a flag to indicate we're in the registration flow
+                            sessionStorage.setItem('inRegistrationFlow', 'true');
+                            // Navigate to the team step
+                            handleDirectStepNavigation('team');
+                          }}
                           style={{ 
                             backgroundColor: event?.branding?.secondaryColor || '#48BB78',
                             color: 'white',

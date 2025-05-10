@@ -136,6 +136,16 @@ export default function AuthPage() {
     // But first check if we're on the auth page directly (not from a registration flow)
     const isDirectAuthPage = window.location.pathname === '/auth';
     
+    // Check if we're in the middle of registration and should not redirect
+    const inRegistrationFlow = sessionStorage.getItem('inRegistrationFlow') === 'true';
+    
+    if (inRegistrationFlow) {
+      console.log("AUTH: User is in registration flow, not redirecting to dashboard");
+      // Clear the flag after using it to avoid issues with future navigation
+      sessionStorage.removeItem('inRegistrationFlow');
+      return;
+    }
+    
     if (isDirectAuthPage) {
       const defaultPath = user.isAdmin ? '/admin' : '/dashboard';
       console.log("No redirect path, going to:", defaultPath);
