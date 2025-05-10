@@ -169,10 +169,8 @@ export default function UserRegistrationsView() {
               <div className="flex flex-col w-full gap-2">
                 <div className="flex justify-between gap-2">
                   <Button variant="outline" size="sm" className="w-full" asChild>
-                    <Link href={`/events/${registration.eventId}/details`}>View Event</Link>
+                    <Link href={`/registrations/${registration.id}/details`}>View Registration Details</Link>
                   </Button>
-                  
-                  {/* Payment buttons removed - admins handle all payment approvals */}
                 </div>
                 
                 {/* Show card info if it exists */}
