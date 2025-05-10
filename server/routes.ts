@@ -219,9 +219,23 @@ export function registerRoutes(app: Express): Server {
           .where(eq(users.email, email))
           .limit(1);
         
-        return res.json({ 
-          exists: !!existingUser 
-        });
+        if (existingUser) {
+          // Return redacted data if the user exists
+          // Only return the pattern of the data, not the actual values
+          return res.json({ 
+            exists: true,
+            redactedData: {
+              firstName: existingUser.firstName ? "●".repeat(Math.min(existingUser.firstName.length, 8)) : "",
+              lastName: existingUser.lastName ? "●".repeat(Math.min(existingUser.lastName.length, 8)) : "",
+              phone: existingUser.phone ? "●".repeat(Math.min(existingUser.phone.length, 10)) : "",
+              address: existingUser.address ? "●".repeat(Math.min(existingUser.address ? existingUser.address.length : 0, 10)) : ""
+            }
+          });
+        } else {
+          return res.json({ 
+            exists: false 
+          });
+        }
       } catch (error) {
         console.error('Error checking email existence:', error);
         return res.status(500).json({ 

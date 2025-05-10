@@ -593,6 +593,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [redactedUserData, setRedactedUserData] = useState<{
+    firstName: string;
+    lastName: string;
+    phone: string;
+    address: string;
+  } | null>(null);
   
   // Skip auth step completely - if user is not logged in, we'll handle auth within personal step
   // This ensures we start at the personal step every time - simpler and more reliable flow
@@ -631,6 +638,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       
       // Set the state based on the response
       setEmailExists(data.exists);
+      
+      // If user exists, set the redacted data
+      if (data.exists && data.redactedData) {
+        setRedactedUserData(data.redactedData);
+      } else {
+        setRedactedUserData(null);
+      }
+      
       return data.exists;
     } catch (error) {
       console.error('Error checking email:', error);
