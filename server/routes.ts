@@ -956,10 +956,17 @@ export function registerRoutes(app: Express): Server {
           });
         }
         
-        // Skip player validation if addRosterLater flag is set to true
-        console.log('addRosterLater value:', addRosterLater, 'typeof:', typeof addRosterLater);
-        console.log('players array:', players);
+        // If no registration fee is required, don't require players
+        // This is particularly important for free registrations
+        const hasNoFees = !totalAmount || totalAmount === 0;
+        const isFreeModeRegistration = paymentMethod === 'free';
         
+        // For free registrations with no fees, automatically set addRosterLater to true
+        if (hasNoFees && isFreeModeRegistration) {
+          addRosterLater = true;
+        }
+        
+        // Skip player validation if addRosterLater flag is set to true
         if (!addRosterLater && (!Array.isArray(players) || players.length === 0)) {
           return res.status(400).json({ 
             error: 'At least one player is required to register a team, or select the "Add Roster Later" option.' 
