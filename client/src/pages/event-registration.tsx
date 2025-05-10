@@ -26,6 +26,7 @@ import {
   ArrowRight,
   Info
 } from "lucide-react";
+import { InfoPopover } from "@/components/ui/InfoPopover";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
 import { useAuth } from "@/hooks/use-auth";
@@ -3021,7 +3022,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
                             <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
                               <p className="flex items-start">
-                                <Info className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                                <InfoPopover content={
+                                  <div>
+                                    Two-step payment process: Your payment information will be securely stored, but your card will only be charged after your team registration is reviewed and approved by event administrators.
+                                  </div>
+                                } />
                                 <span>
                                   <strong>Two-step payment process:</strong> Your payment information will be securely stored, but your card will only be charged after your team registration is reviewed and approved by event administrators.
                                 </span>
@@ -3120,7 +3125,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <p className="text-sm text-gray-600 mb-2">Please provide your payment details below</p>
                         <div className="p-3 mb-4 bg-blue-50 border border-blue-100 rounded-md text-blue-800 text-sm">
                           <p className="flex items-start">
-                            <Info className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                            <InfoPopover content={
+                              <div>
+                                Two-step payment process: Your payment information will be securely stored by Stripe, but your card will only be charged after your team registration is reviewed and approved by event administrators. The total amount will be charged at that time.
+                              </div>
+                            } />
                             <span>
                               <strong>Two-step payment process:</strong> Your payment information will be securely stored by Stripe, but your card will only be charged after your team registration is reviewed and approved by event administrators. The total amount of ${(parseFloat(calculateTotalAmount())).toFixed(2)} will be charged at that time.
                             </span>

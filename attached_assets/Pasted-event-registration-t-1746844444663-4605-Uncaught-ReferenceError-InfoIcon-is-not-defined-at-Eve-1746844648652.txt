@@ -1,0 +1,43 @@
+event-registration.t…=1746844444663:4605 Uncaught ReferenceError: InfoIcon is not defined
+    at EventRegistration (event-registration.t…46844444663:4605:50)
+
+event-registration.t…t=1746844444663:596 Setting initial step based on auth status: 
+{initialStep: 'personal', isLoggedIn: true, isAdmin: false}
+event-registration.t…t=1746844444663:596 Setting initial step based on auth status: 
+{initialStep: 'personal', isLoggedIn: true, isAdmin: false}
+event-registration.t…=1746844444663:4605 Uncaught ReferenceError: InfoIcon is not defined
+    at EventRegistration (event-registration.t…46844444663:4605:50)
+chunk-RPCDYKBN.js?v=8e1f054b:14032 The above error occurred in the <EventRegistration> component:
+
+    at EventRegistration (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/pages/event-registration.tsx?t=1746844444663:579:45)
+    at Route (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=8e1f054b:323:16)
+    at Switch (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=8e1f054b:379:17)
+    at Router (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx?t=1746844444663:69:31)
+    at div
+    at div
+    at MainLayout (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/components/layouts/MainLayout.tsx:18:30)
+    at Provider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…unner/workspace/node_modules/.vite/deps/chunk-GE6KQUNF.js?v=8e1f054b:38:15)
+    at TooltipProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=8e1f054b:64:5)
+    at AuthProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=8e1f054b:2829:3)
+    at App (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/src/App.tsx?t=1746844444663:921:3)
+    at QueryClientProvider (https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=8e1f054b:2829:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError	@	chunk-RPCDYKBN.js?v=8e1f054b:14032
+update.callback	@	chunk-RPCDYKBN.js?v=8e1f054b:14052
+callCallback	@	chunk-RPCDYKBN.js?v=8e1f054b:11248
+commitUpdateQueue	@	chunk-RPCDYKBN.js?v=8e1f054b:11265
+commitLayoutEffectOnFiber	@	chunk-RPCDYKBN.js?v=8e1f054b:17093
+commitLayoutMountEffects_complete	@	chunk-RPCDYKBN.js?v=8e1f054b:17980
+commitLayoutEffects_begin	@	chunk-RPCDYKBN.js?v=8e1f054b:17969
+commitLayoutEffects	@	chunk-RPCDYKBN.js?v=8e1f054b:17920
+commitRootImpl	@	chunk-RPCDYKBN.js?v=8e1f054b:19353
+commitRoot	@	chunk-RPCDYKBN.js?v=8e1f054b:19277
+performSyncWorkOnRoot	@	chunk-RPCDYKBN.js?v=8e1f054b:18895
+flushSyncCallbacks	@	chunk-RPCDYKBN.js?v=8e1f054b:9119
+(anonymous)	@	chunk-RPCDYKBN.js?v=8e1f054b:18627
+chunk-RPCDYKBN.js?v=8e1f054b:9129 Uncaught ReferenceError: InfoIcon is not defined
+    at EventRegistration (event-registration.t…46844444663:4605:50)
+EventRegistration	@	event-registration.t…=1746844444663:4605
