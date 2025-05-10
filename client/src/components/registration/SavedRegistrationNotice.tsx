@@ -27,7 +27,7 @@ export function SavedRegistrationNotice({
       <AlertDescription>
         <p className="mb-3 mt-1">
           You have a saved registration in progress for {eventName} from {timeAgo}.
-          Would you like to resume where you left off?
+          We've automatically loaded your saved progress.
         </p>
         <div className="flex gap-3 mt-3">
           <Button 
@@ -37,16 +37,7 @@ export function SavedRegistrationNotice({
             onClick={onResume}
           >
             <RefreshCw className="h-4 w-4 mr-2" />
-            Resume Registration
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex items-center"
-            onClick={onDiscard}
-          >
-            <X className="h-4 w-4 mr-2" />
-            Start Fresh
+            Continue Registration
           </Button>
         </div>
       </AlertDescription>
