@@ -4425,39 +4425,65 @@ function TeamsView() {
                       </div>
                       <div className="font-medium">{selectedTeam.coachData?.headCoachName || 'N/A'}</div>
                     </div>
-                    <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Coach Email:</div>
-                      <div className="col-span-2">{selectedTeam.coachData?.headCoachEmail || 'N/A'}</div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Coach Email</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.coachData?.headCoachEmail || 'N/A'}</div>
                     </div>
-                    <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Coach Phone:</div>
-                      <div className="col-span-2">{selectedTeam.coachData?.headCoachPhone || 'N/A'}</div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Coach Phone</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.coachData?.headCoachPhone || 'N/A'}</div>
                     </div>
-                    <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Asst. Coach:</div>
-                      <div className="col-span-2">{selectedTeam.coachData?.assistantCoachName || 'N/A'}</div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <UserCircle className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Asst. Coach</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.coachData?.assistantCoachName || 'N/A'}</div>
                     </div>
-                    <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Asst. Email:</div>
-                      <div className="col-span-2">{selectedTeam.coachData?.assistantCoachEmail || 'N/A'}</div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Asst. Email</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.coachData?.assistantCoachEmail || 'N/A'}</div>
                     </div>
-                    <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Asst. Phone:</div>
-                      <div className="col-span-2">{selectedTeam.coachData?.assistantCoachPhone || 'N/A'}</div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Asst. Phone</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.coachData?.assistantCoachPhone || 'N/A'}</div>
                     </div>
-                    <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Club/Org:</div>
-                      <div className="col-span-2">{selectedTeam.clubName || 'N/A'}</div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Building2 className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Club/Org</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.clubName || 'N/A'}</div>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </div>
               
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle>
-                    Team Roster ({selectedTeam.players ? selectedTeam.players.length : 0} players)
-                  </CardTitle>
+              {/* Team Roster Card */}
+              <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted mt-6">
+                <div className="bg-muted/50 py-3 px-4 border-b border-border flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-primary" />
+                    <h3 className="font-semibold">Team Roster ({selectedTeam.players ? selectedTeam.players.length : 0} players)</h3>
+                  </div>
                   <div className="flex space-x-2">
                     <Button 
                       variant="outline" 
@@ -4498,26 +4524,27 @@ function TeamsView() {
                       Add Player
                     </Button>
                   </div>
-                </CardHeader>
-                <CardContent>
+                </div>
+                <div className="p-4">
                   {selectedTeam.players && selectedTeam.players.length > 0 ? (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Name</TableHead>
-                          <TableHead>Date of Birth</TableHead>
-                          <TableHead>Jersey #</TableHead>
-                          <TableHead>Position</TableHead>
-                          <TableHead>Contact</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {selectedTeam.players.map((player: any) => (
-                          <TableRow key={player.id}>
-                            <TableCell>{player.firstName} {player.lastName}</TableCell>
-                            <TableCell>{formatDate(player.dateOfBirth)}</TableCell>
-                            <TableCell>{player.jerseyNumber || 'N/A'}</TableCell>
+                    <div className="rounded-md border">
+                      <Table>
+                        <TableHeader className="bg-muted/30">
+                          <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Date of Birth</TableHead>
+                            <TableHead>Jersey #</TableHead>
+                            <TableHead>Position</TableHead>
+                            <TableHead>Contact</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {selectedTeam.players.map((player: any) => (
+                            <TableRow key={player.id}>
+                              <TableCell className="font-medium">{player.firstName} {player.lastName}</TableCell>
+                              <TableCell>{formatDate(player.dateOfBirth)}</TableCell>
+                              <TableCell>{player.jerseyNumber || 'N/A'}</TableCell>
                             <TableCell>{player.position || 'N/A'}</TableCell>
                             <TableCell>{player.parentGuardianEmail || 'N/A'}</TableCell>
                             <TableCell className="text-right">
