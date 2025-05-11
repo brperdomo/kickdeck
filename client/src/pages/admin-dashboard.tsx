@@ -4260,16 +4260,18 @@ function TeamsView() {
 
       {/* Team Details Dialog */}
       <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <div className="flex items-center gap-2">
-              <Trophy className="h-6 w-6 text-primary" />
-              <DialogTitle className="text-xl">{selectedTeam?.name}</DialogTitle>
-            </div>
-            <DialogDescription className="text-muted-foreground">
-              Complete registration information
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+          <div className="sticky top-0 z-10 bg-gradient-to-r from-primary/20 to-primary/5 px-6 py-4 border-b border-muted">
+            <DialogHeader>
+              <div className="flex items-center gap-2">
+                <Trophy className="h-6 w-6 text-primary" />
+                <DialogTitle className="text-xl">{selectedTeam?.name}</DialogTitle>
+              </div>
+              <DialogDescription className="text-muted-foreground">
+                Complete registration information
+              </DialogDescription>
+            </DialogHeader>
+          </div>
           
           {selectedTeam && (
             <div className="space-y-6 p-6">
@@ -4629,19 +4631,7 @@ function TeamsView() {
         </DialogContent>
       </Dialog>
       
-      {/* New Dialog Section */}
-      <Dialog open={false} onOpenChange={() => {}}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Placeholder</DialogTitle>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-                <div className="p-4">
-                  <div className="space-y-4">
-                    {/* Status & Payment Status */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-muted/20 p-3 rounded-md border border-border/50">
+      {/* Player Dialog */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
