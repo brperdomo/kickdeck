@@ -4617,12 +4617,28 @@ function TeamsView() {
                 </div>
               </div>
               
-              {/* Payment Information Card */}
-              <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted mt-6">
-                <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
-                  <CreditCard className="h-4 w-4 text-primary" />
-                  <h3 className="font-semibold">Payment Information</h3>
-                </div>
+              {/* Action buttons */}
+              <div className="mt-6 flex justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsDetailsDialogOpen(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* New Dialog Section */}
+      <Dialog open={false} onOpenChange={() => {}}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Placeholder</DialogTitle>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
                 <div className="p-4">
                   <div className="space-y-4">
                     {/* Status & Payment Status */}

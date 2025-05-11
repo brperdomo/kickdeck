@@ -1,0 +1,500 @@
+      {/* Team Details Dialog */}
+      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 bg-gradient-to-b from-background to-background/95 border-muted">
+          <div className="sticky top-0 z-10 bg-gradient-to-r from-primary/20 to-primary/5 px-6 py-4 border-b border-muted rounded-t-lg">
+            <DialogHeader>
+              <div className="flex items-center gap-2">
+                <Trophy className="h-6 w-6 text-primary" />
+                <DialogTitle className="text-xl">{selectedTeam?.name}</DialogTitle>
+              </div>
+              <DialogDescription className="text-muted-foreground">
+                Complete registration information
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+          
+          {selectedTeam && (
+            <div className="space-y-6 p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Registration Card */}
+                <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted">
+                  <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
+                    <ClipboardList className="h-4 w-4 text-primary" />
+                    <h3 className="font-semibold">Registration Information</h3>
+                  </div>
+                  
+                  <div className="p-4 space-y-3">
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Flag className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Status</span>
+                      </div>
+                      <div>
+                        <Badge className="font-medium" variant={
+                          selectedTeam.status === 'approved' ? 'success' : 
+                          selectedTeam.status === 'rejected' ? 'destructive' : 
+                          'default'
+                        }>
+                          {selectedTeam.status?.toUpperCase() || 'REGISTERED'}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <CalendarRange className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Event</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.event?.name || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Age Group</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.ageGroup?.ageGroup || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Trophy className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Division</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.ageGroup?.divisionCode || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Submitted by</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.submitterEmail || selectedTeam.managerEmail}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Submission Date</span>
+                      </div>
+                      <div className="font-medium">{formatDate(selectedTeam.createdAt)}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Payment Status</span>
+                      </div>
+                      <div>
+                        <Badge 
+                          className="font-medium" 
+                          variant={
+                            selectedTeam.paymentStatus === 'paid' ? 'success' : 
+                            selectedTeam.paymentStatus === 'refunded' ? 'outline' : 
+                            'outline'
+                          }
+                        >
+                          {selectedTeam.paymentStatus || 'Unpaid'}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Registration Fee</span>
+                      </div>
+                      <div className="font-medium">{formatCurrency(selectedTeam.registrationFee || 0)}</div>
+                    </div>
+                    
+                    {selectedTeam.status === 'rejected' && (
+                      <div className="flex items-start justify-between py-2 border-b border-border/50">
+                        <div className="flex items-center gap-2">
+                          <AlertTriangle className="h-4 w-4 text-destructive" />
+                          <span className="text-muted-foreground">Rejection Reason</span>
+                        </div>
+                        <div className="font-medium text-right max-w-[60%]">{selectedTeam.notes || 'No reason provided'}</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Team Information Card */}
+                <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted">
+                  <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
+                    <Users className="h-4 w-4 text-primary" />
+                    <h3 className="font-semibold">Team Information</h3>
+                  </div>
+                  
+                  <div className="p-4 space-y-3">
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Flag className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Team Name</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.name}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Manager</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.managerName || selectedTeam.managerEmail}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Manager Email</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.managerEmail || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Manager Phone</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.managerPhone || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <UserCircle className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Head Coach</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.coachData?.headCoachName || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Coach Email</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.coachData?.headCoachEmail || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Coach Phone</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.coachData?.headCoachPhone || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <UserCircle className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Asst. Coach</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.coachData?.assistantCoachName || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Asst. Email</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.coachData?.assistantCoachEmail || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Asst. Phone</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.coachData?.assistantCoachPhone || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Building2 className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">Club/Org</span>
+                      </div>
+                      <div className="font-medium">{selectedTeam.clubName || 'N/A'}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Team Roster Card */}
+              <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted mt-6">
+                <div className="bg-muted/50 py-3 px-4 border-b border-border flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-primary" />
+                    <h3 className="font-semibold">Team Roster ({selectedTeam.players ? selectedTeam.players.length : 0} players)</h3>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="csv-upload-button"
+                      onClick={() => setIsCsvUploadDialogOpen(true)}
+                    >
+                      <FileUp className="mr-2 h-4 w-4" />
+                      Import CSV
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="team-edit-button"
+                      onClick={() => {
+                        // Initialize a new blank player
+                        setSelectedPlayer({
+                          id: 0,
+                          teamId: selectedTeam.id,
+                          firstName: '',
+                          lastName: '',
+                          dateOfBirth: '',
+                          jerseyNumber: '',
+                          position: '',
+                          medicalNotes: '',
+                          parentGuardianName: '',
+                          parentGuardianEmail: '',
+                          parentGuardianPhone: '',
+                          emergencyContactName: '',
+                          emergencyContactPhone: '',
+                          isActive: true
+                        });
+                        setIsAddPlayerMode(true);
+                        setIsPlayerDialogOpen(true);
+                      }}
+                    >
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Add Player
+                    </Button>
+                  </div>
+                </div>
+                <div className="p-4">
+                  {selectedTeam.players && selectedTeam.players.length > 0 ? (
+                    <div className="rounded-md border">
+                      <Table>
+                        <TableHeader className="bg-muted/30">
+                          <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Date of Birth</TableHead>
+                            <TableHead>Jersey #</TableHead>
+                            <TableHead>Position</TableHead>
+                            <TableHead>Contact</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {selectedTeam.players.map((player: any) => (
+                            <TableRow key={player.id}>
+                              <TableCell className="font-medium">{player.firstName} {player.lastName}</TableCell>
+                              <TableCell>{formatDate(player.dateOfBirth)}</TableCell>
+                              <TableCell>{player.jerseyNumber || 'N/A'}</TableCell>
+                            <TableCell>{player.position || 'N/A'}</TableCell>
+                            <TableCell>{player.parentGuardianEmail || 'N/A'}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="team-edit-button"
+                                  onClick={() => {
+                                    setSelectedPlayer(player);
+                                    setIsAddPlayerMode(false);
+                                    setIsPlayerDialogOpen(true);
+                                  }}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                  <span className="sr-only">Edit</span>
+                                </Button>
+                                <Button
+                                  variant="ghost" 
+                                  size="icon"
+                                  className="team-edit-button"
+                                  onClick={() => {
+                                    setSelectedPlayer(player);
+                                    setIsDeletePlayerDialogOpen(true);
+                                  }}
+                                >
+                                  <Trash className="h-4 w-4 text-destructive" />
+                                  <span className="sr-only">Delete</span>
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center p-8 text-muted-foreground bg-muted/20 rounded-md border border-dashed">
+                      <Users className="h-12 w-12 mb-2 text-muted-foreground/50" />
+                      <p className="text-center mb-4">No players added to this team yet.</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          setSelectedPlayer({
+                            id: 0,
+                            teamId: selectedTeam.id,
+                            firstName: '',
+                            lastName: '',
+                            dateOfBirth: '',
+                            jerseyNumber: '',
+                            position: '',
+                            medicalNotes: '',
+                            parentGuardianName: '',
+                            parentGuardianEmail: '',
+                            parentGuardianPhone: '',
+                            emergencyContactName: '',
+                            emergencyContactPhone: '',
+                            isActive: true
+                          });
+                          setIsAddPlayerMode(true);
+                          setIsPlayerDialogOpen(true);
+                        }}
+                      >
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add First Player
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Payment Information Card */}
+              <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted mt-6">
+                <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-primary" />
+                  <h3 className="font-semibold">Payment Information</h3>
+                </div>
+                <div className="p-4">
+                  <div className="space-y-4">
+                    {/* Status & Payment Status */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-muted/20 p-3 rounded-md border border-border/50">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">Registration Status</span>
+                          </div>
+                          <div>
+                            {selectedTeam.status === 'approved' && (
+                              <Badge className="bg-green-500 hover:bg-green-600">Approved</Badge>
+                            )}
+                            {selectedTeam.status === 'waitlisted' && (
+                              <Badge className="bg-amber-500 hover:bg-amber-600">Waitlisted</Badge>
+                            )}
+                            {selectedTeam.status === 'pending' && (
+                              <Badge variant="outline">Pending</Badge>
+                            )}
+                            {selectedTeam.status === 'rejected' && (
+                              <Badge className="bg-red-500 hover:bg-red-600">Rejected</Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-muted/20 p-3 rounded-md border border-border/50">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Receipt className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">Payment Status</span>
+                          </div>
+                          <div>
+                            {selectedTeam.isPaid ? (
+                              <Badge className="bg-green-500 hover:bg-green-600">Paid</Badge>
+                            ) : (
+                              <Badge variant="outline">Unpaid</Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Selected Fees */}
+                    <div className="bg-muted/20 p-3 rounded-md border border-border/50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Selected Fees</span>
+                      </div>
+                      {selectedTeam.registrationFees && selectedTeam.registrationFees.length > 0 ? (
+                        <div className="space-y-1 mt-2">
+                          {selectedTeam.registrationFees.map((fee: any) => (
+                            <div key={fee.id} className="flex justify-between text-sm py-1 border-b border-border/30 last:border-0">
+                              <span>{fee.name}</span>
+                              <span className="font-medium">{formatCurrency(fee.amount)}</span>
+                            </div>
+                          ))}
+                          <div className="flex justify-between pt-2 font-medium">
+                            <span>Total</span>
+                            <span>{formatCurrency(selectedTeam.totalAmount || 0)}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-muted-foreground py-2 text-sm">No fees selected</div>
+                      )}
+                    </div>
+
+                    {/* Payment Method & Dates */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-muted/20 p-3 rounded-md border border-border/50">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CreditCard className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Payment Method</span>
+                        </div>
+                        <div className="text-sm">
+                          {selectedTeam.cardLast4 ? (
+                            <div className="flex items-center gap-2">
+                              <CreditCard className="h-4 w-4" />
+                              <span>Card ending in {selectedTeam.cardLast4}</span>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">Not provided</span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="bg-muted/20 p-3 rounded-md border border-border/50">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Important Dates</span>
+                        </div>
+                        <div className="space-y-1 text-sm">
+                          <div className="flex justify-between">
+                            <span>Registered:</span>
+                            <span className="font-medium">{formatDate(selectedTeam.createdAt)}</span>
+                          </div>
+                          {selectedTeam.refundDate && (
+                            <div className="flex justify-between">
+                              <span>Refunded:</span>
+                              <span className="font-medium">{formatDate(selectedTeam.refundDate)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional notes or special requirements */}
+              {selectedTeam.specialRequirements && (
+                <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted mt-6">
+                  <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
+                    <ClipboardList className="h-4 w-4 text-primary" />
+                    <h3 className="font-semibold">Special Requirements</h3>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-muted-foreground whitespace-pre-line">{selectedTeam.specialRequirements}</p>
+                  </div>
+                </div>
+              )}
+              
+              {/* Action buttons */}
+              <div className="mt-6 flex justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsDetailsDialogOpen(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>

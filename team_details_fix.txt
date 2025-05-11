@@ -1,0 +1,278 @@
+      {/* Team Details Dialog */}
+      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 bg-gradient-to-b from-background to-background/95 border-muted">
+          <div className="sticky top-0 z-10 bg-gradient-to-r from-primary/20 to-primary/5 px-6 py-4 border-b border-muted rounded-t-lg">
+            <DialogHeader>
+              <div className="flex items-center gap-2">
+                <Trophy className="h-6 w-6 text-primary" />
+                <DialogTitle className="text-xl">{selectedTeam?.name}</DialogTitle>
+              </div>
+              <DialogDescription className="text-muted-foreground">
+                {selectedTeam?.eventName} - {selectedTeam?.bracketName}
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+          
+          {selectedTeam && (
+            <div className="p-6 space-y-6">
+              {/* Basic Info Card */}
+              <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted">
+                <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
+                  <Info className="h-4 w-4 text-primary" />
+                  <h3 className="font-semibold">Basic Information</h3>
+                </div>
+                <div className="p-4 space-y-3">
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="font-medium">Status:</div>
+                    <div className="col-span-2">
+                      <TeamStatusBadge status={selectedTeam.status} />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="font-medium">Age Group:</div>
+                    <div className="col-span-2">{selectedTeam.ageGroup?.ageGroup}</div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="font-medium">Gender:</div>
+                    <div className="col-span-2">{selectedTeam.gender}</div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="font-medium">Club:</div>
+                    <div className="col-span-2">{selectedTeam.clubName || 'Not specified'}</div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="font-medium">Registration Date:</div>
+                    <div className="col-span-2">
+                      {selectedTeam.createdAt ? formatDate(selectedTeam.createdAt) : 'Not available'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Coach Info Card */}
+              <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted">
+                <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
+                  <User className="h-4 w-4 text-primary" />
+                  <h3 className="font-semibold">Coach Information</h3>
+                </div>
+                <div className="p-4 space-y-3">
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="font-medium">Coach Name:</div>
+                    <div className="col-span-2">
+                      {selectedTeam.submitterName || 'Not available'}
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="font-medium">Email:</div>
+                    <div className="col-span-2">
+                      <div className="flex items-center">
+                        <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <a 
+                          href={`mailto:${selectedTeam.submitterEmail}`} 
+                          className="text-blue-600 hover:underline"
+                        >
+                          {selectedTeam.submitterEmail}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="font-medium">Phone:</div>
+                    <div className="col-span-2">
+                      <div className="flex items-center">
+                        <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+                        <a 
+                          href={`tel:${selectedTeam.submitterPhone}`} 
+                          className="text-blue-600 hover:underline"
+                        >
+                          {selectedTeam.submitterPhone}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Payment Information Card */}
+              <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted">
+                <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-primary" />
+                  <h3 className="font-semibold">Payment Information</h3>
+                </div>
+                <div className="p-4 space-y-3">
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="font-medium">Registration Fee:</div>
+                    <div className="col-span-2">
+                      {selectedTeam.registrationFee 
+                        ? formatCurrency(selectedTeam.registrationFee) 
+                        : 'Not available'}
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="font-medium">Total Amount:</div>
+                    <div className="col-span-2 font-semibold text-blue-700">
+                      {selectedTeam.totalAmount 
+                        ? formatCurrency(selectedTeam.totalAmount) 
+                        : selectedTeam.registrationFee 
+                          ? formatCurrency(selectedTeam.registrationFee) 
+                          : 'Not available'}
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="font-medium">Payment Status:</div>
+                    <div className="col-span-2">
+                      <PaymentStatusBadge status={selectedTeam.paymentStatus} />
+                    </div>
+                  </div>
+                  
+                  {selectedTeam.paymentIntentId && (
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Payment ID:</div>
+                      <div className="col-span-2">
+                        <code className="text-xs bg-muted p-1 rounded">
+                          {selectedTeam.paymentIntentId}
+                        </code>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {selectedTeam.cardLast4 && (
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Card:</div>
+                      <div className="col-span-2">
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-muted">
+                          <CreditCard className="h-3 w-3 mr-1 text-muted-foreground" />
+                          ●●●● {selectedTeam.cardLast4}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {selectedTeam.paymentDate && (
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Payment Date:</div>
+                      <div className="col-span-2">
+                        {formatDate(selectedTeam.paymentDate)}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {selectedTeam.refundDate && (
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="font-medium">Refund Date:</div>
+                      <div className="col-span-2">
+                        {formatDate(selectedTeam.refundDate)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Team Roster Card */}
+              <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted">
+                <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
+                  <Users className="h-4 w-4 text-primary" />
+                  <h3 className="font-semibold">Team Roster</h3>
+                  <div className="ml-auto">
+                    {playersQuery.isSuccess && playersQuery.data && playersQuery.data.length > 0 && (
+                      <Badge variant="outline" className="ml-2">
+                        {playersQuery.data.length} player{playersQuery.data.length !== 1 ? 's' : ''}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="p-4">
+                  {playersQuery.isLoading && (
+                    <div className="py-8 flex justify-center">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  )}
+                  
+                  {playersQuery.isSuccess && playersQuery.data && playersQuery.data.length > 0 && (
+                    <div className="space-y-3 max-h-64 overflow-y-auto pr-2">
+                      {playersQuery.data.map((player: any) => (
+                        <div 
+                          key={player.id}
+                          className="border border-border rounded-lg p-3 flex items-center justify-between bg-card hover:bg-accent/5 transition-colors"
+                        >
+                          <div>
+                            <div className="font-medium">{player.firstName} {player.lastName}</div>
+                            <div className="text-sm text-muted-foreground flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              <span>DOB: {formatDate(player.dateOfBirth)}</span>
+                              {player.position && (
+                                <>
+                                  <span className="mx-1">•</span>
+                                  <span>Position: {player.position}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              onClick={() => handleEditPlayer(player)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleDeletePlayer(player)}
+                              className="h-8 w-8 p-0 text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {playersQuery.isSuccess && (!playersQuery.data || playersQuery.data.length === 0) && (
+                    <div className="py-10 text-center">
+                      <div className="flex justify-center mb-4">
+                        <UserX className="h-12 w-12 text-muted-foreground" />
+                      </div>
+                      <h4 className="text-lg font-medium mb-2">No Players Added</h4>
+                      <p className="text-muted-foreground mb-4">
+                        This team does not have any players in the roster yet.
+                      </p>
+                      <Button 
+                        onClick={() => {
+                          setIsAddPlayerMode(true);
+                          setSelectedPlayer(null);
+                          setIsPlayerDialogOpen(true);
+                        }}
+                      >
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add First Player
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Action buttons */}
+              <div className="mt-6 flex justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsDetailsDialogOpen(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
