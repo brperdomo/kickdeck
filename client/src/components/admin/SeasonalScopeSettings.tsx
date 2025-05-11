@@ -168,8 +168,8 @@ export function SeasonalScopeSettings() {
       const year = parseInt(endYear);
       const initialMappings: AgeGroupSettings[] = [];
 
-      // Generate age groups (U4 to U18)
-      for (let i = 4; i <= 18; i++) {
+      // Generate age groups (U4 to U19)
+      for (let i = 4; i <= 19; i++) {
         const birthYear = year - i;
         const ageGroup = `U${i}`;
         const isYoungerAgeGroup = i <= 12;
