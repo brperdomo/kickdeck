@@ -120,10 +120,13 @@
 @media (max-width: 767px) {
   .payment-form-container {
     padding: 0 !important;
+    margin-bottom: 1.5rem !important;
   }
   
   .card-element-container {
     padding: 0.75rem !important;
+    background-color: #fafafa !important;
+    border-radius: 0.5rem !important;
   }
   
   /* Make payment buttons full width on mobile */
@@ -131,18 +134,58 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-top: 1.5rem !important;
   }
   
   .payment-button-container button {
     width: 100% !important;
     margin-top: 0.5rem !important;
     margin-bottom: 0.5rem !important;
+    height: 50px !important;
+    font-size: 1rem !important;
   }
   
   /* Better Stripe element styling for mobile */
   .mobile-stripe-element {
     padding: 0.75rem !important;
+    min-height: 50px !important;
     font-size: 16px !important; /* Prevent zooming on iOS */
+  }
+  
+  /* Fix for Stripe Element iframe on mobile devices */
+  .StripeElement {
+    width: 100% !important;
+    min-height: 50px !important;
+    padding: 0.75rem 0.5rem !important;
+  }
+  
+  .StripeElement--focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2) !important;
+  }
+  
+  /* Error message styling for payment forms */
+  .payment-error {
+    background-color: #fee2e2 !important;
+    border: 1px solid #ef4444 !important;
+    border-radius: 0.375rem !important;
+    color: #b91c1c !important;
+    font-size: 0.875rem !important;
+    padding: 0.75rem !important;
+    margin-top: 1rem !important;
+  }
+  
+  /* Payment form header/description styling */
+  .payment-form-title {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .payment-form-description {
+    font-size: 0.875rem !important;
+    color: #6b7280 !important;
+    margin-bottom: 1.25rem !important;
   }
 }
 
@@ -168,12 +211,48 @@
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important;
     margin: 0 -1rem -1rem -1rem !important;
     z-index: 10 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
   }
   
   .mobile-action-button {
     width: 100% !important;
-    height: 50px !important;
+    min-height: 50px !important;
     font-size: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 0.375rem !important;
+    transition: background-color 0.2s, transform 0.1s !important;
+  }
+  
+  .mobile-action-button:active {
+    transform: translateY(1px) !important;
+  }
+  
+  /* Improved hover state for mobile buttons */
+  .mobile-action-button-primary {
+    background-color: #2563eb !important;
+    color: white !important;
+  }
+  
+  .mobile-action-button-secondary {
+    background-color: #f3f4f6 !important;
+    color: #1f2937 !important;
+    border: 1px solid #d1d5db !important;
+  }
+  
+  /* Button group for next/back buttons */
+  .mobile-button-group {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+  
+  .mobile-button-group .mobile-action-button {
+    flex: 1 !important;
   }
 }
 
