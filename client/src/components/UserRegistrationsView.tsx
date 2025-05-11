@@ -214,120 +214,119 @@ export default function UserRegistrationsView() {
           </Card>
         ))}
       </div>
-    </div>
-    
-    {/* Registration Details Dialog */}
-    <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
-      <DialogContent className="max-w-md sm:max-w-lg md:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>Registration Details</span>
-            <Button variant="ghost" size="icon" onClick={() => setDetailsDialogOpen(false)}>
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogTitle>
-          <DialogDescription>
-            Registration details for {selectedRegistration?.teamName}
-          </DialogDescription>
-        </DialogHeader>
-        
-        {selectedRegistration && (
-          <div className="space-y-6">
-            {/* Team & Event Info */}
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium text-muted-foreground">Team Information</h3>
-                <div className="bg-muted rounded-md p-3">
-                  <p className="font-semibold text-lg">{selectedRegistration.teamName}</p>
-                  <p className="text-sm text-muted-foreground">Age Group: {selectedRegistration.ageGroup}</p>
+
+      <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
+        <DialogContent className="max-w-md sm:max-w-lg md:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>Registration Details</span>
+              <Button variant="ghost" size="icon" onClick={() => setDetailsDialogOpen(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogTitle>
+            <DialogDescription>
+              Registration details for {selectedRegistration?.teamName}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedRegistration && (
+            <div className="space-y-6">
+              {/* Team & Event Info */}
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground">Team Information</h3>
+                  <div className="bg-muted rounded-md p-3">
+                    <p className="font-semibold text-lg">{selectedRegistration.teamName}</p>
+                    <p className="text-sm text-muted-foreground">Age Group: {selectedRegistration.ageGroup}</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-muted-foreground">Event Information</h3>
+                  <div className="bg-muted rounded-md p-3">
+                    <p className="font-semibold text-lg">{selectedRegistration.eventName}</p>
+                    <p className="text-sm text-muted-foreground">Registration Date: {formatDate(selectedRegistration.registeredAt)}</p>
+                  </div>
                 </div>
               </div>
               
+              {/* Registration Status */}
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-muted-foreground">Event Information</h3>
-                <div className="bg-muted rounded-md p-3">
-                  <p className="font-semibold text-lg">{selectedRegistration.eventName}</p>
-                  <p className="text-sm text-muted-foreground">Registration Date: {formatDate(selectedRegistration.registeredAt)}</p>
+                <h3 className="text-sm font-medium text-muted-foreground">Registration Status</h3>
+                <div className="bg-muted rounded-md p-3 flex items-center justify-between">
+                  <span>Status:</span>
+                  <TeamStatusBadge 
+                    status={selectedRegistration.status} 
+                    payLater={selectedRegistration.payLater} 
+                    setupIntentId={selectedRegistration.setupIntentId} 
+                  />
                 </div>
               </div>
-            </div>
-            
-            {/* Registration Status */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-muted-foreground">Registration Status</h3>
-              <div className="bg-muted rounded-md p-3 flex items-center justify-between">
-                <span>Status:</span>
-                <TeamStatusBadge 
-                  status={selectedRegistration.status} 
-                  payLater={selectedRegistration.payLater} 
-                  setupIntentId={selectedRegistration.setupIntentId} 
-                />
-              </div>
-            </div>
-            
-            {/* Payment Information */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium text-muted-foreground">Payment Information</h3>
-              <div className="bg-muted rounded-md p-3 space-y-2">
-                <div className="flex justify-between">
-                  <span>Registration Fee:</span>
-                  <span className="font-semibold">${(selectedRegistration.amount / 100).toFixed(2)}</span>
-                </div>
-                
-                {selectedRegistration.paymentStatus && (
+              
+              {/* Payment Information */}
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-muted-foreground">Payment Information</h3>
+                <div className="bg-muted rounded-md p-3 space-y-2">
                   <div className="flex justify-between">
-                    <span>Payment Status:</span>
-                    <PaymentStatusBadge status={selectedRegistration.paymentStatus} />
+                    <span>Registration Fee:</span>
+                    <span className="font-semibold">${(selectedRegistration.amount / 100).toFixed(2)}</span>
                   </div>
-                )}
-                
-                {selectedRegistration.paymentDate && (
-                  <div className="flex justify-between">
-                    <span>Payment Date:</span>
-                    <span>{formatDate(selectedRegistration.paymentDate)}</span>
-                  </div>
-                )}
-                
-                {selectedRegistration.cardDetails?.last4 && (
-                  <div className="flex justify-between items-center">
-                    <span>Payment Method:</span>
-                    <div className="flex items-center gap-1">
-                      <CreditCard className="h-4 w-4" />
-                      <span>
-                        {selectedRegistration.cardDetails.brand 
-                          ? `${selectedRegistration.cardDetails.brand.charAt(0).toUpperCase() + selectedRegistration.cardDetails.brand.slice(1)} ending in ${selectedRegistration.cardDetails.last4}`
-                          : `Card ending in ${selectedRegistration.cardDetails.last4}`
-                        }
-                        {selectedRegistration.cardDetails.expMonth && selectedRegistration.cardDetails.expYear && 
-                          ` (exp. ${selectedRegistration.cardDetails.expMonth}/${selectedRegistration.cardDetails.expYear.toString().slice(-2)})`
-                        }
-                      </span>
+                  
+                  {selectedRegistration.paymentStatus && (
+                    <div className="flex justify-between">
+                      <span>Payment Status:</span>
+                      <PaymentStatusBadge status={selectedRegistration.paymentStatus} />
                     </div>
-                  </div>
-                )}
-                
-                {selectedRegistration.errorMessage && (
-                  <div className="mt-2 p-2 border border-destructive/50 bg-destructive/10 rounded-md text-sm text-destructive">
-                    <div className="font-semibold">Payment Error:</div>
-                    <div>{selectedRegistration.errorMessage}</div>
-                  </div>
-                )}
+                  )}
+                  
+                  {selectedRegistration.paymentDate && (
+                    <div className="flex justify-between">
+                      <span>Payment Date:</span>
+                      <span>{formatDate(selectedRegistration.paymentDate)}</span>
+                    </div>
+                  )}
+                  
+                  {selectedRegistration.cardDetails?.last4 && (
+                    <div className="flex justify-between items-center">
+                      <span>Payment Method:</span>
+                      <div className="flex items-center gap-1">
+                        <CreditCard className="h-4 w-4" />
+                        <span>
+                          {selectedRegistration.cardDetails.brand 
+                            ? `${selectedRegistration.cardDetails.brand.charAt(0).toUpperCase() + selectedRegistration.cardDetails.brand.slice(1)} ending in ${selectedRegistration.cardDetails.last4}`
+                            : `Card ending in ${selectedRegistration.cardDetails.last4}`
+                          }
+                          {selectedRegistration.cardDetails.expMonth && selectedRegistration.cardDetails.expYear && 
+                            ` (exp. ${selectedRegistration.cardDetails.expMonth}/${selectedRegistration.cardDetails.expYear.toString().slice(-2)})`
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {selectedRegistration.errorMessage && (
+                    <div className="mt-2 p-2 border border-destructive/50 bg-destructive/10 rounded-md text-sm text-destructive">
+                      <div className="font-semibold">Payment Error:</div>
+                      <div>{selectedRegistration.errorMessage}</div>
+                    </div>
+                  )}
 
-                {selectedRegistration.setupIntentId && (
-                  <div className="mt-2 p-2 border border-primary/20 bg-primary/5 rounded-md text-sm">
-                    <p className="font-medium text-primary">Payment Method Saved</p>
-                    <p className="text-muted-foreground">Your card will be charged after your registration is approved by the event organizer.</p>
-                  </div>
-                )}
+                  {selectedRegistration.setupIntentId && (
+                    <div className="mt-2 p-2 border border-primary/20 bg-primary/5 rounded-md text-sm">
+                      <p className="font-medium text-primary">Payment Method Saved</p>
+                      <p className="text-muted-foreground">Your card will be charged after your registration is approved by the event organizer.</p>
+                    </div>
+                  )}
+                </div>
               </div>
+              
+              <DialogFooter>
+                <Button onClick={() => setDetailsDialogOpen(false)}>Close</Button>
+              </DialogFooter>
             </div>
-            
-            <DialogFooter>
-              <Button onClick={() => setDetailsDialogOpen(false)}>Close</Button>
-            </DialogFooter>
-          </div>
-        )}
-      </DialogContent>
-    </Dialog>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
