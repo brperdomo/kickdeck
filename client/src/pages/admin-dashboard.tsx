@@ -4260,18 +4260,16 @@ function TeamsView() {
 
       {/* Team Details Dialog */}
       <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 bg-gradient-to-b from-background to-background/95 border-muted">
-          <div className="sticky top-0 z-10 bg-gradient-to-r from-primary/20 to-primary/5 px-6 py-4 border-b border-muted rounded-t-lg">
-            <DialogHeader>
-              <div className="flex items-center gap-2">
-                <Trophy className="h-6 w-6 text-primary" />
-                <DialogTitle className="text-xl">{selectedTeam?.name}</DialogTitle>
-              </div>
-              <DialogDescription className="text-muted-foreground">
-                Complete registration information
-              </DialogDescription>
-            </DialogHeader>
-          </div>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <Trophy className="h-6 w-6 text-primary" />
+              <DialogTitle className="text-xl">{selectedTeam?.name}</DialogTitle>
+            </div>
+            <DialogDescription className="text-muted-foreground">
+              Complete registration information
+            </DialogDescription>
+          </DialogHeader>
           
           {selectedTeam && (
             <div className="space-y-6 p-6">

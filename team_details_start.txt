@@ -1,0 +1,10 @@
+      {/* Team Details Dialog */}
+      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <Trophy className="h-6 w-6 text-primary" />
+              <DialogTitle className="text-xl">{selectedTeam?.name}</DialogTitle>
+            </div>
+            <DialogDescription className="text-muted-foreground">
+              Complete registration information
