@@ -116,36 +116,36 @@ export function SetupPaymentForm({
 
   return (
     <Card>
-      <CardHeader className="px-4 py-5 sm:p-6">
-        <CardTitle className="text-xl sm:text-2xl">Complete Payment Information</CardTitle>
-        <CardDescription className="text-sm sm:text-base mt-1">
+      <CardHeader>
+        <CardTitle>Complete Payment Information</CardTitle>
+        <CardDescription>
           Enter your payment details to secure your registration
         </CardDescription>
       </CardHeader>
-      <CardContent className="px-4 py-3 sm:p-6">
+      <CardContent>
         <Alert className="mb-4 bg-blue-50 border-blue-200">
           <Info className="h-4 w-4 text-blue-500" />
-          <AlertDescription className="text-blue-700 text-sm sm:text-base">
-            <p className="mb-1">Your card will not be charged now. We are only collecting your payment information.</p>
-            <p className="mb-1">You will only be charged after your team registration is approved.</p>
-            <p>The expected amount is ${(expectedAmount / 100).toFixed(2)}.</p>
+          <AlertDescription className="text-blue-700">
+            Your card will not be charged now. We are only collecting your payment information.
+            You will only be charged after your team registration is approved.
+            The expected amount is ${(expectedAmount / 100).toFixed(2)}.
           </AlertDescription>
         </Alert>
         
-        <form onSubmit={handleSubmit} className="space-y-6 payment-form-container">
-          <div className="p-3 sm:p-4 bg-accent/10 rounded-lg card-element-container">
-            <PaymentElement className="mobile-stripe-element" />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="p-4 bg-accent/10 rounded-lg">
+            <PaymentElement />
           </div>
           
           {errorMessage && (
-            <div className="p-3 bg-destructive/10 text-destructive rounded-lg text-sm sm:text-base">
+            <div className="p-3 bg-destructive/10 text-destructive rounded-lg">
               {errorMessage}
             </div>
           )}
           
           <Button 
             type="submit" 
-            className="w-full touch-target-input mobile-action-button" 
+            className="w-full" 
             disabled={!stripe || isLoading}
           >
             {isLoading ? (

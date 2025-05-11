@@ -24,7 +24,6 @@ import {
   Save,
   Clock,
   ArrowRight,
-  ArrowLeft,
   Info,
   UserCircle,
   UserSquare,
@@ -411,10 +410,10 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 payment-form-container">
-      <div className="p-4 border rounded-md card-element-container">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="p-4 border rounded-md">
         {/* Replace PaymentElement with CardElement which is more reliable */}
-        <CardElement className="p-3 border rounded mobile-stripe-element" options={{
+        <CardElement className="p-3 border rounded" options={{
           style: {
             base: {
               fontSize: '16px',
@@ -422,7 +421,6 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
               '::placeholder': {
                 color: '#aab7c4',
               },
-              iconColor: '#2C5282',
             },
             invalid: {
               color: '#9e2146',
@@ -430,11 +428,11 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
           },
         }} />
       </div>
-      <div className="flex justify-end mt-4 payment-button-container">
+      <div className="flex justify-end mt-4">
         <Button 
           disabled={!stripe || isProcessing} 
           type="submit"
-          className="text-white mt-4 touch-target-input mobile-action-button"
+          className="text-white mt-4"
           style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
         >
           {isProcessing ? (
@@ -2891,28 +2889,27 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     </div>
                   )}
 
-                  <div className="flex flex-col-reverse sm:flex-row justify-between pt-6 mobile-action-buttons">
+                  <div className="flex justify-between pt-6">
                     <SaveForLaterButton 
                       onSave={saveCurrentState} 
                       variant="ghost"
-                      className="transition-all hover:bg-primary/5 order-2 sm:order-1 mt-2 sm:mt-0"
+                      className="transition-all hover:bg-primary/5"
                     />
                     
-                    <div className="flex mobile-button-group order-1 sm:order-2 sm:space-x-4">
+                    <div className="flex space-x-4">
                       <Button
                         type="button"
                         variant="outline"
                         onClick={() => setCurrentStep('auth')}
-                        className="border-gray-300 hover:border-gray-400 transition-all hover:bg-gray-50 mobile-action-button mobile-action-button-secondary"
+                        className="border-gray-300 hover:border-gray-400 transition-all hover:bg-gray-50"
                       >
-                        <ArrowLeft className="h-4 w-4 mr-2 sm:block hidden" />
                         Back
                       </Button>
                       
                       {/* Original submit button just saves but doesn't advance */}
                       <Button 
                         type="submit"
-                        className="font-medium shadow-md transition-all duration-300 hover:shadow-lg mobile-action-button mobile-action-button-primary"
+                        className="font-medium shadow-md transition-all duration-300 hover:shadow-lg h-10"
                         style={{ 
                           backgroundColor: event?.branding?.primaryColor || '#2C5282',
                           color: primaryContrastColor
@@ -2976,11 +2973,10 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className="registration-step"
               >
                 <Form {...teamForm}>
                   <form onSubmit={teamForm.handleSubmit(onSubmitTeamRegistration)} className="space-y-6">
-                  <div className="space-y-4 form-field-group">
+                  <div className="space-y-4">
                     <h3 
                       className="text-xl font-semibold"
                       style={{ color: event?.branding?.primaryColor || '#2C5282' }}
@@ -3317,24 +3313,24 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   </div>
                   
                   <div className="space-y-4 border-t pt-4">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 mb-3 sm:mb-0">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-4">
                         <h3 
-                          className="text-xl font-semibold mb-2 sm:mb-0"
+                          className="text-xl font-semibold"
                           style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                         >
                           Player Roster
                         </h3>
                         
                         {/* Add Roster Later Checkbox */}
-                        <div className="flex items-center mobile-checkbox-wrapper">
+                        <div className="flex items-center">
                           <Checkbox 
                             id="add-roster-later" 
                             checked={addRosterLater}
                             onCheckedChange={(checked) => {
                               setAddRosterLater(checked === true);
                             }}
-                            className="mr-2 checkbox"
+                            className="mr-2"
                           />
                           <label
                             htmlFor="add-roster-later"
@@ -3348,13 +3344,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         </div>
                       </div>
                       
-                      <div className="flex gap-2 roster-add-buttons mobile-team-actions">
+                      <div className="flex gap-2">
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
                           onClick={addPlayer}
-                          className="flex items-center touch-target-input mobile-action-button"
+                          className="flex items-center"
                           disabled={addRosterLater}
                         >
                           <PlusCircle className="w-4 h-4 mr-2" />
@@ -3366,14 +3362,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               type="button"
                               variant="outline"
                               size="sm"
-                              className="flex items-center touch-target-input mobile-action-button"
+                              className="flex items-center"
                               disabled={addRosterLater}
                             >
                               <Upload className="w-4 h-4 mr-2" />
                               CSV Upload
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className="sm:max-w-[500px] w-[95vw] mx-auto">
+                          <DialogContent className="sm:max-w-[500px]">
                             <DialogHeader>
                               <DialogTitle>Upload Player Roster CSV</DialogTitle>
                               <DialogDescription>
@@ -3381,17 +3377,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 All required fields must be included.
                               </DialogDescription>
                             </DialogHeader>
-                            <div className="mobile-upload-area">
-                              <CsvUploader
-                                onUploadSuccess={(players) => {
-                                  setPlayers((prev) => [...prev, ...players]);
-                                  toast({
-                                    title: "Upload Successful",
-                                    description: `Added ${players.length} players to your roster.`,
-                                  });
-                                }}
-                              />
-                            </div>
+                            <CsvUploader
+                              onUploadSuccess={(players) => {
+                                setPlayers((prev) => [...prev, ...players]);
+                                toast({
+                                  title: "Upload Successful",
+                                  description: `Added ${players.length} players to your roster.`,
+                                });
+                              }}
+                            />
                             <div className="border-t pt-4 mt-4">
                               <h4 className="font-medium mb-2">Need a template?</h4>
                               <p className="text-sm text-gray-500 mb-4">
@@ -3400,7 +3394,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               <a
                                 href="/api/upload/template"
                                 download="player-roster-template.csv"
-                                className="flex items-center text-[#2C5282] hover:underline mobile-upload-button"
+                                className="flex items-center text-[#2C5282] hover:underline"
                               >
                                 <Download className="w-4 h-4 mr-2" />
                                 Download Template
@@ -3412,73 +3406,54 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     </div>
                     
                     {addRosterLater ? (
-                      <div className="text-center p-4 sm:p-8 border border-dashed rounded-md bg-amber-50 add-roster-later-panel">
-                        <div className="flex items-center justify-center mb-4">
-                          <div className="bg-amber-100 p-3 rounded-full">
-                            <Clock className="w-8 h-8 text-amber-500" />
-                          </div>
-                        </div>
-                        <h4 className="font-semibold text-amber-800 text-lg mb-2">Add Roster Later</h4>
-                        <p className="text-amber-700 mt-2 text-sm sm:text-base max-w-md mx-auto">
-                          You've chosen to complete your roster after registration. 
-                          You'll be able to add players from your dashboard or upload a CSV later.
+                      <div className="text-center p-8 border border-dashed rounded-md bg-amber-50">
+                        <Clock className="w-12 h-12 mx-auto text-amber-500 mb-2" />
+                        <h4 className="font-medium text-amber-800">Add Roster Later</h4>
+                        <p className="text-amber-700 mt-2">
+                          You've chosen to complete your roster later. After registration, 
+                          you'll be able to add players from your dashboard or via CSV upload.
                         </p>
-                        <div className="mt-5 sm:mt-6">
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            className="w-full sm:w-auto px-6 py-3 text-amber-700 border-amber-300 bg-white hover:bg-amber-50 mobile-action-button"
-                            onClick={() => setAddRosterLater(false)}
-                          >
-                            <X className="w-4 h-4 mr-2" />
-                            Cancel & Add Players Now
-                          </Button>
-                        </div>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          className="mt-4 text-amber-700 border-amber-300"
+                          onClick={() => setAddRosterLater(false)}
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Cancel & Add Players Now
+                        </Button>
                       </div>
                     ) : players.length === 0 ? (
-                      <div className="text-center p-4 sm:p-8 border border-dashed rounded-md shadow-sm bg-white/50 empty-roster-container">
-                        <UserRoundPlus className="w-12 h-12 mx-auto text-gray-300 mb-2 empty-roster-icon" />
-                        <p className="text-gray-600 text-sm sm:text-base mb-3 px-2">No players added yet. Add players individually or use CSV upload.</p>
-                        <div className="flex flex-col space-y-3 items-center mt-4">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="mobile-action-button w-full sm:w-auto max-w-xs text-center justify-center touch-target-input py-3"
-                            onClick={addPlayer}
-                            disabled={addRosterLater}
-                          >
-                            <PlusCircle className="w-4 h-4 mr-2" />
-                            Add Player
-                          </Button>
-                          <span className="text-sm text-gray-500">or</span>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="mobile-action-button w-full sm:w-auto max-w-xs text-center justify-center touch-target-input py-3"
-                            onClick={() => setAddRosterLater(true)}
-                          >
-                            <Clock className="w-4 h-4 mr-2" />
-                            Add Roster Later
-                          </Button>
-                        </div>
+                      <div className="text-center p-8 border border-dashed rounded-md">
+                        <UserRoundPlus className="w-12 h-12 mx-auto text-gray-300 mb-2" />
+                        <p className="text-gray-500">No players added yet. Click "Add Player" or "CSV Upload" to begin building your roster.</p>
+                        <Button
+                          type="button"
+                          variant="link"
+                          className="mt-4 text-blue-600"
+                          onClick={() => setAddRosterLater(true)}
+                        >
+                          <Clock className="w-4 h-4 mr-2" />
+                          Do This Later - Add Roster After Registration
+                        </Button>
                       </div>
                     ) : (
                       <div className="space-y-6">
                         {players.map((player, index) => (
-                          <div key={player.id} className="p-4 border rounded-md relative player-card">
+                          <div key={player.id} className="p-4 border rounded-md relative">
                             <Button
                               type="button"
                               variant="ghost"
                               size="icon"
-                              className="absolute right-2 top-2 text-gray-400 hover:text-red-500 player-card-delete"
+                              className="absolute right-2 top-2 text-gray-400 hover:text-red-500"
                               onClick={() => removePlayer(player.id as string)}
                             >
                               <X className="w-4 h-4" />
                             </Button>
                             
-                            <h4 className="font-medium mb-4 player-card-title">Player {index + 1}</h4>
+                            <h4 className="font-medium mb-4">Player {index + 1}</h4>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 player-form-fields">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                               <div className="space-y-2">
                                 <Label htmlFor={`player-${index}-firstName`}>First Name *</Label>
                                 <Input
@@ -3491,7 +3466,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                     // Update form state with the modified players array
                                     teamForm.setValue('players', newPlayers);
                                   }}
-                                  className="w-full touch-target-input"
+                                  className="w-full"
                                 />
                               </div>
                               
@@ -3507,7 +3482,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                     // Update form state with the modified players array
                                     teamForm.setValue('players', newPlayers);
                                   }}
-                                  className="w-full touch-target-input"
+                                  className="w-full"
                                 />
                               </div>
                               
@@ -3524,7 +3499,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                     // Update form state with the modified players array
                                     teamForm.setValue('players', newPlayers);
                                   }}
-                                  className="w-full touch-target-input mobile-date-input"
+                                  className="w-full"
                                 />
                               </div>
                               
@@ -3682,26 +3657,23 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     )}
                   </div>
                   
-                  <div className="flex flex-col-reverse sm:flex-row justify-between pt-6 mobile-action-buttons">
+                  <div className="flex justify-between pt-6">
                     <SaveForLaterButton 
                       onSave={saveCurrentState} 
                       variant="ghost"
-                      className="order-2 sm:order-1 mt-2 sm:mt-0"
                     />
                     
-                    <div className="flex mobile-button-group order-1 sm:order-2 sm:space-x-4">
+                    <div className="flex space-x-4">
                       <Button
                         type="button"
                         variant="outline"
                         onClick={() => setCurrentStep('personal')}
-                        className="mobile-action-button mobile-action-button-secondary"
                       >
-                        <ArrowLeft className="h-4 w-4 mr-2 sm:block hidden" />
                         Back
                       </Button>
                       <Button 
                         type="submit"
-                        className="text-white mobile-action-button mobile-action-button-primary"
+                        className="text-white"
                         style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
                         disabled={registerTeamMutation.isPending}
                       >
@@ -4199,24 +4171,19 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   </div>
                 )}
                 
-                <div className="flex flex-col-reverse sm:flex-row justify-between pt-6 mobile-action-buttons">
+                <div className="flex justify-between pt-6">
                   <SaveForLaterButton 
                     onSave={saveCurrentState} 
                     variant="ghost"
-                    className="order-2 sm:order-1 mt-2 sm:mt-0"
                   />
                   
-                  <div className="flex mobile-button-group order-1 sm:order-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setCurrentStep('team')}
-                      className="mobile-action-button mobile-action-button-secondary w-full"
-                    >
-                      <ArrowLeft className="h-4 w-4 mr-2 sm:block hidden" />
-                      Back
-                    </Button>
-                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setCurrentStep('team')}
+                  >
+                    Back
+                  </Button>
                 </div>
               </motion.div>
             )}
