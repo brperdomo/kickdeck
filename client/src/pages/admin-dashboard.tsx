@@ -4616,7 +4616,7 @@ function TeamsView() {
                   )}
                 </div>
               </div>
-                
+              
               {/* Payment Information Card */}
               <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted mt-6">
                 <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
@@ -4758,16 +4758,6 @@ function TeamsView() {
             </div>
           </DialogContent>
         </Dialog>
-                      <div className="font-medium">Total Amount:</div>
-                      <div className="col-span-2 font-semibold text-blue-700">
-                        {selectedTeam.totalAmount 
-                          ? formatCurrency(selectedTeam.totalAmount) 
-                          : selectedTeam.registrationFee 
-                            ? formatCurrency(selectedTeam.registrationFee) 
-                            : 'Not available'}
-                      </div>
-                    </div>
-                    
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Payment Status:</div>
                       <div className="col-span-2">
