@@ -4180,19 +4180,24 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   </div>
                 )}
                 
-                <div className="flex justify-between pt-6">
+                <div className="flex flex-col-reverse sm:flex-row justify-between pt-6 mobile-action-buttons">
                   <SaveForLaterButton 
                     onSave={saveCurrentState} 
                     variant="ghost"
+                    className="order-2 sm:order-1 mt-2 sm:mt-0"
                   />
                   
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setCurrentStep('team')}
-                  >
-                    Back
-                  </Button>
+                  <div className="flex mobile-button-group order-1 sm:order-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setCurrentStep('team')}
+                      className="mobile-action-button mobile-action-button-secondary w-full"
+                    >
+                      <ArrowLeft className="h-4 w-4 mr-2 sm:block hidden" />
+                      Back
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
             )}
