@@ -4589,33 +4589,25 @@ function TeamsView() {
       </Dialog>
       
       {/* Add/Edit Player Dialog */}
-                      
-                      <div className="bg-muted/20 p-3 rounded-md border border-border/50">
-                        <div className="flex items-center gap-2 mb-2">
-                          <CalendarDays className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">Important Dates</span>
-                        </div>
-                        <div className="space-y-1 text-sm">
-                          <div className="flex justify-between">
-                            <span>Registered:</span>
-                            <span className="font-medium">{formatDate(selectedTeam.createdAt)}</span>
-                          </div>
-                          {selectedTeam.refundDate && (
-                            <div className="flex justify-between">
-                              <span>Refunded:</span>
-                              <span className="font-medium">{formatDate(selectedTeam.refundDate)}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Additional notes or special requirements */}
-              {selectedTeam.specialRequirements && (
-                <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted mt-6">
+      <Dialog 
+        open={isPlayerDialogOpen} 
+        onOpenChange={setIsPlayerDialogOpen}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{isAddPlayerMode ? 'Add Player' : 'Edit Player'}</DialogTitle>
+            <DialogDescription>
+              {isAddPlayerMode ? 'Add a new player to the team roster.' : 'Edit player information.'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onPlayerSubmit)} className="space-y-4 pt-4">
+              
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
                   <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
                     <ClipboardList className="h-4 w-4 text-primary" />
                     <h3 className="font-semibold">Special Requirements</h3>
