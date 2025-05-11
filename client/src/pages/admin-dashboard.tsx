@@ -5,7 +5,8 @@ import {
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
-  Trophy, WandSparkles, CheckCircle2, Phone
+  Trophy, WandSparkles, CheckCircle2, Phone, Building2, Users, FileUp,
+  CreditCard, ClipboardCheck, Receipt, ClipboardList, Trash, Clock, Eye
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -4581,12 +4582,40 @@ function TeamsView() {
                       </TableBody>
                     </Table>
                   ) : (
-                    <div className="text-center py-4 text-muted-foreground">
-                      No players added to this team yet.
+                    <div className="flex flex-col items-center justify-center p-8 text-muted-foreground bg-muted/20 rounded-md border border-dashed">
+                      <Users className="h-12 w-12 mb-2 text-muted-foreground/50" />
+                      <p className="text-center mb-4">No players added to this team yet.</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          setSelectedPlayer({
+                            id: 0,
+                            teamId: selectedTeam.id,
+                            firstName: '',
+                            lastName: '',
+                            dateOfBirth: '',
+                            jerseyNumber: '',
+                            position: '',
+                            medicalNotes: '',
+                            parentGuardianName: '',
+                            parentGuardianEmail: '',
+                            parentGuardianPhone: '',
+                            emergencyContactName: '',
+                            emergencyContactPhone: '',
+                            isActive: true
+                          });
+                          setIsAddPlayerMode(true);
+                          setIsPlayerDialogOpen(true);
+                        }}
+                      >
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add First Player
+                      </Button>
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
                 
               {/* Additional notes or special requirements */}
               {selectedTeam.specialRequirements && (
