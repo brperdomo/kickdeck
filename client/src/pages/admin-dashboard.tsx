@@ -4434,42 +4434,6 @@ function TeamsView() {
           </Form>
         </DialogContent>
       </Dialog>
-                      <div className="font-medium">{selectedTeam.coachData?.headCoachPhone || 'N/A'}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <UserCircle className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Asst. Coach</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.coachData?.assistantCoachName || 'N/A'}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Asst. Email</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.coachData?.assistantCoachEmail || 'N/A'}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Asst. Phone</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.coachData?.assistantCoachPhone || 'N/A'}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Club/Org</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.clubName || 'N/A'}</div>
-                    </div>
-                  </div>
-                </div>
               </div>
               
               {/* Team Roster Card */}
