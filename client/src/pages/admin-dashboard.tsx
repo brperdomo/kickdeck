@@ -4270,39 +4270,19 @@ function TeamsView() {
         setSelectedTeamId={setSelectedTeamId}
       />
 
+      {isCsvUploadDialogOpen && (
+        <TeamCsvUploader
+          open={isCsvUploadDialogOpen}
+          onOpenChange={setIsCsvUploadDialogOpen}
+          onUploadSuccess={(data) => {
+            playersRefetch();
+            setIsCsvUploadDialogOpen(false);
+          }}
+          team={selectedTeam}
+        />
+      )}
+
       {/* Add/Edit Player Dialog */}
-                        <span className="text-muted-foreground">Submitted by</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.submitterEmail || selectedTeam.managerEmail}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Submission Date</span>
-                      </div>
-                      <div className="font-medium">{formatDate(selectedTeam.createdAt)}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <CreditCard className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Payment Status</span>
-                      </div>
-                      <div>
-                        <Badge 
-                          className="font-medium" 
-                          variant={
-                            selectedTeam.paymentStatus === 'paid' ? 'success' : 
-                            selectedTeam.paymentStatus === 'refunded' ? 'outline' : 
-                            'outline'
-                          }
-                        >
-                          {selectedTeam.paymentStatus || 'Unpaid'}
-                        </Badge>
-                      </div>
-                    </div>
-                    
                     <div className="flex items-center justify-between py-2 border-b border-border/50">
                       <div className="flex items-center gap-2">
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
