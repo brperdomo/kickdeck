@@ -4617,26 +4617,143 @@ function TeamsView() {
                 </div>
               </div>
                 
+              {/* Payment Information Card */}
+              <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted mt-6">
+                <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-primary" />
+                  <h3 className="font-semibold">Payment Information</h3>
+                </div>
+                <div className="p-4">
+                  <div className="space-y-4">
+                    {/* Status & Payment Status */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-muted/20 p-3 rounded-md border border-border/50">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">Registration Status</span>
+                          </div>
+                          <div>
+                            {selectedTeam.status === 'approved' && (
+                              <Badge className="bg-green-500 hover:bg-green-600">Approved</Badge>
+                            )}
+                            {selectedTeam.status === 'waitlisted' && (
+                              <Badge className="bg-amber-500 hover:bg-amber-600">Waitlisted</Badge>
+                            )}
+                            {selectedTeam.status === 'pending' && (
+                              <Badge variant="outline">Pending</Badge>
+                            )}
+                            {selectedTeam.status === 'rejected' && (
+                              <Badge className="bg-red-500 hover:bg-red-600">Rejected</Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-muted/20 p-3 rounded-md border border-border/50">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Receipt className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">Payment Status</span>
+                          </div>
+                          <div>
+                            {selectedTeam.isPaid ? (
+                              <Badge className="bg-green-500 hover:bg-green-600">Paid</Badge>
+                            ) : (
+                              <Badge variant="outline">Unpaid</Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Selected Fees */}
+                    <div className="bg-muted/20 p-3 rounded-md border border-border/50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Selected Fees</span>
+                      </div>
+                      {selectedTeam.registrationFees && selectedTeam.registrationFees.length > 0 ? (
+                        <div className="space-y-1 mt-2">
+                          {selectedTeam.registrationFees.map((fee: any) => (
+                            <div key={fee.id} className="flex justify-between text-sm py-1 border-b border-border/30 last:border-0">
+                              <span>{fee.name}</span>
+                              <span className="font-medium">{formatCurrency(fee.amount)}</span>
+                            </div>
+                          ))}
+                          <div className="flex justify-between pt-2 font-medium">
+                            <span>Total</span>
+                            <span>{formatCurrency(selectedTeam.totalAmount || 0)}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-muted-foreground py-2 text-sm">No fees selected</div>
+                      )}
+                    </div>
+
+                    {/* Payment Method & Dates */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-muted/20 p-3 rounded-md border border-border/50">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CreditCard className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Payment Method</span>
+                        </div>
+                        <div className="text-sm">
+                          {selectedTeam.cardLast4 ? (
+                            <div className="flex items-center gap-2">
+                              <CreditCard className="h-4 w-4" />
+                              <span>Card ending in {selectedTeam.cardLast4}</span>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">Not provided</span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="bg-muted/20 p-3 rounded-md border border-border/50">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Important Dates</span>
+                        </div>
+                        <div className="space-y-1 text-sm">
+                          <div className="flex justify-between">
+                            <span>Registered:</span>
+                            <span className="font-medium">{formatDate(selectedTeam.createdAt)}</span>
+                          </div>
+                          {selectedTeam.refundDate && (
+                            <div className="flex justify-between">
+                              <span>Refunded:</span>
+                              <span className="font-medium">{formatDate(selectedTeam.refundDate)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Additional notes or special requirements */}
               {selectedTeam.specialRequirements && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Special Requirements</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>{selectedTeam.specialRequirements}</p>
-                  </CardContent>
-                </Card>
+                <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted mt-6">
+                  <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
+                    <ClipboardList className="h-4 w-4 text-primary" />
+                    <h3 className="font-semibold">Special Requirements</h3>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-muted-foreground whitespace-pre-line">{selectedTeam.specialRequirements}</p>
+                  </div>
+                </div>
               )}
               
-              {/* Payment & Fee Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Payment Information</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-3 gap-1">
+              {/* Action buttons */}
+              <div className="mt-6 flex justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsViewingTeamDetails(false)}
+                >
+                  Close
+                </Button>
                       <div className="font-medium">Total Amount:</div>
                       <div className="col-span-2 font-semibold text-blue-700">
                         {selectedTeam.totalAmount 
