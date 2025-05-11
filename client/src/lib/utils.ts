@@ -1,81 +1,74 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-import { format } from "date-fns"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
+/**
+ * Combines class names from Tailwind with clsx for conditional classes
+ */
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
-export function formatDate(dateString: string | null | undefined) {
-  // Handle null, undefined or empty strings
-  if (!dateString) {
-    return 'N/A';
-  }
-  
-  try {
-    // Parse the date string and add 'T00:00:00' to ensure it's treated as start of day in local timezone
-    const date = new Date(dateString);
-    
-    // Check if date is valid
-    if (isNaN(date.getTime())) {
-      return 'Invalid date';
-    }
-    
-    return format(date, 'MMM d, yyyy');
-  } catch (error) {
-    console.error('Error formatting date:', error);
-    return 'Invalid date';
-  }
+/**
+ * Formats a currency value to a locale string
+ */
+export function formatCurrency(amount: number | null | undefined): string {
+  if (amount === null || amount === undefined) return "$0.00";
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  }).format(amount);
 }
 
-export function formatBytes(bytes: number, decimals: number = 2): string {
-  if (bytes === 0) return '0 Bytes';
+/**
+ * Formats a date string to a locale string
+ */
+export function formatDate(dateString: string | null | undefined): string {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  // Check if date is valid
+  if (isNaN(date.getTime())) return "Invalid date";
   
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short', 
+    day: 'numeric',
+  }).format(date);
 }
 
-export function formatCurrency(amount: number): string {
-  // Check if amount is a valid number
-  if (amount === null || amount === undefined || isNaN(amount)) {
-    console.warn("Invalid amount provided to formatCurrency:", amount);
-    return "$0.00";
-  }
-
-  // Debug log to track currency values
-  console.debug(`Formatting currency amount: ${amount} (type: ${typeof amount})`);
+/**
+ * Formats a datetime string with time
+ */
+export function formatDateTime(dateString: string | null | undefined): string {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  // Check if date is valid
+  if (isNaN(date.getTime())) return "Invalid date";
   
-  try {
-    // Convert to a number explicitly to handle string inputs
-    let numericAmount = Number(amount);
-    
-    // If amount seems very large (potentially a value stored in cents)
-    // convert to dollars. This is a safeguard in case our normalization
-    // in the API didn't catch everything
-    if (numericAmount > 10000) { // Assuming normal fees don't exceed $10,000
-      console.debug(`Large amount detected (${numericAmount}), normalizing by dividing by 100`);
-      numericAmount = numericAmount / 100;
-    }
-    
-    // Ensure amount has at most 2 decimal places
-    const fixedAmount = Number(numericAmount.toFixed(2));
-    
-    // Format as currency
-    const formatted = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2
-    }).format(fixedAmount);
-    
-    console.debug(`Formatted currency result: ${formatted}`);
-    return formatted;
-  } catch (error) {
-    console.error("Error formatting currency amount:", amount, error);
-    return "$0.00";
-  }
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short', 
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  }).format(date);
+}
+
+/**
+ * Formats a file size in bytes to a human-readable format
+ */
+export function formatFileSize(sizeInBytes: number): string {
+  if (sizeInBytes < 1024) return `${sizeInBytes} bytes`;
+  if (sizeInBytes < 1024 * 1024) return `${(sizeInBytes / 1024).toFixed(1)} KB`;
+  if (sizeInBytes < 1024 * 1024 * 1024) return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(sizeInBytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+}
+
+/**
+ * Truncates a string to a certain length and adds an ellipsis
+ */
+export function truncateString(str: string, maxLength: number): string {
+  if (!str) return "";
+  if (str.length <= maxLength) return str;
+  return `${str.substring(0, maxLength)}...`;
 }

@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/collapsible";
 import { TeamModal } from "@/components/teams/TeamModal";
 import { TeamCsvUploader } from "@/components/teams/TeamCsvUploader";
+import { TeamDetailsDialog } from "@/components/teams/TeamDetailsDialog";
 import { BracketAssignmentModal } from "@/components/BracketAssignmentModal";
 import { ScheduleVisualization } from "@/components/ScheduleVisualization";
 import BracketSelector from "@/components/admin/scheduling/BracketSelector";
@@ -4259,61 +4260,17 @@ function TeamsView() {
       </Dialog>
 
       {/* Team Details Dialog */}
-      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
-          <div className="sticky top-0 z-10 bg-gradient-to-r from-primary/20 to-primary/5 px-6 py-4 border-b border-muted">
-            <DialogHeader>
-              <div className="flex items-center gap-2">
-                <Trophy className="h-6 w-6 text-primary" />
-                <DialogTitle className="text-xl">{selectedTeam?.name}</DialogTitle>
-              </div>
-              <DialogDescription className="text-muted-foreground">
-                Complete registration information
-              </DialogDescription>
-            </DialogHeader>
-          </div>
-          
-          {selectedTeam && (
-            <div className="space-y-6 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Registration Card */}
-                <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted">
-                  <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
-                    <ClipboardList className="h-4 w-4 text-primary" />
-                    <h3 className="font-semibold">Registration Information</h3>
-                  </div>
-                  
-                  <div className="p-4 space-y-3">
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Flag className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Status</span>
-                      </div>
-                      <div>
-                        <Badge className="font-medium" variant={
-                          selectedTeam.status === 'approved' ? 'success' : 
-                          selectedTeam.status === 'rejected' ? 'destructive' : 
-                          'default'
-                        }>
-                          {selectedTeam.status?.toUpperCase() || 'REGISTERED'}
-                        </Badge>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <CalendarRange className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Event</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.event?.name || 'N/A'}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Age Group</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.ageGroup?.ageGroup || 'N/A'}</div>
+      <TeamDetailsDialog 
+        isOpen={isDetailsDialogOpen} 
+        onOpenChange={setIsDetailsDialogOpen}
+        selectedTeam={selectedTeam}
+        setSelectedPlayer={setSelectedPlayer}
+        setIsAddPlayerMode={setIsAddPlayerMode}
+        setIsPlayerDialogOpen={setIsPlayerDialogOpen}
+        setSelectedTeamId={setSelectedTeamId}
+      />
+      
+      {/* Add/Edit Player Dialog */}
                     </div>
                     
                     <div className="flex items-center justify-between py-2 border-b border-border/50">
