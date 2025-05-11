@@ -4750,10 +4750,14 @@ function TeamsView() {
               <div className="mt-6 flex justify-end gap-2">
                 <Button 
                   variant="outline" 
-                  onClick={() => setIsViewingTeamDetails(false)}
+                  onClick={() => setIsDetailsDialogOpen(false)}
                 >
                   Close
                 </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
                       <div className="font-medium">Total Amount:</div>
                       <div className="col-span-2 font-semibold text-blue-700">
                         {selectedTeam.totalAmount 
