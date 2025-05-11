@@ -4265,30 +4265,30 @@ function TeamsView() {
             <DialogHeader>
               <div className="flex items-center gap-2">
                 <Trophy className="h-6 w-6 text-primary" />
-                <DialogTitle className="text-xl">{selectedTeam?.name}</DialogTitle>
+                <DialogTitle className="text-xl font-bold">{selectedTeam?.name}</DialogTitle>
               </div>
               <DialogDescription className="text-muted-foreground">
-                Complete registration information
+                Team Details
               </DialogDescription>
             </DialogHeader>
           </div>
           
           {selectedTeam && (
-            <div className="space-y-6 p-6">
+            <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Registration Card */}
-                <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-muted">
-                  <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
+                {/* Team Info Card */}
+                <div className="bg-card rounded-lg shadow-sm border p-4">
+                  <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
                     <ClipboardList className="h-4 w-4 text-primary" />
-                    <h3 className="font-semibold">Registration Information</h3>
-                  </div>
+                    Team Information
+                  </h3>
                   
-                  <div className="p-4 space-y-3">
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Flag className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Status</span>
-                      </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center py-1.5 border-b">
+                      <span className="text-muted-foreground flex items-center gap-2">
+                        <Flag className="h-4 w-4" />
+                        Status
+                      </span>
                       <div>
                         <Badge className="font-medium" variant={
                           selectedTeam.status === 'approved' ? 'success' : 
@@ -4615,10 +4615,51 @@ function TeamsView() {
                     </div>
                   )}
                 </div>
+                    
+                    {/* More details can be added here */}
+
+                    <div className="flex justify-between items-center py-1.5 border-b">
+                      <span className="text-muted-foreground flex items-center gap-2">
+                        <DollarSign className="h-4 w-4" />
+                        Fee
+                      </span>
+                      <div className="font-medium">
+                        {formatCurrency(selectedTeam.registrationFee || 0)}
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                
+                {/* Contact Info Card */}
+                <div className="bg-card rounded-lg shadow-sm border p-4">
+                  <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
+                    <User className="h-4 w-4 text-primary" />
+                    Contact Information
+                  </h3>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center py-1.5 border-b">
+                      <span className="text-muted-foreground flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        Email
+                      </span>
+                      <div className="font-medium">{selectedTeam.managerEmail || 'N/A'}</div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center py-1.5 border-b">
+                      <span className="text-muted-foreground flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Phone
+                      </span>
+                      <div className="font-medium">{selectedTeam.managerPhone || 'N/A'}</div>
+                    </div>
+                  </div>
+                </div>
               </div>
               
               {/* Action buttons */}
-              <div className="mt-6 flex justify-end gap-2">
+              <div className="flex justify-end gap-2 mt-4">
                 <Button 
                   variant="outline" 
                   onClick={() => setIsDetailsDialogOpen(false)}
@@ -4631,7 +4672,7 @@ function TeamsView() {
         </DialogContent>
       </Dialog>
       
-      {/* Player Dialog */}
+      {/* Add/Edit Player Dialog */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
