@@ -3412,36 +3412,55 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     </div>
                     
                     {addRosterLater ? (
-                      <div className="text-center p-4 sm:p-8 border border-dashed rounded-md bg-amber-50">
-                        <Clock className="w-12 h-12 mx-auto text-amber-500 mb-2" />
-                        <h4 className="font-medium text-amber-800">Add Roster Later</h4>
-                        <p className="text-amber-700 mt-2">
-                          You've chosen to complete your roster later. After registration, 
-                          you'll be able to add players from your dashboard or via CSV upload.
+                      <div className="text-center p-4 sm:p-8 border border-dashed rounded-md bg-amber-50 add-roster-later-panel">
+                        <div className="flex items-center justify-center mb-4">
+                          <div className="bg-amber-100 p-3 rounded-full">
+                            <Clock className="w-8 h-8 text-amber-500" />
+                          </div>
+                        </div>
+                        <h4 className="font-semibold text-amber-800 text-lg mb-2">Add Roster Later</h4>
+                        <p className="text-amber-700 mt-2 text-sm sm:text-base max-w-md mx-auto">
+                          You've chosen to complete your roster after registration. 
+                          You'll be able to add players from your dashboard or upload a CSV later.
                         </p>
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          className="mt-4 text-amber-700 border-amber-300 touch-target-input mobile-action-button"
-                          onClick={() => setAddRosterLater(false)}
-                        >
-                          <X className="w-4 h-4 mr-2" />
-                          Cancel & Add Players Now
-                        </Button>
+                        <div className="mt-5 sm:mt-6">
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            className="w-full sm:w-auto px-6 py-3 text-amber-700 border-amber-300 bg-white hover:bg-amber-50 mobile-action-button"
+                            onClick={() => setAddRosterLater(false)}
+                          >
+                            <X className="w-4 h-4 mr-2" />
+                            Cancel & Add Players Now
+                          </Button>
+                        </div>
                       </div>
                     ) : players.length === 0 ? (
-                      <div className="text-center p-4 sm:p-8 border border-dashed rounded-md">
-                        <UserRoundPlus className="w-12 h-12 mx-auto text-gray-300 mb-2" />
-                        <p className="text-gray-500 text-sm sm:text-base">No players added yet. Click "Add Player" or "CSV Upload" to begin building your roster.</p>
-                        <Button
-                          type="button"
-                          variant="link"
-                          className="mt-4 text-blue-600 mobile-action-button touch-target-input"
-                          onClick={() => setAddRosterLater(true)}
-                        >
-                          <Clock className="w-4 h-4 mr-2" />
-                          Do This Later - Add Roster After Registration
-                        </Button>
+                      <div className="text-center p-4 sm:p-8 border border-dashed rounded-md shadow-sm bg-white/50 empty-roster-container">
+                        <UserRoundPlus className="w-12 h-12 mx-auto text-gray-300 mb-2 empty-roster-icon" />
+                        <p className="text-gray-600 text-sm sm:text-base mb-3 px-2">No players added yet. Add players individually or use CSV upload.</p>
+                        <div className="flex flex-col space-y-3 items-center mt-4">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="mobile-action-button w-full sm:w-auto max-w-xs text-center justify-center touch-target-input py-3"
+                            onClick={addPlayer}
+                            disabled={addRosterLater}
+                          >
+                            <PlusCircle className="w-4 h-4 mr-2" />
+                            Add Player
+                          </Button>
+                          <span className="text-sm text-gray-500">or</span>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="mobile-action-button w-full sm:w-auto max-w-xs text-center justify-center touch-target-input py-3"
+                            onClick={() => setAddRosterLater(true)}
+                          >
+                            <Clock className="w-4 h-4 mr-2" />
+                            Add Roster Later
+                          </Button>
+                        </div>
                       </div>
                     ) : (
                       <div className="space-y-6">

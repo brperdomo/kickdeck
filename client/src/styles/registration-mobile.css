@@ -279,4 +279,50 @@
     width: 100% !important;
     justify-content: center !important;
   }
+  
+  /* Enhanced empty roster state for mobile */
+  .empty-roster-container {
+    padding: 1.5rem 1rem !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 1.5rem !important;
+    border-radius: 0.75rem !important;
+    background-color: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  .empty-roster-icon {
+    width: 48px !important;
+    height: 48px !important;
+    margin-bottom: 0.75rem !important;
+    opacity: 0.5 !important;
+  }
+  
+  .empty-roster-container button {
+    min-height: 50px !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+  }
+  
+  /* Add Roster Later panel */
+  .add-roster-later-panel {
+    margin: 1rem 0 1.5rem !important;
+    border-radius: 0.75rem !important;
+    padding: 1.5rem 1rem !important;
+  }
+  
+  .add-roster-later-panel h4 {
+    margin-bottom: 0.5rem !important;
+    font-size: 1.1rem !important;
+  }
+  
+  .add-roster-later-panel p {
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  .add-roster-later-panel button {
+    margin-top: 1rem !important;
+    width: 100% !important;
+    min-height: 50px !important;
+    font-size: 0.9rem !important;
+  }
 }
