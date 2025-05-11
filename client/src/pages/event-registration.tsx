@@ -24,6 +24,7 @@ import {
   Save,
   Clock,
   ArrowRight,
+  ArrowLeft,
   Info,
   UserCircle,
   UserSquare,
@@ -2890,27 +2891,28 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     </div>
                   )}
 
-                  <div className="flex justify-between pt-6">
+                  <div className="flex flex-col-reverse sm:flex-row justify-between pt-6 mobile-action-buttons">
                     <SaveForLaterButton 
                       onSave={saveCurrentState} 
                       variant="ghost"
-                      className="transition-all hover:bg-primary/5"
+                      className="transition-all hover:bg-primary/5 order-2 sm:order-1 mt-2 sm:mt-0"
                     />
                     
-                    <div className="flex space-x-4">
+                    <div className="flex mobile-button-group order-1 sm:order-2 sm:space-x-4">
                       <Button
                         type="button"
                         variant="outline"
                         onClick={() => setCurrentStep('auth')}
-                        className="border-gray-300 hover:border-gray-400 transition-all hover:bg-gray-50"
+                        className="border-gray-300 hover:border-gray-400 transition-all hover:bg-gray-50 mobile-action-button mobile-action-button-secondary"
                       >
+                        <ArrowLeft className="h-4 w-4 mr-2 sm:block hidden" />
                         Back
                       </Button>
                       
                       {/* Original submit button just saves but doesn't advance */}
                       <Button 
                         type="submit"
-                        className="font-medium shadow-md transition-all duration-300 hover:shadow-lg h-10"
+                        className="font-medium shadow-md transition-all duration-300 hover:shadow-lg mobile-action-button mobile-action-button-primary"
                         style={{ 
                           backgroundColor: event?.branding?.primaryColor || '#2C5282',
                           color: primaryContrastColor
@@ -3661,23 +3663,26 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     )}
                   </div>
                   
-                  <div className="flex justify-between pt-6">
+                  <div className="flex flex-col-reverse sm:flex-row justify-between pt-6 mobile-action-buttons">
                     <SaveForLaterButton 
                       onSave={saveCurrentState} 
                       variant="ghost"
+                      className="order-2 sm:order-1 mt-2 sm:mt-0"
                     />
                     
-                    <div className="flex space-x-4">
+                    <div className="flex mobile-button-group order-1 sm:order-2 sm:space-x-4">
                       <Button
                         type="button"
                         variant="outline"
                         onClick={() => setCurrentStep('personal')}
+                        className="mobile-action-button mobile-action-button-secondary"
                       >
+                        <ArrowLeft className="h-4 w-4 mr-2 sm:block hidden" />
                         Back
                       </Button>
                       <Button 
                         type="submit"
-                        className="text-white"
+                        className="text-white mobile-action-button mobile-action-button-primary"
                         style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
                         disabled={registerTeamMutation.isPending}
                       >
