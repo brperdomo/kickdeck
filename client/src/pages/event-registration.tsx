@@ -3345,13 +3345,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         </div>
                       </div>
                       
-                      <div className="flex gap-2 roster-add-buttons">
+                      <div className="flex gap-2 roster-add-buttons mobile-team-actions">
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
                           onClick={addPlayer}
-                          className="flex items-center touch-target-input"
+                          className="flex items-center touch-target-input mobile-action-button"
                           disabled={addRosterLater}
                         >
                           <PlusCircle className="w-4 h-4 mr-2" />
@@ -3363,7 +3363,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               type="button"
                               variant="outline"
                               size="sm"
-                              className="flex items-center touch-target-input"
+                              className="flex items-center touch-target-input mobile-action-button"
                               disabled={addRosterLater}
                             >
                               <Upload className="w-4 h-4 mr-2" />
@@ -3409,7 +3409,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     </div>
                     
                     {addRosterLater ? (
-                      <div className="text-center p-8 border border-dashed rounded-md bg-amber-50">
+                      <div className="text-center p-4 sm:p-8 border border-dashed rounded-md bg-amber-50">
                         <Clock className="w-12 h-12 mx-auto text-amber-500 mb-2" />
                         <h4 className="font-medium text-amber-800">Add Roster Later</h4>
                         <p className="text-amber-700 mt-2">
@@ -3419,7 +3419,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         <Button 
                           type="button" 
                           variant="outline" 
-                          className="mt-4 text-amber-700 border-amber-300"
+                          className="mt-4 text-amber-700 border-amber-300 touch-target-input mobile-action-button"
                           onClick={() => setAddRosterLater(false)}
                         >
                           <X className="w-4 h-4 mr-2" />
@@ -3427,13 +3427,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         </Button>
                       </div>
                     ) : players.length === 0 ? (
-                      <div className="text-center p-8 border border-dashed rounded-md">
+                      <div className="text-center p-4 sm:p-8 border border-dashed rounded-md">
                         <UserRoundPlus className="w-12 h-12 mx-auto text-gray-300 mb-2" />
-                        <p className="text-gray-500">No players added yet. Click "Add Player" or "CSV Upload" to begin building your roster.</p>
+                        <p className="text-gray-500 text-sm sm:text-base">No players added yet. Click "Add Player" or "CSV Upload" to begin building your roster.</p>
                         <Button
                           type="button"
                           variant="link"
-                          className="mt-4 text-blue-600"
+                          className="mt-4 text-blue-600 mobile-action-button touch-target-input"
                           onClick={() => setAddRosterLater(true)}
                         >
                           <Clock className="w-4 h-4 mr-2" />
@@ -3443,20 +3443,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     ) : (
                       <div className="space-y-6">
                         {players.map((player, index) => (
-                          <div key={player.id} className="p-4 border rounded-md relative">
+                          <div key={player.id} className="p-4 border rounded-md relative player-card">
                             <Button
                               type="button"
                               variant="ghost"
                               size="icon"
-                              className="absolute right-2 top-2 text-gray-400 hover:text-red-500"
+                              className="absolute right-2 top-2 text-gray-400 hover:text-red-500 player-card-delete"
                               onClick={() => removePlayer(player.id as string)}
                             >
                               <X className="w-4 h-4" />
                             </Button>
                             
-                            <h4 className="font-medium mb-4">Player {index + 1}</h4>
+                            <h4 className="font-medium mb-4 player-card-title">Player {index + 1}</h4>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 player-form-fields">
                               <div className="space-y-2">
                                 <Label htmlFor={`player-${index}-firstName`}>First Name *</Label>
                                 <Input
@@ -3469,7 +3469,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                     // Update form state with the modified players array
                                     teamForm.setValue('players', newPlayers);
                                   }}
-                                  className="w-full"
+                                  className="w-full touch-target-input"
                                 />
                               </div>
                               
@@ -3485,7 +3485,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                     // Update form state with the modified players array
                                     teamForm.setValue('players', newPlayers);
                                   }}
-                                  className="w-full"
+                                  className="w-full touch-target-input"
                                 />
                               </div>
                               
@@ -3502,7 +3502,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                     // Update form state with the modified players array
                                     teamForm.setValue('players', newPlayers);
                                   }}
-                                  className="w-full"
+                                  className="w-full touch-target-input mobile-date-input"
                                 />
                               </div>
                               
