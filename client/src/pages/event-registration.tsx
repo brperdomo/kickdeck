@@ -410,10 +410,10 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="p-4 border rounded-md">
+    <form onSubmit={handleSubmit} className="space-y-4 payment-form-container">
+      <div className="p-4 border rounded-md card-element-container">
         {/* Replace PaymentElement with CardElement which is more reliable */}
-        <CardElement className="p-3 border rounded" options={{
+        <CardElement className="p-3 border rounded mobile-stripe-element" options={{
           style: {
             base: {
               fontSize: '16px',
@@ -421,6 +421,7 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
               '::placeholder': {
                 color: '#aab7c4',
               },
+              iconColor: '#2C5282',
             },
             invalid: {
               color: '#9e2146',
@@ -428,11 +429,11 @@ function PaymentForm({ amount, onSuccess, isProcessing, setIsProcessing, isPrevi
           },
         }} />
       </div>
-      <div className="flex justify-end mt-4">
+      <div className="flex justify-end mt-4 payment-button-container">
         <Button 
           disabled={!stripe || isProcessing} 
           type="submit"
-          className="text-white mt-4"
+          className="text-white mt-4 touch-target-input mobile-action-button"
           style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
         >
           {isProcessing ? (
