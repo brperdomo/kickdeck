@@ -4507,45 +4507,8 @@ function TeamsView() {
           </div>
         </DialogContent>
       </Dialog>
-                    
-                    {/* Fee breakdown section */}
-                    {selectedTeam.selectedFeeIds && (
-                      <div className="mt-4 border-t pt-4">
-                        <h4 className="font-medium mb-2">Fee Breakdown</h4>
-                        <div className="bg-slate-50 rounded-md p-2">
-                          <p className="text-sm text-slate-500 mb-2">
-                            Selected fees: {selectedTeam.selectedFeeIds.split(',').length}
-                          </p>
-                          
-                          <DetailedFeeBreakdown teamId={selectedTeam.id} selectedFeeIds={selectedTeam.selectedFeeIds} />
-                          
-                          <div className="flex justify-between py-1 font-semibold mt-2 border-t border-slate-200 pt-2">
-                            <span>Total</span>
-                            <span>
-                              {selectedTeam.totalAmount 
-                                ? formatCurrency(selectedTeam.totalAmount) 
-                                : selectedTeam.registrationFee 
-                                  ? formatCurrency(selectedTeam.registrationFee) 
-                                  : 'N/A'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* Terms acknowledgment information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Terms & Conditions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Terms Acknowledged:</div>
-                      <div className="col-span-2">
+
+      {/* Player Team Details Section (moved to TeamDetailsDialog component) */}
                         <Badge variant={selectedTeam.termsAcknowledged || selectedTeam.status === 'paid' ? 'success' : 'outline'}>
                           {selectedTeam.termsAcknowledged || selectedTeam.status === 'paid' ? 'Yes' : 'No'}
                         </Badge>
