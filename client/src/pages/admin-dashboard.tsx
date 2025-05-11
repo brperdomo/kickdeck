@@ -4508,34 +4508,7 @@ function TeamsView() {
         </DialogContent>
       </Dialog>
 
-      {/* Player Team Details Section (moved to TeamDetailsDialog component) */}
-                        <Badge variant={selectedTeam.termsAcknowledged || selectedTeam.status === 'paid' ? 'success' : 'outline'}>
-                          {selectedTeam.termsAcknowledged || selectedTeam.status === 'paid' ? 'Yes' : 'No'}
-                        </Badge>
-                      </div>
-                    </div>
-                    {selectedTeam.termsAcknowledgedAt && (
-                      <div className="grid grid-cols-3 gap-1">
-                        <div className="font-medium">Acknowledged On:</div>
-                        <div className="col-span-2">{formatDate(selectedTeam.termsAcknowledgedAt)}</div>
-                      </div>
-                    )}
-                    <div className="pt-2">
-                      {(selectedTeam.termsAcknowledged || selectedTeam.status === 'paid') && (
-                        <div className="flex flex-col gap-2">
-                          {selectedTeam.termsAcknowledgementRecord ? (
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              className="w-full"
-                              onClick={() => window.open(`/api/teams/${selectedTeam.id}/terms-acknowledgment/download`, '_blank')}
-                            >
-                              <FileText className="h-4 w-4 mr-2" />
-                              View Acknowledgment Document
-                            </Button>
-                          ) : (
-                            <Button 
-                              variant="outline" 
+      {/* End of Admin Dashboard Content */}
                               size="sm"
                               className="w-full"
                               onClick={async () => {
