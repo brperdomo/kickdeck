@@ -4608,48 +4608,58 @@ function TeamsView() {
           </Form>
         </DialogContent>
       </Dialog>
-                  <div className="bg-muted/50 py-3 px-4 border-b border-border flex items-center gap-2">
-                    <ClipboardList className="h-4 w-4 text-primary" />
-                    <h3 className="font-semibold">Special Requirements</h3>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-muted-foreground whitespace-pre-line">{selectedTeam.specialRequirements}</p>
-                  </div>
-                </div>
-              )}
-              
-              {/* Action buttons */}
-              <div className="mt-6 flex justify-end gap-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsDetailsDialogOpen(false)}
-                >
-                  Close
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-                    <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Payment Status:</div>
-                      <div className="col-span-2">
-                        <PaymentStatusBadge status={selectedTeam.paymentStatus} />
-                      </div>
-                    </div>
-                    
-                    {selectedTeam.paymentIntentId && (
-                      <div className="grid grid-cols-3 gap-1">
-                        <div className="font-medium">Payment ID:</div>
-                        <div className="col-span-2 font-mono text-xs bg-slate-50 p-1 rounded">
-                          {selectedTeam.paymentIntentId}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {selectedTeam.refundDate && (
-                      <div className="grid grid-cols-3 gap-1">
-                        <div className="font-medium">Refunded On:</div>
-                        <div className="col-span-2">{formatDate(selectedTeam.refundDate)}</div>
+
+      {/* Delete Player Confirmation Dialog */}
+      <Dialog
+        open={isDeletePlayerDialogOpen}
+        onOpenChange={setIsDeletePlayerDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Delete Player</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete {selectedPlayer?.firstName} {selectedPlayer?.lastName} from the team roster? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button variant="outline" onClick={() => setIsDeletePlayerDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeletePlayer}>
+              Delete Player
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* CSV Upload Dialog */}
+      <Dialog
+        open={isCsvUploadDialogOpen} 
+        onOpenChange={setIsCsvUploadDialogOpen}
+      >
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Import Players from CSV</DialogTitle>
+            <DialogDescription>
+              Upload a CSV file with player information to quickly add multiple players to the team.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="pt-4">
+            <CsvUploader 
+              onUploadSuccess={(players) => {
+                setIsCsvUploadDialogOpen(false);
+                queryClient.invalidateQueries(['team', selectedTeam.id]);
+                toast({
+                  title: "CSV Import Successful",
+                  description: `${players.length} players imported successfully.`,
+                });
+              }}
+              teamId={selectedTeam.id}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
                       </div>
                     )}
                     
