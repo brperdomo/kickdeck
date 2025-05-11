@@ -1,0 +1,205 @@
+      {/* Team Details Dialog */}
+      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+          <div className="sticky top-0 z-10 bg-gradient-to-r from-primary/20 to-primary/5 px-6 py-4 border-b border-muted">
+            <DialogHeader>
+              <div className="flex items-center gap-2">
+                <Trophy className="h-6 w-6 text-primary" />
+                <DialogTitle className="text-xl font-bold">{selectedTeam?.name}</DialogTitle>
+              </div>
+              <DialogDescription className="text-muted-foreground">
+                {selectedTeam?.eventName || 'Team Details'}
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+          
+          {selectedTeam && (
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Registration Card */}
+                <Card className="shadow-sm">
+                  <CardHeader className="bg-muted/30 py-3 px-4">
+                    <div className="flex items-center gap-2">
+                      <ClipboardList className="h-4 w-4 text-primary" />
+                      <CardTitle className="text-base font-semibold">Registration Info</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4 space-y-3">
+                    <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Flag className="h-4 w-4" />
+                        <span>Status</span>
+                      </div>
+                      <div className="text-right">
+                        <Badge className="font-medium" variant={
+                          selectedTeam.status === 'approved' ? 'success' : 
+                          selectedTeam.status === 'rejected' ? 'destructive' : 
+                          'default'
+                        }>
+                          {selectedTeam.status?.toUpperCase() || 'REGISTERED'}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Users className="h-4 w-4" />
+                        <span>Age Group</span>
+                      </div>
+                      <div className="text-right font-medium">
+                        {selectedTeam.ageGroup?.ageGroup || 'N/A'}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <CreditCard className="h-4 w-4" />
+                        <span>Payment</span>
+                      </div>
+                      <div className="text-right">
+                        <Badge 
+                          className="font-medium" 
+                          variant={
+                            selectedTeam.paymentStatus === 'paid' ? 'success' : 
+                            selectedTeam.paymentStatus === 'refunded' ? 'outline' : 
+                            'outline'
+                          }
+                        >
+                          {selectedTeam.paymentStatus || 'Unpaid'}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <DollarSign className="h-4 w-4" />
+                        <span>Fee</span>
+                      </div>
+                      <div className="text-right font-medium">
+                        {formatCurrency(selectedTeam.registrationFee || 0)}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Clock className="h-4 w-4" />
+                        <span>Registered</span>
+                      </div>
+                      <div className="text-right font-medium">
+                        {formatDate(selectedTeam.createdAt)}
+                      </div>
+                    </div>
+                    
+                    {selectedTeam.cardLast4 && (
+                      <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <CreditCard className="h-4 w-4" />
+                          <span>Card</span>
+                        </div>
+                        <div className="text-right font-medium">
+                          •••• {selectedTeam.cardLast4}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {selectedTeam.paymentIntentId && (
+                      <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Receipt className="h-4 w-4" />
+                          <span>Transaction</span>
+                        </div>
+                        <div className="text-right">
+                          <code className="text-xs bg-muted px-1 py-0.5 rounded">
+                            {selectedTeam.paymentIntentId.substring(0, 12)}...
+                          </code>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                
+                {/* Contact Info Card */}
+                <Card className="shadow-sm">
+                  <CardHeader className="bg-muted/30 py-3 px-4">
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-primary" />
+                      <CardTitle className="text-base font-semibold">Contact Info</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4 space-y-3">
+                    <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Building2 className="h-4 w-4" />
+                        <span>Club</span>
+                      </div>
+                      <div className="text-right font-medium">
+                        {selectedTeam.clubName || 'N/A'}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <User className="h-4 w-4" />
+                        <span>Manager</span>
+                      </div>
+                      <div className="text-right font-medium">
+                        {selectedTeam.managerName || 'N/A'}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Mail className="h-4 w-4" />
+                        <span>Email</span>
+                      </div>
+                      <div className="text-right font-medium">
+                        {selectedTeam.managerEmail || 'N/A'}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Phone className="h-4 w-4" />
+                        <span>Phone</span>
+                      </div>
+                      <div className="text-right font-medium">
+                        {selectedTeam.managerPhone || 'N/A'}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <UserCircle className="h-4 w-4" />
+                        <span>Coach</span>
+                      </div>
+                      <div className="text-right font-medium">
+                        {selectedTeam.coachData?.headCoachName || 'N/A'}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2 py-2 border-b border-border/50">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Phone className="h-4 w-4" />
+                        <span>Coach Phone</span>
+                      </div>
+                      <div className="text-right font-medium">
+                        {selectedTeam.coachData?.headCoachPhone || 'N/A'}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              {/* Action buttons */}
+              <div className="flex justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsDetailsDialogOpen(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
