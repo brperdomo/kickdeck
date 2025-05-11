@@ -4421,46 +4421,19 @@ function TeamsView() {
                   </FormItem>
                 )}
               />
-                      <div className="font-medium">{selectedTeam.managerName || selectedTeam.managerEmail}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Manager Email</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.managerEmail || 'N/A'}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Manager Phone</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.managerPhone || 'N/A'}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <UserCircle className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Head Coach</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.coachData?.headCoachName || 'N/A'}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Coach Email</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.coachData?.headCoachEmail || 'N/A'}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Coach Phone</span>
-                      </div>
+
+              <div className="flex justify-end gap-2 mt-4">
+                <Button variant="outline" type="button" onClick={() => setIsPlayerDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  {isAddPlayerMode ? 'Add Player' : 'Save Changes'}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
                       <div className="font-medium">{selectedTeam.coachData?.headCoachPhone || 'N/A'}</div>
                     </div>
                     
