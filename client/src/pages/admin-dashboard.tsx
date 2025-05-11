@@ -4269,21 +4269,8 @@ function TeamsView() {
         setIsPlayerDialogOpen={setIsPlayerDialogOpen}
         setSelectedTeamId={setSelectedTeamId}
       />
-      
+
       {/* Add/Edit Player Dialog */}
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Trophy className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Division</span>
-                      </div>
-                      <div className="font-medium">{selectedTeam.ageGroup?.divisionCode || 'N/A'}</div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-border/50">
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
                         <span className="text-muted-foreground">Submitted by</span>
                       </div>
                       <div className="font-medium">{selectedTeam.submitterEmail || selectedTeam.managerEmail}</div>
