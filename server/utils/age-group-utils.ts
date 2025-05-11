@@ -23,6 +23,7 @@ export function getStandardFieldSize(ageGroup: string): string {
   } else if (ageNum <= 12) {
     return '9v9';
   } else {
+    // U13 and up (including new U19) all use 11v11
     return '11v11';
   }
 }

@@ -276,7 +276,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
           fieldSize: group.ageGroup.startsWith('U') ?
             (parseInt(group.ageGroup.substring(1)) <= 7 ? '4v4' :
               parseInt(group.ageGroup.substring(1)) <= 10 ? '7v7' :
-                parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11',
+                parseInt(group.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11', // U13 and up (including U19) use 11v11
           selected: true
         }));
         

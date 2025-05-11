@@ -38,6 +38,8 @@ export const PREDEFINED_AGE_GROUPS = [
   { ageGroup: 'U17', birthYear: 2008, gender: 'Girls', divisionCode: 'G2008' },
   { ageGroup: 'U18', birthYear: 2007, gender: 'Boys', divisionCode: 'B2007' },
   { ageGroup: 'U18', birthYear: 2007, gender: 'Girls', divisionCode: 'G2007' },
+  { ageGroup: 'U19', birthYear: 2006, gender: 'Boys', divisionCode: 'B2006' },
+  { ageGroup: 'U19', birthYear: 2006, gender: 'Girls', divisionCode: 'G2006' },
 ] as const;
 
 export interface AgeGroup {
