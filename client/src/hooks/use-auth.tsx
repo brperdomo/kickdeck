@@ -488,7 +488,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setAuthState('unauthenticated');
       }
     }
-  }, [user, isLoading]);
+  }, [user, isLoading, authState]);
 
   return (
     <AuthContext.Provider
