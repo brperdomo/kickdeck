@@ -34,14 +34,13 @@ import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
 import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
 import { useAuth } from "@/hooks/use-auth";
 import { useHouseholdDetails } from "@/hooks/use-household-details";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useMutation } from "@tanstack/react-query";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -577,6 +576,87 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const { user, isLoading: authLoading } = useAuth();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Coach validation states
+  const [isCheckingCoach, setIsCheckingCoach] = useState(false);
+  const [coachFound, setCoachFound] = useState(false);
+  const [coachData, setCoachData] = useState<{
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  } | null>(null);
+  const [coachDebounceTimeout, setCoachDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
+  
+  // Function to handle coach email change with debounce
+  const handleCoachEmailChange = (value: string) => {
+    // Clear previous timeout if it exists
+    if (coachDebounceTimeout) {
+      clearTimeout(coachDebounceTimeout);
+    }
+    
+    // Don't validate empty emails
+    if (!value || value.trim() === '') {
+      setIsCheckingCoach(false);
+      setCoachFound(false);
+      setCoachData(null);
+      return;
+    }
+    
+    // Set a new timeout for debounce
+    const timeout = setTimeout(() => {
+      validateCoachMutation.mutate(value);
+    }, 500); // 500ms debounce
+    
+    setCoachDebounceTimeout(timeout);
+  };
+  
+  // Coach validation mutation
+  const validateCoachMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const response = await fetch('/api/coaches/check-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to validate coach email');
+      }
+      
+      return response.json();
+    },
+    onMutate: () => {
+      setIsCheckingCoach(true);
+    },
+    onSuccess: (data) => {
+      setIsCheckingCoach(false);
+      setCoachFound(data.exists);
+      
+      if (data.exists && data.coach) {
+        setCoachData(data.coach);
+        
+        // Auto-fill the coach name and phone if found
+        if (teamForm && data.coach.firstName && data.coach.lastName) {
+          const fullName = `${data.coach.firstName} ${data.coach.lastName}`;
+          teamForm.setValue('headCoachName', fullName);
+        }
+        
+        if (teamForm && data.coach.phone) {
+          teamForm.setValue('headCoachPhone', data.coach.phone);
+        }
+      } else {
+        setCoachData(null);
+      }
+    },
+    onError: () => {
+      setIsCheckingCoach(false);
+      setCoachFound(false);
+      setCoachData(null);
+    }
+  });
   
   // Setup registration save state hook
   const { 
