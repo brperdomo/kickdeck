@@ -1127,6 +1127,39 @@ export function registerRoutes(app: Express): Server {
         
         // Create the team in a transaction to ensure all operations succeed or fail together
         const result = await db.transaction(async (tx) => {
+          // Check if coach exists and create an account if it doesn't
+          let coachCreated = false;
+          try {
+            // Check if coach already exists
+            const [existingCoach] = await tx
+              .select()
+              .from(users)
+              .where(eq(users.email, headCoachEmail))
+              .limit(1);
+              
+            if (!existingCoach) {
+              // Import createCoachAccount from auth.ts
+              const { createCoachAccount } = await import('./auth');
+              
+              // Create a new coach account with the provided information
+              console.log(`Creating new coach account for ${headCoachEmail}`);
+              await createCoachAccount(
+                headCoachName.split(' ')[0], // First name (basic split)
+                headCoachName.split(' ').slice(1).join(' '), // Last name (everything after first space)
+                headCoachEmail,
+                headCoachPhone
+              );
+              coachCreated = true;
+              console.log(`New coach account created for ${headCoachEmail}`);
+            } else {
+              console.log(`Coach ${headCoachEmail} already exists, skipping account creation`);
+            }
+          } catch (coachError) {
+            console.error('Error checking/creating coach account:', coachError);
+            // Continue with registration even if coach account creation fails
+            // The main goal is to register the team
+          }
+          
           // Insert team with registration info - using proper property names that match the schema
           const insertedTeam = await tx
             .insert(teams)
@@ -1144,7 +1177,8 @@ export function registerRoutes(app: Express): Server {
                 headCoachName,
                 headCoachEmail,
                 headCoachPhone,
-                assistantCoachName
+                assistantCoachName,
+                accountCreated: coachCreated // Track if we created an account for this coach
               }),
               managerName: managerName,
               managerEmail: managerEmail,
