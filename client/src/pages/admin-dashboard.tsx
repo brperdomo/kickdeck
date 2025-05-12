@@ -3803,7 +3803,7 @@ function TeamsView() {
                                 <TableCell>{team.event?.name || "N/A"}</TableCell>
                                 <TableCell>{team.ageGroup?.ageGroup || "N/A"}</TableCell>
                                 <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
-                                <TableCell>{team.managerEmail}</TableCell>
+                                <TableCell>{formatDate(team.createdAt)}</TableCell>
                                 <TableCell>{getCoachName(team.coach)}</TableCell>
                                 <TableCell>{formatCurrency(team.registrationFee || 0)}</TableCell>
                                 <TableCell>
