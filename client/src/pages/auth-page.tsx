@@ -19,7 +19,7 @@ import { Loader2 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { ExtendedUser, isUserAdmin } from "@/types/user";
+
 
 // Login schema
 const loginSchema = z.object({
@@ -32,8 +32,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function AuthPage() {
   const { toast } = useToast();
   const { loginMutation, user, authState, setAuthState } = useAuth();
-  // Cast user as ExtendedUser for type safety
-  const extendedUser = user as ExtendedUser | null;
+
   const [location, setLocation] = useLocation();
   const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
 
@@ -87,7 +86,7 @@ export default function AuthPage() {
       console.log('Login successful, user data:', userData);
       
       // Check if the user has admin privileges
-      const isAdmin = userData.isAdmin;
+      const isAdmin = userData && userData.isAdmin;
       
       // Determine the appropriate dashboard
       const targetPath = isAdmin ? '/admin/dashboard' : '/dashboard';
@@ -122,22 +121,22 @@ export default function AuthPage() {
     }
   }
 
-  // If already authenticated, redirect to fix-redirect page
+  // If already authenticated, redirect to dashboard
   if (user && authState === 'authenticated') {
-    console.log("User already authenticated, redirecting to fix-redirect");
+    console.log("User already authenticated, redirecting to dashboard");
     
-    // Check if user has admin privileges using our helper function
-    const isAdmin = isUserAdmin(extendedUser);
+    // Check if user has admin privileges
+    const isAdmin = user.isAdmin;
                      
-    console.log("User already authenticated with roles:", extendedUser?.roles || [], "isAdmin:", isAdmin);
+    console.log("User already authenticated, isAdmin:", isAdmin);
                      
     // Immediate redirect to dashboard
     const directTarget = isAdmin ? '/admin/dashboard' : '/dashboard';
     
-    // Use our fix-redirect mechanism for safer handling
+    // Direct redirect to appropriate dashboard
     setTimeout(() => {
-      console.log(`User already authenticated, redirecting safely to ${directTarget}`);
-      window.location.href = "/fix-redirect";
+      console.log(`User already authenticated, redirecting to ${directTarget}`);
+      window.location.href = directTarget;
     }, 250);
     
     return (

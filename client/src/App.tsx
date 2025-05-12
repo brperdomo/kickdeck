@@ -410,18 +410,7 @@ function Router() {
             )}
           </Route>
           
-          {/* Special route for fixing login redirect issues */}
-          <Route path="/fix-redirect">
-            {() => {
-              // Use our enhanced redirect component
-              console.log("Fix-redirect: Using ForceRedirectCombinedFix component");
-              
-              // Import at the top level for better code organization
-              const { ForceRedirectCombinedFix } = require("@/components/ForceRedirectCombinedFix");
-              
-              return <ForceRedirectCombinedFix />;
-            }}
-          </Route>
+
           
           {/* Preview routes */}
 
