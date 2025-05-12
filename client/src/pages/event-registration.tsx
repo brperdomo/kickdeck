@@ -516,10 +516,8 @@ const playerSchema = z.object({
   jerseyNumber: z.string().regex(/^\d{1,2}$/, "Jersey number must be 1-2 digits").optional(),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   medicalNotes: z.string().optional(),
-  parentGuardianName: z.string().optional(),
-  parentGuardianEmail: z.string().email("Invalid email").optional(),
-  parentGuardianPhone: z.string().min(10, "Phone number must be at least 10 digits").optional(),
-  emergencyContactName: z.string().min(1, "Emergency contact name is required"),
+  emergencyContactFirstName: z.string().min(1, "Emergency contact first name is required"),
+  emergencyContactLastName: z.string().min(1, "Emergency contact last name is required"),
   emergencyContactPhone: z.string().min(10, "Emergency contact phone is required"),
 });
 
