@@ -1862,6 +1862,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       managerEmail: '',
       managerPhone: '',
       players: [],
+      addRosterLater: false, // Add this field to match schema
       selectedFeeIds: [],
       totalAmount: 0,
       clubId: null,
