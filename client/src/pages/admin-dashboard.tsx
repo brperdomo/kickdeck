@@ -5,7 +5,7 @@ import {
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
-  Trophy, WandSparkles, CheckCircle2
+  Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -56,10 +56,21 @@ function formatCurrency(amount: number | null | undefined): string {
 
 // Helper function to get the roster count display value
 function getRosterCount(team: any): string {
-  if (!team || !team.playerCount) {
+  if (!team) {
     return '0';
   }
-  return team.playerCount.toString();
+  
+  // Check if players array exists and has length
+  if (team.players && Array.isArray(team.players)) {
+    return team.players.length.toString();
+  }
+  
+  // Fallback to playerCount if available
+  if (team.playerCount) {
+    return team.playerCount.toString();
+  }
+  
+  return '0';
 }
 
 // Helper function to format the payment method display
@@ -99,7 +110,6 @@ import {
   UserRound,
   Palette,
   ChevronRight,
-  CreditCard,
   Search,
   ClipboardList,
   MoreHorizontal,
