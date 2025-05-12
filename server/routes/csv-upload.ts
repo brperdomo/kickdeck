@@ -41,13 +41,12 @@ const playerSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   jerseyNumber: z.string().regex(/^\d{1,2}$/, "Jersey number must be 1-2 digits").optional(),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
-  position: z.string().optional(),
   medicalNotes: z.string().optional(),
   parentGuardianName: z.string().optional(),
   parentGuardianEmail: z.string().email("Invalid email").optional(),
-  parentGuardianPhone: z.string().min(10, "Phone number must be at least 10 digits").optional(),
+  parentGuardianPhone: z.string().optional(),
   emergencyContactName: z.string().min(1, "Emergency contact name is required"),
-  emergencyContactPhone: z.string().min(10, "Emergency contact phone is required"),
+  emergencyContactPhone: z.string().min(1, "Emergency contact phone is required"),
 });
 
 type PlayerData = z.infer<typeof playerSchema>;
@@ -190,7 +189,7 @@ router.post('/csv-admin', upload.single('file'), async (req: Request, res: Respo
         jerseyNumber: record.jerseyNumber || record['Jersey Number'] 
           ? parseInt(record.jerseyNumber || record['Jersey Number']) 
           : null,
-        position: record.position || record['Position'] || '',
+        position: null, // Position is no longer collected
         medicalNotes: record.notes || record['Notes'] || '',
         emergencyContactName: record.emergencyContactName || record['Emergency Contact Name'] || 'Not Provided',
         emergencyContactPhone: record.emergencyContactPhone || record['Emergency Contact Phone'] || 'Not Provided',

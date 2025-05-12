@@ -5007,17 +5007,7 @@ function TeamsView() {
                 </div>
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="position">Position</Label>
-                <Input 
-                  id="position" 
-                  value={selectedPlayer.position || ''}
-                  onChange={(e) => setSelectedPlayer({
-                    ...selectedPlayer,
-                    position: e.target.value
-                  })}
-                />
-              </div>
+              {/* Position field removed as requested */}
               
               <div className="space-y-2">
                 <Label htmlFor="medicalNotes">Medical Notes</Label>

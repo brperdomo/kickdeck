@@ -12,7 +12,6 @@ const playerSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   jerseyNumber: z.string().optional(),
-  position: z.string().optional(),
   medicalNotes: z.string().optional(),
   parentGuardianName: z.string().optional(),
   parentGuardianEmail: z.string().optional(),
