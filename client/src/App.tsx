@@ -313,6 +313,15 @@ function Router() {
               <AdminDashboard />
             </DebugErrorBoundary>
           } />
+          
+          {/* Add a direct route to handle edge cases for admin dashboard */}
+          <Route path="/admin-direct">
+            {() => (
+              <DebugErrorBoundary>
+                <AdminDashboard />
+              </DebugErrorBoundary>
+            )}
+          </Route>
 
           {/* User routes - using ProtectedRoute for member-specific routes */}
           <ProtectedRoute path="/household" requiredRole="member" component={
@@ -391,6 +400,15 @@ function Router() {
               <UserDashboard />
             </DebugErrorBoundary>
           } />
+          
+          {/* Add a direct route to handle edge cases */}
+          <Route path="/dashboard-direct">
+            {() => (
+              <DebugErrorBoundary>
+                <UserDashboard />
+              </DebugErrorBoundary>
+            )}
+          </Route>
           
           {/* Preview routes */}
 
