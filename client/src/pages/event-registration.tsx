@@ -2335,6 +2335,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     console.log("Team form submission attempted with data:", data);
     console.log("Form errors:", teamForm.formState.errors);
     
+    // Add more detailed logging
+    console.log("Required field values:", {
+      name: data.name,
+      ageGroupId: data.ageGroupId,
+      headCoachFirstName: data.headCoachFirstName,
+      headCoachLastName: data.headCoachLastName,
+      headCoachEmail: data.headCoachEmail,
+      headCoachPhone: data.headCoachPhone,
+      managerFirstName: data.managerFirstName,
+      managerLastName: data.managerLastName,
+      managerEmail: data.managerEmail,
+      managerPhone: data.managerPhone,
+    });
+    
     // Ensure player data is synced with form state
     teamForm.setValue('players', players);
     
