@@ -3223,10 +3223,24 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={teamForm.control}
-                        name="headCoachName"
+                        name="headCoachFirstName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Head Coach Name</FormLabel>
+                            <FormLabel>Head Coach First Name</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={teamForm.control}
+                        name="headCoachLastName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Head Coach Last Name</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -3237,10 +3251,24 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
 
                       <FormField
                         control={teamForm.control}
-                        name="assistantCoachName"
+                        name="assistantCoachFirstName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Assistant Coach Name (Optional)</FormLabel>
+                            <FormLabel>Assistant Coach First Name (Optional)</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={teamForm.control}
+                        name="assistantCoachLastName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Assistant Coach Last Name (Optional)</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
@@ -3289,10 +3317,24 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={teamForm.control}
-                        name="managerName"
+                        name="managerFirstName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Manager Name</FormLabel>
+                            <FormLabel>Manager First Name</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={teamForm.control}
+                        name="managerLastName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Manager Last Name</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
