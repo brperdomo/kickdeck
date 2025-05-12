@@ -1,10 +1,10 @@
 /**
  * Coach-related API routes
  */
-import { Request, Response } from "express";
-import { db } from "../../db";
-import { users, userRoles } from "../../db/schema";
-import { eq, and } from "drizzle-orm";
+import { Request, Response } from 'express';
+import { db } from '@db';
+import { users } from '@db/schema';
+import { eq } from 'drizzle-orm';
 
 /**
  * Check if a coach exists by email and return non-sensitive information
@@ -14,54 +14,42 @@ export async function checkCoachEmail(req: Request, res: Response) {
     const { email } = req.body;
     
     if (!email) {
-      return res.status(400).json({ 
-        success: false, 
-        error: "Email is required" 
-      });
+      return res.status(400).json({ error: 'Email is required' });
     }
     
-    // Find user with the given email
-    const user = await db.query.users.findFirst({
-      where: eq(users.email, email),
-      columns: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        phone: true,
-      },
-      with: {
-        roles: {
-          columns: {
-            roleId: true,
-          }
-        }
-      }
-    });
+    // Find the coach by email
+    const [coach] = await db
+      .select({
+        id: users.id,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        email: users.email,
+        phone: users.phone
+      })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
     
-    if (!user) {
-      return res.json({ 
-        exists: false,
-        message: "No coach found with this email"
-      });
+    if (!coach) {
+      // Coach not found
+      return res.json({ exists: false });
     }
     
-    // Return the coach information
+    // Return non-sensitive coach information
     return res.json({
       exists: true,
       coach: {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phone: user.phone || '',
+        firstName: coach.firstName,
+        lastName: coach.lastName,
+        email: coach.email,
+        phone: coach.phone || ''
       }
     });
-    
   } catch (error) {
-    console.error("Error checking coach email:", error);
-    return res.status(500).json({
-      success: false,
-      error: "Failed to check coach email"
+    console.error('Error checking coach email:', error);
+    return res.status(500).json({ 
+      error: 'Failed to check coach email',
+      details: process.env.NODE_ENV === 'development' ? String(error) : undefined
     });
   }
 }
