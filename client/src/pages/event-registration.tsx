@@ -1871,7 +1871,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       firstName: '',
       lastName: '',
       dateOfBirth: '',
-      emergencyContactName: '',
+      emergencyContactFirstName: '',
+      emergencyContactLastName: '',
       emergencyContactPhone: '',
     };
     const updatedPlayers = [...players, newPlayer];
@@ -2373,13 +2374,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       
       // Check for missing emergency contact information
       const missingEmergency = players.filter(player => 
-        !player.emergencyContactName || !player.emergencyContactPhone
+        !player.emergencyContactFirstName || !player.emergencyContactLastName || !player.emergencyContactPhone
       );
       
       if (missingEmergency.length > 0) {
         toast({
           title: "Missing Emergency Contact",
-          description: "Please provide emergency contact information for all players",
+          description: "Please provide complete emergency contact information for all players",
           variant: "destructive",
         });
         return;
@@ -3560,15 +3561,15 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             
                             <div className="mt-4 pt-4 border-t">
                               <h5 className="font-medium mb-2">Emergency Contact</h5>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="space-y-2">
-                                  <Label htmlFor={`player-${index}-emergencyName`}>Emergency Contact Name *</Label>
+                                  <Label htmlFor={`player-${index}-emergencyFirstName`}>First Name *</Label>
                                   <Input
-                                    id={`player-${index}-emergencyName`}
-                                    value={player.emergencyContactName || ''}
+                                    id={`player-${index}-emergencyFirstName`}
+                                    value={player.emergencyContactFirstName || ''}
                                     onChange={(e) => {
                                       const newPlayers = [...players];
-                                      newPlayers[index].emergencyContactName = e.target.value;
+                                      newPlayers[index].emergencyContactFirstName = e.target.value;
                                       setPlayers(newPlayers);
                                       // Update form state with the modified players array
                                       teamForm.setValue('players', newPlayers);
@@ -3578,19 +3579,39 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                 </div>
                                 
                                 <div className="space-y-2">
-                                  <Label htmlFor={`player-${index}-emergencyPhone`}>Emergency Contact Phone *</Label>
+                                  <Label htmlFor={`player-${index}-emergencyLastName`}>Last Name *</Label>
                                   <Input
-                                    id={`player-${index}-emergencyPhone`}
-                                    type="tel"
-                                    value={player.emergencyContactPhone || ''}
+                                    id={`player-${index}-emergencyLastName`}
+                                    value={player.emergencyContactLastName || ''}
                                     onChange={(e) => {
                                       const newPlayers = [...players];
-                                      newPlayers[index].emergencyContactPhone = e.target.value;
+                                      newPlayers[index].emergencyContactLastName = e.target.value;
                                       setPlayers(newPlayers);
                                       // Update form state with the modified players array
                                       teamForm.setValue('players', newPlayers);
                                     }}
                                     className="w-full"
+                                  />
+                                </div>
+                                
+                                <div className="space-y-2">
+                                  <Label htmlFor={`player-${index}-emergencyPhone`}>Phone Number *</Label>
+                                  <Input
+                                    id={`player-${index}-emergencyPhone`}
+                                    type="tel"
+                                    maxLength={10}
+                                    value={player.emergencyContactPhone || ''}
+                                    onChange={(e) => {
+                                      // Only allow digits
+                                      const value = e.target.value.replace(/\D/g, '');
+                                      const newPlayers = [...players];
+                                      newPlayers[index].emergencyContactPhone = value;
+                                      setPlayers(newPlayers);
+                                      // Update form state with the modified players array
+                                      teamForm.setValue('players', newPlayers);
+                                    }}
+                                    className="w-full"
+                                    placeholder="10 digits only"
                                   />
                                 </div>
                               </div>
