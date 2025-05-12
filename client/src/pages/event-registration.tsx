@@ -599,8 +599,16 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   } | null>(null);
   const [managerDebounceTimeout, setManagerDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   
+  // Track when we're loading saved data to prevent validation loops
+  const [isLoadingSavedData, setIsLoadingSavedData] = useState(false);
+
   // Function to handle coach email change with debounce
   const handleCoachEmailChange = (value: string) => {
+    // Skip validation if we're in the process of loading saved data
+    if (isLoadingSavedData) {
+      return;
+    }
+    
     // Clear previous timeout if it exists
     if (coachDebounceTimeout) {
       clearTimeout(coachDebounceTimeout);
@@ -624,6 +632,11 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   
   // Function to handle manager email change with debounce
   const handleManagerEmailChange = (value: string) => {
+    // Skip validation if we're in the process of loading saved data
+    if (isLoadingSavedData) {
+      return;
+    }
+    
     // Clear previous timeout if it exists
     if (managerDebounceTimeout) {
       clearTimeout(managerDebounceTimeout);
@@ -1061,6 +1074,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     try {
       console.log('Loading saved registration state:', savedData);
       
+      // Set the flag to prevent validation loops during data loading
+      setIsLoadingSavedData(true);
+      
       // Check if we have data to restore
       if (savedData.personalDetails) {
         // If user is logged in, we want to merge saved form data with account data
@@ -1121,9 +1137,24 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         setCurrentStep(savedData.currentStep);
       }
       
+      // Now that we've loaded all the data, manually validate coach and manager emails if needed
+      const timeoutId = setTimeout(() => {
+        if (savedData.teamDetails?.headCoachEmail) {
+          validateCoachMutation.mutate(savedData.teamDetails.headCoachEmail);
+        }
+        
+        if (savedData.teamDetails?.managerEmail) {
+          validateManagerMutation.mutate(savedData.teamDetails.managerEmail);
+        }
+        
+        // Reset the loading flag after validations have been triggered
+        setIsLoadingSavedData(false);
+      }, 500);
+      
       return true;
     } catch (error) {
       console.error('Error loading saved registration state:', error);
+      setIsLoadingSavedData(false);
       return false;
     }
   };
