@@ -54,6 +54,41 @@ function formatCurrency(amount: number | null | undefined): string {
   return `$${(amount / 100).toFixed(2)}`;
 }
 
+// Helper function to get the roster count display value
+function getRosterCount(team: any): string {
+  if (!team || !team.playerCount) {
+    return '0';
+  }
+  return team.playerCount.toString();
+}
+
+// Helper function to format the payment method display
+function getPaymentMethodDisplay(team: any): JSX.Element {
+  if (team.setupIntentId && !team.paymentIntentId) {
+    return (
+      <Badge variant="outline" className="text-blue-600 border-blue-400 whitespace-nowrap font-medium">
+        <CreditCard className="w-3 h-3 mr-1" /> Payment Pending
+      </Badge>
+    );
+  } else if (team.payLater) {
+    return (
+      <Badge variant="outline" className="text-orange-500 border-orange-500 whitespace-nowrap font-medium">
+        <AlertCircle className="w-3 h-3 mr-1" /> Pay Later
+      </Badge>
+    );
+  } else if (team.paymentStatus === 'paid') {
+    return (
+      <Badge className="bg-green-500/90 whitespace-nowrap">Paid</Badge>
+    );
+  } else {
+    return (
+      <Badge variant="outline">
+        {team.paymentStatus || 'Unpaid'}
+      </Badge>
+    );
+  }
+}
+
 import {
   Calendar,
   Shield,
@@ -3730,10 +3765,10 @@ function TeamsView() {
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Event</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Age Group</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Submitter</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Manager</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Coach</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registered Date</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Roster Count</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registration Fee</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Payment Status</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Payment Method</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100 text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
