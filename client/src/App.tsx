@@ -308,11 +308,27 @@ function Router() {
             </DebugErrorBoundary>
           } />
           {/* We'll enhance the main dashboard with animations directly */}
-          <ProtectedRoute path="/admin" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="events" />
-            </DebugErrorBoundary>
-          } />
+          {/* Temporarily using DiagnosticDashboard to diagnose the white screen issues */}
+          <ProtectedRoute 
+            path="/admin" 
+            requiredRole="admin" 
+            component={() => {
+              // Use dynamic import for diagnostic dashboard
+              const DiagnosticDashboard = React.lazy(() => import('@/components/diagnostic/DiagnosticDashboard'));
+              
+              return (
+                <DebugErrorBoundary>
+                  <React.Suspense fallback={
+                    <div className="flex items-center justify-center min-h-screen">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  }>
+                    <DiagnosticDashboard />
+                  </React.Suspense>
+                </DebugErrorBoundary>
+              );
+            }}
+          />
 
           {/* User routes - using ProtectedRoute for member-specific routes */}
           <ProtectedRoute path="/household" requiredRole="member" component={
@@ -386,11 +402,27 @@ function Router() {
           <Route path="/payment-setup-confirmation" component={PaymentSetupConfirmation} />
           
           {/* Dashboard routes - protected with role-based redirection */}
-          <ProtectedRoute path="/dashboard" requiredRole="member" component={
-            <DebugErrorBoundary>
-              <UserDashboard />
-            </DebugErrorBoundary>
-          } />
+          {/* Temporarily using DiagnosticDashboard to diagnose the white screen issues on member dashboard */}
+          <ProtectedRoute 
+            path="/dashboard" 
+            requiredRole="member" 
+            component={() => {
+              // Use dynamic import for diagnostic dashboard
+              const DiagnosticDashboard = React.lazy(() => import('@/components/diagnostic/DiagnosticDashboard'));
+              
+              return (
+                <DebugErrorBoundary>
+                  <React.Suspense fallback={
+                    <div className="flex items-center justify-center min-h-screen">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  }>
+                    <DiagnosticDashboard />
+                  </React.Suspense>
+                </DebugErrorBoundary>
+              );
+            }}
+          />
           
           {/* Preview routes */}
 
