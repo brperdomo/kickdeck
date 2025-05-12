@@ -413,39 +413,13 @@ function Router() {
           {/* Special route for fixing login redirect issues */}
           <Route path="/fix-redirect">
             {() => {
-              const { user } = useAuth();
-              console.log("Fix-redirect: User data:", user);
+              // Use our enhanced redirect component
+              console.log("Fix-redirect: Using ForceRedirectCombinedFix component");
               
-              // Force an immediate redirect based on user role
-              if (user) {
-                const targetPath = user.isAdmin ? '/admin/dashboard' : '/dashboard';
-                console.log(`Fix-redirect: Redirecting to ${targetPath}`);
-                
-                // Use window.location for a forced navigation that bypasses router
-                setTimeout(() => {
-                  window.location.href = targetPath;
-                }, 100);
-                
-                return (
-                  <div className="flex items-center justify-center min-h-screen">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <span className="ml-2">Redirecting to dashboard...</span>
-                  </div>
-                );
-              }
+              // Import at the top level for better code organization
+              const { ForceRedirectCombinedFix } = require("@/components/ForceRedirectCombinedFix");
               
-              // If no user, redirect to login
-              console.log("Fix-redirect: No user, redirecting to auth");
-              setTimeout(() => {
-                window.location.href = '/auth';
-              }, 100);
-              
-              return (
-                <div className="flex items-center justify-center min-h-screen">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <span className="ml-2">Redirecting to login...</span>
-                </div>
-              );
+              return <ForceRedirectCombinedFix />;
             }}
           </Route>
           
