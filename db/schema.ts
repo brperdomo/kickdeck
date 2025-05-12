@@ -412,13 +412,17 @@ export const players = pgTable("players", {
   lastName: text("last_name").notNull(),
   jerseyNumber: integer("jersey_number"),
   dateOfBirth: text("date_of_birth").notNull(),
-  position: text("position"),
+  position: text("position"), // Keeping for backward compatibility but no longer used
   medicalNotes: text("medical_notes"),
+  // Modified emergency contact fields
+  emergencyContactFirstName: text("emergency_contact_first_name").notNull(),
+  emergencyContactLastName: text("emergency_contact_last_name").notNull(),
+  emergencyContactPhone: text("emergency_contact_phone").notNull(),
+  // Keeping parent fields for backward compatibility but no longer used
   parentGuardianName: text("parent_guardian_name"),
   parentGuardianEmail: text("parent_guardian_email"),
   parentGuardianPhone: text("parent_guardian_phone"),
-  emergencyContactName: text("emergency_contact_name").notNull(),
-  emergencyContactPhone: text("emergency_contact_phone").notNull(),
+  emergencyContactName: text("emergency_contact_name"), // For backward compatibility
   isActive: boolean("is_active").notNull().default(true),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),

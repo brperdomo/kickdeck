@@ -175,6 +175,10 @@ router.post('/csv-admin', upload.single('file'), async (req: Request, res: Respo
 
     // Transform records to player objects for database insert
     const playersToInsert = records.map((record) => {
+      // Get emergency contact names
+      const emergencyFirstName = record.emergencyContactFirstName || record['Emergency Contact First Name'] || 'Not Provided';
+      const emergencyLastName = record.emergencyContactLastName || record['Emergency Contact Last Name'] || 'Not Provided';
+      
       // Map CSV fields to database fields
       return {
         teamId: parseInt(teamId),
@@ -186,9 +190,15 @@ router.post('/csv-admin', upload.single('file'), async (req: Request, res: Respo
           : null,
         position: null, // Position is no longer collected
         medicalNotes: record.notes || record['Notes'] || '',
-        emergencyContactFirstName: record.emergencyContactFirstName || record['Emergency Contact First Name'] || 'Not Provided',
-        emergencyContactLastName: record.emergencyContactLastName || record['Emergency Contact Last Name'] || 'Not Provided',
+        emergencyContactFirstName: emergencyFirstName,
+        emergencyContactLastName: emergencyLastName,
         emergencyContactPhone: record.emergencyContactPhone || record['Emergency Contact Phone'] || 'Not Provided',
+        // For backward compatibility
+        emergencyContactName: `${emergencyFirstName} ${emergencyLastName}`,
+        // Keeping these fields for backward compatibility
+        parentGuardianName: null,
+        parentGuardianEmail: null,
+        parentGuardianPhone: null,
         isActive: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
