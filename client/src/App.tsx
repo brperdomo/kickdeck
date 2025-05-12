@@ -242,105 +242,80 @@ function Router() {
           <ProtectedRoute path="/admin/form-templates/:id/edit" requiredRole="admin" component={<FormTemplateEditPage />} />
           <ProtectedRoute path="/admin/form-templates" requiredRole="admin" component={<AdminDashboard initialView="formTemplates" />} />
           <ProtectedRoute path="/admin/team-status-test" requiredRole="admin" component={<TeamStatusTest />} />
-          <Route path="/admin/file-manager">
-            {user.isAdmin ? <AdminDashboard initialView="files" /> : <NotFound />}
-          </Route>
-          <Route path="/admin/events">
-            {user.isAdmin ? <AdminDashboard initialView="events" /> : <NotFound />}
-          </Route>
-          <Route path="/admin/teams">
-            {user.isAdmin ? <AdminDashboard initialView="teams" /> : <NotFound />}
-          </Route>
-          <Route path="/admin/administrators">
-            {user.isAdmin ? <AdminDashboard initialView="administrators" /> : <NotFound />}
-          </Route>
-          <Route path="/admin/complexes">
-            {user.isAdmin ? <AdminDashboard initialView="complexes" /> : <NotFound />}
-          </Route>
-          <Route path="/admin/households">
-            {user.isAdmin ? <AdminDashboard initialView="households" /> : <NotFound />}
-          </Route>
-          <Route path="/admin/scheduling">
-            {user.isAdmin ? <AdminDashboard initialView="scheduling" /> : <NotFound />}
-          </Route>
-          <Route path="/admin/reports">
-            {user.isAdmin ? <AdminDashboard initialView="reports" /> : <NotFound />}
-          </Route>
-          <Route path="/admin/members">
-            {user.isAdmin ? <AdminDashboard initialView="members" /> : <NotFound />}
-          </Route>
-          <Route path="/admin/roles">
-            {user.isAdmin ? <AdminDashboard initialView="roles" /> : <NotFound />}
-          </Route>
-          <Route path="/admin/account">
-            {user.isAdmin ? <AdminDashboard initialView="account" /> : <NotFound />}
-          </Route>
-          <Route path="/admin/settings">
-            {user.isAdmin ? <AdminDashboard initialView="settings" /> : <NotFound />}
-          </Route>
+          <ProtectedRoute path="/admin/file-manager" requiredRole="admin" component={<AdminDashboard initialView="files" />} />
+          <ProtectedRoute path="/admin/events" requiredRole="admin" component={<AdminDashboard initialView="events" />} />
+          <ProtectedRoute path="/admin/teams" requiredRole="admin" component={<AdminDashboard initialView="teams" />} />
+          <ProtectedRoute path="/admin/administrators" requiredRole="admin" component={<AdminDashboard initialView="administrators" />} />
+          <ProtectedRoute path="/admin/complexes" requiredRole="admin" component={<AdminDashboard initialView="complexes" />} />
+          <ProtectedRoute path="/admin/households" requiredRole="admin" component={<AdminDashboard initialView="households" />} />
+          <ProtectedRoute path="/admin/scheduling" requiredRole="admin" component={<AdminDashboard initialView="scheduling" />} />
+          <ProtectedRoute path="/admin/reports" requiredRole="admin" component={<AdminDashboard initialView="reports" />} />
+          <ProtectedRoute path="/admin/members" requiredRole="admin" component={<AdminDashboard initialView="members" />} />
+          <ProtectedRoute path="/admin/roles" requiredRole="admin" component={<AdminDashboard initialView="roles" />} />
+          <ProtectedRoute path="/admin/account" requiredRole="admin" component={<AdminDashboard initialView="account" />} />
+          <ProtectedRoute path="/admin/settings" requiredRole="admin" component={<AdminDashboard initialView="settings" />} />
           {/* We'll enhance the main dashboard with animations directly */}
-          <Route path="/admin">
-            {user.isAdmin ? <AdminDashboard initialView="events" /> : <NotFound />}
-          </Route>
+          <ProtectedRoute path="/admin" requiredRole="admin" component={<AdminDashboard initialView="events" />} />
 
-          {/* User routes */}
-          <Route path="/household" component={HouseholdPage} />
-          <Route path="/dashboard/my-household" component={HouseholdPage} />
-          <Route path="/dashboard/my-account">
-            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>}>
-              {React.createElement(lazy(() => import('./pages/my-account')))}
-            </Suspense>
-          </Route>
-          <Route path="/dashboard/account-settings">
-            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>}>
-              {React.createElement(lazy(() => import('./pages/account-settings')))}
-            </Suspense>
-          </Route>
-          <Route path="/dashboard/registrations">
-            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>}>
-              {React.createElement(lazy(() => import('./pages/registrations')))}
-            </Suspense>
-          </Route>
-          <Route path="/chat" component={ChatPage} />
+          {/* User routes - using ProtectedRoute for member-specific routes */}
+          <ProtectedRoute path="/household" requiredRole="member" component={<HouseholdPage />} />
+          <ProtectedRoute path="/dashboard/my-household" requiredRole="member" component={<HouseholdPage />} />
+          <ProtectedRoute 
+            path="/dashboard/my-account" 
+            requiredRole="member" 
+            component={
+              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>}>
+                {React.createElement(lazy(() => import('./pages/my-account')))}
+              </Suspense>
+            }
+          />
+          <ProtectedRoute 
+            path="/dashboard/account-settings" 
+            requiredRole="member" 
+            component={
+              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>}>
+                {React.createElement(lazy(() => import('./pages/account-settings')))}
+              </Suspense>
+            }
+          />
+          <ProtectedRoute 
+            path="/dashboard/registrations" 
+            requiredRole="member" 
+            component={
+              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>}>
+                {React.createElement(lazy(() => import('./pages/registrations')))}
+              </Suspense>
+            }
+          />
+          <ProtectedRoute path="/chat" requiredRole="member" component={<ChatPage />} />
 
-          <Route path="/product-updates">
-            {user.isAdmin ? <ProductUpdatesPage /> : <NotFound />}
-          </Route>
-          <Route path="/registration-orders-report">
-            {user.isAdmin ? <RegistrationOrdersReport /> : <NotFound />}
-          </Route>
-          <Route path="/financial-overview-report">
-            {user.isAdmin ? <FinancialOverviewReport /> : <NotFound />}
-          </Route>
+          <ProtectedRoute path="/product-updates" requiredRole="admin" component={<ProductUpdatesPage />} />
+          <ProtectedRoute path="/registration-orders-report" requiredRole="admin" component={<RegistrationOrdersReport />} />
+          <ProtectedRoute path="/financial-overview-report" requiredRole="admin" component={<FinancialOverviewReport />} />
           <Route path="/event-financial-report/:eventId">
-            {(params) => user.isAdmin ? <EventFinancialReport eventId={params.eventId} /> : <NotFound />}
+            {(params) => (
+              <ProtectedRoute 
+                path="/event-financial-report/:eventId" 
+                requiredRole="admin" 
+                component={<EventFinancialReport eventId={params.eventId} />} 
+              />
+            )}
           </Route>
-          <Route path="/fees-analysis-report">
-            {user.isAdmin ? <FeesAnalysisReport /> : <NotFound />}
-          </Route>
-          <Route path="/bookkeeping-report">
-            {user.isAdmin ? <BookkeepingReport /> : <NotFound />}
-          </Route>
-          <Route path="/checkout">
-            <Checkout />
-          </Route>
-          <Route path="/payment-confirmation">
-            <PaymentConfirmation />
-          </Route>
-          <Route path="/payment-setup-confirmation">
-            <PaymentSetupConfirmation />
-          </Route>
+          <ProtectedRoute path="/fees-analysis-report" requiredRole="admin" component={<FeesAnalysisReport />} />
+          <ProtectedRoute path="/bookkeeping-report" requiredRole="admin" component={<BookkeepingReport />} />
+          {/* Payment routes - not protected by role since they're accessed after authentication from different flows */}
+          <Route path="/checkout" component={Checkout} />
+          <Route path="/payment-confirmation" component={PaymentConfirmation} />
+          <Route path="/payment-setup-confirmation" component={PaymentSetupConfirmation} />
           
-          {/* Dashboard routes - check for admin vs regular user */}
-          <Route path="/dashboard">
-            {user.isAdmin ? <RoleBasedRedirect /> : <UserDashboard />}
-          </Route>
+          {/* Dashboard routes - protected with role-based redirection */}
+          <ProtectedRoute path="/dashboard" requiredRole="member" component={<UserDashboard />} />
           
           {/* Preview routes */}
 
