@@ -1,31 +1,10 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/use-auth";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
+import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { 
-  CalendarDays,
-  Users,
-  Trophy,
-  CalendarClock,
-  AlertCircle
-} from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { Separator } from "@/components/ui/separator";
+import { format } from 'date-fns';
+import { ClipboardList, Calendar, Users } from 'lucide-react';
 
 interface Team {
   id: number;
@@ -33,18 +12,62 @@ interface Team {
   eventId: string;
   eventName: string;
   ageGroup: string;
-  status: 'pending' | 'approved' | 'rejected' | 'waitlisted';
+  status: 'pending' | 'approved' | 'rejected' | 'waitlisted' | 'pending_payment' | 'registered';
   createdAt: string;
   startDate: string;
   role: 'coach' | 'manager';
 }
 
-export function MyTeams() {
-  const { user } = useAuth();
-  const [noTeamsFound, setNoTeamsFound] = useState(false);
+function getStatusBadgeColor(status: Team['status']) {
+  switch (status) {
+    case 'approved':
+      return 'bg-green-500';
+    case 'rejected':
+      return 'bg-red-500';
+    case 'waitlisted':
+      return 'bg-amber-500';
+    case 'pending_payment':
+      return 'bg-blue-500';
+    case 'registered':
+      return 'bg-purple-500';
+    default:
+      return 'bg-gray-500'; // For 'pending' and any other status
+  }
+}
 
-  const { data: teams, isLoading, error } = useQuery({
-    queryKey: ['/api/teams/my-teams'],
+function getStatusLabel(status: Team['status']) {
+  switch (status) {
+    case 'pending_payment':
+      return 'Pending Payment';
+    case 'registered':
+      return 'Registration Submitted';
+    default:
+      return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+}
+
+export function MyTeams() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  
+  // Check authentication status on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/user');
+        if (response.ok) {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error('Error checking auth status:', error);
+      }
+    };
+    
+    checkAuth();
+  }, []);
+  
+  // Fetch teams using react-query
+  const { data: teams, isLoading, error } = useQuery<Team[]>({
+    queryKey: ['my-teams'],
     queryFn: async () => {
       const response = await fetch('/api/teams/my-teams');
       if (!response.ok) {
@@ -52,102 +75,107 @@ export function MyTeams() {
       }
       return response.json();
     },
-    enabled: !!user,
-    onSuccess: (data) => {
-      setNoTeamsFound(data.length === 0);
-    }
+    // Only fetch if the user is authenticated
+    enabled: isAuthenticated,
+    // Refresh every 5 minutes
+    refetchInterval: 5 * 60 * 1000
   });
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return <Badge className="bg-green-500">Approved</Badge>;
-      case 'rejected':
-        return <Badge variant="destructive">Rejected</Badge>;
-      case 'waitlisted':
-        return <Badge variant="secondary" className="bg-amber-500 text-white">Waitlisted</Badge>;
-      default:
-        return <Badge variant="outline">Pending</Badge>;
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return <Trophy className="h-4 w-4 text-green-500" />;
-      case 'rejected':
-        return <AlertCircle className="h-4 w-4 text-red-500" />;
-      case 'waitlisted':
-        return <CalendarClock className="h-4 w-4 text-amber-500" />;
-      default:
-        return <CalendarDays className="h-4 w-4 text-muted-foreground" />;
-    }
-  };
+  
+  // If not authenticated, show login prompt
+  if (!isAuthenticated) {
+    return (
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>My Teams</CardTitle>
+          <CardDescription>
+            You need to log in to see your teams.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+  
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>My Teams</CardTitle>
+          <CardDescription>Loading your teams...</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+  
+  // Handle error state
+  if (error) {
+    return (
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>My Teams</CardTitle>
+          <CardDescription className="text-red-500">
+            There was an error loading your teams. Please try again later.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+  
+  // If no teams found
+  if (!teams || teams.length === 0) {
+    return (
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>My Teams</CardTitle>
+          <CardDescription>
+            You currently have no teams. When you are added as a coach or manager to a team, it will appear here.
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
   
   return (
-    <Card className="member-card">
-      <CardHeader className="member-card-header">
-        <CardTitle className="text-xl flex items-center">
-          <Users className="mr-2 h-5 w-5" /> My Teams
-        </CardTitle>
+    <Card className="mb-8">
+      <CardHeader>
+        <CardTitle>My Teams</CardTitle>
         <CardDescription>
-          Teams you are coaching or managing
+          Teams where you are listed as coach or manager
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          // Loading skeleton
-          <div className="space-y-3">
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-20 w-full" />
-          </div>
-        ) : error ? (
-          <div className="text-center py-8 text-red-500">
-            <AlertCircle className="mx-auto h-8 w-8 mb-2" />
-            <p>Failed to load teams. Please try again later.</p>
-          </div>
-        ) : noTeamsFound ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <Users className="mx-auto h-8 w-8 mb-2" />
-            <p>You don't have any teams yet.</p>
-            <p className="text-sm mt-2">
-              When you're added as a coach or manager to a team, it will appear here.
-            </p>
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Team Name</TableHead>
-                <TableHead>Event</TableHead>
-                <TableHead>Age Group</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Registered</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {teams?.map((team: Team) => (
-                <TableRow key={team.id}>
-                  <TableCell className="font-medium">{team.name}</TableCell>
-                  <TableCell>{team.eventName}</TableCell>
-                  <TableCell>{team.ageGroup}</TableCell>
-                  <TableCell className="capitalize">{team.role}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(team.status)}
-                      {getStatusBadge(team.status)}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">
-                    {formatDistanceToNow(new Date(team.createdAt), { addSuffix: true })}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+        <div className="space-y-4">
+          {teams?.map((team: Team) => (
+            <div key={team.id} className="border rounded-lg p-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-lg font-semibold">{team.name}</h3>
+                  <p className="text-sm text-muted-foreground">{team.eventName}</p>
+                </div>
+                <Badge className={`${getStatusBadgeColor(team.status)}`}>
+                  {getStatusLabel(team.status)}
+                </Badge>
+              </div>
+              
+              <Separator className="my-3" />
+              
+              <div className="flex flex-col sm:flex-row gap-4 text-sm mt-2">
+                <div className="flex items-center gap-2">
+                  <Users size={16} />
+                  <span>{team.ageGroup}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar size={16} />
+                  <span>Event Start: {format(new Date(team.startDate), 'MMM d, yyyy')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ClipboardList size={16} />
+                  <span>Role: {team.role === 'coach' ? 'Coach' : 'Manager'}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );

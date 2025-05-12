@@ -1141,6 +1141,11 @@ export function registerRoutes(app: Express): Server {
         const result = await db.transaction(async (tx) => {
           // Check if coach exists and create an account if it doesn't
           let coachCreated = false;
+          let managerCreated = false;
+          
+          // Import createCoachAccount from auth.ts (for both coach and manager account creation)
+          const { createCoachAccount } = await import('./auth');
+          
           try {
             // Check if coach already exists
             const [existingCoach] = await tx
@@ -1150,9 +1155,6 @@ export function registerRoutes(app: Express): Server {
               .limit(1);
               
             if (!existingCoach) {
-              // Import createCoachAccount from auth.ts
-              const { createCoachAccount } = await import('./auth');
-              
               // Create a new coach account with the provided information
               console.log(`Creating new coach account for ${headCoachEmail}`);
               await createCoachAccount(
@@ -1169,6 +1171,35 @@ export function registerRoutes(app: Express): Server {
           } catch (coachError) {
             console.error('Error checking/creating coach account:', coachError);
             // Continue with registration even if coach account creation fails
+            // The main goal is to register the team
+          }
+          
+          // Also check if team manager exists and create an account if needed
+          try {
+            // Check if manager already exists
+            const [existingManager] = await tx
+              .select()
+              .from(users)
+              .where(eq(users.email, managerEmail))
+              .limit(1);
+              
+            if (!existingManager) {
+              // Create a new manager account with the provided information
+              console.log(`Creating new team manager account for ${managerEmail}`);
+              await createCoachAccount(
+                managerName.split(' ')[0], // First name (basic split)
+                managerName.split(' ').slice(1).join(' '), // Last name (everything after first space)
+                managerEmail,
+                managerPhone
+              );
+              managerCreated = true;
+              console.log(`New team manager account created for ${managerEmail}`);
+            } else {
+              console.log(`Team manager ${managerEmail} already exists, skipping account creation`);
+            }
+          } catch (managerError) {
+            console.error('Error checking/creating team manager account:', managerError);
+            // Continue with registration even if manager account creation fails
             // The main goal is to register the team
           }
           
@@ -1195,6 +1226,7 @@ export function registerRoutes(app: Express): Server {
               managerName: managerName,
               managerEmail: managerEmail,
               managerPhone: managerPhone,
+              managerAccountCreated: managerCreated, // Track if we created an account for this manager
               // Track the submitter's information separately from the manager
               // If the user is logged in, use their information as the submitter
               // Otherwise, fall back to the manager information
