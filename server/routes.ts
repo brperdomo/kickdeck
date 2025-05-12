@@ -528,6 +528,17 @@ export function registerRoutes(app: Express): Server {
         res.status(500).json({ error: 'Failed to check coach email' });
       }
     });
+    
+    // My Teams endpoint - returns teams where the user is a coach or manager
+    app.get('/api/teams/my-teams', async (req, res) => {
+      try {
+        const { getMyTeams } = await import('./routes/teams');
+        await getMyTeams(req, res);
+      } catch (error) {
+        console.error('Error fetching teams:', error);
+        res.status(500).json({ error: 'Failed to fetch teams' });
+      }
+    });
 
     // Public event endpoint
     app.get('/api/events/:id', async (req, res) => {
