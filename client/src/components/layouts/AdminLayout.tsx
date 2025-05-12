@@ -22,8 +22,15 @@ const sidebarItemStyles = {
   }
 };
 
+interface StyleSettings {
+    adminNavBackground: string;
+    adminNavText: string;
+    adminNavHover: string;
+    adminNavActive: string;
+}
+
 function StyleSettingsView() {
-    const [styles, setStyles] = useState({
+    const [styles, setStyles] = useState<StyleSettings>({
         adminNavBackground: '#FFFFFF',
         adminNavText: '#000000',
         adminNavHover: '#f3f4f6',
@@ -31,7 +38,7 @@ function StyleSettingsView() {
         // Add other styles here...
     });
 
-    const handleStyleChange = (e) => {
+    const handleStyleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setStyles(prevStyles => ({ ...prevStyles, [name]: value }));
     };
@@ -60,7 +67,19 @@ function StyleSettingsView() {
     );
 }
 
-export function AdminLayout({ children, sidebar, styles }) {
+// Type definitions for AdminLayout props
+interface AdminLayoutProps {
+  children: React.ReactNode;
+  sidebar?: React.ReactNode;
+  styles?: {
+    adminNavBackground?: string;
+    adminNavText?: string;
+    adminNavHover?: string;
+    adminNavActive?: string;
+  };
+}
+
+export function AdminLayout({ children, sidebar, styles = {} }: AdminLayoutProps) {
   const { isMobile, isTablet } = useBreakpoint();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [location] = useLocation();
@@ -77,8 +96,12 @@ export function AdminLayout({ children, sidebar, styles }) {
   
   // If it's the main admin dashboard and we're on mobile, use the dedicated mobile layout
   if (isMobile && isMainAdminDashboard) {
-    // Import is at the top of the file
-    const MobileAdminDashboard = React.lazy(() => import('@/components/mobile/MobileAdminDashboard').then(mod => ({ default: mod.MobileAdminDashboard })));
+    // We'll disable this for now to fix loading issues
+    /*
+    const MobileAdminDashboard = React.lazy(() => 
+      import('@/components/mobile/MobileAdminDashboard')
+        .then(mod => ({ default: mod.MobileAdminDashboard }))
+    );
     
     return (
       <React.Suspense fallback={
@@ -89,6 +112,7 @@ export function AdminLayout({ children, sidebar, styles }) {
         <MobileAdminDashboard toggleSidebar={() => setIsSidebarOpen(true)} />
       </React.Suspense>
     );
+    */
   }
 
   return (
@@ -162,7 +186,17 @@ export function AdminLayout({ children, sidebar, styles }) {
   );
 }
 
-export function AdminSidebar({ children, styles }) {
+interface AdminSidebarProps {
+  children: React.ReactNode;
+  styles?: {
+    adminNavBackground?: string;
+    adminNavText?: string;
+    adminNavHover?: string;
+    adminNavActive?: string;
+  };
+}
+
+export function AdminSidebar({ children, styles = {} }: AdminSidebarProps) {
   return (
     <div className="h-full p-4 overflow-y-auto scroll-container" style={{ ...sidebarStyles, backgroundColor: styles?.adminNavBackground || '#FFFFFF' }}> 
       {children}
@@ -170,7 +204,25 @@ export function AdminSidebar({ children, styles }) {
   );
 }
 
-export function AdminSidebarItem({ activePath, item, styles, ...props }) {
+interface SidebarItem {
+  path: string;
+  label: string;
+  icon?: React.ReactNode;
+}
+
+interface AdminSidebarItemProps {
+  activePath: string;
+  item: SidebarItem;
+  styles?: {
+    adminNavBackground?: string;
+    adminNavText?: string;
+    adminNavHover?: string;
+    adminNavActive?: string;
+  };
+  [key: string]: any;
+}
+
+export function AdminSidebarItem({ activePath, item, styles = {}, ...props }: AdminSidebarItemProps) {
   const { isMobile } = useBreakpoint();
   
   return (
