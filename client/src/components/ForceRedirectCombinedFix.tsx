@@ -15,6 +15,23 @@ interface ExtendedUser {
   [key: string]: any; // Allow for additional properties
 }
 
+// Helper function to check if a user has admin privileges
+function isUserAdmin(user: ExtendedUser | null): boolean {
+  if (!user) return false;
+  
+  // Check if user has isAdmin flag
+  if (user.isAdmin === true) return true;
+  
+  // Check if user has admin roles
+  if (user.roles && Array.isArray(user.roles)) {
+    return user.roles.some(role => 
+      ['super_admin', 'admin', 'tournament_admin', 'score_admin', 'finance_admin'].includes(role)
+    );
+  }
+  
+  return false;
+}
+
 /**
  * ForceRedirectCombinedFix
  * 
@@ -73,17 +90,8 @@ export function ForceRedirectCombinedFix() {
             // Cast to our ExtendedUser type for type safety
             const extUserData = userData as ExtendedUser;
             
-            // User is authenticated, perform direct redirect
-            // First check if user has roles array and determine admin status
-            let hasAdminRole = false;
-            if (extUserData.roles && Array.isArray(extUserData.roles)) {
-              hasAdminRole = extUserData.roles.some(role => 
-                ['super_admin', 'admin', 'tournament_admin', 'score_admin', 'finance_admin'].includes(role)
-              );
-            }
-                                
-            // Check multiple ways if the user is an admin
-            const isAdmin = extUserData.isAdmin === true || hasAdminRole;
+            // Check if the user has admin privileges using our helper function
+            const isAdmin = isUserAdmin(extUserData);
             
             const targetPath = isAdmin ? '/admin/dashboard' : '/dashboard';
             
@@ -152,7 +160,7 @@ export function ForceRedirectCombinedFix() {
     
     setDebugState(prev => ({ ...prev, hookCheckComplete: true }));
     
-    if (!user) {
+    if (!extendedUser) {
       console.log("ForceRedirectCombinedFix: No user found in useAuth hook");
       setRedirectAttempts(prev => prev + 1);
       
@@ -167,10 +175,14 @@ export function ForceRedirectCombinedFix() {
     // Set a timestamp for debugging
     const timestamp = new Date().toISOString();
     const redirectId = Math.random().toString(36).substring(2, 10);
-    console.log(`FORCE REDIRECT [${redirectId}] [${timestamp}]: User role from useAuth: ${user.isAdmin ? 'admin' : 'regular'}`);
+    
+    // Check if user has admin privileges using our helper function
+    const isAdmin = isUserAdmin(extendedUser);
+    
+    console.log(`FORCE REDIRECT [${redirectId}] [${timestamp}]: User role from useAuth: ${isAdmin ? 'admin' : 'regular'}`);
 
     // Determine the appropriate dashboard
-    const targetPath = user.isAdmin ? '/admin/dashboard' : '/dashboard';
+    const targetPath = isAdmin ? '/admin/dashboard' : '/dashboard';
     
     // Attempt redirect - use window.location.href for a hard redirect
     setRedirectMethod('useAuth Hook Redirect');
@@ -179,7 +191,7 @@ export function ForceRedirectCombinedFix() {
     setTimeout(() => {
       window.location.href = targetPath;
     }, 250);
-  }, [user, isLoading, forceBackToLogin, redirectAttempts, debugState.apiCheckComplete]);
+  }, [extendedUser, isLoading, forceBackToLogin, redirectAttempts, debugState.apiCheckComplete]);
 
   // Use the tryManualLogin for emergencies
   useEffect(() => {
@@ -199,6 +211,18 @@ export function ForceRedirectCombinedFix() {
         {redirectAttempts >= 2 && (
           <div className="mt-3 text-sm">
             <p>Having trouble redirecting you to the right dashboard.</p>
+            
+            {extendedUser ? (
+              <div className="mt-2 mb-3 text-xs">
+                <p>According to our records, you are a{isUserAdmin(extendedUser) ? 'n admin' : ' regular'} user.</p>
+                <p>Please select the appropriate dashboard below:</p>
+              </div>
+            ) : (
+              <div className="mt-2 mb-3 text-xs">
+                <p>We couldn't detect your user role. Please try one of the following options:</p>
+              </div>
+            )}
+            
             <div className="mt-2 space-x-2">
               <button 
                 onClick={() => window.location.href = '/auth'} 
@@ -207,12 +231,12 @@ export function ForceRedirectCombinedFix() {
               </button>
               <button 
                 onClick={() => window.location.href = '/admin/dashboard'} 
-                className="bg-secondary px-3 py-1 rounded text-xs">
+                className={`${extendedUser && isUserAdmin(extendedUser) ? 'bg-green-500 text-white' : 'bg-secondary'} px-3 py-1 rounded text-xs`}>
                 Admin Dashboard
               </button>
               <button 
                 onClick={() => window.location.href = '/dashboard'} 
-                className="bg-secondary px-3 py-1 rounded text-xs">
+                className={`${extendedUser && !isUserAdmin(extendedUser) ? 'bg-green-500 text-white' : 'bg-secondary'} px-3 py-1 rounded text-xs`}>
                 Member Dashboard
               </button>
             </div>
