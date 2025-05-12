@@ -516,6 +516,17 @@ export function registerRoutes(app: Express): Server {
         return res.status(500).json({ error: 'Failed to check email existence' });
       }
     });
+    
+    // Coach email check endpoint - returns coach information if exists
+    app.post('/api/coaches/check-email', async (req, res) => {
+      try {
+        const { checkCoachEmail } = await import('./routes/coaches');
+        await checkCoachEmail(req, res);
+      } catch (error) {
+        console.error('Error checking coach email:', error);
+        res.status(500).json({ error: 'Failed to check coach email' });
+      }
+    });
 
     // Public event endpoint
     app.get('/api/events/:id', async (req, res) => {
