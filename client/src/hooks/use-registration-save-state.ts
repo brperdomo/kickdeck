@@ -19,6 +19,7 @@ interface TeamRegistrationForm {
   managerEmail: string;
   managerPhone: string;
   players: any[];
+  addRosterLater?: boolean; // Add this field to match schema
   selectedFeeIds?: number[];
   totalAmount?: number;
   clubId?: number | null;
