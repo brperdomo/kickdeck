@@ -60,14 +60,14 @@ function getRosterCount(team: any): string {
     return '0';
   }
   
+  // Check for playerCount directly from API
+  if (typeof team.playerCount === 'number') {
+    return team.playerCount.toString();
+  }
+  
   // Check if players array exists and has length
   if (team.players && Array.isArray(team.players)) {
     return team.players.length.toString();
-  }
-  
-  // Fallback to playerCount if available
-  if (team.playerCount) {
-    return team.playerCount.toString();
   }
   
   return '0';
