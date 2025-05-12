@@ -19,6 +19,7 @@ export function RoleBasedRedirect() {
   const { user, isLoading, authState, setAuthState } = useAuth();
   const [location, setLocation] = useLocation();
   const [redirectCount, setRedirectCount] = useState(0);
+  const [hasRedirected, setHasRedirected] = useState(false);
   
   useEffect(() => {
     // Track redirects to prevent loops
@@ -80,6 +81,7 @@ export function RoleBasedRedirect() {
         // Reset auth state after redirect is complete
         if (user) {
           setAuthState('authenticated');
+          setHasRedirected(true);
         }
       }, 100);
       return;
@@ -96,6 +98,7 @@ export function RoleBasedRedirect() {
         // Reset auth state after redirect is complete
         if (user) {
           setAuthState('authenticated');
+          setHasRedirected(true);
         }
       }, 100);
       return;
@@ -108,17 +111,35 @@ export function RoleBasedRedirect() {
       // Set auth state to redirecting to show proper UI feedback
       setAuthState('redirecting');
       setRedirectCount(prev => prev + 1);
+      
+      // Force a direct navigation to the target path
       setTimeout(() => {
+        // Use window.location for a more forceful navigation if needed
+        if (redirectCount > 2) {
+          console.log("Using window.location for forceful redirect");
+          window.location.href = targetPath;
+          return;
+        }
+        
         setLocation(targetPath);
         // Reset auth state after redirect is complete
         if (user) {
           setAuthState('authenticated');
+          setHasRedirected(true);
         }
       }, 100);
       return;
     }
     
-  }, [user, isLoading, authState, location, setLocation, redirectCount, setAuthState]);
+    // If we're on the admin or dashboard route but haven't rendered yet
+    if ((path === '/admin' || path === '/dashboard') && !hasRedirected) {
+      console.log("On target route but component may not be rendered yet, forcing refresh");
+      // Force a refresh of the current route
+      setAuthState('authenticated');
+      setHasRedirected(true);
+    }
+    
+  }, [user, isLoading, authState, location, setLocation, redirectCount, setAuthState, hasRedirected]);
   
   // Show loading indicator during redirects to prevent white flash
   if (authState === 'redirecting') {
