@@ -6,20 +6,14 @@ interface TeamRegistrationForm {
   name: string;
   ageGroupId: number;
   bracketId?: number | null;
-  headCoachFirstName: string;
-  headCoachLastName: string;
+  headCoachName: string;
   headCoachEmail: string;
   headCoachPhone: string;
-  assistantCoachFirstName?: string;
-  assistantCoachLastName?: string;
-  assistantCoachEmail?: string;
-  assistantCoachPhone?: string;
-  managerFirstName: string;
-  managerLastName: string;
+  assistantCoachName?: string;
+  managerName: string;
   managerEmail: string;
   managerPhone: string;
   players: any[];
-  addRosterLater?: boolean; // Add this field to match schema
   selectedFeeIds?: number[];
   totalAmount?: number;
   clubId?: number | null;
