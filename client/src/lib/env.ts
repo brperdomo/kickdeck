@@ -1,5 +1,5 @@
 // Environment variable handling for client-side
-export const googleMapsApiKey = import.meta.env.GOOGLE_MAPS_API_KEY || ""; // Use environment API key
+export const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""; // Use environment API key
 export const tinymceApiKey = import.meta.env.VITE_TINYMCE_API_KEY || "";
 export const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "";
 export const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === "true";
