@@ -6082,6 +6082,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       try {
         const eventId = parseInt(req.query.eventId as string);
         const ageGroupId = req.query.ageGroupId ? parseInt(req.query.ageGroupId as string) : null;
+        const status = req.query.status as string;
 
         let query = db
           .select({
@@ -6103,17 +6104,35 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           query = query.where(eq(teams.ageGroupId, ageGroupId));
         }
 
+        // Add status filter if specified
+        if (status && status !== 'all') {
+          query = query.where(eq(teams.status, status));
+        }
+
         const results = await query.orderBy(teams.name);
 
-        // Format the response
-        const formattedTeams = results.map(({ team, ageGroup, club }) => ({
-          ...team,
-          ageGroup: ageGroup?.ageGroup || 'Unknown',
-          // Include the club logo URL if available
-          clubLogoUrl: club?.logoUrl || null
-        }));
+        // For each team, fetch player count
+        const teamsWithPlayerCounts = await Promise.all(
+          results.map(async ({ team, ageGroup, club }) => {
+            // Count players for this team
+            const playerCountResult = await db
+              .select({ count: sql<number>`count(*)`.mapWith(Number) })
+              .from(players)
+              .where(eq(players.teamId, team.id));
+            
+            const playerCount = playerCountResult[0]?.count || 0;
+            
+            return {
+              ...team,
+              ageGroup: ageGroup?.ageGroup || 'Unknown',
+              clubLogoUrl: club?.logoUrl || null,
+              clubName: club?.name || null,
+              playerCount: playerCount
+            };
+          })
+        );
 
-        res.json(formattedTeams);
+        res.json(teamsWithPlayerCounts);
       } catch (error) {
         console.error('Error fetching teams:', error);
         // Added basic error logging for white screen debugging.
