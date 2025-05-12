@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { format } from 'date-fns';
 import { ClipboardList, Calendar, Users } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 interface Team {
   id: number;
@@ -47,26 +47,12 @@ function getStatusLabel(status: Team['status']) {
 }
 
 export function MyTeams() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  
-  // Check authentication status on mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch('/api/user');
-        if (response.ok) {
-          setIsAuthenticated(true);
-        }
-      } catch (error) {
-        console.error('Error checking auth status:', error);
-      }
-    };
-    
-    checkAuth();
-  }, []);
+  // Use the auth hook to determine authentication status
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const isAuthenticated = !!user;
   
   // Fetch teams using react-query
-  const { data: teams, isLoading, error } = useQuery<Team[]>({
+  const { data: teams, isLoading: isTeamsLoading, error } = useQuery<Team[]>({
     queryKey: ['my-teams'],
     queryFn: async () => {
       const response = await fetch('/api/teams/my-teams');
@@ -81,8 +67,11 @@ export function MyTeams() {
     refetchInterval: 5 * 60 * 1000
   });
   
-  // If not authenticated, show login prompt
-  if (!isAuthenticated) {
+  // Combined loading state
+  const isLoading = isAuthLoading || isTeamsLoading;
+  
+  // If not authenticated and not loading, show login prompt
+  if (!isAuthenticated && !isAuthLoading) {
     return (
       <Card className="mb-8">
         <CardHeader>

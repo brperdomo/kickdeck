@@ -2,7 +2,7 @@ import { useState } from "react";
 import { LogoutOverlay } from "@/components/ui/logout-overlay";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { useUser } from "@/hooks/use-user";
+import { useAuth } from "@/hooks/use-auth";
 import { FileManager } from "@/components/admin/FileManager.tsx";
 import UserRegistrationsView from "@/components/UserRegistrationsView";
 import { MyTeams } from "@/components/member/MyTeams";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function UserDashboard() {
-  const { user } = useUser();
+  const { user } = useAuth(); // Changed from useUser to useAuth for consistency
   const { isMobile } = useBreakpoint();
   const [showFileManager, setShowFileManager] = useState(false);
   const [selectedLogo, setSelectedLogo] = useState<string | null>(null);
