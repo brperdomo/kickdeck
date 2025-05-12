@@ -8,6 +8,7 @@ import React, { lazy, Suspense, useEffect } from 'react';
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
 import { RouteDebugger } from "@/components/RouteDebugger";
+import { RoleBasedRedirect } from "@/components/RoleBasedRedirect";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
@@ -220,6 +221,9 @@ function Router() {
       ) : (
         // Protected routes for authenticated users
         <>
+          {/* Add the RoleBasedRedirect component to handle role-based navigation */}
+          <RoleBasedRedirect />
+          
           {/* Admin routes */}
           <Route path="/admin/events/create">
             {user.isAdmin ? <CreateEvent /> : <NotFound />}
