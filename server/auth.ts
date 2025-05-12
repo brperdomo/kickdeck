@@ -65,6 +65,90 @@ function invalidateUserCache(id: number): void {
   delete userCache[id];
 }
 
+/**
+ * Create a new user account for coaches without requiring a password
+ * @param firstName First name of the coach
+ * @param lastName Last name of the coach
+ * @param email Email address of the coach
+ * @param phone Optional phone number for the coach
+ * @returns The newly created user
+ */
+export async function createCoachAccount(
+  firstName: string,
+  lastName: string,
+  email: string,
+  phone?: string
+): Promise<SelectUser> {
+  // Check if user already exists
+  const [existingUser] = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
+
+  if (existingUser) {
+    return existingUser;
+  }
+
+  // Generate a random password (coach will need to reset this)
+  const tempPassword = crypto.generateRandomPassword(16);
+  const hashedPassword = await crypto.hash(tempPassword);
+
+  // Create a new household for the coach
+  const [household] = await db
+    .insert(households)
+    .values({
+      lastName,
+      address: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      primaryEmail: email,
+      createdAt: new Date().toISOString(),
+    })
+    .returning();
+
+  // Create the user account
+  const [newUser] = await db
+    .insert(users)
+    .values({
+      username: email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      email,
+      phone,
+      isParent: false,
+      isAdmin: false,
+      householdId: household.id,
+      createdAt: new Date().toISOString(),
+    })
+    .returning();
+
+  // Send welcome email
+  try {
+    sendTemplatedEmail(
+      email,
+      'welcome',
+      {
+        firstName,
+        lastName,
+        email,
+        username: email
+      }
+    ).then(() => {
+      console.log(`Welcome email sent to coach ${email}`);
+    }).catch((err: Error) => {
+      console.error('Coach welcome email error:', err);
+    });
+  } catch (emailError) {
+    console.error('Failed to send coach welcome email:', emailError);
+    // Non-blocking - continue account creation even if email fails
+  }
+
+  return newUser;
+}
+
 export function setupAuth(app: Express) {
   const MemoryStore = createMemoryStore(session);
   const sessionSettings: session.SessionOptions = {

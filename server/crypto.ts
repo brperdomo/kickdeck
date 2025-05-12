@@ -31,5 +31,39 @@ export const crypto = {
     return timingSafeEqual(hashedPasswordBuf, suppliedPasswordBuf);
   },
 
+  generateRandomPassword: (length: number = 12) => {
+    // Define character sets for stronger passwords
+    const uppercaseChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // Removed I,O for clarity
+    const lowercaseChars = 'abcdefghijkmnpqrstuvwxyz'; // Removed l,o for clarity
+    const numberChars = '23456789'; // Removed 0,1 for clarity
+    const specialChars = '!@#$%^&*_-+=';
+    
+    // Combine all character sets
+    const allChars = uppercaseChars + lowercaseChars + numberChars + specialChars;
+    
+    // Generate a random password
+    let password = '';
+    
+    // Ensure at least one character from each group for complexity
+    password += uppercaseChars.charAt(Math.floor(Math.random() * uppercaseChars.length));
+    password += lowercaseChars.charAt(Math.floor(Math.random() * lowercaseChars.length));
+    password += numberChars.charAt(Math.floor(Math.random() * numberChars.length));
+    password += specialChars.charAt(Math.floor(Math.random() * specialChars.length));
+    
+    // Fill the rest of the password
+    for (let i = 4; i < length; i++) {
+      password += allChars.charAt(Math.floor(Math.random() * allChars.length));
+    }
+    
+    // Shuffle the password to avoid predictable patterns (Fisher-Yates shuffle)
+    const passwordArray = password.split('');
+    for (let i = passwordArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [passwordArray[i], passwordArray[j]] = [passwordArray[j], passwordArray[i]];
+    }
+    
+    return passwordArray.join('');
+  },
+
   generateEventId,
 };
