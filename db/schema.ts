@@ -460,7 +460,9 @@ export const insertPlayerSchema = createInsertSchema(players, {
   lastName: z.string().min(1, "Last name is required"),
   jerseyNumber: z.number().int().min(0).max(99).optional(),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
-  emergencyContactName: z.string().min(1, "Emergency contact name is required"),
+  medicalNotes: z.string().optional(),
+  emergencyContactFirstName: z.string().min(1, "Emergency contact first name is required"),
+  emergencyContactLastName: z.string().min(1, "Emergency contact last name is required"),
   emergencyContactPhone: z.string().min(1, "Emergency contact phone is required"),
 });
 
