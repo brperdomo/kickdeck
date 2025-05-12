@@ -4343,7 +4343,7 @@ function TeamsView() {
                       <div className="col-span-2">{formatDate(selectedTeam.createdAt)}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Payment Status:</div>
+                      <div className="font-medium">Payment Method:</div>
                       <div className="col-span-2">
                         <Badge variant={
                           selectedTeam.paymentStatus === 'paid' ? 'default' : 
@@ -4559,7 +4559,7 @@ function TeamsView() {
                     </div>
                     
                     <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Payment Status:</div>
+                      <div className="font-medium">Payment Method:</div>
                       <div className="col-span-2">
                         <PaymentStatusBadge status={selectedTeam.paymentStatus} />
                       </div>
