@@ -2334,7 +2334,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     teamForm.setValue('players', players);
     
     // Check required fields
-    if (!data.name || !data.ageGroupId || !data.headCoachName || !data.headCoachEmail || !data.headCoachPhone) {
+    if (!data.name || !data.ageGroupId || !data.headCoachFirstName || !data.headCoachLastName || !data.headCoachEmail || !data.headCoachPhone) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required team and coach information fields",

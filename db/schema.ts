@@ -417,7 +417,11 @@ export const players = pgTable("players", {
   parentGuardianName: text("parent_guardian_name"),
   parentGuardianEmail: text("parent_guardian_email"),
   parentGuardianPhone: text("parent_guardian_phone"),
-  emergencyContactName: text("emergency_contact_name").notNull(),
+  // Legacy field - will be removed after migration
+  emergencyContactName: text("emergency_contact_name"),
+  // New split fields for emergency contact
+  emergencyContactFirstName: text("emergency_contact_first_name"),
+  emergencyContactLastName: text("emergency_contact_last_name"),
   emergencyContactPhone: text("emergency_contact_phone").notNull(),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
@@ -456,7 +460,8 @@ export const insertPlayerSchema = createInsertSchema(players, {
   lastName: z.string().min(1, "Last name is required"),
   jerseyNumber: z.number().int().min(0).max(99).optional(),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
-  emergencyContactName: z.string().min(1, "Emergency contact name is required"),
+  emergencyContactFirstName: z.string().min(1, "Emergency contact first name is required"),
+  emergencyContactLastName: z.string().min(1, "Emergency contact last name is required"),
   emergencyContactPhone: z.string().min(1, "Emergency contact phone is required"),
 });
 
