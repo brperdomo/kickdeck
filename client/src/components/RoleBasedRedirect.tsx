@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { Loader2 } from "lucide-react";
 
 /**
  * RoleBasedRedirect Component
@@ -17,11 +18,25 @@ import { useAuth } from "@/hooks/use-auth";
 export function RoleBasedRedirect() {
   const { user, isLoading } = useAuth();
   const [location, setLocation] = useLocation();
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [redirectCount, setRedirectCount] = useState(0);
   
   useEffect(() => {
+    // Track redirects to prevent loops
+    if (redirectCount > 5) {
+      console.error("Too many redirects detected! Stopping to prevent infinite loop.");
+      return;
+    }
+    
     // Don't do anything if we're still loading or there's no user
-    if (isLoading || !user) {
-      console.log("RoleBasedRedirect - Still loading or no user data, skipping redirect");
+    if (isLoading) {
+      console.log("RoleBasedRedirect - Still loading, skipping redirect");
+      return;
+    }
+    
+    // If no user data and not loading, we should not continue
+    if (!user) {
+      console.log("RoleBasedRedirect - No user data available");
       return;
     }
 
@@ -56,14 +71,24 @@ export function RoleBasedRedirect() {
     // Handle admin routes when user is not an admin
     if ((path === '/admin' || path.startsWith('/admin/')) && !user.isAdmin) {
       console.log("Non-admin accessing admin route, redirecting to dashboard");
-      setLocation('/dashboard');
+      setIsRedirecting(true);
+      setRedirectCount(prev => prev + 1);
+      setTimeout(() => {
+        setLocation('/dashboard');
+        setIsRedirecting(false);
+      }, 100);
       return;
     }
     
     // Handle member routes when user is an admin only
     if ((path === '/dashboard' || path.startsWith('/dashboard/')) && user.isAdmin) {
       console.log("Admin accessing member route, redirecting to admin panel");
-      setLocation('/admin');
+      setIsRedirecting(true);
+      setRedirectCount(prev => prev + 1);
+      setTimeout(() => {
+        setLocation('/admin');
+        setIsRedirecting(false);
+      }, 100);
       return;
     }
     
@@ -71,12 +96,27 @@ export function RoleBasedRedirect() {
     if (path === '/') {
       const targetPath = user.isAdmin ? '/admin' : '/dashboard';
       console.log(`User at root path, redirecting to ${targetPath}`);
-      setLocation(targetPath);
+      setIsRedirecting(true);
+      setRedirectCount(prev => prev + 1);
+      setTimeout(() => {
+        setLocation(targetPath);
+        setIsRedirecting(false);
+      }, 100);
       return;
     }
     
-  }, [user, isLoading, location, setLocation]);
+  }, [user, isLoading, location, setLocation, redirectCount]);
   
-  // No rendering - this is just for redirection
+  // Show loading indicator during redirects to prevent white flash
+  if (isRedirecting) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Redirecting...</span>
+      </div>
+    );
+  }
+  
+  // No rendering when not redirecting
   return null;
 }
