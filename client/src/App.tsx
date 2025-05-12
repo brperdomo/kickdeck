@@ -11,6 +11,7 @@ import { RouteDebugger } from "@/components/RouteDebugger";
 import { RoleBasedRedirect } from "@/components/RoleBasedRedirect";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { DebugErrorBoundary } from "@/components/DebugErrorBoundary";
+import { useAuth } from "@/hooks/use-auth";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
@@ -31,7 +32,6 @@ import FormTemplatesPage from "@/pages/form-templates";
 import FormTemplateCreatePage from "@/pages/form-template-create";
 import FormTemplateEditPage from "@/pages/form-template-edit";
 import ProductUpdatesPage from "@/pages/product-updates";
-import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import EventDetailsPreview from "./pages/event-details-preview";
 import MainLayout from "@/components/layouts/MainLayout";
@@ -65,7 +65,7 @@ import EventPreviewSelector from '@/pages/event-preview-selector';
 import RegistrationPreview from '@/pages/registration-preview';
 
 function Router() {
-  const { user, isLoading } = useUser();
+  const { user, isLoading } = useAuth();
   // Check if we're on the main domain (matchpro.ai)
   const showLandingPage = isMainDomain();
 

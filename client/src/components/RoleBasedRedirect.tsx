@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
-import { useUser } from "@/hooks/use-user";
 
 /**
  * RoleBasedRedirect Component
@@ -16,23 +15,10 @@ import { useUser } from "@/hooks/use-user";
  * role-based access control system throughout the application.
  */
 export function RoleBasedRedirect() {
-  const { user: authUser, isLoading: authLoading } = useAuth();
-  const { user: userHookData, isLoading: userLoading } = useUser();
+  const { user, isLoading } = useAuth();
   const [location, setLocation] = useLocation();
   
   useEffect(() => {
-    // Combine data from both hooks for more robust user detection
-    const user = authUser || userHookData;
-    const isLoading = authLoading || userLoading;
-    
-    // Log available user data from both hooks
-    console.log("RoleBasedRedirect - Auth Data:", { 
-      authUser, 
-      authLoading,
-      userHookData,
-      userLoading 
-    });
-    
     // Don't do anything if we're still loading or there's no user
     if (isLoading || !user) {
       console.log("RoleBasedRedirect - Still loading or no user data, skipping redirect");
