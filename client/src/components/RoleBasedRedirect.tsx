@@ -3,13 +3,16 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 
 /**
- * ProtectedRoute Component
+ * RoleBasedRedirect Component
  * 
- * Redirects users based on their role when they access restricted areas:
+ * Intelligently redirects users based on their role:
+ * - Root path (/) redirects to /admin for admins or /dashboard for regular members
  * - Regular users trying to access admin routes are redirected to the dashboard
  * - Admin users trying to access member routes are redirected to the admin panel
+ * - Non-protected routes are left alone for all users
  * 
- * This component is meant to be used alongside the <Route> component in App.tsx
+ * This component works in conjunction with ProtectedRoute for a complete
+ * role-based access control system throughout the application.
  */
 export function RoleBasedRedirect() {
   const { user, isLoading } = useAuth();

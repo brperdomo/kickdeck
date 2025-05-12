@@ -319,7 +319,7 @@ function Router() {
           
           {/* Preview routes */}
 
-          {/* Home route */}
+          {/* Home route - handles registration process redirects and role-based routing */}
           <Route path="/">
             {() => {
               // If there's an in-progress registration, redirect back to it
@@ -350,8 +350,8 @@ function Router() {
                 );
               }
               
-              // Otherwise show the regular dashboard
-              return user.isAdmin ? <AdminDashboard initialView="events" /> : <UserDashboard />;
+              // Use RoleBasedRedirect to properly handle routing based on user role
+              return <RoleBasedRedirect />;
             }}
           </Route>
 
