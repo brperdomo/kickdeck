@@ -91,13 +91,9 @@ export function MemberLayout({ children, mobileDashboard = false }: MemberLayout
   // Check if we should use mobile layout
   const useMobileDashboard = mobileDashboard || isMobile;
   
-  // For the main dashboard view, we'll use a completely mobile-optimized version on small devices
-  const isMemberDashboard = location.pathname === "/dashboard" || location.pathname === "/dashboard/";
-  
-  // If it's the main dashboard page and we're on mobile, use the dedicated mobile layout
-  if (useMobileDashboard && isMemberDashboard) {
-    return <MobileDashboard />;
-  }
+  // For the main dashboard view, we'll use the same layout for both mobile and desktop
+  // We're removing the conditional that used a completely different mobile layout
+  // The standard dashboard will be used for all devices with responsive styling
   
   return (
     <div className="flex min-h-screen bg-background member-dashboard">
