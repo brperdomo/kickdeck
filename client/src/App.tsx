@@ -308,11 +308,19 @@ function Router() {
             </DebugErrorBoundary>
           } />
           {/* We'll enhance the main dashboard with animations directly */}
-          <ProtectedRoute path="/admin" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="events" />
-            </DebugErrorBoundary>
-          } />
+          <ProtectedRoute 
+            path="/admin" 
+            requiredRole="admin" 
+            component={() => (
+              <DebugErrorBoundary>
+                <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>}>
+                  {React.lazy(() => import("@/pages/admin-dashboard-lite"))}
+                </React.Suspense>
+              </DebugErrorBoundary>
+            )} 
+          />
 
           {/* User routes - using ProtectedRoute for member-specific routes */}
           <ProtectedRoute path="/household" requiredRole="member" component={
