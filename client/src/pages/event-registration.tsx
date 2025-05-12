@@ -588,6 +588,17 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   } | null>(null);
   const [coachDebounceTimeout, setCoachDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
   
+  // Team manager validation states
+  const [isCheckingManager, setIsCheckingManager] = useState(false);
+  const [managerFound, setManagerFound] = useState(false);
+  const [managerData, setManagerData] = useState<{
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  } | null>(null);
+  const [managerDebounceTimeout, setManagerDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
+  
   // Function to handle coach email change with debounce
   const handleCoachEmailChange = (value: string) => {
     // Clear previous timeout if it exists
@@ -611,6 +622,29 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     setCoachDebounceTimeout(timeout);
   };
   
+  // Function to handle manager email change with debounce
+  const handleManagerEmailChange = (value: string) => {
+    // Clear previous timeout if it exists
+    if (managerDebounceTimeout) {
+      clearTimeout(managerDebounceTimeout);
+    }
+    
+    // Don't validate empty emails
+    if (!value || value.trim() === '') {
+      setIsCheckingManager(false);
+      setManagerFound(false);
+      setManagerData(null);
+      return;
+    }
+    
+    // Set a new timeout for debounce
+    const timeout = setTimeout(() => {
+      validateManagerMutation.mutate(value);
+    }, 500); // 500ms debounce
+    
+    setManagerDebounceTimeout(timeout);
+  };
+
   // Coach validation mutation
   const validateCoachMutation = useMutation({
     mutationFn: async (email: string) => {
@@ -655,6 +689,53 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       setIsCheckingCoach(false);
       setCoachFound(false);
       setCoachData(null);
+    }
+  });
+  
+  // Manager validation mutation
+  const validateManagerMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const response = await fetch('/api/coaches/check-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to validate manager email');
+      }
+      
+      return response.json();
+    },
+    onMutate: () => {
+      setIsCheckingManager(true);
+    },
+    onSuccess: (data) => {
+      setIsCheckingManager(false);
+      setManagerFound(data.exists);
+      
+      if (data.exists && data.coach) {
+        setManagerData(data.coach);
+        
+        // Auto-fill the manager name and phone if found
+        if (teamForm && data.coach.firstName && data.coach.lastName) {
+          const fullName = `${data.coach.firstName} ${data.coach.lastName}`;
+          teamForm.setValue('managerName', fullName);
+        }
+        
+        if (teamForm && data.coach.phone) {
+          teamForm.setValue('managerPhone', data.coach.phone);
+        }
+      } else {
+        setManagerData(null);
+      }
+    },
+    onError: () => {
+      setIsCheckingManager(false);
+      setManagerFound(false);
+      setManagerData(null);
     }
   });
   
@@ -3334,8 +3415,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   field.onChange(e);
                                   handleCoachEmailChange(e.target.value);
                                 }}
+                                placeholder="Enter email to search for existing coach"
                               />
                             </FormControl>
+                            <FormDescription>
+                              Enter coach email to check if they already have an account
+                            </FormDescription>
                             <FormMessage />
                             {coachFound && !isCheckingCoach && (
                               <p className="text-xs text-muted-foreground mt-1">
@@ -3391,11 +3476,41 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         name="managerEmail"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Manager Email</FormLabel>
+                            <FormLabel>
+                              Manager Email
+                              {isCheckingManager && (
+                                <span className="ml-2 inline-flex items-center">
+                                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                  <span className="text-xs text-muted-foreground">Checking...</span>
+                                </span>
+                              )}
+                              {managerFound && !isCheckingManager && (
+                                <span className="ml-2 inline-flex items-center text-green-600">
+                                  <CheckCircle className="mr-1 h-3 w-3" />
+                                  <span className="text-xs">Manager found</span>
+                                </span>
+                              )}
+                            </FormLabel>
                             <FormControl>
-                              <Input {...field} type="email" />
+                              <Input 
+                                {...field} 
+                                type="email" 
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  handleManagerEmailChange(e.target.value);
+                                }}
+                                placeholder="Enter email to search for existing manager"
+                              />
                             </FormControl>
+                            <FormDescription>
+                              Enter manager email to check if they already have an account
+                            </FormDescription>
                             <FormMessage />
+                            {managerFound && !isCheckingManager && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Manager information automatically filled from existing account.
+                              </p>
+                            )}
                           </FormItem>
                         )}
                       />
