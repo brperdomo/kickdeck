@@ -3867,8 +3867,8 @@ function TeamsView() {
                           <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Event</TableHead>
                           <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Age Group</TableHead>
                           <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Submitter</TableHead>
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Manager</TableHead>
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Coach</TableHead>
+                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Registered Date</TableHead>
+                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Roster Count</TableHead>
                           <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Registration Fee</TableHead>
                           <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Payment Status</TableHead>
                           <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100 text-right">Actions</TableHead>
