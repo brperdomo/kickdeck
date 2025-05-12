@@ -3230,7 +3230,17 @@ function TeamsView() {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to add player');
+        // Get specific validation errors if available
+        if (errorData.error && Array.isArray(errorData.error)) {
+          const validationErrors = errorData.error.map((err: any) => 
+            `${err.message || err.code}`
+          ).join(', ');
+          throw new Error(`Validation error: ${validationErrors}`);
+        } else if (errorData.details) {
+          throw new Error(`${errorData.error}: ${errorData.details}`);
+        } else {
+          throw new Error(errorData.error || 'Failed to add player');
+        }
       }
       
       return response.json();
@@ -4450,7 +4460,7 @@ function TeamsView() {
                       size="sm"
                       className="team-edit-button"
                       onClick={() => {
-                        // Initialize a new blank player
+                        // Initialize a new blank player with emergency contact placeholders
                         setSelectedPlayer({
                           id: 0,
                           teamId: selectedTeam.id,
@@ -4463,7 +4473,8 @@ function TeamsView() {
                           parentGuardianName: '',
                           parentGuardianEmail: '',
                           parentGuardianPhone: '',
-                          emergencyContactName: '',
+                          // Default placeholders for required fields
+                          emergencyContactName: '', 
                           emergencyContactPhone: '',
                           isActive: true
                         });
