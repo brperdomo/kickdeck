@@ -30,7 +30,7 @@ import FormTemplatesPage from "@/pages/form-templates";
 import FormTemplateCreatePage from "@/pages/form-template-create";
 import FormTemplateEditPage from "@/pages/form-template-edit";
 import ProductUpdatesPage from "@/pages/product-updates";
-import { useAuth } from "@/hooks/use-auth";
+import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import EventDetailsPreview from "./pages/event-details-preview";
 import MainLayout from "@/components/layouts/MainLayout";
@@ -64,7 +64,7 @@ import EventPreviewSelector from '@/pages/event-preview-selector';
 import RegistrationPreview from '@/pages/registration-preview';
 
 function Router() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading } = useUser();
   // Check if we're on the main domain (matchpro.ai)
   const showLandingPage = isMainDomain();
 
