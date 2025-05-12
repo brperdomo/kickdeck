@@ -42,10 +42,8 @@ const playerSchema = z.object({
   jerseyNumber: z.string().regex(/^\d{1,2}$/, "Jersey number must be 1-2 digits").optional(),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   medicalNotes: z.string().optional(),
-  parentGuardianName: z.string().optional(),
-  parentGuardianEmail: z.string().email("Invalid email").optional(),
-  parentGuardianPhone: z.string().optional(),
-  emergencyContactName: z.string().min(1, "Emergency contact name is required"),
+  emergencyContactFirstName: z.string().min(1, "Emergency contact first name is required"),
+  emergencyContactLastName: z.string().min(1, "Emergency contact last name is required"),
   emergencyContactPhone: z.string().min(1, "Emergency contact phone is required"),
 });
 
@@ -97,12 +95,9 @@ router.post('/players', upload.single('file'), async (req: Request, res: Respons
         lastName: record['Last Name'],
         jerseyNumber: record['Jersey Number'] || undefined,
         dateOfBirth: record['Date of Birth'],
-        position: record['Position'] || undefined,
         medicalNotes: record['Medical Notes'] || undefined,
-        parentGuardianName: record['Parent/Guardian Name'] || undefined,
-        parentGuardianEmail: record['Parent/Guardian Email'] || undefined,
-        parentGuardianPhone: record['Parent/Guardian Phone'] || undefined,
-        emergencyContactName: record['Emergency Contact Name'],
+        emergencyContactFirstName: record['Emergency Contact First Name'],
+        emergencyContactLastName: record['Emergency Contact Last Name'],
         emergencyContactPhone: record['Emergency Contact Phone'],
       };
     });
@@ -190,12 +185,10 @@ router.post('/csv-admin', upload.single('file'), async (req: Request, res: Respo
           ? parseInt(record.jerseyNumber || record['Jersey Number']) 
           : null,
         position: null, // Position is no longer collected
-        medicalNotes: record.notes || record['Notes'] || '',
-        emergencyContactName: record.emergencyContactName || record['Emergency Contact Name'] || 'Not Provided',
-        emergencyContactPhone: record.emergencyContactPhone || record['Emergency Contact Phone'] || 'Not Provided',
-        parentGuardianName: record.parentGuardianName || record['Parent/Guardian Name'] || '',
-        parentGuardianEmail: record.parentGuardianEmail || record['Parent/Guardian Email'] || '',
-        parentGuardianPhone: record.parentGuardianPhone || record['Parent/Guardian Phone'] || '',
+        medicalNotes: record.medicalNotes || record['Medical Notes'] || '',
+        emergencyContactFirstName: record.emergencyContactFirstName || record['Emergency Contact First Name'] || '',
+        emergencyContactLastName: record.emergencyContactLastName || record['Emergency Contact Last Name'] || '',
+        emergencyContactPhone: record.emergencyContactPhone || record['Emergency Contact Phone'] || '',
         isActive: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),

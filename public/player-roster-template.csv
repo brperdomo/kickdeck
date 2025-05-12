@@ -1,3 +1,3 @@
-First Name,Last Name,Date of Birth,Jersey Number,Parent/Guardian Name,Parent/Guardian Email,Parent/Guardian Phone,Emergency Contact Name,Emergency Contact Phone,Notes
-John,Doe,2005-01-15,10,John Doe Sr.,john.sr@example.com,555-123-4567,Mary Doe,555-987-6543,Team captain
-Jane,Smith,2005-03-22,7,Robert Smith,robert@example.com,555-987-6543,Sarah Smith,555-876-5432,Vice captain
+First Name,Last Name,Date of Birth,Jersey Number,Emergency Contact First Name,Emergency Contact Last Name,Emergency Contact Phone,Medical Notes
+John,Doe,2005-01-15,10,Mary,Doe,5551234567,Allergic to penicillin
+Jane,Smith,2005-03-22,7,Sarah,Smith,5558765432,No known medical issues
