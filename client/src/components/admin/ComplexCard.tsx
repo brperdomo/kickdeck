@@ -193,6 +193,8 @@ export function ComplexCard({
                   className="w-full h-full rounded-md"
                   src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''}&q=${complex.latitude},${complex.longitude}&zoom=15`}
                   allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
                 />
               )}
             </motion.div>
