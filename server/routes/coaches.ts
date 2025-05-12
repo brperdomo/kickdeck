@@ -1,5 +1,5 @@
 /**
- * Coach-related API routes
+ * Coach and team manager related API routes
  */
 import { Request, Response } from 'express';
 import { db } from '@db';
@@ -7,7 +7,7 @@ import { users } from '@db/schema';
 import { eq } from 'drizzle-orm';
 
 /**
- * Check if a coach exists by email and return non-sensitive information
+ * Check if a coach or team manager exists by email and return non-sensitive information
  */
 export async function checkCoachEmail(req: Request, res: Response) {
   try {
