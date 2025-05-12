@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { useUser } from "@/hooks/use-user";
 import { FileManager } from "@/components/admin/FileManager.tsx";
 import UserRegistrationsView from "@/components/UserRegistrationsView";
+import { MyTeams } from "@/components/member/MyTeams";
 import { MemberLayout } from "@/components/layouts/MemberLayout";
 import { motion } from "framer-motion";
 import { Calendar, User, UserPlus, ExternalLink } from "lucide-react";
@@ -103,6 +104,12 @@ export default function UserDashboard() {
               </motion.div>
             ))}
           </div>
+        </div>
+        
+        {/* My Teams Section */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4 section-header">My Teams</h2>
+          <MyTeams />
         </div>
         
         {/* User Registrations Section */}
