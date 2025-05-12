@@ -10,6 +10,7 @@ import AuthPage from "@/pages/auth-page";
 import { RouteDebugger } from "@/components/RouteDebugger";
 import { RoleBasedRedirect } from "@/components/RoleBasedRedirect";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { DebugErrorBoundary } from "@/components/DebugErrorBoundary";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
@@ -240,57 +241,127 @@ function Router() {
           <ProtectedRoute path="/sendgrid-settings" requiredRole="admin" component={<SendGridSettingsPage />} />
           <ProtectedRoute path="/admin/form-templates/create" requiredRole="admin" component={<FormTemplateCreatePage />} />
           <ProtectedRoute path="/admin/form-templates/:id/edit" requiredRole="admin" component={<FormTemplateEditPage />} />
-          <ProtectedRoute path="/admin/form-templates" requiredRole="admin" component={<AdminDashboard initialView="formTemplates" />} />
+          <ProtectedRoute path="/admin/form-templates" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="formTemplates" />
+            </DebugErrorBoundary>
+          } />
           <ProtectedRoute path="/admin/team-status-test" requiredRole="admin" component={<TeamStatusTest />} />
-          <ProtectedRoute path="/admin/file-manager" requiredRole="admin" component={<AdminDashboard initialView="files" />} />
-          <ProtectedRoute path="/admin/events" requiredRole="admin" component={<AdminDashboard initialView="events" />} />
-          <ProtectedRoute path="/admin/teams" requiredRole="admin" component={<AdminDashboard initialView="teams" />} />
-          <ProtectedRoute path="/admin/administrators" requiredRole="admin" component={<AdminDashboard initialView="administrators" />} />
-          <ProtectedRoute path="/admin/complexes" requiredRole="admin" component={<AdminDashboard initialView="complexes" />} />
-          <ProtectedRoute path="/admin/households" requiredRole="admin" component={<AdminDashboard initialView="households" />} />
-          <ProtectedRoute path="/admin/scheduling" requiredRole="admin" component={<AdminDashboard initialView="scheduling" />} />
-          <ProtectedRoute path="/admin/reports" requiredRole="admin" component={<AdminDashboard initialView="reports" />} />
-          <ProtectedRoute path="/admin/members" requiredRole="admin" component={<AdminDashboard initialView="members" />} />
-          <ProtectedRoute path="/admin/roles" requiredRole="admin" component={<AdminDashboard initialView="roles" />} />
-          <ProtectedRoute path="/admin/account" requiredRole="admin" component={<AdminDashboard initialView="account" />} />
-          <ProtectedRoute path="/admin/settings" requiredRole="admin" component={<AdminDashboard initialView="settings" />} />
+          <ProtectedRoute path="/admin/file-manager" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="files" />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/admin/events" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="events" />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/admin/teams" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="teams" />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/admin/administrators" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="administrators" />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/admin/complexes" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="complexes" />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/admin/households" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="households" />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/admin/scheduling" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="scheduling" />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/admin/reports" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="reports" />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/admin/members" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="members" />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/admin/roles" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="roles" />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/admin/account" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="account" />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/admin/settings" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="settings" />
+            </DebugErrorBoundary>
+          } />
           {/* We'll enhance the main dashboard with animations directly */}
-          <ProtectedRoute path="/admin" requiredRole="admin" component={<AdminDashboard initialView="events" />} />
+          <ProtectedRoute path="/admin" requiredRole="admin" component={
+            <DebugErrorBoundary>
+              <AdminDashboard initialView="events" />
+            </DebugErrorBoundary>
+          } />
 
           {/* User routes - using ProtectedRoute for member-specific routes */}
-          <ProtectedRoute path="/household" requiredRole="member" component={<HouseholdPage />} />
-          <ProtectedRoute path="/dashboard/my-household" requiredRole="member" component={<HouseholdPage />} />
+          <ProtectedRoute path="/household" requiredRole="member" component={
+            <DebugErrorBoundary>
+              <HouseholdPage />
+            </DebugErrorBoundary>
+          } />
+          <ProtectedRoute path="/dashboard/my-household" requiredRole="member" component={
+            <DebugErrorBoundary>
+              <HouseholdPage />
+            </DebugErrorBoundary>
+          } />
           <ProtectedRoute 
             path="/dashboard/my-account" 
             requiredRole="member" 
             component={
-              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>}>
-                {React.createElement(lazy(() => import('./pages/my-account')))}
-              </Suspense>
+              <DebugErrorBoundary>
+                <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>}>
+                  {React.createElement(lazy(() => import('./pages/my-account')))}
+                </Suspense>
+              </DebugErrorBoundary>
             }
           />
           <ProtectedRoute 
             path="/dashboard/account-settings" 
             requiredRole="member" 
             component={
-              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>}>
-                {React.createElement(lazy(() => import('./pages/account-settings')))}
-              </Suspense>
+              <DebugErrorBoundary>
+                <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>}>
+                  {React.createElement(lazy(() => import('./pages/account-settings')))}
+                </Suspense>
+              </DebugErrorBoundary>
             }
           />
           <ProtectedRoute 
             path="/dashboard/registrations" 
             requiredRole="member" 
             component={
-              <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>}>
-                {React.createElement(lazy(() => import('./pages/registrations')))}
-              </Suspense>
+              <DebugErrorBoundary>
+                <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>}>
+                  {React.createElement(lazy(() => import('./pages/registrations')))}
+                </Suspense>
+              </DebugErrorBoundary>
             }
           />
           <ProtectedRoute path="/chat" requiredRole="member" component={<ChatPage />} />
@@ -315,7 +386,11 @@ function Router() {
           <Route path="/payment-setup-confirmation" component={PaymentSetupConfirmation} />
           
           {/* Dashboard routes - protected with role-based redirection */}
-          <ProtectedRoute path="/dashboard" requiredRole="member" component={<UserDashboard />} />
+          <ProtectedRoute path="/dashboard" requiredRole="member" component={
+            <DebugErrorBoundary>
+              <UserDashboard />
+            </DebugErrorBoundary>
+          } />
           
           {/* Preview routes */}
 
