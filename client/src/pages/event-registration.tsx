@@ -2338,11 +2338,13 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     // Ensure player data is synced with form state
     teamForm.setValue('players', players);
     
-    // Check required fields
-    if (!data.name || !data.ageGroupId || !data.headCoachFirstName || !data.headCoachLastName || !data.headCoachEmail || !data.headCoachPhone) {
+    // Check required fields for team, coach, and manager information
+    if (!data.name || !data.ageGroupId || 
+        !data.headCoachFirstName || !data.headCoachLastName || !data.headCoachEmail || !data.headCoachPhone ||
+        !data.managerFirstName || !data.managerLastName || !data.managerEmail || !data.managerPhone) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required team and coach information fields",
+        description: "Please fill in all required team, coach, and manager information fields",
         variant: "destructive",
       });
       return;
