@@ -174,7 +174,28 @@ export function ForceRedirectCombinedFix() {
     if (redirectAttempts >= 3) {
       tryManualLogin();
     }
-  }, [redirectAttempts]);
+    
+    // Add detailed diagnostics when redirects are failing
+    if (redirectAttempts >= 2) {
+      console.log("ForceRedirectCombinedFix: Multiple redirect attempts, logging diagnostic info");
+      
+      // Log detailed diagnostics for debugging
+      console.error("Redirection diagnostics:", {
+        timestamp: new Date().toISOString(),
+        redirectAttempts,
+        debugState,
+        authQueryData: queryClient.getQueryData(['/api/user']),
+        currentUser: user ? {
+          id: user.id,
+          email: user.email,
+          hasIsAdmin: 'isAdmin' in user,
+          isAdmin: user.isAdmin,
+          hasRoles: 'roles' in user && Array.isArray(user.roles),
+          roleCount: 'roles' in user && Array.isArray(user.roles) ? user.roles.length : 0
+        } : 'No user data'
+      });
+    }
+  }, [redirectAttempts, user, debugState]);
   
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">

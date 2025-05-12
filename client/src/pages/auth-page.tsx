@@ -87,8 +87,14 @@ export default function AuthPage() {
       console.log('Login successful, user data:', userData);
       
       // Verify admin status directly before redirect
-      // Cast userData to ExtendedUser for type safety
-      const extendedUserData = userData as ExtendedUser;
+      // Extract user object and cast to ExtendedUser for type safety
+      // Handle both formats: { user: {...} } or the direct user object
+      const userObject = userData && typeof userData === 'object' && 'user' in userData 
+        ? userData.user 
+        : userData;
+      
+      // Use type assertion after validation
+      const extendedUserData = userObject as ExtendedUser;
       
       // Check if user has admin privileges using our helper function
       const isAdmin = isUserAdmin(extendedUserData);
