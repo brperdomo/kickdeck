@@ -5,7 +5,7 @@ import { setupWebSocketServer } from "./websocket";
 import { log } from "./vite";
 import { crypto } from "./crypto";
 import { db } from "@db";
-import { coupons, emailTemplates } from "@db/schema";
+import { coupons, emailTemplates, insertPlayerSchema, players } from "@db/schema";
 import { eq } from "drizzle-orm";
 import { isAdmin, hasEventAccess } from "./middleware";
 // Import the safe registration fees middleware directly
@@ -6482,15 +6482,36 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         // Now check event access using the middleware
         await hasEventAccess(req, res, async () => {
           // Access is granted, proceed with player creation
-          // Validate the player data using a simple validation
-          // Since insertPlayerSchema might not be defined, let's use a basic validation approach
-          const requiredFields = ['firstName', 'lastName', 'dateOfBirth'];
-          const missingFields = requiredFields.filter(field => !req.body[field]);
-          
-          if (missingFields.length > 0) {
+          // Validate the player data using the schema validation
+          try {
+            // Define all required fields based on player schema
+            const requiredFields = [
+              'firstName', 
+              'lastName', 
+              'dateOfBirth', 
+              'emergencyContactName', 
+              'emergencyContactPhone'
+            ];
+            const missingFields = requiredFields.filter(field => !req.body[field]);
+            
+            if (missingFields.length > 0) {
+              return res.status(400).json({ 
+                error: "Invalid player data", 
+                details: `Missing required fields: ${missingFields.join(', ')}` 
+              });
+            }
+            
+            // Import proper schema validation
+            const playerSchema = insertPlayerSchema;
+            const result = playerSchema.safeParse(req.body);
+            if (!result.success) {
+              return res.status(400).json({ error: result.error.errors });
+            }
+          } catch (validationError) {
+            console.error('Player validation error:', validationError);
             return res.status(400).json({ 
-              error: "Invalid player data", 
-              details: `Missing required fields: ${missingFields.join(', ')}` 
+              error: "Player validation error",
+              details: validationError.message || "Failed to validate player data"
             });
           }
           
