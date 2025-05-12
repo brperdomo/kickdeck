@@ -311,15 +311,91 @@ function Router() {
           <ProtectedRoute 
             path="/admin" 
             requiredRole="admin" 
-            component={() => (
-              <DebugErrorBoundary>
-                <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>}>
-                  {React.lazy(() => import("@/pages/admin-dashboard-lite"))}
-                </React.Suspense>
-              </DebugErrorBoundary>
-            )} 
+            component={() => {
+              // Get the user data from auth hook to display
+              const { user, isLoading } = useAuth();
+              
+              // Show loading state while auth is in progress
+              if (isLoading) {
+                return (
+                  <div className="flex items-center justify-center min-h-screen">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                );
+              }
+
+              // Show error if no user or not admin
+              if (!user || !user.isAdmin) {
+                return (
+                  <div className="flex flex-col items-center justify-center min-h-screen">
+                    <div className="bg-red-50 border border-red-300 p-6 rounded-lg max-w-lg">
+                      <h1 className="text-2xl font-bold text-red-600 mb-4">Access Error</h1>
+                      <p className="text-red-500 mb-4">
+                        {!user ? "You need to be logged in to access this page." : "You don't have admin privileges."}
+                      </p>
+                      <button 
+                        onClick={() => window.location.href = "/auth"} 
+                        className="bg-red-600 text-white py-2 px-4 rounded"
+                      >
+                        Return to Login
+                      </button>
+                    </div>
+                  </div>
+                );
+              }
+              
+              // Show simple admin dashboard
+              return (
+                <DebugErrorBoundary>
+                  <div className="container mx-auto py-8">
+                    <h1 className="text-3xl font-bold mb-6">Admin Dashboard (Simple Version)</h1>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="bg-white p-6 rounded-lg shadow-md">
+                        <h2 className="text-xl font-semibold mb-4">User Information</h2>
+                        <div className="space-y-2">
+                          <p><span className="font-medium">Name:</span> {user.firstName} {user.lastName}</p>
+                          <p><span className="font-medium">Email:</span> {user.email}</p>
+                          <p><span className="font-medium">Admin Status:</span> {user.isAdmin ? "Admin" : "User"}</p>
+                          <p><span className="font-medium">User ID:</span> {user.id}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white p-6 rounded-lg shadow-md">
+                        <h2 className="text-xl font-semibold mb-4">System Status</h2>
+                        <div className="space-y-2">
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                            <span>Authentication: Working</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                            <span>Admin Dashboard: Limited</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white p-6 rounded-lg shadow-md">
+                        <h2 className="text-xl font-semibold mb-4">Debug Information</h2>
+                        <div className="text-xs bg-gray-50 p-3 rounded overflow-auto max-h-40">
+                          <pre>
+                            {JSON.stringify({
+                              user: {
+                                id: user.id,
+                                email: user.email,
+                                isAdmin: user.isAdmin
+                              },
+                              location: window.location.href,
+                              timestamp: new Date().toISOString()
+                            }, null, 2)}
+                          </pre>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </DebugErrorBoundary>
+              );
+            }} 
           />
 
           {/* User routes - using ProtectedRoute for member-specific routes */}
