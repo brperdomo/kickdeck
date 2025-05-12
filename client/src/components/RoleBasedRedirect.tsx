@@ -16,9 +16,8 @@ import { Loader2 } from "lucide-react";
  * role-based access control system throughout the application.
  */
 export function RoleBasedRedirect() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, authState, setAuthState } = useAuth();
   const [location, setLocation] = useLocation();
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const [redirectCount, setRedirectCount] = useState(0);
   
   useEffect(() => {
@@ -28,15 +27,16 @@ export function RoleBasedRedirect() {
       return;
     }
     
-    // Don't do anything if we're still loading or there's no user
-    if (isLoading) {
-      console.log("RoleBasedRedirect - Still loading, skipping redirect");
+    // Don't do anything if we're still loading or in a transitional state
+    if (isLoading || authState === 'checking' || authState === 'logging-in' || 
+        authState === 'logging-out' || authState === 'redirecting') {
+      console.log("RoleBasedRedirect - Still loading or in transition, skipping redirect", { authState });
       return;
     }
     
     // If no user data and not loading, we should not continue
-    if (!user) {
-      console.log("RoleBasedRedirect - No user data available");
+    if (!user || authState === 'unauthenticated') {
+      console.log("RoleBasedRedirect - No user data available or unauthenticated");
       return;
     }
 
@@ -44,6 +44,7 @@ export function RoleBasedRedirect() {
     console.log("RoleBasedRedirect checking access", { 
       path: location, 
       isAdmin: user?.isAdmin,
+      authState,
       user
     });
     
@@ -71,11 +72,15 @@ export function RoleBasedRedirect() {
     // Handle admin routes when user is not an admin
     if ((path === '/admin' || path.startsWith('/admin/')) && !user.isAdmin) {
       console.log("Non-admin accessing admin route, redirecting to dashboard");
-      setIsRedirecting(true);
+      // Set auth state to redirecting to show proper UI feedback
+      setAuthState('redirecting');
       setRedirectCount(prev => prev + 1);
       setTimeout(() => {
         setLocation('/dashboard');
-        setIsRedirecting(false);
+        // Reset auth state after redirect is complete
+        if (user) {
+          setAuthState('authenticated');
+        }
       }, 100);
       return;
     }
@@ -83,11 +88,15 @@ export function RoleBasedRedirect() {
     // Handle member routes when user is an admin only
     if ((path === '/dashboard' || path.startsWith('/dashboard/')) && user.isAdmin) {
       console.log("Admin accessing member route, redirecting to admin panel");
-      setIsRedirecting(true);
+      // Set auth state to redirecting to show proper UI feedback
+      setAuthState('redirecting');
       setRedirectCount(prev => prev + 1);
       setTimeout(() => {
         setLocation('/admin');
-        setIsRedirecting(false);
+        // Reset auth state after redirect is complete
+        if (user) {
+          setAuthState('authenticated');
+        }
       }, 100);
       return;
     }
@@ -96,19 +105,23 @@ export function RoleBasedRedirect() {
     if (path === '/') {
       const targetPath = user.isAdmin ? '/admin' : '/dashboard';
       console.log(`User at root path, redirecting to ${targetPath}`);
-      setIsRedirecting(true);
+      // Set auth state to redirecting to show proper UI feedback
+      setAuthState('redirecting');
       setRedirectCount(prev => prev + 1);
       setTimeout(() => {
         setLocation(targetPath);
-        setIsRedirecting(false);
+        // Reset auth state after redirect is complete
+        if (user) {
+          setAuthState('authenticated');
+        }
       }, 100);
       return;
     }
     
-  }, [user, isLoading, location, setLocation, redirectCount]);
+  }, [user, isLoading, authState, location, setLocation, redirectCount, setAuthState]);
   
   // Show loading indicator during redirects to prevent white flash
-  if (isRedirecting) {
+  if (authState === 'redirecting') {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
