@@ -17,7 +17,11 @@ export function ForceRedirectCombinedFix() {
   const [redirectAttempts, setRedirectAttempts] = useState(0);
   const [redirectMethod, setRedirectMethod] = useState('Initializing');
   const [forceBackToLogin, setForceBackToLogin] = useState(false);
-  const [debugState, setDebugState] = useState<any>({
+  const [debugState, setDebugState] = useState<{
+    apiCheckComplete: boolean;
+    hookCheckComplete: boolean;
+    [key: string]: boolean | string | number | undefined; // Allow for additional properties
+  }>({
     apiCheckComplete: false,
     hookCheckComplete: false
   });
@@ -49,7 +53,7 @@ export function ForceRedirectCombinedFix() {
           }
         });
         
-        setDebugState(prev => ({ ...prev, apiCheckComplete: true }));
+        setDebugState((prev) => ({ ...prev, apiCheckComplete: true }));
         
         if (response.ok) {
           const userData = await response.json();
@@ -130,7 +134,7 @@ export function ForceRedirectCombinedFix() {
     // Skip if we're loading, forcing back to login already, or API check isn't done yet
     if (isLoading || forceBackToLogin || !debugState.apiCheckComplete) return;
     
-    setDebugState(prev => ({ ...prev, hookCheckComplete: true }));
+    setDebugState((prev: typeof debugState) => ({ ...prev, hookCheckComplete: true }));
     
     if (!extendedUser) {
       console.log("ForceRedirectCombinedFix: No user found in useAuth hook");
