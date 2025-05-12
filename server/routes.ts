@@ -6516,23 +6516,30 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           }
           
           // Insert the new player
-          const newPlayer = await db.insert(players).values({
+          // Prepare player data with proper type handling
+          const playerData = {
             teamId,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             dateOfBirth: req.body.dateOfBirth,
-            jerseyNumber: req.body.jerseyNumber,
-            position: req.body.position,
-            medicalNotes: req.body.medicalNotes,
-            parentGuardianName: req.body.parentGuardianName,
-            parentGuardianEmail: req.body.parentGuardianEmail,
-            parentGuardianPhone: req.body.parentGuardianPhone,
+            // Convert jerseyNumber to integer if not empty, otherwise set to null
+            jerseyNumber: req.body.jerseyNumber && req.body.jerseyNumber !== '' 
+              ? parseInt(req.body.jerseyNumber) 
+              : null,
+            position: req.body.position || null,
+            medicalNotes: req.body.medicalNotes || null,
+            parentGuardianName: req.body.parentGuardianName || null,
+            parentGuardianEmail: req.body.parentGuardianEmail || null,
+            parentGuardianPhone: req.body.parentGuardianPhone || null,
             emergencyContactName: req.body.emergencyContactName,
             emergencyContactPhone: req.body.emergencyContactPhone,
             isActive: true,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
-          }).returning();
+          };
+          
+          // Insert player with the properly prepared data
+          const newPlayer = await db.insert(players).values(playerData).returning();
           
           res.status(201).json(newPlayer[0]);
         });
