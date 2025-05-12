@@ -3311,11 +3311,37 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                         name="headCoachEmail"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Head Coach Email</FormLabel>
+                            <FormLabel>
+                              Head Coach Email
+                              {isCheckingCoach && (
+                                <span className="ml-2 inline-flex items-center">
+                                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                  <span className="text-xs text-muted-foreground">Checking...</span>
+                                </span>
+                              )}
+                              {coachFound && !isCheckingCoach && (
+                                <span className="ml-2 inline-flex items-center text-green-600">
+                                  <CheckCircle className="mr-1 h-3 w-3" />
+                                  <span className="text-xs">Coach found</span>
+                                </span>
+                              )}
+                            </FormLabel>
                             <FormControl>
-                              <Input {...field} type="email" />
+                              <Input 
+                                {...field} 
+                                type="email"
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  handleCoachEmailChange(e.target.value);
+                                }}
+                              />
                             </FormControl>
                             <FormMessage />
+                            {coachFound && !isCheckingCoach && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Coach information automatically filled from existing account.
+                              </p>
+                            )}
                           </FormItem>
                         )}
                       />

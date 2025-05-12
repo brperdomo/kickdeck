@@ -51,6 +51,7 @@ import {
   getAllPermissions,
   resetRolePermissions 
 } from "./routes/admin/role-permissions";
+import { checkCoachEmail } from "./routes/coaches";
 import {
   getEmulatableAdmins,
   startEmulatingAdmin,
