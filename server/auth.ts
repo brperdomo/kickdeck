@@ -152,7 +152,7 @@ export async function createCoachAccount(
 export function setupAuth(app: Express) {
   const MemoryStore = createMemoryStore(session);
   const sessionSettings: session.SessionOptions = {
-    secret: "matchpro-persistent-session-secret-key", // Use stable secret instead of REPL_ID
+    secret: process.env.SESSION_SECRET || "matchpro-persistent-session-secret-key",
     resave: true, // Changed to true to ensure session is saved on every request
     saveUninitialized: false,
     cookie: {

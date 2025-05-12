@@ -20,6 +20,7 @@ import { Trophy, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Link, useLocation } from "wouter";
 import { useEffect, useState } from "react";
+import { ForceRedirectCombinedFix } from "@/components/ForceRedirectCombinedFix";
 
 // Login schema
 const loginSchema = z.object({
