@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import { Redirect, Route, useLocation } from "wouter";
@@ -26,47 +26,54 @@ export function ProtectedRoute({
   requiredRole,
   component: Component 
 }: ProtectedRouteProps) {
-  const { user, isLoading } = useAuth();
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  const { user, isLoading, authState, setAuthState } = useAuth();
   const [location] = useLocation();
   
   // Improved handling of auth state to prevent white screen flashes
   useEffect(() => {
-    console.log('ProtectedRoute', { path, location, user, isLoading, isRedirecting });
+    console.log('ProtectedRoute', { path, location, user, authState, isLoading });
     
-    // Pre-fetch the necessary data when component mounts
-    if (!isLoading && !user) {
-      // Ensure a smooth redirection with visual feedback
-      setIsRedirecting(true);
+    // Update redirection state based on auth status
+    if (!isLoading && !user && authState === 'unauthenticated') {
+      // Store the current location for post-login redirect
+      sessionStorage.setItem('redirectAfterAuth', location);
     }
-  }, [path, location, user, isLoading]);
+  }, [path, location, user, authState, isLoading]);
 
   return (
     <Route path={path}>
       {() => {
-        // Show loading indicator while checking auth
-        if (isLoading || isRedirecting) {
+        // Show loading indicator while checking auth or during transitions
+        if (isLoading || authState === 'checking' || authState === 'redirecting') {
           return (
             <div className="flex flex-col items-center justify-center min-h-screen gap-3">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p className="text-lg text-muted-foreground">
-                {isRedirecting ? "Redirecting..." : "Loading..."}
+                {authState === 'redirecting' ? "Redirecting..." : "Loading..."}
               </p>
             </div>
           );
         }
 
         // Redirect to login if not authenticated
-        if (!user) {
+        if (!user || authState === 'unauthenticated') {
           // Set a redirectAfterAuth in sessionStorage to return later
           sessionStorage.setItem('redirectAfterAuth', location);
           console.log('ProtectedRoute: User not authenticated, redirecting to auth');
+          
+          // Update state to indicate redirection is happening
+          setAuthState('redirecting');
+          
           return <Redirect to="/auth" />;
         }
 
         // Role-based checks
         if (requiredRole === "admin" && !user.isAdmin) {
           console.log('ProtectedRoute: User not authorized for admin route, redirecting to dashboard');
+          
+          // Update state to indicate redirection is happening
+          setAuthState('redirecting');
+          
           return <Redirect to="/dashboard" />;
         }
 

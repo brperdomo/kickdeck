@@ -251,6 +251,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
+      // Update auth state to show we're logging out
+      setAuthState('logging-out');
+      
       // Add a timestamp to bust any caching completely
       const timestamp = new Date().getTime();
       const res = await fetch(`/api/logout?t=${timestamp}`, { 
@@ -283,11 +286,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error("Server error during logout:", responseData);
       }
       
+      // Set auth state to unauthenticated as we're clearing all state anyway
+      setAuthState('unauthenticated');
+      
       // Always return some data to trigger onSuccess in all cases
       return responseData;
     },
     onSuccess: () => {
       try {
+        // Update auth state to unauthenticated before clearing cache and redirecting
+        setAuthState('unauthenticated');
+        
         // Clear all data from cache immediately
         queryClient.clear();
         
@@ -306,12 +315,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.error("Error clearing browser storage:", storageError);
         }
         
+        // Set redirecting state before navigation to avoid flicker
+        setAuthState('redirecting');
+        
         // Force a reload of the page to completely reset React state
         // This ensures that the router will detect that the user is logged out
         window.location.href = "/auth";
         return; // Early return to prevent toast from showing before redirect
       } catch (cacheError) {
         console.error("Error clearing cache:", cacheError);
+        // Even if there's an error, make sure auth state is unauthenticated
+        setAuthState('unauthenticated');
       }
       
       // Show success message
@@ -323,16 +337,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onError: (error: Error) => {
       // Even if there's an error, try to clear the cache and state
       try {
+        // Make sure auth state is set to unauthenticated
+        setAuthState('unauthenticated');
+        
         queryClient.clear();
         queryClient.setQueryData(["/api/user"], null);
         localStorage.clear();
         sessionStorage.clear();
+        
+        // Set redirecting state before navigation to avoid flicker
+        setAuthState('redirecting');
         
         // Also force redirect to auth page on error
         window.location.href = "/auth";
         return; // Early return to prevent toast from showing before redirect
       } catch (e) {
         console.error("Failed to clean up state after logout error:", e);
+        // Even if there's an error in cleanup, make sure auth state is unauthenticated
+        setAuthState('unauthenticated');
       }
       
       // Show error message
@@ -346,60 +368,74 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterData) => {
-      // Always include cache-busting headers
-      const timestamp = new Date().getTime();
-      const res = await fetch(`/api/register?t=${timestamp}`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          'Cache-Control': 'no-cache, no-store, must-revalidate, private',
-          'Pragma': 'no-cache',
-          'X-Cache-Bust': timestamp.toString()
-        },
-        body: JSON.stringify(data),
-        credentials: "include",
-      });
-      
-      if (!res.ok) {
-        const error = await res.text();
-        throw new Error(error);
-      }
-      
-      const responseData = await res.json();
-      
-      // Trigger an immediate user fetch after registration to ensure session is active
       try {
-        // Check for emulation token
-        const emulationToken = typeof window !== 'undefined' ? localStorage.getItem('emulationToken') : null;
+        // Update auth state to indicate registration in progress
+        setAuthState('logging-in'); // We use logging-in for registration too
         
-        // Prepare headers
-        const headers: HeadersInit = {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'X-Cache-Bust': (timestamp + 1).toString()
-        };
-        
-        // Add emulation token if present
-        if (emulationToken) {
-          console.log('Fetching user with emulation token:', emulationToken);
-          headers['x-emulation-token'] = emulationToken;
-        }
-        
-        const userRes = await fetch('/api/user', {
-          credentials: 'include',
-          headers,
+        // Always include cache-busting headers
+        const timestamp = new Date().getTime();
+        const res = await fetch(`/api/register?t=${timestamp}`, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            'Cache-Control': 'no-cache, no-store, must-revalidate, private',
+            'Pragma': 'no-cache',
+            'X-Cache-Bust': timestamp.toString()
+          },
+          body: JSON.stringify(data),
+          credentials: "include",
         });
         
-        if (userRes.ok) {
-          const userData = await userRes.json();
-          // Update cache with fresh user data
-          responseData.freshUserData = userData;
+        if (!res.ok) {
+          const error = await res.text();
+          // Set auth state back to unauthenticated on error
+          setAuthState('unauthenticated');
+          throw new Error(error);
         }
-      } catch (e) {
-        console.error('Error fetching user after registration:', e);
+        
+        const responseData = await res.json();
+        
+        // Trigger an immediate user fetch after registration to ensure session is active
+        try {
+          // Check for emulation token
+          const emulationToken = typeof window !== 'undefined' ? localStorage.getItem('emulationToken') : null;
+          
+          // Prepare headers
+          const headers: HeadersInit = {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'X-Cache-Bust': (timestamp + 1).toString()
+          };
+          
+          // Add emulation token if present
+          if (emulationToken) {
+            console.log('Fetching user with emulation token:', emulationToken);
+            headers['x-emulation-token'] = emulationToken;
+          }
+          
+          const userRes = await fetch('/api/user', {
+            credentials: 'include',
+            headers,
+          });
+          
+          if (userRes.ok) {
+            const userData = await userRes.json();
+            // Update cache with fresh user data
+            responseData.freshUserData = userData;
+          }
+        } catch (e) {
+          console.error('Error fetching user after registration:', e);
+        }
+        
+        // Set auth state to authenticated since registration was successful
+        setAuthState('authenticated');
+        
+        return responseData;
+      } catch (error) {
+        // Reset auth state on error
+        setAuthState('unauthenticated');
+        throw error;
       }
-      
-      return responseData;
     },
     onSuccess: (data) => {
       // Set user data in cache, prioritizing the freshly fetched data if available
@@ -416,6 +452,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       }
       
+      // Update auth state to reflect successful authentication
+      setAuthState('authenticated');
+      
       // Show success message
       toast({
         title: "Success",
@@ -423,6 +462,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     },
     onError: (error: Error) => {
+      // Make sure auth state is reset on registration error
+      setAuthState('unauthenticated');
+      
       toast({
         title: "Registration failed",
         description: error.message,
@@ -431,12 +473,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  // Add a useEffect to synchronize with user query state
+  useEffect(() => {
+    if (isLoading) {
+      setAuthState('checking');
+    } else if (user) {
+      // Only set to authenticated if we're not in a transitional state
+      if (authState !== 'logging-in' && authState !== 'redirecting' && authState !== 'logging-out') {
+        setAuthState('authenticated');
+      }
+    } else if (!user && !isLoading) {
+      // Only set to unauthenticated if we're not in a transitional state
+      if (authState !== 'logging-in' && authState !== 'redirecting' && authState !== 'logging-out') {
+        setAuthState('unauthenticated');
+      }
+    }
+  }, [user, isLoading]);
+
   return (
     <AuthContext.Provider
       value={{
         user: user ?? null,
         isLoading,
         error,
+        authState,
+        setAuthState,
         loginMutation,
         logoutMutation,
         registerMutation,
