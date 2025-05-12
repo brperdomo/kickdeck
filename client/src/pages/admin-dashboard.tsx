@@ -5068,7 +5068,7 @@ function TeamsView() {
                 <h3 className="text-sm font-medium">Emergency Contact</h3>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="emergencyContactName">Name</Label>
+                  <Label htmlFor="emergencyContactName">Name * (Required)</Label>
                   <Input 
                     id="emergencyContactName" 
                     value={selectedPlayer.emergencyContactName || ''}
@@ -5076,11 +5076,12 @@ function TeamsView() {
                       ...selectedPlayer,
                       emergencyContactName: e.target.value
                     })}
+                    required
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="emergencyContactPhone">Phone</Label>
+                  <Label htmlFor="emergencyContactPhone">Phone * (Required)</Label>
                   <Input 
                     id="emergencyContactPhone" 
                     value={selectedPlayer.emergencyContactPhone || ''}
@@ -5088,6 +5089,7 @@ function TeamsView() {
                       ...selectedPlayer,
                       emergencyContactPhone: e.target.value
                     })}
+                    required
                   />
                 </div>
               </div>
