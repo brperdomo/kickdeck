@@ -5254,7 +5254,7 @@ interface AdminDashboardProps {
 }
 
 function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
-  const { user, logout, isLoading: isUserLoading } = useUser();
+  const { user, logout, isLoading: isUserLoading, authState } = useUser();
   const { hasPermission, hasRole } = usePermissions();
   const [location, navigate] = useLocation();
   const [activeView, setActiveView] = useState<View>(initialView);
@@ -5268,6 +5268,15 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
   const [showInternalOps, setShowInternalOps] = useState(false);
+  
+  // Debug logging to trace authentication
+  useEffect(() => {
+    console.log("AdminDashboard - Auth state:", { 
+      authState, 
+      user: !!user, 
+      isLoading: isUserLoading 
+    });
+  }, [authState, user, isUserLoading]);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
   const [showEmulationModal, setShowEmulationModal] = useState(false);
