@@ -13,10 +13,8 @@ const playerSchema = z.object({
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   jerseyNumber: z.string().optional(),
   medicalNotes: z.string().optional(),
-  parentGuardianName: z.string().optional(),
-  parentGuardianEmail: z.string().optional(),
-  parentGuardianPhone: z.string().optional(),
-  emergencyContactName: z.string().min(1, "Emergency contact name is required"),
+  emergencyContactFirstName: z.string().min(1, "Emergency contact first name is required"),
+  emergencyContactLastName: z.string().min(1, "Emergency contact last name is required"),
   emergencyContactPhone: z.string().min(1, "Emergency contact phone is required"),
   isActive: z.boolean().default(true),
 });
