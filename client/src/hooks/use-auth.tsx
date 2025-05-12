@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode, createContext, useContext, useState, useEffect } from "react";
 import {
   useQuery,
   useMutation,
@@ -6,6 +6,15 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+
+// Authentication states to track the login flow
+export type AuthState = 
+  | 'unauthenticated' // No user is logged in
+  | 'checking'        // Checking if user is authenticated
+  | 'authenticated'   // User is authenticated
+  | 'logging-in'      // Login in progress
+  | 'logging-out'     // Logout in progress
+  | 'redirecting';    // Redirect in progress after auth
 
 type User = {
   id: number;
@@ -24,9 +33,11 @@ type AuthContextType = {
   user: User | null;
   isLoading: boolean;
   error: Error | null;
+  authState: AuthState;
   loginMutation: UseMutationResult<{ user: User }, Error, LoginData>;
   logoutMutation: UseMutationResult<void, Error, void>;
   registerMutation: UseMutationResult<{ user: User }, Error, RegisterData>;
+  setAuthState: (state: AuthState) => void;
 };
 
 type LoginData = {
@@ -46,7 +57,9 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [authState, setAuthState] = useState<AuthState>('checking');
 
+  // Set up the user query
   const {
     data: user,
     error,
@@ -124,72 +137,85 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
-      console.log('Login mutation called with:', credentials.email);
-      
-      // Prepare request with credentials - using username field as Passport expects
-      const requestData = {
-        email: credentials.email,
-        password: credentials.password
-      };
-      
-      console.log('Sending login request with data:', { email: requestData.email, passwordLength: requestData.password.length });
-      
-      // Add cache-busting to avoid any caching issues
-      const timestamp = new Date().getTime();
-      const res = await fetch(`/api/login?t=${timestamp}`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache'
-        },
-        body: JSON.stringify(requestData),
-        credentials: "include",
-      });
-      
-      console.log('Login response status:', res.status);
-      
-      // Handle error responses
-      if (!res.ok) {
-        let errorMessage;
-        try {
-          errorMessage = await res.text();
-        } catch (e) {
-          errorMessage = 'Login failed';
-        }
-        console.error('Login error response:', errorMessage);
-        throw new Error(errorMessage);
-      }
-      
-      // Parse the successful response
-      const data = await res.json();
-      console.log('Login successful, received user data:', data ? 'Yes' : 'No');
-      
-      // Immediately fetch current user to ensure session is established
       try {
-        console.log('Fetching current user after login');
-        const userRes = await fetch('/api/user', {
-          credentials: 'include',
-          headers: {
+        console.log('Login mutation called with:', credentials.email);
+        
+        // Update auth state to show we're logging in
+        setAuthState('logging-in');
+        
+        // Prepare request with credentials - using username field as Passport expects
+        const requestData = {
+          email: credentials.email,
+          password: credentials.password
+        };
+        
+        console.log('Sending login request with data:', { email: requestData.email, passwordLength: requestData.password.length });
+        
+        // Add cache-busting to avoid any caching issues
+        const timestamp = new Date().getTime();
+        const res = await fetch(`/api/login?t=${timestamp}`, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
             'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'X-Cache-Bust': (timestamp + 1).toString()
-          }
+            'Pragma': 'no-cache'
+          },
+          body: JSON.stringify(requestData),
+          credentials: "include",
         });
         
-        if (userRes.ok) {
-          const userData = await userRes.json();
-          console.log('User data fetched after login:', userData ? 'success' : 'not found');
-          // Add the freshly fetched user data to the response
-          data.freshUserData = userData;
-        } else {
-          console.warn('Failed to fetch user after login:', userRes.status);
+        console.log('Login response status:', res.status);
+        
+        // Handle error responses
+        if (!res.ok) {
+          let errorMessage;
+          try {
+            errorMessage = await res.text();
+          } catch (e) {
+            errorMessage = 'Login failed';
+          }
+          console.error('Login error response:', errorMessage);
+          setAuthState('unauthenticated');
+          throw new Error(errorMessage);
         }
-      } catch (e) {
-        console.error('Error fetching user after login:', e);
+        
+        // Parse the successful response
+        const data = await res.json();
+        console.log('Login successful, received user data:', data ? 'Yes' : 'No');
+        
+        // Immediately fetch current user to ensure session is established
+        try {
+          console.log('Fetching current user after login');
+          const userRes = await fetch('/api/user', {
+            credentials: 'include',
+            headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+              'X-Cache-Bust': (timestamp + 1).toString()
+            }
+          });
+          
+          if (userRes.ok) {
+            const userData = await userRes.json();
+            console.log('User data fetched after login:', userData ? 'success' : 'not found');
+            // Add the freshly fetched user data to the response
+            data.freshUserData = userData;
+          } else {
+            console.warn('Failed to fetch user after login:', userRes.status);
+          }
+        } catch (e) {
+          console.error('Error fetching user after login:', e);
+        }
+        
+        // We got past all the error checks, update state to indicate success
+        setAuthState('authenticated');
+        
+        return data;
+      } catch (error) {
+        // Make sure we reset the auth state on errors
+        setAuthState('unauthenticated');
+        throw error;
       }
-      
-      return data;
     },
     onSuccess: (data) => {
       // Use the freshly fetched user data if available, otherwise fall back to the user from login response
@@ -201,6 +227,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Force a refetch to ensure we're using fresh data
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       
+      // Update auth state to reflect successful authentication
+      setAuthState('authenticated');
+      
       toast({
         title: "Success",
         description: "Successfully logged in",
@@ -208,6 +237,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onError: (error: Error) => {
       console.error('Login mutation error:', error);
+      
+      // Make sure we reset the auth state on errors
+      setAuthState('unauthenticated');
+      
       toast({
         title: "Login failed",
         description: error.message,
