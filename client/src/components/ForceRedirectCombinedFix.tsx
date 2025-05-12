@@ -1,5 +1,6 @@
-import { useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
+import { useEffect, useState } from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { Loader2 } from 'lucide-react';
 
 /**
  * ForceRedirectCombinedFix
@@ -9,35 +10,50 @@ import { useAuth } from "@/hooks/use-auth";
  */
 export function ForceRedirectCombinedFix() {
   const { user } = useAuth();
+  const [redirectAttempts, setRedirectAttempts] = useState(0);
+  const [redirectMethod, setRedirectMethod] = useState('Initializing');
 
   useEffect(() => {
     if (!user) {
-      console.log("ForceRedirect: No user found, can't redirect");
+      console.log("ForceRedirectCombinedFix: No user found, redirecting to login");
+      // Redirect to login
+      window.location.href = '/auth';
       return;
     }
 
-    console.log("ForceRedirect: User found, redirecting to appropriate dashboard");
+    // Set a timestamp for debugging
+    const timestamp = new Date().toISOString();
+    const redirectId = Math.random().toString(36).substring(2, 10);
+    console.log(`FORCE REDIRECT [${redirectId}] [${timestamp}]: User role detected: ${user.isAdmin ? 'admin' : 'regular'}`);
+
+    // Determine the appropriate dashboard
     const targetPath = user.isAdmin ? '/admin/dashboard' : '/dashboard';
     
-    // Store the redirect information in localStorage
-    localStorage.setItem('forced_redirect_target', targetPath);
-    localStorage.setItem('forced_redirect_timestamp', Date.now().toString());
+    // First redirect attempt - use window.location.href for a hard redirect
+    setRedirectMethod('Hard Redirect (window.location.href)');
+    console.log(`FORCE REDIRECT [${redirectId}]: Attempting hard redirect to ${targetPath}`);
     
-    // First, try using history API
-    console.log(`ForceRedirect: Using history.pushState to ${targetPath}`);
-    try {
-      window.history.pushState({}, '', targetPath);
-    } catch (e) {
-      console.error("ForceRedirect: history.pushState failed", e);
-    }
-    
-    // Then, use direct location change after a short delay
+    // Use a small timeout to ensure React has finished its current update cycle
     setTimeout(() => {
-      console.log(`ForceRedirect: Using direct location change to ${targetPath}`);
       window.location.href = targetPath;
+      
+      // In case the first redirect fails (should never happen), try again with a different method
+      setTimeout(() => {
+        // If we're still here after 1 second, the first redirect failed
+        setRedirectMethod('Window Replace Redirect (window.location.replace)');
+        setRedirectAttempts(prev => prev + 1);
+        console.log(`FORCE REDIRECT [${redirectId}]: Attempting alternate redirect method (replace) to ${targetPath}`);
+        window.location.replace(targetPath);
+      }, 1000);
     }, 100);
-    
   }, [user]);
 
-  return null; // This component doesn't render anything
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+      <h2 className="text-xl font-medium mb-2">Redirecting to dashboard...</h2>
+      <p className="text-sm text-muted-foreground mb-1">Method: {redirectMethod}</p>
+      <p className="text-sm text-muted-foreground">Attempts: {redirectAttempts + 1}</p>
+    </div>
+  );
 }
