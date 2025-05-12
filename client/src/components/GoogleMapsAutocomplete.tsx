@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Input } from "@/components/ui/input";
-import { googleMapsApiKey, initGoogleMapsApi } from "@/lib/env";
+import { loadGoogleMapsApi } from "@/lib/load-maps-api";
 
 // Extend the window interface to include the google object
 declare global {
