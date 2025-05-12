@@ -55,6 +55,8 @@ import AccountPage from "./pages/account";
 import { LogoutHandler } from "@/components/LogoutHandler";
 // Emergency fix for registration
 import EmergencyRegistrationFix from "@/pages/emergency-registration-fix";
+// Import fallback dashboard for white screen fix
+import FallbackDashboard from "@/pages/FallbackDashboard";
 
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
@@ -308,26 +310,15 @@ function Router() {
             </DebugErrorBoundary>
           } />
           {/* We'll enhance the main dashboard with animations directly */}
-          {/* Temporarily using DiagnosticDashboard to diagnose the white screen issues */}
+          {/* Using simple fallback dashboard */}
           <ProtectedRoute 
             path="/admin" 
             requiredRole="admin" 
-            component={() => {
-              // Use dynamic import for diagnostic dashboard
-              const DiagnosticDashboard = React.lazy(() => import('@/components/diagnostic/DiagnosticDashboard'));
-              
-              return (
-                <DebugErrorBoundary>
-                  <React.Suspense fallback={
-                    <div className="flex items-center justify-center min-h-screen">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                  }>
-                    <DiagnosticDashboard />
-                  </React.Suspense>
-                </DebugErrorBoundary>
-              );
-            }}
+            component={
+              <DebugErrorBoundary>
+                <FallbackDashboard />
+              </DebugErrorBoundary>
+            }
           />
 
           {/* User routes - using ProtectedRoute for member-specific routes */}
@@ -402,26 +393,15 @@ function Router() {
           <Route path="/payment-setup-confirmation" component={PaymentSetupConfirmation} />
           
           {/* Dashboard routes - protected with role-based redirection */}
-          {/* Temporarily using DiagnosticDashboard to diagnose the white screen issues on member dashboard */}
+          {/* Using simple fallback dashboard */}
           <ProtectedRoute 
             path="/dashboard" 
             requiredRole="member" 
-            component={() => {
-              // Use dynamic import for diagnostic dashboard
-              const DiagnosticDashboard = React.lazy(() => import('@/components/diagnostic/DiagnosticDashboard'));
-              
-              return (
-                <DebugErrorBoundary>
-                  <React.Suspense fallback={
-                    <div className="flex items-center justify-center min-h-screen">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                  }>
-                    <DiagnosticDashboard />
-                  </React.Suspense>
-                </DebugErrorBoundary>
-              );
-            }}
+            component={
+              <DebugErrorBoundary>
+                <FallbackDashboard />
+              </DebugErrorBoundary>
+            }
           />
           
           {/* Preview routes */}
