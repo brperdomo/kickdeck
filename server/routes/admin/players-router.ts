@@ -121,10 +121,19 @@ router.put('/:teamId/players/:playerId', async (req, res) => {
       return res.status(400).json({ error: error.errors || 'Invalid player data' });
     }
     
+    // Process jersey number - convert to number or null if empty
+    const processedPlayerData = {
+      ...playerData,
+      // Convert jersey number to integer if it's a non-empty string, otherwise set to null
+      jerseyNumber: playerData.jerseyNumber && playerData.jerseyNumber !== '' 
+        ? parseInt(playerData.jerseyNumber) 
+        : null
+    };
+    
     // Update the player
     const updatedPlayer = await db.update(players)
       .set({
-        ...playerData,
+        ...processedPlayerData,
         updatedAt: new Date().toISOString()
       })
       .where(eq(players.id, playerId))
