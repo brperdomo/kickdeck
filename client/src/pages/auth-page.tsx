@@ -102,8 +102,8 @@ export default function AuthPage() {
       
       const isAdmin = userObject && userObject.isAdmin;
       
-      // Determine the appropriate dashboard
-      const targetPath = isAdmin ? '/admin/dashboard' : '/dashboard';
+      // Determine the appropriate dashboard - Admin and Dashboard are separate portals
+      const targetPath = isAdmin ? '/admin' : '/dashboard';
       console.log(`Login successful, redirecting directly to ${targetPath}`);
       
       // Use direct redirection to the target dashboard
@@ -151,8 +151,8 @@ export default function AuthPage() {
                      
     console.log("User already authenticated, isAdmin:", isAdmin);
                      
-    // Immediate redirect to dashboard
-    const directTarget = isAdmin ? '/admin/dashboard' : '/dashboard';
+    // Immediate redirect to dashboard - Admin and Dashboard are separate portals
+    const directTarget = isAdmin ? '/admin' : '/dashboard';
     
     // Direct redirect to appropriate dashboard
     setTimeout(() => {
