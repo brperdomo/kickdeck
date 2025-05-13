@@ -153,8 +153,8 @@ export function setupAuth(app: Express) {
   const MemoryStore = createMemoryStore(session);
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "matchpro-persistent-session-secret-key",
-    resave: true, // Ensure session is saved on every request
-    saveUninitialized: false, // Don't save empty sessions
+    resave: true, // Changed to true to ensure session is saved on every request
+    saveUninitialized: false,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for longer sessions
       httpOnly: true,
@@ -166,8 +166,8 @@ export function setupAuth(app: Express) {
       checkPeriod: 86400000, // 24 hours cleanup interval
       // Increased max size for better performance
       max: 1000,
-      stale: false, // Don't refresh inactive sessions in the background
-      ttl: 86400000 * 30 // 30 days TTL to match cookie maxAge
+      // Don't refresh/ping inactive sessions in the background
+      stale: false
     }),
     rolling: true, // Reset expiration countdown on every response
     unset: 'destroy' // Immediately destroy when unset
