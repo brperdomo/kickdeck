@@ -84,9 +84,23 @@ export default function AuthPage() {
       const userData = await loginMutation.mutateAsync(data);
       
       console.log('Login successful, user data:', userData);
+      console.log('Login successful, user data type:', typeof userData);
+      console.log('Login successful, user data fields:', userData ? Object.keys(userData) : 'No userData');
       
-      // Check if the user has admin privileges
-      const isAdmin = userData && userData.isAdmin;
+      // Check if the user has admin privileges - check if data is wrapped in a user or freshUserData object
+      let userObject;
+      if (userData && userData.freshUserData) {
+        userObject = userData.freshUserData;
+        console.log('Using freshUserData:', userObject);
+      } else if (userData && userData.user) {
+        userObject = userData.user;
+        console.log('Using user object:', userObject);
+      } else {
+        userObject = userData;
+        console.log('Using direct userData:', userObject);
+      }
+      
+      const isAdmin = userObject && userObject.isAdmin;
       
       // Determine the appropriate dashboard
       const targetPath = isAdmin ? '/admin/dashboard' : '/dashboard';
@@ -123,10 +137,17 @@ export default function AuthPage() {
 
   // If already authenticated, redirect to dashboard
   if (user && authState === 'authenticated') {
-    console.log("User already authenticated, redirecting to dashboard");
+    console.log("User already authenticated, redirecting to dashboard", user);
+    console.log("User already authenticated, user type:", typeof user);
+    console.log("User already authenticated, user fields:", user ? Object.keys(user) : 'No user');
     
-    // Check if user has admin privileges
-    const isAdmin = user.isAdmin;
+    // Check if user has admin privileges - make sure we use the right property
+    let userObject = user;
+    if (user && 'user' in user) {
+      userObject = user.user;
+      console.log('Auto-redirect: Using nested user object:', userObject);
+    }
+    const isAdmin = userObject && userObject.isAdmin;
                      
     console.log("User already authenticated, isAdmin:", isAdmin);
                      
