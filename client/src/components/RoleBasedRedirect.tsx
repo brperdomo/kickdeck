@@ -160,16 +160,34 @@ export function RoleBasedRedirect() {
     
     // If we're on the admin or dashboard route but haven't rendered yet
     if ((path === '/admin' || path === '/dashboard') && !hasRedirected) {
-      console.log("On target route but component may not be rendered yet, forcing refresh", { 
+      console.log("On target route but component may not be rendered yet", { 
         path,
         isAdmin: user?.isAdmin,
         authState,
-        hasRedirected
+        hasRedirected,
+        redirectCount
       });
       
-      // Force a refresh of the current route
-      setAuthState('authenticated');
-      setHasRedirected(true);
+      // Only force state update if we're authenticated and have valid user data
+      if (user && authState !== 'authenticated') {
+        console.log("Forcing authentication state update for valid user");
+        setAuthState('authenticated');
+        setHasRedirected(true);
+      } else if (!user) {
+        console.log("No valid user data found, redirecting to login");
+        setAuthState('unauthenticated');
+        window.location.href = '/auth';
+        return;
+      }
+    }
+
+    // Add safety check for admin routes
+    if (path === '/admin' && user?.isAdmin && authState === 'authenticated') {
+      console.log("Confirmed admin access", {
+        path,
+        isAdmin: user.isAdmin,
+        authState
+      });
     }
     
   }, [user, isLoading, authState, location, setLocation, redirectCount, setAuthState, hasRedirected]);
