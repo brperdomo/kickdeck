@@ -31,7 +31,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function AuthPage() {
   const { toast } = useToast();
-  const { loginMutation, user } = useAuth();
+  const { loginMutation, user, authState, setAuthState } = useAuth();
 
   const [location, setLocation] = useLocation();
   const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
@@ -63,7 +63,7 @@ export default function AuthPage() {
   }, []);
 
   // Form setup
-  const form = useForm<LoginFormData>({
+  const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -75,40 +75,54 @@ export default function AuthPage() {
   async function onSubmit(data: LoginFormData) {
     try {
       console.log('Submitting login with email:', data.email);
-      form.clearErrors();
+      loginForm.clearErrors();
+      
+      // Update auth state to indicate login is in progress
+      setAuthState('logging-in');
       
       // Perform login
-      await loginMutation.mutateAsync(data);
+      const userData = await loginMutation.mutateAsync(data);
       
-      // Check if there's a redirect after auth stored in session storage
-      const redirectAfterAuth = sessionStorage.getItem('redirectAfterAuth');
-      let targetPath;
+      console.log('Login successful, user data:', userData);
+      console.log('Login successful, user data type:', typeof userData);
+      console.log('Login successful, user data fields:', userData ? Object.keys(userData) : 'No userData');
       
-      if (redirectAfterAuth) {
-        console.log(`Found redirect after auth: ${redirectAfterAuth}`);
-        targetPath = redirectAfterAuth;
-        // Clear the stored redirect path
-        sessionStorage.removeItem('redirectAfterAuth');
+      // Check if the user has admin privileges - check if data is wrapped in a user or freshUserData object
+      let userObject;
+      if (userData && userData.freshUserData) {
+        userObject = userData.freshUserData;
+        console.log('Using freshUserData:', userObject);
+      } else if (userData && userData.user) {
+        userObject = userData.user;
+        console.log('Using user object:', userObject);
       } else {
-        // Default to main dashboard
-        targetPath = "/";
+        userObject = userData;
+        console.log('Using direct userData:', userObject);
       }
       
-      console.log(`Login successful, redirecting to ${targetPath}`);
-      setLocation(targetPath);
+      const isAdmin = userObject && userObject.isAdmin;
+      
+      // Determine the appropriate dashboard - Admin and Dashboard are separate portals
+      const targetPath = isAdmin ? '/admin' : '/dashboard';
+      console.log(`Login successful, redirecting directly to ${targetPath}`);
+      
+      // Use direct redirection to the target dashboard
+      window.location.href = targetPath;
       
     } catch (error: any) {
       console.error('Login error:', error);
       
+      setAuthState('unauthenticated');
+      
       // Show appropriate error messages
       if (error.message?.toLowerCase().includes("password")) {
-        form.setError("password", { message: "Invalid password" });
+        loginForm.setError("password", { message: "Invalid password" });
       } else if (error.message?.toLowerCase().includes("email") || 
                 error.message?.toLowerCase().includes("user not found")) {
-        form.setError("email", { message: "Email not found or invalid" });
+        loginForm.setError("email", { message: "Email not found or invalid" });
       } else {
         // Generic error
-        form.setError("root.serverError", { 
+        loginForm.setError("root.serverError", { 
           message: error.message || "Login failed. Please check your credentials and try again."
         });
         
@@ -122,123 +136,157 @@ export default function AuthPage() {
   }
 
   // If already authenticated, redirect to dashboard
-  if (user) {
-    // Check if user has admin privileges
-    const isAdmin = user.isAdmin;
+  if (user && authState === 'authenticated') {
+    console.log("User already authenticated, redirecting to dashboard", user);
+    console.log("User already authenticated, user type:", typeof user);
+    console.log("User already authenticated, user fields:", user ? Object.keys(user) : 'No user');
     
-    // Redirect to appropriate dashboard - Admin and Dashboard are separate portals
-    const target = isAdmin ? '/admin' : '/dashboard';
-    setLocation(target);
+    // Check if user has admin privileges - make sure we use the right property
+    let userObject = user;
+    if (user && 'user' in user) {
+      userObject = user.user;
+      console.log('Auto-redirect: Using nested user object:', userObject);
+    }
+    const isAdmin = userObject && userObject.isAdmin;
+                     
+    console.log("User already authenticated, isAdmin:", isAdmin);
+                     
+    // Immediate redirect to dashboard - Admin and Dashboard are separate portals
+    const directTarget = isAdmin ? '/admin' : '/dashboard';
+    
+    // Direct redirect to appropriate dashboard
+    setTimeout(() => {
+      console.log(`User already authenticated, redirecting to ${directTarget}`);
+      window.location.href = directTarget;
+    }, 250);
     
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
         <h3 className="text-xl mb-2">You're already logged in!</h3>
         <p className="text-sm text-muted-foreground mb-4">Redirecting you to your dashboard...</p>
+        <div className="flex space-x-3">
+          <button 
+            onClick={() => window.location.href = '/admin/dashboard'} 
+            className="bg-primary text-white px-3 py-1 rounded text-sm">
+            Admin Dashboard
+          </button>
+          <button 
+            onClick={() => window.location.href = '/dashboard'} 
+            className="bg-secondary px-3 py-1 rounded text-sm">
+            Member Dashboard
+          </button>
+        </div>
       </div>
     );
   }
   
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-indigo-900 to-indigo-700">
-      <div className="w-full md:w-1/2 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-xl">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
-            {logoutMessage && (
-              <div className={`mt-2 px-4 py-2 rounded-md text-sm font-medium ${
-                window.location.search.includes('forced') ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-              }`}>
-                {logoutMessage}
-              </div>
-            )}
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-5"
-                id="login-form"
-                name="login"
-                autoComplete="on"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          autoComplete="username email"
-                          placeholder="youremail@example.com"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          autoComplete="current-password"
-                          placeholder="••••••••"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={loginMutation.isPending}
-                >
-                  {loginMutation.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Signing in...
-                    </>
-                  ) : (
-                    "Login"
-                  )}
-                </Button>
+    <AuthLayout>
+      <div className="min-h-screen w-full relative">
+        <AnimatedBackground type="particles" primaryColor="#3d3a98" secondaryColor="#2d2a88" speed="medium" />
 
-                <div className="mt-4 text-center">
-                  <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
-                    Forgot Password?
-                  </Link>
-                  <div className="mt-2 text-sm">
-                    New to MatchPro? <Link to="/register" className="text-blue-600 hover:text-blue-800 font-bold">Register Here</Link>
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
+          <div className="w-full max-w-[min(400px,100%-2rem)] mx-auto">
+            <Card className="w-full bg-[#3d3a98]/70 backdrop-blur-md shadow-xl border-0 ring-4 ring-[#6a67ff]/60 ring-offset-4 ring-offset-[#3d3a98]/20 shadow-[0_0_20px_5px_rgba(106,103,255,0.4)]">
+              <CardHeader className="space-y-3 pb-6">
+                <div className="flex justify-center">
+                  <div className="w-100 h-100">
+                    <img
+                      src="/uploads/MatchProAI_Linear_BlackNOBUFFER.png"
+                      alt="MatchPro Logo"
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                 </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <div className="hidden md:flex md:w-1/2 bg-indigo-800 flex-col items-center justify-center relative">
-        <div className="absolute inset-0">
-          <AnimatedBackground />
+                <CardTitle className="text-2xl sm:text-3xl font-bold text-center text-white">
+                  Let's get you signed in
+                </CardTitle>
+                {logoutMessage && (
+                  <div className={`mt-2 px-4 py-2 rounded-md text-sm font-medium ${
+                    window.location.search.includes('forced') ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                  }`}>
+                    {logoutMessage}
+                  </div>
+                )}
+              </CardHeader>
+              <CardContent>
+                <Form {...loginForm}>
+                  <form
+                    onSubmit={loginForm.handleSubmit(onSubmit)}
+                    className="space-y-5"
+                    id="login-form"
+                    name="login"
+                    autoComplete="on"
+                  >
+                    <FormField
+                      control={loginForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base text-white">Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              autoComplete="username email"
+                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-yellow-200" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={loginForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base text-white">Password</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              autoComplete="current-password"
+                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-yellow-200" />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="submit"
+                      className="w-full h-11 text-base bg-white hover:bg-white/90 text-[#3d3a98] font-medium transition-colors"
+                      disabled={loginMutation.isPending}
+                    >
+                      {loginMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Signing in...
+                        </>
+                      ) : (
+                        "Sign In"
+                      )}
+                    </Button>
+
+                    <div className="mt-4 text-center">
+                      <Link to="/forgot-password" className="text-white hover:text-white/80 text-sm underline transition-colors">
+                        Forgot password?
+                      </Link>
+                      <div className="mt-1">
+                        <Link to="/register" className="text-white hover:text-white/80 text-sm underline transition-colors">
+                          Create an account
+                        </Link>
+                      </div>
+                    </div>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-        <div className="z-10 text-white max-w-lg mx-auto p-8 space-y-6 text-center">
-          <h1 className="text-4xl font-bold mb-6">MatchPro Tournament Management</h1>
-          <p className="text-xl">
-            The complete solution for tournament organizers and teams. 
-            Login to access your dashboard and manage your tournaments.
-          </p>
-        </div>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

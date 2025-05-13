@@ -67,9 +67,9 @@ export function ProtectedRoute({
           return <Redirect to="/auth" />;
         }
 
-        // Role-based checks - use strict comparison to true for isAdmin check
-        if (requiredRole === "admin" && user.isAdmin !== true) {
-          console.log('ProtectedRoute: User not authorized for admin route, redirecting to dashboard', { isAdmin: user.isAdmin });
+        // Role-based checks
+        if (requiredRole === "admin" && !user.isAdmin) {
+          console.log('ProtectedRoute: User not authorized for admin route, redirecting to dashboard');
           
           // Update state to indicate redirection is happening
           setAuthState('redirecting');

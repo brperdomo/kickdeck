@@ -39,32 +39,34 @@ export function RoleBasedRedirect() {
     });
 
     // Don't do anything if we're still loading or in a transitional state
-    if (isLoading || authState === 'checking' || authState === 'logging-in' || 
+    if (isLoading || !user || authState === 'checking' || authState === 'logging-in' || 
         authState === 'logging-out' || authState === 'redirecting') {
       console.log("RoleBasedRedirect - Still loading or in transition, skipping redirect", { authState });
       return;
     }
 
-    // If no user data and not in a loading state, redirect to auth for protected routes
-    if (!user && authState === 'unauthenticated') {
-      // Only redirect to auth for protected routes
-      const path = location.toLowerCase();
-      const protectedRoutes = ['/admin', '/dashboard'];
-      
-      // Check if current path is a protected route or a subpath of one
-      const isProtected = protectedRoutes.some(route => 
-        path === route || path.startsWith(`${route}/`)
-      );
-      
-      if (isProtected) {
-        console.log("No authenticated user for protected route, redirecting to auth");
-        sessionStorage.setItem('redirectAfterAuth', location);
-        setAuthState('redirecting');
-        setLocation('/auth');
-      }
+    // Ensure we have valid user data before proceeding
+    if (authState === 'authenticated' && user) {
+      console.log("RoleBasedRedirect - User authenticated:", { 
+        isAdmin: user.isAdmin,
+        currentPath: location 
+      });
+    }
+    
+    // If no user data and not loading, we should not continue
+    if (!user || authState === 'unauthenticated') {
+      console.log("RoleBasedRedirect - No user data available or unauthenticated");
       return;
     }
 
+    // Log for debugging
+    console.log("RoleBasedRedirect checking access", { 
+      path: location, 
+      isAdmin: user?.isAdmin,
+      authState,
+      user
+    });
+    
     // Extract current path
     const path = location.toLowerCase();
     
@@ -86,43 +88,90 @@ export function RoleBasedRedirect() {
       return;
     }
     
-    // Only proceed if we have a valid user and are in authenticated state
-    if (user && authState === 'authenticated') {
-      // Handle root path based on role - redirect to appropriate dashboard
-      if (path === '/') {
-        const targetPath = user.isAdmin === true ? '/admin' : '/dashboard';
-        console.log(`User at root path, redirecting to ${targetPath}`, { isAdmin: user.isAdmin });
-        
-        // Set auth state to redirecting to show proper UI feedback
+    // Handle admin routes
+    if (path === '/admin' || path.startsWith('/admin/')) {
+      if (!user.isAdmin) {
+        console.log("Non-admin accessing admin route, redirecting to dashboard");
         setAuthState('redirecting');
-        
-        // Force a direct navigation to the target path
-        window.location.href = targetPath;
-        return;
-      }
-      
-      // Handle admin routes - only allow access to admins
-      if (path === '/admin' || path.startsWith('/admin/')) {
-        // If user is not an admin, redirect to dashboard
-        if (user.isAdmin !== true) {
-          console.log("Non-admin user tried to access admin route, redirecting to dashboard");
-          setAuthState('redirecting');
+        setRedirectCount(prev => prev + 1);
+        setTimeout(() => {
           setLocation('/dashboard');
-          return;
-        }
-        
-        // Admin user is allowed access to admin routes
-        console.log("Admin access confirmed");
+          setAuthState('authenticated');
+          setHasRedirected(true);
+        }, 100);
         return;
-      }
-      
-      // Handle dashboard routes - for member-specific pages
-      if (path === '/dashboard' || path.startsWith('/dashboard/')) {
-        // Allow both admins and members to access dashboard routes
-        console.log("Member/dashboard access confirmed");
+      } else {
+        console.log("Admin accessing admin route, ensuring authentication state");
+        if (!hasRedirected) {
+          setAuthState('authenticated');
+          setHasRedirected(true);
+        }
         return;
       }
     }
+    
+    // Handle member routes when user is an admin only
+    // TEMPORARILY DISABLED to fix login redirect issue
+    // This was causing admins to be redirected away from /dashboard after login
+    /*
+    if ((path === '/dashboard' || path.startsWith('/dashboard/')) && user.isAdmin) {
+      console.log("Admin accessing member route, redirecting to admin panel");
+      // Set auth state to redirecting to show proper UI feedback
+      setAuthState('redirecting');
+      setRedirectCount(prev => prev + 1);
+      setTimeout(() => {
+        setLocation('/admin');
+        // Reset auth state after redirect is complete
+        if (user) {
+          setAuthState('authenticated');
+          setHasRedirected(true);
+        }
+      }, 100);
+      return;
+    }
+    */
+    
+    // Handle root path based on role
+    if (path === '/') {
+      const targetPath = user.isAdmin ? '/admin' : '/dashboard';
+      console.log(`User at root path, redirecting to ${targetPath}`);
+      // Set auth state to redirecting to show proper UI feedback
+      setAuthState('redirecting');
+      setRedirectCount(prev => prev + 1);
+      
+      // Force a direct navigation to the target path
+      setTimeout(() => {
+        // Use window.location for a more forceful navigation if needed
+        if (redirectCount > 2) {
+          console.log("Using window.location for forceful redirect");
+          window.location.href = targetPath;
+          return;
+        }
+        
+        setLocation(targetPath);
+        // Reset auth state after redirect is complete
+        if (user) {
+          setAuthState('authenticated');
+          setHasRedirected(true);
+        }
+      }, 100);
+      return;
+    }
+    
+    // If we're on the admin or dashboard route but haven't rendered yet
+    if ((path === '/admin' || path === '/dashboard') && !hasRedirected) {
+      console.log("On target route but component may not be rendered yet, forcing refresh", { 
+        path,
+        isAdmin: user?.isAdmin,
+        authState,
+        hasRedirected
+      });
+      
+      // Force a refresh of the current route
+      setAuthState('authenticated');
+      setHasRedirected(true);
+    }
+    
   }, [user, isLoading, authState, location, setLocation, redirectCount, setAuthState, hasRedirected]);
   
   // Show loading indicator during redirects to prevent white flash
