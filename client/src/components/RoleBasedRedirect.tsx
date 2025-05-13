@@ -92,24 +92,30 @@ export function RoleBasedRedirect() {
     if (path === '/admin' || path.startsWith('/admin/')) {
       console.log("Checking admin route access", { user, authState, path });
       
-      // If we don't have user data yet, wait
-      if (!user) {
-        console.log("No user data yet, waiting...");
+      // If loading or in transition state, wait
+      if (isLoading || authState === 'checking' || authState === 'redirecting') {
         return;
       }
 
-      // If user is not admin, redirect to dashboard
+      // If not authenticated at all, redirect to auth
+      if (!user || authState === 'unauthenticated') {
+        console.log("Not authenticated, redirecting to auth");
+        setLocation('/auth');
+        return;
+      }
+
+      // If authenticated but not admin, redirect to dashboard
       if (!user.isAdmin) {
         console.log("Non-admin user, redirecting to dashboard");
         setLocation('/dashboard');
         return;
       }
       
-      // If user is admin and we haven't confirmed auth state
-      if (user.isAdmin && authState !== 'authenticated') {
-        console.log("Admin verified, confirming auth state");
+      // At this point, user is authenticated and is admin
+      // Only update state if needed to avoid loops
+      if (authState !== 'authenticated') {
+        console.log("Admin verified, setting auth state");
         setAuthState('authenticated');
-        setHasRedirected(true);
       }
       
       return;
