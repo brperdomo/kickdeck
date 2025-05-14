@@ -1,30 +1,24 @@
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { useLocation } from "wouter";
+import { ArrowLeft } from "lucide-react";
 
 export default function NotFoundPage() {
-  const [, navigate] = useLocation();
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="max-w-md text-center space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-extrabold tracking-tight">404 - Page Not Found</h1>
-          <p className="text-muted-foreground">
-            The page you are looking for doesn't exist or has been moved.
-          </p>
-        </div>
-        
-        <div className="flex flex-col sm:flex-row gap-2 justify-center">
-          <Button onClick={() => navigate("/")}>Go to Dashboard</Button>
-          <Button variant="outline" onClick={() => navigate("/auth")}>
-            Go to Login
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground">
+      <div className="container flex max-w-[64rem] flex-col items-center justify-center gap-4 text-center">
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+          404 - Page Not Found
+        </h1>
+        <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
+          We couldn't find the page you were looking for.
+        </p>
+        <div className="flex gap-4">
+          <Button asChild>
+            <Link href="/">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Home
+            </Link>
           </Button>
-        </div>
-        
-        <div className="text-sm text-muted-foreground pt-4">
-          <p>
-            If you believe this is an error, please contact support.
-          </p>
         </div>
       </div>
     </div>

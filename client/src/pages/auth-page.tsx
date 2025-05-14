@@ -1,237 +1,270 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
+import { Redirect } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/hooks/use-auth";
-import { useToast } from "@/hooks/use-toast";
-import { Link, useLocation } from "wouter";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 export default function AuthPage() {
-  const [location, setLocation] = useLocation();
-  const { user, loginMutation, registerMutation } = useAuth();
+  const { user, isLoading, loginMutation, registerMutation } = useAuth();
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState<string>("login");
+
+  // Form state
+  const [loginForm, setLoginForm] = useState({
+    email: "",
+    password: "",
+  });
   
-  // State for form inputs
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [registerEmail, setRegisterEmail] = useState("");
-  const [registerPassword, setRegisterPassword] = useState("");
-  const [registerFirstName, setRegisterFirstName] = useState("");
-  const [registerLastName, setRegisterLastName] = useState("");
-  
+  const [registerForm, setRegisterForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+  });
+
   // If user is already logged in, redirect to dashboard
   if (user) {
-    if (user.isAdmin) {
-      setTimeout(() => setLocation('/admin'), 0);
-    } else {
-      setTimeout(() => setLocation('/dashboard'), 0);
-    }
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p>You are already logged in. Redirecting...</p>
-      </div>
-    );
+    console.log("AUTH: User already logged in, redirecting to dashboard");
+    return <Redirect to="/" />;
   }
 
-  const handleLogin = async (e: React.FormEvent) => {
+  // Handle login form submission
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await loginMutation.mutateAsync({
-        email: loginEmail,
-        password: loginPassword,
-      });
-      
-      toast({
-        title: "Login successful",
-        description: "Welcome back!",
-      });
-      
-      // Redirect will happen automatically when user state updates
-    } catch (error) {
-      // Error handling is done in the mutation
-    }
+    
+    console.log("AUTH: Login form submitted", loginForm);
+    
+    loginMutation.mutate({
+      email: loginForm.email,
+      password: loginForm.password,
+    });
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
+  // Handle register form submission
+  const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await registerMutation.mutateAsync({
-        email: registerEmail,
-        password: registerPassword,
-        firstName: registerFirstName,
-        lastName: registerLastName,
-      });
-      
+    
+    // Validate password match
+    if (registerForm.password !== registerForm.confirmPassword) {
       toast({
-        title: "Registration successful",
-        description: "Your account has been created.",
+        title: "Passwords don't match",
+        description: "Please make sure your passwords match",
+        variant: "destructive",
       });
-      
-      // Redirect will happen automatically when user state updates
-    } catch (error) {
-      // Error handling is done in the mutation
+      return;
     }
+    
+    console.log("AUTH: Register form submitted", registerForm);
+    
+    registerMutation.mutate({
+      email: registerForm.email,
+      password: registerForm.password,
+      firstName: registerForm.firstName,
+      lastName: registerForm.lastName,
+    });
   };
+
+  const isLoginLoading = loginMutation.isPending;
+  const isRegisterLoading = registerMutation.isPending;
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 z-0" />
-      
-      <div className="container relative z-10 flex flex-col md:flex-row justify-center max-w-5xl">
-        <div className="md:w-1/2 flex flex-col justify-center p-6 md:p-8">
-          <h1 className="text-3xl font-bold tracking-tight mb-2">MatchPro</h1>
-          <p className="text-muted-foreground mb-6">
-            Your comprehensive solution for soccer facility and team management
-          </p>
-          
-          <div className="mb-8 space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
-              </div>
-              <div>
-                <h3 className="font-medium">Streamlined Team Management</h3>
-                <p className="text-sm text-muted-foreground">Organize teams, players, and events in one place</p>
-              </div>
-            </div>
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="w-full max-w-5xl grid md:grid-cols-2 gap-6 items-center">
+        {/* Left column - Form */}
+        <div className="w-full max-w-md mx-auto">
+          <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="login">Login</TabsTrigger>
+              <TabsTrigger value="register">Register</TabsTrigger>
+            </TabsList>
             
-            <div className="flex items-start gap-3">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-              </div>
-              <div>
-                <h3 className="font-medium">Powerful Insights</h3>
-                <p className="text-sm text-muted-foreground">Leverage AI-driven analytics for better performance</p>
-              </div>
-            </div>
+            {/* Login Tab */}
+            <TabsContent value="login">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Login</CardTitle>
+                  <CardDescription>
+                    Enter your credentials to access your account
+                  </CardDescription>
+                </CardHeader>
+                <form onSubmit={handleLogin}>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="your.email@example.com"
+                        value={loginForm.email}
+                        onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={loginForm.password}
+                        onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button type="submit" className="w-full" disabled={isLoginLoading}>
+                      {isLoginLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Logging in...
+                        </>
+                      ) : (
+                        "Login"
+                      )}
+                    </Button>
+                  </CardFooter>
+                </form>
+              </Card>
+            </TabsContent>
             
-            <div className="flex items-start gap-3">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              </div>
-              <div>
-                <h3 className="font-medium">Enhanced Collaboration</h3>
-                <p className="text-sm text-muted-foreground">Improve communication between coaches, players, and staff</p>
-              </div>
-            </div>
-          </div>
+            {/* Register Tab */}
+            <TabsContent value="register">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Create an account</CardTitle>
+                  <CardDescription>
+                    Enter your information to create a new account
+                  </CardDescription>
+                </CardHeader>
+                <form onSubmit={handleRegister}>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input
+                          id="firstName"
+                          value={registerForm.firstName}
+                          onChange={(e) => setRegisterForm({ ...registerForm, firstName: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input
+                          id="lastName"
+                          value={registerForm.lastName}
+                          onChange={(e) => setRegisterForm({ ...registerForm, lastName: e.target.value })}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="registerEmail">Email</Label>
+                      <Input
+                        id="registerEmail"
+                        type="email"
+                        placeholder="your.email@example.com"
+                        value={registerForm.email}
+                        onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="registerPassword">Password</Label>
+                      <Input
+                        id="registerPassword"
+                        type="password"
+                        placeholder="••••••••"
+                        value={registerForm.password}
+                        onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword">Confirm Password</Label>
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="••••••••"
+                        value={registerForm.confirmPassword}
+                        onChange={(e) => setRegisterForm({ ...registerForm, confirmPassword: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button type="submit" className="w-full" disabled={isRegisterLoading}>
+                      {isRegisterLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Creating account...
+                        </>
+                      ) : (
+                        "Create Account"
+                      )}
+                    </Button>
+                  </CardFooter>
+                </form>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
         
-        <div className="md:w-1/2">
-          <div className="mx-auto max-w-md">
-            <Card className="border-0 shadow-lg">
-              <Tabs defaultValue="login" className="w-full">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
-                  <CardDescription className="text-center">
-                    Login to your account or create a new one
-                  </CardDescription>
-                  <TabsList className="grid w-full grid-cols-2 mt-4">
-                    <TabsTrigger value="login">Login</TabsTrigger>
-                    <TabsTrigger value="register">Register</TabsTrigger>
-                  </TabsList>
-                </CardHeader>
-                <CardContent>
-                  <TabsContent value="login">
-                    <form onSubmit={handleLogin} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input 
-                          id="email" 
-                          type="email" 
-                          placeholder="your@email.com"
-                          value={loginEmail}
-                          onChange={(e) => setLoginEmail(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label htmlFor="password">Password</Label>
-                          <Link href="/reset-password" className="text-sm text-primary hover:underline">
-                            Forgot password?
-                          </Link>
-                        </div>
-                        <Input 
-                          id="password" 
-                          type="password"
-                          value={loginPassword}
-                          onChange={(e) => setLoginPassword(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <Button 
-                        type="submit" 
-                        className="w-full"
-                        disabled={loginMutation.isPending}
-                      >
-                        {loginMutation.isPending ? "Logging in..." : "Login"}
-                      </Button>
-                    </form>
-                  </TabsContent>
-                  
-                  <TabsContent value="register">
-                    <form onSubmit={handleRegister} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="firstName">First Name</Label>
-                          <Input 
-                            id="firstName" 
-                            value={registerFirstName}
-                            onChange={(e) => setRegisterFirstName(e.target.value)}
-                            required
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="lastName">Last Name</Label>
-                          <Input 
-                            id="lastName" 
-                            value={registerLastName}
-                            onChange={(e) => setRegisterLastName(e.target.value)}
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="registerEmail">Email</Label>
-                        <Input 
-                          id="registerEmail" 
-                          type="email" 
-                          placeholder="your@email.com"
-                          value={registerEmail}
-                          onChange={(e) => setRegisterEmail(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="registerPassword">Password</Label>
-                        <Input 
-                          id="registerPassword" 
-                          type="password"
-                          value={registerPassword}
-                          onChange={(e) => setRegisterPassword(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <Button 
-                        type="submit" 
-                        className="w-full"
-                        disabled={registerMutation.isPending}
-                      >
-                        {registerMutation.isPending ? "Creating account..." : "Create account"}
-                      </Button>
-                    </form>
-                  </TabsContent>
-                </CardContent>
-                <CardFooter className="flex flex-col space-y-4">
-                  <div className="text-sm text-muted-foreground text-center mt-2">
-                    By continuing, you agree to our Terms of Service and Privacy Policy.
-                  </div>
-                </CardFooter>
-              </Tabs>
-            </Card>
+        {/* Right column - Hero section */}
+        <div className="hidden md:block bg-primary/5 p-8 rounded-lg">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold tracking-tight mb-4">Welcome to MatchPro</h1>
+            <p className="text-muted-foreground mb-6">
+              The comprehensive platform for tournament management and team organization. 
+              Streamline your sports events with our powerful tools.
+            </p>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <h3 className="font-medium">Effortless Tournament Management</h3>
+                  <p className="text-sm text-muted-foreground">Handle registrations, schedules, and results all in one place.</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <h3 className="font-medium">Real-time Updates</h3>
+                  <p className="text-sm text-muted-foreground">Get instant notifications and live scoring for all your games.</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="bg-primary/10 p-2 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <h3 className="font-medium">Team Collaboration</h3>
+                  <p className="text-sm text-muted-foreground">Invite coaches, players, and staff to collaborate seamlessly.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

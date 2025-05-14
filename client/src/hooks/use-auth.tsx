@@ -218,10 +218,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  // Make sure we always pass a valid user (either the actual user or null, never undefined)
+  const safeUser = user === undefined ? null : user;
+  
   return (
     <AuthContext.Provider
       value={{
-        user,
+        user: safeUser,
         isLoading,
         error,
         loginMutation,
