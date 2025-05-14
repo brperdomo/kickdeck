@@ -223,6 +223,38 @@ function Router() {
           {/* Add the RoleBasedRedirect component to handle role-based navigation */}
           <RoleBasedRedirect />
           
+          {/* Emergency dashboard selector - direct access without role checks */}
+          <Route path="/emergency-access">
+            {() => {
+              const DashboardSelector = React.lazy(() => import('./pages/dashboard-selector'));
+              return (
+                <DebugErrorBoundary>
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                  </div>}>
+                    <DashboardSelector />
+                  </Suspense>
+                </DebugErrorBoundary>
+              );
+            }}
+          </Route>
+          
+          {/* Auth diagnosis page - for debugging authentication issues */}
+          <Route path="/auth-diagnosis">
+            {() => {
+              const AuthDiagnosisPage = React.lazy(() => import('./pages/auth-diagnosis'));
+              return (
+                <DebugErrorBoundary>
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                  </div>}>
+                    <AuthDiagnosisPage />
+                  </Suspense>
+                </DebugErrorBoundary>
+              );
+            }}
+          </Route>
+          
           {/* Admin routes */}
           <ProtectedRoute path="/admin/events/create" requiredRole="admin" component={<CreateEvent />} />
           {/* Admin routes - using ProtectedRoute for better protection */}

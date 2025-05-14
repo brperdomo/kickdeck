@@ -81,7 +81,11 @@ export function RoleBasedRedirect() {
       '/logout',
       '/auth-logged-out',
       '/admin-emergency',
-      '/dashboard-emergency'
+      '/dashboard-emergency',
+      '/emergency-access',
+      '/admin-direct',
+      '/dashboard-direct',
+      '/auth-diagnosis'
     ];
     
     // Check if the current path matches any of the non-protected paths
@@ -144,22 +148,22 @@ export function RoleBasedRedirect() {
     
     // Handle root path based on role - TEMPORARILY SIMPLIFIED for debugging
     if (path === '/') {
-      // For now, always redirect to the emergency admin route for diagnosis
-      console.log(`EMERGENCY FIX: Redirecting to admin-emergency`);
+      // For now, always redirect to the emergency access page for diagnosis
+      console.log(`EMERGENCY FIX: Redirecting to emergency-access`);
       // Set auth state to redirecting to show proper UI feedback
       setAuthState('redirecting');
       setRedirectCount(prev => prev + 1);
       
-      // Force a direct navigation to the emergency path
+      // Force a direct navigation to the emergency access selector
       setTimeout(() => {
         // Use window.location for a more forceful navigation if needed
         if (redirectCount > 2) {
           console.log("Using window.location for forceful redirect");
-          window.location.href = '/admin-emergency';
+          window.location.href = '/emergency-access';
           return;
         }
         
-        setLocation('/admin-emergency');
+        setLocation('/emergency-access');
         // Reset auth state after redirect is complete
         if (user) {
           setAuthState('authenticated');
