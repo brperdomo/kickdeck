@@ -165,14 +165,22 @@ export default function AuthPage() {
     console.log("User already authenticated, isAdmin:", isAdmin);
                      
     // Immediate redirect to dashboard - Admin and Dashboard are separate portals
-    const directTarget = isAdmin ? '/admin' : '/dashboard';
+    // Use the stable admin route for better reliability
+    const directTarget = isAdmin ? '/admin-direct' : '/dashboard';
     
     // Direct redirect to appropriate dashboard
-    console.log(`User already authenticated, redirecting to ${directTarget}`);
+    console.log(`User already authenticated, redirecting to ${directTarget} (isAdmin: ${isAdmin})`);
     
-    // Use React Router's setLocation instead of window.location
-    // This prevents the page reload that could cause authentication issues
-    setLocation(directTarget);
+    // For admin users, use window.location for a clean state reset
+    if (isAdmin) {
+      console.log('Already authenticated admin user, using window.location for reliable redirect');
+      window.location.href = directTarget;
+      // Return early to show a loading indicator
+      return;
+    } else {
+      // For regular users, we can use the standard React router navigation
+      setLocation(directTarget);
+    }
     
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -181,7 +189,7 @@ export default function AuthPage() {
         <p className="text-sm text-muted-foreground mb-4">Redirecting you to your dashboard...</p>
         <div className="flex space-x-3">
           <button 
-            onClick={() => window.location.href = '/admin/dashboard'} 
+            onClick={() => window.location.href = '/admin-direct'} 
             className="bg-primary text-white px-3 py-1 rounded text-sm">
             Admin Dashboard
           </button>

@@ -133,16 +133,17 @@ export function RoleBasedRedirect() {
     
     // Handle root path based on role
     if (path === '/') {
-      const targetPath = user.isAdmin ? '/admin' : '/dashboard';
-      console.log(`User at root path, redirecting to ${targetPath}`);
+      // Use the more stable admin-direct route for admin users
+      const targetPath = user.isAdmin ? '/admin-direct' : '/dashboard';
+      console.log(`User at root path, redirecting to ${targetPath} (isAdmin: ${user.isAdmin})`);
       // Set auth state to redirecting to show proper UI feedback
       setAuthState('redirecting');
       setRedirectCount(prev => prev + 1);
       
       // Force a direct navigation to the target path
       setTimeout(() => {
-        // Use window.location for a more forceful navigation if needed
-        if (redirectCount > 2) {
+        // For admin users, always use window.location to ensure a clean state load
+        if (user.isAdmin || redirectCount > 2) {
           console.log("Using window.location for forceful redirect");
           window.location.href = targetPath;
           return;
