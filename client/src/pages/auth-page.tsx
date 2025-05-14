@@ -103,14 +103,24 @@ export default function AuthPage() {
       const isAdmin = userObject && userObject.isAdmin;
       
       // Determine the appropriate dashboard - Admin and Dashboard are separate portals
-      const targetPath = isAdmin ? '/admin' : '/dashboard';
-      console.log(`Login successful, redirecting directly to ${targetPath}`);
+      // For admin users, use the stable direct route to avoid potential issues
+      const targetPath = isAdmin ? '/admin-direct' : '/dashboard';
+      console.log(`Login successful, redirecting directly to ${targetPath} (isAdmin: ${isAdmin})`);
       
       // Set the authentication state to prevent redirect loops
       setAuthState('authenticated');
       
-      // Use setLocation instead of window.location to avoid full page reloads
-      setLocation(targetPath);
+      // For admin users, we'll use window.location to ensure a fresh load of the admin dashboard
+      // This helps avoid potential state issues with the complex admin dashboard
+      if (isAdmin) {
+        console.log('Admin user detected, using window.location for reliable redirect');
+        window.location.href = targetPath;
+        // Show loading state while redirecting
+        return;
+      } else {
+        // For regular users, we can use the standard React router navigation
+        setLocation(targetPath);
+      }
       
     } catch (error: any) {
       console.error('Login error:', error);
