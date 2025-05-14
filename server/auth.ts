@@ -156,15 +156,23 @@ export function setupAuth(app: Express) {
 
   // Get the hostname from the request for setting the cookie domain
   app.use((req, res, next) => {
-    const hostname = req.hostname;
-    console.log('Request hostname:', hostname);
-    const isReplit = hostname.includes('replit');
-    console.log('Is Replit environment:', isReplit);
-    
-    // Store for use in subsequent middleware
-    (req as any).isReplit = isReplit;
-    (req as any).hostname = hostname;
-    next();
+    try {
+      const hostname = req.hostname;
+      console.log('Request hostname:', hostname);
+      const isReplit = hostname.includes('replit');
+      console.log('Is Replit environment:', isReplit);
+      
+      // Store for use in subsequent middleware using symbol property to avoid conflicts
+      (req as any)._customData = {
+        isReplit,
+        originalHostname: hostname
+      };
+      
+      next();
+    } catch (err) {
+      console.error('Error in hostname middleware:', err);
+      next(); // Continue even if there's an error
+    }
   });
 
   const sessionSettings: session.SessionOptions = {
@@ -173,15 +181,18 @@ export function setupAuth(app: Express) {
     resave: true, 
     saveUninitialized: true,
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days - shorter for testing
+      // Very important - use a much shorter maxAge for testing to avoid stale sessions
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
       httpOnly: true,
-      sameSite: 'none', // Important for cross-site development environment
+      sameSite: 'lax', // Changed to lax which works better for same-site in development
       path: '/',
-      secure: false // Must be false for development environment
+      secure: false // Must be false in development
     },
     store: new MemoryStore({
       checkPeriod: 86400000,
-      max: 1000
+      max: 1000,
+      // Explicitly set the TTL to match cookie maxAge
+      ttl: 24 * 60 * 60 * 1000
     }),
     rolling: true
   };
@@ -224,26 +235,36 @@ export function setupAuth(app: Express) {
 
   // Add enhanced debug middleware to log authentication status on each request
   app.use((req, res, next) => {
-    // Only log API endpoints to reduce noise
-    if (req.path.startsWith('/api/') && !req.path.includes('assets')) {
-      console.log(`[Auth Debug] ${req.method} ${req.path} - Authenticated: ${req.isAuthenticated()} - Session ID: ${req.sessionID}`);
-      
-      // Log cookies for debugging
-      console.log(`[Cookie Debug] Cookies: ${JSON.stringify(req.cookies)}`);
-      
-      // For logout requests, log headers to help troubleshoot
-      if (req.path === '/api/logout') {
-        console.log('[Logout Debug] Request headers:', JSON.stringify(req.headers));
+    try {
+      // Only log API endpoints to reduce noise
+      if (req.path.startsWith('/api/') && !req.path.includes('assets')) {
+        console.log(`[Auth Debug] ${req.method} ${req.path} - Authenticated: ${req.isAuthenticated()} - Session ID: ${req.sessionID}`);
+        
+        // Log cookies for debugging
+        if (req.cookies) {
+          console.log(`[Cookie Debug] Cookies: ${JSON.stringify(req.cookies)}`);
+        } else {
+          console.log(`[Cookie Debug] No cookies found in request`);
+        }
+        
+        // For logout requests, log headers to help troubleshoot
+        if (req.path === '/api/logout') {
+          console.log('[Logout Debug] Request headers:', JSON.stringify(req.headers));
+        }
       }
+      
+      // Add CORS headers for development environment
+      const origin = req.headers.origin || '*';
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      
+      next();
+    } catch (err) {
+      console.error('Error in debug middleware:', err);
+      next(); // Continue even if there's an error
     }
-    
-    // Add CORS headers for development environment
-    res.header('Access-Control-Allow-Origin', req.headers.origin);
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    
-    next();
   });
 
   passport.use(
