@@ -23,12 +23,11 @@ async function createMagicLinkEmailTemplate() {
   const [template] = await db
     .insert(emailTemplates)
     .values({
-      name: 'Magic Link Login',
-      description: 'Email template for magic link authentication',
       type: 'magic_link',
       subject: 'Your MatchPro Login Link',
-      sender_name: 'MatchPro',
-      sender_email: 'support@matchpro.ai',
+      senderName: 'MatchPro',
+      senderEmail: 'support@matchpro.ai',
+      description: 'Email template for magic link authentication',
       content: `
 <!DOCTYPE html>
 <html>
@@ -112,8 +111,8 @@ async function createMagicLinkEmailTemplate() {
 </body>
 </html>
       `,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     })
     .returning();
 

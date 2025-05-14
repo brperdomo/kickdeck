@@ -1,7 +1,7 @@
 import { db } from '@db';
 import { users } from '@db/schema';
 import { magicLinkTokens } from '@db/schema/magicLink';
-import { eq, gt } from 'drizzle-orm';
+import { eq, gt, and } from 'drizzle-orm';
 import { randomBytes } from 'crypto';
 import { sendEmail } from './emailService';
 
@@ -27,19 +27,24 @@ export async function createMagicLinkToken(
   ipAddress: string = 'Unknown'
 ): Promise<string> {
   const token = generateToken();
-  const expiresAt = new Date();
-  expiresAt.setMinutes(expiresAt.getMinutes() + TOKEN_EXPIRY_MINUTES);
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + TOKEN_EXPIRY_MINUTES * 60000);
 
-  await db.insert(magicLinkTokens).values({
-    userId,
-    token,
-    expiresAt,
-    userAgent,
-    ipAddress,
-    createdAt: new Date(),
-  });
-
-  return token;
+  try {
+    await db.insert(magicLinkTokens).values({
+      userId,
+      token,
+      expiresAt: expiresAt.toISOString(), // Convert to ISO string for compatibility
+      userAgent,
+      ipAddress,
+      createdAt: now.toISOString(), // Convert to ISO string for compatibility
+    });
+    
+    return token;
+  } catch (error) {
+    console.error('Error creating magic link token:', error);
+    throw error;
+  }
 }
 
 /**
@@ -96,19 +101,48 @@ export async function sendMagicLinkEmail(
     const userType = user.isAdmin ? 'Administrator' : 'Member';
     const magicLinkUrl = `${baseUrl}/auth/verify-magic-link?token=${token}`;
 
-    const result = await sendEmail({
-      to: email,
-      templateType: 'magic_link',
-      subject: 'Your MatchPro Login Link',
-      variables: {
-        firstName,
-        userType,
-        magicLinkUrl,
-        expiryMinutes: String(TOKEN_EXPIRY_MINUTES),
-      },
-    });
+    // Try to send with template
+    try {
+      const result = await sendEmail({
+        to: email,
+        from: 'support@matchpro.ai',
+        templateType: 'magic_link',
+        subject: 'Your MatchPro Login Link',
+        variables: {
+          firstName,
+          userType,
+          magicLinkUrl,
+          expiryMinutes: String(TOKEN_EXPIRY_MINUTES),
+        },
+      });
+      
+      return result.success;
+    } catch (templateError) {
+      console.warn('Failed to send templated magic link email, falling back to inline HTML:', templateError);
+      
+      // Fallback to inline HTML if template sending fails
+      const fallbackResult = await sendEmail({
+        to: email,
+        from: 'support@matchpro.ai',
+        subject: 'Your MatchPro Login Link',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #333; text-align: center;">MatchPro Login Link</h1>
+            <p>Hello ${firstName},</p>
+            <p>You requested a secure login link for your MatchPro ${userType} account. Click the button below to log in:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${magicLinkUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+                Log In Securely
+              </a>
+            </div>
+            <p style="color: #666; font-size: 14px;">This link will expire in ${TOKEN_EXPIRY_MINUTES} minutes and can only be used once.</p>
+            <p style="color: #666; font-size: 14px;">If you didn't request this link, you can safely ignore this email.</p>
+          </div>
+        `,
+      });
 
-    return result.success;
+      return fallbackResult.success;
+    }
   } catch (error) {
     console.error('Error sending magic link email:', error);
     return false;
@@ -126,11 +160,11 @@ export async function verifyMagicLinkToken(token: string): Promise<number | null
     const [magicLinkToken] = await db
       .select()
       .from(magicLinkTokens)
-      .where(
+      .where(and(
         eq(magicLinkTokens.token, token),
         gt(magicLinkTokens.expiresAt, new Date()),
         eq(magicLinkTokens.used, false)
-      )
+      ))
       .limit(1);
 
     if (!magicLinkToken) {
@@ -141,7 +175,10 @@ export async function verifyMagicLinkToken(token: string): Promise<number | null
     // Mark the token as used
     await db
       .update(magicLinkTokens)
-      .set({ used: true, usedAt: new Date() })
+      .set({ 
+        used: true, 
+        usedAt: new Date().toISOString() // Convert to ISO string for compatibility
+      })
       .where(eq(magicLinkTokens.id, magicLinkToken.id));
 
     return magicLinkToken.userId;
