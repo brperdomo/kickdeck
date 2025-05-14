@@ -314,100 +314,39 @@ function Router() {
             </DebugErrorBoundary>
           } />
           
-          {/* Add a direct route to handle edge cases for admin dashboard */}
+          {/* Add a simplified direct route to admin dashboard */}
           <Route path="/admin-direct">
             {() => {
-              // Create a state for authentication status
-              const [authStatus, setAuthStatus] = React.useState<{
-                isChecking: boolean;
-                isAuthenticated: boolean;
-                isAdmin: boolean;
-              }>({
-                isChecking: true,
-                isAuthenticated: false,
-                isAdmin: false
-              });
+              // Use the standard auth hook
+              const { user, isLoading, authState } = useAuth();
               
-              // Check authentication on mount
-              React.useEffect(() => {
-                const checkAuth = async () => {
-                  try {
-                    // First check session storage for backup auth info
-                    const storedIsAuthenticated = typeof window !== 'undefined' && 
-                      sessionStorage.getItem('user_authenticated') === 'true';
-                    const storedIsAdmin = typeof window !== 'undefined' && 
-                      sessionStorage.getItem('user_is_admin') === 'true';
-                    
-                    // Then try to get fresh data from the API
-                    try {
-                      const response = await fetch('/api/user', {
-                        credentials: 'include'
-                      });
-                      
-                      if (response.ok) {
-                        const userData = await response.json();
-                        console.log("Admin-direct: Fresh user data fetched", userData);
-                        
-                        // Update session storage with fresh data
-                        if (userData) {
-                          sessionStorage.setItem('user_authenticated', 'true');
-                          sessionStorage.setItem('user_is_admin', userData.isAdmin ? 'true' : 'false');
-                          sessionStorage.setItem('auth_timestamp', Date.now().toString());
-                          
-                          setAuthStatus({
-                            isChecking: false,
-                            isAuthenticated: true,
-                            isAdmin: userData.isAdmin
-                          });
-                          return;
-                        }
-                      }
-                    } catch (err) {
-                      console.warn("Error fetching user data:", err);
-                    }
-                    
-                    // Fall back to stored values if API call fails
-                    setAuthStatus({
-                      isChecking: false,
-                      isAuthenticated: storedIsAuthenticated,
-                      isAdmin: storedIsAdmin
-                    });
-                    
-                  } catch (err) {
-                    console.error("Error in admin-direct auth check:", err);
-                    setAuthStatus({
-                      isChecking: false,
-                      isAuthenticated: false,
-                      isAdmin: false
-                    });
-                  }
-                };
-                
-                checkAuth();
-              }, []);
-              
-              console.log("Admin direct route accessed", authStatus);
-              
-              // Show loading while checking
-              if (authStatus.isChecking) {
+              // Show loading while checking auth
+              if (isLoading || authState === 'checking') {
                 return (
                   <div className="flex items-center justify-center h-screen">
                     <Loader2 className="h-8 w-8 animate-spin" />
-                    <span className="ml-2">Verifying admin access...</span>
+                    <span className="ml-2">Accessing admin dashboard...</span>
                   </div>
                 );
               }
-                
-              // If authenticated and admin, render the dashboard
-              if (authStatus.isAuthenticated && authStatus.isAdmin) {
+              
+              // If user is authenticated and an admin, show the dashboard
+              if (user && user.isAdmin) {
                 // Set a timestamp for this successful admin access
                 sessionStorage.setItem('admin_access_timestamp', Date.now().toString());
                 
-                return (
-                  <DebugErrorBoundary>
-                    <AdminDashboard />
-                  </DebugErrorBoundary>
-                );
+                // Return to standard /admin route
+                return <Redirect to="/admin" />;
+              }
+              
+              // Check session storage as backup
+              const isAuthenticatedFromBackup = sessionStorage.getItem('user_authenticated') === 'true';
+              const isAdminFromBackup = sessionStorage.getItem('user_is_admin') === 'true';
+              
+              // If we have valid backup auth, try one more redirect
+              if (isAuthenticatedFromBackup && isAdminFromBackup) {
+                // Redirect to /admin which will use ProtectedRoute's checks
+                return <Redirect to="/admin" />;
               }
               
               // Otherwise redirect to login
