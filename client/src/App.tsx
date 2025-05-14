@@ -223,38 +223,6 @@ function Router() {
           {/* Add the RoleBasedRedirect component to handle role-based navigation */}
           <RoleBasedRedirect />
           
-          {/* Emergency dashboard selector - direct access without role checks */}
-          <Route path="/emergency-access">
-            {() => {
-              const DashboardSelector = React.lazy(() => import('./pages/dashboard-selector'));
-              return (
-                <DebugErrorBoundary>
-                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-                  </div>}>
-                    <DashboardSelector />
-                  </Suspense>
-                </DebugErrorBoundary>
-              );
-            }}
-          </Route>
-          
-          {/* Auth diagnosis page - for debugging authentication issues */}
-          <Route path="/auth-diagnosis">
-            {() => {
-              const AuthDiagnosisPage = React.lazy(() => import('./pages/auth-diagnosis'));
-              return (
-                <DebugErrorBoundary>
-                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-                  </div>}>
-                    <AuthDiagnosisPage />
-                  </Suspense>
-                </DebugErrorBoundary>
-              );
-            }}
-          </Route>
-          
           {/* Admin routes */}
           <ProtectedRoute path="/admin/events/create" requiredRole="admin" component={<CreateEvent />} />
           {/* Admin routes - using ProtectedRoute for better protection */}
@@ -354,15 +322,6 @@ function Router() {
               </DebugErrorBoundary>
             )}
           </Route>
-          
-          {/* Emergency admin access route that bypasses role checks */}
-          <Route path="/admin-emergency">
-            {() => (
-              <DebugErrorBoundary>
-                <AdminDashboard />
-              </DebugErrorBoundary>
-            )}
-          </Route>
 
           {/* User routes - using ProtectedRoute for member-specific routes */}
           <ProtectedRoute path="/household" requiredRole="member" component={
@@ -444,15 +403,6 @@ function Router() {
           
           {/* Add a direct route to handle edge cases */}
           <Route path="/dashboard-direct">
-            {() => (
-              <DebugErrorBoundary>
-                <UserDashboard />
-              </DebugErrorBoundary>
-            )}
-          </Route>
-          
-          {/* Emergency member dashboard access route that bypasses role checks */}
-          <Route path="/dashboard-emergency">
             {() => (
               <DebugErrorBoundary>
                 <UserDashboard />

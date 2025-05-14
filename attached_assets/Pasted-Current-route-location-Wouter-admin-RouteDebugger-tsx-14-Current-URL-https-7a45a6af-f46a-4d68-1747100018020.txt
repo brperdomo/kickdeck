@@ -1,0 +1,207 @@
+Current route location (Wouter): /admin
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+RouteDebugger.tsx:15 Current pathname: /admin
+RouteDebugger.tsx:16 Current search: 
+RouteDebugger.tsx:13 Current route location (Wouter): /admin
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+RouteDebugger.tsx:15 Current pathname: /admin
+RouteDebugger.tsx:16 Current search: 
+js?key=AIzaSyDDYxDyy…ototype&v=beta:2493 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+admin:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+admin:1 OTS parsing error: invalid sfntVersion: 791289955
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+auth-page.tsx:77 Submitting login with email: bperdomo@zoho.com
+use-auth.tsx:141 Login mutation called with: bperdomo@zoho.com
+use-auth.tsx:152 Sending login request with data: 
+{email: 'bperdomo@zoho.com', passwordLength: 9}
+use-auth.tsx:167 Login response status: 200
+use-auth.tsx:184 Login successful, received user data: Yes
+use-auth.tsx:156 Fetch finished loading: POST "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/login?t=1747099973419".
+use-auth.tsx:188 Fetching current user after login
+use-auth.tsx:189 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+use-auth.tsx:200 User data fetched after login: success
+auth-page.tsx:86 Login successful, user data: 
+{message: 'Login successful', user: {…}, timestamp: 1747099973951, authenticated: true, sessionId: 'v8UKfakCi7NmGisd8fHFKNk93RLMtDYk', …}
+auth-page.tsx:87 Login successful, user data type: object
+auth-page.tsx:88 Login successful, user data fields: 
+(6) ['message', 'user', 'timestamp', 'authenticated', 'sessionId', 'freshUserData']
+auth-page.tsx:94 Using freshUserData: 
+{id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: 'ad75c57234238781888aadb41f9ad64caa18a890fd69db1102…4a9dd70de55b58fc.71569fdab7897339753c4858c5414bb0', firstName: 'Bryan', …}
+auth-page.tsx:107 Login successful, redirecting directly to /admin
+RoleBasedRedirect.tsx:33 RoleBasedRedirect - Current state: 
+{isLoading: false, authState: 'authenticated', user: {…}, location: '/admin', redirectCount: 0}
+RoleBasedRedirect.tsx:50 RoleBasedRedirect - User authenticated: 
+{isAdmin: true, currentPath: '/admin'}
+RoleBasedRedirect.tsx:63 RoleBasedRedirect checking access 
+{path: '/admin', isAdmin: true, authState: 'authenticated', user: {…}}
+RoleBasedRedirect.tsx:93 Checking admin route access 
+{user: {…}, authState: 'authenticated', path: '/admin'}
+RoleBasedRedirect.tsx:33 RoleBasedRedirect - Current state: 
+{isLoading: false, authState: 'authenticated', user: {…}, location: '/admin', redirectCount: 0}
+RoleBasedRedirect.tsx:50 RoleBasedRedirect - User authenticated: 
+{isAdmin: true, currentPath: '/admin'}
+RoleBasedRedirect.tsx:63 RoleBasedRedirect checking access 
+{path: '/admin', isAdmin: true, authState: 'authenticated', user: {…}}
+RoleBasedRedirect.tsx:93 Checking admin route access 
+{user: {…}, authState: 'authenticated', path: '/admin'}
+use-auth.tsx:98 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn	@	use-auth.tsx:98
+onSuccess	@	use-auth.tsx:228
+await in execute		
+onSubmit	@	auth-page.tsx:84
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+chunk-RPCDYKBN.js?v=8e1f054b:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:19 Google Maps API key length: 39 characters
+env.ts:48 Creating new Google Maps script tag
+RouteDebugger.tsx:13 Current route location (Wouter): /admin
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+RouteDebugger.tsx:15 Current pathname: /admin
+RouteDebugger.tsx:16 Current search: 
+RouteDebugger.tsx:13 Current route location (Wouter): /admin
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+RouteDebugger.tsx:15 Current pathname: /admin
+RouteDebugger.tsx:16 Current search: 
+js?key=AIzaSyDDYxDyy…ototype&v=beta:2493 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+use-auth.tsx:98 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+admin:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap
+admin:1 OTS parsing error: invalid sfntVersion: 791289955
+js?key=AIzaSyDDYxDyy…ototype&v=beta:2520 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.H.send	@	js?key=AIzaSyDDYxDyy…ototype&v=beta:2520
+qga	@	js?key=AIzaSyDDYxDyy…ototype&v=beta:2502
+tga	@	js?key=AIzaSyDDYxDyy…ototype&v=beta:2494
+google.maps.Load	@	js?key=AIzaSyDDYxDyy…prototype&v=beta:14
+(anonymous)	@	js?key=AIzaSyDDYxDyy…ototype&v=beta:2734
+(anonymous)	@	js?key=AIzaSyDDYxDyy…ototype&v=beta:2734
+shared-01d07a91dae6e…a609fc4276acdc.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+e	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+l	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+k	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	controller-with-prec…542478572b9e56.js:1
+e	@	controller-with-prec…542478572b9e56.js:1
+value	@	controller-with-prec…542478572b9e56.js:1
+e	@	controller-with-prec…542478572b9e56.js:1
+52003	@	controller-with-prec…542478572b9e56.js:1
+e	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+e.O	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+shared-01d07a91dae6e…a609fc4276acdc.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+e	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+l	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+k	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+log	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+log	@	controller-with-prec…542478572b9e56.js:1
+e	@	controller-with-prec…542478572b9e56.js:1
+52003	@	controller-with-prec…542478572b9e56.js:1
+e	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+e.O	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+shared-01d07a91dae6e…a609fc4276acdc.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+e	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+l	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+setTimeout		
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+Promise.then		
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	controller-with-prec…542478572b9e56.js:1
+e	@	controller-with-prec…542478572b9e56.js:1
+value	@	controller-with-prec…542478572b9e56.js:1
+e	@	controller-with-prec…542478572b9e56.js:1
+52003	@	controller-with-prec…542478572b9e56.js:1
+e	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+e.O	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+shared-01d07a91dae6e…a609fc4276acdc.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+e	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+l	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+setTimeout		
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+Promise.then		
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+log	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+log	@	controller-with-prec…542478572b9e56.js:1
+e	@	controller-with-prec…542478572b9e56.js:1
+52003	@	controller-with-prec…542478572b9e56.js:1
+e	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+e.O	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous)	@	out-4.5.44.js:1
+i	@	out-4.5.44.js:1
+s	@	out-4.5.44.js:1
+(anonymous)	@	out-4.5.44.js:1
+(anonymous)	@	out-4.5.44.js:1
+Promise.then		
+S	@	out-4.5.44.js:1
+y	@	out-4.5.44.js:1
+E	@	out-4.5.44.js:1
+e.onload	@	inner.html:1
+script		
+(anonymous)	@	inner.html:1
+(anonymous)	@	inner.html:1
+shared-01d07a91dae6e…a609fc4276acdc.js:1 Fetch finished loading: POST "https://r.stripe.com/b".
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+e	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+l	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+setTimeout		
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+(anonymous)	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+value	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+log	@	shared-01d07a91dae6e…a609fc4276acdc.js:1
+log	@	controller-with-prec…542478572b9e56.js:1
+value	@	controller-with-prec…542478572b9e56.js:1
+value	@	controller-with-prec…542478572b9e56.js:1
+(anonymous)	@	controller-with-prec…542478572b9e56.js:1
