@@ -35,6 +35,7 @@ import adminClubsRouter from "./routes/admin/clubs";
 import eventClubsRouter from "./routes/admin/event-clubs";
 import emailConfigRouter from "./routes/admin/update-email-config";
 import productUpdatesRouter from "./routes/product-updates.js";
+import magicLinkRouter from "./routes/magicLinks";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import paymentsRouter from "./routes/payments";
