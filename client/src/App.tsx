@@ -348,11 +348,18 @@ function Router() {
           
           {/* Add a direct route to handle edge cases for admin dashboard */}
           <Route path="/admin-direct">
-            {() => (
-              <DebugErrorBoundary>
-                <AdminDashboard />
-              </DebugErrorBoundary>
-            )}
+            {() => {
+              const DirectAdminDashboard = React.lazy(() => import('./pages/direct-admin-dashboard'));
+              return (
+                <DebugErrorBoundary>
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                  </div>}>
+                    <DirectAdminDashboard />
+                  </Suspense>
+                </DebugErrorBoundary>
+              );
+            }}
           </Route>
           
           {/* Emergency admin access route that bypasses role checks */}
@@ -444,11 +451,18 @@ function Router() {
           
           {/* Add a direct route to handle edge cases */}
           <Route path="/dashboard-direct">
-            {() => (
-              <DebugErrorBoundary>
-                <UserDashboard />
-              </DebugErrorBoundary>
-            )}
+            {() => {
+              const DirectUserDashboard = React.lazy(() => import('./pages/direct-user-dashboard'));
+              return (
+                <DebugErrorBoundary>
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                  </div>}>
+                    <DirectUserDashboard />
+                  </Suspense>
+                </DebugErrorBoundary>
+              );
+            }}
           </Route>
           
           {/* Emergency member dashboard access route that bypasses role checks */}
