@@ -79,9 +79,7 @@ export function RoleBasedRedirect() {
       '/auth',
       '/login',
       '/logout',
-      '/auth-logged-out',
-      '/admin-emergency',
-      '/admin-direct'
+      '/auth-logged-out'
     ];
     
     // Check if the current path matches any of the non-protected paths
