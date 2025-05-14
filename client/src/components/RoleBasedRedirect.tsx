@@ -79,13 +79,7 @@ export function RoleBasedRedirect() {
       '/auth',
       '/login',
       '/logout',
-      '/auth-logged-out',
-      '/admin-emergency',
-      '/dashboard-emergency',
-      '/emergency-access',
-      '/admin-direct',
-      '/dashboard-direct',
-      '/auth-diagnosis'
+      '/auth-logged-out'
     ];
     
     // Check if the current path matches any of the non-protected paths
@@ -94,8 +88,7 @@ export function RoleBasedRedirect() {
       return;
     }
     
-    // Handle admin routes - TEMPORARILY DISABLED for debugging
-    /*
+    // Handle admin routes
     if (path === '/admin' || path.startsWith('/admin/')) {
       if (!user.isAdmin) {
         console.log("Non-admin accessing admin route, redirecting to dashboard");
@@ -115,14 +108,6 @@ export function RoleBasedRedirect() {
         }
         return;
       }
-    }
-    */
-    
-    // Temporary solution - just set authenticated state for any route
-    console.log("EMERGENCY FIX: Allowing access to all routes for debugging");
-    if (!hasRedirected) {
-      setAuthState('authenticated');
-      setHasRedirected(true);
     }
     
     // Handle member routes when user is an admin only
@@ -146,24 +131,24 @@ export function RoleBasedRedirect() {
     }
     */
     
-    // Handle root path based on role - TEMPORARILY SIMPLIFIED for debugging
+    // Handle root path based on role
     if (path === '/') {
-      // For now, always redirect to the emergency access page for diagnosis
-      console.log(`EMERGENCY FIX: Redirecting to emergency-access`);
+      const targetPath = user.isAdmin ? '/admin' : '/dashboard';
+      console.log(`User at root path, redirecting to ${targetPath}`);
       // Set auth state to redirecting to show proper UI feedback
       setAuthState('redirecting');
       setRedirectCount(prev => prev + 1);
       
-      // Force a direct navigation to the emergency access selector
+      // Force a direct navigation to the target path
       setTimeout(() => {
         // Use window.location for a more forceful navigation if needed
         if (redirectCount > 2) {
           console.log("Using window.location for forceful redirect");
-          window.location.href = '/emergency-access';
+          window.location.href = targetPath;
           return;
         }
         
-        setLocation('/emergency-access');
+        setLocation(targetPath);
         // Reset auth state after redirect is complete
         if (user) {
           setAuthState('authenticated');
