@@ -1,5 +1,5 @@
 import { db } from '@db';
-import { users } from '@db/schema';
+import { users, emailTemplates } from '@db/schema';
 import { magicLinkTokens } from '@db/schema/magicLink';
 import { eq, gt, and } from 'drizzle-orm';
 import { randomBytes } from 'crypto';
@@ -32,12 +32,12 @@ export async function createMagicLinkToken(
 
   try {
     await db.insert(magicLinkTokens).values({
-      user_id: userId,
+      userId,
       token,
-      expires_at: expiresAt, // Use the Date object directly
-      user_agent: userAgent,
-      ip_address: ipAddress,
-      // Let the database handle created_at
+      expiresAt, // Use the Date object directly
+      userAgent,
+      ipAddress,
+      // Let the database handle createdAt
     });
     
     return token;

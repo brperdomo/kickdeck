@@ -96,7 +96,13 @@ async function sendMagicLinkEmail(user, token) {
     let emailTemplate;
     if (templateResult.rows.length > 0) {
       console.log('Found magic_link template in database');
-      emailTemplate = templateResult.rows[0];
+      const templateData = templateResult.rows[0];
+      emailTemplate = {
+        subject: templateData.subject,
+        content: templateData.content,
+        senderName: templateData.sender_name,
+        senderEmail: templateData.sender_email
+      };
     } else {
       console.log('No magic_link template found, using fallback');
       emailTemplate = {
