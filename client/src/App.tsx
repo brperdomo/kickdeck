@@ -55,6 +55,7 @@ import AccountPage from "./pages/account";
 import { LogoutHandler } from "@/components/LogoutHandler";
 // Emergency fix for registration
 import EmergencyRegistrationFix from "@/pages/emergency-registration-fix";
+import EmergencyAdminPage from "@/pages/admin-emergency";
 
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
@@ -162,6 +163,9 @@ function Router() {
           {/* Create a separate route for auth-logged-out to handle the redirect */}
           <Route path="/auth-logged-out" component={AuthLoggedOut} />
 
+          {/* Emergency admin access route */}
+          <Route path="/admin-emergency" component={EmergencyAdminPage} />
+      
           {/* Regular auth route */}
           <Route path="/auth">
             {() => {
