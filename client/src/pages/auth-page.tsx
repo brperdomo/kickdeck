@@ -77,36 +77,62 @@ export default function AuthPage() {
       console.log('Submitting login with email:', data.email);
       loginForm.clearErrors();
       
-      // Update auth state to indicate login is in progress
+      // Set loading state for the button
       setAuthState('logging-in');
       
-      // Perform login
-      const userData = await loginMutation.mutateAsync(data);
+      // Make a direct API call to login instead of using the mutation
+      // This gives us more control over the process
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          username: data.email // Include username for compatibility
+        }),
+        credentials: 'include' // Important for session cookie
+      });
       
-      console.log('Login successful, user data:', userData);
-      console.log('Login successful, user data type:', typeof userData);
-      console.log('Login successful, user data fields:', userData ? Object.keys(userData) : 'No userData');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
+      }
       
-      // Check if the user has admin privileges - check if data is wrapped in a user or freshUserData object
+      const userData = await response.json();
+      console.log('Login successful, raw response data:', userData);
+      
+      // Determine user object from response
       let userObject;
       if (userData && userData.freshUserData) {
         userObject = userData.freshUserData;
-        console.log('Using freshUserData:', userObject);
       } else if (userData && userData.user) {
         userObject = userData.user;
-        console.log('Using user object:', userObject);
       } else {
         userObject = userData;
-        console.log('Using direct userData:', userObject);
+      }
+      
+      // Store auth info in session storage as backup
+      try {
+        sessionStorage.setItem('user_authenticated', 'true');
+        sessionStorage.setItem('user_is_admin', userObject.isAdmin ? 'true' : 'false');
+        sessionStorage.setItem('auth_timestamp', Date.now().toString());
+        console.log('Stored auth info in session storage');
+      } catch (e) {
+        console.warn('Failed to store auth backup in sessionStorage', e);
       }
       
       const isAdmin = userObject && userObject.isAdmin;
+      console.log('User is admin:', isAdmin);
       
-      // Determine the appropriate dashboard - Admin and Dashboard are separate portals
-      const targetPath = isAdmin ? '/admin' : '/dashboard';
-      console.log(`Login successful, redirecting directly to ${targetPath}`);
+      // Handle redirect based on role
+      // Set cookie to avoid 401 errors on page load
+      document.cookie = "is_authenticated=true; path=/";
       
-      // Use direct redirection to the target dashboard
+      // Determine the appropriate dashboard
+      const targetPath = isAdmin ? '/admin-direct' : '/dashboard';
+      console.log(`Login successful, redirecting to ${targetPath}`);
+      
+      // Use direct redirection to bypass wouter
       window.location.href = targetPath;
       
     } catch (error: any) {
