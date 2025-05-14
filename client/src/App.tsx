@@ -17,6 +17,7 @@ import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
 import AuthLoggedOut from "@/pages/auth-logged-out";
 import AdminDashboard from "@/pages/admin-dashboard";
+import StandaloneAdmin from "@/pages/standalone-admin";
 import CreateEvent from "@/pages/create-event";
 import CouponManagement from "@/pages/coupon-management";
 import AccountingCodeManagement from "@/pages/accounting-code-management";
@@ -314,24 +315,9 @@ function Router() {
             </DebugErrorBoundary>
           } />
           
-          {/* Direct admin dashboard access with minimal dependencies */}
+          {/* Ultra simple standalone admin dashboard route with zero dependencies */}
           <Route path="/admin-direct">
-            {() => {
-              // Import the direct view component
-              const AdminDirectView = React.lazy(() => import('@/pages/admin-direct-view'));
-              
-              // Simply render the direct view component with suspense
-              return (
-                <React.Suspense fallback={
-                  <div className="flex items-center justify-center h-screen">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                    <span className="ml-2">Accessing admin dashboard...</span>
-                  </div>
-                }>
-                  <AdminDirectView />
-                </React.Suspense>
-              );
-            }}
+            {() => <StandaloneAdmin />}
           </Route>
 
           {/* User routes - using ProtectedRoute for member-specific routes */}
