@@ -175,7 +175,8 @@ export function setupAuth(app: Express) {
 
   if (app.get("env") === "production") {
     app.set("trust proxy", 1);
-    // No need to set cookie.secure here as we've already set it conditionally above
+    // In production, we'll explicitly set secure cookies
+    sessionSettings.cookie!.secure = true;
   }
 
   app.use(session(sessionSettings));
