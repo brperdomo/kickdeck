@@ -128,8 +128,8 @@ export default function AuthPage() {
       // Set cookie to avoid 401 errors on page load
       document.cookie = "is_authenticated=true; path=/";
       
-      // Use emergency admin for admins to avoid all authentication issues
-      const targetPath = isAdmin ? '/admin-emergency' : '/dashboard';
+      // Direct admin path that bypasses all hooks and redirects
+      const targetPath = isAdmin ? '/admin-dashboard' : '/dashboard';
       console.log(`Login successful, redirecting to ${targetPath}`);
       
       // Set session storage markers to help with auth fallbacks

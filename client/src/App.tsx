@@ -20,6 +20,7 @@ import AdminDashboard from "@/pages/admin-dashboard";
 import StandaloneAdmin from "@/pages/standalone-admin";
 import DirectAdminViewer from "@/pages/direct-admin-viewer";
 import EmergencyAdmin from "@/pages/emergency-admin";
+import DirectLogin from "@/pages/direct-login";
 import CreateEvent from "@/pages/create-event";
 import CouponManagement from "@/pages/coupon-management";
 import AccountingCodeManagement from "@/pages/accounting-code-management";
@@ -317,9 +318,18 @@ function Router() {
             </DebugErrorBoundary>
           } />
           
-          {/* Super-simple emergency admin access route with direct login */}
-          <Route path="/admin-emergency">
-            {() => <EmergencyAdmin />}
+          {/* Direct admin dashboard without ProtectedRoute wrapper */}
+          <Route path="/admin-dashboard">
+            {() => (
+              <DebugErrorBoundary>
+                <AdminDashboard />
+              </DebugErrorBoundary>
+            )}
+          </Route>
+          
+          {/* Simple direct login that avoids all authentication hooks */}
+          <Route path="/direct-login">
+            {() => <DirectLogin />}
           </Route>
 
           {/* User routes - using ProtectedRoute for member-specific routes */}
