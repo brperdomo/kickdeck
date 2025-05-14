@@ -88,11 +88,11 @@ export default function AuthPage() {
       console.log('Login successful, user data fields:', userData ? Object.keys(userData) : 'No userData');
       
       // Check if the user has admin privileges - check if data is wrapped in a user or freshUserData object
-      let userObject;
-      if (userData && userData.freshUserData) {
+      let userObject: any;
+      if (userData && 'freshUserData' in userData) {
         userObject = userData.freshUserData;
         console.log('Using freshUserData:', userObject);
-      } else if (userData && userData.user) {
+      } else if (userData && 'user' in userData) {
         userObject = userData.user;
         console.log('Using user object:', userObject);
       } else {
@@ -106,8 +106,11 @@ export default function AuthPage() {
       const targetPath = isAdmin ? '/admin' : '/dashboard';
       console.log(`Login successful, redirecting directly to ${targetPath}`);
       
-      // Use direct redirection to the target dashboard
-      window.location.href = targetPath;
+      // Set the authentication state to prevent redirect loops
+      setAuthState('authenticated');
+      
+      // Use setLocation instead of window.location to avoid full page reloads
+      setLocation(targetPath);
       
     } catch (error: any) {
       console.error('Login error:', error);
@@ -142,9 +145,9 @@ export default function AuthPage() {
     console.log("User already authenticated, user fields:", user ? Object.keys(user) : 'No user');
     
     // Check if user has admin privileges - make sure we use the right property
-    let userObject = user;
-    if (user && 'user' in user) {
-      userObject = user.user;
+    let userObject: any = user;
+    if (user && typeof user === 'object' && 'user' in (user as any)) {
+      userObject = (user as any).user;
       console.log('Auto-redirect: Using nested user object:', userObject);
     }
     const isAdmin = userObject && userObject.isAdmin;
@@ -155,10 +158,11 @@ export default function AuthPage() {
     const directTarget = isAdmin ? '/admin' : '/dashboard';
     
     // Direct redirect to appropriate dashboard
-    setTimeout(() => {
-      console.log(`User already authenticated, redirecting to ${directTarget}`);
-      window.location.href = directTarget;
-    }, 250);
+    console.log(`User already authenticated, redirecting to ${directTarget}`);
+    
+    // Use React Router's setLocation instead of window.location
+    // This prevents the page reload that could cause authentication issues
+    setLocation(directTarget);
     
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
