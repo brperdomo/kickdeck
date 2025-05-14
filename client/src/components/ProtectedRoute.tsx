@@ -116,14 +116,26 @@ export function ProtectedRoute({
           return <Redirect to="/auth" />;
         }
 
-        // Role-based checks
-        if (requiredRole === "admin" && !user.isAdmin) {
-          console.log('ProtectedRoute: User not authorized for admin route, redirecting to dashboard');
-          
-          // Update state to indicate redirection is happening
-          setAuthState('redirecting');
-          
-          return <Redirect to="/dashboard" />;
+        // Role-based checks - with special case for admin routes
+        if (requiredRole === "admin") {
+          if (!user.isAdmin) {
+            console.log('ProtectedRoute: User not authorized for admin route, redirecting to dashboard');
+            
+            // Update state to indicate redirection is happening
+            setAuthState('redirecting');
+            
+            return <Redirect to="/dashboard" />;
+          } else {
+            // User is an admin accessing admin route - force a direct render for reliability
+            console.log('ProtectedRoute: Admin accessing admin route - direct render mode');
+            // Ensure we're in authenticated state
+            if (authState !== 'authenticated') {
+              setAuthState('authenticated');
+            }
+            
+            // Force cookie update in case it was lost
+            document.cookie = "is_authenticated=true; path=/";
+          }
         }
 
         // Render the component if all checks pass

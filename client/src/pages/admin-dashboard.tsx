@@ -5293,6 +5293,30 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
     }
   }, [isUserLoading, isSettingsLoading, initialLoadComplete]);
   
+  // Safety check - if user data is completely missing but we're not in loading state
+  // This is typically a sign that auth state is incorrect
+  useEffect(() => {
+    if (!user && !isUserLoading && authState === 'authenticated') {
+      console.error("AdminDashboard: No user data available but not in loading state", { authState });
+      
+      // Check if we have backup auth info
+      const isAuthenticatedFromBackup = sessionStorage.getItem('user_authenticated') === 'true';
+      const isAdminFromBackup = sessionStorage.getItem('user_is_admin') === 'true';
+      
+      if (isAuthenticatedFromBackup && isAdminFromBackup) {
+        console.log("AdminDashboard: Using backup auth info");
+        // Try refreshing the page once to reload user data
+        if (!sessionStorage.getItem('admin_dashboard_refreshed')) {
+          sessionStorage.setItem('admin_dashboard_refreshed', 'true');
+          window.location.reload();
+        }
+      } else {
+        // Redirect to auth if we have no backup
+        window.location.href = '/auth';
+      }
+    }
+  }, [user, isUserLoading, authState]);
+  
   // Update activeView based on current location/URL
   useEffect(() => {
     // Extract view from URL path
