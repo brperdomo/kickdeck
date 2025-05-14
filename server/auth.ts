@@ -153,19 +153,19 @@ export function setupAuth(app: Express) {
   const MemoryStore = createMemoryStore(session);
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "matchpro-persistent-session-secret-key",
-    resave: true, // Changed to true to ensure session is saved on every request
-    saveUninitialized: false,
+    resave: true, // Force resave - session is saved on every request even if unchanged
+    saveUninitialized: true, // Save new sessions that haven't been modified (important for authentication)
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for longer sessions
       httpOnly: true,
       sameSite: 'lax',
       path: '/',
-      secure: app.get("env") === "production" // Only set secure in production
+      secure: false // Disable secure for development to ensure cookies work
     },
     store: new MemoryStore({
       checkPeriod: 86400000, // 24 hours cleanup interval
       // Increased max size for better performance
-      max: 1000,
+      max: 10000, // Store more sessions
       // Don't refresh/ping inactive sessions in the background
       stale: false
     }),
