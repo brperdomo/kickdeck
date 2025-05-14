@@ -314,43 +314,23 @@ function Router() {
             </DebugErrorBoundary>
           } />
           
-          {/* Add a simplified direct route to admin dashboard */}
+          {/* Direct admin dashboard access with minimal dependencies */}
           <Route path="/admin-direct">
             {() => {
-              // Use the standard auth hook
-              const { user, isLoading, authState } = useAuth();
+              // Import the direct view component
+              const AdminDirectView = React.lazy(() => import('@/pages/admin-direct-view'));
               
-              // Show loading while checking auth
-              if (isLoading || authState === 'checking') {
-                return (
+              // Simply render the direct view component with suspense
+              return (
+                <React.Suspense fallback={
                   <div className="flex items-center justify-center h-screen">
                     <Loader2 className="h-8 w-8 animate-spin" />
                     <span className="ml-2">Accessing admin dashboard...</span>
                   </div>
-                );
-              }
-              
-              // If user is authenticated and an admin, show the dashboard
-              if (user && user.isAdmin) {
-                // Set a timestamp for this successful admin access
-                sessionStorage.setItem('admin_access_timestamp', Date.now().toString());
-                
-                // Return to standard /admin route
-                return <Redirect to="/admin" />;
-              }
-              
-              // Check session storage as backup
-              const isAuthenticatedFromBackup = sessionStorage.getItem('user_authenticated') === 'true';
-              const isAdminFromBackup = sessionStorage.getItem('user_is_admin') === 'true';
-              
-              // If we have valid backup auth, try one more redirect
-              if (isAuthenticatedFromBackup && isAdminFromBackup) {
-                // Redirect to /admin which will use ProtectedRoute's checks
-                return <Redirect to="/admin" />;
-              }
-              
-              // Otherwise redirect to login
-              return <Redirect to="/auth" />;
+                }>
+                  <AdminDirectView />
+                </React.Suspense>
+              );
             }}
           </Route>
 

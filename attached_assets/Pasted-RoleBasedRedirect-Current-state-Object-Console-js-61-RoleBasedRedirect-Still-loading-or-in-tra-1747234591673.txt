@@ -1,0 +1,74 @@
+RoleBasedRedirect - Current state: 
+Object
+Console.js:61 RoleBasedRedirect - Still loading or in transition, skipping redirect 
+Object
+Console.js:61 Auth state sync effect triggered 
+Object
+Console.js:61 Setting authState to authenticated because we have a user
+Console.js:61 RoleBasedRedirect - Current state: 
+Object
+Console.js:61 RoleBasedRedirect - Still loading or in transition, skipping redirect 
+Object
+Console.js:61 RoleBasedRedirect - Current state: 
+Object
+Console.js:61 RoleBasedRedirect - User authenticated: 
+Object
+Console.js:61 RoleBasedRedirect checking access 
+Object
+Console.js:61 Admin accessing admin route, ensuring authentication state
+Console.js:61 On target route but component may not be rendered yet, forcing refresh 
+Object
+Console.js:61 Auth state sync effect triggered 
+Object
+Console.js:61 RoleBasedRedirect - Current state: 
+Object
+Console.js:61 RoleBasedRedirect - User authenticated: 
+Object
+Console.js:61 RoleBasedRedirect checking access 
+Object
+Console.js:61 Admin accessing admin route, ensuring authentication state
+2
+
+ Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.
+_app-245a47e82a1a0abc.js:38 
+ POST https://logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&…0&dd-evp-origin=browser&dd-request-id=96318441-8658-444d-87d3-61b73a003d7b net::ERR_BLOCKED_BY_CLIENT
+(anonymous)	@	_app-245a47e82a1a0abc.js:38
+(anonymous)	@	_app-245a47e82a1a0abc.js:1
+o	@	_app-245a47e82a1a0abc.js:6
+a	@	_app-245a47e82a1a0abc.js:26
+m	@	_app-245a47e82a1a0abc.js:26
+g	@	_app-245a47e82a1a0abc.js:26
+send	@	_app-245a47e82a1a0abc.js:26
+e.flush	@	_app-245a47e82a1a0abc.js:6
+(anonymous)	@	_app-245a47e82a1a0abc.js:6
+(anonymous)	@	_app-245a47e82a1a0abc.js:6
+e.notify	@	_app-245a47e82a1a0abc.js:6
+f	@	_app-245a47e82a1a0abc.js:1
+(anonymous)	@	_app-245a47e82a1a0abc.js:1
+d	@	_app-245a47e82a1a0abc.js:1
+(anonymous)	@	_app-245a47e82a1a0abc.js:1
+r	@	_app-245a47e82a1a0abc.js:38
+_app-245a47e82a1a0abc.js:38 
+ POST https://logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&…0&dd-evp-origin=browser&dd-request-id=ec6fb07b-792c-42f0-a84a-d289738425e0 net::ERR_BLOCKED_BY_CLIENT
+(anonymous)	@	_app-245a47e82a1a0abc.js:38
+(anonymous)	@	_app-245a47e82a1a0abc.js:38
+(anonymous)	@	_app-245a47e82a1a0abc.js:6
+o	@	_app-245a47e82a1a0abc.js:6
+w	@	_app-245a47e82a1a0abc.js:26
+(anonymous)	@	_app-245a47e82a1a0abc.js:26
+d	@	_app-245a47e82a1a0abc.js:1
+(anonymous)	@	_app-245a47e82a1a0abc.js:1
+Promise.then		
+a	@	_app-245a47e82a1a0abc.js:26
+m	@	_app-245a47e82a1a0abc.js:26
+g	@	_app-245a47e82a1a0abc.js:26
+send	@	_app-245a47e82a1a0abc.js:26
+e.flush	@	_app-245a47e82a1a0abc.js:6
+(anonymous)	@	_app-245a47e82a1a0abc.js:6
+(anonymous)	@	_app-245a47e82a1a0abc.js:6
+e.notify	@	_app-245a47e82a1a0abc.js:6
+f	@	_app-245a47e82a1a0abc.js:1
+(anonymous)	@	_app-245a47e82a1a0abc.js:1
+d	@	_app-245a47e82a1a0abc.js:1
+(anonymous)	@	_app-245a47e82a1a0abc.js:1
+r	@	_app-245a47e82a1a0abc.js:38

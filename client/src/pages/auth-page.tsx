@@ -128,18 +128,12 @@ export default function AuthPage() {
       // Set cookie to avoid 401 errors on page load
       document.cookie = "is_authenticated=true; path=/";
       
-      // Always use standard routes for the first redirect
-      const targetPath = isAdmin ? '/admin' : '/dashboard';
+      // Use admin-direct for admin users to avoid routing issues
+      const targetPath = isAdmin ? '/admin-direct' : '/dashboard';
       console.log(`Login successful, redirecting to ${targetPath}`);
       
-      // For admin users, refresh the whole page to clear any stale state
-      if (isAdmin) {
-        // This is a more reliable way to navigate and ensure cookies are recognized
-        window.location.href = targetPath;
-      } else {
-        // For regular users, standard navigation is fine
-        window.location.href = targetPath;
-      }
+      // For all users, use direct browser navigation to ensure clean state
+      window.location.href = targetPath;
       
     } catch (error: any) {
       console.error('Login error:', error);
