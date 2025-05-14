@@ -2,6 +2,7 @@ import passport from "passport";
 import { IVerifyOptions, Strategy as LocalStrategy } from "passport-local";
 import { type Express, Request } from "express";
 import session from "express-session";
+import cookieParser from "cookie-parser";
 import createMemoryStore from "memorystore";
 import { users, insertUserSchema, households, insertHouseholdSchema, type SelectUser } from "@db/schema";
 import { db } from "@db";
@@ -150,54 +151,98 @@ export async function createCoachAccount(
 }
 
 export function setupAuth(app: Express) {
-  // Use a more reliable session store configuration
+  // Create a simplified session store that explicitly focuses on development compatibility
   const MemoryStore = createMemoryStore(session);
+
+  // Get the hostname from the request for setting the cookie domain
+  app.use((req, res, next) => {
+    const hostname = req.hostname;
+    console.log('Request hostname:', hostname);
+    const isReplit = hostname.includes('replit');
+    console.log('Is Replit environment:', isReplit);
+    
+    // Store for use in subsequent middleware
+    (req as any).isReplit = isReplit;
+    (req as any).hostname = hostname;
+    next();
+  });
+
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET || "matchpro-persistent-session-secret-key",
-    resave: true, // Set to true to ensure session is saved on every request
-    saveUninitialized: true, // Changed to true to save uninitialized sessions
+    name: 'matchpro.sid', // Custom name to prevent conflicts
+    secret: process.env.SESSION_SECRET || "matchpro-dev-session-secret-key-fixed",
+    resave: true, 
+    saveUninitialized: true,
     cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for longer sessions
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days - shorter for testing
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none', // Important for cross-site development environment
       path: '/',
-      secure: false // Disabled secure for development to fix cookie issues
+      secure: false // Must be false for development environment
     },
     store: new MemoryStore({
-      checkPeriod: 86400000, // 24 hours cleanup interval
-      max: 5000, // Increased max size for better performance
-      stale: false, // Don't refresh/ping inactive sessions in the background
-      ttl: 86400000 * 30 // 30 days TTL to match cookie maxAge
+      checkPeriod: 86400000,
+      max: 1000
     }),
-    rolling: true, // Reset expiration countdown on every response
-    unset: 'destroy' // Immediately destroy when unset
+    rolling: true
   };
 
   // Trust proxy for all environments, not just production
   app.set("trust proxy", 1);
+  
+  // First add cookie parser for advanced cookie handling
+  app.use(cookieParser(sessionSettings.secret as string));
   
   // Log session settings for debugging
   console.log("Session configuration:", {
     resave: sessionSettings.resave,
     saveUninitialized: sessionSettings.saveUninitialized,
     cookieSecure: sessionSettings.cookie?.secure,
+    cookieSameSite: sessionSettings.cookie?.sameSite,
+    cookieName: sessionSettings.name,
     rolling: sessionSettings.rolling,
     environment: app.get("env")
   });
 
+  // Initialize session middleware
   app.use(session(sessionSettings));
+  
+  // Initialize authentication middleware
   app.use(passport.initialize());
   app.use(passport.session());
+  
+  // Add session recovery middleware to attempt to recover failed sessions
+  app.use((req, res, next) => {
+    if (!req.isAuthenticated() && req.cookies && Object.keys(req.cookies).length > 0) {
+      console.log('[Session Recovery] Attempting session recovery with cookies:', 
+        Object.keys(req.cookies).join(', '));
+    }
+    next();
+  });
   
   // Add emulation middleware after the passport middleware
   app.use(emulationMiddleware);
 
-  // Add debug middleware to log authentication status on each request
+  // Add enhanced debug middleware to log authentication status on each request
   app.use((req, res, next) => {
     // Only log API endpoints to reduce noise
     if (req.path.startsWith('/api/') && !req.path.includes('assets')) {
       console.log(`[Auth Debug] ${req.method} ${req.path} - Authenticated: ${req.isAuthenticated()} - Session ID: ${req.sessionID}`);
+      
+      // Log cookies for debugging
+      console.log(`[Cookie Debug] Cookies: ${JSON.stringify(req.cookies)}`);
+      
+      // For logout requests, log headers to help troubleshoot
+      if (req.path === '/api/logout') {
+        console.log('[Logout Debug] Request headers:', JSON.stringify(req.headers));
+      }
     }
+    
+    // Add CORS headers for development environment
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    
     next();
   });
 
