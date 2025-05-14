@@ -205,6 +205,9 @@ export function registerRoutes(app: Express): Server {
     // Authentication is already set up in index.ts, no need to call setupAuth again
     log("Using existing authentication middleware");
     
+    // Register magic link authentication routes
+    app.use('/api/auth', magicLinkRouter);
+    
     // Email check endpoint for contextual authentication flow
     app.get("/api/auth/check-email", async (req: Request, res: Response) => {
       try {

@@ -12,7 +12,7 @@ async function createMagicLinkEmailTemplate() {
   const existingTemplates = await db
     .select()
     .from(emailTemplates)
-    .where(eq(emailTemplates.templateType, 'magic_link'));
+    .where(eq(emailTemplates.type, 'magic_link'));
 
   if (existingTemplates.length > 0) {
     console.log('Magic link email template already exists');
@@ -23,11 +23,13 @@ async function createMagicLinkEmailTemplate() {
   const [template] = await db
     .insert(emailTemplates)
     .values({
-      templateType: 'magic_link',
+      name: 'Magic Link Login',
+      description: 'Email template for magic link authentication',
+      type: 'magic_link',
       subject: 'Your MatchPro Login Link',
-      fromName: 'MatchPro',
-      fromEmail: 'support@matchpro.ai',
-      template: `
+      sender_name: 'MatchPro',
+      sender_email: 'support@matchpro.ai',
+      content: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -119,17 +121,13 @@ async function createMagicLinkEmailTemplate() {
   return template;
 }
 
-// Execute the function if this script is run directly
-if (require.main === module) {
-  createMagicLinkEmailTemplate()
-    .then(() => {
-      console.log('Magic link email template setup complete');
-      process.exit(0);
-    })
-    .catch((error) => {
-      console.error('Error setting up magic link email template:', error);
-      process.exit(1);
-    });
-}
+// Execute the function immediately when imported
+createMagicLinkEmailTemplate()
+  .then(() => {
+    console.log('Magic link email template setup complete');
+  })
+  .catch((error) => {
+    console.error('Error setting up magic link email template:', error);
+  });
 
 export { createMagicLinkEmailTemplate };

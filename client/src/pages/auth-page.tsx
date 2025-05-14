@@ -15,10 +15,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
-import { Link, useLocation } from "wouter";
+import { Loader2, Mail } from "lucide-react";
+import { Link, useLocation, Route, Switch } from "wouter";
 import { useEffect, useState } from "react";
 import { z } from "zod";
+import MagicLinkForm from "@/components/auth/MagicLinkForm";
+import MagicLinkVerify from "@/components/auth/MagicLinkVerify";
 
 
 // Login schema
@@ -35,6 +37,7 @@ export default function AuthPage() {
 
   const [location, setLocation] = useLocation();
   const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
+  const [authMethod, setAuthMethod] = useState<"password" | "magic-link">("password");
 
   // Check for logout message and handle redirection parameters
   useEffect(() => {
