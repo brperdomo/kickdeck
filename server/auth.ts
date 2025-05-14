@@ -411,22 +411,16 @@ export function setupAuth(app: Express) {
 
       console.log('Authentication successful for user:', user.email);
       
-      // Save the session before login to ensure we have a session ID
-      req.session.save((saveErr) => {
-        if (saveErr) {
-          console.error('Session save error:', saveErr);
-          return next(saveErr);
+      // Login the user and create the session
+      req.logIn(user, async (loginErr) => {
+        if (loginErr) {
+          console.error('Login session creation error:', loginErr);
+          return next(loginErr);
         }
         
-        req.logIn(user, async (err) => {
-          if (err) {
-            console.error('Login session creation error:', err);
-            return next(err);
-          }
-          
-          // Force the session to be saved back to the store
-          req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
-
+        // Set longer session cookie expiration
+        req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+        
         try {
           // Update the user's last login time in the database
           await db
@@ -436,7 +430,7 @@ export function setupAuth(app: Express) {
             })
             .where(eq(users.id, user.id));
             
-          // Also update the cached user
+          // Also update the cached user if present
           if (userCache[user.id]) {
             userCache[user.id].user = {
               ...userCache[user.id].user,
@@ -455,29 +449,25 @@ export function setupAuth(app: Express) {
           'Authenticated:', req.isAuthenticated(), 
           'Session ID:', req.sessionID);
 
-        // Add stricter caching headers to ensure freshness
+        // Add no-cache headers to prevent browser caching
         res.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
         res.set('Pragma', 'no-cache');
         res.set('Expires', '0');
         res.set('X-Login-Timestamp', Date.now().toString());
         
-        // Force session save one more time before returning
-        req.session.save((finalSaveErr) => {
-          if (finalSaveErr) {
-            console.error('Final session save error:', finalSaveErr);
+        // Final save to ensure session is persisted
+        req.session.save((saveErr) => {
+          if (saveErr) {
+            console.error('Session save error:', saveErr);
           }
           
-          // Get the user again with the latest DB info
-          const freshUserData = { ...user, lastLogin: new Date() };
-          
-          // Return enhanced response with authentication status for debugging
+          // Return the response with user data and session info
           return res.json({
             message: "Login successful",
             user,
             timestamp: Date.now(),
             authenticated: req.isAuthenticated(),
-            sessionId: req.sessionID,
-            freshUserData
+            sessionId: req.sessionID
           });
         });
       });
@@ -533,10 +523,28 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", async (req: Request, res) => {
+    console.log('GET /api/user request received');
+    console.log('Session ID:', req.sessionID);
+    console.log('Is authenticated:', req.isAuthenticated());
+    
     if (req.isAuthenticated()) {
       // Access the emulatedUserId that we attached in the middleware
       const emulatedUserId = (req as any).emulatedUserId;
       const actualUserId = (req as any).actualUserId;
+      
+      console.log('User authenticated, ID:', req.user?.id);
+      console.log('Session cookie:', req.session?.cookie);
+      console.log('User data exists:', !!req.user);
+      if (req.user) {
+        // Log a limited slice of user data for debugging without exposing sensitive info
+        const userDataSample = JSON.stringify({
+          id: req.user.id,
+          email: req.user.email,
+          authenticated: true,
+          lastLogin: req.user.lastLogin
+        });
+        console.log('User data sample:', userDataSample);
+      }
       
       // Add ETag support for more efficient caching
       const timestamp = req.user?.lastLogin?.getTime() || Date.now();
@@ -544,32 +552,28 @@ export function setupAuth(app: Express) {
       
       // Check if client already has this version (If-None-Match header)
       if (req.headers['if-none-match'] === etag) {
+        console.log('ETag match, returning 304 Not Modified');
         return res.status(304).end();
       }
       
-      // Set appropriate cache-control based on environment
-      // Add longer cache time in production, but allow revalidation
-      const isProduction = app.get("env") === "production";
-      
-      // Disable caching during emulation to ensure latest data
-      if (emulatedUserId) {
-        res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-      } else if (isProduction) {
-        // In production, improve performance with longer cache but allow revalidation
-        res.set('Cache-Control', 'private, max-age=3600, must-revalidate');
-      } else {
-        // In development, shorter cache time
-        res.set('Cache-Control', 'private, max-age=60, must-revalidate');
-      }
+      // Set appropriate cache-control headers to prevent caching issues
+      res.set('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
       
       // Set ETag for efficient caching
       res.set('ETag', etag);
       
+      // Add a timestamp to help debug caching issues
+      res.set('X-Auth-Timestamp', Date.now().toString());
+      
       // Check if this is an emulated session
       if (emulatedUserId) {
+        console.log('Emulated session detected, user ID:', emulatedUserId);
         // Get the emulated user from the database or cache
         const emulatedUser = await getUserById(emulatedUserId);
         if (emulatedUser) {
+          console.log('Returning emulated user data');
           return res.json({
             ...emulatedUser,
             _emulated: true,
@@ -579,14 +583,25 @@ export function setupAuth(app: Express) {
       }
       
       // Return the actual user
+      console.log('Returning authenticated user data');
       return res.json(req.user);
     }
 
-    // For unauthenticated requests, add cache headers to prevent frequent refreshes
-    // This is key to solving the login page refresh issue
-    res.set('Cache-Control', 'private, max-age=3600');
-    res.set('Expires', new Date(Date.now() + 3600000).toUTCString());
-    res.status(401).send("Not logged in");
+    // For unauthenticated requests, add debugging info
+    console.log('User not authenticated, returning 401');
+    console.log('Headers:', JSON.stringify(req.headers));
+    
+    // For unauthenticated requests, prevent caching to ensure login state is checked
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    
+    // Return a detailed 401 response for better debugging
+    res.status(401).json({
+      message: "Not authenticated",
+      authenticated: false,
+      timestamp: Date.now()
+    });
   });
 
   // Email availability check is handled in routes.ts
