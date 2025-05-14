@@ -108,6 +108,7 @@ function Router() {
           }}
         </Route>
         <Route path="/auth-logged-out" component={AuthLoggedOut} />
+        <Route path="/auth/verify-magic-link" component={AuthPage} />
         <Route path="/register" component={Register} />
         <Route path="/forgot-password" component={ForgotPassword} />
         <Route path="/reset-password" component={ResetPassword} />
@@ -161,6 +162,7 @@ function Router() {
         <>
           {/* Create a separate route for auth-logged-out to handle the redirect */}
           <Route path="/auth-logged-out" component={AuthLoggedOut} />
+          <Route path="/auth/verify-magic-link" component={AuthPage} />
 
           {/* Regular auth route */}
           <Route path="/auth">
