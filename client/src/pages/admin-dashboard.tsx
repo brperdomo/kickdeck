@@ -5255,9 +5255,32 @@ interface AdminDashboardProps {
 
 function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   const { user, logout, isLoading: isUserLoading, authState } = useUser();
-  const { hasPermission, hasRole } = usePermissions();
+  const { hasPermission, hasRole, isLoading: permissionsLoading } = usePermissions();
   const [location, navigate] = useLocation();
   const [activeView, setActiveView] = useState<View>(initialView);
+  const { toast } = useToast();
+  
+  // Check authentication and redirect if needed
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        // If not authenticated and not loading, redirect to login
+        if (!user && !isUserLoading && authState === 'unauthenticated') {
+          console.log('User not authenticated in admin dashboard, redirecting to auth');
+          navigate('/auth');
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+        toast({
+          title: "Authentication error",
+          description: "Please try logging in again",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    checkAuth();
+  }, [user, isUserLoading, authState, navigate, toast]);
   // Show welcome banner only once per login session
   const [showWelcome, setShowWelcome] = useState(() => {
     // Check if we've already shown the banner in this session
