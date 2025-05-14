@@ -36,6 +36,7 @@ import eventClubsRouter from "./routes/admin/event-clubs";
 import emailConfigRouter from "./routes/admin/update-email-config";
 import productUpdatesRouter from "./routes/product-updates.js";
 import magicLinkRouter from "./routes/magicLinks";
+import testHelpersRouter from "./routes/test-helpers";
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import paymentsRouter from "./routes/payments";
@@ -1477,6 +1478,10 @@ export function registerRoutes(app: Express): Server {
       }).catch(err => {
         log(`Error loading test payment routes: ${err}`, 'express');
       });
+      
+      // Register test helper routes
+      app.use('/api/test', testHelpersRouter);
+      log('Test helper endpoints registered (development only)', 'express');
       
       // Test endpoint for event filtering
       import('./routes/test-event-filtering.js').then(({ testFinanceAdminEventFiltering }) => {
