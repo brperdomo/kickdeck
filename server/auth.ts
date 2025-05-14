@@ -153,24 +153,21 @@ export function setupAuth(app: Express) {
   const MemoryStore = createMemoryStore(session);
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "matchpro-persistent-session-secret-key",
-    resave: true, // Force resave - session is saved on every request even if unchanged
-    saveUninitialized: true, // Save new sessions that haven't been modified (important for authentication)
+    resave: true, // Force resave - session is saved on every request
+    saveUninitialized: true, // Save new sessions immediately
     cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for longer sessions
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'lax', 
       path: '/',
-      secure: false // Disable secure for development to ensure cookies work
+      secure: false // Must be false for development
     },
     store: new MemoryStore({
-      checkPeriod: 86400000, // 24 hours cleanup interval
-      // Increased max size for better performance
+      checkPeriod: 86400000, // 24 hours cleanup
       max: 10000, // Store more sessions
-      // Don't refresh/ping inactive sessions in the background
-      stale: false
     }),
-    rolling: true, // Reset expiration countdown on every response
-    unset: 'destroy' // Immediately destroy when unset
+    rolling: true, // Reset expiration on every response
+    name: 'matchpro.sid' // Explicit cookie name for better tracking
   };
 
   if (app.get("env") === "production") {
@@ -229,15 +226,25 @@ export function setupAuth(app: Express) {
   );
 
   passport.serializeUser((user, done) => {
+    console.log('Serializing user to session:', user.id);
     done(null, user.id);
   });
 
   passport.deserializeUser(async (id: number, done) => {
     try {
+      console.log('Deserializing user from session ID:', id);
       // Use cached user data if available, otherwise fetch from database
       const user = await getUserById(id);
+      
+      if (!user) {
+        console.log('User not found during deserialization, id:', id);
+        return done(null, false);
+      }
+      
+      console.log('User deserialized successfully:', user.id);
       done(null, user);
     } catch (err) {
+      console.error('Error deserializing user:', err);
       done(err);
     }
   });
@@ -404,11 +411,21 @@ export function setupAuth(app: Express) {
 
       console.log('Authentication successful for user:', user.email);
       
-      req.logIn(user, async (err) => {
-        if (err) {
-          console.error('Login session creation error:', err);
-          return next(err);
+      // Save the session before login to ensure we have a session ID
+      req.session.save((saveErr) => {
+        if (saveErr) {
+          console.error('Session save error:', saveErr);
+          return next(saveErr);
         }
+        
+        req.logIn(user, async (err) => {
+          if (err) {
+            console.error('Login session creation error:', err);
+            return next(err);
+          }
+          
+          // Force the session to be saved back to the store
+          req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
 
         try {
           // Update the user's last login time in the database
@@ -444,13 +461,24 @@ export function setupAuth(app: Express) {
         res.set('Expires', '0');
         res.set('X-Login-Timestamp', Date.now().toString());
         
-        // Return enhanced response with authentication status for debugging
-        return res.json({
-          message: "Login successful",
-          user,
-          timestamp: Date.now(),
-          authenticated: req.isAuthenticated(),
-          sessionId: req.sessionID
+        // Force session save one more time before returning
+        req.session.save((finalSaveErr) => {
+          if (finalSaveErr) {
+            console.error('Final session save error:', finalSaveErr);
+          }
+          
+          // Get the user again with the latest DB info
+          const freshUserData = { ...user, lastLogin: new Date() };
+          
+          // Return enhanced response with authentication status for debugging
+          return res.json({
+            message: "Login successful",
+            user,
+            timestamp: Date.now(),
+            authenticated: req.isAuthenticated(),
+            sessionId: req.sessionID,
+            freshUserData
+          });
         });
       });
     })(req, res, next);

@@ -1,0 +1,460 @@
+background.js:78 channel: stable
+version: 8.10.75.1
+build: 81075001 (135.0.7049.41)
+browser: Chrome (135.0.7049.41)
+os: MacOSX (15.4.0)
+background.js:78 WASM: Initializing.  Log Level: Info
+background.js:78 Performance diagnostic: "Initialize WASM" took 169.9ms to execute.
+background.js:78 Performance diagnostic: "Collect pre-registration flags" took 0.1ms to execute.
+background.js:78 Performance diagnostic: "Initialize native app connection" took 0.7ms to execute.
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2735244032>
+background.js:78 Performance diagnostic: "Unlock with context init cache" took 2.9ms to execute.
+background.js:78 👍 Finished initializing 1Password
+background.js:78 Performance diagnostic: "Initialize the extension" took 228.9ms to execute.
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3776149334>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <3776149334>
+(anonymous) @ background.js:78
+(anonymous) @ background.js:104Understand this warning
+2background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78
+loadItemCache @ background.js:118
+Gxe @ background.js:118
+(anonymous) @ background.js:118
+Fxe @ background.js:118
+AyA @ background.js:118Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <293797400>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2795029766>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+2background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78
+loadItemCache @ background.js:118
+Gxe @ background.js:118
+(anonymous) @ background.js:118
+Fxe @ background.js:118
+AyA @ background.js:118Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3305140035>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <1247184500>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+background.js:78 Could not get default saving location, resetting location.
+(anonymous) @ background.js:78
+sp @ background.js:80Understand this error
+background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78
+loadItemCache @ background.js:118
+w0 @ background.js:80
+Ave @ background.js:118Understand this warning
+background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78
+loadItemCache @ background.js:118
+rle @ background.js:80
+D0 @ background.js:80
+Zxe @ background.js:118Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3196602545>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3599779334>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <2795029766>
+(anonymous) @ background.js:78
+(anonymous) @ background.js:104Understand this warning
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <1247184500>
+(anonymous) @ background.js:78
+(anonymous) @ background.js:104Understand this warning
+Unchecked runtime.lastError: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <3599779334>
+(anonymous) @ background.js:78
+(anonymous) @ background.js:104Understand this warning
+5Unchecked runtime.lastError: The message port closed before a response was received.Understand this error
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/logout
+background.js:78 DeviceHandler: DeviceTrust is not available - aborting
+(anonymous) @ background.js:78
+YqA @ background.js:104Understand this warning
+background.js:78 Device trust is not available
+(anonymous) @ background.js:78
+Dhe @ background.js:118Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3890984141>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <1564823438>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2465658006>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3502372346>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2822248802>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2486929327>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+chunk-RPCDYKBN.js?v=e7b2193e:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:19 Google Maps API key length: 39 characters
+env.ts:48 Creating new Google Maps script tag
+background.js:78 DeviceHandler: DeviceTrust is not available - aborting
+(anonymous) @ background.js:78
+YqA @ background.js:104Understand this warning
+background.js:78 Device trust is not available
+(anonymous) @ background.js:78
+Dhe @ background.js:118Understand this warning
+RouteDebugger.tsx:13 Current route location (Wouter): /logout
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/logout
+RouteDebugger.tsx:15 Current pathname: /logout
+RouteDebugger.tsx:16 Current search: 
+RouteDebugger.tsx:13 Current route location (Wouter): /logout
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/logout
+RouteDebugger.tsx:15 Current pathname: /logout
+RouteDebugger.tsx:16 Current search: 
+logout:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+logout:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:2493 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+tga @ js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:2493
+google.maps.Load @ js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:14
+(anonymous) @ js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:2734
+(anonymous) @ js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:2734Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3734801520>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+LogoutHandler.tsx:49 Broadcast logout event to all tabs
+LogoutHandler.tsx:56 Initiating logout API call
+background.js:78 💫 Looking for desktop app com.1password.1password7
+LogoutHandler.tsx:34 Logout already in progress, preventing duplicate
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3476271140>
+App.tsx:473 Received logout event from another tab/window
+App.tsx:478 Logout already in progress, not initiating another one
+background.js:78 Received <BrowserVerificationFailed> from the native core
+LogoutHandler.tsx:79 Logout API call completed with status: 200
+LogoutHandler.tsx:114 All cookies cleared
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3149090458>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <1428573414>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/auth?logged_out=true
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <1564823438>
+(anonymous) @ background.js:78
+(anonymous) @ background.js:104Understand this warning
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <3502372346>
+(anonymous) @ background.js:78Understand this warning
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <2486929327>
+(anonymous) @ background.js:78Understand this warning
+chunk-RPCDYKBN.js?v=e7b2193e:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:19 Google Maps API key length: 39 characters
+env.ts:48 Creating new Google Maps script tag
+background.js:78 DeviceHandler: DeviceTrust is not available - aborting
+(anonymous) @ background.js:78Understand this warning
+background.js:78 Device trust is not available
+(anonymous) @ background.js:78Understand this warning
+RouteDebugger.tsx:13 Current route location (Wouter): /auth
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/auth?logged_out=true
+RouteDebugger.tsx:15 Current pathname: /auth
+RouteDebugger.tsx:16 Current search: ?logged_out=true
+RouteDebugger.tsx:21 DEBUGGING: Route /auth with logged_out=true parameter detected
+RouteDebugger.tsx:13 Current route location (Wouter): /auth
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/auth?logged_out=true
+RouteDebugger.tsx:15 Current pathname: /auth
+RouteDebugger.tsx:16 Current search: ?logged_out=true
+RouteDebugger.tsx:21 DEBUGGING: Route /auth with logged_out=true parameter detected
+js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:2493 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+tga @ js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:2493
+google.maps.Load @ js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:14
+(anonymous) @ js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:2734
+(anonymous) @ js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:2734Understand this warning
+use-auth.tsx:98 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user 401 (Unauthorized)
+queryFn @ use-auth.tsx:98
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384Understand this error
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3624014389>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <1717953992>
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <3476271140>
+(anonymous) @ background.js:78Understand this warning
+background.js:78 Received <BrowserVerificationFailed> from the native core
+App.tsx:173 Auth route accessed - params: {hasLoggedOut: true, searchParams: '?logged_out=true', urlParams: {…}}
+App.tsx:182 Setting logout message in sessionStorage
+App.tsx:173 Auth route accessed - params: {hasLoggedOut: false, searchParams: '', urlParams: {…}}
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+auth-page.tsx:44 Found logout message in session storage: You have been successfully logged out
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+/auth:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+/auth:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+App.tsx:173 Auth route accessed - params: {hasLoggedOut: false, searchParams: '', urlParams: {…}}
+App.tsx:173 Auth route accessed - params: {hasLoggedOut: false, searchParams: '', urlParams: {…}}
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <1428573414>
+(anonymous) @ background.js:78Understand this warning
+4background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2122659090>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2563994181>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+4background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2208841439>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <695558489>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+6background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <1813348777>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <1219350955>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+6background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78Understand this warning
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <1717953992>
+(anonymous) @ background.js:78Understand this warning
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <2563994181>
+(anonymous) @ background.js:78Understand this warning
+auth-page.tsx:77 Submitting login with email: bperdomo@zoho.com
+App.tsx:173 Auth route accessed - params: {hasLoggedOut: false, searchParams: '', urlParams: {…}}
+App.tsx:173 Auth route accessed - params: {hasLoggedOut: false, searchParams: '', urlParams: {…}}
+use-auth.tsx:141 Login mutation called with: bperdomo@zoho.com
+use-auth.tsx:152 Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 9}
+2background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78Understand this warning
+background.js:78 Could not get default saving location, resetting location.
+(anonymous) @ background.js:78Understand this error
+2background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2758625611>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3837687889>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+use-auth.tsx:167 Login response status: 200
+use-auth.tsx:184 Login successful, received user data: Yes
+use-auth.tsx:188 Fetching current user after login
+use-auth.tsx:189 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user 401 (Unauthorized)
+mutationFn @ use-auth.tsx:189
+await in mutationFn
+fn @ @tanstack_react-query.js?v=e7b2193e:1188
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+execute @ @tanstack_react-query.js?v=e7b2193e:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=e7b2193e:2649
+onSubmit @ auth-page.tsx:84
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449Understand this error
+use-auth.tsx:204 Failed to fetch user after login: 401
+mutationFn @ use-auth.tsx:204
+await in mutationFn
+fn @ @tanstack_react-query.js?v=e7b2193e:1188
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+execute @ @tanstack_react-query.js?v=e7b2193e:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=e7b2193e:2649
+onSubmit @ auth-page.tsx:84
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449Understand this warning
+auth-page.tsx:86 Login successful, user data: {message: 'Login successful', user: {…}, timestamp: 1747252540484, authenticated: true, sessionId: 'TTt1PfAo31MvBP6spHbRtKXvli_21gXJ'}
+auth-page.tsx:87 Login successful, user data type: object
+auth-page.tsx:88 Login successful, user data fields: (5) ['message', 'user', 'timestamp', 'authenticated', 'sessionId']
+auth-page.tsx:97 Using user object: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: 'ad75c57234238781888aadb41f9ad64caa18a890fd69db1102…4a9dd70de55b58fc.71569fdab7897339753c4858c5414bb0', firstName: 'Bryan', …}
+auth-page.tsx:107 Login successful, redirecting directly to /admin
+RouteDebugger.tsx:13 Current route location (Wouter): /admin
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+RouteDebugger.tsx:15 Current pathname: /admin
+RouteDebugger.tsx:16 Current search: 
+RoleBasedRedirect.tsx:33 RoleBasedRedirect - Current state: {isLoading: false, authState: 'authenticated', user: {…}, location: '/admin', redirectCount: 0}
+RoleBasedRedirect.tsx:50 RoleBasedRedirect - User authenticated: {isAdmin: true, currentPath: '/admin'}
+RoleBasedRedirect.tsx:63 RoleBasedRedirect checking access {path: '/admin', isAdmin: true, authState: 'authenticated', user: {…}}
+RoleBasedRedirect.tsx:104 Admin accessing admin route, ensuring authentication state
+RoleBasedRedirect.tsx:33 RoleBasedRedirect - Current state: {isLoading: false, authState: 'authenticated', user: {…}, location: '/admin', redirectCount: 0}
+RoleBasedRedirect.tsx:50 RoleBasedRedirect - User authenticated: {isAdmin: true, currentPath: '/admin'}
+RoleBasedRedirect.tsx:63 RoleBasedRedirect checking access {path: '/admin', isAdmin: true, authState: 'authenticated', user: {…}}
+RoleBasedRedirect.tsx:104 Admin accessing admin route, ensuring authentication state
+RoleBasedRedirect.tsx:33 RoleBasedRedirect - Current state: {isLoading: false, authState: 'authenticated', user: {…}, location: '/admin', redirectCount: 0}
+RoleBasedRedirect.tsx:50 RoleBasedRedirect - User authenticated: {isAdmin: true, currentPath: '/admin'}
+RoleBasedRedirect.tsx:63 RoleBasedRedirect checking access {path: '/admin', isAdmin: true, authState: 'authenticated', user: {…}}
+RoleBasedRedirect.tsx:104 Admin accessing admin route, ensuring authentication state
+use-auth.tsx:98 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user 401 (Unauthorized)
+queryFn @ use-auth.tsx:98
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:1752
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:1751
+batch @ @tanstack_react-query.js?v=e7b2193e:582
+refetchQueries @ @tanstack_react-query.js?v=e7b2193e:1750
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:1742
+batch @ @tanstack_react-query.js?v=e7b2193e:582
+invalidateQueries @ @tanstack_react-query.js?v=e7b2193e:1731
+onSuccess @ use-auth.tsx:228
+execute @ @tanstack_react-query.js?v=e7b2193e:1232
+await in execute
+mutate @ @tanstack_react-query.js?v=e7b2193e:2649
+onSubmit @ auth-page.tsx:84
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449Understand this error
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <695558489>
+(anonymous) @ background.js:78
+(anonymous) @ background.js:104Understand this warning
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <1219350955>
+(anonymous) @ background.js:78
+(anonymous) @ background.js:104Understand this warning
+background.js:78 DeviceHandler: DeviceTrust is not available - aborting
+(anonymous) @ background.js:78
+YqA @ background.js:104
+await in YqA
+Dhe @ background.js:118Understand this warning
+background.js:78 Device trust is not available
+(anonymous) @ background.js:78
+Dhe @ background.js:118Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <349822464>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <500918016>
+background.js:78 Could not get default saving location, resetting location.
+(anonymous) @ background.js:78
+sp @ background.js:80
+await in sp
+Zxe @ background.js:118
+await in Zxe
+(anonymous) @ background.js:118
+(anonymous) @ background.js:80Understand this error
+background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78
+loadItemCache @ background.js:118
+w0 @ background.js:80
+Ave @ background.js:118
+await in Ave
+Zxe @ background.js:118
+await in Zxe
+(anonymous) @ background.js:118
+(anonymous) @ background.js:80Understand this warning
+background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78
+loadItemCache @ background.js:118
+rle @ background.js:80
+D0 @ background.js:80
+Zxe @ background.js:118
+await in Zxe
+(anonymous) @ background.js:118
+(anonymous) @ background.js:80Understand this warning
+background.js:78 Received <BrowserVerificationFailed> from the native core
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3840426401>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2495582100>
+background.js:78 Received <BrowserVerificationFailed> from the native core
