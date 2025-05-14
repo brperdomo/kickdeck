@@ -29,15 +29,6 @@ export function RoleBasedRedirect() {
       return;
     }
     
-    // Enhanced logging for debugging
-    console.log("RoleBasedRedirect - Current state:", {
-      isLoading,
-      authState,
-      user,
-      location,
-      redirectCount
-    });
-
     // Don't do anything if we're still loading or in a transitional state
     if (isLoading || !user || authState === 'checking' || authState === 'logging-in' || 
         authState === 'logging-out' || authState === 'redirecting') {
@@ -58,14 +49,6 @@ export function RoleBasedRedirect() {
       console.log("RoleBasedRedirect - No user data available or unauthenticated");
       return;
     }
-
-    // Log for debugging
-    console.log("RoleBasedRedirect checking access", { 
-      path: location, 
-      isAdmin: user?.isAdmin,
-      authState,
-      user
-    });
     
     // Extract current path
     const path = location.toLowerCase();
@@ -79,13 +62,7 @@ export function RoleBasedRedirect() {
       '/auth',
       '/login',
       '/logout',
-      '/auth-logged-out',
-      '/admin-emergency',
-      '/dashboard-emergency',
-      '/emergency-access',
-      '/admin-direct',
-      '/dashboard-direct',
-      '/auth-diagnosis'
+      '/auth-logged-out'
     ];
     
     // Check if the current path matches any of the non-protected paths
@@ -94,8 +71,7 @@ export function RoleBasedRedirect() {
       return;
     }
     
-    // Handle admin routes - TEMPORARILY DISABLED for debugging
-    /*
+    // Handle admin routes
     if (path === '/admin' || path.startsWith('/admin/')) {
       if (!user.isAdmin) {
         console.log("Non-admin accessing admin route, redirecting to dashboard");
@@ -116,19 +92,8 @@ export function RoleBasedRedirect() {
         return;
       }
     }
-    */
-    
-    // Temporary solution - just set authenticated state for any route
-    console.log("EMERGENCY FIX: Allowing access to all routes for debugging");
-    if (!hasRedirected) {
-      setAuthState('authenticated');
-      setHasRedirected(true);
-    }
     
     // Handle member routes when user is an admin only
-    // TEMPORARILY DISABLED to fix login redirect issue
-    // This was causing admins to be redirected away from /dashboard after login
-    /*
     if ((path === '/dashboard' || path.startsWith('/dashboard/')) && user.isAdmin) {
       console.log("Admin accessing member route, redirecting to admin panel");
       // Set auth state to redirecting to show proper UI feedback
@@ -144,26 +109,25 @@ export function RoleBasedRedirect() {
       }, 100);
       return;
     }
-    */
     
-    // Handle root path based on role - TEMPORARILY SIMPLIFIED for debugging
+    // Handle root path based on role
     if (path === '/') {
-      // For now, always redirect to the emergency access page for diagnosis
-      console.log(`EMERGENCY FIX: Redirecting to emergency-access`);
+      const targetPath = user.isAdmin ? '/admin' : '/dashboard';
+      console.log(`User at root path, redirecting to ${targetPath}`);
       // Set auth state to redirecting to show proper UI feedback
       setAuthState('redirecting');
       setRedirectCount(prev => prev + 1);
       
-      // Force a direct navigation to the emergency access selector
+      // Force a direct navigation to the target path
       setTimeout(() => {
         // Use window.location for a more forceful navigation if needed
         if (redirectCount > 2) {
           console.log("Using window.location for forceful redirect");
-          window.location.href = '/emergency-access';
+          window.location.href = targetPath;
           return;
         }
         
-        setLocation('/emergency-access');
+        setLocation(targetPath);
         // Reset auth state after redirect is complete
         if (user) {
           setAuthState('authenticated');
