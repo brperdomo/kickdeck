@@ -206,6 +206,20 @@ export default function AuthPage() {
     );
   }
   
+  // Check if we are on the verify magic link route
+  if (location.startsWith("/auth/verify-magic-link")) {
+    return (
+      <AuthLayout>
+        <div className="min-h-screen w-full relative">
+          <AnimatedBackground type="particles" primaryColor="#3d3a98" secondaryColor="#2d2a88" speed="medium" />
+          <div className="relative z-10 flex items-center justify-center min-h-screen">
+            <MagicLinkVerify />
+          </div>
+        </div>
+      </AuthLayout>
+    );
+  }
+
   return (
     <AuthLayout>
       <div className="min-h-screen w-full relative">
@@ -234,79 +248,104 @@ export default function AuthPage() {
                     {logoutMessage}
                   </div>
                 )}
+                
+                {/* Toggle between password and magic link authentication */}
+                <div className="flex justify-center space-x-2 pt-2">
+                  <Button 
+                    variant={authMethod === "password" ? "default" : "outline"} 
+                    className="text-sm px-3 py-1 h-auto bg-white/90 hover:bg-white text-[#3d3a98] border-white/50"
+                    onClick={() => setAuthMethod("password")}
+                  >
+                    Password
+                  </Button>
+                  <Button 
+                    variant={authMethod === "magic-link" ? "default" : "outline"} 
+                    className="text-sm px-3 py-1 h-auto bg-white/90 hover:bg-white text-[#3d3a98] border-white/50"
+                    onClick={() => setAuthMethod("magic-link")}
+                  >
+                    <Mail className="h-3 w-3 mr-1" />
+                    Magic Link
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <Form {...loginForm}>
-                  <form
-                    onSubmit={loginForm.handleSubmit(onSubmit)}
-                    className="space-y-5"
-                    id="login-form"
-                    name="login"
-                    autoComplete="on"
-                  >
-                    <FormField
-                      control={loginForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base text-white">Email</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="email"
-                              autoComplete="username email"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-yellow-200" />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={loginForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-base text-white">Password</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="password"
-                              autoComplete="current-password"
-                              className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-yellow-200" />
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      className="w-full h-11 text-base bg-white hover:bg-white/90 text-[#3d3a98] font-medium transition-colors"
-                      disabled={loginMutation.isPending}
+                {authMethod === "password" ? (
+                  <Form {...loginForm}>
+                    <form
+                      onSubmit={loginForm.handleSubmit(onSubmit)}
+                      className="space-y-5"
+                      id="login-form"
+                      name="login"
+                      autoComplete="on"
                     >
-                      {loginMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Signing in...
-                        </>
-                      ) : (
-                        "Sign In"
-                      )}
-                    </Button>
+                      <FormField
+                        control={loginForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-base text-white">Email</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="email"
+                                autoComplete="username email"
+                                className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-yellow-200" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={loginForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-base text-white">Password</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                autoComplete="current-password"
+                                className="h-11 text-base px-4 bg-white/90 border-white/50 focus:border-white focus:ring-white/50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-yellow-200" />
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        type="submit"
+                        className="w-full h-11 text-base bg-white hover:bg-white/90 text-[#3d3a98] font-medium transition-colors"
+                        disabled={loginMutation.isPending}
+                      >
+                        {loginMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Signing in...
+                          </>
+                        ) : (
+                          "Sign In"
+                        )}
+                      </Button>
 
-                    <div className="mt-4 text-center">
-                      <Link to="/forgot-password" className="text-white hover:text-white/80 text-sm underline transition-colors">
-                        Forgot password?
-                      </Link>
-                      <div className="mt-1">
-                        <Link to="/register" className="text-white hover:text-white/80 text-sm underline transition-colors">
-                          Create an account
+                      <div className="mt-4 text-center">
+                        <Link to="/forgot-password" className="text-white hover:text-white/80 text-sm underline transition-colors">
+                          Forgot password?
                         </Link>
+                        <div className="mt-1">
+                          <Link to="/register" className="text-white hover:text-white/80 text-sm underline transition-colors">
+                            Create an account
+                          </Link>
+                        </div>
                       </div>
-                    </div>
-                  </form>
-                </Form>
+                    </form>
+                  </Form>
+                ) : (
+                  <div className="text-white">
+                    <MagicLinkForm onBack={() => setAuthMethod("password")} />
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
