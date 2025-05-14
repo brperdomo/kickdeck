@@ -316,11 +316,31 @@ function Router() {
           
           {/* Add a direct route to handle edge cases for admin dashboard */}
           <Route path="/admin-direct">
-            {() => (
-              <DebugErrorBoundary>
-                <AdminDashboard />
-              </DebugErrorBoundary>
-            )}
+            {() => {
+              // Check for backup auth info from session storage
+              const isAuthenticated = typeof window !== 'undefined' && 
+                sessionStorage.getItem('user_authenticated') === 'true';
+              const isAdmin = typeof window !== 'undefined' && 
+                sessionStorage.getItem('user_is_admin') === 'true';
+              
+              console.log("Admin direct route accessed", { 
+                isAuthenticated, 
+                isAdmin, 
+                timestamp: sessionStorage.getItem('admin_access_timestamp') 
+              });
+                
+              // If we have auth info and it indicates admin status, render the dashboard
+              if (isAuthenticated && isAdmin) {
+                return (
+                  <DebugErrorBoundary>
+                    <AdminDashboard />
+                  </DebugErrorBoundary>
+                );
+              }
+              
+              // Otherwise redirect to login
+              return <Redirect to="/auth" />;
+            }}
           </Route>
 
           {/* User routes - using ProtectedRoute for member-specific routes */}

@@ -475,20 +475,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Add a useEffect to synchronize with user query state
   useEffect(() => {
+    console.log("Auth state sync effect triggered", { 
+      user: !!user, 
+      isLoading,
+      authState,
+      error
+    });
+
     if (isLoading) {
       setAuthState('checking');
     } else if (user) {
-      // Only set to authenticated if we're not in a transitional state
-      if (authState !== 'logging-in' && authState !== 'redirecting' && authState !== 'logging-out') {
+      // Even if we're in a transitional state, if we have a user, we should be authenticated
+      // This prevents auth loops where the component gets stuck in a redirecting state
+      if (authState !== 'authenticated') {
+        console.log("Setting authState to authenticated because we have a user");
         setAuthState('authenticated');
       }
     } else if (!user && !isLoading) {
-      // Only set to unauthenticated if we're not in a transitional state
-      if (authState !== 'logging-in' && authState !== 'redirecting' && authState !== 'logging-out') {
+      // Only set to unauthenticated if we're not in a transitional state or if there's an auth error
+      if (authState !== 'logging-in' && (error || authState !== 'redirecting') && authState !== 'logging-out') {
+        console.log("Setting authState to unauthenticated", { error });
         setAuthState('unauthenticated');
       }
     }
-  }, [user, isLoading, authState]);
+  }, [user, isLoading, authState, error]);
 
   return (
     <AuthContext.Provider

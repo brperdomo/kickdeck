@@ -167,9 +167,27 @@ export function RoleBasedRedirect() {
         hasRedirected
       });
       
-      // Force a refresh of the current route
+      // Force a refresh of the current route with stronger measures
       setAuthState('authenticated');
       setHasRedirected(true);
+      
+      // Additional fail-safe: if on admin route but not showing content, try direct navigation
+      if (path === '/admin' && redirectCount > 2) {
+        console.log("Multiple redirect attempts detected, trying force reload");
+        
+        // Store authentication state in session storage as backup
+        try {
+          sessionStorage.setItem('user_authenticated', 'true');
+          sessionStorage.setItem('user_is_admin', user.isAdmin ? 'true' : 'false');
+          sessionStorage.setItem('admin_access_timestamp', Date.now().toString());
+        } catch (e) {
+          console.warn('Failed to store auth backup in sessionStorage', e);
+        }
+        
+        // Use window.location for a hard reload to the admin dashboard
+        window.location.href = "/admin-direct";
+        return;
+      }
     }
     
   }, [user, isLoading, authState, location, setLocation, redirectCount, setAuthState, hasRedirected]);
