@@ -11,8 +11,10 @@ require('dotenv').config();
 
 const { Pool } = require('pg');
 const crypto = require('crypto');
-const { createMagicLinkTemplateIfNotExists } = require('./check-email-templates');
-const { sendEmail } = require('./server/services/emailService');
+const { createMagicLinkTemplateIfNotExists } = require('./check-email-templates.cjs');
+// Cannot directly require TypeScript modules in CommonJS
+// Instead we'll use direct database and SendGrid operations
+const { MailService } = require('@sendgrid/mail');
 
 // Database connection
 const pool = new Pool({
@@ -85,52 +87,84 @@ async function sendMagicLinkEmail(user, token) {
     console.log(`- Type: ${userType}`);
     console.log(`- Magic Link URL: ${magicLinkUrl}`);
 
-    // Try to send with template first
-    try {
-      const result = await sendEmail({
-        to: user.email,
-        from: 'support@matchpro.ai',
-        templateType: 'magic_link',
+    // Get template from database
+    const templateResult = await pool.query(
+      'SELECT * FROM email_templates WHERE type = $1 AND is_active = true',
+      ['magic_link']
+    );
+    
+    let emailTemplate;
+    if (templateResult.rows.length > 0) {
+      console.log('Found magic_link template in database');
+      emailTemplate = templateResult.rows[0];
+    } else {
+      console.log('No magic_link template found, using fallback');
+      emailTemplate = {
         subject: 'Your MatchPro Login Link',
-        variables: {
-          firstName,
-          userType,
-          magicLinkUrl,
-          expiryMinutes: String(TOKEN_EXPIRY_MINUTES),
-        },
-      });
-      
-      console.log('Email sending result:', result);
-      return result.success;
-    } catch (templateError) {
-      console.warn('Failed to send templated magic link email, falling back to inline HTML:', templateError);
-      
-      // Fallback to inline HTML if template sending fails
-      const fallbackResult = await sendEmail({
-        to: user.email,
-        from: 'support@matchpro.ai',
-        subject: 'Your MatchPro Login Link',
-        html: `
+        content: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h1 style="color: #333; text-align: center;">MatchPro Login Link</h1>
-            <p>Hello ${firstName},</p>
-            <p>You requested a secure login link for your MatchPro ${userType} account. Click the button below to log in:</p>
+            <p>Hello {{firstName}},</p>
+            <p>You requested a secure login link for your MatchPro {{userType}} account. Click the button below to log in:</p>
             <div style="text-align: center; margin: 30px 0;">
-              <a href="${magicLinkUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+              <a href="{{magicLinkUrl}}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
                 Log In Securely
               </a>
             </div>
-            <p style="color: #666; font-size: 14px;">This link will expire in ${TOKEN_EXPIRY_MINUTES} minutes and can only be used once.</p>
+            <p style="color: #666; font-size: 14px;">This link will expire in {{expiryMinutes}} minutes and can only be used once.</p>
             <p style="color: #666; font-size: 14px;">If you didn't request this link, you can safely ignore this email.</p>
           </div>
         `,
-      });
-
-      console.log('Fallback email sending result:', fallbackResult);
-      return fallbackResult.success;
+        senderName: 'MatchPro',
+        senderEmail: 'support@matchpro.ai'
+      };
     }
+    
+    // Initialize SendGrid
+    const mailService = new MailService();
+    if (!process.env.SENDGRID_API_KEY) {
+      throw new Error('SENDGRID_API_KEY environment variable is not set');
+    }
+    mailService.setApiKey(process.env.SENDGRID_API_KEY);
+    
+    // Prepare template variables
+    const context = {
+      firstName,
+      userType,
+      magicLinkUrl,
+      expiryMinutes: String(TOKEN_EXPIRY_MINUTES)
+    };
+    
+    // Render template with variables
+    let subject = emailTemplate.subject;
+    let html = emailTemplate.content;
+    
+    // Replace template variables
+    Object.keys(context).forEach(key => {
+      const regex = new RegExp(`{{${key}}}`, 'g');
+      subject = subject.replace(regex, context[key]);
+      html = html.replace(regex, context[key]);
+    });
+    
+    // Send email with SendGrid
+    const message = {
+      to: user.email,
+      from: `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`,
+      subject,
+      html,
+      text: html.replace(/<[^>]*>/g, '') // Simple HTML to text conversion
+    };
+    
+    console.log('Sending email with SendGrid...');
+    const response = await mailService.send(message);
+    console.log('SendGrid response:', response[0].statusCode);
+    
+    return response[0].statusCode >= 200 && response[0].statusCode < 300;
   } catch (error) {
     console.error('Error sending magic link email:', error);
+    if (error.response && error.response.body) {
+      console.error('SendGrid API error details:', error.response.body);
+    }
     return false;
   }
 }
