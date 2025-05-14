@@ -240,8 +240,6 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
 
 /**
  * Sends a templated email using a specific template type
- * If the template has a SendGrid template ID, it will use SendGrid dynamic templates.
- * Otherwise, it will render the template locally and send it as a regular email.
  */
 export async function sendTemplatedEmail(
   to: string,
@@ -263,44 +261,22 @@ export async function sendTemplatedEmail(
     }
     
     try {
-      // Check if we should use SendGrid Dynamic Templates
-      if (emailTemplate.sendgridTemplateId) {
-        console.log(`Using SendGrid dynamic template for ${templateType} (ID: ${emailTemplate.sendgridTemplateId})`);
-        
-        const fromEmail = `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`;
-        
-        // Use SendGrid dynamic template
-        const result = await sendgridService.sendDynamicTemplateEmail({
-          to,
-          from: fromEmail,
-          templateId: emailTemplate.sendgridTemplateId,
-          dynamicTemplateData: context
-        });
-        
-        if (result) {
-          console.log(`SendGrid dynamic template email (${templateType}) sent to ${to}`);
-        } else {
-          throw new Error(`Failed to send SendGrid dynamic template email to ${to}`);
-        }
-      } else {
-        // Use regular template rendering
-        const subject = renderTemplate(emailTemplate.subject, context) || 'Notification';
-        let html = renderTemplate(emailTemplate.content, context);
-        
-        // Ensure html is never empty or undefined
-        if (!html || html.trim() === '') {
-          html = '<p>You have received a notification from MatchPro. Please check your account for more information.</p>';
-        }
-        
-        await sendEmail({
-          to,
-          subject,
-          html,
-          from: `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`
-        });
-        
-        console.log(`Templated email (${templateType}) sent to ${to}`);
+      const subject = renderTemplate(emailTemplate.subject, context) || 'Notification';
+      let html = renderTemplate(emailTemplate.content, context);
+      
+      // Ensure html is never empty or undefined
+      if (!html || html.trim() === '') {
+        html = '<p>You have received a notification from MatchPro. Please check your account for more information.</p>';
       }
+      
+      await sendEmail({
+        to,
+        subject,
+        html,
+        from: `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`
+      });
+      
+      console.log(`Templated email (${templateType}) sent to ${to}`);
     } catch (renderError) {
       console.error(`Error rendering or sending email (${templateType}):`, renderError);
       // Don't throw here, even in development, to prevent API failures
@@ -336,8 +312,7 @@ function createFallbackTemplate(templateType: string, context: TemplateContext, 
       senderEmail: "support@matchpro.ai",
       isActive: true,
       type: templateType,
-      providerId: null,
-      sendgridTemplateId: null
+      providerId: null
     };
   } else {
     // In production, use a generic professional template
@@ -356,9 +331,55 @@ function createFallbackTemplate(templateType: string, context: TemplateContext, 
       senderEmail: "support@matchpro.ai",
       isActive: true,
       type: templateType,
-      providerId: null,
-      sendgridTemplateId: null
+      providerId: null
     };
+  }
+}
+
+/**
+ * Sends a password reset email
+ */
+export async function sendPasswordResetEmail(
+  to: string,
+  resetToken: string,
+  username: string
+): Promise<void> {
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+  
+  try {
+    // In production, always use the PRODUCTION_URL env var or the fallback production domain
+    // In development, use APP_URL or Replit domain
+    let appUrl: string;
+    
+    if (isDevelopment) {
+      // Development environment - use local domain
+      appUrl = process.env.APP_URL || `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
+      console.log(`Using development URL for password reset: ${appUrl}`);
+    } else {
+      // Production environment - use production domain
+      appUrl = process.env.PRODUCTION_URL || process.env.APP_URL || 'https://matchpro.ai';
+      console.log(`Using production URL for password reset: ${appUrl}`);
+    }
+    
+    const resetUrl = `${appUrl}/reset-password?token=${resetToken}`;
+    
+    await sendTemplatedEmail(to, 'password_reset', {
+      username,
+      resetUrl,
+      token: resetToken,
+      expiryHours: 24, // Token validity period
+    });
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+    
+    if (isDevelopment) {
+      // Rethrow errors in development mode for easier debugging
+      throw error;
+    }
+    
+    // In production, log error but don't crash the application
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`Failed to send password reset email to ${to}: ${errorMessage}`);
   }
 }
 
@@ -456,38 +477,4 @@ export async function sendRegistrationReceiptEmail(
   }
 }
 
-/**
- * Sends a password reset email
- */
-export async function sendPasswordResetEmail(
-  to: string,
-  resetToken: string,
-  username: string
-): Promise<void> {
-  const isDevelopment = process.env.NODE_ENV !== 'production';
-  
-  try {
-    const appUrl = getAppUrl(isDevelopment);
-    console.log(`Using URL for password reset: ${appUrl}`);
-    
-    const resetUrl = `${appUrl}/reset-password?token=${resetToken}`;
-    
-    await sendTemplatedEmail(to, 'password_reset', {
-      username,
-      resetUrl,
-      token: resetToken,
-      expiryHours: 24, // Token validity period
-    });
-  } catch (error) {
-    console.error('Error sending password reset email:', error);
-    
-    if (isDevelopment) {
-      // Rethrow errors in development mode for easier debugging
-      throw error;
-    }
-    
-    // In production, log error but don't crash the application
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`Failed to send password reset email to ${to}: ${errorMessage}`);
-  }
-}
+// Password reset email function is defined above
