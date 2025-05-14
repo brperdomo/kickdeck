@@ -101,50 +101,97 @@ export async function sendMagicLinkEmail(
     const userType = user.isAdmin ? 'Administrator' : 'Member';
     const magicLinkUrl = `${baseUrl}/auth/verify-magic-link?token=${token}`;
 
-    // Try to send with template
-    try {
+    // Get template from database
+    const [emailTemplate] = await db
+      .select()
+      .from(emailTemplates)
+      .where(
+        and(
+          eq(emailTemplates.type, 'magic_link'),
+          eq(emailTemplates.isActive, true)
+        )
+      )
+      .limit(1);
+      
+    // Prepare template variables
+    const variables = {
+      firstName,
+      userType,
+      magicLinkUrl,
+      expiryMinutes: String(TOKEN_EXPIRY_MINUTES),
+    };
+    
+    if (emailTemplate) {
+      console.log('Found magic_link template in database');
+      
+      // Try to send with SendGrid template if configured
+      if (emailTemplate.sendgridTemplateId) {
+        try {
+          const result = await sendEmail({
+            to: email,
+            from: `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`,
+            templateType: 'magic_link',
+            subject: emailTemplate.subject,
+            variables,
+          });
+          
+          console.log('Sent magic link email using SendGrid template');
+          return result.success;
+        } catch (err) {
+          console.error('Error sending with SendGrid template:', err);
+          // Will fall through to inline template
+        }
+      }
+      
+      // Use inline template with variable replacement
+      let html = emailTemplate.content;
+      let subject = emailTemplate.subject;
+      
+      // Replace template variables
+      Object.entries(variables).forEach(([key, value]) => {
+        const regex = new RegExp(`{{${key}}}`, 'g');
+        subject = subject.replace(regex, String(value));
+        html = html.replace(regex, String(value));
+      });
+      
       const result = await sendEmail({
         to: email,
-        from: 'support@matchpro.ai',
-        templateType: 'magic_link',
-        subject: 'Your MatchPro Login Link',
-        variables: {
-          firstName,
-          userType,
-          magicLinkUrl,
-          expiryMinutes: String(TOKEN_EXPIRY_MINUTES),
-        },
+        from: `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`,
+        subject,
+        html,
       });
       
       return result.success;
-    } catch (templateError) {
-      console.warn('Failed to send templated magic link email, falling back to inline HTML:', templateError);
-      
-      // Fallback to inline HTML if template sending fails
-      const fallbackResult = await sendEmail({
-        to: email,
-        from: 'support@matchpro.ai',
-        subject: 'Your MatchPro Login Link',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h1 style="color: #333; text-align: center;">MatchPro Login Link</h1>
-            <p>Hello ${firstName},</p>
-            <p>You requested a secure login link for your MatchPro ${userType} account. Click the button below to log in:</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${magicLinkUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
-                Log In Securely
-              </a>
-            </div>
-            <p style="color: #666; font-size: 14px;">This link will expire in ${TOKEN_EXPIRY_MINUTES} minutes and can only be used once.</p>
-            <p style="color: #666; font-size: 14px;">If you didn't request this link, you can safely ignore this email.</p>
+    } 
+    
+    // Fallback to inline HTML if no template found
+    console.warn('No magic_link template found, using fallback');
+    const fallbackResult = await sendEmail({
+      to: email,
+      from: 'MatchPro <support@matchpro.ai>',
+      subject: 'Your MatchPro Login Link',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h1 style="color: #333; text-align: center;">MatchPro Login Link</h1>
+          <p>Hello ${firstName},</p>
+          <p>You requested a secure login link for your MatchPro ${userType} account. Click the button below to log in:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${magicLinkUrl}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+              Log In Securely
+            </a>
           </div>
-        `,
-      });
+          <p style="color: #666; font-size: 14px;">This link will expire in ${TOKEN_EXPIRY_MINUTES} minutes and can only be used once.</p>
+          <p style="color: #666; font-size: 14px;">If you didn't request this link, you can safely ignore this email.</p>
+        </div>
+      `,
+    });
 
-      return fallbackResult.success;
-    }
+    return fallbackResult.success;
   } catch (error) {
     console.error('Error sending magic link email:', error);
+    if (error.response && error.response.body) {
+      console.error('SendGrid API error details:', error.response.body);
+    }
     return false;
   }
 }
