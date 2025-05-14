@@ -1,17 +1,17 @@
-import { pgTable, serial, integer, varchar, timestamp, boolean } from 'drizzle-orm/pg-core';
-import { users } from '../schema';
+import { pgTable, serial, integer, text, timestamp, boolean } from 'drizzle-orm/pg-core';
+import { users } from '@db/schema';
 
 /**
  * Schema for magic link authentication tokens
  */
 export const magicLinkTokens = pgTable('magic_link_tokens', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => users.id).notNull(),
-  token: varchar('token', { length: 100 }).notNull().unique(),
+  userId: integer('user_id').notNull().references(() => users.id),
+  token: text('token').notNull().unique(),
   expiresAt: timestamp('expires_at').notNull(),
-  createdAt: timestamp('created_at').notNull(),
-  isUsed: boolean('is_used').default(false).notNull(),
+  used: boolean('used').default(false),
   usedAt: timestamp('used_at'),
-  userAgent: varchar('user_agent', { length: 255 }),
-  ipAddress: varchar('ip_address', { length: 45 })
+  userAgent: text('user_agent'),
+  ipAddress: text('ip_address'),
+  createdAt: timestamp('created_at').defaultNow(),
 });
