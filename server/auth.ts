@@ -150,33 +150,40 @@ export async function createCoachAccount(
 }
 
 export function setupAuth(app: Express) {
+  // Use a more reliable session store configuration
   const MemoryStore = createMemoryStore(session);
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "matchpro-persistent-session-secret-key",
-    resave: true, // Changed to true to ensure session is saved on every request
-    saveUninitialized: false,
+    resave: true, // Set to true to ensure session is saved on every request
+    saveUninitialized: true, // Changed to true to save uninitialized sessions
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for longer sessions
       httpOnly: true,
       sameSite: 'lax',
       path: '/',
-      secure: app.get("env") === "production" // Only set secure in production
+      secure: false // Disabled secure for development to fix cookie issues
     },
     store: new MemoryStore({
       checkPeriod: 86400000, // 24 hours cleanup interval
-      // Increased max size for better performance
-      max: 1000,
-      // Don't refresh/ping inactive sessions in the background
-      stale: false
+      max: 5000, // Increased max size for better performance
+      stale: false, // Don't refresh/ping inactive sessions in the background
+      ttl: 86400000 * 30 // 30 days TTL to match cookie maxAge
     }),
     rolling: true, // Reset expiration countdown on every response
     unset: 'destroy' // Immediately destroy when unset
   };
 
-  if (app.get("env") === "production") {
-    app.set("trust proxy", 1);
-    // No need to set cookie.secure here as we've already set it conditionally above
-  }
+  // Trust proxy for all environments, not just production
+  app.set("trust proxy", 1);
+  
+  // Log session settings for debugging
+  console.log("Session configuration:", {
+    resave: sessionSettings.resave,
+    saveUninitialized: sessionSettings.saveUninitialized,
+    cookieSecure: sessionSettings.cookie?.secure,
+    rolling: sessionSettings.rolling,
+    environment: app.get("env")
+  });
 
   app.use(session(sessionSettings));
   app.use(passport.initialize());
@@ -184,6 +191,15 @@ export function setupAuth(app: Express) {
   
   // Add emulation middleware after the passport middleware
   app.use(emulationMiddleware);
+
+  // Add debug middleware to log authentication status on each request
+  app.use((req, res, next) => {
+    // Only log API endpoints to reduce noise
+    if (req.path.startsWith('/api/') && !req.path.includes('assets')) {
+      console.log(`[Auth Debug] ${req.method} ${req.path} - Authenticated: ${req.isAuthenticated()} - Session ID: ${req.sessionID}`);
+    }
+    next();
+  });
 
   passport.use(
     new LocalStrategy({ 
