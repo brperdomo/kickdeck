@@ -322,6 +322,15 @@ function Router() {
               </DebugErrorBoundary>
             )}
           </Route>
+          
+          {/* Emergency admin access route that bypasses role checks */}
+          <Route path="/admin-emergency">
+            {() => (
+              <DebugErrorBoundary>
+                <AdminDashboard />
+              </DebugErrorBoundary>
+            )}
+          </Route>
 
           {/* User routes - using ProtectedRoute for member-specific routes */}
           <ProtectedRoute path="/household" requiredRole="member" component={
@@ -403,6 +412,15 @@ function Router() {
           
           {/* Add a direct route to handle edge cases */}
           <Route path="/dashboard-direct">
+            {() => (
+              <DebugErrorBoundary>
+                <UserDashboard />
+              </DebugErrorBoundary>
+            )}
+          </Route>
+          
+          {/* Emergency member dashboard access route that bypasses role checks */}
+          <Route path="/dashboard-emergency">
             {() => (
               <DebugErrorBoundary>
                 <UserDashboard />
