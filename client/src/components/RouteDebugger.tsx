@@ -1,28 +1,36 @@
-import { useEffect } from 'react';
 import { useLocation } from 'wouter';
+import { useEffect } from 'react';
 
-/**
- * A component that logs information about the current route
- * Helps debug routing issues with Wouter
- */
-export function RouteDebugger() {
+type RouteDebuggerProps = {
+  enableConsoleLog?: boolean;
+};
+
+// A debug component to show current route information
+// Place this in any component to see route details
+export function RouteDebugger({ enableConsoleLog = true }: RouteDebuggerProps) {
   const [location] = useLocation();
   
   useEffect(() => {
-    // Use these to troubleshoot routing issues
-    console.log('Current route location (Wouter):', location);
-    console.log('Current URL:', window.location.href);
-    console.log('Current pathname:', window.location.pathname);
-    console.log('Current search:', window.location.search);
-    
-    // This is specific to our issue
-    if (location === '/auth') {
-      if (window.location.search.includes('logged_out=true')) {
-        console.log('DEBUGGING: Route /auth with logged_out=true parameter detected');
-      }
+    if (enableConsoleLog) {
+      console.log("Current route location (Wouter):", location);
+      console.log("Current URL:", window.location.href);
+      console.log("Current pathname:", window.location.pathname);
+      console.log("Current search:", window.location.search);
     }
-  }, [location]);
+  }, [location, enableConsoleLog]);
   
-  // This component doesn't render anything
-  return null;
+  return (
+    <div className="fixed bottom-2 left-2 bg-black/80 text-white p-2 rounded text-xs z-50 max-w-sm">
+      <p><strong>Route:</strong> {location}</p>
+      <p><strong>Path:</strong> {window.location.pathname}</p>
+      <p><strong>Auth:</strong> {sessionStorage.getItem('user_authenticated') ? 'Yes' : 'No'}</p>
+      <p><strong>Admin:</strong> {sessionStorage.getItem('user_is_admin') ? 'Yes' : 'No'}</p>
+      <button 
+        onClick={() => window.location.href = '/admin-emergency'} 
+        className="mt-1 bg-red-500 hover:bg-red-600 p-1 rounded text-white text-xs"
+      >
+        Emergency Admin
+      </button>
+    </div>
+  );
 }

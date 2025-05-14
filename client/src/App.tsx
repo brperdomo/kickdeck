@@ -19,6 +19,7 @@ import AuthLoggedOut from "@/pages/auth-logged-out";
 import AdminDashboard from "@/pages/admin-dashboard";
 import StandaloneAdmin from "@/pages/standalone-admin";
 import DirectAdminViewer from "@/pages/direct-admin-viewer";
+import EmergencyAdmin from "@/pages/emergency-admin";
 import CreateEvent from "@/pages/create-event";
 import CouponManagement from "@/pages/coupon-management";
 import AccountingCodeManagement from "@/pages/accounting-code-management";
@@ -316,9 +317,9 @@ function Router() {
             </DebugErrorBoundary>
           } />
           
-          {/* Emergency admin access with minimal dependencies */}
-          <Route path="/admin-direct">
-            {() => <DirectAdminViewer />}
+          {/* Super-simple emergency admin access route with direct login */}
+          <Route path="/admin-emergency">
+            {() => <EmergencyAdmin />}
           </Route>
 
           {/* User routes - using ProtectedRoute for member-specific routes */}

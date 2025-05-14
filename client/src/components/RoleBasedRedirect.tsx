@@ -80,7 +80,8 @@ export function RoleBasedRedirect() {
       '/login',
       '/logout',
       '/auth-logged-out',
-      '/admin-direct'  // Add standalone admin path to bypass redirection
+      '/admin-direct',  // Add standalone admin path to bypass redirection
+      '/admin-emergency'  // Add emergency admin path to bypass redirection
     ];
     
     // Check if the current path matches any of the non-protected paths

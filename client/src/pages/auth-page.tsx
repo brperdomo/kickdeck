@@ -128,15 +128,16 @@ export default function AuthPage() {
       // Set cookie to avoid 401 errors on page load
       document.cookie = "is_authenticated=true; path=/";
       
-      // Use standalone admin for admins to completely bypass auth hooks
-      const targetPath = isAdmin ? '/admin-direct' : '/dashboard';
+      // Use emergency admin for admins to avoid all authentication issues
+      const targetPath = isAdmin ? '/admin-emergency' : '/dashboard';
       console.log(`Login successful, redirecting to ${targetPath}`);
       
       // Set session storage markers to help with auth fallbacks
       if (isAdmin) {
-        // Store auth state for standalone admin component
+        // Store auth state for emergency admin component
         sessionStorage.setItem('user_authenticated', 'true');
         sessionStorage.setItem('user_is_admin', 'true');
+        sessionStorage.setItem('admin_login_time', Date.now().toString());
         console.log("Stored auth info in session storage");
       }
       
