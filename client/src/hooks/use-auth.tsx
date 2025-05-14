@@ -103,6 +103,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log("AUTH DEBUG: Fetching user data");
         const response = await fetch("/api/user", {
           credentials: "include", // Important for cookie-based auth
+          headers: {
+            // Add a cache-busting query parameter
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache"
+          }
         });
 
         if (!response.ok) {
@@ -122,7 +127,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw error;
       }
     },
-    staleTime: 60 * 1000, // 1 minute
+    staleTime: 1000, // 1 second - more aggressive refresh
+    refetchOnWindowFocus: true, // Refetch when window gains focus
     retry: 1, // Only retry once to avoid excessive retries on auth failures
   });
 
