@@ -10,7 +10,8 @@ const fetch = require('node-fetch');
 
 const BASE_URL = 'http://localhost:5000/api';
 const TEST_EMAIL = 'markeconnelly@gmail.com'; // Use an existing user email
-let savedToken;
+// For testing, we'll use a known token from the database
+let savedToken = '05e4f42aa267d22aed9ba26460dd1ae5a52944531078718ffe9997d18416cb0a';
 
 // Helper function for API requests
 async function apiRequest(endpoint, method = 'GET', body = null) {
@@ -69,11 +70,12 @@ async function testVerifyMagicLink() {
     return false;
   }
   
-  const { status, data } = await apiRequest('/auth/magic-link/verify', 'POST', { token: savedToken });
+  const { status, data } = await apiRequest(`/auth/magic-link/verify?token=${savedToken}`, 'GET');
   
   if (status === 200 && data.success) {
     console.log('✅ Magic link verification successful');
-    console.log(`User authenticated: ${data.userId}`);
+    console.log(`User authenticated: ${data.user.id}`);
+    console.log(`Redirect to: ${data.redirectTo}`);
     return true;
   } else {
     console.error('❌ Magic link verification failed:', data);
