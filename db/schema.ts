@@ -3,6 +3,9 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
 
+// Just import the modules directly where needed, no circular references
+import { magicLinkTokens } from './schema/magicLink';
+
 export const clubs = pgTable("clubs", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
