@@ -307,15 +307,43 @@ function Router() {
               <AdminDashboard initialView="settings" />
             </DebugErrorBoundary>
           } />
-          {/* We'll enhance the main dashboard with animations directly */}
+          {/* Use the fixed admin dashboard for the main admin route */}
           <ProtectedRoute path="/admin" requiredRole="admin" component={
             <DebugErrorBoundary>
-              <AdminDashboard />
+              {/* Import and use the fixed admin dashboard that's known to work with auth */}
+              {(() => {
+                const FixedAdminDashboard = lazy(() => import('@/pages/fixed-admin-dashboard'));
+                return (
+                  <Suspense fallback={
+                    <div className="flex items-center justify-center min-h-screen">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  }>
+                    <FixedAdminDashboard />
+                  </Suspense>
+                );
+              })()}
             </DebugErrorBoundary>
           } />
           
           {/* Add a direct route to handle edge cases for admin dashboard */}
           <Route path="/admin-direct">
+            {() => {
+              const FixedDashboard = lazy(() => import('@/pages/fixed-admin-dashboard'));
+              return (
+                <Suspense fallback={
+                  <div className="flex items-center justify-center min-h-screen">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                }>
+                  <FixedDashboard />
+                </Suspense>
+              );
+            }}
+          </Route>
+          
+          {/* Legacy admin route for compatibility */}
+          <Route path="/admin-legacy">
             {() => (
               <DebugErrorBoundary>
                 <AdminDashboard />
