@@ -23,10 +23,19 @@ function AdminDirectDashboard() {
   const { setAppearance, currentAppearance } = useTheme();
   const [theme, setTheme] = useState(currentAppearance);
   
+  // State for tracking the authentication status
+  const [authStatus, setAuthStatus] = useState({
+    checked: false,
+    isAuthenticated: false,
+    adminEmail: '',
+    isAdmin: false
+  });
+  
   // Attempt to fetch admin status on component mount
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
+        console.log('Checking authentication status for direct dashboard...');
         const response = await fetch('/api/user', {
           credentials: 'include',
           headers: {
@@ -34,15 +43,42 @@ function AdminDirectDashboard() {
           }
         });
         
+        if (!response.ok) {
+          console.log('Direct dashboard: Not authenticated (status code: ' + response.status + ')');
+          setAuthStatus({
+            checked: true,
+            isAuthenticated: false,
+            adminEmail: '',
+            isAdmin: false
+          });
+          return;
+        }
+        
         const data = await response.json();
         
-        if (!response.ok || !data || !data.isAdmin) {
-          console.log('Direct dashboard: Not authenticated as admin, showing anyway');
+        if (!data || !data.isAdmin) {
+          console.log('Direct dashboard: Authenticated but not as admin, showing anyway');
+          setAuthStatus({
+            checked: true,
+            isAuthenticated: true,
+            adminEmail: data?.email || '',
+            isAdmin: false
+          });
         } else {
           console.log('Direct dashboard: Authenticated as admin', data.email);
+          setAuthStatus({
+            checked: true,
+            isAuthenticated: true,
+            adminEmail: data.email,
+            isAdmin: true
+          });
         }
       } catch (error) {
         console.error('Error checking auth status:', error);
+        setAuthStatus(prev => ({
+          ...prev,
+          checked: true
+        }));
       }
     };
     
@@ -266,6 +302,35 @@ function AdminDirectDashboard() {
                     You are viewing the admin dashboard in development mode through the direct access route.
                     This bypasses regular authentication checks for testing purposes.
                   </p>
+                  {authStatus.checked && (
+                    <div className="mt-2 p-2 bg-white/50 rounded border border-yellow-100">
+                      <h4 className="font-medium">Session Status:</h4>
+                      <ul className="mt-1 text-sm">
+                        <li>
+                          <strong>Authentication:</strong> {authStatus.isAuthenticated 
+                            ? <span className="text-green-600">Authenticated</span> 
+                            : <span className="text-red-600">Not Authenticated</span>}
+                        </li>
+                        {authStatus.isAuthenticated && (
+                          <>
+                            <li><strong>Email:</strong> {authStatus.adminEmail}</li>
+                            <li>
+                              <strong>Admin Status:</strong> {authStatus.isAdmin 
+                                ? <span className="text-green-600">Admin</span> 
+                                : <span className="text-orange-500">Not Admin</span>}
+                            </li>
+                          </>
+                        )}
+                      </ul>
+                      {!authStatus.isAuthenticated && (
+                        <div className="mt-2">
+                          <Button size="sm" onClick={() => window.location.href = "/dev-auth"}>
+                            Go to Dev Auth
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 
                 <h3 className="text-lg font-medium mb-3">Quick Links</h3>

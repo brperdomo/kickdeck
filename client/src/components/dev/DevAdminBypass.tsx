@@ -58,14 +58,24 @@ export default function DevAdminBypass() {
         throw new Error(await response.text() || 'Failed to bypass authentication');
       }
 
+      const result = await response.json();
+      console.log('Dev login success:', result);
+      
+      // Force a new check for the user state
+      await fetch('/api/user', {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-cache'
+      });
+      
       // Successfully bypassed login
       toast({
         title: 'Dev mode activated',
         description: 'You are now logged in as an admin in development mode.',
       });
 
-      // Redirect to the direct admin dashboard
-      setLocation('/admin-direct');
+      // Using window.location for a hard redirect to ensure session picks up
+      window.location.href = '/admin-direct';
     } catch (err) {
       console.error('Dev login bypass error:', err);
       setError(err instanceof Error ? err.message : 'Failed to bypass authentication');
@@ -101,11 +111,19 @@ export default function DevAdminBypass() {
       }
 
       const data = await response.json();
+      console.log('Standard login success:', data);
       
       // Check if the user is an admin
       if (!data.isAdmin) {
         throw new Error('This user does not have administrator privileges');
       }
+      
+      // Force a new check for the user state
+      await fetch('/api/user', {
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-cache'
+      });
 
       // Successfully logged in
       toast({
@@ -113,8 +131,8 @@ export default function DevAdminBypass() {
         description: 'You have been successfully authenticated as an admin.',
       });
 
-      // Redirect to admin dashboard
-      setLocation('/admin');
+      // Using window.location for a hard redirect to ensure session picks up
+      window.location.href = '/admin';
     } catch (err) {
       console.error('Login error:', err);
       setError(err instanceof Error ? err.message : 'Authentication failed');

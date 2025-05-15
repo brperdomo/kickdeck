@@ -1,0 +1,103 @@
+background.js:78 using deprecated parameters for the initialization function; pass a single object instead
+(anonymous) @ background.js:78Understand this warning
+background.js:78 channel: stable
+version: 8.10.75.1
+build: 81075001 (135.0.7049.41)
+browser: Chrome (135.0.7049.41)
+os: MacOSX (15.4.0)
+background.js:78 WASM: Initializing.  Log Level: Info
+background.js:78 Performance diagnostic: "Initialize WASM" took 36.9ms to execute.
+background.js:78 Performance diagnostic: "Collect pre-registration flags" took 0.1ms to execute.
+background.js:78 Performance diagnostic: "Initialize native app connection" took 1.3ms to execute.
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2243614261>
+background.js:78 Performance diagnostic: "Unlock with context init cache" took 3.3ms to execute.
+background.js:78 👍 Finished initializing 1Password
+background.js:78 Performance diagnostic: "Initialize the extension" took 77.3ms to execute.
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2782017311>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <2782017311>
+(anonymous) @ background.js:78Understand this warning
+Unchecked runtime.lastError: The message port closed before a response was received.Understand this error
+chunk-RPCDYKBN.js?v=e7b2193e:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:19 Google Maps API key length: 39 characters
+env.ts:48 Creating new Google Maps script tag
+background.js:78 DeviceHandler: DeviceTrust is not available - aborting
+(anonymous) @ background.js:78Understand this warning
+background.js:78 Device trust is not available
+(anonymous) @ background.js:78Understand this warning
+RouteDebugger.tsx:13 Current route location (Wouter): /dev-auth
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/dev-auth
+RouteDebugger.tsx:15 Current pathname: /dev-auth
+RouteDebugger.tsx:16 Current search: 
+RouteDebugger.tsx:13 Current route location (Wouter): /dev-auth
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/dev-auth
+RouteDebugger.tsx:15 Current pathname: /dev-auth
+RouteDebugger.tsx:16 Current search: 
+dev-auth:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+dev-auth:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:2493 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+tga @ js?key=AIzaSyDDYxDyyvGl9oqdl8OmSuo4980WURTA0Bg&libraries=places,marker&callback=Function.prototype&v=beta:2493Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2201791902>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <1659597441>
+api/user:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+2AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+background.js:78 Received <BrowserVerificationFailed> from the native core
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <2305200695>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3532459501>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+RouteDebugger.tsx:13 Current route location (Wouter): /admin-direct
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin-direct
+RouteDebugger.tsx:15 Current pathname: /admin-direct
+RouteDebugger.tsx:16 Current search: 
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <746288510>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3313619021>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3186125395>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <1048189935>
+background.js:78 Received <BrowserVerificationFailed> from the native core
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <1659597441>
+(anonymous) @ background.js:78Understand this warning
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <3532459501>
+(anonymous) @ background.js:78Understand this warning
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <3313619021>
+(anonymous) @ background.js:78Understand this warning
+background.js:78 ⏳ Timeout waiting for response to <NmRequestAccounts> from native core <1048189935>
+(anonymous) @ background.js:78Understand this warning
+4background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <1076742974>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <188882674>
+4background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78Understand this warning
+background.js:78 Received <BrowserVerificationFailed> from the native core
+background.js:78 Could not get default saving location, resetting location.
+(anonymous) @ background.js:78Understand this error
+2background.js:78 The item cache has not been initialized yet.
+(anonymous) @ background.js:78Understand this warning
+background.js:78 💫 Looking for desktop app com.1password.1password
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3328088837>
+background.js:78 Desktop app port disconnected. Error: Specified native messaging host not found.
+background.js:78 💫 Looking for desktop app com.1password.1password7
+background.js:78 📤 Sending <NmRequestAccounts> message to native core <3707905022>
+background.js:78 Received <BrowserVerificationFailed> from the native core
