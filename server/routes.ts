@@ -213,7 +213,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/auth', magicLinkRouter);
     
     // Development auth bypass (only active in development)
-    app.use('/api/auth', devAuthBypassRouter);
+    app.use('/api', devAuthBypassRouter);
     
     // Email check endpoint for contextual authentication flow
     app.get("/api/auth/check-email", async (req: Request, res: Response) => {
