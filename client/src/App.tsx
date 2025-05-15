@@ -241,30 +241,8 @@ function Router() {
           {/* Add the RoleBasedRedirect component to handle role-based navigation */}
           <RoleBasedRedirect />
           
-          {/* Admin routes */}
-          <ProtectedRoute path="/admin/events/create" requiredRole="admin" component={<CreateEvent />} />
-          {/* Admin routes - using ProtectedRoute for better protection */}
-          <ProtectedRoute path="/admin/events/:id/edit" requiredRole="admin" component={<EditEvent />} />
-          <ProtectedRoute path="/admin/events/:id/application-form" requiredRole="admin" component={<FormEditorPage />} />
-          <ProtectedRoute path="/admin/events/:id/fees" requiredRole="admin" component={<FeeManagementPage />} />
-          <ProtectedRoute path="/admin/events/:id/coupons" requiredRole="admin" component={<CouponManagerPage />} />
-          <ProtectedRoute path="/admin/events/:id/clubs" requiredRole="admin" component={<EventClubsPage />} />
-          <ProtectedRoute path="/admin/events/:id/preview-registration" requiredRole="admin" component={<RegistrationPreview />} />
-          <ProtectedRoute path="/admin/events/preview" requiredRole="admin" component={<EventPreviewSelector />} />
-          <ProtectedRoute path="/admin/events/:id" requiredRole="admin" component={<EditEvent />} />
-          <ProtectedRoute path="/admin/accounting-codes" requiredRole="admin" component={<AccountingCodeManagement />} />
-          <ProtectedRoute path="/admin/email-templates/create" requiredRole="admin" component={<EmailTemplateEdit />} />
-          <ProtectedRoute path="/admin/email-templates/:id" requiredRole="admin" component={<EmailTemplateEdit />} />
-          <ProtectedRoute path="/admin/email-templates" requiredRole="admin" component={<EmailTemplatesPage />} />
-          <ProtectedRoute path="/sendgrid-settings" requiredRole="admin" component={<SendGridSettingsPage />} />
-          <ProtectedRoute path="/admin/form-templates/create" requiredRole="admin" component={<FormTemplateCreatePage />} />
-          <ProtectedRoute path="/admin/form-templates/:id/edit" requiredRole="admin" component={<FormTemplateEditPage />} />
-          <ProtectedRoute path="/admin/form-templates" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="formTemplates" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/team-status-test" requiredRole="admin" component={<TeamStatusTest />} />
+          {/* Admin routes - using centralized import with development bypass functionality */}
+          <AdminRoutes />
           
           {/* Development tools routes */}
           <Route path="/dev-auth">
