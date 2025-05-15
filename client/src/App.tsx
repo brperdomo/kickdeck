@@ -357,22 +357,6 @@ function Router() {
             </DebugErrorBoundary>
           } />
           
-          {/* Add a direct route to handle edge cases for admin dashboard */}
-          <Route path="/admin-direct">
-            {() => {
-              const FixedDashboard = lazy(() => import('@/pages/fixed-admin-dashboard'));
-              return (
-                <Suspense fallback={
-                  <div className="flex items-center justify-center min-h-screen">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  </div>
-                }>
-                  <FixedDashboard />
-                </Suspense>
-              );
-            }}
-          </Route>
-          
           {/* Legacy admin route for compatibility */}
           <Route path="/admin-legacy">
             {() => (
