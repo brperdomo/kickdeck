@@ -15,9 +15,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('STRIPE_SECRET_KEY environment variable is not set');
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16', 
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 /**
  * Create a new Stripe Connect Express account for a club/organization

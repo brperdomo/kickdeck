@@ -170,9 +170,16 @@ router.get('/:clubId/stripe-connect/status', isAdmin, validateClub, async (req: 
  * Generate a fresh account link for onboarding
  * POST /api/clubs/:clubId/stripe-connect/account-link
  */
-router.post('/:clubId/stripe-connect/account-link', isAdmin, validateClub, async (req, res) => {
+router.post('/:clubId/stripe-connect/account-link', isAdmin, validateClub, async (req: ClubRequest, res: Response) => {
   try {
     const { club } = req;
+    
+    if (!club) {
+      return res.status(404).json({
+        success: false,
+        message: 'Club not found'
+      });
+    }
     
     // Check if club has a Connect account
     if (!club.stripeConnectAccountId) {
@@ -210,9 +217,16 @@ router.post('/:clubId/stripe-connect/account-link', isAdmin, validateClub, async
  * Generate a Stripe dashboard login link
  * GET /api/clubs/:clubId/stripe-connect/dashboard-link
  */
-router.get('/:clubId/stripe-connect/dashboard-link', isAdmin, validateClub, async (req, res) => {
+router.get('/:clubId/stripe-connect/dashboard-link', isAdmin, validateClub, async (req: ClubRequest, res: Response) => {
   try {
     const { club } = req;
+    
+    if (!club) {
+      return res.status(404).json({
+        success: false,
+        message: 'Club not found'
+      });
+    }
     
     // Check if club has a Connect account
     if (!club.stripeConnectAccountId) {
