@@ -90,6 +90,10 @@ export default function DevAdminBypass() {
     }
   };
 
+  const navigateToDebugTools = () => {
+    setLocation('/dev-debug');
+  };
+  
   const handleStandardLogin = async () => {
     setIsLoading(true);
     setError(null);
@@ -223,6 +227,16 @@ export default function DevAdminBypass() {
               <LockOpen className="ml-2 h-4 w-4" />
             </Button>
           </div>
+          
+          <Button
+            onClick={navigateToDebugTools}
+            disabled={isProductionMode}
+            variant="outline"
+            className="w-full mt-2"
+          >
+            Debug Tools
+            <Bug className="ml-2 h-4 w-4" />
+          </Button>
           
           <p className="text-xs text-muted-foreground mt-2 text-center">
             ⚠️ This component should not be included in production builds.
