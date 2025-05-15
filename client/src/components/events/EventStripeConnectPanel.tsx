@@ -136,7 +136,7 @@ export function EventStripeConnectPanel({ eventId, eventName }: EventStripeConne
             <CardTitle>Stripe Connect</CardTitle>
             <CardDescription>Payment processing for {eventName}</CardDescription>
           </div>
-          <Badge variant={status.chargesEnabled ? "success" : "outline"}>
+          <Badge variant={status.chargesEnabled ? "secondary" : "outline"} className={status.chargesEnabled ? "bg-green-100 text-green-800 hover:bg-green-100" : ""}>
             {status.chargesEnabled ? "Active" : "Setup Incomplete"}
           </Badge>
         </div>
@@ -167,8 +167,8 @@ export function EventStripeConnectPanel({ eventId, eventName }: EventStripeConne
           </div>
 
           {!status.detailsSubmitted && (
-            <Alert variant="warning" className="bg-amber-50">
-              <AlertCircle className="h-4 w-4" />
+            <Alert className="bg-amber-50 border-amber-200">
+              <AlertCircle className="h-4 w-4 text-amber-600" />
               <AlertDescription className="text-amber-800">
                 Your Stripe Connect account setup is incomplete. Click "Complete Onboarding" to finish the process.
               </AlertDescription>
@@ -176,8 +176,8 @@ export function EventStripeConnectPanel({ eventId, eventName }: EventStripeConne
           )}
 
           {status.chargesEnabled && (
-            <Alert variant="success" className="bg-green-50">
-              <Check className="h-4 w-4" />
+            <Alert className="bg-green-50 border-green-200">
+              <Check className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800">
                 Your Stripe Connect account is fully set up and ready to receive payments.
               </AlertDescription>
