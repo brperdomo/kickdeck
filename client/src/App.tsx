@@ -251,6 +251,13 @@ function Router() {
             </DebugErrorBoundary>
           } />
           <ProtectedRoute path="/admin/team-status-test" requiredRole="admin" component={<TeamStatusTest />} />
+          
+          {/* Development authentication bypass route */}
+          <Route path="/dev-auth">
+            <DebugErrorBoundary>
+              <DevAdminBypass />
+            </DebugErrorBoundary>
+          </Route>
           <ProtectedRoute path="/admin/file-manager" requiredRole="admin" component={
             <DebugErrorBoundary>
               <AdminDashboard initialView="files" />
