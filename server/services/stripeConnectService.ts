@@ -15,19 +15,17 @@ if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('STRIPE_SECRET_KEY is required for Stripe Connect');
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2023-10-16',
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 /**
  * Get a club's Stripe Connect account ID
  */
 export async function getConnectAccountId(clubId: number): Promise<string | null> {
   const [club] = await db.select({
-    stripeConnectId: clubs.stripeConnectId
+    stripeConnectAccountId: clubs.stripeConnectAccountId
   }).from(clubs).where(eq(clubs.id, clubId));
   
-  return club?.stripeConnectId || null;
+  return club?.stripeConnectAccountId || null;
 }
 
 /**
@@ -44,7 +42,7 @@ export async function createConnectAccount(clubId: number, businessType: 'indivi
   }
   
   // Check if club already has a Stripe Connect account
-  if (club.stripeConnectId) {
+  if (club.stripeConnectAccountId) {
     throw new Error('Club already has a Stripe Connect account');
   }
   
@@ -58,16 +56,17 @@ export async function createConnectAccount(clubId: number, businessType: 'indivi
     },
     business_profile: {
       name: club.name,
-      url: club.website || undefined,
+      // Website is not available in the club schema, so we'll skip it
     },
   });
   
   // Save Stripe Connect account ID to club record
   await db.update(clubs)
     .set({
-      stripeConnectId: account.id,
-      stripeConnectType: businessType,
-      stripeConnectCreatedAt: new Date(),
+      stripeConnectAccountId: account.id,
+      stripeConnectStatus: 'pending',
+      stripeConnectEnabled: false,
+      stripeConnectDetailsSubmitted: false,
     })
     .where(eq(clubs.id, clubId));
   
