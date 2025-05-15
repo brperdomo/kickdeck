@@ -141,15 +141,6 @@ function Router() {
 
       {/* Development routes - only available in development environment */}
       <Route path="/dev-debug" component={DevDebugPage} />
-      
-      {/* Admin direct dashboard with DevBypassProtectedRoute for development */}
-      <Route path="/admin-direct">
-        {() => (
-          <DebugErrorBoundary>
-            <AdminDirectDashboard />
-          </DebugErrorBoundary>
-        )}
-      </Route>
 
       {/* Public routes that don't require authentication */}
       

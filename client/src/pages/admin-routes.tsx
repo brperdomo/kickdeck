@@ -75,6 +75,13 @@ export default function AdminRoutes({}: AdminRoutesProps) {
           <AdminDashboard />
         </DebugErrorBoundary>
       } />
+      
+      {/* Direct admin access with same functionality as /admin */}
+      <RouteComponent path="/admin-direct" component={
+        <DebugErrorBoundary>
+          <AdminDashboard />
+        </DebugErrorBoundary>
+      } />
     </>
   );
 }
