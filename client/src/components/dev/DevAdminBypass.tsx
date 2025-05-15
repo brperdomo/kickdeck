@@ -28,7 +28,11 @@ export default function DevAdminBypass() {
   const loginAsAdmin = async () => {
     try {
       setLoading(true);
-      const response = await apiRequest("GET", "/api/auth/dev-login-bypass");
+      // Using fetch directly with credentials included to ensure cookies are sent and received
+      const response = await fetch("/api/auth/dev-login-bypass", {
+        method: "GET",
+        credentials: "include"
+      });
       const data = await response.json();
       
       if (response.ok) {
@@ -38,8 +42,8 @@ export default function DevAdminBypass() {
           variant: "default"
         });
         
-        // Reload the page to update auth state everywhere
-        window.location.href = '/admin';
+        // Direct navigation to admin dashboard
+        window.location.href = '/admin-direct';
       } else {
         throw new Error(data.message || "Authentication bypass failed");
       }
