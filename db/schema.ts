@@ -186,6 +186,10 @@ export const events = pgTable("events", {
   agreement: text("agreement"),
   refundPolicy: text("refund_policy"),
   isArchived: boolean("is_archived").default(false).notNull(),
+  stripeConnectAccountId: text("stripe_connect_account_id"),
+  stripeConnectStatus: text("stripe_connect_status"),
+  stripeConnectEnabled: boolean("stripe_connect_enabled").default(false),
+  stripeConnectDetailsSubmitted: boolean("stripe_connect_details_submitted").default(false),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
 });

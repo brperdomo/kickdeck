@@ -11,19 +11,21 @@ import { events } from '@db/schema';
 import { eq } from 'drizzle-orm';
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is required for Stripe Connect');
+  throw new Error('Missing Stripe secret key');
 }
 
+// Initialize Stripe with the platform account's secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 /**
  * Get an event's Stripe Connect account ID
  */
 export async function getEventConnectAccountId(eventId: number): Promise<string | null> {
-  const [event] = await db.select({
-    stripeConnectAccountId: events.stripeConnectAccountId
-  }).from(events).where(eq(events.id, eventId));
-  
+  const [event] = await db
+    .select({ stripeConnectAccountId: events.stripeConnectAccountId })
+    .from(events)
+    .where(eq(events.id, eventId));
+
   return event?.stripeConnectAccountId || null;
 }
 
@@ -33,52 +35,58 @@ export async function getEventConnectAccountId(eventId: number): Promise<string 
  * @param businessType Type of business (individual or company)
  */
 export async function createEventConnectAccount(eventId: number, businessType: 'individual' | 'company' = 'company') {
+  // Check if event already has a Connect account
+  const existingAccountId = await getEventConnectAccountId(eventId);
+  if (existingAccountId) {
+    return { 
+      accountId: existingAccountId,
+      message: 'Event already has a Stripe Connect account' 
+    };
+  }
+
   // Get event details
-  const [event] = await db.select({
-    id: events.id,
-    name: events.name,
-    stripeConnectAccountId: events.stripeConnectAccountId,
-  }).from(events).where(eq(events.id, eventId));
-  
+  const [event] = await db
+    .select({
+      id: events.id,
+      name: events.name
+    })
+    .from(events)
+    .where(eq(events.id, eventId));
+
   if (!event) {
-    throw new Error(`Event not found with ID: ${eventId}`);
+    throw new Error(`Event with ID ${eventId} not found`);
   }
-  
-  // Check if event already has a Stripe Connect account
-  if (event.stripeConnectAccountId) {
-    throw new Error('This event already has a Stripe Connect account');
-  }
-  
-  // Create Stripe Connect account
+
+  // Create a new Stripe Connect account
   const account = await stripe.accounts.create({
     type: 'express',
     business_type: businessType,
     capabilities: {
       card_payments: { requested: true },
-      transfers: { requested: true },
+      transfers: { requested: true }
     },
-    business_profile: {
-      name: event.name,
-      // Website is not available in the events schema, so we'll skip it
-    },
+    metadata: {
+      eventId: event.id.toString(),
+      type: 'tournament'
+    }
   });
-  
-  // Save Stripe Connect account ID to event record
-  await db.update(events)
+
+  // Update the event with the new account ID
+  await db
+    .update(events)
     .set({
       stripeConnectAccountId: account.id,
-      stripeConnectStatus: 'pending',
-      stripeConnectEnabled: false,
-      stripeConnectDetailsSubmitted: false,
+      stripeConnectStatus: account.details_submitted ? 'completed' : 'pending'
     })
     .where(eq(events.id, eventId));
-  
-  // Generate onboarding URL
+
+  // Generate an account link for onboarding
   const accountLink = await generateAccountLink(account.id);
-  
+
   return {
     accountId: account.id,
-    accountLinkUrl: accountLink.url
+    accountLink: accountLink.url,
+    message: 'Stripe Connect account created successfully'
   };
 }
 
@@ -87,14 +95,12 @@ export async function createEventConnectAccount(eventId: number, businessType: '
  * @param accountId Stripe Connect account ID
  */
 export async function generateAccountLink(accountId: string) {
-  const accountLink = await stripe.accountLinks.create({
+  return await stripe.accountLinks.create({
     account: accountId,
-    refresh_url: `${process.env.SITE_URL || 'http://localhost:5000'}/admin/stripe-connect/refresh`,
-    return_url: `${process.env.SITE_URL || 'http://localhost:5000'}/admin/stripe-connect/return`,
-    type: 'account_onboarding',
+    refresh_url: `${process.env.APP_URL || 'http://localhost:5000'}/admin/events/stripe-connect/refresh`,
+    return_url: `${process.env.APP_URL || 'http://localhost:5000'}/admin/events/stripe-connect/success`,
+    type: 'account_onboarding'
   });
-  
-  return accountLink;
 }
 
 /**
@@ -105,14 +111,13 @@ export async function generateEventAccountLink(eventId: number) {
   const accountId = await getEventConnectAccountId(eventId);
   
   if (!accountId) {
-    throw new Error('This event does not have a Stripe Connect account');
+    throw new Error(`Event ${eventId} does not have a Stripe Connect account`);
   }
   
   const accountLink = await generateAccountLink(accountId);
   
   return {
-    accountId,
-    accountLinkUrl: accountLink.url
+    accountLink: accountLink.url
   };
 }
 
@@ -124,14 +129,13 @@ export async function generateEventDashboardLink(eventId: number) {
   const accountId = await getEventConnectAccountId(eventId);
   
   if (!accountId) {
-    throw new Error('This event does not have a Stripe Connect account');
+    throw new Error(`Event ${eventId} does not have a Stripe Connect account`);
   }
   
-  const loginLink = await stripe.accounts.createLoginLink(accountId);
+  const link = await stripe.accounts.createLoginLink(accountId);
   
   return {
-    accountId,
-    dashboardLink: loginLink.url
+    url: link.url
   };
 }
 
@@ -144,22 +148,30 @@ export async function getEventAccountStatus(eventId: number) {
   
   if (!accountId) {
     return {
-      hasConnectAccount: false,
-      accountId: null,
-      accountStatus: null,
+      hasStripeConnect: false,
+      message: 'Event does not have a Stripe Connect account'
     };
   }
   
   const account = await stripe.accounts.retrieve(accountId);
   
+  // Update the account status in our database
+  await db
+    .update(events)
+    .set({
+      stripeConnectStatus: account.details_submitted ? 'completed' : 'pending',
+      stripeConnectDetailsSubmitted: !!account.details_submitted,
+      stripeConnectEnabled: account.charges_enabled || false
+    })
+    .where(eq(events.id, eventId));
+  
   return {
-    hasConnectAccount: true,
-    accountId,
-    accountStatus: {
-      chargesEnabled: account.charges_enabled,
-      payoutsEnabled: account.payouts_enabled,
-      detailsSubmitted: account.details_submitted,
-      requirements: account.requirements,
-    },
+    hasStripeConnect: true,
+    accountId: account.id,
+    detailsSubmitted: !!account.details_submitted,
+    chargesEnabled: account.charges_enabled || false,
+    payoutsEnabled: account.payouts_enabled || false,
+    requirements: account.requirements,
+    status: account.details_submitted ? 'completed' : 'pending'
   };
 }

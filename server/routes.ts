@@ -317,6 +317,7 @@ export function registerRoutes(app: Express): Server {
     
     // Register Stripe Connect routes for clubs (requires admin access)
     app.use('/api/clubs', isAdmin, stripeConnectRouter);
+    app.use('/api/events', isAdmin, eventStripeConnectRouter);
     
     // Role permissions management endpoints
     app.get('/api/admin/roles', isAdmin, getRolesWithPermissions);

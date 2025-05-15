@@ -5,8 +5,13 @@
  * tournament organizers can receive payments directly through Stripe Connect.
  */
 
-const { Pool } = require('pg');
-require('dotenv').config();
+import pg from 'pg';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const { Pool } = pg;
+dotenv.config();
 
 async function addStripeConnectFieldsToEvents() {
   console.log('Starting migration to add Stripe Connect fields to events table...');
