@@ -12,6 +12,7 @@ import { RoleBasedRedirect } from "@/components/RoleBasedRedirect";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { DebugErrorBoundary } from "@/components/DebugErrorBoundary";
 import DevAdminBypass from "@/components/dev/DevAdminBypass";
+// Import the DevDebugPage lazily in the route definition
 import { useAuth } from "@/hooks/use-auth";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
@@ -252,10 +253,25 @@ function Router() {
           } />
           <ProtectedRoute path="/admin/team-status-test" requiredRole="admin" component={<TeamStatusTest />} />
           
-          {/* Development authentication bypass route */}
+          {/* Development tools routes */}
           <Route path="/dev-auth">
             <DebugErrorBoundary>
               <DevAdminBypass />
+            </DebugErrorBoundary>
+          </Route>
+          
+          <Route path="/dev-debug">
+            <DebugErrorBoundary>
+              <Suspense fallback={
+                <div className="flex items-center justify-center min-h-screen">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              }>
+                {(() => {
+                  const DevDebugPage = lazy(() => import('@/pages/dev-debug'));
+                  return <DevDebugPage />;
+                })()}
+              </Suspense>
             </DebugErrorBoundary>
           </Route>
           <ProtectedRoute path="/admin/file-manager" requiredRole="admin" component={
