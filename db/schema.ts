@@ -389,6 +389,10 @@ export const paymentTransactionsRelations = relations(paymentTransactions, ({ on
   user: one(users, {
     fields: [paymentTransactions.userId],
     references: [users.id]
+  }),
+  club: one(clubs, {
+    fields: [paymentTransactions.clubId],
+    references: [clubs.id]
   })
 }));
 

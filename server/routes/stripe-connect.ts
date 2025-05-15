@@ -5,10 +5,10 @@
  * and organizations.
  */
 
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { db } from '@db';
 import { eq } from 'drizzle-orm';
-import { clubs } from '@db/schema';
+import { clubs, SelectClub } from '@db/schema';
 import { isAdmin } from '../middleware';
 import { 
   createConnectAccount, 
@@ -17,10 +17,15 @@ import {
   getConnectAccount
 } from '../services/stripeConnectService';
 
+// Extended request type to include club
+interface ClubRequest extends Request {
+  club?: SelectClub;
+}
+
 const router = Router();
 
 // Middleware to ensure club exists and belongs to the right organization
-const validateClub = async (req, res, next) => {
+const validateClub = async (req: ClubRequest, res: Response, next: NextFunction) => {
   try {
     const clubId = parseInt(req.params.clubId);
     
@@ -61,10 +66,17 @@ const validateClub = async (req, res, next) => {
  * Create a Stripe Connect account for a club
  * POST /api/clubs/:clubId/stripe-connect
  */
-router.post('/:clubId/stripe-connect', isAdmin, validateClub, async (req, res) => {
+router.post('/:clubId/stripe-connect', isAdmin, validateClub, async (req: ClubRequest, res: Response) => {
   try {
     const { club } = req;
     const { businessType } = req.body;
+    
+    if (!club) {
+      return res.status(404).json({
+        success: false,
+        message: 'Club not found'
+      });
+    }
     
     // Check if club already has a Connect account
     if (club.stripeConnectAccountId) {
@@ -77,9 +89,9 @@ router.post('/:clubId/stripe-connect', isAdmin, validateClub, async (req, res) =
     // Create a Connect account
     const accountId = await createConnectAccount(
       club.id,
-      club.email,
+      club.email || '',
       club.name,
-      businessType
+      businessType as 'individual' | 'company'
     );
     
     // Get base URL for links
@@ -111,9 +123,16 @@ router.post('/:clubId/stripe-connect', isAdmin, validateClub, async (req, res) =
  * Get Stripe Connect account status
  * GET /api/clubs/:clubId/stripe-connect/status
  */
-router.get('/:clubId/stripe-connect/status', isAdmin, validateClub, async (req, res) => {
+router.get('/:clubId/stripe-connect/status', isAdmin, validateClub, async (req: ClubRequest, res: Response) => {
   try {
     const { club } = req;
+    
+    if (!club) {
+      return res.status(404).json({
+        success: false,
+        message: 'Club not found'
+      });
+    }
     
     // Check if club has a Connect account
     if (!club.stripeConnectAccountId) {
