@@ -14,6 +14,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { DebugErrorBoundary } from "@/components/DebugErrorBoundary";
 import DevAdminBypass from "@/components/dev/DevAdminBypass";
 import DevDebugPage from "@/pages/dev-debug";
+import AdminRoutes from "@/pages/admin-routes";
 import { useAuth } from "@/hooks/use-auth";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
@@ -141,7 +142,7 @@ function Router() {
       {/* Development routes - only available in development environment */}
       <Route path="/dev-debug" component={DevDebugPage} />
       
-      {/* Admin direct dashboard for development-only authentication bypass */}
+      {/* Admin direct dashboard with DevBypassProtectedRoute for development */}
       <Route path="/admin-direct">
         {() => (
           <DebugErrorBoundary>

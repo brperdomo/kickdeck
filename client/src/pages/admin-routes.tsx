@@ -19,7 +19,7 @@ import CouponManagerPage from "@/pages/coupon-manager";
 import EventClubsPage from "@/pages/event-clubs";
 import RegistrationPreview from "@/pages/registration-preview";
 import EventPreviewSelector from "@/pages/event-preview-selector";
-import AccountingCodeManagement from "@/pages/accounting-codes";
+import AccountingCodeManagement from "@/pages/accounting-code-management";
 import EmailTemplateEdit from "@/pages/email-template-edit";
 import EmailTemplatesPage from "@/pages/email-templates";
 import SendGridSettingsPage from "@/pages/sendgrid-settings";
@@ -27,7 +27,7 @@ import FormTemplateCreatePage from "@/pages/form-template-create";
 import FormTemplateEditPage from "@/pages/form-template-edit";
 import AdminDashboard from "@/pages/admin-dashboard";
 import TeamStatusTest from "@/pages/team-status-test";
-import { DebugErrorBoundary } from "@/components/dev/DebugErrorBoundary";
+import { DebugErrorBoundary } from "@/components/DebugErrorBoundary";
 
 // In development, we use the dev bypass route. In production, we use the protected route.
 // This provides a consistent way to handle authentication across the application.
