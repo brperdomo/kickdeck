@@ -42,6 +42,7 @@ import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignment
 import paymentsRouter from "./routes/payments";
 import reportsRouter from "./routes/reports";
 import stripeConnectRouter from "./routes/stripe-connect";
+import eventStripeConnectRouter from "./routes/event-stripe-connect";
 import { getNewRegistrationsCount, acknowledgeNewRegistrations } from "./routes/admin/registrations";
 import { getTinyMCEConfig } from "./services/configService";
 import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
