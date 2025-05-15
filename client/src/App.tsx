@@ -572,7 +572,7 @@ function App() {
       <AuthProvider>
         <TooltipProvider>
           <MainLayout>
-            <RouteDebugger />
+            {/* Debug tools moved to /dev-debug page */}
             <Router />
             {/* Development authentication bypass - only appears in dev mode */}
             <DevAdminBypass />

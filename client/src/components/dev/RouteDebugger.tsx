@@ -1,142 +1,121 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
-import { Button } from '@/components/ui/button';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader,
-  CardTitle,
-  CardFooter
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import { ClipboardCopy } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
-/**
- * A development tool to debug routing and authentication issues
- * Only use this component during development
- */
-export default function RouteDebugger() {
-  const [location] = useLocation();
-  const [authStatus, setAuthStatus] = useState({
-    loading: true,
-    isAuthenticated: false,
-    user: null as any,
-    error: null as string | null
-  });
+interface RouteInfoProps {
+  label: string;
+  value: string;
+}
+
+const RouteInfo: React.FC<RouteInfoProps> = ({ label, value }) => {
+  const { toast } = useToast();
   
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch('/api/user', {
-          credentials: 'include',
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
-        });
-        
-        if (!response.ok) {
-          if (response.status === 401) {
-            setAuthStatus({
-              loading: false,
-              isAuthenticated: false,
-              user: null,
-              error: 'Not authenticated'
-            });
-            return;
-          }
-          
-          throw new Error(`Error ${response.status}: ${await response.text()}`);
-        }
-        
-        const user = await response.json();
-        setAuthStatus({
-          loading: false,
-          isAuthenticated: true,
-          user,
-          error: null
-        });
-      } catch (error) {
-        console.error('Auth check error:', error);
-        setAuthStatus({
-          loading: false,
-          isAuthenticated: false,
-          user: null,
-          error: error instanceof Error ? error.message : String(error)
-        });
-      }
-    };
-    
-    checkAuth();
-  }, []);
-  
-  const getUrl = () => {
-    try {
-      return window.location.href;
-    } catch (e) {
-      return 'Unable to get URL';
-    }
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(value);
+    toast({
+      title: 'Copied!',
+      description: `${label} copied to clipboard`,
+      duration: 2000,
+    });
   };
   
   return (
-    <Card className="mb-6 border-yellow-300 bg-yellow-50">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-yellow-800">Route Debugger</CardTitle>
-        <CardDescription className="text-yellow-700">
-          Development Tool - Remove in Production
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-2 text-sm">
-        <div>
-          <strong>Current route (location Wouter):</strong> {location}
-        </div>
-        <div>
-          <strong>Current URL:</strong> {getUrl()}
-        </div>
-        <div className="pt-2 pb-1">
-          <strong>Authentication Status:</strong> {' '}
-          {authStatus.loading ? (
-            <Badge variant="outline" className="bg-gray-100">Loading...</Badge>
-          ) : authStatus.isAuthenticated ? (
-            <Badge variant="default" className="bg-green-500">Authenticated</Badge>
-          ) : (
-            <Badge variant="outline" className="bg-red-100 text-red-700 border-red-200">Not Authenticated</Badge>
-          )}
-        </div>
-        
-        {authStatus.error && (
-          <div className="text-red-500">
-            <strong>Error:</strong> {authStatus.error}
-          </div>
-        )}
-        
-        {authStatus.user && (
-          <div className="p-2 bg-white/70 rounded border border-yellow-100">
-            <div className="font-medium mb-1">User Info:</div>
-            <ul className="pl-4 list-disc space-y-1">
-              <li><strong>ID:</strong> {authStatus.user.id}</li>
-              <li><strong>Email:</strong> {authStatus.user.email}</li>
-              <li><strong>Username:</strong> {authStatus.user.username}</li>
-              <li><strong>Admin:</strong> {authStatus.user.isAdmin ? 'Yes' : 'No'}</li>
-            </ul>
-          </div>
-        )}
-      </CardContent>
-      <CardFooter className="pt-0 flex gap-2">
+    <div className="flex flex-col space-y-1.5">
+      <div className="flex items-center gap-1.5">
+        <span className="text-sm font-medium">{label}:</span>
         <Button 
           variant="outline" 
-          size="sm"
-          onClick={() => window.location.href = '/dev-auth'}
+          size="icon" 
+          className="h-6 w-6" 
+          onClick={copyToClipboard}
         >
-          Go to Dev Auth
+          <ClipboardCopy className="h-3 w-3" />
         </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => window.location.href = '/admin-direct'}
-        >
-          Direct Admin Dashboard
-        </Button>
-      </CardFooter>
-    </Card>
+      </div>
+      <code className="p-2 bg-muted rounded-md text-xs font-mono break-all flex-1">{value}</code>
+    </div>
   );
-}
+};
+
+const RouteDebugger: React.FC = () => {
+  const [location] = useLocation();
+  const [pathname, setPathname] = useState('');
+  const [search, setSearch] = useState('');
+  const [url, setUrl] = useState('');
+  const [params, setParams] = useState<Record<string, string>>({});
+
+  // Update URL parts when location changes
+  useEffect(() => {
+    try {
+      // Get current URL
+      const currentUrl = window.location.href;
+      setUrl(currentUrl);
+      
+      // Get pathname
+      const pathFromLocation = window.location.pathname;
+      setPathname(pathFromLocation);
+      
+      // Get search params
+      const searchParams = window.location.search;
+      setSearch(searchParams);
+
+      // Parse search params
+      const urlParams = new URLSearchParams(searchParams);
+      const paramsObject: Record<string, string> = {};
+      urlParams.forEach((value, key) => {
+        paramsObject[key] = value;
+      });
+      setParams(paramsObject);
+      
+      // Log for debugging
+      console.log('Current route location (Wouter):', location);
+      console.log('Current URL:', currentUrl);
+      console.log('Current pathname:', pathFromLocation);
+      console.log('Current search:', searchParams);
+    } catch (error) {
+      console.error('Route debugger error:', error);
+    }
+  }, [location]);
+
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <RouteInfo label="Current Route (Wouter)" value={location} />
+        <RouteInfo label="Full URL" value={url} />
+      </div>
+      
+      <Separator />
+      
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <RouteInfo label="Pathname" value={pathname} />
+        <RouteInfo label="Search" value={search || "(none)"} />
+      </div>
+      
+      <Separator />
+      
+      <div>
+        <h3 className="text-sm font-medium mb-2">Search Parameters:</h3>
+        {Object.keys(params).length > 0 ? (
+          <div className="bg-muted p-3 rounded-md">
+            {Object.entries(params).map(([key, value]) => (
+              <div key={key} className="mb-2 flex items-center gap-2">
+                <Badge variant="outline">{key}</Badge>
+                <span>=</span>
+                <code className="bg-background px-2 py-1 rounded text-xs">{value}</code>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-sm text-muted-foreground italic">No search parameters</div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default RouteDebugger;
