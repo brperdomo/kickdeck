@@ -1,142 +1,44 @@
 import { Request, Response, NextFunction } from 'express';
-import { db } from '@db/index';
-import { adminRoles, users } from '@db/schema';
-import { eq, and } from 'drizzle-orm';
-
-interface EmulationSession {
-  actualUserId: number;
-  emulatedUserId: number;
-  expiresAt: Date;
-}
-
-// Store emulation sessions in memory
-// In a production app, this should be stored in Redis or another distributed cache
-const emulationSessions: Record<string, EmulationSession> = {};
 
 /**
- * Generate a unique emulation token
+ * This is a disabled version of the emulation service.
+ * User emulation functionality has been removed from the system.
  */
-function generateEmulationToken(): string {
-  return Math.random().toString(36).substring(2, 15) + 
-         Math.random().toString(36).substring(2, 15);
-}
 
 /**
- * Start an emulation session for a super admin to emulate another admin
+ * Start an emulation session - DISABLED
+ * This function will always return null, disabling the emulation functionality.
  */
 export async function startEmulation(
   superAdminId: number, 
   adminToEmulateId: number
 ): Promise<string | null> {
-  try {
-    // Verify the requesting user is a super admin
-    const superAdminRole = await db.query.adminRoles.findFirst({
-      where: and(
-        eq(adminRoles.userId, superAdminId),
-        eq(adminRoles.roleId, 1) // 1 is super_admin role
-      )
-    });
-
-    if (!superAdminRole) {
-      console.error(`User ${superAdminId} is not a super admin`);
-      return null;
-    }
-
-    // Verify the user to emulate exists and is not a super admin
-    const adminToEmulate = await db.query.users.findFirst({
-      where: eq(users.id, adminToEmulateId)
-    });
-
-    if (!adminToEmulate || !adminToEmulate.isAdmin) {
-      console.error(`User ${adminToEmulateId} is not an admin`);
-      return null;
-    }
-
-    // Check if the user to emulate is also a super admin (not allowed)
-    const isTargetSuperAdmin = await db.query.adminRoles.findFirst({
-      where: and(
-        eq(adminRoles.userId, adminToEmulateId),
-        eq(adminRoles.roleId, 1) // 1 is super_admin role
-      )
-    });
-
-    if (isTargetSuperAdmin) {
-      console.error(`Cannot emulate super admin ${adminToEmulateId}`);
-      return null;
-    }
-
-    // Generate token and create session
-    const token = generateEmulationToken();
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 2); // Session expires in 2 hours
-
-    emulationSessions[token] = {
-      actualUserId: superAdminId,
-      emulatedUserId: adminToEmulateId,
-      expiresAt
-    };
-
-    return token;
-  } catch (error) {
-    console.error('Error starting emulation session:', error);
-    return null;
-  }
+  console.log('User emulation functionality has been disabled');
+  return null;
 }
 
 /**
- * Stop an emulation session
+ * Stop an emulation session - DISABLED
+ * This function will always return false, as emulation is disabled.
  */
 export function stopEmulation(token: string): boolean {
-  if (emulationSessions[token]) {
-    delete emulationSessions[token];
-    return true;
-  }
+  console.log('User emulation functionality has been disabled');
   return false;
 }
 
 /**
- * Get the currently emulated user ID if a session exists
+ * Get the currently emulated user ID if a session exists - DISABLED
+ * This function will always return null, as emulation is disabled.
  */
 export function getEmulatedUserId(token: string): number | null {
-  const session = emulationSessions[token];
-  
-  if (!session) {
-    return null;
-  }
-
-  // Check if session has expired
-  if (new Date() > session.expiresAt) {
-    delete emulationSessions[token];
-    return null;
-  }
-
-  return session.emulatedUserId;
+  return null;
 }
 
 /**
- * Middleware to handle emulation sessions
+ * Middleware to handle emulation sessions - DISABLED
+ * This middleware does nothing and simply passes control to the next middleware.
  */
 export function emulationMiddleware(req: Request, res: Response, next: NextFunction) {
-  const emulationToken = req.headers['x-emulation-token'] as string;
-  
-  if (emulationToken && emulationSessions[emulationToken]) {
-    const session = emulationSessions[emulationToken];
-    
-    // Check if session has expired
-    if (new Date() > session.expiresAt) {
-      delete emulationSessions[emulationToken];
-      console.log(`Emulation session expired: ${emulationToken}`);
-    } else {
-      // Store both the actual and emulated user IDs in the request
-      (req as any).actualUserId = session.actualUserId;
-      (req as any).emulatedUserId = session.emulatedUserId;
-      
-      // Log detailed emulation status (only on authorization routes to avoid log spam)
-      if (req.path.includes('/api/user') || req.path.includes('/api/admin/permissions')) {
-        console.log(`Emulating user ID ${session.emulatedUserId} from actual user ${session.actualUserId} on path ${req.path}`);
-      }
-    }
-  }
-  
+  // Emulation is disabled, do nothing
   next();
 }

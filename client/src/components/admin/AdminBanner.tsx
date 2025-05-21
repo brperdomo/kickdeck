@@ -20,208 +20,114 @@ export function AdminBanner() {
   const { settings } = useOrganizationSettings();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
-  // User emulation is disabled completely
-  const isEmulating = false;
-  const emulatedName = null;
-  
-  // No emulation functionality is available
-  const adminsData = null;
 
-  // Handle stopping emulation
-  const handleStopEmulation = async () => {
-    const token = localStorage.getItem('emulationToken');
-    if (!token) return;
-
+  // Handle logging out
+  const handleLogout = async () => {
     try {
-      // Show toast first
-      toast({
-        title: 'Emulation Stopped',
-        description: 'You are now viewing the system as yourself',
-      });
-
-      const response = await fetch(`/api/admin/emulation/stop/${token}`, {
+      const response = await fetch('/api/logout', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache, no-store',
-          'Pragma': 'no-cache'
-        },
       });
-
-      // Always clean up the client storage
-      localStorage.removeItem('emulationToken');
-      sessionStorage.removeItem('emulationActive');
-      sessionStorage.removeItem('emulatedAdminName');
-      sessionStorage.removeItem('emulatedRoles');
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error stopping emulation:", errorData);
-      }
-
-      // Wait a brief moment to ensure the toast is displayed
-      setTimeout(() => {
-        // Force refresh all queries with the new identity
-        queryClient.invalidateQueries();
+      
+      if (response.ok) {
+        // Clear any user data from the query cache
         queryClient.invalidateQueries({ queryKey: ['user'] });
-        queryClient.invalidateQueries({ queryKey: ['user-permissions'] });
         
-        // Reload the page to ensure UI updates properly
-        window.location.href = '/admin';
-      }, 1000);
+        // Redirect to login page
+        navigate('/login');
+        
+        toast({
+          title: 'Logged Out',
+          description: 'You have been successfully logged out',
+        });
+      } else {
+        toast({
+          title: 'Logout Failed',
+          description: 'There was an error logging out. Please try again.',
+          variant: 'destructive',
+        });
+      }
     } catch (error) {
+      console.error('Error during logout:', error);
       toast({
-        title: 'Emulation Reset',
-        description: 'Emulation mode has been reset due to an error',
+        title: 'Logout Failed',
+        description: 'There was an error logging out. Please try again.',
         variant: 'destructive',
       });
-      console.error("Error in emulation stop handler:", error);
-      localStorage.removeItem('emulationToken');
-      sessionStorage.removeItem('emulationActive');
-      sessionStorage.removeItem('emulatedAdminName');
-      sessionStorage.removeItem('emulatedRoles');
     }
   };
   
   return (
     <>
-      {/* Emulation status bar - shown above the regular banner when emulating */}
-      {isEmulating && (
-        <div className="w-full bg-red-100 border-b border-red-300 py-2">
-          <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <UserCog className="text-red-600 h-5 w-5 mr-2" />
-                <p className="text-red-800 font-medium">
-                  <span className="font-bold">EMULATION MODE:</span> 
-                  {emulatedName ? ` Viewing as ${emulatedName}` : ' Viewing as another administrator'}
-                </p>
-              </div>
-              <Button 
-                variant="outline"
-                size="sm"
-                className="border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
-                onClick={handleStopEmulation}
-              >
-                <LogOut className="h-4 w-4 mr-1" />
-                Exit Emulation
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-    
-      {/* Regular admin banner */}
       <motion.div 
-        className="bg-card/50 backdrop-blur-sm p-4 border-b sticky top-0 z-10 shadow-sm"
-        initial={{ opacity: 0, y: -20 }}
+        className={cn(
+          "relative border-b w-full border-border/40 bg-background shadow-sm",
+          isRootAdmin ? "shadow-lg" : ""
+        )}
+        initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, type: "spring" }}
+        transition={{ duration: 0.2 }}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            {/* MatchPro Logo */}
-            <motion.div
-              className="flex items-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.15 }}
-            >
-              <img 
-                src={settings?.logoUrl || "/uploads/MatchProAI_Linear_BlackNOBUFFER.png"} 
-                alt="MatchPro" 
-                className="h-8 mr-2"
-              />
-              {/* Page title removed as requested */}
-            </motion.div>
-          </div>
-          
-          {/* Right-side tools */}
-          <div className="flex items-center space-x-3">
-            {/* Emulation Button - Only show when not already emulating */}
-            {!isEmulating && (
+        <div className="container mx-auto py-3 px-4">
+          <div className="flex items-center justify-between">
+            {/* Left section - Logo/Title */}
+            <div className="flex items-center gap-4 md:gap-6">
+              <motion.div
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/admin')}
+                style={{ cursor: 'pointer' }}
+              >
+                <Users className="h-5 w-5" />
+              </motion.div>
+                
+              <div className="flex flex-col">
+                <h1 className="flex items-center gap-1.5 text-lg font-semibold leading-tight tracking-tight text-foreground">
+                  {getBannerTitle(location)}
+                  {location === "/admin" && (
+                    <Badge variant="secondary" className="text-[0.65rem] px-1 py-0 font-normal opacity-80">
+                      Administrator
+                    </Badge>
+                  )}
+                </h1>
+                {settings?.name && (
+                  <span className="text-xs text-muted-foreground">
+                    {settings.name}
+                  </span>
+                )}
+              </div>
+            </div>
+              
+            {/* Right section - Actions */}
+            <div className="flex items-center space-x-3">
+              {/* View Toggle - Switch between Admin/Member views */}
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                <Popover open={emulationMenuOpen} onOpenChange={setEmulationMenuOpen}>
-                  <PopoverTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="rounded-full px-3 gap-1 h-8 hover:bg-primary/10 btn-enhanced"
-                    >
-                      <UserCog className="h-4 w-4" />
-                      <span className="text-xs hidden md:inline-block">
-                        Emulate User
-                      </span>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80" align="end">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <UserCog className="h-5 w-5 text-primary" />
-                        <h4 className="font-medium">Emulate Administrator</h4>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Select an administrator to view the system from their perspective:
-                      </p>
-                      
-                      {adminsData && adminsData.length > 0 ? (
-                        <div className="max-h-[300px] overflow-y-auto space-y-2">
-                          {adminsData.map((admin: any) => (
-                            <div 
-                              key={admin.id}
-                              className="flex items-center justify-between rounded-md border p-2 hover:bg-muted cursor-pointer"
-                              onClick={() => {
-                                startEmulationMutation.mutate(admin.id);
-                                setEmulationMenuOpen(false);
-                              }}
-                            >
-                              <div>
-                                <div className="font-medium text-sm">
-                                  {admin.firstName} {admin.lastName}
-                                </div>
-                                <div className="text-xs text-muted-foreground">
-                                  {admin.email}
-                                </div>
-                                {admin.roles && admin.roles.length > 0 && (
-                                  <div className="flex flex-wrap gap-1 mt-1">
-                                    {admin.roles.map((role: string) => (
-                                      <Badge key={role} variant="outline" className="text-xs">
-                                        {role.replace('_', ' ')}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                              <Button size="sm" variant="ghost">
-                                <Users className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="text-sm text-muted-foreground p-2 text-center">
-                          {emulationMenuOpen ? 'Loading administrators...' : 'No administrators available'}
-                        </div>
-                      )}
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                <ViewToggle />
               </motion.div>
-            )}
-            
-            {/* View Toggle - Switch between Admin/Member views */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <ViewToggle />
-            </motion.div>
+              
+              {/* Logout button */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-full px-3 gap-1 h-8"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span className="text-xs hidden md:inline-block">
+                    Logout
+                  </span>
+                </Button>
+              </motion.div>
+            </div>
           </div>
         </div>
       </motion.div>
