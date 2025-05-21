@@ -31,7 +31,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function AuthPage() {
   const { toast } = useToast();
-  const { loginMutation, user, authState, setAuthState } = useAuth();
+  const { loginMutation, user } = useAuth();
   const [location, setLocation] = useLocation();
   const [logoutMessage, setLogoutMessage] = useState<string | null>(null);
 
@@ -85,20 +85,12 @@ export default function AuthPage() {
     }
   }, []);
 
-  // Enhanced redirection approach with authState
+  // ULTRA SIMPLIFIED APPROACH
   useEffect(() => {
-    // Only process if we have user data and are in a stable authenticated state
-    if (!user || authState !== 'authenticated') {
-      console.log("Auth redirect: Not redirecting due to auth state:", { authState, hasUser: !!user });
-      return;
-    }
+    // Only process if we have user data
+    if (!user) return;
     
-    console.log("AUTH REDIRECT - ENHANCED: User logged in, handling redirect", {
-      isAdmin: user.isAdmin,
-      authState,
-      currentPath: window.location.pathname,
-      userInfo: `${user.firstName} ${user.lastName} (${user.email})`
-    });
+    console.log("AUTH REDIRECT - SIMPLIFIED: User logged in, handling redirect");
     
     // Check for redirectAfterAuth in session storage
     const redirectPath = sessionStorage.getItem('redirectAfterAuth');
@@ -117,9 +109,6 @@ export default function AuthPage() {
     if (redirectPath) {
       console.log("Found redirect path:", redirectPath);
       
-      // Signal that we're starting a redirect
-      setAuthState('redirecting');
-      
       // Set a simple flag to indicate auth is complete
       sessionStorage.setItem('authRedirectCompleted', 'true');
       
@@ -135,16 +124,10 @@ export default function AuthPage() {
         // Special handling for event registration to ensure step advancement
         const eventPath = redirectPath + (redirectPath.includes('?') ? '&' : '?') + 'auth_complete=true';
         console.log("Enhanced event registration redirect path:", eventPath);
-        
-        // Short timeout to allow UI to update with redirecting state
-        setTimeout(() => {
-          window.location.href = eventPath;
-        }, 50);
+        window.location.href = eventPath;
       } else {
         // Standard redirect for other paths
-        setTimeout(() => {
-          window.location.href = redirectPath;
-        }, 50);
+        window.location.href = redirectPath;
       }
       return;
     }
@@ -183,42 +166,14 @@ export default function AuthPage() {
       return;
     }
     
-    // Handle the default case where we're on the auth page or related paths
     if (isAuthPage) {
       const defaultPath = user.isAdmin ? '/admin' : '/dashboard';
       console.log("On auth page, redirecting to:", defaultPath);
-      
-      // Signal that we're starting a redirect
-      setAuthState('redirecting');
-      
-      // Use a short timeout to ensure this happens after other useEffects
-      setTimeout(() => {
-        window.location.href = defaultPath;
-      }, 50);
+      window.location.href = defaultPath;
     } else {
-      // If we're on an admin page but we're not an admin, redirect to dashboard
-      if (window.location.pathname.startsWith('/admin') && !user.isAdmin) {
-        console.log("Non-admin user on admin page, redirecting to dashboard");
-        setAuthState('redirecting');
-        setTimeout(() => {
-          window.location.href = '/dashboard';
-        }, 50);
-        return;
-      }
-      
-      // If we're on a dashboard page but we're an admin, redirect to admin panel
-      if (window.location.pathname.startsWith('/dashboard') && user.isAdmin) {
-        console.log("Admin user on dashboard page, redirecting to admin panel");
-        setAuthState('redirecting');
-        setTimeout(() => {
-          window.location.href = '/admin';
-        }, 50);
-        return;
-      }
-      
       console.log("On a non-auth page while logged in, not redirecting");
     }
-  }, [user, authState, setAuthState]);
+  }, [user]);
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -232,9 +187,6 @@ export default function AuthPage() {
     try {
       console.log('Submitting login with email:', data.email);
       loginForm.clearErrors();
-      
-      // Update auth state to indicate login is in progress
-      setAuthState('logging-in');
       
       // Login request with improved error handling
       await loginMutation.mutateAsync(data);
@@ -256,27 +208,16 @@ export default function AuthPage() {
         if (userResponse.ok) {
           const userData = await userResponse.json();
           console.log('User data retrieved after login:', userData ? 'success' : 'not found');
-          
-          // Update auth state to authenticated now that we have confirmed the session
-          setAuthState('authenticated');
         } else {
           console.warn('Failed to fetch user data after login:', userResponse.status);
-          // If we can't confirm the session, still try to set authenticated state
-          // as the redirect mechanism will check user data anyways
-          setAuthState('authenticated');
         }
       } catch (userFetchError) {
         console.error('Error fetching user data after login:', userFetchError);
-        // Even if this fails, we should still set authenticated state since the login mutation succeeded
-        setAuthState('authenticated');
       }
       
       // Login success is handled in useEffect for redirects
     } catch (error: any) {
       console.error('Login error:', error);
-      
-      // Reset auth state on failure
-      setAuthState('unauthenticated');
       
       // Show detailed error messages
       if (error.message?.toLowerCase().includes("password")) {

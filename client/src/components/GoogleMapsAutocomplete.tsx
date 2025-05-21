@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Input } from "@/components/ui/input";
-import { loadGoogleMapsApi } from "@/lib/load-maps-api";
+import { googleMapsApiKey, initGoogleMapsApi } from "@/lib/env";
 
 // Extend the window interface to include the google object
 declare global {
@@ -75,52 +75,52 @@ export function GoogleMapsAutocomplete({
 
   // Initialize Google Maps API when component mounts
   useEffect(() => {
-    let isMounted = true;
+    // Call the initGoogleMapsApi from env.ts
+    initGoogleMapsApi();
     
-    async function initializeMaps() {
-      try {
-        // Dynamically load Google Maps API
-        await loadGoogleMapsApi();
+    // Check if Google Maps API is loaded
+    const checkGoogleMapsLoaded = () => {
+      if (window.google && window.google.maps && window.google.maps.places) {
+        console.log("Google Maps API is loaded");
+        setIsGoogleMapsLoaded(true);
         
-        // Only update state if component is still mounted
-        if (isMounted) {
-          console.log("Google Maps API is loaded");
-          setIsGoogleMapsLoaded(true);
+        // Determine which API to use based on what's available
+        // Check if we can use the modern PlaceAutocompleteElement
+        if (window.google.maps.places.PlaceAutocompleteElement) {
+          setUseModernAPI(true);
+        } else {
+          // Fall back to legacy API
+          setUseModernAPI(false);
           
-          // Determine which API to use based on what's available
-          // Check if we can use the modern PlaceAutocompleteElement
-          if (window.google?.maps?.places?.PlaceAutocompleteElement) {
-            setUseModernAPI(true);
-          } else {
-            // Fall back to legacy API
-            setUseModernAPI(false);
-            
-            // Check if we've already logged deprecation warning
-            if (!warningDisplayedRef.current) {
-              console.warn(
-                "Using legacy Google Maps Places Autocomplete API. As of March 1st, 2025, " +
-                "this API is deprecated. Please update to the newer PlaceAutocompleteElement API."
-              );
-              warningDisplayedRef.current = true;
-            }
+          // Check if we've already logged deprecation warning
+          if (!warningDisplayedRef.current) {
+            console.warn(
+              "Using legacy Google Maps Places Autocomplete API. As of March 1st, 2025, " +
+              "this API is deprecated. Please update to the newer PlaceAutocompleteElement API."
+            );
+            warningDisplayedRef.current = true;
           }
         }
-      } catch (error) {
-        console.error("Failed to load Google Maps API:", error);
-        if (isMounted) {
-          // Still set isGoogleMapsLoaded to true to show the fallback input
-          setIsGoogleMapsLoaded(false);
-        }
+        
+        return true;
       }
+      return false;
+    };
+    
+    // If Google Maps is already loaded, set state immediately
+    if (checkGoogleMapsLoaded()) {
+      return;
     }
     
-    // Initialize Google Maps
-    initializeMaps();
+    // Otherwise, set up an interval to check periodically
+    const interval = setInterval(() => {
+      if (checkGoogleMapsLoaded()) {
+        clearInterval(interval);
+      }
+    }, 500);
     
     // Clean up on unmount
-    return () => {
-      isMounted = false;
-    };
+    return () => clearInterval(interval);
   }, []);
 
   // Update input value when the prop changes
@@ -172,185 +172,117 @@ export function GoogleMapsAutocomplete({
   
   // Initialize the modern PlaceAutocompleteElement API
   const initializeModernAutocomplete = () => {
-    if (!autocompleteContainerRef.current || !window.google?.maps?.places) return;
+    if (!autocompleteContainerRef.current) return;
     
-    try {
-      // Modern approach using PlaceAutocompleteElement
-      const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
-        types: ['address'],
-        fields: ['address_components', 'formatted_address', 'geometry', 'name', 'place_id'],
-      });
-      
-      // Apply custom styling to match our UI
-      autocompleteElement.style.width = '100%';
-      
-      // Set the initial value
-      if (inputValue) {
-        autocompleteElement.value = inputValue;
-      }
-      
-      // Add the element to our container
-      autocompleteContainerRef.current.appendChild(autocompleteElement);
-      
-      // Store for cleanup
-      autocompleteRef.current = autocompleteElement;
-      
-      // Listen to place selection
-      autocompleteElement.addEventListener('gmp-placeselect', (event: any) => {
-        const place = event.detail.place;
-        if (place) {
-          handlePlaceSelection(place);
-        }
-      });
-      
-      // Listen to input changes
-      autocompleteElement.addEventListener('input', (e: any) => {
-        const newValue = e.target.value;
-        setInputValue(newValue);
-        onChange(newValue);
-      });
-  
-      console.log("Modern Google Maps Autocomplete initialized successfully");
-    } catch (error) {
-      console.error("Error initializing modern Google Maps autocomplete:", error);
-      // Fall back to a regular input if initialization fails
-      useRegularInputFallback();
+    // Modern approach using PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+      fields: ['address_components', 'formatted_address', 'geometry', 'name', 'place_id'],
+    });
+    
+    // Apply custom styling to match our UI
+    autocompleteElement.style.width = '100%';
+    
+    // Set the initial value
+    if (inputValue) {
+      autocompleteElement.value = inputValue;
     }
+    
+    // Add the element to our container
+    autocompleteContainerRef.current.appendChild(autocompleteElement);
+    
+    // Store for cleanup
+    autocompleteRef.current = autocompleteElement;
+    
+    // Listen to place selection
+    autocompleteElement.addEventListener('gmp-placeselect', (event: any) => {
+      const place = event.detail.place;
+      if (place) {
+        handlePlaceSelection(place);
+      }
+    });
+    
+    // Listen to input changes
+    autocompleteElement.addEventListener('input', (e: any) => {
+      const newValue = e.target.value;
+      setInputValue(newValue);
+      onChange(newValue);
+    });
+
+    console.log("Modern Google Maps Autocomplete initialized successfully");
   };
   
   // Initialize the legacy Autocomplete API
   const initializeLegacyAutocomplete = () => {
-    if (!autocompleteContainerRef.current || !window.google?.maps?.places) return;
-    
-    try {
-      // Create a standard input for the legacy approach
-      const input = document.createElement('input');
-      input.className = `${className} w-full h-10 px-3 py-2 border border-input bg-background rounded-md`;
-      input.placeholder = placeholder;
-      input.value = inputValue;
-      
-      autocompleteContainerRef.current.appendChild(input);
-      
-      // Create a standard autocomplete instance
-      const autocomplete = new window.google.maps.places.Autocomplete(input, {
-        types: ['address'],
-        fields: ['address_components', 'formatted_address', 'geometry', 'name', 'place_id'],
-      });
-  
-      // Store the instance
-      autocompleteRef.current = autocomplete;
-  
-      // Add event listener for place changes
-      autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace() as PlaceResult;
-        handlePlaceSelection(place);
-      });
-      
-      // Add input change event
-      input.addEventListener('input', (e: any) => {
-        const newValue = e.target.value;
-        setInputValue(newValue);
-        onChange(newValue);
-      });
-      
-      console.log("Legacy Google Maps Autocomplete initialized successfully");
-    } catch (error) {
-      console.error("Error initializing legacy Google Maps autocomplete:", error);
-      // Fall back to a regular input if initialization fails
-      useRegularInputFallback();
-    }
-  };
-  
-  // Fallback to a regular input when Google Maps fails to initialize
-  const useRegularInputFallback = () => {
     if (!autocompleteContainerRef.current) return;
     
-    try {
-      // Clear any previous content
-      autocompleteContainerRef.current.innerHTML = '';
-      
-      // Create a regular input as fallback
-      const input = document.createElement('input');
-      input.className = `${className} w-full h-10 px-3 py-2 border border-input bg-background rounded-md`;
-      input.placeholder = placeholder;
-      input.value = inputValue;
-      
-      // Add input change event
-      input.addEventListener('input', (e: any) => {
-        const newValue = e.target.value;
-        setInputValue(newValue);
-        onChange(newValue);
-      });
-      
-      autocompleteContainerRef.current.appendChild(input);
-      console.log("Using regular input as fallback for address input");
-    } catch (error) {
-      console.error("Error creating fallback input:", error);
-    }
+    // Create a standard input for the legacy approach
+    const input = document.createElement('input');
+    input.className = `${className} w-full h-10 px-3 py-2 border border-input bg-background rounded-md`;
+    input.placeholder = placeholder;
+    input.value = inputValue;
+    
+    autocompleteContainerRef.current.appendChild(input);
+    
+    // Create a standard autocomplete instance
+    const autocomplete = new window.google.maps.places.Autocomplete(input, {
+      types: ['address'],
+      fields: ['address_components', 'formatted_address', 'geometry', 'name', 'place_id'],
+    });
+
+    // Store the instance
+    autocompleteRef.current = autocomplete;
+
+    // Add event listener for place changes
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace() as PlaceResult;
+      handlePlaceSelection(place);
+    });
+    
+    // Add input change event
+    input.addEventListener('input', (e: any) => {
+      const newValue = e.target.value;
+      setInputValue(newValue);
+      onChange(newValue);
+    });
+    
+    console.log("Legacy Google Maps Autocomplete initialized successfully");
   };
   
   // Handle place selection common logic (works for both API versions)
   const handlePlaceSelection = (place: PlaceResult) => {
-    if (!place) {
+    if (!place || !place.geometry) {
       console.log("No place details available");
       return;
     }
     
-    try {
-      // Get the formatted address
-      const formattedAddress = place.formatted_address || '';
-      setInputValue(formattedAddress);
-      
-      // Create a default place result with just the address
-      const defaultResult: ExtendedPlaceResult = {
-        formatted_address: formattedAddress,
-        extractedData: {
-          city: '',
-          state: '',
-          country: '',
-        }
-      };
-      
-      // Try to extract location and address components if available
-      if (place.geometry?.location) {
-        try {
-          // Extract location data
-          const location = {
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng()
-          };
-          
-          // Extract address components
-          const components = extractAddressComponents(place);
-          
-          // Create place object with extracted data
-          const placeWithExtractedData: ExtendedPlaceResult = {
-            ...place,
-            extractedData: {
-              ...components,
-              location
-            }
-          };
-          
-          // Store the place data for reference
-          placeDataRef.current = placeWithExtractedData;
-          
-          // Call the onChange callback with the selected place
-          onChange(formattedAddress, placeWithExtractedData);
-          return;
-        } catch (error) {
-          console.error("Error extracting location details:", error);
-        }
+    // Get the formatted address
+    const formattedAddress = place.formatted_address || '';
+    setInputValue(formattedAddress);
+    
+    // Extract location data
+    const location = {
+      lat: place.geometry.location.lat(),
+      lng: place.geometry.location.lng()
+    };
+    
+    // Extract address components
+    const components = extractAddressComponents(place);
+    
+    // Create place object with extracted data
+    const placeWithExtractedData: ExtendedPlaceResult = {
+      ...place,
+      extractedData: {
+        ...components,
+        location
       }
-      
-      // If we couldn't extract location data, just use the formatted address
-      placeDataRef.current = defaultResult;
-      onChange(formattedAddress, defaultResult);
-    } catch (error) {
-      console.error("Error handling place selection:", error);
-      // Just pass back whatever text is in the input
-      onChange(inputValue);
-    }
+    };
+    
+    // Store the place data for reference
+    placeDataRef.current = placeWithExtractedData;
+    
+    // Call the onChange callback with the selected place
+    onChange(formattedAddress, placeWithExtractedData);
   };
 
   // Extract address components from place details

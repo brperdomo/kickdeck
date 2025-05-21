@@ -103,7 +103,7 @@ export default function UserRegistrationsView() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
         {registrations.map((registration: Registration, index: number) => (
           <Card 
             key={registration.id} 
@@ -111,17 +111,17 @@ export default function UserRegistrationsView() {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
-            <CardHeader className="pb-2 px-3 sm:px-6 pt-4 member-card-header">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+            <CardHeader className="pb-2 member-card-header">
+              <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle className="text-base sm:text-lg font-bold group-hover:text-primary transition-colors">
+                  <CardTitle className="text-lg font-bold group-hover:text-primary transition-colors">
                     {registration.teamName}
                   </CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">
+                  <CardDescription className="text-sm">
                     {registration.eventName} | {registration.ageGroup}
                   </CardDescription>
                 </div>
-                <div className="flex flex-row sm:flex-col gap-1">
+                <div className="flex flex-col gap-1">
                   <TeamStatusBadge 
                     status={registration.status} 
                     payLater={registration.payLater} 
@@ -132,8 +132,8 @@ export default function UserRegistrationsView() {
               </div>
             </CardHeader>
             
-            <CardContent className="pb-2 px-3 sm:px-6">
-              <div className="space-y-2 text-xs sm:text-sm">
+            <CardContent className="pb-2">
+              <div className="space-y-2 text-sm">
                 <div className="flex justify-between items-center bg-primary/5 px-2 py-1 rounded">
                   <span className="text-muted-foreground">Registered:</span>
                   <span className="font-medium">{formatDate(registration.registeredAt)}</span>
@@ -144,9 +144,7 @@ export default function UserRegistrationsView() {
                   <>
                     <div className="flex justify-between items-center px-2 py-1">
                       <span className="text-muted-foreground">Payment ID:</span>
-                      <span className="font-medium text-primary/90 text-right truncate max-w-[150px] sm:max-w-none">
-                        {registration.paymentId || 'N/A'}
-                      </span>
+                      <span className="font-medium text-primary/90">{registration.paymentId || 'N/A'}</span>
                     </div>
                     {registration.paymentDate && (
                       <div className="flex justify-between items-center px-2 py-1">
@@ -165,7 +163,7 @@ export default function UserRegistrationsView() {
                 
                 {/* Show error message if payment failed */}
                 {registration.paymentStatus === 'failed' && registration.errorMessage && (
-                  <div className="mt-2 p-2 bg-destructive/10 border border-destructive/20 rounded text-destructive text-xs sm:text-sm">
+                  <div className="mt-2 p-2 bg-destructive/10 border border-destructive/20 rounded text-destructive text-sm">
                     <p className="font-medium">Payment Error:</p>
                     <p>{registration.errorMessage}</p>
                   </div>
@@ -178,13 +176,13 @@ export default function UserRegistrationsView() {
               </div>
             </CardContent>
             
-            <CardFooter className="pt-2 px-3 sm:px-6">
+            <CardFooter className="pt-2">
               <div className="flex flex-col w-full gap-2">
                 <div className="flex justify-between gap-2">
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="w-full text-xs sm:text-sm" 
+                    className="w-full" 
                     onClick={() => showRegistrationDetails(registration)}
                   >
                     View Registration Details
@@ -193,17 +191,15 @@ export default function UserRegistrationsView() {
                 
                 {/* Show card info if it exists */}
                 {registration.setupIntentId && registration.cardDetails?.last4 && (
-                  <div className="text-xs sm:text-sm text-center text-muted-foreground border rounded p-2 flex items-center justify-center bg-muted/30">
+                  <div className="text-sm text-center text-muted-foreground border rounded p-2 flex items-center justify-center bg-muted/30">
                     <CreditCard className="h-3.5 w-3.5 mr-2 text-primary/70" />
-                    <span className="truncate">
-                      {registration.cardDetails.brand 
-                        ? `${registration.cardDetails.brand.charAt(0).toUpperCase() + registration.cardDetails.brand.slice(1)} ending in ${registration.cardDetails.last4}`
-                        : `Card ending in ${registration.cardDetails.last4}`
-                      }
-                      {registration.cardDetails.expMonth && registration.cardDetails.expYear && 
-                        ` (exp. ${registration.cardDetails.expMonth}/${registration.cardDetails.expYear.toString().slice(-2)})`
-                      }
-                    </span>
+                    {registration.cardDetails.brand 
+                      ? `${registration.cardDetails.brand.charAt(0).toUpperCase() + registration.cardDetails.brand.slice(1)} ending in ${registration.cardDetails.last4}`
+                      : `Card ending in ${registration.cardDetails.last4}`
+                    }
+                    {registration.cardDetails.expMonth && registration.cardDetails.expYear && 
+                      ` (exp. ${registration.cardDetails.expMonth}/${registration.cardDetails.expYear.toString().slice(-2)})`
+                    }
                   </div>
                 )}
                 
@@ -220,44 +216,44 @@ export default function UserRegistrationsView() {
       </div>
 
       <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
-        <DialogContent className="max-w-[92%] sm:max-w-lg md:max-w-2xl">
+        <DialogContent className="max-w-md sm:max-w-lg md:max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center justify-between text-base sm:text-lg">
+            <DialogTitle className="flex items-center justify-between">
               <span>Registration Details</span>
               <Button variant="ghost" size="icon" onClick={() => setDetailsDialogOpen(false)}>
                 <X className="h-4 w-4" />
               </Button>
             </DialogTitle>
-            <DialogDescription className="text-xs sm:text-sm">
+            <DialogDescription>
               Registration details for {selectedRegistration?.teamName}
             </DialogDescription>
           </DialogHeader>
           
           {selectedRegistration && (
-            <div className="space-y-4 sm:space-y-6 text-xs sm:text-sm">
+            <div className="space-y-6">
               {/* Team & Event Info */}
-              <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Team Information</h3>
-                  <div className="bg-muted rounded-md p-2 sm:p-3">
-                    <p className="font-semibold text-sm sm:text-lg">{selectedRegistration.teamName}</p>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Age Group: {selectedRegistration.ageGroup}</p>
+                  <h3 className="text-sm font-medium text-muted-foreground">Team Information</h3>
+                  <div className="bg-muted rounded-md p-3">
+                    <p className="font-semibold text-lg">{selectedRegistration.teamName}</p>
+                    <p className="text-sm text-muted-foreground">Age Group: {selectedRegistration.ageGroup}</p>
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Event Information</h3>
-                  <div className="bg-muted rounded-md p-2 sm:p-3">
-                    <p className="font-semibold text-sm sm:text-lg">{selectedRegistration.eventName}</p>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Registration Date: {formatDate(selectedRegistration.registeredAt)}</p>
+                  <h3 className="text-sm font-medium text-muted-foreground">Event Information</h3>
+                  <div className="bg-muted rounded-md p-3">
+                    <p className="font-semibold text-lg">{selectedRegistration.eventName}</p>
+                    <p className="text-sm text-muted-foreground">Registration Date: {formatDate(selectedRegistration.registeredAt)}</p>
                   </div>
                 </div>
               </div>
               
               {/* Registration Status */}
               <div className="space-y-2">
-                <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Registration Status</h3>
-                <div className="bg-muted rounded-md p-2 sm:p-3 flex items-center justify-between">
+                <h3 className="text-sm font-medium text-muted-foreground">Registration Status</h3>
+                <div className="bg-muted rounded-md p-3 flex items-center justify-between">
                   <span>Status:</span>
                   <TeamStatusBadge 
                     status={selectedRegistration.status} 
@@ -269,8 +265,8 @@ export default function UserRegistrationsView() {
               
               {/* Payment Information */}
               <div className="space-y-2">
-                <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Payment Information</h3>
-                <div className="bg-muted rounded-md p-2 sm:p-3 space-y-2">
+                <h3 className="text-sm font-medium text-muted-foreground">Payment Information</h3>
+                <div className="bg-muted rounded-md p-3 space-y-2">
                   <div className="flex justify-between">
                     <span>Registration Fee:</span>
                     <span className="font-semibold">${(selectedRegistration.amount / 100).toFixed(2)}</span>
@@ -291,11 +287,11 @@ export default function UserRegistrationsView() {
                   )}
                   
                   {selectedRegistration.cardDetails?.last4 && (
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                    <div className="flex justify-between items-center">
                       <span>Payment Method:</span>
                       <div className="flex items-center gap-1">
-                        <CreditCard className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                        <span className="truncate">
+                        <CreditCard className="h-4 w-4" />
+                        <span>
                           {selectedRegistration.cardDetails.brand 
                             ? `${selectedRegistration.cardDetails.brand.charAt(0).toUpperCase() + selectedRegistration.cardDetails.brand.slice(1)} ending in ${selectedRegistration.cardDetails.last4}`
                             : `Card ending in ${selectedRegistration.cardDetails.last4}`
@@ -309,14 +305,14 @@ export default function UserRegistrationsView() {
                   )}
                   
                   {selectedRegistration.errorMessage && (
-                    <div className="mt-2 p-2 border border-destructive/50 bg-destructive/10 rounded-md text-xs sm:text-sm text-destructive">
+                    <div className="mt-2 p-2 border border-destructive/50 bg-destructive/10 rounded-md text-sm text-destructive">
                       <div className="font-semibold">Payment Error:</div>
                       <div>{selectedRegistration.errorMessage}</div>
                     </div>
                   )}
 
                   {selectedRegistration.setupIntentId && (
-                    <div className="mt-2 p-2 border border-primary/20 bg-primary/5 rounded-md text-xs sm:text-sm">
+                    <div className="mt-2 p-2 border border-primary/20 bg-primary/5 rounded-md text-sm">
                       <p className="font-medium text-primary">Payment Method Saved</p>
                       <p className="text-muted-foreground">Your card will be charged after your registration is approved by the event organizer.</p>
                     </div>
@@ -325,7 +321,7 @@ export default function UserRegistrationsView() {
               </div>
               
               <DialogFooter>
-                <Button className="w-full sm:w-auto text-xs sm:text-sm" onClick={() => setDetailsDialogOpen(false)}>Close</Button>
+                <Button onClick={() => setDetailsDialogOpen(false)}>Close</Button>
               </DialogFooter>
             </div>
           )}

@@ -1,19 +1,9 @@
 // Environment variable handling for client-side
-// Main env object for consistent access to environment variables
-export const env = {
-  VITE_GOOGLE_MAPS_API_KEY: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
-  VITE_TINYMCE_API_KEY: import.meta.env.VITE_TINYMCE_API_KEY || "",
-  VITE_STRIPE_PUBLISHABLE_KEY: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "",
-  VITE_BYPASS_AUTH: import.meta.env.VITE_BYPASS_AUTH === "true",
-  VITE_HOST: import.meta.env.VITE_HOST || ""
-};
-
-// For backward compatibility with existing code
-export const googleMapsApiKey = env.VITE_GOOGLE_MAPS_API_KEY;
-export const tinymceApiKey = env.VITE_TINYMCE_API_KEY;
-export const stripePublishableKey = env.VITE_STRIPE_PUBLISHABLE_KEY;
-export const bypassAuth = env.VITE_BYPASS_AUTH;
-export const hostUrl = env.VITE_HOST || "";
+export const googleMapsApiKey = import.meta.env.GOOGLE_MAPS_API_KEY || ""; // Use environment API key
+export const tinymceApiKey = import.meta.env.VITE_TINYMCE_API_KEY || "";
+export const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "";
+export const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === "true";
+export const hostUrl = import.meta.env.VITE_HOST || "";
 
 // Log API key length for debugging
 console.log(`Google Maps API key length: ${googleMapsApiKey?.length || 0} characters`);

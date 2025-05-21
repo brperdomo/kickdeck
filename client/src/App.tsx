@@ -8,10 +8,6 @@ import React, { lazy, Suspense, useEffect } from 'react';
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
 import { RouteDebugger } from "@/components/RouteDebugger";
-import { RoleBasedRedirect } from "@/components/RoleBasedRedirect";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { DebugErrorBoundary } from "@/components/DebugErrorBoundary";
-import { useAuth } from "@/hooks/use-auth";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
@@ -32,6 +28,7 @@ import FormTemplatesPage from "@/pages/form-templates";
 import FormTemplateCreatePage from "@/pages/form-template-create";
 import FormTemplateEditPage from "@/pages/form-template-edit";
 import ProductUpdatesPage from "@/pages/product-updates";
+import { useUser } from "@/hooks/use-user";
 import EventRegistration from "./pages/event-registration";
 import EventDetailsPreview from "./pages/event-details-preview";
 import MainLayout from "@/components/layouts/MainLayout";
@@ -65,7 +62,7 @@ import EventPreviewSelector from '@/pages/event-preview-selector';
 import RegistrationPreview from '@/pages/registration-preview';
 
 function Router() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading } = useUser();
   // Check if we're on the main domain (matchpro.ai)
   const showLandingPage = isMainDomain();
 
@@ -212,6 +209,9 @@ function Router() {
           <Route path="/register" component={Register} />
           <Route path="/forgot-password" component={ForgotPassword} />
           <Route path="/reset-password" component={ResetPassword} />
+          <Route path="/dashboard">
+            <AuthPage />
+          </Route>
           {/* Redirect all other routes to auth page */}
           <Route>
             <AuthPage />
@@ -220,181 +220,161 @@ function Router() {
       ) : (
         // Protected routes for authenticated users
         <>
-          {/* Add the RoleBasedRedirect component to handle role-based navigation */}
-          <RoleBasedRedirect />
-          
           {/* Admin routes */}
-          <ProtectedRoute path="/admin/events/create" requiredRole="admin" component={<CreateEvent />} />
-          {/* Admin routes - using ProtectedRoute for better protection */}
-          <ProtectedRoute path="/admin/events/:id/edit" requiredRole="admin" component={<EditEvent />} />
-          <ProtectedRoute path="/admin/events/:id/application-form" requiredRole="admin" component={<FormEditorPage />} />
-          <ProtectedRoute path="/admin/events/:id/fees" requiredRole="admin" component={<FeeManagementPage />} />
-          <ProtectedRoute path="/admin/events/:id/coupons" requiredRole="admin" component={<CouponManagerPage />} />
-          <ProtectedRoute path="/admin/events/:id/clubs" requiredRole="admin" component={<EventClubsPage />} />
-          <ProtectedRoute path="/admin/events/:id/preview-registration" requiredRole="admin" component={<RegistrationPreview />} />
-          <ProtectedRoute path="/admin/events/preview" requiredRole="admin" component={<EventPreviewSelector />} />
-          <ProtectedRoute path="/admin/events/:id" requiredRole="admin" component={<EditEvent />} />
-          <ProtectedRoute path="/admin/accounting-codes" requiredRole="admin" component={<AccountingCodeManagement />} />
-          <ProtectedRoute path="/admin/email-templates/create" requiredRole="admin" component={<EmailTemplateEdit />} />
-          <ProtectedRoute path="/admin/email-templates/:id" requiredRole="admin" component={<EmailTemplateEdit />} />
-          <ProtectedRoute path="/admin/email-templates" requiredRole="admin" component={<EmailTemplatesPage />} />
-          <ProtectedRoute path="/sendgrid-settings" requiredRole="admin" component={<SendGridSettingsPage />} />
-          <ProtectedRoute path="/admin/form-templates/create" requiredRole="admin" component={<FormTemplateCreatePage />} />
-          <ProtectedRoute path="/admin/form-templates/:id/edit" requiredRole="admin" component={<FormTemplateEditPage />} />
-          <ProtectedRoute path="/admin/form-templates" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="formTemplates" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/team-status-test" requiredRole="admin" component={<TeamStatusTest />} />
-          <ProtectedRoute path="/admin/file-manager" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="files" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/events" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="events" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/teams" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="teams" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/administrators" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="administrators" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/complexes" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="complexes" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/households" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="households" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/scheduling" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="scheduling" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/reports" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="reports" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/members" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="members" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/roles" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="roles" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/account" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="account" />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/admin/settings" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard initialView="settings" />
-            </DebugErrorBoundary>
-          } />
-          {/* We'll enhance the main dashboard with animations directly */}
-          <ProtectedRoute path="/admin" requiredRole="admin" component={
-            <DebugErrorBoundary>
-              <AdminDashboard />
-            </DebugErrorBoundary>
-          } />
-
-          {/* User routes - using ProtectedRoute for member-specific routes */}
-          <ProtectedRoute path="/household" requiredRole="member" component={
-            <DebugErrorBoundary>
-              <HouseholdPage />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute path="/dashboard/my-household" requiredRole="member" component={
-            <DebugErrorBoundary>
-              <HouseholdPage />
-            </DebugErrorBoundary>
-          } />
-          <ProtectedRoute 
-            path="/dashboard/my-account" 
-            requiredRole="member" 
-            component={
-              <DebugErrorBoundary>
-                <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>}>
-                  {React.createElement(lazy(() => import('./pages/my-account')))}
-                </Suspense>
-              </DebugErrorBoundary>
-            }
-          />
-          <ProtectedRoute 
-            path="/dashboard/account-settings" 
-            requiredRole="member" 
-            component={
-              <DebugErrorBoundary>
-                <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>}>
-                  {React.createElement(lazy(() => import('./pages/account-settings')))}
-                </Suspense>
-              </DebugErrorBoundary>
-            }
-          />
-          <ProtectedRoute 
-            path="/dashboard/registrations" 
-            requiredRole="member" 
-            component={
-              <DebugErrorBoundary>
-                <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>}>
-                  {React.createElement(lazy(() => import('./pages/registrations')))}
-                </Suspense>
-              </DebugErrorBoundary>
-            }
-          />
-          <ProtectedRoute path="/chat" requiredRole="member" component={<ChatPage />} />
-
-          <ProtectedRoute path="/product-updates" requiredRole="admin" component={<ProductUpdatesPage />} />
-          <ProtectedRoute path="/registration-orders-report" requiredRole="admin" component={<RegistrationOrdersReport />} />
-          <ProtectedRoute path="/financial-overview-report" requiredRole="admin" component={<FinancialOverviewReport />} />
-          <Route path="/event-financial-report/:eventId">
-            {(params) => (
-              <ProtectedRoute 
-                path="/event-financial-report/:eventId" 
-                requiredRole="admin" 
-                component={<EventFinancialReport eventId={params.eventId} />} 
-              />
-            )}
+          <Route path="/admin/events/create">
+            {user.isAdmin ? <CreateEvent /> : <NotFound />}
           </Route>
-          <ProtectedRoute path="/fees-analysis-report" requiredRole="admin" component={<FeesAnalysisReport />} />
-          <ProtectedRoute path="/bookkeeping-report" requiredRole="admin" component={<BookkeepingReport />} />
-          {/* Payment routes - not protected by role since they're accessed after authentication from different flows */}
-          <Route path="/checkout" component={Checkout} />
-          <Route path="/payment-confirmation" component={PaymentConfirmation} />
-          <Route path="/payment-setup-confirmation" component={PaymentSetupConfirmation} />
-          
-          {/* Dashboard routes - protected with role-based redirection */}
-          <ProtectedRoute path="/dashboard" requiredRole="member" component={
-            <DebugErrorBoundary>
-              <UserDashboard />
-            </DebugErrorBoundary>
-          } />
-          
+          {/* Admin routes */}
+          <Route path="/admin/events/:id/edit">
+            {user.isAdmin ? <EditEvent /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id/application-form">
+            {(params) => user.isAdmin ? <FormEditorPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id/fees">
+            {(params) => user.isAdmin ? <FeeManagementPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id/coupons">
+            {(params) => user.isAdmin ? <CouponManagerPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id/clubs">
+            {(params) => user.isAdmin ? <EventClubsPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id/preview-registration">
+            {user.isAdmin ? <RegistrationPreview /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/preview">
+            {user.isAdmin ? <EventPreviewSelector /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events/:id">
+            {user.isAdmin ? <EditEvent /> : <NotFound />}
+          </Route>
+          <Route path="/admin/accounting-codes">
+            {user.isAdmin ? <AccountingCodeManagement /> : <NotFound />}
+          </Route>
+          <Route path="/admin/email-templates/create">
+            {user.isAdmin ? <EmailTemplateEdit /> : <NotFound />}
+          </Route>
+          <Route path="/admin/email-templates/:id">
+            {user.isAdmin ? <EmailTemplateEdit /> : <NotFound />}
+          </Route>
+          <Route path="/admin/email-templates">
+            {user.isAdmin ? <EmailTemplatesPage /> : <NotFound />}
+          </Route>
+          <Route path="/sendgrid-settings">
+            {user.isAdmin ? <SendGridSettingsPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/form-templates/create">
+            {user.isAdmin ? <FormTemplateCreatePage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/form-templates/:id/edit">
+            {user.isAdmin ? <FormTemplateEditPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/form-templates">
+            {user.isAdmin ? <AdminDashboard initialView="formTemplates" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/team-status-test">
+            {user.isAdmin ? <TeamStatusTest /> : <NotFound />}
+          </Route>
+          <Route path="/admin/file-manager">
+            {user.isAdmin ? <AdminDashboard initialView="files" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/events">
+            {user.isAdmin ? <AdminDashboard initialView="events" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/teams">
+            {user.isAdmin ? <AdminDashboard initialView="teams" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/administrators">
+            {user.isAdmin ? <AdminDashboard initialView="administrators" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/complexes">
+            {user.isAdmin ? <AdminDashboard initialView="complexes" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/households">
+            {user.isAdmin ? <AdminDashboard initialView="households" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/scheduling">
+            {user.isAdmin ? <AdminDashboard initialView="scheduling" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/reports">
+            {user.isAdmin ? <AdminDashboard initialView="reports" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/members">
+            {user.isAdmin ? <AdminDashboard initialView="members" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/roles">
+            {user.isAdmin ? <AdminDashboard initialView="roles" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/account">
+            {user.isAdmin ? <AdminDashboard initialView="account" /> : <NotFound />}
+          </Route>
+          <Route path="/admin/settings">
+            {user.isAdmin ? <AdminDashboard initialView="settings" /> : <NotFound />}
+          </Route>
+          {/* We'll enhance the main dashboard with animations directly */}
+          <Route path="/admin">
+            {user.isAdmin ? <AdminDashboard initialView="events" /> : <NotFound />}
+          </Route>
+
+          {/* User routes */}
+          <Route path="/household" component={HouseholdPage} />
+          <Route path="/dashboard/my-household" component={HouseholdPage} />
+          <Route path="/dashboard/my-account">
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>}>
+              {React.createElement(lazy(() => import('./pages/my-account')))}
+            </Suspense>
+          </Route>
+          <Route path="/dashboard/account-settings">
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>}>
+              {React.createElement(lazy(() => import('./pages/account-settings')))}
+            </Suspense>
+          </Route>
+          <Route path="/dashboard/registrations">
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>}>
+              {React.createElement(lazy(() => import('./pages/registrations')))}
+            </Suspense>
+          </Route>
+          <Route path="/chat" component={ChatPage} />
+
+          <Route path="/product-updates">
+            {user.isAdmin ? <ProductUpdatesPage /> : <NotFound />}
+          </Route>
+          <Route path="/registration-orders-report">
+            {user.isAdmin ? <RegistrationOrdersReport /> : <NotFound />}
+          </Route>
+          <Route path="/financial-overview-report">
+            {user.isAdmin ? <FinancialOverviewReport /> : <NotFound />}
+          </Route>
+          <Route path="/event-financial-report/:eventId">
+            {(params) => user.isAdmin ? <EventFinancialReport eventId={params.eventId} /> : <NotFound />}
+          </Route>
+          <Route path="/fees-analysis-report">
+            {user.isAdmin ? <FeesAnalysisReport /> : <NotFound />}
+          </Route>
+          <Route path="/bookkeeping-report">
+            {user.isAdmin ? <BookkeepingReport /> : <NotFound />}
+          </Route>
+          <Route path="/checkout">
+            <Checkout />
+          </Route>
+          <Route path="/payment-confirmation">
+            <PaymentConfirmation />
+          </Route>
+          <Route path="/payment-setup-confirmation">
+            <PaymentSetupConfirmation />
+          </Route>
+          <Route path="/dashboard" component={UserDashboard} />
+
           {/* Preview routes */}
 
-          {/* Home route - handles registration process redirects and role-based routing */}
+          {/* Home route */}
           <Route path="/">
             {() => {
               // If there's an in-progress registration, redirect back to it
@@ -425,8 +405,8 @@ function Router() {
                 );
               }
               
-              // Use RoleBasedRedirect to properly handle routing based on user role
-              return <RoleBasedRedirect />;
+              // Otherwise show the regular dashboard
+              return user.isAdmin ? <AdminDashboard initialView="events" /> : <UserDashboard />;
             }}
           </Route>
 

@@ -161,15 +161,15 @@ export function MyTeams() {
               
               <div className="flex flex-col sm:flex-row gap-4 text-sm mt-2">
                 <div className="flex items-center gap-2">
-                  <Users size={16} className="text-primary/70" />
+                  <Users size={16} />
                   <span>{team.ageGroup}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar size={16} className="text-primary/70" />
+                  <Calendar size={16} />
                   <span>Event Start: {format(new Date(team.startDate), 'MMM d, yyyy')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <ClipboardList size={16} className="text-primary/70" />
+                  <ClipboardList size={16} />
                   <span>Role: {team.role === 'coach' ? 'Coach' : 'Manager'}</span>
                 </div>
               </div>

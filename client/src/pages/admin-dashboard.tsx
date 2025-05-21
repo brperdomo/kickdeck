@@ -5254,7 +5254,7 @@ interface AdminDashboardProps {
 }
 
 function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
-  const { user, logout, isLoading: isUserLoading, authState } = useUser();
+  const { user, logout, isLoading: isUserLoading } = useUser();
   const { hasPermission, hasRole } = usePermissions();
   const [location, navigate] = useLocation();
   const [activeView, setActiveView] = useState<View>(initialView);
@@ -5268,15 +5268,6 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showUpdatesLog, setShowUpdatesLog] = useState(false);
   const [showInternalOps, setShowInternalOps] = useState(false);
-  
-  // Debug logging to trace authentication
-  useEffect(() => {
-    console.log("AdminDashboard - Auth state:", { 
-      authState, 
-      user: !!user, 
-      isLoading: isUserLoading 
-    });
-  }, [authState, user, isUserLoading]);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [showLogoutOverlay, setShowLogoutOverlay] = useState(false);
   const [showEmulationModal, setShowEmulationModal] = useState(false);
@@ -5480,39 +5471,6 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
         return <div>Feature coming soon</div>;
     }
   };
-
-  // Handle loading and transitional states
-  if (isUserLoading || authState === 'checking' || authState === 'redirecting' || authState === 'logging-in') {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          <p className="text-lg font-medium text-muted-foreground">
-            {authState === 'redirecting' ? 'Redirecting...' : 'Loading dashboard...'}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Additional check for user data
-  if (!user) {
-    console.error("AdminDashboard: No user data available but not in loading state", { authState });
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="flex flex-col items-center gap-4 p-6 bg-card shadow-lg rounded-lg">
-          <AlertTriangle className="h-12 w-12 text-destructive" />
-          <h2 className="text-xl font-bold">Authentication Error</h2>
-          <p className="text-center text-muted-foreground mb-4">
-            Unable to load user data. Please try refreshing the page or logging in again.
-          </p>
-          <Button onClick={() => window.location.href = '/auth'} variant="default">
-            Return to Login
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
