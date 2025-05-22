@@ -201,17 +201,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     enabled: !!selectedSeasonalScopeId
   });
   
-  // Query for fetching the age group eligibility settings specific to this event
-  const eligibilitySettingsQuery = useQuery({
-    queryKey: ['ageGroupEligibilitySettings', defaultValues?.id],
-    queryFn: async () => {
-      if (!defaultValues?.id) return [];
-      const response = await fetch(`/api/admin/age-group-eligibility-settings?eventId=${defaultValues.id}`);
-      if (!response.ok) throw new Error('Failed to fetch age group eligibility settings');
-      return response.json();
-    },
-    enabled: !!defaultValues?.id && mode === 'edit'
-  });
+  // This query was merged with the one below
 
   // Effect for initializing seasonal scope ID from defaultValues
   useEffect(() => {
