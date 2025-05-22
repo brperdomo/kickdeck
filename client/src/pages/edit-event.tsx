@@ -76,11 +76,12 @@ export default function EditEvent() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event', id] });
       queryClient.invalidateQueries({ queryKey: ['event-age-groups', id] });
+      queryClient.invalidateQueries({ queryKey: ['ageGroupEligibilitySettings', id] });
       toast({
         title: "Success",
-        description: "Event updated successfully",
+        description: "Event updated successfully. You can continue editing.",
       });
-      navigate("/admin");
+      // Stay on the same page instead of redirecting
     },
     onError: (error: Error) => {
       toast({
