@@ -249,6 +249,42 @@ router.get('/:id/age-groups', async (req, res) => {
       }
     }
 
+    // Fetch age group eligibility settings from the separate eligibility table
+    // Import the table if it hasn't been imported yet
+    let eventAgeGroupEligibility;
+    try {
+      // Try to import the module dynamically
+      const { eventAgeGroupEligibility: importedTable } = await import('../../db/schema-updates.js');
+      eventAgeGroupEligibility = importedTable;
+    } catch (error) {
+      console.warn('Could not import eventAgeGroupEligibility from schema-updates.js:', error);
+      // Fallback to using the isEligible field from eventAgeGroups
+    }
+
+    // Get eligibility settings if the table was successfully imported
+    let eligibilityMap = new Map();
+    
+    if (eventAgeGroupEligibility) {
+      try {
+        const eligibilitySettings = await db
+          .select()
+          .from(eventAgeGroupEligibility)
+          .where(eq(eventAgeGroupEligibility.eventId, parseInt(eventId)));
+        
+        console.log(`Found ${eligibilitySettings.length} eligibility settings records for event ${eventId}`);
+        
+        // Create a map of ageGroupId -> isEligible
+        for (const setting of eligibilitySettings) {
+          // The ageGroupId in the eligibility table is a composite ID like "male-2014-U11"
+          // We need to match this with our age groups
+          const compositeId = setting.ageGroupId;
+          eligibilityMap.set(compositeId, setting.isEligible);
+        }
+      } catch (error) {
+        console.error('Error fetching eligibility settings:', error);
+      }
+    }
+
     // Deduplicate based on division code before returning
     const uniqueGroups = [];
     const uniqueMap = new Map();
@@ -258,17 +294,32 @@ router.get('/:id/age-groups', async (req, res) => {
       const divisionCode = group.divisionCode || `${group.gender.charAt(0)}${group.ageGroup.replace(/\D/g, '')}`;
       const key = divisionCode;
       
+      // Create a composite ID to match against eligibility settings
+      const compositeId = `${group.gender.toLowerCase()}-${group.birthYear}-${group.ageGroup}`;
+      
+      // Determine if this age group is eligible
+      // First check the eligibility settings table, then fall back to the age group's isEligible field
+      const isEligible = eligibilityMap.has(compositeId) 
+        ? eligibilityMap.get(compositeId) 
+        : (group.isEligible === undefined ? true : Boolean(group.isEligible));
+      
       if (!uniqueMap.has(key)) {
         uniqueMap.set(key, true);
         uniqueGroups.push({
           ...group,
+          isEligible: isEligible, // Set the eligibility based on our determination
           selected: true
         });
       }
     }
 
-    console.log(`Deduplicated to ${uniqueGroups.length} unique age groups (from ${ageGroups.length}) for event ${eventId}`);
-    res.json(uniqueGroups);
+    // Filter out ineligible age groups for the public-facing endpoints
+    const eligibleGroups = uniqueGroups.filter(group => group.isEligible !== false);
+    
+    console.log(`Deduplicated to ${uniqueGroups.length} unique age groups (${eligibleGroups.length} eligible) from ${ageGroups.length} for event ${eventId}`);
+    
+    // Only return eligible age groups for the public event registration page
+    res.json(eligibleGroups);
   } catch (error) {
     console.error('Error fetching age groups:', error);
     res.status(500).json({ error: 'Failed to fetch age groups' });
