@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDropzone } from 'react-dropzone';
 import EventAdminModal from "@/components/events/EventAdminModal";
 import {
@@ -98,6 +98,7 @@ interface EventFormProps {
 }
 
 export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false, activeTab, onTabChange, completedTabs, onCompletedTabsChange, navigateTab }: EventFormProps) => {
+  const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const form = useForm<EventFormValues>({
@@ -198,6 +199,18 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       return response.json();
     },
     enabled: !!selectedSeasonalScopeId
+  });
+  
+  // Query for fetching the age group eligibility settings specific to this event
+  const eligibilitySettingsQuery = useQuery({
+    queryKey: ['ageGroupEligibilitySettings', defaultValues?.id],
+    queryFn: async () => {
+      if (!defaultValues?.id) return [];
+      const response = await fetch(`/api/admin/age-group-eligibility-settings?eventId=${defaultValues.id}`);
+      if (!response.ok) throw new Error('Failed to fetch age group eligibility settings');
+      return response.json();
+    },
+    enabled: !!defaultValues?.id && mode === 'edit'
   });
 
   // Effect for initializing seasonal scope ID from defaultValues
@@ -708,7 +721,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                                 const eventId = defaultValues.id;
                                 console.log(`Saving eligibility for age group ${group.id}: ${eligibilityValue} in event ${eventId}`);
                                 
-                                // Call the new API to update the eligibility settings
+                                // Call the age group eligibility settings API to update the eligibility
                                 const response = await fetch(`/api/admin/age-group-eligibility-settings/${group.id}`, {
                                   method: 'PUT',
                                   headers: { 'Content-Type': 'application/json' },
@@ -721,6 +734,9 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                                 if (!response.ok) {
                                   throw new Error(`Failed to update eligibility: ${response.statusText}`);
                                 }
+                                
+                                // Invalidate the eligibility settings query to refresh the data
+                                queryClient.invalidateQueries(['ageGroupEligibilitySettings', eventId]);
                                 
                                 console.log(`Successfully updated eligibility for age group ${group.id}`);
                                 
