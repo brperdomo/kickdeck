@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/table";
 import { BracketsContent } from "@/components/admin/brackets/BracketsContent";
 import { Editor } from "@tinymce/tinymce-react";
+import { AgeGroupEligibilityManager } from "@/components/admin/age-groups/AgeGroupEligibilityManager";
 
 // TinyMCE API key from environment variable
 const TINYMCE_API_KEY = import.meta.env.VITE_TINYMCE_API_KEY;

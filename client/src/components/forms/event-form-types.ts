@@ -102,7 +102,7 @@ export interface ScoringRule {
   points: number;
 }
 
-export const TAB_ORDER: EventTab[] = ['information', 'age-groups', 'brackets', 'scoring', 'complexes', 'settings', 'administrators'];
+export const TAB_ORDER: EventTab[] = ['information', 'age-groups', 'eligibility', 'brackets', 'scoring', 'complexes', 'settings', 'administrators'];
 
 export const USA_TIMEZONES = [
   { value: 'America/New_York', label: 'Eastern Time (ET)' },
