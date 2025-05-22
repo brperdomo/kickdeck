@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { AgeGroup, bulkUpdateAgeGroupEligibility } from "../../../api/age-groups";
+import { AgeGroup, updateAgeGroupEligibilitySetting } from "../../../api/age-groups";
 import { Loader2 } from "lucide-react";
 
 interface AgeGroupEligibilityManagerProps {
@@ -30,7 +30,7 @@ export const AgeGroupEligibilityManager = ({
     })));
   }, [ageGroups]);
 
-  const handleToggleEligibility = (ageGroupId: number, isEligible: boolean) => {
+  const handleToggleEligibility = (ageGroupId: string | number, isEligible: boolean) => {
     setLocalAgeGroups((prevGroups) => 
       prevGroups.map(group => 
         group.id === ageGroupId ? { ...group, isEligible } : group
@@ -42,17 +42,27 @@ export const AgeGroupEligibilityManager = ({
     try {
       setIsSaving(true);
       
-      // Create the array of age groups with id and isEligible for the API
-      const eligibilityUpdates = localAgeGroups.map(group => ({
-        id: group.id,
-        isEligible: group.isEligible === undefined ? true : Boolean(group.isEligible)
-      }));
+      // Create a composite key for each age group
+      // Format: gender-birthYear-ageGroup (e.g., "male-2014-U11")
+      const savePromises = localAgeGroups.map(async (group) => {
+        // Generate a string-based composite ID
+        const compositeId = `${group.gender.toLowerCase()}-${group.birthYear}-${group.ageGroup}`;
+        
+        console.log(`Updating eligibility for age group ${compositeId} to ${group.isEligible}`);
+        
+        return updateAgeGroupEligibilitySetting({
+          eventId: eventId,
+          ageGroupId: compositeId,
+          isEligible: group.isEligible === undefined ? true : Boolean(group.isEligible)
+        });
+      });
       
-      console.log('Saving eligibility updates:', eligibilityUpdates);
+      const results = await Promise.all(savePromises);
       
-      const result = await bulkUpdateAgeGroupEligibility(eligibilityUpdates);
+      // Check if all updates were successful
+      const allSuccessful = results.every(result => result.success);
       
-      if (result.success) {
+      if (allSuccessful) {
         // Update parent component with the changes
         onAgeGroupsChange(localAgeGroups);
         
@@ -61,7 +71,7 @@ export const AgeGroupEligibilityManager = ({
           description: "Age group eligibility settings have been updated successfully.",
         });
       } else {
-        throw new Error("API returned failure status");
+        throw new Error("One or more eligibility updates failed");
       }
     } catch (error) {
       console.error("Failed to save eligibility settings:", error);
