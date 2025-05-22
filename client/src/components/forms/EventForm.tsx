@@ -674,7 +674,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       <TableCell className="text-center">
                         <Switch
                           checked={group.isEligible !== false}
-                          onCheckedChange={(checked) => {
+                          onCheckedChange={async (checked) => {
+                            // Update the local state
                             const updatedAgeGroups = ageGroups.map(ag => 
                               ag.id === group.id 
                                 ? { ...ag, isEligible: checked } 
@@ -682,6 +683,34 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                             );
                             setAgeGroups(updatedAgeGroups);
                             form.setValue('ageGroups', updatedAgeGroups);
+                            
+                            // Save to the backend if we're in edit mode with a valid event ID
+                            if (mode === 'edit' && defaultValues?.id) {
+                              try {
+                                const eligibilityValue = Boolean(checked);
+                                console.log(`Saving eligibility for age group ${group.id}: ${eligibilityValue}`);
+                                
+                                // Call the API to update the eligibility
+                                const response = await fetch(`/api/admin/age-group-eligibility/${group.id}`, {
+                                  method: 'PUT',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ isEligible: eligibilityValue })
+                                });
+                                
+                                if (!response.ok) {
+                                  throw new Error(`Failed to update eligibility: ${response.statusText}`);
+                                }
+                                
+                                console.log(`Successfully updated eligibility for age group ${group.id}`);
+                              } catch (error) {
+                                console.error('Error updating age group eligibility:', error);
+                                toast({
+                                  title: "Error updating eligibility",
+                                  description: "The change couldn't be saved to the server. Please try again.",
+                                  variant: "destructive"
+                                });
+                              }
+                            }
                           }}
                           aria-label={`Age group ${group.ageGroup} eligibility toggle`}
                         />
@@ -1466,49 +1495,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                 )}
               </TabsContent>
               
-              <TabsContent value="eligibility">
-                {mode === 'edit' && ageGroups.length > 0 ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold">Age Group Eligibility Settings</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Enable or disable registration for specific age groups. Disabled age groups will not be available for team registration.
-                    </p>
-                    <AgeGroupEligibilityManager 
-                      ageGroups={ageGroups.map(ag => ({
-                        id: Number(ag.id), // Convert string id to number
-                        eventId: defaultValues?.id || 0,
-                        ageGroup: ag.ageGroup,
-                        gender: ag.gender,
-                        divisionCode: ag.divisionCode,
-                        birthYear: ag.birthYear,
-                        fieldSize: ag.fieldSize,
-                        projectedTeams: ag.projectedTeams,
-                        isEligible: ag.isEligible === undefined ? true : Boolean(ag.isEligible)
-                      }))}
-                      onAgeGroupsChange={(updatedGroups) => {
-                        // Convert the API age group format back to form age group format
-                        const formattedGroups = updatedGroups.map(ag => ({
-                          ...ageGroups.find(group => Number(group.id) === ag.id) || {},
-                          isEligible: ag.isEligible
-                        }));
-                        setAgeGroups(formattedGroups);
-                      }}
-                      eventId={defaultValues?.id || 0}
-                    />
-                  </div>
-                ) : (
-                  <div className="p-4 bg-muted/50 rounded-md text-center">
-                    <p>You must save the event with age groups first to manage eligibility.</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {mode === 'create' 
-                        ? 'Create the event with age groups first, then you can manage eligibility in edit mode.'
-                        : 'Add age groups in the Age Groups tab before managing eligibility.'}
-                    </p>
-                  </div>
-                )}
-              </TabsContent>
+
 
               <TabsContent value="brackets">
                 {mode === 'edit' ? (
