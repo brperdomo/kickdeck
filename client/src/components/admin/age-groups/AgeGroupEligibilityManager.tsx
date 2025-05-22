@@ -22,7 +22,12 @@ export const AgeGroupEligibilityManager = ({
   const { toast } = useToast();
 
   useEffect(() => {
-    setLocalAgeGroups(ageGroups);
+    // Make sure to preserve the isEligible flag from the server
+    setLocalAgeGroups(ageGroups.map(group => ({
+      ...group,
+      // Ensure isEligible is explicitly boolean, default to true if undefined
+      isEligible: group.isEligible === undefined ? true : Boolean(group.isEligible)
+    })));
   }, [ageGroups]);
 
   const handleToggleEligibility = (ageGroupId: number, isEligible: boolean) => {
@@ -40,18 +45,24 @@ export const AgeGroupEligibilityManager = ({
       // Create the array of age groups with id and isEligible for the API
       const eligibilityUpdates = localAgeGroups.map(group => ({
         id: group.id,
-        isEligible: group.isEligible === undefined ? true : group.isEligible
+        isEligible: group.isEligible === undefined ? true : Boolean(group.isEligible)
       }));
       
-      await bulkUpdateAgeGroupEligibility(eligibilityUpdates);
+      console.log('Saving eligibility updates:', eligibilityUpdates);
       
-      // Update parent component with the changes
-      onAgeGroupsChange(localAgeGroups);
+      const result = await bulkUpdateAgeGroupEligibility(eligibilityUpdates);
       
-      toast({
-        title: "Eligibility settings saved",
-        description: "Age group eligibility settings have been updated successfully.",
-      });
+      if (result.success) {
+        // Update parent component with the changes
+        onAgeGroupsChange(localAgeGroups);
+        
+        toast({
+          title: "Eligibility settings saved",
+          description: "Age group eligibility settings have been updated successfully.",
+        });
+      } else {
+        throw new Error("API returned failure status");
+      }
     } catch (error) {
       console.error("Failed to save eligibility settings:", error);
       toast({
