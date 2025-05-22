@@ -5,7 +5,7 @@
  * It serves as a place to add new tables and modifications without altering the main schema file.
  */
 
-import { pgTable, integer, boolean, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, integer, boolean, primaryKey, varchar } from "drizzle-orm/pg-core";
 import { events, eventAgeGroups } from "./schema.js";
 
 /**
@@ -20,9 +20,8 @@ export const eventAgeGroupEligibility = pgTable(
     eventId: integer("event_id")
       .notNull()
       .references(() => events.id),
-    ageGroupId: integer("age_group_id")
-      .notNull()
-      .references(() => eventAgeGroups.id),
+    ageGroupId: varchar("age_group_id", { length: 255 })
+      .notNull(),
     isEligible: boolean("is_eligible").notNull().default(true)
   },
   (table) => {

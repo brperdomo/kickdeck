@@ -35,11 +35,11 @@ router.get('/event/:eventId', async (req, res) => {
  */
 router.put('/:ageGroupId', async (req, res) => {
   try {
-    const ageGroupId = parseInt(req.params.ageGroupId);
+    const ageGroupId = req.params.ageGroupId; // Keep as string for composite IDs like "male-2014-U11"
     const { isEligible, eventId } = req.body;
     
     // Validate input
-    if (isNaN(ageGroupId) || isNaN(eventId)) {
+    if (!ageGroupId || isNaN(eventId)) {
       return res.status(400).json({ error: 'Invalid age group ID or event ID' });
     }
     
@@ -47,6 +47,8 @@ router.put('/:ageGroupId', async (req, res) => {
       return res.status(400).json({ error: 'isEligible must be a boolean value' });
     }
     
+    console.log(`Updating eligibility setting for event ${eventId}, age group ${ageGroupId}, isEligible: ${isEligible}`);
+
     // Check if a record already exists
     const existingSettings = await db
       .select()
@@ -59,6 +61,7 @@ router.put('/:ageGroupId', async (req, res) => {
       );
     
     if (existingSettings.length > 0) {
+      console.log(`Found existing eligibility setting, updating to ${isEligible}`);
       // Update existing record
       await db
         .update(eventAgeGroupEligibility)
@@ -70,6 +73,7 @@ router.put('/:ageGroupId', async (req, res) => {
           )
         );
     } else {
+      console.log(`No existing eligibility setting found, creating new record with isEligible: ${isEligible}`);
       // Create new record
       await db.insert(eventAgeGroupEligibility).values({
         eventId,

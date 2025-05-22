@@ -521,22 +521,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
     enabled: !!defaultValues?.id
   });
   
-  // Load age group eligibility settings when an event ID is available
-  const eligibilitySettingsQuery = useQuery({
-    queryKey: ['ageGroupEligibilitySettings', defaultValues?.id],
-    queryFn: async () => {
-      if (!defaultValues?.id) return [];
-      
-      const response = await fetch(`/api/admin/age-group-eligibility-settings/event/${defaultValues.id}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch age group eligibility settings");
-      }
-      
-      console.log('Eligibility settings loaded:', await response.clone().json());
-      return response.json();
-    },
-    enabled: !!defaultValues?.id && mode === 'edit'
-  });
+  // The eligibility settings query is already defined above
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: async (acceptedFiles) => {
