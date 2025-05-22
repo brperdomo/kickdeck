@@ -35,7 +35,7 @@ async function createEligibilitySettingsTable() {
     
     // Create the table if it doesn't exist
     await db.execute(sql`
-      CREATE TABLE event_age_group_eligibility (
+      CREATE TABLE IF NOT EXISTS event_age_group_eligibility (
         event_id INTEGER NOT NULL REFERENCES events(id),
         age_group_id VARCHAR(255) NOT NULL,
         is_eligible BOOLEAN NOT NULL DEFAULT TRUE,
