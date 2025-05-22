@@ -23,6 +23,7 @@ import publicBracketsRouter from "./routes/brackets";  // Public brackets router
 import eventsRouter from "./routes/admin/events";
 import ageGroupsRouter from "./routes/admin/age-groups";
 import ageGroupEligibilityRouter from "./routes/admin/age-group-eligibility";
+import ageGroupEligibilitySettingsRouter from "./routes/admin/age-group-eligibility-settings";
 import organizationsRouter from "./routes/admin/organizations"; 
 import emailProvidersRouter from "./routes/admin/email-providers";
 import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings";
@@ -290,6 +291,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
     app.use('/api/admin/age-group-eligibility', isAdmin, ageGroupEligibilityRouter); // Age group eligibility router
+    app.use('/api/admin/age-group-eligibility-settings', isAdmin, ageGroupEligibilitySettingsRouter); // New age group eligibility settings router
     app.use('/api/admin/organizations', isAdmin, organizationsRouter); // Add organizations router
     app.use('/api/admin/email-providers', isAdmin, emailProvidersRouter); // Add email providers router
     app.use('/api/admin/email-template-routings', isAdmin, emailTemplateRoutingsRouter); // Add email template routings router

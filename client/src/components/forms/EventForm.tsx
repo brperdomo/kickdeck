@@ -688,13 +688,17 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                             if (mode === 'edit' && defaultValues?.id) {
                               try {
                                 const eligibilityValue = Boolean(checked);
-                                console.log(`Saving eligibility for age group ${group.id}: ${eligibilityValue}`);
+                                const eventId = defaultValues.id;
+                                console.log(`Saving eligibility for age group ${group.id}: ${eligibilityValue} in event ${eventId}`);
                                 
-                                // Call the API to update the eligibility
-                                const response = await fetch(`/api/admin/age-group-eligibility/${group.id}`, {
+                                // Call the new API to update the eligibility settings
+                                const response = await fetch(`/api/admin/age-group-eligibility-settings/${group.id}`, {
                                   method: 'PUT',
                                   headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ isEligible: eligibilityValue })
+                                  body: JSON.stringify({ 
+                                    isEligible: eligibilityValue,
+                                    eventId: eventId
+                                  })
                                 });
                                 
                                 if (!response.ok) {
@@ -702,6 +706,13 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                                 }
                                 
                                 console.log(`Successfully updated eligibility for age group ${group.id}`);
+                                
+                                // Show success toast
+                                toast({
+                                  title: "Eligibility updated",
+                                  description: `${group.ageGroup} (${group.gender}) is now ${checked ? 'eligible' : 'ineligible'} for registration.`,
+                                  variant: "default"
+                                });
                               } catch (error) {
                                 console.error('Error updating age group eligibility:', error);
                                 toast({
@@ -709,6 +720,15 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                                   description: "The change couldn't be saved to the server. Please try again.",
                                   variant: "destructive"
                                 });
+                                
+                                // Revert the local state if the server update failed
+                                const revertedAgeGroups = ageGroups.map(ag => 
+                                  ag.id === group.id 
+                                    ? { ...ag, isEligible: !checked } 
+                                    : ag
+                                );
+                                setAgeGroups(revertedAgeGroups);
+                                form.setValue('ageGroups', revertedAgeGroups);
                               }
                             }
                           }}
