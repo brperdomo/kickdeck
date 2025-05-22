@@ -1465,6 +1465,33 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                   handleSeasonalScopeChange
                 )}
               </TabsContent>
+              
+              <TabsContent value="eligibility">
+                {mode === 'edit' && ageGroups.length > 0 ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold">Age Group Eligibility Settings</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Enable or disable registration for specific age groups. Disabled age groups will not be available for team registration.
+                    </p>
+                    <AgeGroupEligibilityManager 
+                      ageGroups={ageGroups}
+                      onAgeGroupsChange={setAgeGroups}
+                      eventId={defaultValues?.id || 0}
+                    />
+                  </div>
+                ) : (
+                  <div className="p-4 bg-muted/50 rounded-md text-center">
+                    <p>You must save the event with age groups first to manage eligibility.</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {mode === 'create' 
+                        ? 'Create the event with age groups first, then you can manage eligibility in edit mode.'
+                        : 'Add age groups in the Age Groups tab before managing eligibility.'}
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
 
               <TabsContent value="brackets">
                 {mode === 'edit' ? (
