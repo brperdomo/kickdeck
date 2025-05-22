@@ -17,6 +17,7 @@ type AgeGroup = {
   ageGroup: string;
   gender: string;
   divisionCode: string;
+  isEligible?: boolean;
 };
 
 export function BracketsContent() {
@@ -39,12 +40,19 @@ export function BracketsContent() {
     enabled: !!eventId,
   });
 
-  // Set the first age group as selected when data loads
+  // Filter out ineligible age groups and set the first eligible age group as selected
+  const eligibleAgeGroups = ageGroups?.filter((ageGroup: AgeGroup) => 
+    ageGroup.isEligible !== false
+  ) || [];
+  
   useEffect(() => {
-    if (ageGroups && ageGroups.length > 0 && !selectedAgeGroupId) {
-      setSelectedAgeGroupId(ageGroups[0].id);
+    if (eligibleAgeGroups.length > 0 && !selectedAgeGroupId) {
+      setSelectedAgeGroupId(eligibleAgeGroups[0].id);
+    } else if (eligibleAgeGroups.length === 0 && selectedAgeGroupId) {
+      // Reset selection if there are no eligible age groups
+      setSelectedAgeGroupId(null);
     }
-  }, [ageGroups, selectedAgeGroupId]);
+  }, [eligibleAgeGroups, selectedAgeGroupId]);
 
   // Get the display name for the age group - use original gender values
   const getAgeGroupDisplayName = (ageGroup: AgeGroup) => {
@@ -85,9 +93,22 @@ export function BracketsContent() {
       </Alert>
     );
   }
+  
+  // Handle no eligible age groups
+  if (eligibleAgeGroups.length === 0) {
+    return (
+      <Alert>
+        <AlertTitle>No Eligible Age Groups</AlertTitle>
+        <AlertDescription>
+          There are no eligible age groups available for creating brackets.
+          Please go to the "Age Groups" tab and enable eligibility for at least one age group.
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
-  // Find the selected age group
-  const selectedAgeGroup = ageGroups.find(
+  // Find the selected age group from eligible age groups
+  const selectedAgeGroup = eligibleAgeGroups.find(
     (group: AgeGroup) => group.id === selectedAgeGroupId
   );
 
@@ -116,7 +137,7 @@ export function BracketsContent() {
               <div className="border rounded-md mb-4 overflow-hidden">
                 <ScrollArea className="h-24 w-full p-1">
                   <div className="flex flex-wrap gap-2 p-2">
-                    {ageGroups.map((ageGroup: AgeGroup) => (
+                    {eligibleAgeGroups.map((ageGroup: AgeGroup) => (
                       <button
                         key={ageGroup.id}
                         onClick={() => setSelectedAgeGroupId(ageGroup.id)}
