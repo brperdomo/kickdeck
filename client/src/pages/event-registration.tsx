@@ -1813,28 +1813,32 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       return acc;
     }, {} as Record<string, (AgeGroup & { displayText: string })[]>);
 
-    // Sort each gender group by birth year (oldest to youngest)
+    // Sort each gender group by age group order (U4, U5, U6, etc.)
     Object.keys(groupedByGender).forEach(gender => {
       groupedByGender[gender].sort((a, b) => {
-        // Extract birth year from division code if available
-        const getBirthYear = (ageGroup: AgeGroup & { displayText: string }) => {
-          if (ageGroup.birthYear) return ageGroup.birthYear;
-          
-          // Try to extract year from division code (format like B2008, G2017)
-          const match = ageGroup.divisionCode?.match(/\d{4}/);
-          if (match) return parseInt(match[0]);
-          
-          return 0; // Fallback for items without birth year
+        // Extract age number from age group (U4 -> 4, U5 -> 5, etc.)
+        const getAgeNumber = (ageGroup: AgeGroup & { displayText: string }) => {
+          if (ageGroup.ageGroup && ageGroup.ageGroup.startsWith('U')) {
+            return parseInt(ageGroup.ageGroup.substring(1));
+          }
+          return 999; // Put non-U groups at the end
         };
         
-        // Sort from oldest to youngest (ascending birth year)
-        return getBirthYear(a) - getBirthYear(b);
+        // Sort from youngest to oldest (U4, U5, U6, etc.)
+        return getAgeNumber(a) - getAgeNumber(b);
       });
+    });
+
+    // Sort genders to show Boys first, then Girls
+    const sortedGenders = Object.keys(groupedByGender).sort((a, b) => {
+      if (a === 'Boys' && b === 'Girls') return -1;
+      if (a === 'Girls' && b === 'Boys') return 1;
+      return a.localeCompare(b);
     });
 
     return (
       <div className="space-y-4">
-        {Object.entries(groupedByGender).map(([gender, groups]) => (
+        {sortedGenders.map((gender) => (
           <div 
             key={gender} 
             className="p-4 rounded-lg"
@@ -1845,7 +1849,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
             <h4 
               className="font-semibold mb-2"
               style={{ color: event?.branding?.primaryColor || '#2C5282' }}
-            >{gender}:</h4>
+            >{gender}</h4>
             <div className="flex flex-wrap gap-2">
               {groups.map((group) => (
                 <span 

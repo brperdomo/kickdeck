@@ -671,20 +671,40 @@ export function registerRoutes(app: Express): Server {
           .select()
           .from(eventAgeGroups)
           .where(eq(eventAgeGroups.eventId, String(parsedEventId)));
+
+        // Get eligibility settings for age groups
+        const eligibilitySettings = await db
+          .select()
+          .from(ageGroupEligibilitySettings)
+          .where(eq(ageGroupEligibilitySettings.eventId, parsedEventId));
+
+        // Create a map for quick eligibility lookup
+        const eligibilityMap = new Map();
+        eligibilitySettings.forEach(setting => {
+          eligibilityMap.set(setting.ageGroupId, setting.isEligible);
+        });
           
-        // Deduplicate age groups based on division code
+        // Deduplicate age groups based on division code and filter for eligibility
         // This prevents duplicate age groups from appearing in the registration dropdown
         const uniqueMap = new Map();
         const uniqueAgeGroups = [];
         
         for (const group of rawAgeGroups) {
-          // Use division code or create one from gender and age group if not available
-          const divisionCode = group.divisionCode || `${group.gender.charAt(0)}${group.ageGroup.replace(/\D/g, '')}`;
-          const key = divisionCode;
+          // Check if this age group is eligible for registration
+          const isEligible = eligibilityMap.has(group.id) 
+            ? eligibilityMap.get(group.id) 
+            : (group.isEligible === undefined ? true : Boolean(group.isEligible));
           
-          if (!uniqueMap.has(key)) {
-            uniqueMap.set(key, {...group});
-            uniqueAgeGroups.push(group);
+          // Only include eligible age groups for public registration
+          if (isEligible !== false) {
+            // Use division code or create one from gender and age group if not available
+            const divisionCode = group.divisionCode || `${group.gender.charAt(0)}${group.ageGroup.replace(/\D/g, '')}`;
+            const key = divisionCode;
+            
+            if (!uniqueMap.has(key)) {
+              uniqueMap.set(key, {...group});
+              uniqueAgeGroups.push(group);
+            }
           }
         }
         
