@@ -4702,15 +4702,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
                 console.log('Age group eligibility is managed through the separate eligibility table only');
               } else {
                 console.log('No age groups to preserve, but checking for brackets before deletion');
-                // Even if no teams, still check for brackets before deleting
-                if (bracketAgeGroupIds.length === 0) {
-                  await tx
-                    .delete(eventAgeGroups)
-                    .where(eq(eventAgeGroups.eventId, eventId));
-                  console.log('Safely removed all age groups (no teams or brackets)');
-                } else {
-                  console.log('Cannot delete age groups - some have brackets assigned');
-                }
+                // DISABLED: Never delete age groups when updating eligibility
+                // This prevents foreign key constraint violations
+                console.log('Age group deletion disabled - eligibility is managed through separate table only');
               }
               
               // Create a map of existing age groups after deletion (only ones with teams)
@@ -4788,15 +4782,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           
           // Handle age groups that were removed
           const remainingGroups = Array.from(existingAgeGroupsMap.entries());
-          for (const [, group] of remainingGroups) {
-            // Check if the age group has teams
-            if (!ageGroupsWithTeamsMap.has(group.id)) {
-              // Only delete if no teams are associated
-              await tx
-                .delete(eventAgeGroups)
-                .where(eq(eventAgeGroups.id, group.id));
-            }
-          }
+          // DISABLED: Never delete age groups to prevent constraint violations
+          // Age group eligibility is managed through the separate eligibility table
+          console.log(`Found ${remainingGroups.size} age groups that could be cleaned up, but deletion is disabled to prevent constraint violations`);
 
           // Update complex assignments
           await tx.execute(sql`DELETE FROM event_complexes WHERE event_id = ${eventId}`);
