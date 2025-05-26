@@ -291,11 +291,9 @@ router.delete('/:id', hasEventAccess, async (req, res) => {
         .execute();
       console.log('Deleted event fees');
 
-      // Delete age groups
-      await tx.delete(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId.toString()))
-        .execute();
-      console.log('Deleted event age groups');
+      // DISABLED: Never delete age groups to prevent constraint violations
+      // Age group eligibility is managed through the separate eligibility table
+      console.log('Age group deletion disabled - eligibility managed separately');
 
       // Delete complexes
       await tx.delete(eventComplexes)
