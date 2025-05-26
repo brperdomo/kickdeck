@@ -4696,18 +4696,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
                 // Only delete age groups that don't have teams or brackets
                 const ageGroupsToDelete = existingAgeGroups.filter(ag => !uniqueIdsToKeep.includes(ag.id));
                 
-                if (ageGroupsToDelete.length > 0) {
-                  const idsToDelete = ageGroupsToDelete.map(ag => ag.id);
-                  await tx
-                    .delete(eventAgeGroups)
-                    .where(and(
-                      eq(eventAgeGroups.eventId, eventId), 
-                      inArray(eventAgeGroups.id, idsToDelete)
-                    ));
-                  console.log(`Safely deleted ${idsToDelete.length} age groups without teams or brackets`);
-                } else {
-                  console.log('No age groups can be safely deleted - all have teams or brackets');
-                }
+                // DISABLED: Never delete age groups when updating eligibility
+                // This prevents foreign key constraint violations
+                console.log(`Found ${ageGroupsToDelete.length} age groups that could be deleted, but deletion is disabled to prevent constraint violations`);
+                console.log('Age group eligibility is managed through the separate eligibility table only');
               } else {
                 console.log('No age groups to preserve, but checking for brackets before deletion');
                 // Even if no teams, still check for brackets before deleting
