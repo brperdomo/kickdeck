@@ -673,19 +673,21 @@ export function registerRoutes(app: Express): Server {
           .from(eventAgeGroups)
           .where(eq(eventAgeGroups.eventId, String(parsedEventId)));
 
-        // Get eligibility settings for age groups
-        const eligibilitySettings = await db
-          .select()
-          .from(ageGroupEligibilitySettings)
-          .where(eq(ageGroupEligibilitySettings.eventId, parsedEventId));
+        // Get eligibility settings for age groups from the correct table using raw query
+        const eligibilityResult = await db.execute(sql`
+          SELECT age_group_id, is_eligible 
+          FROM event_age_group_eligibility 
+          WHERE event_id = ${parsedEventId}
+        `);
+        const eligibilitySettings = eligibilityResult.rows;
 
         console.log(`Found ${eligibilitySettings.length} eligibility settings for event ${parsedEventId}:`, eligibilitySettings);
 
         // Create a map for quick eligibility lookup
         const eligibilityMap = new Map();
-        eligibilitySettings.forEach(setting => {
-          eligibilityMap.set(setting.ageGroupId, setting.isEligible);
-          console.log(`Eligibility setting: age group ${setting.ageGroupId} = ${setting.isEligible}`);
+        eligibilitySettings.forEach((setting: any) => {
+          eligibilityMap.set(setting.age_group_id, setting.is_eligible);
+          console.log(`Eligibility setting: age group ${setting.age_group_id} = ${setting.is_eligible}`);
         });
           
         // Deduplicate age groups based on division code and filter for eligibility
