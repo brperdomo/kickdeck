@@ -45,34 +45,26 @@ router.get('/:eventId', async (req, res) => {
         key = `${group.gender}-${group.ageGroup}`;
       }
       
-      // Special handling for U8 age groups - always include them
-      // This ensures we don't filter out U8 in deduplication
-      if (group.ageGroup === 'U8') {
-        if (!uniqueMap.has(`${key}-${group.id}`)) {
-          uniqueMap.set(`${key}-${group.id}`, true);
-          
-          // Ensure this U8 age group record always has the division code set
-          if (!group.divisionCode) {
-            if (group.gender === 'Boys') {
-              group.divisionCode = 'B2017';
-            } else if (group.gender === 'Girls') {
-              group.divisionCode = 'G2017';
-            }
-          }
-          
-          // For U8, we want to prioritize the age group that has brackets defined
-          if (group.id === 3055) { // This is the U8 Boys age group that has brackets
-            uniqueGroups.unshift(group); // Add to beginning of array to prioritize
-          } else {
-            uniqueGroups.push(group);
+      // Use consistent deduplication logic for all age groups including U8
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, true);
+        
+        // Ensure this age group record always has the division code set
+        if (!group.divisionCode) {
+          if (group.gender === 'Boys') {
+            group.divisionCode = group.ageGroup === 'U8' ? 'B2017' : 
+                                 group.ageGroup === 'U7' ? 'B2018' :
+                                 group.ageGroup === 'U6' ? 'B2019' :
+                                 `B${new Date().getFullYear() - parseInt(group.ageGroup.substring(1))}`;
+          } else if (group.gender === 'Girls') {
+            group.divisionCode = group.ageGroup === 'U8' ? 'G2017' : 
+                                 group.ageGroup === 'U7' ? 'G2018' :
+                                 group.ageGroup === 'U6' ? 'G2019' :
+                                 `G${new Date().getFullYear() - parseInt(group.ageGroup.substring(1))}`;
           }
         }
-      } else {
-        // Regular handling for non-U8 age groups
-        if (!uniqueMap.has(key)) {
-          uniqueMap.set(key, true);
-          uniqueGroups.push(group);
-        }
+        
+        uniqueGroups.push(group);
       }
     }
     
