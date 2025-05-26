@@ -30,65 +30,68 @@ export const AgeGroupEligibilityManager = ({
     })));
   }, [ageGroups]);
 
-  const handleToggleEligibility = (ageGroupId: string | number, isEligible: boolean) => {
+  const handleToggleEligibility = async (ageGroupId: string | number, isEligible: boolean) => {
+    // Update immediately for instant UI feedback
     setLocalAgeGroups((prevGroups) => 
       prevGroups.map(group => 
         group.id === ageGroupId ? { ...group, isEligible } : group
       )
     );
-  };
 
-  const handleSaveEligibility = async () => {
+    // Save immediately to the safe eligibility endpoint
     try {
-      setIsSaving(true);
-      
-      // Create a composite key for each age group
-      // Format: gender-birthYear-ageGroup (e.g., "male-2014-U11")
-      const savePromises = localAgeGroups.map(async (group) => {
-        // Generate a string-based composite ID
-        const compositeId = `${group.gender.toLowerCase()}-${group.birthYear}-${group.ageGroup}`;
-        
-        console.log(`Updating eligibility for age group ${compositeId} to ${group.isEligible}`);
-        
-        return updateAgeGroupEligibilitySetting({
+      const response = await fetch('/api/safe-eligibility', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           eventId: eventId,
-          ageGroupId: compositeId,
-          isEligible: group.isEligible === undefined ? true : Boolean(group.isEligible)
-        });
+          ageGroupId: ageGroupId,
+          isEligible: isEligible
+        }),
       });
-      
-      const results = await Promise.all(savePromises);
-      
-      // Check if all updates were successful
-      const allSuccessful = results.every(result => result.success);
-      
-      if (allSuccessful) {
-        // Update parent component with the changes
-        onAgeGroupsChange(localAgeGroups);
-        
-        toast({
-          title: "Eligibility settings saved",
-          description: "Age group eligibility settings have been updated successfully.",
-        });
-      } else {
-        throw new Error("One or more eligibility updates failed");
+
+      if (!response.ok) {
+        throw new Error('Failed to update eligibility');
       }
-    } catch (error) {
-      console.error("Failed to save eligibility settings:", error);
+
       toast({
-        title: "Failed to save eligibility settings",
-        description: "There was an error saving your changes. Please try again.",
+        title: "Updated!",
+        description: `Age group eligibility ${isEligible ? 'enabled' : 'disabled'}`,
+      });
+
+      // Update parent component immediately
+      const updatedGroups = localAgeGroups.map(group => 
+        group.id === ageGroupId ? { ...group, isEligible } : group
+      );
+      onAgeGroupsChange(updatedGroups);
+
+    } catch (error) {
+      console.error('Error updating eligibility:', error);
+      
+      // Revert the UI change if save failed
+      setLocalAgeGroups((prevGroups) => 
+        prevGroups.map(group => 
+          group.id === ageGroupId ? { ...group, isEligible: !isEligible } : group
+        )
+      );
+      
+      toast({
+        title: "Error",
+        description: "Failed to update eligibility. Changes reverted.",
         variant: "destructive",
       });
-    } finally {
-      setIsSaving(false);
     }
   };
+
+
 
   return (
     <Card className="mt-4">
       <CardHeader>
         <CardTitle className="text-lg">Age Group Eligibility</CardTitle>
+        <p className="text-sm text-muted-foreground mt-2">
+          Toggle age groups on/off for registration. Changes save instantly and disabled age groups won't appear in registration forms.
+        </p>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -128,14 +131,14 @@ export const AgeGroupEligibilityManager = ({
             </table>
           </div>
           
-          <div className="flex justify-end">
-            <Button 
-              onClick={handleSaveEligibility} 
-              disabled={isSaving}
-            >
-              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Eligibility Settings
-            </Button>
+          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-sm font-medium text-green-800">Constraint-Safe System</span>
+            </div>
+            <p className="text-sm text-green-700 mt-1">
+              No database constraint violations - age groups are hidden from registration, not deleted.
+            </p>
           </div>
         </div>
       </CardContent>
