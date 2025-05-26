@@ -102,6 +102,7 @@ import {
   gameTimeSlots,
   eventSettings,
   ageGroupSettings,
+  ageGroupEligibilitySettings,
   eventAdministrators,
   eventBrackets,
 } from "@db/schema";
