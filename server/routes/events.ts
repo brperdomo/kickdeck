@@ -3,6 +3,7 @@ import { db } from '../../db';
 import { events, eventAgeGroups, eventSettings, teams, tournamentGroups, eventAdministrators, eventFees, eventComplexes, eventAgeGroupFees } from '@db/schema';
 import { eq, inArray } from 'drizzle-orm';
 import { z } from 'zod';
+import { sortAgeGroups } from '../lib/ageGroupSorter';
 
 const router = Router();
 
@@ -552,9 +553,12 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
     }
 
     console.log(`Fetched ${ageGroups.length} age groups for event ${eventId}`);
-    console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication or adding standard groups`);
+    
+    // Apply unified sorting to ensure consistent order (U4, U5, U6, etc.)
+    const sortedGroups = sortAgeGroups(uniqueGroups);
+    console.log(`Returning ${sortedGroups.length} age groups in proper order: ${sortedGroups.slice(0, 6).map(g => `${g.ageGroup}-${g.gender}`).join(', ')}...`);
 
-    res.json(uniqueGroups);
+    res.json(sortedGroups);
   } catch (error) {
     console.error('Error fetching age groups:', error);
     res.status(500).json({ error: 'Failed to fetch age groups' });
