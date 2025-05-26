@@ -29,6 +29,24 @@ router.get('/:eventId', async (req, res) => {
 
     console.log(`Fetched ${groups.length} age groups for event ${eventId}`);
     
+    // First, sort all groups by age and gender to ensure consistent ordering
+    groups.sort((a, b) => {
+      // First sort by gender (Boys first, then Girls)
+      if (a.gender !== b.gender) {
+        return a.gender === 'Boys' ? -1 : 1;
+      }
+      
+      // Then sort by age group number (U4, U5, U6, etc.)
+      const getAgeNumber = (ageGroup: string) => {
+        if (ageGroup.startsWith('U')) {
+          return parseInt(ageGroup.substring(1));
+        }
+        return 999; // Put non-U groups at the end
+      };
+      
+      return getAgeNumber(a.ageGroup) - getAgeNumber(b.ageGroup);
+    });
+    
     // Deduplicate age groups based on division code or gender+ageGroup
     const uniqueGroups = [];
     const uniqueMap = new Map();
