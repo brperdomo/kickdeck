@@ -6,7 +6,7 @@ import { log } from "./vite";
 import { crypto } from "./crypto";
 import { db } from "@db";
 import { coupons, emailTemplates, insertPlayerSchema, players } from "@db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { isAdmin, hasEventAccess } from "./middleware";
 // Import the safe registration fees middleware directly
 import safeRegistrationFeesMiddleware from "./middleware/safe-registration-fees.js";
