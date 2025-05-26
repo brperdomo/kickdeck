@@ -6,7 +6,7 @@ import { log } from "./vite";
 import { crypto } from "./crypto";
 import { db } from "@db";
 import { coupons, emailTemplates, insertPlayerSchema, players } from "@db/schema";
-import { eq, sql } from "drizzle-orm";
+import { eq, sql, and, inArray } from "drizzle-orm";
 import { isAdmin, hasEventAccess } from "./middleware";
 // Import the safe registration fees middleware directly
 import safeRegistrationFeesMiddleware from "./middleware/safe-registration-fees.js";
@@ -4678,22 +4678,46 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
                 }
               }
               
-              // Delete all existing age groups that don't have teams
-              const idsToKeep = Array.from(ageGroupsToPreserve.keys());
-              if (idsToKeep.length > 0) {
-                console.log(`Preserving ${idsToKeep.length} age groups that have teams`);
-                await tx
-                  .delete(eventAgeGroups)
-                  .where(and(
-                    eq(eventAgeGroups.eventId, eventId), 
-                    notInArray(eventAgeGroups.id, idsToKeep)
-                  ));
+              // Check for age groups with brackets before attempting deletion
+              const ageGroupsWithBrackets = await tx
+                .select({ ageGroupId: sql`DISTINCT age_group_id` })
+                .from(sql`event_brackets`)
+                .where(sql`age_group_id IN (SELECT id FROM event_age_groups WHERE event_id = ${eventId})`);
+              
+              const bracketAgeGroupIds = ageGroupsWithBrackets.map(row => row.ageGroupId);
+              
+              // Preserve age groups that have teams OR brackets
+              const idsToKeep = Array.from(ageGroupsToPreserve.keys()).concat(bracketAgeGroupIds);
+              const uniqueIdsToKeep = [...new Set(idsToKeep)];
+              
+              if (uniqueIdsToKeep.length > 0) {
+                console.log(`Preserving ${uniqueIdsToKeep.length} age groups that have teams or brackets`);
+                // Only delete age groups that don't have teams or brackets
+                const ageGroupsToDelete = existingAgeGroups.filter(ag => !uniqueIdsToKeep.includes(ag.id));
+                
+                if (ageGroupsToDelete.length > 0) {
+                  const idsToDelete = ageGroupsToDelete.map(ag => ag.id);
+                  await tx
+                    .delete(eventAgeGroups)
+                    .where(and(
+                      eq(eventAgeGroups.eventId, eventId), 
+                      inArray(eventAgeGroups.id, idsToDelete)
+                    ));
+                  console.log(`Safely deleted ${idsToDelete.length} age groups without teams or brackets`);
+                } else {
+                  console.log('No age groups can be safely deleted - all have teams or brackets');
+                }
               } else {
-                // Delete all existing age groups if none have teams
-                console.log('Removing all existing age groups and replacing with scope age groups');
-                await tx
-                  .delete(eventAgeGroups)
-                  .where(eq(eventAgeGroups.eventId, eventId));
+                console.log('No age groups to preserve, but checking for brackets before deletion');
+                // Even if no teams, still check for brackets before deleting
+                if (bracketAgeGroupIds.length === 0) {
+                  await tx
+                    .delete(eventAgeGroups)
+                    .where(eq(eventAgeGroups.eventId, eventId));
+                  console.log('Safely removed all age groups (no teams or brackets)');
+                } else {
+                  console.log('Cannot delete age groups - some have brackets assigned');
+                }
               }
               
               // Create a map of existing age groups after deletion (only ones with teams)
