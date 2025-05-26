@@ -478,29 +478,44 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
       { ageGroup: 'U19', birthYear: 2006, gender: 'Girls', divisionCode: 'G2006' },
     ];
 
-    // Make sure all standard age groups are included in the response
+    // Only add standard age groups that are eligible for registration
+    // This prevents ineligible age groups from appearing on the public registration page
     for (const stdGroup of PREDEFINED_AGE_GROUPS) {
       const key = stdGroup.divisionCode;
       if (!uniqueMap.has(key)) {
-        // Add standard age group if not already present
-        const fieldSize = stdGroup.ageGroup.startsWith('U') ?
-          (parseInt(stdGroup.ageGroup.substring(1)) <= 7 ? '4v4' :
-            parseInt(stdGroup.ageGroup.substring(1)) <= 10 ? '7v7' :
-              parseInt(stdGroup.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11';
+        // Create a composite ID to check eligibility
+        const compositeId = `${stdGroup.gender.toLowerCase()}-${stdGroup.birthYear}-${stdGroup.ageGroup}`;
+        
+        // Check if this age group is eligible
+        const isEligible = eligibilityMap.has(compositeId) 
+          ? eligibilityMap.get(compositeId) 
+          : false; // Default to ineligible for missing standard groups
+        
+        // Only add if eligible
+        if (isEligible !== false) {
+          const fieldSize = stdGroup.ageGroup.startsWith('U') ?
+            (parseInt(stdGroup.ageGroup.substring(1)) <= 7 ? '4v4' :
+              parseInt(stdGroup.ageGroup.substring(1)) <= 10 ? '7v7' :
+                parseInt(stdGroup.ageGroup.substring(1)) <= 12 ? '9v9' : '11v11') : '11v11';
 
-        uniqueGroups.push({
-          id: null,
-          eventId,
-          ageGroup: stdGroup.ageGroup,
-          gender: stdGroup.gender,
-          divisionCode: stdGroup.divisionCode,
-          birthDateStart: null,
-          birthDateEnd: null,
-          fieldSize: fieldSize,
-          projectedTeams: 0,
-          createdAt: new Date().toISOString(),
-          selected: false,
-        });
+          uniqueGroups.push({
+            id: null,
+            eventId,
+            ageGroup: stdGroup.ageGroup,
+            gender: stdGroup.gender,
+            divisionCode: stdGroup.divisionCode,
+            birthDateStart: null,
+            birthDateEnd: null,
+            fieldSize: fieldSize,
+            projectedTeams: 0,
+            createdAt: new Date().toISOString(),
+            selected: false,
+            isEligible: true
+          });
+          console.log(`✓ Added eligible standard age group: ${stdGroup.ageGroup} ${stdGroup.gender}`);
+        } else {
+          console.log(`✗ Skipped ineligible standard age group: ${stdGroup.ageGroup} ${stdGroup.gender}`);
+        }
       }
     }
 
