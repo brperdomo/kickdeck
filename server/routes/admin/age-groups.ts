@@ -68,8 +68,26 @@ router.get('/:eventId', async (req, res) => {
       }
     }
     
-    console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication`);
-    res.json(uniqueGroups);
+    // Sort age groups in logical order (U4, U5, U6, etc.) grouped by gender
+    const sortedGroups = uniqueGroups.sort((a, b) => {
+      // First sort by gender (Boys first, then Girls)
+      if (a.gender !== b.gender) {
+        return a.gender === 'Boys' ? -1 : 1;
+      }
+      
+      // Then sort by age group number (U4, U5, U6, etc.)
+      const getAgeNumber = (ageGroup: string) => {
+        if (ageGroup.startsWith('U')) {
+          return parseInt(ageGroup.substring(1));
+        }
+        return 999; // Put non-U groups at the end
+      };
+      
+      return getAgeNumber(a.ageGroup) - getAgeNumber(b.ageGroup);
+    });
+
+    console.log(`Returning ${sortedGroups.length} unique age groups after deduplication and sorting`);
+    res.json(sortedGroups);
   } catch (error) {
     console.error('Error fetching age groups:', error);
     res.status(500).json({ error: "Failed to fetch age groups" });
