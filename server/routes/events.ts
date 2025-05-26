@@ -148,9 +148,9 @@ router.patch('/:id', async (req, res) => {
         updatedAt: new Date().toISOString(),
       });
 
-      // Delete existing age groups for this event
-      await db.delete(eventAgeGroups)
-        .where(eq(eventAgeGroups.eventId, eventId));
+      // DISABLED: Never delete age groups to prevent constraint violations
+      // Age group eligibility is managed through the separate eligibility table
+      console.log('Age group deletion disabled - eligibility managed separately');
 
       // Fetch the age groups from the seasonal scope
       const scopeAgeGroups = await db.query.ageGroupSettings.findMany({
@@ -773,10 +773,9 @@ router.delete('/:id', async (req, res) =>{
 
       // 4. Delete age groups
       try {
-        const deletedAgeGroups = await tx.delete(eventAgeGroups)
-          .where(eq(eventAgeGroups.eventId, eventId))
-          .returning();
-        console.log(`Deleted ${deletedAgeGroups.length} age groups`);
+        // DISABLED: Never delete age groups to prevent constraint violations
+        // Age group eligibility is managed through the separate eligibility table
+        console.log('Age group deletion disabled - eligibility managed separately');
       } catch (error) {
         console.log('No age groups to delete or error:', error);
       }

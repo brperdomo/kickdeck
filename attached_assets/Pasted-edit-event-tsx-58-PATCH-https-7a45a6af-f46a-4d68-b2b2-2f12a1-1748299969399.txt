@@ -1,0 +1,122 @@
+edit-event.tsx:58 
+            
+            
+           PATCH https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events/1408614908 500 (Internal Server Error)
+mutationFn @ edit-event.tsx:58
+fn @ @tanstack_react-query.js?v=e7b2193e:1188
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+execute @ @tanstack_react-query.js?v=e7b2193e:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=e7b2193e:2649
+handleSubmit @ edit-event.tsx:113
+handleSubmit @ EventForm.tsx:455
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449Understand this error
+edit-event.tsx:66 Server response: update or delete on table "event_age_groups" violates foreign key constraint "event_brackets_age_group_id_fkey" on table "event_brackets"
+mutationFn @ edit-event.tsx:66
+await in mutationFn
+fn @ @tanstack_react-query.js?v=e7b2193e:1188
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+execute @ @tanstack_react-query.js?v=e7b2193e:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=e7b2193e:2649
+handleSubmit @ edit-event.tsx:113
+handleSubmit @ EventForm.tsx:455
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449Understand this error
+edit-event.tsx:72 Error updating event: Error: Failed to update event: update or delete on table "event_age_groups" violates foreign key constraint "event_brackets_age_group_id_fkey" on table "event_brackets"
+    at Object.mutationFn (edit-event.tsx:67:17)
+mutationFn @ edit-event.tsx:72
+await in mutationFn
+fn @ @tanstack_react-query.js?v=e7b2193e:1188
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+execute @ @tanstack_react-query.js?v=e7b2193e:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=e7b2193e:2649
+handleSubmit @ edit-event.tsx:113
+handleSubmit @ EventForm.tsx:455
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449Understand this error
+edit-event.tsx:118 Submit error: Error: Failed to update event: update or delete on table "event_age_groups" violates foreign key constraint "event_brackets_age_group_id_fkey" on table "event_brackets"
+    at Object.mutationFn (edit-event.tsx:67:17)
+handleSubmit @ edit-event.tsx:118
+await in handleSubmit
+handleSubmit @ EventForm.tsx:455
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449Understand this error
+edit-event.tsx:156 Raw event data from server: {id: 1408614908, name: 'Empire Super Cup', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: '/uploads/empire_super_cup_1747348906182_ga6ssb.png', primaryColor: '#007AFF', secondaryColor: '#ffffff'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '/uploads/empire_super_cup_1747348906182_ga6ssb.png', primaryColor: '#007AFF', secondaryColor: '#ffffff'}
+edit-event.tsx:197 Prepared event data: {id: 1408614908, name: 'Empire Super Cup', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1408614908, name: 'Empire Super Cup', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: '/uploads/empire_super_cup_1747348906182_ga6ssb.png', primaryColor: '#007AFF', secondaryColor: '#ffffff'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '/uploads/empire_super_cup_1747348906182_ga6ssb.png', primaryColor: '#007AFF', secondaryColor: '#ffffff'}
+edit-event.tsx:197 Prepared event data: {id: 1408614908, name: 'Empire Super Cup', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '/uploads/empire_super_cup_1747348906182_ga6ssb.png', primaryColor: '#007AFF', secondaryColor: '#ffffff'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '/uploads/empire_super_cup_1747348906182_ga6ssb.png', primaryColor: '#007AFF', secondaryColor: '#ffffff'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#ffffff'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '/uploads/empire_super_cup_1747348906182_ga6ssb.png', primaryColor: '#007AFF', secondaryColor: '#ffffff'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '/uploads/empire_super_cup_1747348906182_ga6ssb.png', primaryColor: '#007AFF', secondaryColor: '#ffffff'}
