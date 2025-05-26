@@ -52,6 +52,8 @@ import AccountPage from "./pages/account";
 import { LogoutHandler } from "@/components/LogoutHandler";
 // Emergency fix for registration
 import EmergencyRegistrationFix from "@/pages/emergency-registration-fix";
+// Safe eligibility demo
+import SafeEligibilityDemo from "@/pages/SafeEligibilityDemo";
 
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
