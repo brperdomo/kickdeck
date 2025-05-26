@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { db } from '@db';
 import { eventAgeGroups } from '@db/schema';
 import { eq, sql } from 'drizzle-orm';
-import { generateStandardAgeGroups, formatForDatabase } from '../lib/ageGroupGenerator';
+import { generateStandardAgeGroups, formatForDatabase } from '../../lib/ageGroupGenerator';
+import { sortAgeGroups } from '../../lib/ageGroupSorter';
 
 const router = Router();
 
