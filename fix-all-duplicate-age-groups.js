@@ -6,9 +6,9 @@
  * age groups to the original ones before removing the duplicates.
  */
 
-const { db } = require('./db');
-const { eventAgeGroups, teams } = require('./db/schema');
-const { eq, sql } = require('drizzle-orm');
+import { db } from './db/index.ts';
+import { eventAgeGroups, teams } from './db/schema.ts';
+import { eq, sql } from 'drizzle-orm';
 
 async function consolidateDuplicateAgeGroups() {
   console.log('🔍 Starting system-wide age group duplicate cleanup...\n');
@@ -134,8 +134,4 @@ async function main() {
   }
 }
 
-if (require.main === module) {
-  main();
-}
-
-module.exports = { consolidateDuplicateAgeGroups, verifyCleanup };
+main();
