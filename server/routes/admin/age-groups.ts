@@ -20,100 +20,65 @@ interface AgeGroup {
 router.get('/:eventId', async (req, res) => {
   try {
     const eventId = req.params.eventId;
+    console.log(`Fetching age groups for event ${eventId} using unified generator`);
 
-    console.log(`Fetching age groups for event ${eventId}`);
-
-    const groups = await db
+    // Get existing age groups from database
+    const existingGroups = await db
       .select()
       .from(eventAgeGroups)
       .where(eq(eventAgeGroups.eventId, eventId));
 
-    console.log(`Fetched ${groups.length} age groups for event ${eventId}`);
-    
-    // First, sort all groups by age and gender to ensure consistent ordering
-    groups.sort((a, b) => {
-      // First sort by gender (Boys first, then Girls)
-      if (a.gender !== b.gender) {
-        return a.gender === 'Boys' ? -1 : 1;
-      }
+    console.log(`Found ${existingGroups.length} existing age groups in database`);
+
+    // If no age groups exist, create them using the unified generator
+    if (existingGroups.length === 0) {
+      console.log('No age groups found, generating standard set...');
       
-      // Then sort by age group number (U4, U5, U6, etc.)
-      const getAgeNumber = (ageGroup: string) => {
-        if (ageGroup.startsWith('U')) {
-          return parseInt(ageGroup.substring(1));
-        }
-        return 999; // Put non-U groups at the end
-      };
+      const standardGroups = generateStandardAgeGroups();
+      const dbGroups = formatForDatabase(standardGroups, eventId);
       
-      return getAgeNumber(a.ageGroup) - getAgeNumber(b.ageGroup);
-    });
-    
-    // Deduplicate age groups based on division code or gender+ageGroup
-    const uniqueGroups = [];
-    const uniqueMap = new Map();
-    
-    for (const group of groups) {
-      // Create a unique key based on division code or gender+ageGroup
-      let key = '';
+      await db.insert(eventAgeGroups).values(dbGroups);
+      console.log(`Created ${standardGroups.length} standard age groups`);
       
-      // First check if the group has a division code
-      if (group.divisionCode) {
-        key = group.divisionCode;
-      } else {
-        // If not, use gender + ageGroup as a fallback
-        key = `${group.gender}-${group.ageGroup}`;
-      }
-      
-      // Use consistent deduplication logic for all age groups including U8
-      if (!uniqueMap.has(key)) {
-        uniqueMap.set(key, true);
+      // Return the newly created groups (already sorted by generator)
+      const newGroups = await db
+        .select()
+        .from(eventAgeGroups)
+        .where(eq(eventAgeGroups.eventId, eventId));
         
-        // Ensure this age group record always has the division code set
-        if (!group.divisionCode) {
-          if (group.gender === 'Boys') {
-            group.divisionCode = group.ageGroup === 'U8' ? 'B2017' : 
-                                 group.ageGroup === 'U7' ? 'B2018' :
-                                 group.ageGroup === 'U6' ? 'B2019' :
-                                 `B${new Date().getFullYear() - parseInt(group.ageGroup.substring(1))}`;
-          } else if (group.gender === 'Girls') {
-            group.divisionCode = group.ageGroup === 'U8' ? 'G2017' : 
-                                 group.ageGroup === 'U7' ? 'G2018' :
-                                 group.ageGroup === 'U6' ? 'G2019' :
-                                 `G${new Date().getFullYear() - parseInt(group.ageGroup.substring(1))}`;
-          }
-        }
-        
-        uniqueGroups.push(group);
-      }
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.json(newGroups);
+      return;
     }
-    
-    // Sort age groups in logical order (U4, U5, U6, etc.) grouped by gender
-    const sortedGroups = uniqueGroups.sort((a, b) => {
-      // First sort by gender (Boys first, then Girls)
-      if (a.gender !== b.gender) {
-        return a.gender === 'Boys' ? -1 : 1;
-      }
-      
-      // Then sort by age group number (U4, U5, U6, etc.)
+
+    // Sort existing groups using the same logic as the unified generator
+    const sortedGroups = existingGroups.sort((a, b) => {
+      // First sort by age group number
       const getAgeNumber = (ageGroup: string) => {
         if (ageGroup.startsWith('U')) {
           return parseInt(ageGroup.substring(1));
         }
-        return 999; // Put non-U groups at the end
+        return 999;
       };
       
-      return getAgeNumber(a.ageGroup) - getAgeNumber(b.ageGroup);
+      const ageA = getAgeNumber(a.ageGroup);
+      const ageB = getAgeNumber(b.ageGroup);
+      
+      if (ageA !== ageB) {
+        return ageA - ageB;
+      }
+      
+      // Within same age, sort by gender: Boys, Girls, Coed
+      const genderOrder = { 'Boys': 0, 'Girls': 1, 'Coed': 2 };
+      return (genderOrder[a.gender] || 3) - (genderOrder[b.gender] || 3);
     });
 
-    console.log(`Returning ${sortedGroups.length} unique age groups after deduplication and sorting`);
+    console.log(`Returning ${sortedGroups.length} age groups in unified order`);
     console.log('Age groups order:', sortedGroups.map(g => `${g.ageGroup}-${g.gender}`).join(', '));
     
-    // Add cache-busting headers to ensure sorting changes are applied
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-    
     res.json(sortedGroups);
+    
   } catch (error) {
     console.error('Error fetching age groups:', error);
     res.status(500).json({ error: "Failed to fetch age groups" });
