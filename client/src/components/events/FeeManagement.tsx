@@ -180,10 +180,33 @@ export function FeeManagement() {
       // Don't filter by divisionCode, as this can cause inconsistencies with the rest of the application
       // Use the full dataset instead to ensure all age groups are displayed correctly
       const uniqueAgeGroups = data;
+      
+      // Sort age groups properly to fix display order issue
+      const sortedAgeGroups = uniqueAgeGroups.sort((a, b) => {
+        // First sort by age group number (U4, U5, U6, etc.)
+        const getAgeNumber = (ageGroup) => {
+          if (ageGroup.startsWith('U')) {
+            return parseInt(ageGroup.substring(1));
+          }
+          return 999; // Put non-U groups at the end
+        };
+        
+        const ageA = getAgeNumber(a.ageGroup);
+        const ageB = getAgeNumber(b.ageGroup);
+        
+        if (ageA !== ageB) {
+          return ageA - ageB;
+        }
+        
+        // Within same age, sort by gender: Boys, Girls, Coed
+        const genderOrder = { 'Boys': 0, 'Girls': 1, 'Coed': 2 };
+        return (genderOrder[a.gender] || 3) - (genderOrder[b.gender] || 3);
+      });
+      
       console.log(
-        `Found ${uniqueAgeGroups.length} unique age groups for event ${eventIdParam}`,
+        `Found ${sortedAgeGroups.length} unique age groups for event ${eventIdParam}, sorted properly`,
       );
-      return uniqueAgeGroups;
+      return sortedAgeGroups;
     },
     enabled: !!eventIdParam && !isNaN(parseInt(eventIdParam)),
   });
