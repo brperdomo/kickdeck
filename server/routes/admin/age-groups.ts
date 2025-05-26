@@ -52,27 +52,8 @@ router.get('/:eventId', async (req, res) => {
       return;
     }
 
-    // Sort existing groups using the same logic as the unified generator
-    const sortedGroups = existingGroups.sort((a, b) => {
-      // First sort by age group number
-      const getAgeNumber = (ageGroup: string) => {
-        if (ageGroup.startsWith('U')) {
-          return parseInt(ageGroup.substring(1));
-        }
-        return 999;
-      };
-      
-      const ageA = getAgeNumber(a.ageGroup);
-      const ageB = getAgeNumber(b.ageGroup);
-      
-      if (ageA !== ageB) {
-        return ageA - ageB;
-      }
-      
-      // Within same age, sort by gender: Boys, Girls, Coed
-      const genderOrder = { 'Boys': 0, 'Girls': 1, 'Coed': 2 };
-      return (genderOrder[a.gender] || 3) - (genderOrder[b.gender] || 3);
-    });
+    // Use the unified sorting utility for consistency
+    const sortedGroups = sortAgeGroups(existingGroups);
 
     console.log(`Returning ${sortedGroups.length} age groups in unified order`);
     console.log('Age groups order:', sortedGroups.map(g => `${g.ageGroup}-${g.gender}`).join(', '));

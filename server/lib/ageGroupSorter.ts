@@ -33,8 +33,7 @@ export function sortAgeGroups<T extends AgeGroupSortable>(ageGroups: T[]): T[] {
     }
     
     // Within same age, sort by gender: Boys, Girls, Coed
-    const genderOrder = { 'Boys': 0, 'Girls': 1, 'Coed': 2 };
-    return (genderOrder[a.gender as keyof typeof genderOrder] || 3) - 
-           (genderOrder[b.gender as keyof typeof genderOrder] || 3);
+    const genderOrder: { [key: string]: number } = { 'Boys': 0, 'Girls': 1, 'Coed': 2 };
+    return (genderOrder[a.gender] || 3) - (genderOrder[b.gender] || 3);
   });
 }
