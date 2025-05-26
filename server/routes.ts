@@ -6138,9 +6138,19 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
                     isEligible: true // Default to eligible
                   })
                   .returning();
+
+                // Check eligibility before adding to results for public registration
+                const isEligible = eligibilityMap.has(newAgeGroup.id) 
+                  ? eligibilityMap.get(newAgeGroup.id) 
+                  : true; // Default to eligible for new groups
                   
-                // Add to our existing results
-                ageGroups.push(newAgeGroup);
+                if (isEligible !== false) {
+                  // Add to our existing results only if eligible
+                  ageGroups.push(newAgeGroup);
+                  console.log(`✓ Added missing eligible age group: ${scopeAgeGroup.ageGroup} ${scopeAgeGroup.gender}`);
+                } else {
+                  console.log(`✗ Skipped missing ineligible age group: ${scopeAgeGroup.ageGroup} ${scopeAgeGroup.gender}`);
+                }
               }
             }
             
