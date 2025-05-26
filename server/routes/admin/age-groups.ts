@@ -87,6 +87,7 @@ router.get('/:eventId', async (req, res) => {
     });
 
     console.log(`Returning ${sortedGroups.length} unique age groups after deduplication and sorting`);
+    console.log('Age groups order:', sortedGroups.map(g => `${g.ageGroup}-${g.gender}`).join(', '));
     res.json(sortedGroups);
   } catch (error) {
     console.error('Error fetching age groups:', error);
