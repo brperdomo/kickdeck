@@ -478,17 +478,34 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
       { ageGroup: 'U19', birthYear: 2006, gender: 'Girls', divisionCode: 'G2006' },
     ];
 
+    // Fetch eligibility settings for this event using direct SQL query
+    const eligibilitySettings = await db.execute(sql`
+      SELECT age_group_id, is_eligible 
+      FROM event_age_group_eligibility 
+      WHERE event_id = ${eventId}
+    `);
+
+    console.log(`Found ${eligibilitySettings.length} eligibility settings for event ${eventId}`);
+
+    // Create eligibility map for quick lookup
+    const eligibilityMap = new Map();
+    for (const setting of eligibilitySettings) {
+      const ageGroup = ageGroups.find(ag => ag.id === setting.age_group_id);
+      if (ageGroup) {
+        const key = ageGroup.divisionCode;
+        eligibilityMap.set(key, setting.is_eligible);
+        console.log(`Eligibility for ${key}: ${setting.is_eligible}`);
+      }
+    }
+
     // Only add standard age groups that are eligible for registration
     // This prevents ineligible age groups from appearing on the public registration page
     for (const stdGroup of PREDEFINED_AGE_GROUPS) {
       const key = stdGroup.divisionCode;
       if (!uniqueMap.has(key)) {
-        // Create a composite ID to check eligibility
-        const compositeId = `${stdGroup.gender.toLowerCase()}-${stdGroup.birthYear}-${stdGroup.ageGroup}`;
-        
         // Check if this age group is eligible
-        const isEligible = eligibilityMap.has(compositeId) 
-          ? eligibilityMap.get(compositeId) 
+        const isEligible = eligibilityMap.has(key) 
+          ? eligibilityMap.get(key) 
           : false; // Default to ineligible for missing standard groups
         
         // Only add if eligible
