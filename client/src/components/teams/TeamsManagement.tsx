@@ -140,7 +140,7 @@ export function TeamsManagement({ eventId }: TeamsManagementProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Age Groups</SelectItem>
-              {ageGroupsQuery.data?.map((group) => (
+              {ageGroupsQuery.data?.filter(group => group.isEligible !== false).map((group) => (
                 <SelectItem key={group.id} value={group.id.toString()}>
                   {group.divisionCode ? `${group.divisionCode} - ${group.gender} ${group.ageGroup}` : `${group.gender} ${group.ageGroup}`}
                 </SelectItem>

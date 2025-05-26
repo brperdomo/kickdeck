@@ -469,7 +469,7 @@ export function TeamModal({ isOpen, onClose, team }: TeamModalProps) {
                               No age groups available
                             </SelectItem>
                           ) : (
-                            ageGroupsQuery.data?.map((ageGroup: any) => (
+                            ageGroupsQuery.data?.filter((ageGroup: any) => ageGroup.isEligible !== false).map((ageGroup: any) => (
                               <SelectItem key={ageGroup.id} value={String(ageGroup.id)}>
                                 {ageGroup.ageGroup}
                               </SelectItem>

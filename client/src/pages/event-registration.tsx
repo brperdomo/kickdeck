@@ -3302,7 +3302,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {event.ageGroups?.map((ageGroup) => (
+                              {event.ageGroups?.filter(ageGroup => ageGroup.isEligible !== false).map((ageGroup) => (
                                 <SelectItem key={ageGroup.id} value={String(ageGroup.id)}>
                                   {ageGroup.divisionCode ? `${ageGroup.divisionCode} - ` : ''}{`${ageGroup.gender} ${ageGroup.ageGroup}`}
                                   {ageGroup.birthYear ? ` (${ageGroup.birthYear})` : ''}
