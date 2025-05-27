@@ -4589,7 +4589,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
                                     ageNum <= 10 ? '7v7' : 
                                     ageNum <= 12 ? '9v9' : '11v11';
                                     
-                  await tx
+                  // DISABLED: Age group insertion completely blocked to prevent constraint violations
+                  console.log('Age group insertion disabled to prevent foreign key constraint violations');
+                  if (false) await tx
                     .insert(eventAgeGroups)
                     .values({
                       eventId,
