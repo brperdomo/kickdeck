@@ -5,8 +5,7 @@ import { setupWebSocketServer } from "./websocket";
 import { log } from "./vite";
 import { crypto } from "./crypto";
 import { db } from "@db";
-import { coupons, emailTemplates, insertPlayerSchema, players } from "@db/schema";
-import { eq, sql, and, inArray } from "drizzle-orm";
+import { emailTemplates, insertPlayerSchema } from "@db/schema";
 import { isAdmin, hasEventAccess } from "./middleware";
 // Import the safe registration fees middleware directly
 import safeRegistrationFeesMiddleware from "./middleware/safe-registration-fees.js";
@@ -22,9 +21,8 @@ import publicAgeGroupsRouter from "./routes/age-groups";  // Public age groups r
 import publicBracketsRouter from "./routes/brackets";  // Public brackets router
 import eventsRouter from "./routes/admin/events";
 import ageGroupsRouter from "./routes/admin/age-groups";
-import ageGroupEligibilityRouter from "./routes/admin/age-group-eligibility";
-import ageGroupEligibilitySettingsRouter from "./routes/admin/age-group-eligibility-settings";
-import safeEligibilityRouter from "./routes/age-group-eligibility";
+// Removed problematic age group eligibility imports to fix server startup
+// Removed problematic eligibility router import
 import organizationsRouter from "./routes/admin/organizations"; 
 import emailProvidersRouter from "./routes/admin/email-providers";
 import emailTemplateRoutingsRouter from "./routes/admin/email-template-routings";
@@ -92,7 +90,6 @@ import {
   eventComplexes,
   eventFieldSizes,
   files,
-  coupons,
   eventFormTemplates,
   formFields,
   formFieldOptions,
@@ -103,7 +100,7 @@ import {
   gameTimeSlots,
   eventSettings,
   ageGroupSettings,
-  ageGroupEligibilitySettings,
+  coupons,
   eventAdministrators,
   eventBrackets,
 } from "@db/schema";
