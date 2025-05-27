@@ -3082,7 +3082,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   className="enhanced-input h-11" 
                                   {...field} 
                                   type="password" 
-                                  placeholder="Enter your password" />
+                                  placeholder="Enter your password"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault();
+                                      verifyExistingAccount();
+                                    }
+                                  }}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
