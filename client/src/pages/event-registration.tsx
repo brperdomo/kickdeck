@@ -1919,6 +1919,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         }
         
         setAuthError(null);
+        setIsAuthenticating(true);
+        
         try {
           // Login using the existing API
           console.log('Logging in through personal details submit with:', { email: data.email });
@@ -1931,27 +1933,44 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
               email: data.email,
               password: data.password 
             }),
+            credentials: 'include',
           });
           
           if (!response.ok) {
-            const errorData = await response.json();
+            const errorData = await response.json().catch(() => ({ message: 'Login failed' }));
             setAuthError(errorData.message || 'Invalid username or password');
+            form.setError('password', { 
+              type: 'manual', 
+              message: errorData.message || 'Invalid password' 
+            });
             return;
           }
           
+          // Get user data from response
+          const userData = await response.json();
+          
           // Update auth context after successful login
+          queryClient.setQueryData(['/api/user'], userData);
           await queryClient.invalidateQueries({ queryKey: ['/api/user'] });
           
           console.log('Login successful, continuing with registration');
           form.setValue('authenticated', true);
-          updatePersonalDetailsMutation.mutate(data);
           
-          // Important: Proceed to the team step after successful login
-          setCurrentStep('team');
+          // Small delay to ensure React Query updates
+          setTimeout(() => {
+            updatePersonalDetailsMutation.mutate(data);
+            setCurrentStep('team');
+          }, 100);
         } catch (loginError) {
           console.error('Login error:', loginError);
           setAuthError('An error occurred during login. Please try again.');
+          form.setError('password', { 
+            type: 'manual', 
+            message: 'An error occurred during login. Please try again.' 
+          });
           return;
+        } finally {
+          setIsAuthenticating(false);
         }
       } else {
         // Create a new account with provided credentials
@@ -1974,6 +1993,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         }
         
         setAuthError(null);
+        setIsCreatingAccount(true);
+        
         try {
           // Registration using the existing API
           const response = await fetch('/api/register', {
@@ -1988,27 +2009,44 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
               lastName: data.lastName,
               email: data.email,
             }),
+            credentials: 'include',
           });
           
           if (!response.ok) {
-            const errorData = await response.json();
+            const errorData = await response.json().catch(() => ({ message: 'Failed to create account' }));
             setAuthError(errorData.message || 'Failed to create account');
+            form.setError('email', { 
+              type: 'manual', 
+              message: errorData.message || 'Failed to create account' 
+            });
             return;
           }
           
+          // Get user data from response
+          const userData = await response.json();
+          
           // Update auth context after successful registration
+          queryClient.setQueryData(['/api/user'], userData);
           await queryClient.invalidateQueries({ queryKey: ['/api/user'] });
           
           console.log('Registration successful, continuing with registration');
           form.setValue('authenticated', true);
-          updatePersonalDetailsMutation.mutate(data);
           
-          // Important: Proceed to the team step after successful registration
-          setCurrentStep('team');
+          // Small delay to ensure React Query updates
+          setTimeout(() => {
+            updatePersonalDetailsMutation.mutate(data);
+            setCurrentStep('team');
+          }, 100);
         } catch (registerError) {
           console.error('Registration error:', registerError);
           setAuthError('An error occurred during account creation. Please try again.');
+          form.setError('password', { 
+            type: 'manual', 
+            message: 'An error occurred during account creation. Please try again.' 
+          });
           return;
+        } finally {
+          setIsCreatingAccount(false);
         }
       }
     } catch (error) {
