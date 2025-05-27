@@ -1,0 +1,94 @@
+Registration: Bypassing authentication check
+registration-auth-checker.tsx:162 Registration: Bypassing authentication check
+event-registration.tsx:1322 Found saved registration data from: 5/27/2025, 2:10:54 PM
+event-registration.tsx:1075 Loading saved registration state: {personalDetails: {…}, teamDetails: {…}, selectedAgeGroup: null, selectedBracket: null, players: Array(0), …}
+event-registration.tsx:568 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:569 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:787 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:789 🔍 AUTH DEBUG 🔍 {user: null, isLoggedIn: false, urlParams: '', currentStep: 'personal', isPreview: false}
+event-registration.tsx:568 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:569 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:787 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:789 🔍 AUTH DEBUG 🔍 {user: null, isLoggedIn: false, urlParams: '', currentStep: 'personal', isPreview: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+framer-motion.js?v=e7b2193e:252 You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+AnimatePresence @ framer-motion.js?v=e7b2193e:252
+renderWithHooks @ chunk-RPCDYKBN.js?v=e7b2193e:11568
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=e7b2193e:14582
+beginWork @ chunk-RPCDYKBN.js?v=e7b2193e:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=e7b2193e:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=e7b2193e:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=e7b2193e:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=e7b2193e:19116
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18678
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384Understand this warning
+framer-motion.js?v=e7b2193e:252 You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+AnimatePresence @ framer-motion.js?v=e7b2193e:252
+renderWithHooks @ chunk-RPCDYKBN.js?v=e7b2193e:11568
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=e7b2193e:14587
+beginWork @ chunk-RPCDYKBN.js?v=e7b2193e:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=e7b2193e:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=e7b2193e:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=e7b2193e:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=e7b2193e:19116
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18678
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384Understand this warning
+registration-auth-checker.tsx:162 Registration: Bypassing authentication check
+registration-auth-checker.tsx:162 Registration: Bypassing authentication check
+event-registration.tsx:1322 Found saved registration data from: 5/27/2025, 2:10:54 PM
+event-registration.tsx:1075 Loading saved registration state: {personalDetails: {…}, teamDetails: {…}, selectedAgeGroup: null, selectedBracket: null, players: Array(0), …}
+event-registration.tsx:568 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:569 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:787 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:789 🔍 AUTH DEBUG 🔍 {user: null, isLoggedIn: false, urlParams: '', currentStep: 'personal', isPreview: false}
+event-registration.tsx:568 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:569 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:787 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:789 🔍 AUTH DEBUG 🔍 {user: null, isLoggedIn: false, urlParams: '', currentStep: 'personal', isPreview: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+framer-motion.js?v=e7b2193e:252 You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+AnimatePresence @ framer-motion.js?v=e7b2193e:252
+renderWithHooks @ chunk-RPCDYKBN.js?v=e7b2193e:11568
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=e7b2193e:14582
+beginWork @ chunk-RPCDYKBN.js?v=e7b2193e:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=e7b2193e:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=e7b2193e:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=e7b2193e:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=e7b2193e:19116
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18678
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384Understand this warning
+framer-motion.js?v=e7b2193e:252 You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.
+AnimatePresence @ framer-motion.js?v=e7b2193e:252
+renderWithHooks @ chunk-RPCDYKBN.js?v=e7b2193e:11568
+updateFunctionComponent @ chunk-RPCDYKBN.js?v=e7b2193e:14587
+beginWork @ chunk-RPCDYKBN.js?v=e7b2193e:15924
+beginWork$1 @ chunk-RPCDYKBN.js?v=e7b2193e:19753
+performUnitOfWork @ chunk-RPCDYKBN.js?v=e7b2193e:19198
+workLoopSync @ chunk-RPCDYKBN.js?v=e7b2193e:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=e7b2193e:19116
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18678
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384Understand this warning
+registration-auth-checker.tsx:162 Registration: Bypassing authentication check
+registration-auth-checker.tsx:162 Registration: Bypassing authentication check
+event-registration.tsx:1322 Found saved registration data from: 5/27/2025, 2:10:54 PM
+event-registration.tsx:1075 Loading saved registration state: {personalDetails: {…}, teamDetails: {…}, selectedAgeGroup: null, selectedBracket: null, players: Array(0), …}
+event-registration.tsx:568 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:569 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:787 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:789 🔍 AUTH DEBUG 🔍 {user: null, isLoggedIn: false, urlParams: '', currentStep: 'personal', isPreview: false}
+event-registration.tsx:568 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:569 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:787 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:789 🔍 AUTH DEBUG 🔍 {user: null, isLoggedIn: false, urlParams: '', currentStep: 'personal', isPreview: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#7034a8', secondaryColor: '#25cc50', type: 'particles', opacity: 0.6}
