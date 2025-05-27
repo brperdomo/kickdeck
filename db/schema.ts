@@ -351,19 +351,37 @@ export const paymentTransactions = pgTable("payment_transactions", {
   setupIntentId: text("setup_intent_id"), // For setup intents (when just saving payment method)
   transactionType: text("transaction_type").notNull(), // payment, refund, chargeback, payment_info_collected, etc.
   amount: integer("amount").notNull(), // Amount in cents, positive for payments, negative for refunds
+  stripeFee: integer("stripe_fee"), // Actual Stripe processing fee in cents
+  netAmount: integer("net_amount"), // Net amount after fees (amount - stripeFee)
   status: text("status").notNull(), // succeeded, failed, pending, etc.
   cardBrand: text("card_brand"), // Visa, Mastercard, etc.
   cardLastFour: text("card_last_four"), // Last 4 digits of card
   paymentMethodType: text("payment_method_type"), // card, bank_transfer, etc.
   errorCode: text("error_code"), // Error code if transaction failed
   errorMessage: text("error_message"), // Error message if transaction failed
+  settlementDate: timestamp("settlement_date"), // When funds settle to account
+  payoutId: text("payout_id"), // Stripe payout ID when settled
   metadata: jsonb("metadata"), // Additional data about the transaction
   notes: text("notes"), // Admin notes about the transaction
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow()
 });
 
-export const paymentTransactionsRelations = relations(paymentTransactions, ({ one }) => ({
+// Fee revenue tracking table - tracks how much revenue each fee generates
+export const feeRevenue = pgTable("fee_revenue", {
+  id: serial("id").primaryKey(),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
+  feeId: integer("fee_id").notNull().references(() => eventFees.id, { onDelete: 'cascade' }),
+  teamId: integer("team_id").references(() => teams.id),
+  paymentTransactionId: integer("payment_transaction_id").references(() => paymentTransactions.id),
+  feeAmount: integer("fee_amount").notNull(), // Amount of this specific fee in cents
+  stripeFeeAllocation: integer("stripe_fee_allocation"), // Allocated portion of Stripe fee for this fee
+  netFeeRevenue: integer("net_fee_revenue"), // Net revenue after allocated Stripe fees
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const paymentTransactionsRelations = relations(paymentTransactions, ({ one, many }) => ({
   team: one(teams, {
     fields: [paymentTransactions.teamId],
     references: [teams.id]
@@ -375,7 +393,27 @@ export const paymentTransactionsRelations = relations(paymentTransactions, ({ on
   user: one(users, {
     fields: [paymentTransactions.userId],
     references: [users.id]
-  })
+  }),
+  feeRevenues: many(feeRevenue),
+}));
+
+export const feeRevenueRelations = relations(feeRevenue, ({ one }) => ({
+  event: one(events, {
+    fields: [feeRevenue.eventId],
+    references: [events.id],
+  }),
+  fee: one(eventFees, {
+    fields: [feeRevenue.feeId],
+    references: [eventFees.id],
+  }),
+  team: one(teams, {
+    fields: [feeRevenue.teamId],
+    references: [teams.id],
+  }),
+  paymentTransaction: one(paymentTransactions, {
+    fields: [feeRevenue.paymentTransactionId],
+    references: [paymentTransactions.id],
+  }),
 }));
 
 export const insertGameTimeSlotSchema = createInsertSchema(gameTimeSlots);
