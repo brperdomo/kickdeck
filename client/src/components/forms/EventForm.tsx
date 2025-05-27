@@ -435,11 +435,9 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       const submitData = {
         ...data,
         seasonalScopeId: scopeIdToSubmit,
-        // Ensure each age group includes the isEligible property
-        ageGroups: ageGroups.map(group => ({
-          ...group,
-          isEligible: group.isEligible !== false // defaults to true if not explicitly set to false
-        })),
+        // CONSTRAINT SAFE: Remove age groups from event update to prevent violations
+        // Age group eligibility is handled separately through dedicated endpoints
+        // ageGroups: undefined, // Don't include age groups in main event update
         scoringRules,
         settings: updatedSettings, // Use the updated settings
         complexFieldSizes,
