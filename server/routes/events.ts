@@ -541,8 +541,9 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
       }
     }
 
-    // If we still have no age groups after deduplication, return standard age groups
-    if (uniqueGroups.length === 0) {
+    // DISABLED: No longer add standard age groups as fallback
+    // This was bypassing eligibility filtering
+    if (false && uniqueGroups.length === 0) {
       // Define standard age groups directly
       const PREDEFINED_AGE_GROUPS = [
         { ageGroup: 'U4', birthYear: 2021, gender: 'Boys', divisionCode: 'B2021' },
