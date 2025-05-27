@@ -6,8 +6,8 @@
  */
 
 import { Router } from 'express';
-import { db } from '../db';
-import { eventAgeGroupEligibility } from '../db/schema';
+import { db } from '@db';
+import { eventAgeGroupEligibility } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
 
 const router = Router();
