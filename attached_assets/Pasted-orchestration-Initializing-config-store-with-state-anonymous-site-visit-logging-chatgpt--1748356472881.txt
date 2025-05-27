@@ -1,0 +1,520 @@
+orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-RPCDYKBN.js?v=8e1f054b:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:9 Google Maps API key length: 0 characters
+env.ts:15 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /
+RouteDebugger.tsx:14 Current URL: https://app.matchpro.ai/
+RouteDebugger.tsx:15 Current pathname: /
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /
+RouteDebugger.tsx:14 Current URL: https://app.matchpro.ai/
+RouteDebugger.tsx:15 Current pathname: /
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:61 
+            
+            
+           GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=8e1f054b:839
+run @ @tanstack_react-query.js?v=8e1f054b:493
+start @ @tanstack_react-query.js?v=8e1f054b:535
+fetch @ @tanstack_react-query.js?v=8e1f054b:925
+executeFetch_fn @ @tanstack_react-query.js?v=8e1f054b:2237
+onSubscribe @ @tanstack_react-query.js?v=8e1f054b:1924
+subscribe @ @tanstack_react-query.js?v=8e1f054b:24
+(anonymous) @ @tanstack_react-query.js?v=8e1f054b:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=8e1f054b:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8e1f054b:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8e1f054b:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8e1f054b:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8e1f054b:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8e1f054b:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8e1f054b:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8e1f054b:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8e1f054b:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8e1f054b:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18718
+workLoop @ chunk-RPCDYKBN.js?v=8e1f054b:197
+flushWork @ chunk-RPCDYKBN.js?v=8e1f054b:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8e1f054b:384Understand this error
+use-auth.tsx:85 
+            
+            
+           GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=8e1f054b:839
+run @ @tanstack_react-query.js?v=8e1f054b:493
+start @ @tanstack_react-query.js?v=8e1f054b:535
+fetch @ @tanstack_react-query.js?v=8e1f054b:925
+executeFetch_fn @ @tanstack_react-query.js?v=8e1f054b:2237
+onSubscribe @ @tanstack_react-query.js?v=8e1f054b:1924
+subscribe @ @tanstack_react-query.js?v=8e1f054b:24
+(anonymous) @ @tanstack_react-query.js?v=8e1f054b:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=8e1f054b:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8e1f054b:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8e1f054b:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8e1f054b:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8e1f054b:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8e1f054b:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8e1f054b:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8e1f054b:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8e1f054b:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8e1f054b:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18718
+workLoop @ chunk-RPCDYKBN.js?v=8e1f054b:197
+flushWork @ chunk-RPCDYKBN.js?v=8e1f054b:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8e1f054b:384Understand this error
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+app.matchpro.ai/:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+app.matchpro.ai/:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+util.js:41 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+lEa @ util.js:41
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1721
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1721
+setTimeout
+tga @ js?libraries=places&v=beta&callback=Function.prototype:1721
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958Understand this warning
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+app.matchpro.ai/:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+app.matchpro.ai/:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+Navigated to https://app.matchpro.ai/
+js?libraries=places&v=beta&callback=Function.prototype:1719 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+tga @ js?libraries=places&v=beta&callback=Function.prototype:1719
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1746 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1746
+qga @ js?libraries=places&v=beta&callback=Function.prototype:1728
+tga @ js?libraries=places&v=beta&callback=Function.prototype:1720
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-RPCDYKBN.js?v=8e1f054b:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:9 Google Maps API key length: 0 characters
+env.ts:15 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /
+RouteDebugger.tsx:14 Current URL: https://app.matchpro.ai/
+RouteDebugger.tsx:15 Current pathname: /
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /
+RouteDebugger.tsx:14 Current URL: https://app.matchpro.ai/
+RouteDebugger.tsx:15 Current pathname: /
+RouteDebugger.tsx:16 Current search: 
+shared-fa6add6b24b911b48b9e541f7d4bef78.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+e @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+l @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+k @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+value @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+value @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+value @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+value @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+43722 @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e.O @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+shared-fa6add6b24b911b48b9e541f7d4bef78.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+e @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+l @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+k @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+value @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+value @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+log @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+log @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+43722 @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e.O @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+use-user.ts:61 
+            
+            
+           GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=8e1f054b:839
+run @ @tanstack_react-query.js?v=8e1f054b:493
+start @ @tanstack_react-query.js?v=8e1f054b:535
+fetch @ @tanstack_react-query.js?v=8e1f054b:925
+executeFetch_fn @ @tanstack_react-query.js?v=8e1f054b:2237
+onSubscribe @ @tanstack_react-query.js?v=8e1f054b:1924
+subscribe @ @tanstack_react-query.js?v=8e1f054b:24
+(anonymous) @ @tanstack_react-query.js?v=8e1f054b:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=8e1f054b:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8e1f054b:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8e1f054b:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8e1f054b:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8e1f054b:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8e1f054b:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8e1f054b:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8e1f054b:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8e1f054b:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8e1f054b:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18718
+workLoop @ chunk-RPCDYKBN.js?v=8e1f054b:197
+flushWork @ chunk-RPCDYKBN.js?v=8e1f054b:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8e1f054b:384Understand this error
+use-auth.tsx:85 
+            
+            
+           GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=8e1f054b:839
+run @ @tanstack_react-query.js?v=8e1f054b:493
+start @ @tanstack_react-query.js?v=8e1f054b:535
+fetch @ @tanstack_react-query.js?v=8e1f054b:925
+executeFetch_fn @ @tanstack_react-query.js?v=8e1f054b:2237
+onSubscribe @ @tanstack_react-query.js?v=8e1f054b:1924
+subscribe @ @tanstack_react-query.js?v=8e1f054b:24
+(anonymous) @ @tanstack_react-query.js?v=8e1f054b:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=8e1f054b:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8e1f054b:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8e1f054b:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8e1f054b:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8e1f054b:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8e1f054b:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8e1f054b:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8e1f054b:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8e1f054b:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8e1f054b:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18718
+workLoop @ chunk-RPCDYKBN.js?v=8e1f054b:197
+flushWork @ chunk-RPCDYKBN.js?v=8e1f054b:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8e1f054b:384Understand this error
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+app.matchpro.ai/:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+app.matchpro.ai/:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-user.ts:61 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=8e1f054b:839
+run @ @tanstack_react-query.js?v=8e1f054b:493
+start @ @tanstack_react-query.js?v=8e1f054b:535
+fetch @ @tanstack_react-query.js?v=8e1f054b:925
+executeFetch_fn @ @tanstack_react-query.js?v=8e1f054b:2237
+onSubscribe @ @tanstack_react-query.js?v=8e1f054b:1924
+subscribe @ @tanstack_react-query.js?v=8e1f054b:24
+(anonymous) @ @tanstack_react-query.js?v=8e1f054b:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=8e1f054b:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8e1f054b:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8e1f054b:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8e1f054b:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8e1f054b:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8e1f054b:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8e1f054b:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8e1f054b:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8e1f054b:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8e1f054b:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18718
+workLoop @ chunk-RPCDYKBN.js?v=8e1f054b:197
+flushWork @ chunk-RPCDYKBN.js?v=8e1f054b:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8e1f054b:384
+use-auth.tsx:85 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=8e1f054b:839
+run @ @tanstack_react-query.js?v=8e1f054b:493
+start @ @tanstack_react-query.js?v=8e1f054b:535
+fetch @ @tanstack_react-query.js?v=8e1f054b:925
+executeFetch_fn @ @tanstack_react-query.js?v=8e1f054b:2237
+onSubscribe @ @tanstack_react-query.js?v=8e1f054b:1924
+subscribe @ @tanstack_react-query.js?v=8e1f054b:24
+(anonymous) @ @tanstack_react-query.js?v=8e1f054b:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=8e1f054b:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8e1f054b:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8e1f054b:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8e1f054b:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8e1f054b:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8e1f054b:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8e1f054b:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8e1f054b:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8e1f054b:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8e1f054b:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18718
+workLoop @ chunk-RPCDYKBN.js?v=8e1f054b:197
+flushWork @ chunk-RPCDYKBN.js?v=8e1f054b:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8e1f054b:384
+7Fetch finished loading: POST "<URL>".
+util.js:41 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+lEa @ util.js:41
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1721
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1721
+setTimeout
+tga @ js?libraries=places&v=beta&callback=Function.prototype:1721
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958Understand this warning
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
+(anonymous) @ out-4.5.44.js:1
+i @ out-4.5.44.js:1
+s @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+(anonymous) @ out-4.5.44.js:1
+Promise.then
+S @ out-4.5.44.js:1
+y @ out-4.5.44.js:1
+E @ out-4.5.44.js:1
+e.onload @ inner.html:1
+script
+(anonymous) @ inner.html:1
+(anonymous) @ inner.html:1
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+app.matchpro.ai/:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+client:556 [vite] server connection lost. Polling for restart...
+client:732 Fetch failed loading: GET "https://app.matchpro.ai/".
+ping @ client:732
+waitForSuccessfulPing @ client:745
+(anonymous) @ client:557
+Navigated to https://app.matchpro.ai/
+js?libraries=places&v=beta&callback=Function.prototype:1719 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+tga @ js?libraries=places&v=beta&callback=Function.prototype:1719
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958Understand this warning
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+js?libraries=places&v=beta&callback=Function.prototype:1746 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1746
+qga @ js?libraries=places&v=beta&callback=Function.prototype:1728
+tga @ js?libraries=places&v=beta&callback=Function.prototype:1720
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958
+client:495 [vite] connecting...
+chunk-RPCDYKBN.js?v=8e1f054b:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:9 Google Maps API key length: 0 characters
+env.ts:15 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /
+RouteDebugger.tsx:14 Current URL: https://app.matchpro.ai/
+RouteDebugger.tsx:15 Current pathname: /
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /
+RouteDebugger.tsx:14 Current URL: https://app.matchpro.ai/
+RouteDebugger.tsx:15 Current pathname: /
+RouteDebugger.tsx:16 Current search: 
+client:614 [vite] connected.
+use-user.ts:61 
+            
+            
+           GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=8e1f054b:839
+run @ @tanstack_react-query.js?v=8e1f054b:493
+start @ @tanstack_react-query.js?v=8e1f054b:535
+fetch @ @tanstack_react-query.js?v=8e1f054b:925
+executeFetch_fn @ @tanstack_react-query.js?v=8e1f054b:2237
+onSubscribe @ @tanstack_react-query.js?v=8e1f054b:1924
+subscribe @ @tanstack_react-query.js?v=8e1f054b:24
+(anonymous) @ @tanstack_react-query.js?v=8e1f054b:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=8e1f054b:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8e1f054b:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8e1f054b:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8e1f054b:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8e1f054b:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8e1f054b:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8e1f054b:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8e1f054b:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8e1f054b:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8e1f054b:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18718
+workLoop @ chunk-RPCDYKBN.js?v=8e1f054b:197
+flushWork @ chunk-RPCDYKBN.js?v=8e1f054b:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8e1f054b:384Understand this error
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+app.matchpro.ai/:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+app.matchpro.ai/:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+use-user.ts:61 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=8e1f054b:839
+run @ @tanstack_react-query.js?v=8e1f054b:493
+start @ @tanstack_react-query.js?v=8e1f054b:535
+fetch @ @tanstack_react-query.js?v=8e1f054b:925
+executeFetch_fn @ @tanstack_react-query.js?v=8e1f054b:2237
+onSubscribe @ @tanstack_react-query.js?v=8e1f054b:1924
+subscribe @ @tanstack_react-query.js?v=8e1f054b:24
+(anonymous) @ @tanstack_react-query.js?v=8e1f054b:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=8e1f054b:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8e1f054b:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8e1f054b:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8e1f054b:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8e1f054b:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8e1f054b:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8e1f054b:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8e1f054b:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8e1f054b:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8e1f054b:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18718
+workLoop @ chunk-RPCDYKBN.js?v=8e1f054b:197
+flushWork @ chunk-RPCDYKBN.js?v=8e1f054b:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8e1f054b:384
+use-auth.tsx:85 
+            
+            
+           GET https://app.matchpro.ai/api/user 401 (Unauthorized)
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=8e1f054b:839
+run @ @tanstack_react-query.js?v=8e1f054b:493
+start @ @tanstack_react-query.js?v=8e1f054b:535
+fetch @ @tanstack_react-query.js?v=8e1f054b:925
+executeFetch_fn @ @tanstack_react-query.js?v=8e1f054b:2237
+onSubscribe @ @tanstack_react-query.js?v=8e1f054b:1924
+subscribe @ @tanstack_react-query.js?v=8e1f054b:24
+(anonymous) @ @tanstack_react-query.js?v=8e1f054b:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=8e1f054b:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8e1f054b:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8e1f054b:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8e1f054b:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8e1f054b:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8e1f054b:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8e1f054b:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8e1f054b:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8e1f054b:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8e1f054b:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18718
+workLoop @ chunk-RPCDYKBN.js?v=8e1f054b:197
+flushWork @ chunk-RPCDYKBN.js?v=8e1f054b:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8e1f054b:384Understand this error
+shared-fa6add6b24b911b48b9e541f7d4bef78.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+e @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+l @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+k @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+value @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+value @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+value @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+value @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+43722 @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e.O @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+shared-fa6add6b24b911b48b9e541f7d4bef78.js:1 Fetch finished loading: GET "https://js.stripe.com/v3/.deploy_status_henson.json".
+(anonymous) @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+e @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+l @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+k @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+value @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+value @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+log @ shared-fa6add6b24b911b48b9e541f7d4bef78.js:1
+log @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+43722 @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+e.O @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+(anonymous) @ controller-with-preconnect-60bbb5190bbd4750cca90b4c597dd6ca.js:1
+use-auth.tsx:85 Fetch failed loading: GET "https://app.matchpro.ai/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=8e1f054b:839
+run @ @tanstack_react-query.js?v=8e1f054b:493
+start @ @tanstack_react-query.js?v=8e1f054b:535
+fetch @ @tanstack_react-query.js?v=8e1f054b:925
+executeFetch_fn @ @tanstack_react-query.js?v=8e1f054b:2237
+onSubscribe @ @tanstack_react-query.js?v=8e1f054b:1924
+subscribe @ @tanstack_react-query.js?v=8e1f054b:24
+(anonymous) @ @tanstack_react-query.js?v=8e1f054b:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=8e1f054b:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=8e1f054b:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=8e1f054b:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=8e1f054b:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=8e1f054b:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=8e1f054b:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=8e1f054b:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=8e1f054b:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=8e1f054b:19432
+commitRoot @ chunk-RPCDYKBN.js?v=8e1f054b:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=8e1f054b:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=8e1f054b:18718
+workLoop @ chunk-RPCDYKBN.js?v=8e1f054b:197
+flushWork @ chunk-RPCDYKBN.js?v=8e1f054b:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=8e1f054b:384
+util.js:41 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+lEa @ util.js:41
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1721
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1721
+setTimeout
+tga @ js?libraries=places&v=beta&callback=Function.prototype:1721
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1958Understand this warning
+out-4.5.44.js:1 XHR finished loading: POST "https://m.stripe.com/6".
