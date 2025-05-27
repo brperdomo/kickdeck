@@ -361,9 +361,9 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
     const uniqueMap = new Map();
     const uniqueGroups = [];
 
-    // If we have no age groups but this is an API call for an existing event,
-    // we should return standard age groups as a fallback
-    if (ageGroups.length === 0) {
+    // DISABLED: No longer add standard age groups as fallback
+    // This was bypassing eligibility filtering
+    if (false && ageGroups.length === 0) {
       // Define standard age groups directly instead of importing (which might be failing)
       const PREDEFINED_AGE_GROUPS = [
         { ageGroup: 'U4', birthYear: 2021, gender: 'Boys', divisionCode: 'B2021' },
@@ -441,8 +441,9 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
       }
     }
 
-    // When editing an event, we want to show ALL age groups including standard ones not initially selected
-    // Define standard age groups directly instead of importing (which might be failing)
+    // DISABLED: No longer add predefined age groups for editing
+    // This was bypassing eligibility filtering
+    if (false) {
     const PREDEFINED_AGE_GROUPS = [
       { ageGroup: 'U4', birthYear: 2021, gender: 'Boys', divisionCode: 'B2021' },
       { ageGroup: 'U4', birthYear: 2021, gender: 'Girls', divisionCode: 'G2021' },
@@ -499,9 +500,12 @@ router.get('/api/admin/events/:eventId/age-groups', async (req, res) => {
       }
     }
 
-    // Only add standard age groups that are eligible for registration
-    // This prevents ineligible age groups from appearing on the public registration page
-    for (const stdGroup of PREDEFINED_AGE_GROUPS) {
+    } // End of disabled block
+    
+    // DISABLED: No longer add standard age groups based on eligibility
+    // This was causing complexity and bypassing the main eligibility filtering
+    if (false) {
+    for (const stdGroup of []) {
       const key = stdGroup.divisionCode;
       if (!uniqueMap.has(key)) {
         // Check if this age group is eligible
