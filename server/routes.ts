@@ -39,6 +39,11 @@ import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/c
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import paymentsRouter from "./routes/payments";
 import reportsRouter from "./routes/reports";
+import { 
+  getEnhancedEventFinancialReport, 
+  getOrganizationFinancialSummary, 
+  getStripeFeeOptimizationReport 
+} from "./routes/enhanced-financial-reports";
 import { getNewRegistrationsCount, acknowledgeNewRegistrations } from "./routes/admin/registrations";
 import { getTinyMCEConfig } from "./services/configService";
 import { requestPasswordReset, verifyResetToken, completePasswordReset } from "./routes/auth";
@@ -1452,6 +1457,11 @@ export function registerRoutes(app: Express): Server {
     // Financial reporting endpoints - former getFinancialReportData endpoint has been removed
     // Mount reports router for financial reporting
     app.use('/api/reports', isAdmin, reportsRouter);
+    
+    // Enhanced financial reporting endpoints with Stripe fee analysis
+    app.get('/api/reports/enhanced/event/:eventId/financial', isAdmin, getEnhancedEventFinancialReport);
+    app.get('/api/reports/enhanced/organization/summary', isAdmin, getOrganizationFinancialSummary);
+    app.get('/api/reports/enhanced/stripe-optimization', isAdmin, getStripeFeeOptimizationReport);
     
     // Terms acknowledgment endpoints
     app.post('/api/teams/:teamId/terms-acknowledgment/generate', isAdmin, generateTermsAcknowledgmentDocument);

@@ -428,6 +428,16 @@ export const insertPaymentTransactionSchema = createInsertSchema(paymentTransact
 export const selectPaymentTransactionSchema = createSelectSchema(paymentTransactions);
 export type InsertPaymentTransaction = typeof paymentTransactions.$inferInsert;
 export type SelectPaymentTransaction = typeof paymentTransactions.$inferSelect;
+
+export const insertFeeRevenueSchema = createInsertSchema(feeRevenue, {
+  feeAmount: z.number().int().positive("Fee amount must be positive"),
+  stripeFeeAllocation: z.number().int().optional(),
+  netFeeRevenue: z.number().int().optional(),
+});
+
+export const selectFeeRevenueSchema = createSelectSchema(feeRevenue);
+export type InsertFeeRevenue = typeof feeRevenue.$inferInsert;
+export type SelectFeeRevenue = typeof feeRevenue.$inferSelect;
 export const insertGameSchema = createInsertSchema(games, {
   status: z.enum(['scheduled', 'in_progress', 'completed', 'cancelled']),
   duration: z.number().min(20).max(120),
