@@ -1851,7 +1851,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
               style={{ color: event?.branding?.primaryColor || '#2C5282' }}
             >{gender}</h4>
             <div className="flex flex-wrap gap-2">
-              {groups.map((group) => (
+              {groupedByGender[gender].map((group) => (
                 <span 
                   key={group.id} 
                   className="bg-white px-3 py-1 rounded-full text-sm border"
