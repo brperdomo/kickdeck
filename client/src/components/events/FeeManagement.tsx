@@ -81,6 +81,8 @@ export function FeeManagement() {
   const [isEditFeeOpen, setIsEditFeeOpen] = useState(false);
   const [isAssignFeeOpen, setIsAssignFeeOpen] = useState(false);
   const [selectedFeeId, setSelectedFeeId] = useState(null);
+  const [isQuickAssignOpen, setIsQuickAssignOpen] = useState(false);
+  const [newlyCreatedFee, setNewlyCreatedFee] = useState(null);
   const [newFee, setNewFee] = useState({
     name: "",
     amount: "",
@@ -356,13 +358,19 @@ export function FeeManagement() {
         throw error;
       }
     },
-    onSuccess: () => {
+    onSuccess: (newFee) => {
       queryClient.invalidateQueries(["fees", eventIdParam]);
       setIsDialogOpen(false);
       form.reset();
+      
+      // Store the newly created fee and immediately prompt for age group assignment
+      setNewlyCreatedFee(newFee);
+      setSelectedFeeId(newFee.id);
+      setIsQuickAssignOpen(true);
+      
       toast({
-        title: "Success",
-        description: "Fee created successfully",
+        title: "Success", 
+        description: "Fee created! Now select which age groups to assign it to.",
       });
     },
     onError: (error) => {
@@ -1366,6 +1374,135 @@ export function FeeManagement() {
                 Cancel
               </Button>
               <Button onClick={handleSaveAssignments}>Save Assignments</Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quick Assign Dialog - Shows immediately after fee creation */}
+      <Dialog open={isQuickAssignOpen} onOpenChange={setIsQuickAssignOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Assign Fee to Age Groups</DialogTitle>
+            <DialogDescription>
+              {newlyCreatedFee && `Your fee "${newlyCreatedFee.name}" has been created successfully! Now select which age groups should have this fee.`}
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Show the newly created fee */}
+          {newlyCreatedFee && (
+            <div className="bg-green-50 p-3 rounded-md mb-4">
+              <h4 className="text-sm font-medium text-green-800 mb-1">
+                Newly Created Fee
+              </h4>
+              <p className="text-sm text-green-900">
+                {newlyCreatedFee.name} - {formatCurrency(newlyCreatedFee.amount || 0)}
+              </p>
+              <div className="mt-1 flex space-x-2">
+                <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                  {newlyCreatedFee.feeType === "registration" ? "Registration" :
+                   newlyCreatedFee.feeType === "uniform" ? "Uniform" :
+                   newlyCreatedFee.feeType === "equipment" ? "Equipment" :
+                   newlyCreatedFee.feeType === "tournament" ? "Tournament" : "Other"}
+                </span>
+                {newlyCreatedFee.isRequired !== false && (
+                  <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
+                    Required
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Age group selection with simplified interface */}
+          <div className="max-h-64 overflow-y-auto space-y-2 border rounded-md p-3 bg-gray-50">
+            {ageGroupsQuery.data?.map((ageGroup) => (
+              <div
+                key={ageGroup.id}
+                className="flex items-center p-2 hover:bg-gray-100 rounded-md"
+              >
+                <Checkbox
+                  id={`quick-assign-${ageGroup.id}`}
+                  className="h-5 w-5 border-2 rounded-sm data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600 data-[state=checked]:text-white"
+                  checked={selectedAgeGroups[ageGroup.id]?.[selectedFeeId] === true}
+                  onCheckedChange={(checked) => {
+                    setSelectedAgeGroups(prev => {
+                      const newState = {...prev};
+                      if (!newState[ageGroup.id]) {
+                        newState[ageGroup.id] = {};
+                      }
+                      newState[ageGroup.id][selectedFeeId] = checked === true;
+                      return newState;
+                    });
+                  }}
+                />
+                <div className="ml-2 flex-1">
+                  <Label
+                    htmlFor={`quick-assign-${ageGroup.id}`}
+                    className="font-medium cursor-pointer"
+                  >
+                    {ageGroup.name}
+                  </Label>
+                  <p className="text-xs text-gray-500">
+                    {ageGroup.gender} • {ageGroup.divisionCode || "No Division"}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <DialogFooter className="flex flex-col sm:flex-row sm:justify-between gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setIsQuickAssignOpen(false);
+                setNewlyCreatedFee(null);
+                setSelectedFeeId(null);
+              }}
+            >
+              Skip for Now
+            </Button>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  // Select all age groups for convenience
+                  if (ageGroupsQuery.data && selectedFeeId) {
+                    setSelectedAgeGroups(prev => {
+                      const newState = {...prev};
+                      ageGroupsQuery.data.forEach(ageGroup => {
+                        if (!newState[ageGroup.id]) {
+                          newState[ageGroup.id] = {};
+                        }
+                        newState[ageGroup.id][selectedFeeId] = true;
+                      });
+                      return newState;
+                    });
+                  }
+                }}
+              >
+                Select All
+              </Button>
+              <Button
+                type="button"
+                onClick={async () => {
+                  await handleSaveAssignments();
+                  setIsQuickAssignOpen(false);
+                  setNewlyCreatedFee(null);
+                }}
+                disabled={updateAssignmentsMutation.isPending}
+              >
+                {updateAssignmentsMutation.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Assignments"
+                )}
+              </Button>
             </div>
           </DialogFooter>
         </DialogContent>
