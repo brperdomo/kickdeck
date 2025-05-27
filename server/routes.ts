@@ -4582,35 +4582,35 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
               console.log('All age group processing disabled during event updates to prevent foreign key violations');
               
               // Skip all age group processing entirely
+              // for (const scopeGroup of response.data.ageGroups) {
                   // Calculate field size based on age group
-                  const ageNum = scopeGroup.ageGroup.startsWith('U') ? 
-                    parseInt(scopeGroup.ageGroup.substring(1)) : 18;
+                  // const ageNum = scopeGroup.ageGroup.startsWith('U') ? 
+                  //   parseInt(scopeGroup.ageGroup.substring(1)) : 18;
                   
-                  const fieldSize = ageNum <= 7 ? '4v4' : 
-                                    ageNum <= 10 ? '7v7' : 
-                                    ageNum <= 12 ? '9v9' : '11v11';
+                  // const fieldSize = ageNum <= 7 ? '4v4' : 
+                  //                   ageNum <= 10 ? '7v7' : 
+                  //                   ageNum <= 12 ? '9v9' : '11v11';
                                     
                   // DISABLED: Age group insertion completely blocked to prevent constraint violations
                   console.log('Age group insertion disabled to prevent foreign key constraint violations');
-                  if (false) await tx
-                    .insert(eventAgeGroups)
-                    .values({
-                      eventId,
-                      ageGroup: scopeGroup.ageGroup,
-                      birthYear: scopeGroup.birthYear,
-                      gender: scopeGroup.gender,
-                      divisionCode: scopeGroup.divisionCode,
-                      fieldSize: fieldSize,
-                      projectedTeams: 8,
-                      createdAt: new Date().toISOString(),
-                      birthDateStart: new Date(scopeGroup.birthYear, 0, 1).toISOString().split('T')[0],
-                      birthDateEnd: new Date(scopeGroup.birthYear, 11, 31).toISOString().split('T')[0],
-                      seasonalScopeId: seasonalScopeId,
-                      scoringRule: null,
-                      amountDue: null,
-                    });
-                }
-              }
+                  // if (false) await tx
+                  //   .insert(eventAgeGroups)
+                  //   .values({
+                  //     eventId,
+                  //     ageGroup: scopeGroup.ageGroup,
+                  //     birthYear: scopeGroup.birthYear,
+                  //     gender: scopeGroup.gender,
+                  //     divisionCode: scopeGroup.divisionCode,
+                  //     fieldSize: fieldSize,
+                  //     projectedTeams: 8,
+                  //     createdAt: new Date().toISOString(),
+                  //     birthDateStart: new Date(scopeGroup.birthYear, 0, 1).toISOString().split('T')[0],
+                  //     birthDateEnd: new Date(scopeGroup.birthYear, 11, 31).toISOString().split('T')[0],
+                  //     seasonalScopeId: seasonalScopeId,
+                  //     scoringRule: null,
+                  //     amountDue: null,
+                  //   });
+                // }
               
               // Save the seasonal scope ID in event settings
               const existingSetting = await tx
@@ -4680,7 +4680,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
                 });
             }
           }
-        });
+        }); // Close the transaction properly
         
         // Verify all branding settings were actually updated in the database
         if (eventData.branding) {
