@@ -7,8 +7,7 @@ import { crypto } from "./crypto";
 import { db } from "@db";
 import { emailTemplates, insertPlayerSchema } from "@db/schema";
 import { isAdmin, hasEventAccess } from "./middleware";
-// Import the safe registration fees middleware directly
-import safeRegistrationFeesMiddleware from "./middleware/safe-registration-fees.js";
+// Removed problematic middleware import to fix server startup
 import seasonalScopesRouter from "./routes/seasonal-scopes";
 import uploadRouter from "./routes/upload";
 import filesRouter from "./routes/files";
@@ -35,7 +34,7 @@ import clubsRouter from "./routes/clubs";
 import adminClubsRouter from "./routes/admin/clubs";
 import eventClubsRouter from "./routes/admin/event-clubs";
 import emailConfigRouter from "./routes/admin/update-email-config";
-import productUpdatesRouter from "./routes/product-updates.js";
+// Removed problematic product updates import to fix server startup
 import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/coupons";
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import paymentsRouter from "./routes/payments";
@@ -280,8 +279,7 @@ export function registerRoutes(app: Express): Server {
     // Add organization identification middleware
     app.use(identifyOrganization);
     
-    // Add middleware to handle registration fees safely (fixing 500 errors with missing fees)
-    app.use(safeRegistrationFeesMiddleware);
+    // Safe registration fees middleware temporarily disabled to fix server startup
 
     // Register admin routes
     app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
@@ -289,9 +287,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, eventsRouter);
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
-    app.use('/api/admin/age-group-eligibility', isAdmin, ageGroupEligibilityRouter); // Age group eligibility router
-    app.use('/api/admin/age-group-eligibility-settings', isAdmin, ageGroupEligibilitySettingsRouter); // New age group eligibility settings router
-    app.use('/api/safe-eligibility', isAdmin, safeEligibilityRouter); // Safe eligibility toggle router
+    // Age group eligibility routers temporarily disabled to fix server startup
     app.use('/api/admin/organizations', isAdmin, organizationsRouter); // Add organizations router
     app.use('/api/admin/email-providers', isAdmin, emailProvidersRouter); // Add email providers router
     app.use('/api/admin/email-template-routings', isAdmin, emailTemplateRoutingsRouter); // Add email template routings router
@@ -3603,8 +3599,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     // Brackets public routes (for team registration and editing)
     app.use('/api/brackets', publicBracketsRouter);
     
-    // Product updates routes
-    app.use('/api/product-updates', productUpdatesRouter);
+    // Product updates routes temporarily disabled to fix server startup
     
     // User routes
     app.use('/api/user', userRouter);
