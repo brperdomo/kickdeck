@@ -1019,6 +1019,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
           email,
           firstName,
           lastName,
+          phone: form.getValues('phone') || null,
         }),
         credentials: 'include',
       });
