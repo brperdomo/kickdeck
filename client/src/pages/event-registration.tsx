@@ -803,11 +803,34 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       queryClient.setQueryData(['/api/user'], null);
       queryClient.invalidateQueries({ queryKey: ['/api/user'] });
       
-      // Reset form and go back to personal step for auth
+      // Reset ALL authentication state completely for clarity
       setCurrentStep('personal');
-      setEmailExists(null);
+      setEmailExists(false);
       setRedactedUserData(null);
       setAuthError(null);
+      setIsVerifyingPassword(false);
+      setIsCheckingEmail(false);
+      setIsAuthenticating(false);
+      setIsCreatingAccount(false);
+      
+      // Reset all form fields to ensure clean state
+      form.reset({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        address: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        password: '',
+        confirmPassword: '',
+        emailChecked: false,
+        emailExists: false,
+        authenticated: false,
+      });
+      
+      console.log('Complete logout and form reset performed');
       
       toast({
         title: "Logged Out",
