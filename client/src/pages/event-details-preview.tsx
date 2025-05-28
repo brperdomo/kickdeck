@@ -124,14 +124,37 @@ export default function EventDetailsPreview() {
       }
       groupedByGender[group.gender].push(group);
     });
+
+    // Sort each gender group by age group order (U8, U9, U10, etc.)
+    Object.keys(groupedByGender).forEach(gender => {
+      groupedByGender[gender].sort((a, b) => {
+        // Extract age number from age group (U8 -> 8, U9 -> 9, etc.)
+        const getAgeNumber = (group: any) => {
+          if (group.ageGroup && group.ageGroup.startsWith('U')) {
+            return parseInt(group.ageGroup.substring(1));
+          }
+          return 999; // Put non-U groups at the end
+        };
+        
+        // Sort from youngest to oldest (U8, U9, U10, etc.)
+        return getAgeNumber(a) - getAgeNumber(b);
+      });
+    });
     
+    // Sort genders to show Boys first, then Girls
+    const sortedGenders = Object.keys(groupedByGender).sort((a, b) => {
+      if (a === 'Boys' && b === 'Girls') return -1;
+      if (a === 'Girls' && b === 'Boys') return 1;
+      return a.localeCompare(b);
+    });
+
     return (
       <div className="grid gap-4 md:grid-cols-2">
-        {Object.entries(groupedByGender).map(([gender, groups]) => (
+        {sortedGenders.map((gender) => (
           <div key={gender} className="space-y-2">
             <h4 className="font-medium">{gender}</h4>
             <div className="grid grid-cols-2 gap-2">
-              {groups.map(group => (
+              {groupedByGender[gender].map(group => (
                 <div 
                   key={group.id} 
                   className="border rounded p-2 text-center"
