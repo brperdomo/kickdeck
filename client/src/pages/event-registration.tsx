@@ -26,7 +26,8 @@ import {
   Info,
   UserCircle,
   UserSquare,
-  Users
+  Users,
+  LogOut
 } from "lucide-react";
 import { InfoPopover } from "@/components/ui/InfoPopover";
 import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
@@ -789,6 +790,38 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   
   // Query client for auth state updates
   const queryClient = useQueryClient();
+  
+  // Logout handler for registration form
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      
+      // Clear user data from query cache
+      queryClient.setQueryData(['/api/user'], null);
+      queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+      
+      // Reset form and go back to personal step for auth
+      setCurrentStep('personal');
+      setEmailExists(null);
+      setRedactedUserData(null);
+      setAuthError(null);
+      
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out. You can continue with a new account or log in again.",
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast({
+        title: "Logout Error",
+        description: "There was a problem logging you out. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
   
   // Function to check if an email exists in the system and update form with redacted data
   const checkEmailExists = async (email: string) => {
@@ -2650,7 +2683,22 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         {renderStepIndicator()}
 
         <Card className="max-w-4xl mx-auto bg-white/95 backdrop-blur">
-          <CardHeader className="text-center border-b">
+          <CardHeader className="text-center border-b relative">
+            {/* Logout button for authenticated users */}
+            {user && (
+              <div className="absolute top-4 right-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </Button>
+              </div>
+            )}
+            
             {event.branding?.logoUrl && (
               <div className="mx-auto mb-4">
                 <img 
