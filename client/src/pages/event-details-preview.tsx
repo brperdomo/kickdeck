@@ -129,7 +129,7 @@ export default function EventDetailsPreview() {
       <div className="grid gap-4 md:grid-cols-2">
         {Object.entries(groupedByGender).map(([gender, groups]) => (
           <div key={gender} className="space-y-2">
-            <h4 className="font-medium">{gender === 'boys' ? 'Boys' : 'Girls'}</h4>
+            <h4 className="font-medium">{gender}</h4>
             <div className="grid grid-cols-2 gap-2">
               {groups.map(group => (
                 <div 
