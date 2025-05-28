@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BracketSelector } from "@/components/registration/BracketSelector";
 import { useToast } from "@/hooks/use-toast";
-import { useSavedRegistration } from "@/hooks/use-saved-registration";
-import { SavedRegistrationNotice } from "@/components/registration/SavedRegistrationNotice";
+
+
 import { 
   Loader2, 
   CheckCircle2, 
@@ -752,13 +752,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   });
   
   // Setup registration save state hook
-  const { 
-    savedData, 
-    saveRegistrationData, 
-    clearSavedData, 
-    hasSavedData,
-    lastSaved
-  } = useSavedRegistration(eventId);
+  // Removed saved registration functionality for cleaner flow
   
   // NEW Authentication States
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
@@ -990,11 +984,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   };
   const [currentStep, setCurrentStep] = useState<RegistrationStep>(initialStep);
   
-  // Track if we've shown the saved registration alert
-  const [showSavedRegistrationAlert, setShowSavedRegistrationAlert] = useState(false);
-  
-  // Flag to track auto-saving (disabled since we removed save functionality)
-  const [autoSaveEnabled, setAutoSaveEnabled] = useState(false);
+  // Simplified registration flow without save functionality
   
   // We'll move this effect after the form is initialized
   
@@ -2706,14 +2696,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-6">
-            {/* Show saved registration notice if available */}
-            {showSavedRegistrationAlert && hasSavedData && lastSaved && (
-              <SavedRegistrationNotice 
-                lastSaved={lastSaved}
-                eventName={event?.name || 'this event'}
-                onResume={() => {}} // Not used anymore since we auto-load, but kept for interface compatibility
-              />
-            )}
+
             
             <AnimatePresence mode="wait">
               {currentStep === 'auth' && !authLoading && (
