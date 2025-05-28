@@ -813,7 +813,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       setIsAuthenticating(false);
       setIsCreatingAccount(false);
       
-      // Reset all form fields to ensure clean state
+      // Reset all form fields to ensure completely clean state
       form.reset({
         firstName: '',
         lastName: '',
@@ -829,6 +829,20 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         emailExists: false,
         authenticated: false,
       });
+      
+      // Force clear any remaining form values that might persist
+      setTimeout(() => {
+        form.setValue('firstName', '');
+        form.setValue('lastName', '');
+        form.setValue('email', '');
+        form.setValue('phone', '');
+        form.setValue('address', '');
+        form.setValue('city', '');
+        form.setValue('state', '');
+        form.setValue('zipCode', '');
+        form.setValue('password', '');
+        form.setValue('confirmPassword', '');
+      }, 100);
       
       console.log('Complete logout and form reset performed');
       
