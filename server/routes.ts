@@ -4332,7 +4332,33 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
         // Start a transaction to update event and related records
         await db.transaction(async (tx) => {
-          console.log('Updating event with data:', JSON.stringify(eventData, null, 2));
+          console.log('🔍 EVENT UPDATE - Received event data keys:', Object.keys(eventData));
+          console.log('🔍 EVENT UPDATE - seasonalScopeId in request:', eventData.seasonalScopeId);
+          
+          // Handle seasonal scope ID first
+          if (eventData.seasonalScopeId) {
+            const seasonalScopeId = Number(eventData.seasonalScopeId);
+            console.log('🔍 EVENT UPDATE - Processing seasonalScopeId:', seasonalScopeId);
+            
+            try {
+              // Delete any existing seasonal scope setting
+              await tx.execute(sql`
+                DELETE FROM event_settings 
+                WHERE event_id = ${eventId} AND setting_key = 'seasonalScopeId'
+              `);
+              
+              // Insert the new seasonal scope setting
+              await tx.execute(sql`
+                INSERT INTO event_settings (event_id, setting_key, setting_value, created_at, updated_at)
+                VALUES (${eventId}, 'seasonalScopeId', ${seasonalScopeId.toString()}, ${new Date().toISOString()}, ${new Date().toISOString()})
+              `);
+              
+              console.log('✅ Successfully saved seasonalScopeId:', seasonalScopeId);
+            } catch (error) {
+              console.error('❌ Error saving seasonal scope setting:', error);
+              throw error;
+            }
+          }
           
           // Update the event
           const [updatedEvent] = await tx
