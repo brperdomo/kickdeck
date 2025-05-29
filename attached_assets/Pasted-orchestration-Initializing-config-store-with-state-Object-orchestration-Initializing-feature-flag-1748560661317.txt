@@ -1,0 +1,1691 @@
+orchestration: Initializing config store with state Object
+ orchestration: Initializing feature flag store with state Object
+ orchestration: Initializing user store with state Object
+ orchestration: Updating combined state Object
+ [vite] connecting...
+ [vite] connected.
+ Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+GDa @ util.js:41Understand this warning
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ Google Maps API key length: 0 characters
+ Google Maps API already loaded
+ Current route location (Wouter): /admin/events/1594502072/edit
+ Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+ Current pathname: /admin/events/1594502072/edit
+ Current search: 
+ Fetching user with emulation token: not present
+ Current route location (Wouter): /admin/events/1594502072/edit
+ Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+ Current pathname: /admin/events/1594502072/edit
+RouteDebugger.tsx:16 Current search: 
+7Failed to decode downloaded font: <URL>Understand this warning
+7OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+use-user.ts:76 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: 'ad75c57234238781888aadb41f9ad64caa18a890fd69db1102…4a9dd70de55b58fc.71569fdab7897339753c4858c5414bb0', firstName: 'Bryan', …}
+20Fetch finished loading: GET "<URL>".
+edit-event.tsx:47 Fetched age groups: []
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:103 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:164 Fetching eligibility settings for event: 1594502072
+EventForm.tsx:103 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+19Fetch finished loading: POST "<URL>".
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+tinymce.min.js:16 Failed to load plugin: onboarding from url plugins/onboarding/plugin.min.js
+mE @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+Promise.catch
+n @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+q @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+RO @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+render @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+mt @ tinymce.min.js:16
+s @ tinymce.min.js:16
+executeHandlers @ tinymce.min.js:16
+i @ tinymce.min.js:16
+s @ tinymce.min.js:16
+qa @ tinymce.min.js:16
+bind @ tinymce.min.js:16
+V @ tinymce.min.js:16
+init @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:25
+Editor2._this.initialise @ @tinymce_tinymce-react.js?v=e7b2193e:517
+successHandler @ @tinymce_tinymce-react.js?v=e7b2193e:594
+loaded @ @tinymce_tinymce-react.js?v=e7b2193e:278
+scriptLoadOrErrorHandler @ @tinymce_tinymce-react.js?v=e7b2193e:256
+loadHandler @ @tinymce_tinymce-react.js?v=e7b2193e:235
+script
+injectScriptTag @ @tinymce_tinymce-react.js?v=e7b2193e:225
+loadScripts @ @tinymce_tinymce-react.js?v=e7b2193e:299
+doLoad @ @tinymce_tinymce-react.js?v=e7b2193e:337
+loadList @ @tinymce_tinymce-react.js?v=e7b2193e:342
+Editor2.componentDidMount @ @tinymce_tinymce-react.js?v=e7b2193e:600
+commitLayoutEffectOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:17030
+commitLayoutMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:17980
+commitLayoutEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:17969
+commitLayoutEffects @ chunk-RPCDYKBN.js?v=e7b2193e:17920
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19353
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=e7b2193e:554
+flush @ @tanstack_react-query.js?v=e7b2193e:568
+batch @ @tanstack_react-query.js?v=e7b2193e:586
+dispatch_fn @ @tanstack_react-query.js?v=e7b2193e:995
+setData @ @tanstack_react-query.js?v=e7b2193e:695
+onSuccess @ @tanstack_react-query.js?v=e7b2193e:896
+resolve @ @tanstack_react-query.js?v=e7b2193e:455
+Promise.then
+run @ @tanstack_react-query.js?v=e7b2193e:497
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19416
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=e7b2193e:554
+flush @ @tanstack_react-query.js?v=e7b2193e:568
+batch @ @tanstack_react-query.js?v=e7b2193e:586
+dispatch_fn @ @tanstack_react-query.js?v=e7b2193e:995
+setData @ @tanstack_react-query.js?v=e7b2193e:695
+onSuccess @ @tanstack_react-query.js?v=e7b2193e:896
+resolve @ @tanstack_react-query.js?v=e7b2193e:455Understand this error
+13[Violation] Added non-passive event listener to a scroll-blocking <some> event. Consider marking event handler as 'passive' to make the page more responsive. See <URL>
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+6Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+injected.js:5 [USO] Button detection aborting due to timeout.
+10XHR finished loading: POST "<URL>".
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:103 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:263 Loaded 32 age groups for scope 20
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:306 Syncing branding settings before submit: {primaryColor: '#007AFF', secondaryColor: '#34C759', logoUrl: null, formLogoUrl: ''}
+EventForm.tsx:314 Logo URL being used for submission: null
+edit-event.tsx:97 Form data received: {name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', applicationDeadline: '2025-07-26T15:32', …}
+edit-event.tsx:111 Using seasonalScopeId: 20
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:56 Submitting event update with data: {name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', applicationDeadline: '2025-07-26T15:32', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:103 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:58 Fetch finished loading: PATCH "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events/1594502072".
+mutationFn @ edit-event.tsx:58
+fn @ @tanstack_react-query.js?v=e7b2193e:1188
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+execute @ @tanstack_react-query.js?v=e7b2193e:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=e7b2193e:2649
+handleSubmit @ edit-event.tsx:113
+handleSubmit @ EventForm.tsx:338
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:103 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:94 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:103 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:47 Fetched age groups: []length: 0[[Prototype]]: Array(0)at: ƒ at()concat: ƒ concat()constructor: ƒ Array()copyWithin: ƒ copyWithin()entries: ƒ entries()every: ƒ every()fill: ƒ fill()filter: ƒ filter()find: ƒ find()findIndex: ƒ findIndex()findLast: ƒ findLast()findLastIndex: ƒ findLastIndex()flat: ƒ flat()flatMap: ƒ flatMap()forEach: ƒ forEach()includes: ƒ includes()indexOf: ƒ indexOf()join: ƒ join()keys: ƒ keys()lastIndexOf: ƒ lastIndexOf()length: 0map: ƒ map()pop: ƒ pop()push: ƒ push()reduce: ƒ reduce()reduceRight: ƒ reduceRight()reverse: ƒ reverse()shift: ƒ shift()slice: ƒ slice()some: ƒ some()sort: ƒ sort()splice: ƒ splice()toLocaleString: ƒ toLocaleString()toReversed: ƒ toReversed()toSorted: ƒ toSorted()toSpliced: ƒ toSpliced()toString: ƒ toString()unshift: ƒ unshift()values: ƒ values()with: ƒ with()length: 2name: "with"arguments: (...)caller: (...)[[Prototype]]: ƒ ()[[Scopes]]: Scopes[0]Symbol(Symbol.iterator): ƒ values()length: 0name: "values"arguments: (...)caller: (...)[[Prototype]]: ƒ ()[[Scopes]]: Scopes[0]Symbol(Symbol.unscopables): {at: true, copyWithin: true, entries: true, fill: true, find: true, …}at: truecopyWithin: trueentries: truefill: truefind: truefindIndex: truefindLast: truefindLastIndex: trueflat: trueflatMap: trueincludes: truekeys: truetoReversed: truetoSorted: truetoSpliced: truevalues: true[[Prototype]]: Object
+client:223 [vite] hot updated: /src/components/forms/EventForm.tsx
+client:223 [vite] hot updated: /src/index.css
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:164 Fetching eligibility settings for event: 1594502072
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+@react-refresh:675 [Violation] 'setTimeout' handler took 103ms
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+client:556 [vite] server connection lost. Polling for restart...
+client:732 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/ 502 (Bad Gateway)
+ping @ client:732
+waitForSuccessfulPing @ client:745
+(anonymous) @ client:557Understand this error
+ 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit 502 (Bad Gateway)
+(anonymous) @ /@vite/client:558Understand this error
+ Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/".
+ping @ /@vite/client:732
+waitForSuccessfulPing @ /@vite/client:745
+(anonymous) @ /@vite/client:557
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+favicon.ico:1 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/favicon.ico 502 (Bad Gateway)Understand this error
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+js?libraries=places&v=beta&callback=Function.prototype:1446 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1446
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1476 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.H.send @ js?libraries=places&v=beta&callback=Function.prototype:1476
+xga @ js?libraries=places&v=beta&callback=Function.prototype:1455
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1447
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+client:495 [vite] connecting...
+client:614 [vite] connected.
+util.js:41 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+GDa @ util.js:41
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+setTimeout
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1448
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+chunk-RPCDYKBN.js?v=e7b2193e:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:9 Google Maps API key length: 0 characters
+env.ts:15 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events/1594502072/edit
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+RouteDebugger.tsx:15 Current pathname: /admin/events/1594502072/edit
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events/1594502072/edit
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+RouteDebugger.tsx:15 Current pathname: /admin/events/1594502072/edit
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:61 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user 401 (Unauthorized)
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384Understand this error
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+edit:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+edit:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-user.ts:61 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384
+edit:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+use-auth.tsx:85 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user 401 (Unauthorized)
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384Understand this error
+use-auth.tsx:85 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+client:556 [vite] server connection lost. Polling for restart...
+client:732 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/".
+ping @ client:732
+waitForSuccessfulPing @ client:745
+(anonymous) @ client:557
+js?libraries=places&v=beta&callback=Function.prototype:1446 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1446
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+js?libraries=places&v=beta&callback=Function.prototype:1476 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.H.send @ js?libraries=places&v=beta&callback=Function.prototype:1476
+xga @ js?libraries=places&v=beta&callback=Function.prototype:1455
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1447
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+client:495 [vite] connecting...
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+client:614 [vite] connected.
+client:556 [vite] server connection lost. Polling for restart...
+client:732 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/ net::ERR_INTERNET_DISCONNECTED
+ping @ client:732
+waitForSuccessfulPing @ client:745
+(anonymous) @ client:557Understand this error
+client:732 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/".
+ping @ client:732
+waitForSuccessfulPing @ client:745
+(anonymous) @ client:557
+edit:1 Some resource load requests were throttled while the tab was in background, and no request was sent from the queue in the last 1 minute. This means previously requested in-flight requests haven't received any response from servers. See https://www.chromestatus.com/feature/5527160148197376 for more details
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+util.js:41 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+GDa @ util.js:41
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+setTimeout
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1448
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+client:732 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/".
+ping @ client:732
+waitForSuccessfulPing @ client:751
+await in waitForSuccessfulPing
+(anonymous) @ client:557
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+js?libraries=places&v=beta&callback=Function.prototype:1446 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1446
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1476 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.H.send @ js?libraries=places&v=beta&callback=Function.prototype:1476
+xga @ js?libraries=places&v=beta&callback=Function.prototype:1455
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1447
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+client:495 [vite] connecting...
+util.js:41 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+GDa @ util.js:41
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+setTimeout
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1448
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+client:614 [vite] connected.
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events
+js?libraries=places&v=beta&callback=Function.prototype:1446 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1446
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+js?libraries=places&v=beta&callback=Function.prototype:1476 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.H.send @ js?libraries=places&v=beta&callback=Function.prototype:1476
+xga @ js?libraries=places&v=beta&callback=Function.prototype:1455
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1447
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+client:495 [vite] connecting...
+client:614 [vite] connected.
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+util.js:41 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+GDa @ util.js:41
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+setTimeout
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1448
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+chunk-RPCDYKBN.js?v=e7b2193e:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:9 Google Maps API key length: 0 characters
+env.ts:15 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events
+RouteDebugger.tsx:15 Current pathname: /admin/events
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events
+RouteDebugger.tsx:15 Current pathname: /admin/events
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:61 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user 401 (Unauthorized)
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384Understand this error
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+AnimatedBackground.tsx:30 AnimatedBackground initialized with type: particles
+chunk-RPCDYKBN.js?v=e7b2193e:18625 [Violation] 'setTimeout' handler took 54ms
+events:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+events:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-user.ts:61 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+fetchUser @ use-user.ts:61
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+use-auth.tsx:85 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user 401 (Unauthorized)
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384Understand this error
+use-auth.tsx:85 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev.png:1 
+            
+            
+           GET https://c.1password.com/richicons/images/login/120/7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev.png 404 (Not Found)
+Image
+k @ menu.js:6
+c @ menu.js:75
+q @ menu.js:6
+c @ menu.js:75
+c @ menu.js:75
+c @ menu.js:75
+c @ menu.js:75
+q @ menu.js:6
+c @ menu.js:75
+q @ menu.js:6
+c @ menu.js:90
+c @ menu.js:90
+q @ menu.js:6
+c @ menu.js:104
+c @ menu.js:104
+c @ menu.js:90
+c @ menu.js:90
+q @ menu.js:6
+c @ menu.js:104
+q @ menu.js:6
+c @ menu.js:104
+p @ menu.js:104
+lp @ menu.js:6
+hn @ menu.js:6
+Promise.then
+Et @ menu.js:6
+pp @ menu.js:6
+(anonymous) @ menu.js:6
+(anonymous) @ menu.js:104
+o @ menu.js:6
+a @ menu.js:6
+(anonymous) @ menu.js:6
+Promise.then
+v_ @ menu.js:6
+Uu @ menu.js:6
+L @ menu.js:6
+Lr @ menu.js:6
+Vx @ menu.js:104
+V @ menu.js:6
+vf @ menu.js:6
+L @ menu.js:6
+Gr @ menu.js:6
+Kx @ menu.js:104
+V @ menu.js:6
+po @ menu.js:6
+p @ menu.js:6
+lp @ menu.js:6
+hn @ menu.js:6
+Promise.then
+Et @ menu.js:6
+pp @ menu.js:6
+(anonymous) @ menu.js:6
+(anonymous) @ menu.js:6
+Promise.then
+yu @ menu.js:6
+L @ menu.js:6
+xr @ menu.js:6
+Yx @ menu.js:104
+V @ menu.js:6
+zu @ menu.js:6
+L @ menu.js:6
+Er @ menu.js:6
+Zx @ menu.js:104
+V @ menu.js:6
+Tu @ menu.js:6
+L @ menu.js:6
+Br @ menu.js:6
+Xx @ menu.js:104
+L @ menu.js:6
+ut @ menu.js:104
+Oc @ menu.js:104
+(anonymous) @ menu.js:104Understand this error
+auth-page.tsx:188 Submitting login with email: bperdomo@zoho.com
+use-auth.tsx:127 Login mutation called with: bperdomo@zoho.com
+use-auth.tsx:135 Sending login request with data: {email: 'bperdomo@zoho.com', passwordLength: 9}
+use-auth.tsx:150 Login response status: 200
+use-auth.tsx:166 Login successful, received user data: Yes
+use-auth.tsx:170 Fetching current user after login
+use-auth.tsx:139 Fetch finished loading: POST "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/login?t=1748560572654".
+mutationFn @ use-auth.tsx:139
+fn @ @tanstack_react-query.js?v=e7b2193e:1188
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+execute @ @tanstack_react-query.js?v=e7b2193e:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=e7b2193e:2649
+onSubmit @ auth-page.tsx:192
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449
+submit @ injected.js:5
+ds @ injected.js:5
+C1 @ injected.js:5
+await in C1
+hb @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+r @ injected.js:5
+use-auth.tsx:171 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+mutationFn @ use-auth.tsx:171
+await in mutationFn
+fn @ @tanstack_react-query.js?v=e7b2193e:1188
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+execute @ @tanstack_react-query.js?v=e7b2193e:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=e7b2193e:2649
+onSubmit @ auth-page.tsx:192
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449
+submit @ injected.js:5
+ds @ injected.js:5
+C1 @ injected.js:5
+await in C1
+hb @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+r @ injected.js:5
+use-auth.tsx:182 User data fetched after login: success
+auth-page.tsx:194 Login mutation completed successfully
+auth-page.tsx:198 Performing explicit user data fetch after login
+auth-page.tsx:93 AUTH REDIRECT - SIMPLIFIED: User logged in, handling redirect
+auth-page.tsx:139 Current path: /admin/events isAuthPage: false
+auth-page.tsx:174 On a non-auth page while logged in, not redirecting
+auth-page.tsx:199 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+onSubmit @ auth-page.tsx:199
+await in onSubmit
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449
+submit @ injected.js:5
+ds @ injected.js:5
+C1 @ injected.js:5
+await in C1
+hb @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+r @ injected.js:5
+auth-page.tsx:210 User data retrieved after login: success
+use-auth.tsx:85 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:1752
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:1751
+batch @ @tanstack_react-query.js?v=e7b2193e:582
+refetchQueries @ @tanstack_react-query.js?v=e7b2193e:1750
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:1742
+batch @ @tanstack_react-query.js?v=e7b2193e:582
+invalidateQueries @ @tanstack_react-query.js?v=e7b2193e:1731
+onSuccess @ use-auth.tsx:202
+execute @ @tanstack_react-query.js?v=e7b2193e:1232
+await in execute
+mutate @ @tanstack_react-query.js?v=e7b2193e:2649
+onSubmit @ auth-page.tsx:192
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449
+submit @ injected.js:5
+ds @ injected.js:5
+C1 @ injected.js:5
+await in C1
+hb @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+(anonymous) @ injected.js:5
+r @ injected.js:5
+js?libraries=places&v=beta&callback=Function.prototype:1446 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1446
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events
+js?libraries=places&v=beta&callback=Function.prototype:1476 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.H.send @ js?libraries=places&v=beta&callback=Function.prototype:1476
+xga @ js?libraries=places&v=beta&callback=Function.prototype:1455
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1447
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+client:495 [vite] connecting...
+client:614 [vite] connected.
+util.js:41 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+GDa @ util.js:41
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+setTimeout
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1448
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+chunk-RPCDYKBN.js?v=e7b2193e:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:9 Google Maps API key length: 0 characters
+env.ts:15 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events
+RouteDebugger.tsx:15 Current pathname: /admin/events
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events
+RouteDebugger.tsx:15 Current pathname: /admin/events
+RouteDebugger.tsx:16 Current search: 
+15Fetch finished loading: GET "<URL>".
+use-user.ts:76 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: 'ad75c57234238781888aadb41f9ad64caa18a890fd69db1102…4a9dd70de55b58fc.71569fdab7897339753c4858c5414bb0', firstName: 'Bryan', …}
+6Failed to decode downloaded font: <URL>Understand this warning
+6OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-auth.tsx:85 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/organization-settings".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19416
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=e7b2193e:554
+flush @ @tanstack_react-query.js?v=e7b2193e:568
+batch @ @tanstack_react-query.js?v=e7b2193e:586
+dispatch_fn @ @tanstack_react-query.js?v=e7b2193e:995
+setData @ @tanstack_react-query.js?v=e7b2193e:695
+onSuccess @ @tanstack_react-query.js?v=e7b2193e:896
+resolve @ @tanstack_react-query.js?v=e7b2193e:455
+Promise.then
+run @ @tanstack_react-query.js?v=e7b2193e:497
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384
+17Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+17Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+queryClient.ts:72 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/organization-settings".
+queryFn @ queryClient.ts:72
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events/1594502072/edit
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+RouteDebugger.tsx:15 Current pathname: /admin/events/1594502072/edit
+RouteDebugger.tsx:16 Current search: 
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+edit-event.tsx:47 Fetched age groups: []
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:210 Fetching eligibility settings for event: 1594502072
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+tinymce.min.js:16 Failed to load plugin: onboarding from url plugins/onboarding/plugin.min.js
+mE @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+Promise.catch
+n @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+q @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+RO @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+render @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+mt @ tinymce.min.js:16
+s @ tinymce.min.js:16
+executeHandlers @ tinymce.min.js:16
+i @ tinymce.min.js:16
+s @ tinymce.min.js:16
+qa @ tinymce.min.js:16
+bind @ tinymce.min.js:16
+V @ tinymce.min.js:16
+init @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:25
+Editor2._this.initialise @ @tinymce_tinymce-react.js?v=e7b2193e:517
+successHandler @ @tinymce_tinymce-react.js?v=e7b2193e:594
+loaded @ @tinymce_tinymce-react.js?v=e7b2193e:278
+scriptLoadOrErrorHandler @ @tinymce_tinymce-react.js?v=e7b2193e:256
+loadHandler @ @tinymce_tinymce-react.js?v=e7b2193e:235
+script
+injectScriptTag @ @tinymce_tinymce-react.js?v=e7b2193e:225
+loadScripts @ @tinymce_tinymce-react.js?v=e7b2193e:299
+doLoad @ @tinymce_tinymce-react.js?v=e7b2193e:337
+loadList @ @tinymce_tinymce-react.js?v=e7b2193e:342
+Editor2.componentDidMount @ @tinymce_tinymce-react.js?v=e7b2193e:600
+commitLayoutEffectOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:17030
+commitLayoutMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:17980
+commitLayoutEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:17969
+commitLayoutEffects @ chunk-RPCDYKBN.js?v=e7b2193e:17920
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19353
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=e7b2193e:554
+flush @ @tanstack_react-query.js?v=e7b2193e:568
+batch @ @tanstack_react-query.js?v=e7b2193e:586
+dispatch_fn @ @tanstack_react-query.js?v=e7b2193e:995
+setData @ @tanstack_react-query.js?v=e7b2193e:695
+onSuccess @ @tanstack_react-query.js?v=e7b2193e:896
+resolve @ @tanstack_react-query.js?v=e7b2193e:455
+Promise.then
+run @ @tanstack_react-query.js?v=e7b2193e:497
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19416
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+flushSync @ chunk-RPCDYKBN.js?v=e7b2193e:18959
+flushSync$1 @ chunk-RPCDYKBN.js?v=e7b2193e:21538
+dispatchDiscreteCustomEvent @ chunk-CPFL7ZFD.js?v=e7b2193e:52
+handleSelect @ @radix-ui_react-dropdown-menu.js?v=e7b2193e:432
+handleEvent @ chunk-OD433RWB.js?v=e7b2193e:6
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449Understand this error
+12[Violation] Added non-passive event listener to a scroll-blocking <some> event. Consider marking event handler as 'passive' to make the page more responsive. See <URL>
+3tinymce.min.js:51 Fetch finished loading: POST "https://cdn.tiny.cloud/1/wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8/tinymce/7.9.1-173/cdn-init".
+Tn @ tinymce.min.js:51
+sendInit @ tinymce.min.js:51
+(anonymous) @ tinymce.min.js:51
+dispatch @ tinymce.min.js:16
+dispatch @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+vO @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+Promise.then
+(anonymous) @ tinymce.min.js:16
+fold @ tinymce.min.js:16
+yO @ tinymce.min.js:16
+n @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:351 Loaded 32 age groups for scope 20
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:391 Seasonal scope debug info: {hasExistingAgeGroups: true, selectedSeasonalScopeId: 20, data.seasonalScopeId: undefined, defaultValues.seasonalScopeId: null, scopeIdToSubmit: 20}
+EventForm.tsx:423 Syncing branding settings before submit: {primaryColor: '#007AFF', secondaryColor: '#34C759', logoUrl: null, formLogoUrl: ''}
+EventForm.tsx:434 Logo URL being used for submission: null
+edit-event.tsx:97 Form data received: {name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', applicationDeadline: '2025-07-26T15:32', …}
+edit-event.tsx:111 Using seasonalScopeId: 20
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:56 Submitting event update with data: {name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', applicationDeadline: '2025-07-26T15:32', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:58 Fetch finished loading: PATCH "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events/1594502072".
+mutationFn @ edit-event.tsx:58
+fn @ @tanstack_react-query.js?v=e7b2193e:1188
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+execute @ @tanstack_react-query.js?v=e7b2193e:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=e7b2193e:2649
+handleSubmit @ edit-event.tsx:113
+handleSubmit @ EventForm.tsx:461
+(anonymous) @ chunk-YABUFNLM.js?v=e7b2193e:1675
+await in (anonymous)
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:47 Fetched age groups: []
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+js?libraries=places&v=beta&callback=Function.prototype:1446 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1446
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+Navigated to https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+js?libraries=places&v=beta&callback=Function.prototype:1476 XHR finished loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.H.send @ js?libraries=places&v=beta&callback=Function.prototype:1476
+xga @ js?libraries=places&v=beta&callback=Function.prototype:1455
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1447
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+chunk-LRH6BLRZ.js:31 orchestration: Initializing config store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing feature flag store with state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+chunk-LRH6BLRZ.js:31 orchestration: Initializing user store with state {}
+chunk-LRH6BLRZ.js:31 orchestration: Updating combined state {anonymous-site-visit-logging: {…}, chatgpt: {…}, context-menus: {…}, debugger: {…}, docs-support: {…}, …}
+client:495 [vite] connecting...
+client:614 [vite] connected.
+util.js:41 Google Maps JavaScript API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys
+GDa @ util.js:41
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+Promise.then
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1448
+setTimeout
+Aga @ js?libraries=places&v=beta&callback=Function.prototype:1448
+google.maps.Load @ js?libraries=places&v=beta&callback=Function.prototype:14
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688
+(anonymous) @ js?libraries=places&v=beta&callback=Function.prototype:1688Understand this warning
+chunk-RPCDYKBN.js?v=e7b2193e:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+env.ts:9 Google Maps API key length: 0 characters
+env.ts:15 Google Maps API already loaded
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events/1594502072/edit
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+RouteDebugger.tsx:15 Current pathname: /admin/events/1594502072/edit
+RouteDebugger.tsx:16 Current search: 
+use-user.ts:59 Fetching user with emulation token: not present
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events/1594502072/edit
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1594502072/edit
+RouteDebugger.tsx:15 Current pathname: /admin/events/1594502072/edit
+RouteDebugger.tsx:16 Current search: 
+8Fetch finished loading: GET "<URL>".
+use-user.ts:76 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: 'ad75c57234238781888aadb41f9ad64caa18a890fd69db1102…4a9dd70de55b58fc.71569fdab7897339753c4858c5414bb0', firstName: 'Bryan', …}
+use-auth.tsx:85 Fetch failed loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+queryFn @ use-auth.tsx:85
+fetchFn @ @tanstack_react-query.js?v=e7b2193e:839
+run @ @tanstack_react-query.js?v=e7b2193e:493
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384
+edit:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+edit:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+edit-event.tsx:47 Fetched age groups: []
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:210 Fetching eligibility settings for event: 1594502072
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+tinymce.min.js:16 Failed to load plugin: onboarding from url plugins/onboarding/plugin.min.js
+mE @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+Promise.catch
+n @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+q @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+RO @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+render @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+mt @ tinymce.min.js:16
+s @ tinymce.min.js:16
+executeHandlers @ tinymce.min.js:16
+i @ tinymce.min.js:16
+s @ tinymce.min.js:16
+qa @ tinymce.min.js:16
+bind @ tinymce.min.js:16
+V @ tinymce.min.js:16
+init @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:25
+Editor2._this.initialise @ @tinymce_tinymce-react.js?v=e7b2193e:517
+successHandler @ @tinymce_tinymce-react.js?v=e7b2193e:594
+loaded @ @tinymce_tinymce-react.js?v=e7b2193e:278
+scriptLoadOrErrorHandler @ @tinymce_tinymce-react.js?v=e7b2193e:256
+loadHandler @ @tinymce_tinymce-react.js?v=e7b2193e:235
+script
+injectScriptTag @ @tinymce_tinymce-react.js?v=e7b2193e:225
+loadScripts @ @tinymce_tinymce-react.js?v=e7b2193e:299
+doLoad @ @tinymce_tinymce-react.js?v=e7b2193e:337
+loadList @ @tinymce_tinymce-react.js?v=e7b2193e:342
+Editor2.componentDidMount @ @tinymce_tinymce-react.js?v=e7b2193e:600
+commitLayoutEffectOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:17030
+commitLayoutMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:17980
+commitLayoutEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:17969
+commitLayoutEffects @ chunk-RPCDYKBN.js?v=e7b2193e:17920
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19353
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=e7b2193e:554
+flush @ @tanstack_react-query.js?v=e7b2193e:568
+batch @ @tanstack_react-query.js?v=e7b2193e:586
+dispatch_fn @ @tanstack_react-query.js?v=e7b2193e:995
+setData @ @tanstack_react-query.js?v=e7b2193e:695
+onSuccess @ @tanstack_react-query.js?v=e7b2193e:896
+resolve @ @tanstack_react-query.js?v=e7b2193e:455
+Promise.then
+run @ @tanstack_react-query.js?v=e7b2193e:497
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19416
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=e7b2193e:554
+flush @ @tanstack_react-query.js?v=e7b2193e:568
+batch @ @tanstack_react-query.js?v=e7b2193e:586
+dispatch_fn @ @tanstack_react-query.js?v=e7b2193e:995
+setData @ @tanstack_react-query.js?v=e7b2193e:695
+onSuccess @ @tanstack_react-query.js?v=e7b2193e:896
+resolve @ @tanstack_react-query.js?v=e7b2193e:455
+Promise.then
+run @ @tanstack_react-query.js?v=e7b2193e:497
+start @ @tanstack_react-query.js?v=e7b2193e:535
+fetch @ @tanstack_react-query.js?v=e7b2193e:925
+executeFetch_fn @ @tanstack_react-query.js?v=e7b2193e:2237
+onSubscribe @ @tanstack_react-query.js?v=e7b2193e:1924
+subscribe @ @tanstack_react-query.js?v=e7b2193e:24
+(anonymous) @ @tanstack_react-query.js?v=e7b2193e:3047
+subscribeToStore @ chunk-RPCDYKBN.js?v=e7b2193e:11984
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=e7b2193e:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=e7b2193e:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=e7b2193e:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=e7b2193e:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=e7b2193e:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=e7b2193e:19447
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18868
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=e7b2193e:9119
+commitRootImpl @ chunk-RPCDYKBN.js?v=e7b2193e:19432
+commitRoot @ chunk-RPCDYKBN.js?v=e7b2193e:19277
+finishConcurrentRender @ chunk-RPCDYKBN.js?v=e7b2193e:18805
+performConcurrentWorkOnRoot @ chunk-RPCDYKBN.js?v=e7b2193e:18718
+workLoop @ chunk-RPCDYKBN.js?v=e7b2193e:197
+flushWork @ chunk-RPCDYKBN.js?v=e7b2193e:176
+performWorkUntilDeadline @ chunk-RPCDYKBN.js?v=e7b2193e:384Understand this error
+12[Violation] Added non-passive event listener to a scroll-blocking <some> event. Consider marking event handler as 'passive' to make the page more responsive. See <URL>
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+3tinymce.min.js:51 Fetch finished loading: POST "https://cdn.tiny.cloud/1/wysafiugpee0xtyjdnegcq6x43osb81qje582522ekththu8/tinymce/7.9.1-173/cdn-init".
+Tn @ tinymce.min.js:51
+sendInit @ tinymce.min.js:51
+(anonymous) @ tinymce.min.js:51
+dispatch @ tinymce.min.js:16
+dispatch @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+vO @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+Promise.then
+(anonymous) @ tinymce.min.js:16
+fold @ tinymce.min.js:16
+yO @ tinymce.min.js:16
+n @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+(anonymous) @ tinymce.min.js:16
+6Invalid keyframe value for property filter: blur(-0.08136px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.16063px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.22707px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.28173px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.32564px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.3598px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.38521px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.40278px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.41343px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.41799px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.41726px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.41199px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.40286px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.39052px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.37556px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.35849px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.33982px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.31996px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.2993px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.27819px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.25693px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.23576px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.21492px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.19459px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.17493px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.15606px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.13808px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.12106px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.10507px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.09014px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.07628px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.0635px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.0518px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.04115px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.03153px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.02289px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.01521px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.00842px)Understand this warning
+6Invalid keyframe value for property filter: blur(-0.00249px)Understand this warning
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}

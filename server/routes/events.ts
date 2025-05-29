@@ -629,11 +629,13 @@ router.get('/:id/edit', async (req, res) => {
     }
 
     // Get the seasonal scope ID from event settings
-    const scopeSetting = await db.query.eventSettings.findFirst({
-      where: eq(eventSettings.eventId, eventId)
-    });
+    const scopeSetting = await db.execute(sql`
+      SELECT setting_value FROM event_settings 
+      WHERE event_id = ${eventId.toString()} AND setting_key = 'seasonalScopeId'
+      LIMIT 1
+    `);
 
-    const seasonalScopeId = scopeSetting ? parseInt(scopeSetting.settingValue) : null;
+    const seasonalScopeId = scopeSetting.length > 0 ? parseInt(scopeSetting[0].setting_value) : null;
     console.log(`Found seasonal scope ID for event: ${seasonalScopeId}`);
 
     // Also fetch the age groups count for verification
