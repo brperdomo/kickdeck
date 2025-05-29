@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface AgeGroupSettings {
   id: number;
@@ -46,6 +47,7 @@ interface AgeGroupSettings {
   maxBirthYear: number;
   createdAt: string;
   updatedAt: string;
+  isSelected?: boolean; // Add selection state
 }
 
 interface SeasonalScope {
@@ -190,7 +192,8 @@ export function SeasonalScopeSettings() {
             minBirthYear: birthYear,
             maxBirthYear: birthYear,
             createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
+            isSelected: true // Default to selected
           });
 
           // Add girls division
@@ -205,7 +208,8 @@ export function SeasonalScopeSettings() {
             minBirthYear: birthYear,
             maxBirthYear: birthYear,
             createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
+            isSelected: true // Default to selected
           });
         }
 
@@ -223,7 +227,8 @@ export function SeasonalScopeSettings() {
             minBirthYear: birthYear,
             maxBirthYear: birthYear,
             createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
+            isSelected: true // Default to selected
           });
         }
       }
@@ -241,6 +246,18 @@ export function SeasonalScopeSettings() {
 
   const handleSubmit = async () => {
     try {
+      // Filter to only include selected age groups
+      const selectedAgeGroups = ageGroupMappings.filter(ag => ag.isSelected);
+      
+      if (selectedAgeGroups.length === 0) {
+        toast({
+          title: "Error",
+          description: "Please select at least one age group to include in this seasonal scope",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const seasonalScope: SeasonalScope = {
         name: scopeName,
         startYear: parseInt(selectedStartYear),
@@ -248,7 +265,7 @@ export function SeasonalScopeSettings() {
         isActive: true,
         createCoedGroups: createCoedGroups,
         coedOnly: createCoedGroups && coedOnly, // Only send coedOnly as true if createCoedGroups is also enabled
-        ageGroups: ageGroupMappings
+        ageGroups: selectedAgeGroups // Only include selected age groups
       };
 
       await createScopeMutation.mutateAsync(seasonalScope);
@@ -337,10 +354,35 @@ export function SeasonalScopeSettings() {
 
           {ageGroupMappings.length > 0 && (
             <Card className="mt-4">
-              <CardContent className="pt-6">
+              <CardHeader>
+                <CardTitle className="text-lg">Age Groups to Create</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Select which age groups should be available when creating events with this seasonal scope.
+                </p>
+                <div className="flex gap-2 mt-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setAgeGroupMappings(prev => prev.map(ag => ({ ...ag, isSelected: true })))}
+                  >
+                    Select All
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setAgeGroupMappings(prev => prev.map(ag => ({ ...ag, isSelected: false })))}
+                  >
+                    Select None
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-12">Include</TableHead>
                       <TableHead>Birth Year</TableHead>
                       <TableHead>Division Code</TableHead>
                       <TableHead>Age Group</TableHead>
@@ -348,8 +390,20 @@ export function SeasonalScopeSettings() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {ageGroupMappings.map((mapping) => (
+                    {ageGroupMappings.map((mapping, index) => (
                       <TableRow key={`${mapping.gender}-${mapping.birthYear}`}>
+                        <TableCell>
+                          <Checkbox
+                            checked={mapping.isSelected || false}
+                            onCheckedChange={(checked) => {
+                              setAgeGroupMappings(prev => 
+                                prev.map((ag, i) => 
+                                  i === index ? { ...ag, isSelected: !!checked } : ag
+                                )
+                              );
+                            }}
+                          />
+                        </TableCell>
                         <TableCell>{mapping.birthYear}</TableCell>
                         <TableCell>{mapping.divisionCode}</TableCell>
                         <TableCell>{mapping.ageGroup}</TableCell>
