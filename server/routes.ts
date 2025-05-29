@@ -5981,6 +5981,26 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         // Initialize eligibility map first
         const eligibilityMap = new Map();
 
+        // Load eligibility settings for this event
+        try {
+          const eligibilitySettings = await db.execute(sql`
+            SELECT age_group_id, is_eligible 
+            FROM event_age_group_eligibility 
+            WHERE event_id = ${eventId}
+          `);
+          
+          console.log(`Found ${eligibilitySettings.rows?.length || 0} eligibility settings for event ${eventId}`);
+          
+          // Populate eligibility map
+          if (eligibilitySettings.rows) {
+            for (const setting of eligibilitySettings.rows) {
+              eligibilityMap.set(setting.age_group_id, setting.is_eligible);
+            }
+          }
+        } catch (error) {
+          console.error('Error loading eligibility settings:', error);
+        }
+
         // First, check if we have existing age groups for this event
         let ageGroups = await db.query.eventAgeGroups.findMany({
           where: eq(eventAgeGroups.eventId, eventId),
@@ -6065,11 +6085,21 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         for (const group of ageGroups) {
           if (!seenIds.has(group.id)) {
             seenIds.add(group.id);
-            uniqueGroups.push(group);
+            
+            // Apply eligibility settings from the eligibility map
+            const isEligible = eligibilityMap.has(group.id) 
+              ? eligibilityMap.get(group.id) 
+              : (group.isEligible !== undefined ? group.isEligible : true); // Default to eligible if not specified
+            
+            uniqueGroups.push({
+              ...group,
+              isEligible: isEligible
+            });
           }
         }
 
         console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication`);
+        console.log(`Applied eligibility settings: ${eligibilityMap.size} custom settings found`);
         res.json(uniqueGroups);
       } catch (error) {
         console.error('Error fetching age groups:', error);
