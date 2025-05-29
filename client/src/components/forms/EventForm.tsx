@@ -388,6 +388,14 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
         ? defaultValues.seasonalScopeId
         : selectedSeasonalScopeId || data.seasonalScopeId || defaultValues?.seasonalScopeId;
       
+      console.log('Seasonal scope debug info:', {
+        hasExistingAgeGroups,
+        selectedSeasonalScopeId,
+        'data.seasonalScopeId': data.seasonalScopeId,
+        'defaultValues.seasonalScopeId': defaultValues?.seasonalScopeId,
+        scopeIdToSubmit
+      });
+      
       // Make sure branding values are also present in settings array
       // Create a new settings array with updated branding values
       const updatedSettings = [...settings];
