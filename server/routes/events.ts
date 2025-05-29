@@ -101,14 +101,16 @@ router.patch('/:id', async (req, res) => {
     const eventId = parseInt(id);
     const eventData = req.body;
 
-    console.log('Updating event with data:', JSON.stringify(eventData, null, 2));
+    console.log('🔍 EVENT UPDATE - Received event data keys:', Object.keys(eventData));
+    console.log('🔍 EVENT UPDATE - seasonalScopeId in request:', eventData.seasonalScopeId);
+    console.log('🔍 EVENT UPDATE - Full eventData:', JSON.stringify(eventData, null, 2));
 
     // Convert seasonalScopeId to number or null
     const seasonalScopeId = eventData.seasonalScopeId ?
       Number(eventData.seasonalScopeId) : null;
-    console.log('Using seasonalScopeId:', seasonalScopeId);
-    console.log('seasonalScopeId type:', typeof seasonalScopeId);
-    console.log('seasonalScopeId truthy check:', !!seasonalScopeId);
+    console.log('🔍 EVENT UPDATE - Processing seasonalScopeId:', seasonalScopeId);
+    console.log('🔍 EVENT UPDATE - seasonalScopeId type:', typeof seasonalScopeId);
+    console.log('🔍 EVENT UPDATE - seasonalScopeId truthy check:', !!seasonalScopeId);
 
     // Update the event in the database first
     const event = await db.query.events.findFirst({
