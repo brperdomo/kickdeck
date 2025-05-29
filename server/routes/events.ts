@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../db';
 import { events, eventAgeGroups, eventSettings, teams, tournamentGroups, eventAdministrators, eventFees, eventComplexes, eventAgeGroupFees } from '@db/schema';
-import { eq, inArray, sql } from 'drizzle-orm';
+import { eq, inArray, sql, and } from 'drizzle-orm';
 import { z } from 'zod';
 import { sortAgeGroups } from '../lib/ageGroupSorter';
 
@@ -138,7 +138,7 @@ router.patch('/:id', async (req, res) => {
       // Check if seasonal scope setting already exists
       const existingScopeSetting = await db.query.eventSettings.findFirst({
         where: and(
-          eq(eventSettings.eventId, eventId),
+          eq(eventSettings.eventId, eventId.toString()),
           eq(eventSettings.settingKey, 'seasonalScopeId')
         )
       });
@@ -155,7 +155,7 @@ router.patch('/:id', async (req, res) => {
       } else {
         // Insert new setting
         await db.insert(eventSettings).values({
-          eventId: eventId,
+          eventId: eventId.toString(),
           settingKey: 'seasonalScopeId',
           settingValue: seasonalScopeId.toString(),
           createdAt: new Date().toISOString(),
