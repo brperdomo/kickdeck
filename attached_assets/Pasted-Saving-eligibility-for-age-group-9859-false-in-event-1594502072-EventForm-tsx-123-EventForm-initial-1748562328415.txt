@@ -1,0 +1,119 @@
+Saving eligibility for age group 9859: false in event 1594502072
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:210 Fetching eligibility settings for event: 1594502072
+EventForm.tsx:787 Successfully updated eligibility for age group 9859
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:769 Fetch finished loading: PUT "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/age-group-eligibility-settings/9859".
+onCheckedChange @ EventForm.tsx:769
+(anonymous) @ chunk-PY2QDP3E.js?v=e7b2193e:17
+(anonymous) @ chunk-WYARCTPK.js?v=e7b2193e:28
+(anonymous) @ @radix-ui_react-switch.js?v=e7b2193e:79
+handleEvent @ chunk-OD433RWB.js?v=e7b2193e:6
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449
+EventForm.tsx:766 Saving eligibility for age group 9860: false in event 1594502072
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:210 Fetching eligibility settings for event: 1594502072
+EventForm.tsx:787 Successfully updated eligibility for age group 9860
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:769 Fetch finished loading: PUT "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/age-group-eligibility-settings/9860".
+onCheckedChange @ EventForm.tsx:769
+(anonymous) @ chunk-PY2QDP3E.js?v=e7b2193e:17
+(anonymous) @ chunk-WYARCTPK.js?v=e7b2193e:28
+(anonymous) @ @radix-ui_react-switch.js?v=e7b2193e:79
+handleEvent @ chunk-OD433RWB.js?v=e7b2193e:6
+callCallback2 @ chunk-RPCDYKBN.js?v=e7b2193e:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=e7b2193e:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=e7b2193e:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=e7b2193e:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=e7b2193e:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=e7b2193e:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=e7b2193e:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=e7b2193e:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=e7b2193e:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=e7b2193e:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=e7b2193e:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=e7b2193e:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=e7b2193e:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=e7b2193e:5449
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:156 Raw event data from server: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1594502072, name: 'Empire Cup New', startDate: '2025-08-16', endDate: '2025-08-17', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:135 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:123 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
