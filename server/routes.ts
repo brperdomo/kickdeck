@@ -292,6 +292,50 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, eventsRouter);
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
+    
+    // Add age group eligibility settings endpoint
+    app.put('/api/admin/age-group-eligibility-settings/:ageGroupId', isAdmin, async (req, res) => {
+      try {
+        const ageGroupId = parseInt(req.params.ageGroupId);
+        const { isEligible, eventId } = req.body;
+        
+        console.log(`Updating eligibility for age group ${ageGroupId} in event ${eventId} to ${isEligible}`);
+        
+        if (typeof isEligible !== 'boolean' || !eventId) {
+          return res.status(400).json({ error: 'Invalid request data' });
+        }
+        
+        // Check if record exists in eligibility table
+        const existingRecord = await db.execute(sql`
+          SELECT * FROM event_age_group_eligibility 
+          WHERE event_id = ${eventId} AND age_group_id = ${ageGroupId}
+        `);
+        
+        if (existingRecord.rows && existingRecord.rows.length > 0) {
+          // Update existing record
+          await db.execute(sql`
+            UPDATE event_age_group_eligibility 
+            SET is_eligible = ${isEligible}
+            WHERE event_id = ${eventId} AND age_group_id = ${ageGroupId}
+          `);
+          console.log(`Updated existing eligibility record`);
+        } else {
+          // Insert new record
+          await db.execute(sql`
+            INSERT INTO event_age_group_eligibility (event_id, age_group_id, is_eligible)
+            VALUES (${eventId}, ${ageGroupId}, ${isEligible})
+          `);
+          console.log(`Created new eligibility record`);
+        }
+        
+        console.log(`Successfully saved eligibility setting: event ${eventId}, age group ${ageGroupId}, eligible: ${isEligible}`);
+        res.json({ success: true });
+      } catch (error) {
+        console.error('Error updating age group eligibility:', error);
+        res.status(500).json({ error: 'Failed to update eligibility' });
+      }
+    });
+    
     // Age group eligibility routers temporarily disabled to fix server startup
     app.use('/api/admin/organizations', isAdmin, organizationsRouter); // Add organizations router
     app.use('/api/admin/email-providers', isAdmin, emailProvidersRouter); // Add email providers router
