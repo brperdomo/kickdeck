@@ -5978,6 +5978,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           return res.json(previewAgeGroups);
         }
 
+        // Initialize eligibility map first
+        const eligibilityMap = new Map();
+
         // First, check if we have existing age groups for this event
         let ageGroups = await db.query.eventAgeGroups.findMany({
           where: eq(eventAgeGroups.eventId, eventId),
