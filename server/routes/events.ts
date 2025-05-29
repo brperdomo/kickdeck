@@ -135,18 +135,34 @@ router.patch('/:id', async (req, res) => {
     if (seasonalScopeId) {
       console.log(`Setting seasonalScopeId ${seasonalScopeId} for event ${eventId}`);
 
-      // Delete existing seasonalScopeId setting if it exists
-      await db.delete(eventSettings)
-        .where(eq(eventSettings.eventId, eventId));
-
-      // Insert new setting
-      await db.insert(eventSettings).values({
-        eventId: eventId,
-        settingKey: 'seasonalScopeId',
-        settingValue: seasonalScopeId.toString(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+      // Check if seasonal scope setting already exists
+      const existingScopeSetting = await db.query.eventSettings.findFirst({
+        where: and(
+          eq(eventSettings.eventId, eventId),
+          eq(eventSettings.settingKey, 'seasonalScopeId')
+        )
       });
+
+      if (existingScopeSetting) {
+        // Update existing setting
+        await db.update(eventSettings)
+          .set({
+            settingValue: seasonalScopeId.toString(),
+            updatedAt: new Date().toISOString()
+          })
+          .where(eq(eventSettings.id, existingScopeSetting.id));
+        console.log(`Updated existing seasonalScopeId setting for event ${eventId}`);
+      } else {
+        // Insert new setting
+        await db.insert(eventSettings).values({
+          eventId: eventId,
+          settingKey: 'seasonalScopeId',
+          settingValue: seasonalScopeId.toString(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+        console.log(`Created new seasonalScopeId setting for event ${eventId}`);
+      }
 
       // DISABLED: Never delete age groups to prevent constraint violations
       // Age group eligibility is managed through the separate eligibility table
