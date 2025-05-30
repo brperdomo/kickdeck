@@ -65,6 +65,99 @@ import {
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
+// Payment Setup Wrapper Component
+function PaymentSetupWrapper({ 
+  teamId, 
+  expectedAmount, 
+  teamName, 
+  eventName, 
+  onSuccess, 
+  onError 
+}: {
+  teamId: string | number;
+  expectedAmount: number;
+  teamName: string;
+  eventName: string;
+  onSuccess: (setupIntentId: string, paymentMethodId: string) => void;
+  onError: (error: Error) => void;
+}) {
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const initializeSetupIntent = async () => {
+      try {
+        const response = await fetch('/api/payments/create-setup-intent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            teamId,
+            metadata: {
+              teamName,
+              eventName,
+              expectedAmount: expectedAmount.toString()
+            }
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create setup intent');
+        }
+
+        const data = await response.json();
+        setClientSecret(data.clientSecret);
+      } catch (error) {
+        console.error('Error creating setup intent:', error);
+        onError(error instanceof Error ? error : new Error('Failed to initialize payment setup'));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeSetupIntent();
+  }, [teamId, expectedAmount, teamName, eventName, onError]);
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="pt-6 flex justify-center items-center h-48">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+            <p>Initializing payment form...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!clientSecret) {
+    return (
+      <Card>
+        <CardContent className="pt-6 text-center">
+          <p className="text-muted-foreground">Payment setup not initialized. Please try again.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <SetupPaymentProvider clientSecret={clientSecret}>
+      <SetupPaymentForm 
+        teamId={teamId}
+        expectedAmount={expectedAmount}
+        teamName={teamName}
+        eventName={eventName}
+        returnUrl={window.location.origin + '/payment-setup-confirmation'}
+        onSuccess={onSuccess}
+        onError={onError}
+      />
+    </SetupPaymentProvider>
+  );
+}
+
 // CSV Uploader Component
 function CsvUploader({ onUploadSuccess }: { onUploadSuccess: (players: PlayerForm[]) => void }) {
   const [isUploading, setIsUploading] = useState(false);
