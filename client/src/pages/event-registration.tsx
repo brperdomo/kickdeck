@@ -486,17 +486,53 @@ const personalDetailsSchema = z.object({
   
   // If creating a new account
   if (data.emailChecked && !data.emailExists && !data.authenticated) {
-    // Validate password creation
-    if (!data.password || data.password.length < 8) {
+    // Validate password creation with backend requirements
+    if (!data.password) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Password must be at least 8 characters",
+        message: "Password is required",
         path: ["password"]
       });
+    } else {
+      // Check minimum length
+      if (data.password.length < 8) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Password must be at least 8 characters",
+          path: ["password"]
+        });
+      }
+      
+      // Check for at least one number
+      if (!/[0-9]/.test(data.password)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Password must contain at least one number",
+          path: ["password"]
+        });
+      }
+      
+      // Check for at least one special character
+      if (!/[^a-zA-Z0-9]/.test(data.password)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Password must contain at least one special character",
+          path: ["password"]
+        });
+      }
     }
     
     // Validate password confirmation
-    if (data.password !== data.confirmPassword) {
+    if (!data.confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please confirm your password",
+        path: ["confirmPassword"]
+      });
+    }
+    
+    // Validate password match
+    if (data.password && data.confirmPassword && data.password !== data.confirmPassword) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Passwords don't match",
