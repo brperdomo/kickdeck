@@ -4302,45 +4302,42 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               </p>
                             </div>
                             
-                            <SetupPaymentProvider clientSecret={null}>
-                              <SetupPaymentForm 
-                                teamId={`temp-${Date.now()}`} // Use temporary ID that won't conflict with database
-                                expectedAmount={parseFloat(calculateTotalAmount()) * 100} // Convert back to cents for payment processing
-                                teamName={teamForm.getValues().name}
-                                eventName={event?.name || 'tournament'}
-                                returnUrl={window.location.origin + '/payment-setup-confirmation'}
-                                onSuccess={(setupIntentId, paymentMethodId) => {
-                                  console.log(`Setup intent created successfully: ${setupIntentId}, Payment method: ${paymentMethodId}`);
-                                  
-                                  // Make sure to sync the latest players array with form data
-                                  teamForm.setValue('players', players);
-                                  
-                                  // Include all applicable fee IDs in the submission
-                                  const allSelectedFeeIds = [
-                                    ...(selectedFee ? [selectedFee.id] : []),
-                                    ...requiredFees.map(fee => fee.id)
-                                  ];
-                                  
-                                  // Then submit the form values along with player data, selected fees, and payment method info
-                                  registerTeamMutation.mutate({
-                                    ...teamForm.getValues(),
-                                    selectedFeeIds: allSelectedFeeIds,
-                                    totalAmount: parseFloat(calculateTotalAmount()) * 100, // in cents
-                                    paymentMethod: 'card',
-                                    addRosterLater, // Include the flag to indicate roster will be added later
-                                    setupIntentId, // Include the setup intent ID
-                                    paymentMethodId // Include the payment method ID
-                                  });
-                                }}
-                                onError={(error) => {
-                                  toast({
-                                    title: "Payment Setup Error",
-                                    description: error.message || "There was a problem setting up your payment method",
-                                    variant: "destructive"
-                                  });
-                                }}
-                              />
-                            </SetupPaymentProvider>
+                            <PaymentSetupWrapper 
+                              teamId={`temp-${Date.now()}`} // Use temporary ID that won't conflict with database
+                              expectedAmount={parseFloat(calculateTotalAmount()) * 100} // Convert back to cents for payment processing
+                              teamName={teamForm.getValues().name}
+                              eventName={event?.name || 'tournament'}
+                              onSuccess={(setupIntentId, paymentMethodId) => {
+                                console.log(`Setup intent created successfully: ${setupIntentId}, Payment method: ${paymentMethodId}`);
+                                
+                                // Make sure to sync the latest players array with form data
+                                teamForm.setValue('players', players);
+                                
+                                // Include all applicable fee IDs in the submission
+                                const allSelectedFeeIds = [
+                                  ...(selectedFee ? [selectedFee.id] : []),
+                                  ...requiredFees.map(fee => fee.id)
+                                ];
+                                
+                                // Then submit the form values along with player data, selected fees, and payment method info
+                                registerTeamMutation.mutate({
+                                  ...teamForm.getValues(),
+                                  selectedFeeIds: allSelectedFeeIds,
+                                  totalAmount: parseFloat(calculateTotalAmount()) * 100, // in cents
+                                  paymentMethod: 'card',
+                                  addRosterLater, // Include the flag to indicate roster will be added later
+                                  setupIntentId, // Include the setup intent ID
+                                  paymentMethodId // Include the payment method ID
+                                });
+                              }}
+                              onError={(error) => {
+                                toast({
+                                  title: "Payment Setup Error",
+                                  description: error.message || "There was a problem setting up your payment method",
+                                  variant: "destructive"
+                                });
+                              }}
+                            />
                           </>
                         )}
                       </div>
