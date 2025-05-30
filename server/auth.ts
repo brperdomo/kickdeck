@@ -244,10 +244,12 @@ export function setupAuth(app: Express) {
   app.post("/api/register", async (req, res, next) => {
     try {
       console.log('Registration request received:', req.body.email);
+      console.log('Full registration data:', JSON.stringify(req.body, null, 2));
       
       const result = insertUserSchema.safeParse(req.body);
       if (!result.success) {
-        const errorMsg = "Invalid input: " + result.error.issues.map((i) => i.message).join(", ");
+        console.error('Validation failed. Full error details:', JSON.stringify(result.error, null, 2));
+        const errorMsg = "Invalid input: " + result.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join(", ");
         console.error('Registration validation error:', errorMsg);
         return res
           .status(400)
