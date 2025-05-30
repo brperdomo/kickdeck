@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { BracketSelector } from "@/components/registration/BracketSelector";
 import { useToast } from "@/hooks/use-toast";
 
@@ -4462,6 +4463,173 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   className="text-xl font-semibold"
                   style={{ color: event?.branding?.primaryColor || '#2C5282' }}
                 >
+                  Review & Confirm Registration
+                </h3>
+                
+                {/* Team Information Summary */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Team Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Team Name</label>
+                        <p className="font-medium">{teamForm.getValues().name}</p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Age Group</label>
+                        <p className="font-medium">
+                          {selectedAgeGroup ? `${selectedAgeGroup.name} (Ages ${selectedAgeGroup.minAge}-${selectedAgeGroup.maxAge})` : 'Not selected'}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Head Coach</label>
+                        <p className="font-medium">{teamForm.getValues().headCoachName}</p>
+                        <p className="text-sm text-gray-600">{teamForm.getValues().headCoachEmail}</p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Team Manager</label>
+                        <p className="font-medium">{teamForm.getValues().managerName}</p>
+                        <p className="text-sm text-gray-600">{teamForm.getValues().managerEmail}</p>
+                      </div>
+                      {teamForm.getValues().clubName && (
+                        <div>
+                          <label className="text-sm font-medium text-gray-500">Club</label>
+                          <p className="font-medium">{teamForm.getValues().clubName}</p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {addRosterLater ? (
+                      <div className="bg-amber-50 p-3 rounded border border-amber-200">
+                        <p className="text-amber-800 font-medium">Players will be added later</p>
+                        <p className="text-sm text-amber-600">You've chosen to add your team roster after registration</p>
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Players ({players.length})</label>
+                        <div className="mt-2 max-h-40 overflow-y-auto">
+                          {players.map((player, index) => (
+                            <div key={index} className="flex justify-between py-1 border-b border-gray-100 last:border-0">
+                              <span className="font-medium">{player.firstName} {player.lastName}</span>
+                              <span className="text-sm text-gray-600">Born: {player.dateOfBirth}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Transaction Summary */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Transaction Summary</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-3">
+                      {/* Required Fees */}
+                      {requiredFees.map((fee) => (
+                        <div key={fee.id} className="flex justify-between">
+                          <span>{fee.name}</span>
+                          <span className="font-medium">${fee.amount.toFixed(2)}</span>
+                        </div>
+                      ))}
+                      
+                      {/* Selected Optional Fee */}
+                      {selectedFee && (
+                        <div className="flex justify-between">
+                          <span>{selectedFee.name}</span>
+                          <span className="font-medium">${selectedFee.amount.toFixed(2)}</span>
+                        </div>
+                      )}
+                      
+                      {requiredFees.length === 0 && !selectedFee && (
+                        <div className="text-center py-4 text-gray-500">
+                          No registration fees for this age group
+                        </div>
+                      )}
+                    </div>
+                    
+                    {(requiredFees.length > 0 || selectedFee) && (
+                      <>
+                        <Separator />
+                        <div className="flex justify-between text-lg font-bold">
+                          <span>Total Amount</span>
+                          <span>${calculateTotalAmount()}</span>
+                        </div>
+                      </>
+                    )}
+                    
+                    <div className="bg-blue-50 p-4 rounded border border-blue-200">
+                      <h4 className="font-medium text-blue-800 mb-2">Payment Process</h4>
+                      <ul className="text-sm text-blue-700 space-y-1">
+                        <li>• Your payment method will be securely saved</li>
+                        <li>• No charge will be made immediately</li>
+                        <li>• Payment will only be processed if your registration is approved</li>
+                        <li>• You'll receive an email receipt when payment is processed</li>
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Contact Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Registration Contact</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Name</label>
+                        <p className="font-medium">{form.getValues().firstName} {form.getValues().lastName}</p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Email</label>
+                        <p className="font-medium">{form.getValues().email}</p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-500">Phone</label>
+                        <p className="font-medium">{form.getValues().phone}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Action Buttons */}
+                <div className="flex justify-between pt-6">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setCurrentStep('payment')}
+                  >
+                    Back to Payment
+                  </Button>
+                  
+                  <Button
+                    onClick={() => setCurrentStep('payment')}
+                    className="text-white"
+                    style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
+                  >
+                    Confirm & Continue to Payment
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+
+            {currentStep === 'success' && user && (
+              <motion.div 
+                key="success-step"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-6">
+                <h3 
+                  className="text-xl font-semibold"
+                  style={{ color: event?.branding?.primaryColor || '#2C5282' }}
+                >
                   Registration Complete
                 </h3>
                 <div className="bg-green-50 border border-green-200 rounded-md p-4">
@@ -4473,7 +4641,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                 
                 <Button
                   onClick={() => {
-                    // Make sure we navigate to the absolute dashboard path, not a relative one
                     window.location.href = '/dashboard';
                   }}
                   className="text-white"
