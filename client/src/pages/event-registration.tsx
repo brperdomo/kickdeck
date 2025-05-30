@@ -377,7 +377,7 @@ interface Fee {
   isRequired?: boolean; // Whether the fee is mandatory
 }
 
-type RegistrationStep = 'auth' | 'personal' | 'team' | 'payment' | 'review' | 'complete';
+type RegistrationStep = 'auth' | 'personal' | 'team' | 'payment' | 'review' | 'success' | 'complete';
 
 // Animation variants for step transitions
 const fadeInUp = {
@@ -2504,7 +2504,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         title: "Success",
         description: "Team registered successfully",
       });
-      setCurrentStep('review');
+      setCurrentStep('success');
     },
     onError: (error: Error) => {
       toast({
@@ -4480,7 +4480,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                       <div>
                         <label className="text-sm font-medium text-gray-500">Age Group</label>
                         <p className="font-medium">
-                          {selectedAgeGroup ? `${selectedAgeGroup.name} (Ages ${selectedAgeGroup.minAge}-${selectedAgeGroup.maxAge})` : 'Not selected'}
+                          {selectedAgeGroup ? `${selectedAgeGroup.ageGroup} ${selectedAgeGroup.gender}` : 'Not selected'}
                         </p>
                       </div>
                       <div>
@@ -4597,22 +4597,99 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                   </CardContent>
                 </Card>
 
-                {/* Action Buttons */}
-                <div className="flex justify-between pt-6">
+                {/* Payment Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Complete Payment Setup</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {(requiredFees.length > 0 || selectedFee) ? (
+                      <div className="space-y-4">
+                        {/* Show payment form directly */}
+                        <div className="bg-blue-50 p-4 rounded border border-blue-200 mb-4">
+                          <h4 className="font-medium text-blue-800 mb-2">Ready to Complete Registration</h4>
+                          <p className="text-sm text-blue-700">
+                            Review your information above and complete the payment setup below to finalize your registration.
+                          </p>
+                        </div>
+                        
+                        {/* Payment Setup Form */}
+                        <div className="border-t pt-4">
+                          <StripeProvider>
+                            <PaymentSetupWrapper 
+                              teamId={`temp-${Date.now()}`}
+                              expectedAmount={parseFloat(calculateTotalAmount()) * 100}
+                              teamName={teamForm.getValues().name}
+                              eventName={event?.name || 'tournament'}
+                              onSuccess={(setupIntentId, paymentMethodId) => {
+                                console.log(`Setup intent created successfully: ${setupIntentId}, Payment method: ${paymentMethodId}`);
+                                
+                                teamForm.setValue('players', players);
+                                
+                                const allSelectedFeeIds = [
+                                  ...(selectedFee ? [selectedFee.id] : []),
+                                  ...requiredFees.map(fee => fee.id)
+                                ];
+                                
+                                registerTeamMutation.mutate({
+                                  ...teamForm.getValues(),
+                                  selectedFeeIds: allSelectedFeeIds,
+                                  totalAmount: parseFloat(calculateTotalAmount()) * 100,
+                                  addRosterLater,
+                                  setupIntentId,
+                                  paymentMethodId
+                                });
+                              }}
+                              onError={(error) => {
+                                toast({
+                                  title: "Payment Setup Error",
+                                  description: error.message || "There was a problem setting up your payment method",
+                                  variant: "destructive"
+                                });
+                              }}
+                            />
+                          </StripeProvider>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <p className="text-gray-600 mb-4">No payment required for this registration.</p>
+                        <Button
+                          onClick={() => {
+                            teamForm.setValue('players', players);
+                            registerTeamMutation.mutate({
+                              ...teamForm.getValues(),
+                              selectedFeeIds: [],
+                              totalAmount: 0,
+                              addRosterLater
+                            });
+                          }}
+                          disabled={registerTeamMutation.isPending}
+                          className="text-white"
+                          style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
+                        >
+                          {registerTeamMutation.isPending ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Submitting Registration...
+                            </>
+                          ) : (
+                            'Complete Registration'
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Back Button */}
+                <div className="flex justify-start pt-6">
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setCurrentStep('payment')}
+                    onClick={() => setCurrentStep('team')}
                   >
-                    Back to Payment
-                  </Button>
-                  
-                  <Button
-                    onClick={() => setCurrentStep('payment')}
-                    className="text-white"
-                    style={{ backgroundColor: event?.branding?.primaryColor || '#2C5282' }}
-                  >
-                    Confirm & Continue to Payment
+                    Back to Team Details
                   </Button>
                 </div>
               </motion.div>
