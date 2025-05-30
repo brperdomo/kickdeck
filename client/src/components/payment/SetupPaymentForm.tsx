@@ -77,14 +77,27 @@ export function SetupPaymentForm({
     setErrorMessage(null);
 
     try {
-      // Use the confirmSetup method to confirm the setup intent
-      const result = await confirmSetup(elements, clientSecret, returnUrl);
+      // Confirm setup intent without redirect to keep user on the form
+      const stripe = await import('@/lib/payment').then(m => m.getStripe());
+      const stripeInstance = await stripe();
+      
+      if (!stripeInstance) {
+        throw new Error('Stripe failed to load');
+      }
+
+      const result = await stripeInstance.confirmSetup({
+        elements,
+        confirmParams: {
+          return_url: returnUrl,
+        },
+        redirect: 'if_required' // Only redirect if absolutely necessary
+      });
 
       if (result.error) {
         // Handle errors from Stripe
         setErrorMessage(result.error.message || 'An error occurred with your payment method');
         if (onError) onError(new Error(result.error.message || 'Payment setup failed'));
-      } else if (result.setupIntent) {
+      } else if (result.setupIntent && result.setupIntent.status === 'succeeded') {
         // Handle success - setupIntent is available on the result object
         toast({
           title: 'Payment Method Saved',

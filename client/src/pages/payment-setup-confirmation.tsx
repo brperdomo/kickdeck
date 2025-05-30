@@ -5,7 +5,7 @@ import { getSetupStatus } from '@/lib/payment';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { AlertCircle, CheckCircle, CreditCard, Loader2 } from 'lucide-react';
+import { AlertCircle, CheckCircle, CreditCard, Loader2, Info } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface SetupStatus {
@@ -17,6 +17,7 @@ interface SetupStatus {
   teamName?: string;
   eventName?: string;
   errorMessage?: string;
+  expectedAmount?: string;
 }
 
 export default function PaymentSetupConfirmation() {
@@ -157,11 +158,19 @@ export default function PaymentSetupConfirmation() {
               </AlertDescription>
             </Alert>
 
+            <Alert className="bg-blue-50 text-blue-800 border-blue-200">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Important: This is NOT your final payment receipt</AlertTitle>
+              <AlertDescription>
+                No payment has been processed yet. You will receive a separate payment receipt email only if your registration is approved and payment is charged.
+              </AlertDescription>
+            </Alert>
+
             {(setupStatus.cardBrand && setupStatus.cardLast4) && (
               <div className="bg-muted/50 p-4 rounded-md">
                 <div className="flex items-center">
                   <CreditCard className="h-5 w-5 mr-2 text-muted-foreground" />
-                  <h3 className="font-medium">Payment Method</h3>
+                  <h3 className="font-medium">Payment Method on File</h3>
                 </div>
                 <div className="mt-2 pl-7">
                   <p>
@@ -170,6 +179,24 @@ export default function PaymentSetupConfirmation() {
                 </div>
               </div>
             )}
+
+            <div className="bg-amber-50 p-4 rounded-md border border-amber-200">
+              <div className="flex items-center">
+                <Info className="h-5 w-5 mr-2 text-amber-600" />
+                <h3 className="font-medium text-amber-800">Expected Charge Amount</h3>
+              </div>
+              <div className="mt-2 pl-7">
+                <p className="text-amber-700">
+                  If your registration is approved, your card will be charged: 
+                  <span className="font-semibold ml-1">
+                    {setupStatus.expectedAmount ? `$${(parseFloat(setupStatus.expectedAmount) / 100).toFixed(2)}` : 'Amount to be determined'}
+                  </span>
+                </p>
+                <p className="text-sm text-amber-600 mt-1">
+                  This amount includes all registration fees and applicable charges.
+                </p>
+              </div>
+            </div>
 
             <div>
               <h3 className="font-medium mb-2">What happens next?</h3>
