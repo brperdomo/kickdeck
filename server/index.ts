@@ -112,10 +112,8 @@ async function testDbConnection() {
     // Initialize standard folder structure
     await initializeStandardFolders();
 
-    // Create the server object first
+    // Get port configuration
     const PORT = Number(process.env.PORT) || 5000; // Ensure PORT is a number
-    server = app.listen();
-    server.close(); // Create but don't start listening yet
     
     // Set up authentication BEFORE registering routes
     setupAuth(app);
@@ -139,7 +137,9 @@ async function testDbConnection() {
       serveStatic(app);
       log("Static file serving configured for production");
     } else {
-      // In development, use Vite middleware
+      // In development, create a temporary server for Vite HMR
+      const { createServer } = await import('http');
+      server = createServer(app);
       await setupVite(app, server);
       log("Vite middleware setup complete for development");
     }
@@ -179,6 +179,14 @@ async function testDbConnection() {
 
     try {
       const availablePort = await findAvailablePort(PORT);
+      
+      // Create and start the server properly
+      if (nodeEnv === 'production') {
+        // In production, create a new server instance
+        const { createServer } = await import('http');
+        server = createServer(app);
+      }
+      
       server.listen(availablePort, HOST, () => {
         log(`Server started successfully on ${HOST}:${availablePort}`);
       });
