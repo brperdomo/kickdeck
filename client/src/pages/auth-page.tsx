@@ -65,22 +65,37 @@ export default function AuthPage() {
       sessionStorage.setItem('redirectAfterAuth', redirectUrl);
     }
     
-    // Check the referring page to catch event registration redirects that didn't include parameters
-    const referrer = document.referrer;
-    if (!redirectParam && !eventId && referrer) {
-      try {
-        const referrerUrl = new URL(referrer);
-        const path = referrerUrl.pathname;
-        
-        // If the referrer was a registration page, set it as the redirect
-        if ((path.includes('/register/') || path.includes('/event/')) && 
-            path !== '/register' && 
-            !path.includes('/reset-password')) {
-          console.log('Setting redirect based on referrer:', path);
-          sessionStorage.setItem('redirectAfterAuth', path);
+    // If no explicit redirect is set, check current URL and store it for after-login redirect
+    if (!redirectParam && !eventId) {
+      const currentPath = window.location.pathname;
+      
+      // If we're on a protected page (not auth pages), store it for redirect
+      if (currentPath !== '/' && currentPath !== '/auth' && 
+          !currentPath.includes('/register') && 
+          !currentPath.includes('/login') &&
+          !currentPath.includes('/forgot-password') &&
+          !currentPath.includes('/reset-password')) {
+        console.log('Setting redirect based on current protected URL:', currentPath);
+        sessionStorage.setItem('redirectAfterAuth', currentPath);
+      }
+      
+      // Also check the referring page to catch event registration redirects
+      const referrer = document.referrer;
+      if (referrer && !sessionStorage.getItem('redirectAfterAuth')) {
+        try {
+          const referrerUrl = new URL(referrer);
+          const path = referrerUrl.pathname;
+          
+          // If the referrer was a registration page, set it as the redirect
+          if ((path.includes('/register/') || path.includes('/event/')) && 
+              path !== '/register' && 
+              !path.includes('/reset-password')) {
+            console.log('Setting redirect based on referrer:', path);
+            sessionStorage.setItem('redirectAfterAuth', path);
+          }
+        } catch (e) {
+          console.error('Error parsing referrer URL:', e);
         }
-      } catch (e) {
-        console.error('Error parsing referrer URL:', e);
       }
     }
   }, []);
