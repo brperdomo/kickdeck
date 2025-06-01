@@ -316,7 +316,7 @@ export async function createSetupIntent(teamId: number | string, metadata?: Reco
         allow_redirects: 'never'
       },
       usage: 'off_session', // This allows for future use without customer being present
-      payment_method_configuration: 'pmc_1RJmWdP4BpmZARxtTPn2Ek9K', // Force live mode configuration
+      // Remove hardcoded payment_method_configuration to use account default
       metadata: {
         teamId: teamId.toString(),
         ...metadata
