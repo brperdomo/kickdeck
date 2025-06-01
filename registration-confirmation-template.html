@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Confirmation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid {{branding.primaryColor}};
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-height: 60px;
+            margin-bottom: 15px;
+        }
+        .title {
+            color: {{branding.primaryColor}};
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin: 5px 0 0 0;
+        }
+        .alert-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #856404;
+        }
+        .alert-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .section {
+            margin: 25px 0;
+        }
+        .section-title {
+            color: {{branding.primaryColor}};
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+        .info-grid {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .info-row {
+            display: table-row;
+        }
+        .info-label {
+            display: table-cell;
+            font-weight: bold;
+            color: #555;
+            padding: 8px 15px 8px 0;
+            width: 40%;
+            vertical-align: top;
+        }
+        .info-value {
+            display: table-cell;
+            padding: 8px 0;
+            color: #333;
+            vertical-align: top;
+        }
+        .payment-summary {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .total-amount {
+            font-size: 20px;
+            font-weight: bold;
+            color: {{branding.primaryColor}};
+            text-align: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+        .card-info {
+            background-color: #e8f5e8;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+        .next-steps {
+            background-color: #e7f3ff;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 25px 0;
+            border-left: 4px solid {{branding.primaryColor}};
+        }
+        .footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+            margin-top: 40px;
+            color: #666;
+            font-size: 14px;
+        }
+        .button {
+            display: inline-block;
+            background-color: {{branding.primaryColor}};
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .fee-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .fee-item:last-child {
+            border-bottom: none;
+        }
+        .fee-name {
+            font-weight: bold;
+        }
+        .fee-amount {
+            float: right;
+            color: {{branding.primaryColor}};
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            {{#if branding.logoUrl}}
+            <img src="{{branding.logoUrl}}" alt="{{organizationName}}" class="logo">
+            {{/if}}
+            <h1 class="title">Registration Confirmation</h1>
+            <p class="subtitle">{{eventName}} - Team Registration Submitted</p>
+        </div>
+
+        <div class="alert-box">
+            <div class="alert-title">⏳ Registration Under Review</div>
+            <p>Your team registration has been successfully submitted and is now under review by our administrators. Your payment method has been securely saved, but <strong>no charge has been processed yet</strong>.</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Team Information</h2>
+            <div class="info-grid">
+                <div class="info-row">
+                    <div class="info-label">Team Name:</div>
+                    <div class="info-value">{{teamName}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Event:</div>
+                    <div class="info-value">{{eventName}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Age Group:</div>
+                    <div class="info-value">{{ageGroup}}</div>
+                </div>
+                {{#if bracket}}
+                <div class="info-row">
+                    <div class="info-label">Bracket:</div>
+                    <div class="info-value">{{bracket}}</div>
+                </div>
+                {{/if}}
+                {{#if clubName}}
+                <div class="info-row">
+                    <div class="info-label">Club:</div>
+                    <div class="info-value">{{clubName}}</div>
+                </div>
+                {{/if}}
+                <div class="info-row">
+                    <div class="info-label">Registration Date:</div>
+                    <div class="info-value">{{registrationDate}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Contact Information</h2>
+            <div class="info-grid">
+                <div class="info-row">
+                    <div class="info-label">Submitted By:</div>
+                    <div class="info-value">{{submitterName}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Email:</div>
+                    <div class="info-value">{{submitterEmail}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Head Coach:</div>
+                    <div class="info-value">{{headCoachName}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Team Manager:</div>
+                    <div class="info-value">{{managerName}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Manager Email:</div>
+                    <div class="info-value">{{managerEmail}}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Manager Phone:</div>
+                    <div class="info-value">{{managerPhone}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Registration Summary</h2>
+            <div class="payment-summary">
+                {{#if selectedFees}}
+                <div style="margin-bottom: 15px;">
+                    {{#each selectedFees}}
+                    <div class="fee-item">
+                        <span class="fee-name">{{name}}</span>
+                        <span class="fee-amount">${{amount}}</span>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+                
+                <div class="total-amount">
+                    Total Amount: ${{totalAmount}}
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Payment Information</h2>
+            <div class="card-info">
+                <strong>✓ Payment Method Secured</strong><br>
+                Card ending in {{cardLastFour}} ({{cardBrand}}) has been securely saved for this registration.
+            </div>
+            
+            <div class="alert-box">
+                <div class="alert-title">📋 Important Payment Information</div>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>No charge has been processed yet</strong> - This is NOT a payment receipt</li>
+                    <li>Payment will only be charged if your team is approved for the event</li>
+                    <li>If your team is rejected, no payment will be processed</li>
+                    <li>You will receive a separate payment confirmation email once payment is processed</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="next-steps">
+            <h3 style="color: {{branding.primaryColor}}; margin-top: 0;">What Happens Next?</h3>
+            <ol style="margin: 15px 0; padding-left: 20px;">
+                <li><strong>Review Process:</strong> Our administrators will review your team registration within 1-2 business days</li>
+                <li><strong>Approval Decision:</strong> You'll receive an email notification with the decision</li>
+                <li><strong>If Approved:</strong> Payment will be automatically processed and you'll receive a payment confirmation</li>
+                <li><strong>If Rejected:</strong> No payment will be charged and you'll receive information about the decision</li>
+            </ol>
+            
+            {{#if loginLink}}
+            <p style="margin-top: 20px;">
+                <a href="{{loginLink}}" class="button">Check Registration Status</a>
+            </p>
+            {{/if}}
+        </div>
+
+        {{#if addRosterLater}}
+        <div class="alert-box">
+            <div class="alert-title">📝 Roster Reminder</div>
+            <p>You chose to add your team roster later. Please remember to complete your roster before the event begins. You'll receive instructions on how to add players once your team is approved.</p>
+        </div>
+        {{/if}}
+
+        <div class="footer">
+            <p><strong>Questions?</strong> Contact us at {{supportEmail}}</p>
+            <p>{{organizationName}} • {{currentYear}}</p>
+            <p style="font-size: 12px; color: #999; margin-top: 15px;">
+                Reference ID: {{setupIntentId}}<br>
+                This email confirms your registration submission only. This is not a payment receipt.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
