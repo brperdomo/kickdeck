@@ -1,0 +1,141 @@
+{
+  "error": {
+    "code": "card_declined",
+    "decline_code": "test_mode_live_card",
+    "doc_url": "https://stripe.com/docs/error-codes/card-declined",
+    "message": "Your card was declined. Your request used a real card while testing. For a list of valid test cards, visit: https://stripe.com/docs/testing.",
+    "payment_method": {
+      "id": "pm_1RVHDPCGdBwOWAK0ycjONJOS",
+      "object": "payment_method",
+      "allow_redisplay": "unspecified",
+      "billing_details": {
+        "address": {
+          "city": null,
+          "country": "US",
+          "line1": null,
+          "line2": null,
+          "postal_code": "27597",
+          "state": null
+        },
+        "email": null,
+        "name": null,
+        "phone": null,
+        "tax_id": null
+      },
+      "card": {
+        "brand": "visa",
+        "checks": {
+          "address_line1_check": null,
+          "address_postal_code_check": null,
+          "cvc_check": null
+        },
+        "country": "US",
+        "display_brand": "visa",
+        "exp_month": 2,
+        "exp_year": 2030,
+        "funding": "debit",
+        "generated_from": null,
+        "last4": "3002",
+        "networks": {
+          "available": [
+            "visa"
+          ],
+          "preferred": null
+        },
+        "regulated_status": "regulated",
+        "three_d_secure_usage": {
+          "supported": true
+        },
+        "wallet": null
+      },
+      "created": 1748804799,
+      "customer": null,
+      "livemode": false,
+      "type": "card"
+    },
+    "request_log_url": "https://dashboard.stripe.com/test/logs/req_No63Vum2lw34wl?t=1748804799",
+    "setup_intent": {
+      "id": "seti_1RVHBkCGdBwOWAK0qHoWGHRR",
+      "object": "setup_intent",
+      "automatic_payment_methods": {
+        "allow_redirects": "never",
+        "enabled": true
+      },
+      "cancellation_reason": null,
+      "client_secret": "seti_1RVHBkCGdBwOWAK0qHoWGHRR_secret_SQ7QgH3UWxNQjOH8stu8g2OqK6gdgGn",
+      "created": 1748804696,
+      "description": null,
+      "last_setup_error": {
+        "code": "card_declined",
+        "decline_code": "test_mode_live_card",
+        "doc_url": "https://stripe.com/docs/error-codes/card-declined",
+        "message": "Your card was declined. Your request used a real card while testing. For a list of valid test cards, visit: https://stripe.com/docs/testing.",
+        "payment_method": {
+          "id": "pm_1RVHDPCGdBwOWAK0ycjONJOS",
+          "object": "payment_method",
+          "allow_redisplay": "unspecified",
+          "billing_details": {
+            "address": {
+              "city": null,
+              "country": "US",
+              "line1": null,
+              "line2": null,
+              "postal_code": "27597",
+              "state": null
+            },
+            "email": null,
+            "name": null,
+            "phone": null,
+            "tax_id": null
+          },
+          "card": {
+            "brand": "visa",
+            "checks": {
+              "address_line1_check": null,
+              "address_postal_code_check": null,
+              "cvc_check": null
+            },
+            "country": "US",
+            "display_brand": "visa",
+            "exp_month": 2,
+            "exp_year": 2030,
+            "funding": "debit",
+            "generated_from": null,
+            "last4": "3002",
+            "networks": {
+              "available": [
+                "visa"
+              ],
+              "preferred": null
+            },
+            "regulated_status": "regulated",
+            "three_d_secure_usage": {
+              "supported": true
+            },
+            "wallet": null
+          },
+          "created": 1748804799,
+          "customer": null,
+          "livemode": false,
+          "type": "card"
+        },
+        "type": "card_error"
+      },
+      "livemode": false,
+      "next_action": null,
+      "payment_method": null,
+      "payment_method_configuration_details": {
+        "id": "pmc_1R6IxdCGdBwOWAK0WSxoKWa1",
+        "parent": null
+      },
+      "payment_method_types": [
+        "card",
+        "link",
+        "amazon_pay"
+      ],
+      "status": "requires_payment_method",
+      "usage": "off_session"
+    },
+    "type": "card_error"
+  }
+}
