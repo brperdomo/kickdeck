@@ -512,8 +512,10 @@ export function setupAuth(app: Express) {
       const actualUserId = (req as any).actualUserId;
       
       // Add ETag support for more efficient caching
-      const timestamp = req.user?.lastLogin?.getTime() || Date.now();
-      const etag = `"user-${req.user?.id}-${timestamp}"`;
+      // Include updatedAt and profile fields in ETag to ensure fresh data after profile updates
+      const lastLogin = req.user?.lastLogin?.getTime() || Date.now();
+      const profileHash = `${req.user?.firstName}-${req.user?.lastName}-${req.user?.phone}`;
+      const etag = `"user-${req.user?.id}-${lastLogin}-${profileHash}"`;
       
       // Check if client already has this version (If-None-Match header)
       if (req.headers['if-none-match'] === etag) {

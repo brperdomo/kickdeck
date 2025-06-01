@@ -2300,6 +2300,13 @@ export function registerRoutes(app: Express): Server {
         // Update the session with new user data
         req.user = updatedUser;
 
+        // Save the updated session
+        req.session.save((err) => {
+          if (err) {
+            console.error('Error saving updated session:', err);
+          }
+        });
+
         // Remove sensitive data before returning
         const { password, ...userData } = updatedUser;
 
