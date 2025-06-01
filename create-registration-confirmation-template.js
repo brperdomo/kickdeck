@@ -6,6 +6,7 @@
  */
 
 import pkg from 'pg';
+import fs from 'fs';
 const { Pool } = pkg;
 
 async function createRegistrationConfirmationTemplate() {
@@ -15,6 +16,9 @@ async function createRegistrationConfirmationTemplate() {
 
   try {
     console.log("Creating registration confirmation email template...");
+    
+    // Read the HTML template content
+    const htmlContent = fs.readFileSync('registration-confirmation-template.html', 'utf8');
     
     // Check if the template already exists
     const existingResult = await pool.query(
@@ -58,16 +62,18 @@ async function createRegistrationConfirmationTemplate() {
          name = $1, 
          description = $2, 
          subject = $3, 
-         sender_name = $4, 
-         sender_email = $5, 
-         is_active = $6, 
-         variables = $7, 
-         updated_at = $8
-         WHERE type = $9`,
+         content = $4,
+         sender_name = $5, 
+         sender_email = $6, 
+         is_active = $7, 
+         variables = $8, 
+         updated_at = $9
+         WHERE type = $10`,
         [
           'Registration Confirmation',
           'Sent when team registration is submitted with setup intent (payment method saved but not charged)',
           'Registration Confirmation - {{teamName}} for {{eventName}}',
+          htmlContent,
           'MatchPro Registration',
           'support@matchpro.ai',
           true,
@@ -81,13 +87,14 @@ async function createRegistrationConfirmationTemplate() {
     } else {
       // Create new template
       await pool.query(
-        `INSERT INTO email_templates (name, type, description, subject, sender_name, sender_email, is_active, variables, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+        `INSERT INTO email_templates (name, type, description, subject, content, sender_name, sender_email, is_active, variables, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
         [
           'Registration Confirmation',
           'registration_confirmation',
           'Sent when team registration is submitted with setup intent (payment method saved but not charged)',
           'Registration Confirmation - {{teamName}} for {{eventName}}',
+          htmlContent,
           'MatchPro Registration',
           'support@matchpro.ai',
           true,
@@ -112,6 +119,8 @@ async function createRegistrationConfirmationTemplate() {
   } catch (error) {
     console.error('Error creating registration confirmation template:', error);
     return { success: false, error };
+  } finally {
+    await pool.end();
   }
 }
 
