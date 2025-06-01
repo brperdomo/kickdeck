@@ -14,7 +14,7 @@ async function debugSpecificSetupIntent() {
   
   try {
     // Check the specific failing setup intent
-    const setupIntentId = 'seti_1RVGscCGdBwOWAK0oYG9iczh';
+    const setupIntentId = 'seti_1RVH4ECGdBwOWAK0JmIedtlm';
     
     console.log(`Retrieving setup intent: ${setupIntentId}`);
     const setupIntent = await stripe.setupIntents.retrieve(setupIntentId);
