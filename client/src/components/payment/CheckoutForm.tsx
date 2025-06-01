@@ -89,7 +89,14 @@ export default function CheckoutForm({
           </div>
         )}
         
-        <PaymentElement />
+        <PaymentElement 
+          options={{
+            paymentMethodOrder: ['card'],
+            wallets: {
+              amazonPay: 'never'
+            }
+          }}
+        />
       </div>
       
       {errorMessage && (

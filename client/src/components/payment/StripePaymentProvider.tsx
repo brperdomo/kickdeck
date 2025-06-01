@@ -112,6 +112,10 @@ export default function StripePaymentProvider({
         borderRadius: '8px',
       },
     },
+    paymentMethodOrder: ['card'],
+    wallets: {
+      amazonPay: 'never'
+    }
   };
 
   if (error) {

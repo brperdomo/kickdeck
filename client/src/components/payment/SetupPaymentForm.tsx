@@ -147,7 +147,14 @@ export function SetupPaymentForm({
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="p-4 bg-accent/10 rounded-lg">
-            <PaymentElement />
+            <PaymentElement 
+              options={{
+                paymentMethodOrder: ['card'],
+                wallets: {
+                  amazonPay: 'never'
+                }
+              }}
+            />
           </div>
           
           {errorMessage && (

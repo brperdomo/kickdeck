@@ -58,6 +58,10 @@ export function SetupPaymentProvider({
         borderRadius: '8px',
       },
     },
+    paymentMethodOrder: ['card'],
+    wallets: {
+      amazonPay: 'never'
+    }
   };
 
   if (isLoading || !stripePromise) {
