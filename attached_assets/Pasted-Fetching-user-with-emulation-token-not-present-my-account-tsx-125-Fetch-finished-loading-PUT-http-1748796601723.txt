@@ -1,0 +1,102 @@
+Fetching user with emulation token: not present
+my-account.tsx:125 Fetch finished loading: PUT "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user/account".
+onProfileSubmit	@	my-account.tsx:125
+use-user.ts:61 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+fetchUser	@	use-user.ts:61
+onProfileSubmit	@	my-account.tsx:139
+use-user.ts:76 User data fetched: 
+{id: 101, email: 'nahsondotcom+222@gmail.com', username: 'nahsondotcom+222@gmail.com', password: '1a5db390efb8d4c12ba3e35b659a85e01eaa050272adfb9dc5…902b07a9b7d1ed2c.a8106541fb0092dfa27f827cf1b4b837', firstName: 'Bryan', …}
+createdAt
+: 
+"2025-05-30T22:12:07.825Z"
+email
+: 
+"nahsondotcom+222@gmail.com"
+firstName
+: 
+"Bryan"
+householdId
+: 
+28
+id
+: 
+101
+isAdmin
+: 
+false
+isParent
+: 
+false
+lastLogin
+: 
+"2025-06-01T16:46:24.688Z"
+lastName
+: 
+"Perdomo"
+lastViewedRegistrations
+: 
+null
+password
+: 
+"1a5db390efb8d4c12ba3e35b659a85e01eaa050272adfb9dc59802ba4ec71a9dcb777a039b44cf9282a3f442d1d7d3423d42471c6d15bb3d902b07a9b7d1ed2c.a8106541fb0092dfa27f827cf1b4b837"
+phone
+: 
+"3983983983"
+username
+: 
+"nahsondotcom+222@gmail.com"
+[[Prototype]]
+: 
+Object
+use-user.ts:59 Fetching user with emulation token: not present
+my-account.tsx:125 Fetch finished loading: PUT "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user/account".
+use-user.ts:61 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+use-user.ts:76 User data fetched: 
+{id: 101, email: 'nahsondotcom+222@gmail.com', username: 'nahsondotcom+222@gmail.com', password: '1a5db390efb8d4c12ba3e35b659a85e01eaa050272adfb9dc5…902b07a9b7d1ed2c.a8106541fb0092dfa27f827cf1b4b837', firstName: 'Bryan', …}
+use-user.ts:59 Fetching user with emulation token: not present
+my-account.tsx:125 Fetch finished loading: PUT "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user/account".
+use-user.ts:61 Fetch finished loading: GET "https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/user".
+use-user.ts:76 User data fetched: 
+{id: 101, email: 'nahsondotcom+222@gmail.com', username: 'nahsondotcom+222@gmail.com', password: '1a5db390efb8d4c12ba3e35b659a85e01eaa050272adfb9dc5…902b07a9b7d1ed2c.a8106541fb0092dfa27f827cf1b4b837', firstName: 'Bryan', …}
+createdAt
+: 
+"2025-05-30T22:12:07.825Z"
+email
+: 
+"nahsondotcom+222@gmail.com"
+firstName
+: 
+"Bryan"
+householdId
+: 
+28
+id
+: 
+101
+isAdmin
+: 
+false
+isParent
+: 
+false
+lastLogin
+: 
+"2025-06-01T16:46:24.688Z"
+lastName
+: 
+"Perdomo"
+lastViewedRegistrations
+: 
+null
+password
+: 
+"1a5db390efb8d4c12ba3e35b659a85e01eaa050272adfb9dc59802ba4ec71a9dcb777a039b44cf9282a3f442d1d7d3423d42471c6d15bb3d902b07a9b7d1ed2c.a8106541fb0092dfa27f827cf1b4b837"
+phone
+: 
+"3983983983"
+username
+: 
+"nahsondotcom+222@gmail.com"
+[[Prototype]]
+: 
+Object

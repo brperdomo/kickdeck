@@ -2265,13 +2265,15 @@ export function registerRoutes(app: Express): Server {
         const { firstName, lastName, phone } = req.body;
         const userId = req.user.id;
 
+        console.log('Profile update request:', { firstName, lastName, phone, userId });
+
         // Validate required fields
         if (!firstName || !lastName) {
           return res.status(400).send("First name and last name are required");
         }
 
         // Update user in database
-        await db
+        const updateResult = await db
           .update(users)
           .set({
             firstName,
@@ -2279,7 +2281,10 @@ export function registerRoutes(app: Express): Server {
             phone: phone || null,
             updatedAt: new Date().toISOString()
           })
-          .where(eq(users.id, userId));
+          .where(eq(users.id, userId))
+          .returning();
+
+        console.log('Database update result:', updateResult);
 
         // Get updated user data
         const [updatedUser] = await db
