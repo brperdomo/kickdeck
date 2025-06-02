@@ -55,11 +55,13 @@ export async function getRevenueForecastReport(req: Request, res: Response) {
         COUNT(*) as pending_registrations,
         SUM(t.total_amount) as potential_revenue,
         e.id as event_id,
-        e.name as event_name
+        e.name as event_name,
+        COUNT(CASE WHEN t.payment_status = 'pending' THEN 1 END) as awaiting_approval_count,
+        SUM(CASE WHEN t.payment_status = 'pending' THEN t.total_amount ELSE 0 END) as awaiting_approval_amount
       FROM teams t
       JOIN events e ON t.event_id = e.id
-      WHERE t.created_at BETWEEN ${startDateObj.toISOString()} AND ${endDateObj.toISOString()}
-        AND t.payment_status IS NULL
+      WHERE t.created_at::timestamp BETWEEN ${startDateObj.toISOString()} AND ${endDateObj.toISOString()}
+        AND (t.stripe_customer_id IS NULL OR t.setup_intent_id IS NULL)
         AND t.total_amount > 0
         ${eventFilter}
       GROUP BY e.id, e.name
@@ -84,10 +86,12 @@ export async function getRevenueForecastReport(req: Request, res: Response) {
       potential_summary AS (
         SELECT 
           COUNT(*) as potential_registrations,
-          SUM(t.total_amount) as potential_amount
+          SUM(t.total_amount) as potential_amount,
+          COUNT(CASE WHEN t.payment_status = 'pending' THEN 1 END) as teams_awaiting_approval,
+          SUM(CASE WHEN t.payment_status = 'pending' THEN t.total_amount ELSE 0 END) as amount_awaiting_approval
         FROM teams t
-        WHERE t.created_at BETWEEN ${startDateObj.toISOString()} AND ${endDateObj.toISOString()}
-          AND t.payment_status IS NULL
+        WHERE t.created_at::timestamp BETWEEN ${startDateObj.toISOString()} AND ${endDateObj.toISOString()}
+          AND (t.stripe_customer_id IS NULL OR t.setup_intent_id IS NULL)
           AND t.total_amount > 0
           ${eventFilter}
       )
