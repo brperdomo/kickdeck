@@ -1025,6 +1025,7 @@ function ReportsView() {
                   <option value="financial-overview">Financial Overview</option>
                   <option value="fees-analysis">Fees Analysis</option>
                   <option value="bookkeeping">Bookkeeping Report</option>
+                  <option value="revenue-forecast">Revenue Forecast</option>
                   <option value="fees-by-event">Fees by Event</option>
                   <option value="fees-by-age-group">Fees by Age Group</option>
                 </select>
@@ -1216,6 +1217,36 @@ function ReportsView() {
                         <Button onClick={() => navigate('/bookkeeping-report')} className="space-x-2">
                           <FileText className="w-4 h-4" />
                           <span>Open Bookkeeping Report</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+            
+            {selectedFinancialReport === 'revenue-forecast' && (
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle>Revenue Forecast</CardTitle>
+                    <CardDescription>Track captured transactions and forecast future revenue from your "collect now, charge later" flow</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-col space-y-4">
+                      <p className="text-sm text-muted-foreground">
+                        This report shows revenue forecasting based on your setup intent payment flow:
+                      </p>
+                      <ul className="list-disc pl-5 text-sm space-y-1 text-muted-foreground">
+                        <li>Captured payment methods ready to charge</li>
+                        <li>Pending team approvals and potential revenue</li>
+                        <li>Forecasted total revenue with fee estimates</li>
+                        <li>Event-based filtering and breakdown</li>
+                      </ul>
+                      <div className="flex justify-center items-center py-4">
+                        <Button onClick={() => navigate('/revenue-forecast')} className="space-x-2">
+                          <TrendingUp className="w-4 h-4" />
+                          <span>Open Revenue Forecast</span>
                         </Button>
                       </div>
                     </div>
