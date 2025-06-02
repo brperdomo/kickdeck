@@ -714,7 +714,8 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                       <TableCell>
                         <Select
                           value={group.fieldSize || "11v11"}
-                          onValueChange={(value) => {
+                          onValueChange={async (value) => {
+                            // Update local state immediately
                             const updatedAgeGroups = ageGroups.map(ag => 
                               ag.id === group.id 
                                 ? { ...ag, fieldSize: value } 
@@ -722,6 +723,33 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
                             );
                             setAgeGroups(updatedAgeGroups);
                             form.setValue('ageGroups', updatedAgeGroups);
+                            
+                            // Save to database if we're in edit mode and have a valid age group ID
+                            if (mode === 'edit' && group.id && defaultValues?.id) {
+                              try {
+                                const response = await fetch(`/api/admin/age-groups/${group.id}/field-size`, {
+                                  method: 'PATCH',
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                  },
+                                  credentials: 'include',
+                                  body: JSON.stringify({ fieldSize: value }),
+                                });
+                                
+                                if (!response.ok) {
+                                  throw new Error('Failed to update field size');
+                                }
+                                
+                                console.log(`Successfully saved field size ${value} for age group ${group.id}`);
+                              } catch (error) {
+                                console.error('Error saving field size:', error);
+                                toast({
+                                  title: "Warning",
+                                  description: "Field size updated locally but failed to save to database. Please save the event to persist changes.",
+                                  variant: "destructive"
+                                });
+                              }
+                            }
                           }}
                         >
                           <SelectTrigger className="w-[140px]">

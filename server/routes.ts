@@ -20,6 +20,7 @@ import publicAgeGroupsRouter from "./routes/age-groups";  // Public age groups r
 import publicBracketsRouter from "./routes/brackets";  // Public brackets router
 import eventsRouter from "./routes/admin/events";
 import ageGroupsRouter from "./routes/admin/age-groups";
+import ageGroupFieldSizesRouter from "./routes/admin/age-group-field-sizes";
 // Removed problematic age group eligibility imports to fix server startup
 // Removed problematic eligibility router import
 import organizationsRouter from "./routes/admin/organizations"; 
@@ -293,6 +294,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/events', isAdmin, eventsRouter);
     app.use('/api/admin/events', isAdmin, feesRouter); // Mount fees router under events path
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
+    app.use('/api/admin/age-groups', isAdmin, ageGroupFieldSizesRouter); // Add field size update router
     
     // Add age group eligibility settings endpoint
     app.put('/api/admin/age-group-eligibility-settings/:ageGroupId', isAdmin, async (req, res) => {
