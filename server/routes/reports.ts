@@ -819,6 +819,9 @@ export async function getBookkeepingReport(req: Request, res: Response) {
     } else if (reportType === 'pending-payments') {
       // For pending payments, we need to look at teams with pending payment status
       return getPendingPaymentsReport(req, res, startDateObj, endDateObj);
+    } else if (reportType === 'all-transactions') {
+      // Include all payment-related transactions including registration_payment
+      filterQuery = ` AND pt.transaction_type IN ('payment', 'registration_payment', 'refund', 'partial_refund', 'chargeback')`;
     }
     
     // Add settled only filter if requested
@@ -843,7 +846,7 @@ export async function getBookkeepingReport(req: Request, res: Response) {
           pt.id, 
           pt.amount, 
           CASE
-            WHEN pt.status = 'succeeded' AND pt.transaction_type = 'payment' THEN 
+            WHEN pt.status = 'succeeded' AND pt.transaction_type IN ('payment', 'registration_payment') THEN 
               ROUND(pt.amount * 0.029 + 30)
             ELSE 0
           END as stripe_fee
