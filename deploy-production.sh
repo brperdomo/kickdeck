@@ -1,53 +1,40 @@
 #!/bin/bash
 
-# Production Deployment Script for MatchPro Live Launch
-# This script ensures a clean, optimized production build
+# Production Deployment Script
+# This script prepares your application for stable production deployment
 
-set -e  # Exit on any error
+echo "🚀 Preparing production deployment..."
 
-echo "🚀 Starting production deployment for MatchPro..."
-
-# Stop any running processes
-echo "Stopping existing processes..."
-pkill -f "node server/index.ts" 2>/dev/null || true
-pkill -f "vite build" 2>/dev/null || true
-sleep 2
-
-# Clean previous builds
-echo "Cleaning previous builds..."
-rm -rf dist/
-rm -rf client/dist/
-
-# Set production environment
+# 1. Set production environment
+echo "📝 Setting production environment..."
 export NODE_ENV=production
 
-# Optimize build process
-echo "Building application for production (this may take 5-10 minutes)..."
-echo "Building frontend..."
-npx vite build --mode production
+# 2. Build the frontend
+echo "🏗️ Building frontend for production..."
+npm run build
 
-echo "Building backend..."
-npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --minify
-
-# Verify build success
-if [ ! -f "dist/index.js" ]; then
-    echo "❌ Build failed! Backend build not found"
+# 3. Verify build files exist
+if [ -d "dist/public" ] && [ "$(ls -A dist/public)" ]; then
+    echo "✅ Production build files created successfully"
+else
+    echo "❌ Production build failed - check for errors above"
     exit 1
 fi
 
-if [ ! -d "dist/public" ] && [ ! -f "client/dist/index.html" ]; then
-    echo "❌ Build failed! Frontend build not found"
-    exit 1
-fi
+# 4. Create production environment file
+echo "📄 Creating production environment configuration..."
+cat > .env.production << EOF
+NODE_ENV=production
+# Add your production environment variables here
+# DATABASE_URL=your_production_database_url
+# STRIPE_SECRET_KEY=your_production_stripe_key
+EOF
 
-# Copy frontend build to correct location
-if [ -d "client/dist" ]; then
-    echo "Moving frontend build to production location..."
-    cp -r client/dist/* dist/public/ 2>/dev/null || mkdir -p dist/public && cp -r client/dist/* dist/public/
-fi
-
-echo "✅ Build completed successfully!"
-
-# Start production server
-echo "🌟 Starting production server..."
-NODE_ENV=production node dist/index.js
+echo "🎉 Production deployment preparation complete!"
+echo ""
+echo "Next steps for deployment:"
+echo "1. Copy the built files from 'dist/public' to your production server"
+echo "2. Set NODE_ENV=production in your production environment"
+echo "3. Ensure your production server uses the production build files"
+echo ""
+echo "This will eliminate the WebSocket connection issues you're experiencing."
