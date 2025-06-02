@@ -79,9 +79,8 @@ async function testDbConnection() {
   let server: any; // Fix implicit any error
   
   try {
-    // Force production mode for stable operations
-    const nodeEnv = process.env.NODE_ENV || 'production';
-    process.env.NODE_ENV = nodeEnv;
+    // Use NODE_ENV from environment or default to development
+    const nodeEnv = process.env.NODE_ENV || 'development';
     app.set('env', nodeEnv);
     
     log(`Server starting in ${nodeEnv} mode`);
@@ -134,9 +133,18 @@ async function testDbConnection() {
 
     // Set up appropriate middleware based on environment
     if (nodeEnv === 'production') {
-      // In production, serve static files
-      serveStatic(app);
-      log("Static file serving configured for production");
+      try {
+        // Try production static files first
+        serveStatic(app);
+        log("Static file serving configured for production");
+      } catch (error) {
+        // Fall back to development mode if production files don't exist
+        log("Production files not found, falling back to development mode");
+        const { createServer } = await import('http');
+        server = createServer(app);
+        await setupVite(app, server);
+        log("Vite middleware setup complete for development fallback");
+      }
     } else {
       // In development, create a temporary server for Vite HMR
       const { createServer } = await import('http');
