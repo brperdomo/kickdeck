@@ -6157,9 +6157,32 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           }
         }
 
-        console.log(`Returning ${uniqueGroups.length} unique age groups after deduplication`);
+        // Apply proper sorting to ensure consistent order (U4, U5, U6, etc.)
+        const sortedGroups = uniqueGroups.sort((a, b) => {
+          // First sort by age group number (U4, U5, U6, etc.)
+          const getAgeNumber = (ageGroup: string) => {
+            if (ageGroup && ageGroup.startsWith('U')) {
+              return parseInt(ageGroup.substring(1));
+            }
+            return 999; // Put non-U groups at the end
+          };
+          
+          const ageA = getAgeNumber(a.ageGroup);
+          const ageB = getAgeNumber(b.ageGroup);
+          
+          if (ageA !== ageB) {
+            return ageA - ageB;
+          }
+          
+          // Within same age, sort by gender: Boys, Girls, Coed
+          const genderOrder: { [key: string]: number } = { 'Boys': 0, 'Girls': 1, 'Coed': 2 };
+          return (genderOrder[a.gender] || 3) - (genderOrder[b.gender] || 3);
+        });
+
+        console.log(`Returning ${sortedGroups.length} unique age groups after deduplication and sorting`);
         console.log(`Applied eligibility settings: ${eligibilityMap.size} custom settings found`);
-        res.json(uniqueGroups);
+        console.log(`Age groups order: ${sortedGroups.slice(0, 6).map(g => `${g.ageGroup}-${g.gender}`).join(', ')}...`);
+        res.json(sortedGroups);
       } catch (error) {
         console.error('Error fetching age groups:', error);
         res.status(500).json({ error: 'Failed to fetch age groups' });
