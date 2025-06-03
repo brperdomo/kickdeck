@@ -129,19 +129,20 @@ export function CouponManagement() {
   }
 
   return (
-    <>
-      <AdminBanner />
-      <div className="max-w-6xl mx-auto px-4">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 font-inter">Coupon Management</h2>
-        <div className="flex gap-4">
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Discount Codes</h2>
+          <p className="text-sm text-gray-600 mt-1">Manage promotional codes and discounts for your events</p>
+        </div>
+        <div className="flex gap-3">
           <Button 
             onClick={() => {
               setSelectedCoupon(null);
               setIsAddModalOpen(true);
             }}
             disabled={!eventId}
-            className="bg-[#2563EB] hover:bg-[#1d4ed8] text-white"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add Coupon
@@ -149,60 +150,64 @@ export function CouponManagement() {
           <Button 
             onClick={handleSaveAndExit}
             variant="outline"
-            className="border-[#6B7280] text-[#6B7280] hover:bg-gray-50"
+            className="border-gray-300 text-gray-700 hover:bg-gray-50 shadow-sm"
           >
             Save & Exit
           </Button>
         </div>
       </div>
-      <Card className="border border-gray-100 shadow-xl rounded-xl mb-8 overflow-hidden bg-white">
+      <Card className="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-gray-200 bg-gray-50">
-                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Code</TableHead>
-                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Type</TableHead>
-                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Amount</TableHead>
-                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Expires</TableHead>
-                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Uses</TableHead>
-                <TableHead className="font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Event</TableHead>
-                <TableHead className="text-right font-bold text-gray-900 px-6 py-5 text-sm uppercase tracking-wider">Actions</TableHead>
+              <TableRow className="border-b border-gray-200 bg-gray-50/50">
+                <TableHead className="font-semibold text-gray-700 px-6 py-4 text-sm">Code</TableHead>
+                <TableHead className="font-semibold text-gray-700 px-6 py-4 text-sm">Type</TableHead>
+                <TableHead className="font-semibold text-gray-700 px-6 py-4 text-sm">Amount</TableHead>
+                <TableHead className="font-semibold text-gray-700 px-6 py-4 text-sm">Expires</TableHead>
+                <TableHead className="font-semibold text-gray-700 px-6 py-4 text-sm">Usage</TableHead>
+                <TableHead className="font-semibold text-gray-700 px-6 py-4 text-sm">Event</TableHead>
+                <TableHead className="text-right font-semibold text-gray-700 px-6 py-4 text-sm">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {couponsQuery.data?.map((coupon: SelectCoupon) => (
                 <TableRow 
                   key={coupon.id}
-                  className="border-b border-gray-100 hover:bg-blue-50/30 transition-all duration-200"
+                  className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors duration-150"
                 >
-                  <TableCell className="font-medium text-gray-900 px-6 py-5">{coupon.code}</TableCell>
+                  <TableCell className="font-medium text-gray-900 px-6 py-4">
+                    <code className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-mono">
+                      {coupon.code}
+                    </code>
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     <Badge 
-                      variant={coupon.discount_type === 'percentage' ? 'secondary' : 'outline'}
+                      variant={coupon.discountType === 'percentage' ? 'default' : 'secondary'}
                       className={
-                        coupon.discount_type === 'percentage' 
-                          ? 'bg-[#6B7280] text-white' 
-                          : 'border-[#6B7280] text-[#6B7280]'
+                        coupon.discountType === 'percentage' 
+                          ? 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200' 
+                          : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
                       }
                     >
-                      {coupon.discount_type === 'percentage' ? 'Percentage' : 'Fixed'}
+                      {coupon.discountType === 'percentage' ? 'Percentage' : 'Fixed Amount'}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-gray-700">
-                    {coupon.discount_type === 'percentage' ? `${coupon.amount}%` : `$${coupon.amount}`}
+                  <TableCell className="px-6 py-4 text-gray-700 font-medium">
+                    {coupon.discountType === 'percentage' ? `${coupon.amount}%` : `$${coupon.amount}`}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {coupon.expiration_date ? (
+                    {coupon.expirationDate ? (
                       <span className={`${
-                        new Date(coupon.expiration_date) < new Date() 
+                        new Date(coupon.expirationDate) < new Date() 
                           ? 'text-red-500' 
                           : 'text-green-500'
                       }`}>
-                        {new Date(coupon.expiration_date).toLocaleDateString()} 
-                        {new Date(coupon.expiration_date) < new Date() && ' (Expired)'}
+                        {new Date(coupon.expirationDate).toLocaleDateString()} 
+                        {new Date(coupon.expirationDate) < new Date() && ' (Expired)'}
                       </span>
                     ) : (
-                      <span className="text-gray-500">No expiration</span>
+                      <span className="text-gray-500 italic">No expiration</span>
                     )}
                   </TableCell>
                   <TableCell className="px-6 py-4 text-gray-700">
@@ -218,22 +223,24 @@ export function CouponManagement() {
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     <span className="text-gray-700">
-                      {events?.find(event => event.id === coupon.eventId)?.name || 'Global Coupon'}
+                      {events?.find((event: any) => event.id === coupon.eventId)?.name || 'Global Coupon'}
                     </span>
                   </TableCell>
                   <TableCell className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
                       <Button 
                         variant="ghost" 
+                        size="sm"
                         onClick={() => handleEditCoupon(coupon)}
-                        className="text-[#6B7280] hover:text-[#2563EB] hover:bg-blue-50/80 transition-colors"
+                        className="text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
                       >
                         Edit
                       </Button>
                       <Button 
                         variant="ghost" 
+                        size="sm"
                         onClick={() => handleDeleteCoupon(coupon.id)}
-                        className="text-[#EF4444] hover:bg-red-50/80 transition-colors"
+                        className="text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors"
                       >
                         Delete
                       </Button>
@@ -248,10 +255,9 @@ export function CouponManagement() {
       <CouponModal
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
-        eventId={eventId}
+        eventId={eventId?.toString() || ""}
         couponToEdit={selectedCoupon}
       />
     </div>
-    </>
   );
 }
