@@ -45,7 +45,9 @@ export default function SendGridSettingsPage() {
   const { data: settings, isLoading: isLoadingSettings } = useQuery({
     queryKey: ["sendgrid-settings"],
     queryFn: async () => {
-      const response = await fetch("/api/admin/sendgrid/settings");
+      const response = await fetch("/api/admin/sendgrid/settings", {
+        credentials: 'include'
+      });
       if (!response.ok) throw new Error("Failed to fetch SendGrid settings");
       return response.json();
     },
@@ -55,7 +57,9 @@ export default function SendGridSettingsPage() {
   const { data: sendgridTemplates, isLoading: isLoadingTemplates, refetch: refetchTemplates } = useQuery({
     queryKey: ["sendgrid-templates"],
     queryFn: async () => {
-      const response = await fetch("/api/admin/sendgrid/templates");
+      const response = await fetch("/api/admin/sendgrid/templates", {
+        credentials: 'include'
+      });
       if (!response.ok) throw new Error("Failed to fetch SendGrid templates");
       return response.json();
     },
@@ -65,7 +69,9 @@ export default function SendGridSettingsPage() {
   const { data: emailTemplates, isLoading: isLoadingEmailTemplates } = useQuery({
     queryKey: ["email-templates-with-mappings"],
     queryFn: async () => {
-      const response = await fetch("/api/admin/sendgrid/template-mappings");
+      const response = await fetch("/api/admin/sendgrid/template-mappings", {
+        credentials: 'include'
+      });
       if (!response.ok) throw new Error("Failed to fetch email template mappings");
       return response.json();
     },
@@ -77,6 +83,7 @@ export default function SendGridSettingsPage() {
       const response = await fetch("/api/admin/sendgrid/template-mapping", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify({ templateType, sendgridTemplateId }),
       });
       if (!response.ok) throw new Error("Failed to update template mapping");
@@ -104,6 +111,7 @@ export default function SendGridSettingsPage() {
       const response = await fetch("/api/admin/sendgrid/test-template", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify({
           templateId,
           recipientEmail,
