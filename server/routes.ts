@@ -7864,54 +7864,59 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
     
-    // SendGrid settings routes
+    // SendGrid settings routes with enhanced authentication debugging
     app.get('/api/admin/sendgrid/settings', isAdmin, async (req, res) => {
       try {
+        console.log('SendGrid settings request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
         const { getSendGridSettings } = await import('./routes/sendgrid-settings');
         await getSendGridSettings(req, res);
       } catch (error) {
         console.error('Error fetching SendGrid settings:', error);
-        res.status(500).send("Failed to fetch SendGrid settings");
+        res.status(500).json({ error: "Failed to fetch SendGrid settings", details: error.message });
       }
     });
     
     app.get('/api/admin/sendgrid/templates', isAdmin, async (req, res) => {
       try {
+        console.log('SendGrid templates request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
         const { getSendGridTemplates } = await import('./routes/sendgrid-settings');
         await getSendGridTemplates(req, res);
       } catch (error) {
         console.error('Error fetching SendGrid templates:', error);
-        res.status(500).send("Failed to fetch SendGrid templates");
+        res.status(500).json({ error: "Failed to fetch SendGrid templates", details: error.message });
       }
     });
     
     app.get('/api/admin/sendgrid/template-mappings', isAdmin, async (req, res) => {
       try {
+        console.log('SendGrid template mappings request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
         const { getEmailTemplatesWithSendGridMapping } = await import('./routes/sendgrid-settings');
         await getEmailTemplatesWithSendGridMapping(req, res);
       } catch (error) {
         console.error('Error fetching template mappings:', error);
-        res.status(500).send("Failed to fetch template mappings");
+        res.status(500).json({ error: "Failed to fetch template mappings", details: error.message });
       }
     });
     
     app.post('/api/admin/sendgrid/template-mapping', isAdmin, async (req, res) => {
       try {
+        console.log('SendGrid template mapping update - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
         const { updateSendGridTemplateMapping } = await import('./routes/sendgrid-settings');
         await updateSendGridTemplateMapping(req, res);
       } catch (error) {
         console.error('Error updating template mapping:', error);
-        res.status(500).send("Failed to update template mapping");
+        res.status(500).json({ error: "Failed to update template mapping", details: error.message });
       }
     });
     
     app.post('/api/admin/sendgrid/test-template', isAdmin, async (req, res) => {
       try {
+        console.log('SendGrid template test - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
         const { testSendGridTemplate } = await import('./routes/sendgrid-settings');
         await testSendGridTemplate(req, res);
       } catch (error) {
         console.error('Error testing SendGrid template:', error);
-        res.status(500).send("Failed to test SendGrid template");
+        res.status(500).json({ error: "Failed to test SendGrid template", details: error.message });
       }
     });
     
