@@ -260,7 +260,7 @@ export function AdminPageLayout({
         >
           <Button 
             variant="outline" 
-            className="w-full"
+            className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white hover:border-white/30"
             onClick={() => navigate(backUrl)}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
