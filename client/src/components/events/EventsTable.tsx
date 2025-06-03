@@ -140,7 +140,12 @@ export function EventsTable() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter, sortField, sortDirection] });
+      // Invalidate all events queries and force immediate refresh
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/events"] });
+      queryClient.refetchQueries({
+        queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter, sortField, sortDirection]
+      });
+      
       toast({
         title: "Success",
         description: "Event deleted successfully",

@@ -278,10 +278,12 @@ router.delete('/:id', hasEventAccess, async (req, res) => {
       const ageGroupIds = ageGroupRows.map(row => row.id);
       
       if (ageGroupIds.length > 0) {
-        // Delete fee assignments for these age groups
-        await tx.delete(eventAgeGroupFees)
-          .where(sql`${eventAgeGroupFees.ageGroupId} IN (${ageGroupIds.join(',')})`)
-          .execute();
+        // Delete fee assignments for these age groups using proper parameter binding
+        for (const ageGroupId of ageGroupIds) {
+          await tx.delete(eventAgeGroupFees)
+            .where(eq(eventAgeGroupFees.ageGroupId, ageGroupId))
+            .execute();
+        }
       }
       console.log('Deleted fee assignments');
 
