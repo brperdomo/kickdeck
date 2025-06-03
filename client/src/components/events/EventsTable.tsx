@@ -194,8 +194,13 @@ export function EventsTable() {
     onSuccess: (data) => {
       const action = data.event.isArchived ? "archived" : "unarchived";
       
-      // Force refetch all events data with the current filters
+      // Invalidate all events queries to ensure real-time updates
       queryClient.invalidateQueries({ 
+        queryKey: ["/api/admin/events"]
+      });
+      
+      // Also refetch the current query to get immediate updates
+      queryClient.refetchQueries({
         queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter, sortField, sortDirection]
       });
       
