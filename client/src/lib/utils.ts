@@ -13,8 +13,14 @@ export function formatDate(dateString: string | null | undefined) {
   }
   
   try {
-    // Parse the date string and add 'T00:00:00' to ensure it's treated as start of day in local timezone
-    const date = new Date(dateString);
+    // If the date string is in YYYY-MM-DD format without time, 
+    // add local time to prevent timezone conversion issues
+    let processedDateString = dateString;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      processedDateString = dateString + 'T00:00:00';
+    }
+    
+    const date = new Date(processedDateString);
     
     // Check if date is valid
     if (isNaN(date.getTime())) {
