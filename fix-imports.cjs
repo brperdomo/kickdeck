@@ -56,9 +56,15 @@ function fixImports(filePath) {
     });
     
     // Fix import statements for @db
-    content = content.replace(/from ["']@db([^"']*)["']/g, (match, importPath) => {
+    content = content.replace(/import\s+{[^}]*}\s+from\s+["']@db[^"']*["'];?/g, (match) => {
       modified = true;
-      return `// ${match} // Database import disabled for build`;
+      return `// ${match.trim()} // Database import disabled for build`;
+    });
+    
+    // Fix any broken comment lines
+    content = content.replace(/import\s+{[^}]*}\s+\/\/\s+from[^;]*;/g, (match) => {
+      modified = true;
+      return `// ${match.replace(/^import\s+/, '').replace(/\s+\/\/.*$/, '')} // Database import disabled for build`;
     });
     
     if (modified) {

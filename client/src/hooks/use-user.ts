@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { InsertUser, SelectUser } // from "@db/schema" // Database import disabled for build;
+// import type { InsertUser, SelectUser } from "@db/schema"; // Database import disabled for build
 
 // Mock admin user was removed to fix logout issues
 // Production code should never use mock data

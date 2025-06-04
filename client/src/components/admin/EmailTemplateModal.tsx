@@ -35,7 +35,7 @@ import {
   SelectValue,
 } from "../../components/ui/select";
 import type { EmailTemplate } // from "@db/schema/emailTemplates" // Database import disabled for build;
-import { insertEmailTemplateSchema } // from "@db/schema/emailTemplates" // Database import disabled for build;
+// { insertEmailTemplateSchema } // Database import disabled for build
 
 // Define template types
 const templateTypes = [

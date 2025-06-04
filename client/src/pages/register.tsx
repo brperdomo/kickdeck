@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { type InsertUser } from "@db/schema"; // Database import disabled for build
+// // import { type InsertUser } from "@db/schema"; // Database import disabled for build // Database import disabled for build
 import { useUser } from "../hooks/use-user";
 import { useToast } from "../hooks/use-toast";
 import { AnimatedBackground } from "../components/ui/AnimatedBackground";

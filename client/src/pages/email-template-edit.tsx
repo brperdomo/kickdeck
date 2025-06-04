@@ -28,8 +28,8 @@ import {
 import { Switch } from "../components/ui/switch";
 import { Editor } from "@tinymce/tinymce-react";
 import { AdminBanner } from "../components/admin/AdminBanner";
-import type { EmailTemplate } // from "@db/schema/emailTemplates" // Database import disabled for build;
-import { insertEmailTemplateSchema } // from "@db/schema/emailTemplates" // Database import disabled for build;
+// import type { EmailTemplate } from "@db/schema/emailTemplates"; // Database import disabled for build
+// import { insertEmailTemplateSchema } from "@db/schema/emailTemplates"; // Database import disabled for build
 
 // Define template types
 const templateTypes = [

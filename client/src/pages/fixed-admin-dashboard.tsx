@@ -10,7 +10,7 @@ import { Separator } from "../components/ui/separator";
 import { useUser } from "../hooks/use-user";
 import { usePermissions } from "../hooks/use-permissions";
 import { useTheme } from "../hooks/use-theme";
-import { SelectUser } // from "@db/schema" // Database import disabled for build;
+// { SelectUser } // Database import disabled for build
 import { AnimatedSidebar } from "../components/admin/AnimatedSidebar";
 import { AnimatedContent } from "../components/ui/animation";
 import { AnimatedNavigationButton } from "../components/admin/AnimatedNavigationButton";

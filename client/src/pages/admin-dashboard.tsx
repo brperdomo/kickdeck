@@ -42,7 +42,7 @@ import { useUser } from "../hooks/use-user";
 import { usePermissions } from "../hooks/use-permissions";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "../hooks/use-theme";
-import { SelectUser } // from "@db/schema" // Database import disabled for build;
+// // import { SelectUser } from "@db/schema"; // Database import disabled for build // Database import disabled for build
 import { LogoutOverlay } from "../components/ui/logout-overlay";
 import { PermissionGuard } from "../components/admin/PermissionGuard";
 
