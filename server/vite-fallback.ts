@@ -56,17 +56,21 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
+  const publicPath = path.resolve(__dirname, "../dist/public");
   const distPath = path.resolve(__dirname, "../dist");
   
-  if (fs.existsSync(distPath)) {
-    app.use(express.static(distPath));
+  // Try public directory first, then fallback to dist
+  const staticPath = fs.existsSync(publicPath) ? publicPath : distPath;
+  
+  if (fs.existsSync(staticPath)) {
+    app.use(express.static(staticPath));
     
     app.get("*", (req, res, next) => {
       if (req.path.startsWith("/api")) {
         return next();
       }
       
-      const indexPath = path.join(distPath, "index.html");
+      const indexPath = path.join(staticPath, "index.html");
       if (fs.existsSync(indexPath)) {
         res.sendFile(indexPath);
       } else {
@@ -74,7 +78,7 @@ export function serveStatic(app: Express) {
       }
     });
     
-    log("Serving static files from dist/");
+    log(`Serving static files from ${staticPath}`);
   } else {
     log("No dist folder found. Application needs to be built.", "static");
     
