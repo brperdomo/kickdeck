@@ -2265,7 +2265,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         currentStep: currentStep
       };
       
-      saveCart({
+      // Smart save implementation will be activated when cart system is re-enabled
+      console.log('Smart save triggered:', {
         formData,
         currentStep,
         selectedAgeGroupId: selectedAgeGroup?.id,
@@ -2274,7 +2275,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         totalAmount: calculateTotalAmount()
       });
     }
-  }, [user, currentStep, selectedAgeGroup, selectedBracket, teamData, players, selectedFees, addRosterLater, saveCart]);
+  }, [user, currentStep, selectedAgeGroup, selectedBracket, teamData, players, selectedFees, addRosterLater]);
 
   // Save when user makes meaningful selections
   const handleAgeGroupSelect = useCallback((ageGroup: any) => {
@@ -2295,12 +2296,12 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     setTimeout(saveOnInteraction, 500);
   }, [saveOnInteraction]);
   
-  // Clear cart on successful registration
+  // Clear cart on successful registration - disabled for smart save strategy
   useEffect(() => {
     if (currentStep === 'success') {
-      clearCart();
+      console.log('Registration completed - cart would be cleared here');
     }
-  }, [currentStep, clearCart]);
+  }, [currentStep]);
   
   // Handle club selection
   const handleClubSelect = (clubId: number | null) => {
