@@ -109,6 +109,7 @@ import {
   coupons,
   eventAdministrators,
   eventBrackets,
+  registrationCarts,
 } from "@db/schema";
 import fs from "fs/promises";
 import path from "path";
