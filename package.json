@@ -98,6 +98,7 @@
     "stripe": "^17.7.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.19.4",
     "uuid": "^11.1.0",
     "vaul": "^1.1.0",
     "wouter": "^3.3.5",
@@ -122,7 +123,6 @@
     "esbuild": "^0.24.2",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
-    "tsx": "^4.19.4",
     "typescript": "^5.8.3",
     "vite": "^5.4.19"
   },
