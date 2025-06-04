@@ -1,7 +1,7 @@
 import { db } from "@db";
 import { eventFees } from '@db/schema';
 import { sql } from "drizzle-orm";
-import { log } from "../vite-temp";
+import { log } from "../vite";
 
 /**
  * Migration to add feeType and isRequired columns to event_fees table
@@ -19,7 +19,7 @@ export async function addFeeTypeColumns() {
       AND column_name IN ('fee_type', 'is_required')
     `);
     
-    const existingColumns = hasColumns && hasColumns.length > 0 ? hasColumns.map((row: any) => row.column_name) : [];
+    const existingColumns = hasColumns.rows.map(row => row.column_name);
     
     if (!existingColumns.includes('fee_type')) {
       // Add fee_type column
