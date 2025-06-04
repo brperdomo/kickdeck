@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type InsertUser } from "@db/schema";
-import { useAuth } from "@/hooks/use-auth";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "../hooks/use-auth";
+import { useToast } from "../hooks/use-toast";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import {
