@@ -1,7 +1,7 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { usePermissions } from "@/hooks/use-permissions";
-import { cn } from "@/lib/utils";
+import { Button } from "../../components/ui/button";
+import { usePermissions } from "../../hooks/use-permissions";
+import { cn } from "../../lib/utils";
 import { motion } from "framer-motion";
 
 interface NavigationButtonProps {

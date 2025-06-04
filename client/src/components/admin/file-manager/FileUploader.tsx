@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useFileManager } from './FileManagerContext';
-import { Button } from '@/components/ui/button';
+import { Button } from "../../../components/ui/button";
 import { Upload, X } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
+import { Progress } from "../../../components/ui/progress";
+import { cn } from "../../../lib/utils";
 
 const FileUploader: React.FC = () => {
   const { 

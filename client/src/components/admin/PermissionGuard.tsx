@@ -1,8 +1,8 @@
 import React from 'react';
-import { usePermissions } from '@/hooks/use-permissions';
+import { usePermissions } from "../../hooks/use-permissions";
 import { Loader2 } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
-import type { Permission } from '@/hooks/use-permissions';
+import { useAuth } from "../../hooks/use-auth";
+import type { Permission } from "../../hooks/use-permissions";
 
 /**
  * PermissionGuard Component

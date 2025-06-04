@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import AuthFooter from '@/components/ui/AuthFooter';
+import AuthFooter from "../../components/ui/AuthFooter";
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 
 interface AuthLayoutProps {

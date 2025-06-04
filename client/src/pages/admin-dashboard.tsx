@@ -8,43 +8,43 @@ import {
   Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
-import { ComplexCard } from "@/components/admin/ComplexCard";
-import { formatAddress } from "@/lib/format-address";
-import { EventsTable } from "@/components/events/EventsTable";
-import { GeneralSettingsView } from "@/components/admin/GeneralSettingsView";
-import EmulationManager from "@/components/admin/EmulationManager";
+import { ComplexCard } from "../components/admin/ComplexCard";
+import { formatAddress } from "../lib/format-address";
+import { EventsTable } from "../components/events/EventsTable";
+import { GeneralSettingsView } from "../components/admin/GeneralSettingsView";
+import EmulationManager from "../components/admin/EmulationManager";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { AnimatedSidebar } from "@/components/admin/AnimatedSidebar";
-import { AnimatedNavigationButton } from "@/components/admin/AnimatedNavigationButton";
-import { AnimatedContainer, AnimatedList, AnimatedItem, AnimatedContent } from "@/components/ui/animation";
+import { AnimatedSidebar } from "../components/admin/AnimatedSidebar";
+import { AnimatedNavigationButton } from "../components/admin/AnimatedNavigationButton";
+import { AnimatedContainer, AnimatedList, AnimatedItem, AnimatedContent } from "../components/ui/animation";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { TeamModal } from "@/components/teams/TeamModal";
-import { TeamCsvUploader } from "@/components/teams/TeamCsvUploader";
-import { BracketAssignmentModal } from "@/components/BracketAssignmentModal";
-import { ScheduleVisualization } from "@/components/ScheduleVisualization";
-import BracketSelector from "@/components/admin/scheduling/BracketSelector";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { PaymentStatusBadge, TeamStatusBadge } from "@/components/ui/payment-status-badge";
-import { Textarea } from "@/components/ui/textarea";
-import { useUser } from "@/hooks/use-user";
-import { usePermissions } from "@/hooks/use-permissions";
+} from "../components/ui/collapsible";
+import { TeamModal } from "../components/teams/TeamModal";
+import { TeamCsvUploader } from "../components/teams/TeamCsvUploader";
+import { BracketAssignmentModal } from "../components/BracketAssignmentModal";
+import { ScheduleVisualization } from "../components/ScheduleVisualization";
+import BracketSelector from "../components/admin/scheduling/BracketSelector";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../components/ui/form";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { Badge } from "../components/ui/badge";
+import { PaymentStatusBadge, TeamStatusBadge } from "../components/ui/payment-status-badge";
+import { Textarea } from "../components/ui/textarea";
+import { useUser } from "../hooks/use-user";
+import { usePermissions } from "../hooks/use-permissions";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTheme } from "@/hooks/use-theme";
-import { SelectUser } from "@db/schema";
-import { LogoutOverlay } from "@/components/ui/logout-overlay";
-import { PermissionGuard } from "@/components/admin/PermissionGuard";
+import { useTheme } from "../hooks/use-theme";
+import { SelectUser } // from "@db/schema" // Database import disabled for build;
+import { LogoutOverlay } from "../components/ui/logout-overlay";
+import { PermissionGuard } from "../components/admin/PermissionGuard";
 
 // Format currency values in dollars with 2 decimal places
 function formatCurrency(amount: number | null | undefined): string {
@@ -143,23 +143,23 @@ import {
   Clock
 } from "lucide-react";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { cn } from "../lib/utils";
+import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { useOrganizationSettings } from "@/hooks/use-organization-settings";
-import { BrandingPreviewProvider, useBrandingPreview } from "@/hooks/use-branding-preview";
-import { BrandingPreview } from "@/components/BrandingPreview";
-import { DetailedFeeBreakdown } from "@/components/teams/DetailedFeeBreakdown";
-import { useExportProcess } from "@/hooks/use-export-process";
-import { formatDate } from "@/lib/utils";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "../components/ui/popover";
+import { useOrganizationSettings } from "../hooks/use-organization-settings";
+import { BrandingPreviewProvider, useBrandingPreview } from "../hooks/use-branding-preview";
+import { BrandingPreview } from "../components/BrandingPreview";
+import { DetailedFeeBreakdown } from "../components/teams/DetailedFeeBreakdown";
+import { useExportProcess } from "../hooks/use-export-process";
+import { formatDate } from "../lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { AnimatePresence } from "framer-motion";
-import { MotionCard } from "@/components/ui/motion-card";
-import { useToast } from "@/hooks/use-toast";
+import { MotionCard } from "../components/ui/motion-card";
+import { useToast } from "../hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -167,7 +167,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogDescription
-} from "@/components/ui/dialog";
+} from "../components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -175,7 +175,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "../components/ui/dropdown-menu";
 import { 
   Select, 
   SelectContent, 
@@ -185,29 +185,29 @@ import {
   SelectSeparator,
   SelectTrigger, 
   SelectValue 
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { AdminModal } from "@/components/admin/AdminModal";
-import { ComplexEditor } from "@/components/ComplexEditor";
-import { FieldEditor } from "@/components/FieldEditor";
-import { UpdatesLogModal } from "@/components/admin/UpdatesLogModal";
+} from "../components/ui/select";
+import { Switch } from "../components/ui/switch";
+import { AdminModal } from "../components/admin/AdminModal";
+import { ComplexEditor } from "../components/ComplexEditor";
+import { FieldEditor } from "../components/FieldEditor";
+import { UpdatesLogModal } from "../components/admin/UpdatesLogModal";
 import { useDropzone } from 'react-dropzone';
-import { FileManager } from "@/components/admin/FileManager.tsx";
-import Members from "@/components/admin/Members";
-import { FormTemplatesView } from "@/components/admin/FormTemplatesView"; // Import the component
-import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
-import FormTemplateEditPage from "@/pages/form-template-edit";
-import FormTemplateCreatePage from "@/pages/form-template-create";
-import { InternalOperationsPanel } from "@/components/admin/InternalOperationsPanel"; // Added import
-import { StripeSettingsView } from "@/components/admin/StripeSettingsView"; // Added import
-import RolePermissionsManager from "@/components/admin/RolePermissionsManager"; // Added import
-import { AdminBanner } from "@/components/admin/AdminBanner"; // Import the AdminBanner component
-import { NewRegistrationsBanner } from "@/components/admin/NewRegistrationsBanner"; // Import the notification banner
-import { Toggle } from '@/components/ui/toggle';
-import { Progress } from '@/components/ui/progress';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { FileManager } from "../components/admin/FileManager.tsx";
+import Members from "../components/admin/Members";
+import { FormTemplatesView } from "../components/admin/FormTemplatesView"; // Import the component
+import { AccountingCodeModal } from "../components/admin/AccountingCodeModal";
+import FormTemplateEditPage from "../pages/form-template-edit";
+import FormTemplateCreatePage from "../pages/form-template-create";
+import { InternalOperationsPanel } from "../components/admin/InternalOperationsPanel"; // Added import
+import { StripeSettingsView } from "../components/admin/StripeSettingsView"; // Added import
+import RolePermissionsManager from "../components/admin/RolePermissionsManager"; // Added import
+import { AdminBanner } from "../components/admin/AdminBanner"; // Import the AdminBanner component
+import { NewRegistrationsBanner } from "../components/admin/NewRegistrationsBanner"; // Import the notification banner
+import { Toggle } from "../components/ui/toggle";
+import { Progress } from "../components/ui/progress";
+import { Checkbox } from "../components/ui/checkbox";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
+import { ScrollArea } from "../components/ui/scroll-area";
 
 // CSV Uploader Component
 function CsvUploader({ onUploadSuccess, teamId }: { onUploadSuccess: (players: any[]) => void, teamId: number }) {
@@ -1975,7 +1975,7 @@ function ComplexesView() {
 
 // Using the simpler EventsView implementation from line 126
 
-import { ClientManagementView } from "@/components/admin/ClientManagementView";
+import { ClientManagementView } from "../components/admin/ClientManagementView";
 
 function HouseholdsView() {
   return <ClientManagementView />;

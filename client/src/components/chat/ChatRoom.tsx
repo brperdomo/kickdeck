@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Card } from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
 import { Send } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useUser } from "@/hooks/use-user";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "../../hooks/use-toast";
+import { useUser } from "../../hooks/use-user";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import { ScrollArea } from "../../components/ui/scroll-area";
 
 interface Message {
   id: number;

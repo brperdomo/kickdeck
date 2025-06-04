@@ -1,7 +1,7 @@
 import React from "react";
-import { cn } from "@/lib/utils";
-import { useBreakpoint } from "@/hooks/use-mobile";
-import { Button } from "@/components/ui/button";
+import { cn } from "../../lib/utils";
+import { useBreakpoint } from "../../hooks/use-mobile";
+import { Button } from "../../components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Link } from "wouter";
 

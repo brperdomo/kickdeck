@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../hooks/use-toast";
 import { Link } from "wouter";
-import AuthLayout from "@/components/layouts/AuthLayout";
+import AuthLayout from "../components/layouts/AuthLayout";
 import {
   Form,
   FormControl,
@@ -12,12 +12,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+} from "../components/ui/form";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
+import { AnimatedBackground } from "../components/ui/AnimatedBackground";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address"),

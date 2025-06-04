@@ -4,7 +4,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../../components/ui/card";
 import {
   Settings,
   PlusCircle,
@@ -13,8 +13,8 @@ import {
   Users,
   FileText
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "../../components/ui/button";
+import { Badge } from "../../components/ui/badge";
 
 type InternalOperationsPanelProps = {
   setActiveView: (view: string) => void;

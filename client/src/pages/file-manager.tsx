@@ -1,8 +1,8 @@
 import React from 'react';
 import { useLocation } from 'wouter';
-import { useUser } from '@/hooks/use-user';
-import { FileManager } from '@/components/admin/file-manager';
-import { AdminLayout, AdminSidebar, AdminSidebarItem } from '@/components/layouts/AdminLayout.tsx';
+import { useUser } from "../hooks/use-user";
+import { FileManager } from "../components/admin/file-manager";
+import { AdminLayout, AdminSidebar, AdminSidebarItem } from "../components/layouts/AdminLayout.tsx";
 import { Loader2 } from 'lucide-react';
 
 const FileManagerPage: React.FC = () => {

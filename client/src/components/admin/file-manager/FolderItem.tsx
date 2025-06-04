@@ -1,7 +1,7 @@
 import React, { useEffect, forwardRef, useRef } from 'react';
 import { Folder, DragItem } from './types';
 import { useFileManager } from './FileManagerContext';
-import { cn } from '@/lib/utils';
+import { cn } from "../../../lib/utils";
 import { 
   Folder as FolderIcon, 
   MoreHorizontal, 
@@ -23,16 +23,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
+} from "../../../components/ui/dropdown-menu";
 import { 
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+} from "../../../components/ui/dialog";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
 import { formatDistanceToNow } from 'date-fns';
 import { useDrag, useDrop } from 'react-dnd';
 import { useState } from 'react';

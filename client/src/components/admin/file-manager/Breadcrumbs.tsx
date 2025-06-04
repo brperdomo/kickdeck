@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronRight, Home } from 'lucide-react';
 import { useFileManager } from './FileManagerContext';
-import { Button } from '@/components/ui/button';
+import { Button } from "../../../components/ui/button";
 import { FileBreadcrumb } from './types';
 
 const Breadcrumbs: React.FC = () => {

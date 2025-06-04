@@ -10,11 +10,11 @@ import {
   CardFooter, 
   CardHeader, 
   CardTitle 
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
+import { Checkbox } from "../../../components/ui/checkbox";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import {
   Dialog,
@@ -24,7 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "../../../components/ui/dialog";
 import { 
   Table, 
   TableBody, 
@@ -32,10 +32,10 @@ import {
   TableHead, 
   TableHeader, 
   TableRow 
-} from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Textarea } from "@/components/ui/textarea";
+} from "../../../components/ui/table";
+import { ScrollArea } from "../../../components/ui/scroll-area";
+import { Alert, AlertDescription, AlertTitle } from "../../../components/ui/alert";
+import { Textarea } from "../../../components/ui/textarea";
 
 type AgeGroup = {
   id: number;

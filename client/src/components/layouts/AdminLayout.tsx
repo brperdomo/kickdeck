@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { Link, useLocation } from 'wouter';
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { useBreakpoint } from "@/hooks/use-mobile";
+import { Button } from "../../components/ui/button";
+import { useBreakpoint } from "../../hooks/use-mobile";
 
 // Add CSS to use admin dashboard variables
 const sidebarStyles = {

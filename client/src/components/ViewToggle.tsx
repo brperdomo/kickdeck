@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { ToggleRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { useUser } from "@/hooks/use-user";
+import { Button } from "../components/ui/button";
+import { useToast } from "../hooks/use-toast";
+import { useUser } from "../hooks/use-user";
 
 /**
  * ViewToggle Component

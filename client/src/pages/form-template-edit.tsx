@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FormTemplateEditor } from "@/components/admin/FormTemplateEditor";
+import { FormTemplateEditor } from "../components/admin/FormTemplateEditor";
 import { useLocation, useRoute } from "wouter";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "../components/ui/button";
+import { useToast } from "../hooks/use-toast";
 
 // Import the types from the FormTemplateEditor component
 interface FormFieldOption {

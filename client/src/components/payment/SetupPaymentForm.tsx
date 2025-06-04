@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from "../../components/ui/button";
+import { useToast } from "../../hooks/use-toast";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
 import { Loader2, CreditCard, Info } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { createSetupIntent, confirmSetup } from '@/lib/payment';
+import { Alert, AlertDescription } from "../../components/ui/alert";
+import { createSetupIntent, confirmSetup } from "../../lib/payment";
 
 interface SetupPaymentFormProps {
   teamId: number | string;

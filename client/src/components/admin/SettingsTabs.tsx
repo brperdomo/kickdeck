@@ -1,4 +1,4 @@
-import { EmailTemplatesView } from "@/components/admin/EmailTemplatesView";
+import { EmailTemplatesView } from "../../components/admin/EmailTemplatesView";
 
 export function GeneralSettingsView() {
   return (

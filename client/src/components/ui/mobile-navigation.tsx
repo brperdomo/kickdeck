@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, X } from "lucide-react";
 import { Separator } from "./separator";
 import { Button } from "./button";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 type NavigationItem = {
   href: string;

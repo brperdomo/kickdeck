@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
-import { cn } from "@/lib/utils"
-import { Card, CardContent } from "@/components/ui/card"
+import { cn } from "../../lib/utils"
+import { Card, CardContent } from "../../components/ui/card"
 import { QueryClient } from "@tanstack/react-query"
 
 const logoutMessages = [

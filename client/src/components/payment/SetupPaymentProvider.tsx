@@ -2,8 +2,8 @@ import { useState, useEffect, ReactNode } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { Stripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Loader2 } from 'lucide-react';
-import { getStripe } from '@/lib/payment';
-import { useToast } from '@/hooks/use-toast';
+import { getStripe } from "../../lib/payment";
+import { useToast } from "../../hooks/use-toast";
 
 interface SetupPaymentProviderProps {
   children: ReactNode;

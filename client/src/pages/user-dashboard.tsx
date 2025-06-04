@@ -1,21 +1,21 @@
 import { useState } from "react";
-import { LogoutOverlay } from "@/components/ui/logout-overlay";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { useUser } from "@/hooks/use-user";
-import { FileManager } from "@/components/admin/FileManager.tsx";
-import UserRegistrationsView from "@/components/UserRegistrationsView";
-import { MyTeams } from "@/components/member/MyTeams";
-import { MemberLayout } from "@/components/layouts/MemberLayout";
+import { LogoutOverlay } from "../components/ui/logout-overlay";
+import { Button } from "../components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../components/ui/card";
+import { useUser } from "../hooks/use-user";
+import { FileManager } from "../components/admin/FileManager.tsx";
+import UserRegistrationsView from "../components/UserRegistrationsView";
+import { MyTeams } from "../components/member/MyTeams";
+import { MemberLayout } from "../components/layouts/MemberLayout";
 import { motion } from "framer-motion";
 import { Calendar, User, UserPlus, ExternalLink } from "lucide-react";
-import { useBreakpoint } from "@/hooks/use-mobile";
+import { useBreakpoint } from "../hooks/use-mobile";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "../components/ui/dialog";
 
 export default function UserDashboard() {
   const { user } = useUser();

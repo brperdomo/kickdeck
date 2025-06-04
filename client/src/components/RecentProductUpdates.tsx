@@ -1,8 +1,8 @@
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ProductUpdates } from "@/components/ProductUpdates";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "../components/ui/button";
+import { ProductUpdates } from "../components/ProductUpdates";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 
 interface RecentProductUpdatesProps {
   limit?: number;

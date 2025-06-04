@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MemberLayout } from "@/components/layouts/MemberLayout";
+import { MemberLayout } from "../components/layouts/MemberLayout";
 import {
   Card,
   CardContent,
@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from "@/components/ui/card";
+} from "../components/ui/card";
 import {
   Form,
   FormControl,
@@ -16,7 +16,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from "@/components/ui/form";
+} from "../components/ui/form";
 import { motion } from "framer-motion";
 import { 
   User, 
@@ -28,18 +28,18 @@ import {
   AlertTriangle,
   InfoIcon
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Switch } from "../components/ui/switch";
+import { Separator } from "../components/ui/separator";
+import { useToast } from "../hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useUser } from "@/hooks/use-user";
+import { useUser } from "../hooks/use-user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from "../components/ui/checkbox";
 
 // Schema for communication preferences
 const communicationSchema = z.object({

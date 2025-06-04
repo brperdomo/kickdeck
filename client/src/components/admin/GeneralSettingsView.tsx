@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { OrganizationSettingsForm } from "./OrganizationSettingsForm";
 import { SeasonalScopeSettings } from "./SeasonalScopeSettings";
 import { StyleSettingsView } from "./StyleSettingsView";

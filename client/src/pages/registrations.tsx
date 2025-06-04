@@ -5,14 +5,14 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui/tabs";
+} from "../components/ui/tabs";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../components/ui/card";
 import {
   Table,
   TableBody,
@@ -20,21 +20,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+} from "../components/ui/table";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "../components/ui/accordion";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
+import { Skeleton } from "../components/ui/skeleton";
 import { AlertCircle, Calendar, CheckCircle, CreditCard, FileText, ShieldOff } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
-import { MemberLayout } from "@/components/layouts/MemberLayout";
+import { MemberLayout } from "../components/layouts/MemberLayout";
 
 interface Registration {
   id: number;

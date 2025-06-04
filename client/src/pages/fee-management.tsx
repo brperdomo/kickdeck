@@ -1,8 +1,8 @@
 import { useParams } from "wouter";
-import { AdminPageLayout } from "@/components/layouts/AdminPageLayout";
+import { AdminPageLayout } from "../components/layouts/AdminPageLayout";
 import { DollarSign } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { FeeManagement } from "@/components/events/FeeManagement";
+import { Card, CardContent } from "../components/ui/card";
+import { FeeManagement } from "../components/events/FeeManagement";
 
 export default function FeeManagementPage() {
   const params = useParams();

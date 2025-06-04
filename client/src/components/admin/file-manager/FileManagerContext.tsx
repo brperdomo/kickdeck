@@ -8,7 +8,7 @@ import {
   FileUploadProgress
 } from './types';
 import * as api from './api';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from "../../../hooks/use-toast";
 import { v4 as uuidv4 } from 'uuid';
 
 const FileManagerContext = createContext<FileManagerContextType | undefined>(undefined);

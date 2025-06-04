@@ -1,9 +1,9 @@
 
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent } from "../../components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
 import { Plus, Edit, Eye, MoreHorizontal, Copy } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import {
@@ -11,10 +11,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useToast } from "@/hooks/use-toast";
-import { Badge } from "@/components/ui/badge";
-import type { EmailTemplate } from "@db/schema/emailTemplates";
+} from "../../components/ui/dropdown-menu";
+import { useToast } from "../../hooks/use-toast";
+import { Badge } from "../../components/ui/badge";
+import type { EmailTemplate } // from "@db/schema/emailTemplates" // Database import disabled for build;
 
 interface EmailTemplatesViewProps {
   isEmbedded?: boolean;

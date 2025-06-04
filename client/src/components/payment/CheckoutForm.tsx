@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+import { Button } from "../../components/ui/button";
+import { useToast } from "../../hooks/use-toast";
 import { Loader2 } from 'lucide-react';
 
 interface CheckoutFormProps {

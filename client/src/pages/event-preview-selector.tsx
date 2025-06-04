@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useLocation } from '@/hooks/use-location';
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { useLocation } from "../hooks/use-location";
 
 // Define the event interface
 interface Event {

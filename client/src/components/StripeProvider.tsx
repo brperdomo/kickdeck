@@ -1,8 +1,8 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe, Stripe } from '@stripe/stripe-js';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Skeleton } from "../components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 import { AlertCircle } from 'lucide-react';
 
 interface StripeProviderProps {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from "../../components/ui/button";
 import { LifeBuoy, X, HelpCircle, Info } from 'lucide-react';
 import MascotCharacter, { MascotEmotion } from './MascotCharacter';
 import SpeechBubble from './SpeechBubble';

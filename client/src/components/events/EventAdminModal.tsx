@@ -7,7 +7,7 @@ import {
   DialogFooter, 
   DialogHeader, 
   DialogTitle 
-} from "@/components/ui/dialog";
+} from "../../components/ui/dialog";
 import { 
   Table, 
   TableHeader, 
@@ -15,8 +15,8 @@ import {
   TableHead, 
   TableBody, 
   TableCell 
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+} from "../../components/ui/table";
+import { Button } from "../../components/ui/button";
 import { 
   Select, 
   SelectContent, 
@@ -25,19 +25,19 @@ import {
   SelectLabel, 
   SelectTrigger, 
   SelectValue 
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "../../components/ui/select";
+import { Label } from "../../components/ui/label";
+import { Badge } from "../../components/ui/badge";
+import { Checkbox } from "../../components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { 
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "../../components/ui/accordion";
 import { Loader2, UserPlus, Trash2, Edit, ShieldCheck, Settings } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../../hooks/use-toast";
 
 interface Admin {
   id: number;

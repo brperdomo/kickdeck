@@ -8,15 +8,15 @@ import {
   CardTitle, 
   CardDescription, 
   CardFooter 
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
 import { 
   Select, 
   SelectContent, 
   SelectItem, 
   SelectTrigger, 
   SelectValue 
-} from "@/components/ui/select";
+} from "../components/ui/select";
 import { 
   Table, 
   TableBody, 
@@ -24,7 +24,7 @@ import {
   TableHead, 
   TableHeader, 
   TableRow 
-} from "@/components/ui/table";
+} from "../components/ui/table";
 import { 
   BarChart, 
   Bar, 
@@ -48,17 +48,17 @@ import {
   RefreshCw, 
   TrendingUp 
 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { formatCurrency } from "@/lib/formatters";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+import { toast } from "../hooks/use-toast";
+import { formatCurrency } from "../lib/formatters";
+import { Label } from "../components/ui/label";
+import { Switch } from "../components/ui/switch";
 import { 
   Tabs, 
   TabsContent, 
   TabsList, 
   TabsTrigger 
-} from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from "../components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 
 // Define color palette that matches our UI
 const CHART_COLORS = [

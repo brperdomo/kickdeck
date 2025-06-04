@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
 import {
   Folder,
   FileItem,
@@ -14,20 +14,20 @@ import {
 import {
   Card,
   CardContent,
-} from '@/components/ui/card';
+} from "../../components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from "../../components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "../../components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -35,7 +35,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "../../components/ui/table";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import {
@@ -45,17 +45,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from "../../components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { ScrollArea } from '@/components/ui/scroll-area';
+} from "../../components/ui/select";
+import { ScrollArea } from "../../components/ui/scroll-area";
 import { toast } from 'sonner';
-import { useUser } from '@/hooks/use-user';
+import { useUser } from "../../hooks/use-user";
 import {
   FolderIcon,
   FileIcon,
@@ -79,8 +79,8 @@ import {
   ClipboardCopyIcon,
   MaximizeIcon
 } from 'lucide-react';
-import { formatBytes, formatDate } from '@/lib/utils';
-import { cn } from '@/lib/utils';
+import { formatBytes, formatDate } from "../../lib/utils";
+import { cn } from "../../lib/utils";
 
 export function FileManager({ className, onFileSelect, allowMultiple = false }: FileManagerProps) {
   const { user } = useUser();

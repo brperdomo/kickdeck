@@ -8,8 +8,8 @@ import {
   CardTitle, 
   CardDescription, 
   CardFooter 
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
 import { 
   Table, 
   TableBody, 
@@ -17,7 +17,7 @@ import {
   TableHead, 
   TableHeader, 
   TableRow 
-} from "@/components/ui/table";
+} from "../components/ui/table";
 import { 
   BarChart, 
   Bar, 
@@ -42,18 +42,18 @@ import {
   Tag,
   ToggleLeft
 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { formatCurrency } from "@/lib/formatters";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { toast } from "../hooks/use-toast";
+import { formatCurrency } from "../lib/formatters";
+import { Switch } from "../components/ui/switch";
+import { Label } from "../components/ui/label";
 import { 
   Tabs, 
   TabsContent, 
   TabsList, 
   TabsTrigger 
-} from "@/components/ui/tabs";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+} from "../components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
+import { Badge } from "../components/ui/badge";
 
 // Define color palette that matches our UI
 const CHART_COLORS = [

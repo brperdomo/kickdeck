@@ -1,8 +1,8 @@
 import { ReactNode, useEffect } from "react";
 import { MemberSidebar } from "./MemberSidebar";
 import { motion } from "framer-motion";
-import { useBreakpoint } from "@/hooks/use-mobile";
-import { MobileDashboard } from "@/components/mobile/MobileDashboard";
+import { useBreakpoint } from "../../hooks/use-mobile";
+import { MobileDashboard } from "../../components/mobile/MobileDashboard";
 
 interface MemberLayoutProps {
   children: ReactNode;

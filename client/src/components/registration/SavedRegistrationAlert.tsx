@@ -4,8 +4,8 @@ import {
   Alert, 
   AlertDescription, 
   AlertTitle 
-} from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+} from "../../components/ui/alert";
+import { Button } from "../../components/ui/button";
 import { formatDistanceToNow } from 'date-fns';
 
 interface SavedRegistrationAlertProps {

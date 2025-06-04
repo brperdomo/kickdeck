@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Link2, Edit, FileQuestion, Copy, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash, Archive, RotateCcw, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { useLocation } from "wouter";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../../hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -10,17 +10,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from "../../components/ui/table";
+import { Card } from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../../components/ui/select";
 import { Loader2 } from "lucide-react";
 import {
   DropdownMenu,
@@ -29,7 +29,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "../../components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -37,8 +37,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
+} from "../../components/ui/dialog";
+import { Badge } from "../../components/ui/badge";
 import { 
   Pagination, 
   PaginationContent, 
@@ -47,11 +47,11 @@ import {
   PaginationLink, 
   PaginationNext, 
   PaginationPrevious 
-} from "@/components/ui/pagination";
-import { Switch } from "@/components/ui/switch";
-import { formatDate } from "@/lib/utils";
-import { ResponsiveCardTable } from "@/components/ui/responsive-card-table";
-import { useMobileContext } from "@/hooks/use-mobile";
+} from "../../components/ui/pagination";
+import { Switch } from "../../components/ui/switch";
+import { formatDate } from "../../lib/utils";
+import { ResponsiveCardTable } from "../../components/ui/responsive-card-table";
+import { useMobileContext } from "../../hooks/use-mobile";
 
 interface Event {
   id: bigint | number;  

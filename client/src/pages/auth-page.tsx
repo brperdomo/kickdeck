@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type InsertUser } from "@db/schema";
+// import { type InsertUser } // from "@db/schema" // Database import disabled for build;
 import { useAuth } from "../hooks/use-auth";
 import { useToast } from "../hooks/use-toast";
-import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
-import AuthLayout from "@/components/layouts/AuthLayout";
+import { AnimatedBackground } from "../components/ui/AnimatedBackground";
+import AuthLayout from "../components/layouts/AuthLayout";
 import {
   Form,
   FormControl,
@@ -12,10 +12,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+} from "../components/ui/form";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Trophy, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Link, useLocation } from "wouter";

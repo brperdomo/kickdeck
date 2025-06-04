@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from "../../components/ui/button";
 import { X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import MascotCharacter, { MascotEmotion } from './MascotCharacter';

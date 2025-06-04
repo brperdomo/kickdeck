@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { Calendar, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 import { useLocation } from "wouter";
-import { EventTab } from "@/components/forms/event-form-types";
+import { EventTab } from "../../components/forms/event-form-types";
 
 // Subtle particle animation for sidebar background
 const Particles = () => {

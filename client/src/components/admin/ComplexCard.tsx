@@ -5,12 +5,12 @@ import {
   CardContent, 
   CardFooter,
   CardHeader
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { formatAddress } from "@/lib/format-address";
-import { cn } from "@/lib/utils";
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Badge } from "../../components/ui/badge";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
+import { formatAddress } from "../../lib/format-address";
+import { cn } from "../../lib/utils";
 import { motion } from "framer-motion";
 
 interface Complex {

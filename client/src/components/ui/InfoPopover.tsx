@@ -4,7 +4,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from "../../components/ui/popover";
 import { InfoIcon } from 'lucide-react';
 
 interface InfoPopoverProps {

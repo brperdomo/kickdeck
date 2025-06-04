@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useUser } from "@/hooks/use-user";
-import { useHouseholdInvitations } from "@/hooks/use-household-invitations";
-import { useHouseholdDetails } from "@/hooks/use-household-details";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useUser } from "../hooks/use-user";
+import { useHouseholdInvitations } from "../hooks/use-household-invitations";
+import { useHouseholdDetails } from "../hooks/use-household-details";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -15,10 +15,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "../components/ui/dialog";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../components/ui/form";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { format } from "date-fns";
 import {
   Table,
@@ -27,11 +27,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "../components/ui/table";
 import { Users, Send, Clock, Home, HomeIcon, MapPin, Loader2, Save, Mail } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "../hooks/use-toast";
 import { motion } from "framer-motion";
-import { MemberLayout } from "@/components/layouts/MemberLayout";
+import { MemberLayout } from "../components/layouts/MemberLayout";
 
 // Schema for the address form
 const addressSchema = z.object({

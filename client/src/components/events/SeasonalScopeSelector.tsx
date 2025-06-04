@@ -5,9 +5,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
+} from "../../components/ui/select";
+import { Label } from "../../components/ui/label";
+import { Card, CardContent } from "../../components/ui/card";
 
 interface SeasonalScope {
   id: number;
