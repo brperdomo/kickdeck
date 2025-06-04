@@ -5,8 +5,7 @@ import { setupWebSocketServer } from "./websocket";
 import { log } from "./vite";
 import { crypto } from "./crypto";
 import { db } from "@db";
-import { emailTemplates, insertPlayerSchema, registrationCarts } from "@db/schema";
-import { eq, and } from "drizzle-orm";
+import { emailTemplates, insertPlayerSchema } from "@db/schema";
 import { isAdmin, hasEventAccess } from "./middleware";
 // Removed problematic middleware import to fix server startup
 import seasonalScopesRouter from "./routes/seasonal-scopes";
@@ -1068,123 +1067,6 @@ export function registerRoutes(app: Express): Server {
       } catch (error) {
         console.error('Error saving personal details:', error);
         res.status(500).json({ error: 'Failed to save personal details' });
-      }
-    });
-
-    // Registration Cart API endpoints
-    
-    // Get existing registration cart for user and event
-    app.get('/api/events/:eventId/cart', async (req: Request, res: Response) => {
-      if (!req.user) {
-        return res.status(401).json({ error: 'You must be logged in to access registration cart' });
-      }
-      
-      try {
-        const { eventId } = req.params;
-        const userId = req.user.id;
-        
-        const [cart] = await db.execute(sql`
-          SELECT * FROM registration_carts 
-          WHERE user_id = ${userId} AND event_id = ${eventId}
-          AND expires_at > NOW()
-        `);
-        
-        if (!cart.rows || cart.rows.length === 0) {
-          return res.json({ cart: null });
-        }
-        
-        const cartData = cart.rows[0];
-        return res.json({ 
-          cart: {
-            id: cartData.id,
-            eventId: cartData.event_id,
-            formData: cartData.form_data,
-            currentStep: cartData.current_step,
-            selectedAgeGroupId: cartData.selected_age_group_id,
-            selectedBracketId: cartData.selected_bracket_id,
-            selectedClubId: cartData.selected_club_id,
-            selectedFeeIds: cartData.selected_fee_ids,
-            totalAmount: cartData.total_amount,
-            lastUpdated: cartData.last_updated,
-            createdAt: cartData.created_at
-          }
-        });
-      } catch (error) {
-        console.error('Error fetching registration cart:', error);
-        res.status(500).json({ error: 'Failed to fetch registration cart' });
-      }
-    });
-    
-    // Save/update registration cart using raw SQL to avoid timestamp issues
-    app.post('/api/events/:eventId/cart', async (req: Request, res: Response) => {
-      if (!req.user) {
-        return res.status(401).json({ error: 'You must be logged in to save registration cart' });
-      }
-      
-      try {
-        const { eventId } = req.params;
-        const userId = req.user.id;
-        const {
-          formData,
-          currentStep,
-          selectedAgeGroupId,
-          selectedBracketId,
-          selectedClubId,
-          selectedFeeIds,
-          totalAmount
-        } = req.body;
-        
-        // Use INSERT ... ON CONFLICT to handle upsert with raw SQL
-        await db.execute(sql`
-          INSERT INTO registration_carts (
-            user_id, event_id, form_data, current_step, 
-            selected_age_group_id, selected_bracket_id, selected_club_id,
-            selected_fee_ids, total_amount, last_updated, created_at, expires_at
-          ) VALUES (
-            ${userId}, ${eventId}, ${JSON.stringify(formData)}, ${currentStep},
-            ${selectedAgeGroupId || null}, ${selectedBracketId || null}, ${selectedClubId || null},
-            ${selectedFeeIds || null}, ${totalAmount || null}, 
-            NOW(), NOW(), NOW() + INTERVAL '30 days'
-          )
-          ON CONFLICT (user_id, event_id) 
-          DO UPDATE SET
-            form_data = EXCLUDED.form_data,
-            current_step = EXCLUDED.current_step,
-            selected_age_group_id = EXCLUDED.selected_age_group_id,
-            selected_bracket_id = EXCLUDED.selected_bracket_id,
-            selected_club_id = EXCLUDED.selected_club_id,
-            selected_fee_ids = EXCLUDED.selected_fee_ids,
-            total_amount = EXCLUDED.total_amount,
-            last_updated = NOW(),
-            expires_at = NOW() + INTERVAL '30 days'
-        `);
-        
-        res.json({ message: 'Registration cart saved successfully' });
-      } catch (error) {
-        console.error('Error saving registration cart:', error);
-        res.status(500).json({ error: 'Failed to save registration cart' });
-      }
-    });
-    
-    // Clear registration cart
-    app.delete('/api/events/:eventId/cart', async (req: Request, res: Response) => {
-      if (!req.user) {
-        return res.status(401).json({ error: 'You must be logged in to clear registration cart' });
-      }
-      
-      try {
-        const { eventId } = req.params;
-        const userId = req.user.id;
-        
-        await db.execute(sql`
-          DELETE FROM registration_carts 
-          WHERE user_id = ${userId} AND event_id = ${eventId}
-        `);
-        
-        res.json({ message: 'Registration cart cleared successfully' });
-      } catch (error) {
-        console.error('Error clearing registration cart:', error);
-        res.status(500).json({ error: 'Failed to clear registration cart' });
       }
     });
 

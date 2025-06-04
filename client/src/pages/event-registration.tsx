@@ -36,8 +36,6 @@ import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground
 import { useAuth } from "@/hooks/use-auth";
 import { useHouseholdDetails } from "@/hooks/use-household-details";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-// import { useRegistrationCart } from "@/hooks/useRegistrationCart"; // Temporarily disabled
-import { ResumeRegistrationDialog } from "@/components/ResumeRegistrationDialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
@@ -1230,18 +1228,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [selectedFees, setSelectedFees] = useState<Fee[]>([]);
   const [addRosterLater, setAddRosterLater] = useState<boolean>(false);
   
-  // Registration cart functionality - temporarily disabled for smart save strategy
-  // const { cart, saveCart, clearCart, isLoading: cartLoading } = useRegistrationCart(eventId || '');
-  const [showResumeDialog, setShowResumeDialog] = useState(false);
-  const [cartChecked, setCartChecked] = useState(true); // Skip cart checking
-  
-  // Placeholder cart functions for smart save strategy
-  const cart = null;
-  const cartLoading = false;
-  
-  // Auto-save timer ref
-  const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
-  
   // We don't need the handleAuthRedirect function anymore since we're handling auth state
   // directly in the useEffect hooks. This was causing the redirect to /auth when unnecessary.
   // Removing this function and direct redirections prevents circular redirects.
@@ -2108,121 +2094,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     }
   });
 
-  // Function to save current registration progress
-  const saveRegistrationProgress = useCallback(() => {
-    if (!user || !eventId) return;
-    
-    const formData = form.getValues();
-    const teamFormData = teamForm.getValues();
-    
-    const cartData = {
-      formData: {
-        ...formData,
-        selectedAgeGroup,
-        selectedBracket,
-        players,
-        selectedFees,
-        addRosterLater,
-        clubs,
-        isNewClub,
-      },
-      currentStep,
-      selectedAgeGroupId: selectedAgeGroup?.id,
-      selectedBracketId: selectedBracket,
-      selectedClubId: teamFormData.clubId,
-      selectedFeeIds: JSON.stringify(selectedFees.map(f => f.id)),
-      totalAmount: teamFormData.totalAmount,
-    };
-    
-    saveCart(cartData);
-  }, [user, eventId, form, teamForm, currentStep, selectedAgeGroup, selectedBracket, players, selectedFees, addRosterLater, clubs, isNewClub, saveCart]);
-  
-  // Auto-save with debouncing
-  const debouncedAutoSave = useCallback(() => {
-    if (autoSaveTimerRef.current) {
-      clearTimeout(autoSaveTimerRef.current);
-    }
-    
-    autoSaveTimerRef.current = setTimeout(() => {
-      saveRegistrationProgress();
-    }, 2000); // Save after 2 seconds of inactivity
-  }, [saveRegistrationProgress]);
-  
-  // Resume registration from cart
-  const handleResumeRegistration = useCallback(() => {
-    if (!cart) return;
-    
-    try {
-      const { formData } = cart;
-      
-      // Restore form data
-      if (formData) {
-        form.reset({
-          ...form.getValues(),
-          ...formData,
-        });
-        
-        // Restore other state
-        if (formData.selectedAgeGroup) setSelectedAgeGroup(formData.selectedAgeGroup);
-        if (formData.selectedBracket) setSelectedBracket(formData.selectedBracket);
-        if (formData.players) setPlayers(formData.players);
-        if (formData.selectedFees) setSelectedFees(formData.selectedFees);
-        if (formData.addRosterLater !== undefined) setAddRosterLater(formData.addRosterLater);
-        if (formData.clubs) setClubs(formData.clubs);
-        if (formData.isNewClub !== undefined) setIsNewClub(formData.isNewClub);
-      }
-      
-      // Navigate to the saved step
-      setCurrentStep(cart.currentStep as RegistrationStep);
-      setShowResumeDialog(false);
-      
-      toast({
-        title: "Registration Resumed",
-        description: "Your previous progress has been restored.",
-      });
-    } catch (error) {
-      console.error('Error resuming registration:', error);
-      toast({
-        title: "Error",
-        description: "Failed to resume registration. Starting fresh.",
-        variant: "destructive",
-      });
-      handleStartFresh();
-    }
-  }, [cart, form, toast]);
-  
-  // Start fresh registration
-  const handleStartFresh = useCallback(() => {
-    clearCart();
-    setShowResumeDialog(false);
-    setCurrentStep('personal');
-    
-    // Reset all form state
-    form.reset({
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-      email: user?.email || '',
-      phone: user?.phone || '',
-      address: addressData.address,
-      city: addressData.city,
-      state: addressData.state,
-      zipCode: addressData.zipCode,
-      password: '',
-      confirmPassword: '',
-      emailChecked: false,
-      emailExists: false,
-      authenticated: !!user,
-    });
-    
-    teamForm.reset();
-    setPlayers([]);
-    setSelectedAgeGroup(null);
-    setSelectedBracket(null);
-    setSelectedFees([]);
-    setAddRosterLater(false);
-    setIsNewClub(false);
-  }, [form, teamForm, user, addressData]); // Removed clearCart dependency
-
   const addPlayer = () => {
     const newPlayer: PlayerForm = {
       id: crypto.randomUUID(),
@@ -2243,65 +2114,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     setPlayers(updatedPlayers);
     teamForm.setValue('players', updatedPlayers);
   };
-
-  // Cart functionality disabled - smart save strategy implemented
-  useEffect(() => {
-    setCartChecked(true); // Skip cart checking
-  }, [user, currentStep]);
-  
-  // Smart save strategy: Save on meaningful user interactions only
-  const saveOnInteraction = useCallback(() => {
-    if (user && currentStep !== 'auth' && currentStep !== 'success') {
-      const formData = {
-        selectedAgeGroupId: selectedAgeGroup?.id,
-        selectedBracketId: selectedBracket?.id,
-        teamName: teamData.name,
-        managerName: teamData.managerName,
-        managerEmail: teamData.managerEmail,
-        managerPhone: teamData.managerPhone,
-        players: players,
-        selectedFees: selectedFees,
-        addRosterLater: addRosterLater,
-        currentStep: currentStep
-      };
-      
-      // Smart save implementation will be activated when cart system is re-enabled
-      console.log('Smart save triggered:', {
-        formData,
-        currentStep,
-        selectedAgeGroupId: selectedAgeGroup?.id,
-        selectedBracketId: selectedBracket?.id,
-        selectedFeeIds: selectedFees.length > 0 ? selectedFees.join(',') : undefined,
-        totalAmount: calculateTotalAmount()
-      });
-    }
-  }, [user, currentStep, selectedAgeGroup, selectedBracket, teamData, players, selectedFees, addRosterLater]);
-
-  // Save when user makes meaningful selections
-  const handleAgeGroupSelect = useCallback((ageGroup: any) => {
-    setSelectedAgeGroup(ageGroup);
-    setTimeout(saveOnInteraction, 500); // Small delay to batch changes
-  }, [saveOnInteraction]);
-
-  const handleBracketSelect = useCallback((bracket: any) => {
-    setSelectedBracket(bracket);
-    setTimeout(saveOnInteraction, 500);
-  }, [saveOnInteraction]);
-
-  const handlePlayerUpdate = useCallback(() => {
-    setTimeout(saveOnInteraction, 1000); // Longer delay for text input
-  }, [saveOnInteraction]);
-
-  const handleFeeSelection = useCallback(() => {
-    setTimeout(saveOnInteraction, 500);
-  }, [saveOnInteraction]);
-  
-  // Clear cart on successful registration - disabled for smart save strategy
-  useEffect(() => {
-    if (currentStep === 'success') {
-      console.log('Registration completed - cart would be cleared here');
-    }
-  }, [currentStep]);
   
   // Handle club selection
   const handleClubSelect = (clubId: number | null) => {
@@ -4994,18 +4806,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         </Card>
       </div>
       <Footer />
-      
-      {/* Resume Registration Dialog */}
-      {cart && (
-        <ResumeRegistrationDialog
-          isOpen={showResumeDialog}
-          onClose={() => setShowResumeDialog(false)}
-          cart={cart}
-          onResume={handleResumeRegistration}
-          onStartFresh={handleStartFresh}
-          isClearing={false}
-        />
-      )}
     </div>
   );
 }
