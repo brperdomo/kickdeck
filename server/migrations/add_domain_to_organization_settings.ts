@@ -1,7 +1,7 @@
 
 import { db } from "@db";
 import { sql } from "drizzle-orm";
-import { log } from "../vite";
+import { log } from "../vite-fallback";
 
 export async function addDomainToOrganizationSettings() {
   try {

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { log } from '../vite';
+import { log } from '../vite-fallback';
 import { createPaymentIntent, updatePaymentIntentStatus } from '../services/stripeService';
 import { teams } from '@db/schema';
 import { db } from '@db';
