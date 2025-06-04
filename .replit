@@ -27,7 +27,7 @@ localPort = 24678
 externalPort = 3000
 
 [workflows]
-runButton = "Start application (alternative)"
+runButton = "Development Server"
 
 [[workflows.workflow]]
 name = "Project"
@@ -61,3 +61,12 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npx tsx server/index.ts"
+
+[[workflows.workflow]]
+name = "Development Server"
+author = 38826922
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
