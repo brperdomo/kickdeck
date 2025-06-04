@@ -5,7 +5,8 @@ import { setupWebSocketServer } from "./websocket";
 import { log } from "./vite";
 import { crypto } from "./crypto";
 import { db } from "@db";
-import { emailTemplates, insertPlayerSchema } from "@db/schema";
+import { emailTemplates, insertPlayerSchema, registrationCarts } from "@db/schema";
+import { eq, and } from "drizzle-orm";
 import { isAdmin, hasEventAccess } from "./middleware";
 // Removed problematic middleware import to fix server startup
 import seasonalScopesRouter from "./routes/seasonal-scopes";
@@ -1134,40 +1135,47 @@ export function registerRoutes(app: Express): Server {
         } = req.body;
         
         // Check if cart already exists
-        const [existingCart] = await db.execute(sql`
-          SELECT id FROM registration_carts 
-          WHERE user_id = ${userId} AND event_id = ${eventId}
-        `);
+        const existingCart = await db.query.registrationCarts.findFirst({
+          where: and(
+            eq(registrationCarts.userId, userId),
+            eq(registrationCarts.eventId, eventId)
+          )
+        });
         
-        if (existingCart.rows && existingCart.rows.length > 0) {
+        if (existingCart) {
           // Update existing cart
-          await db.execute(sql`
-            UPDATE registration_carts 
-            SET 
-              form_data = ${JSON.stringify(formData)},
-              current_step = ${currentStep},
-              selected_age_group_id = ${selectedAgeGroupId || null},
-              selected_bracket_id = ${selectedBracketId || null},
-              selected_club_id = ${selectedClubId || null},
-              selected_fee_ids = ${selectedFeeIds || null},
-              total_amount = ${totalAmount || null},
-              last_updated = NOW(),
-              expires_at = NOW() + INTERVAL '30 days'
-            WHERE user_id = ${userId} AND event_id = ${eventId}
-          `);
+          await db.update(registrationCarts)
+            .set({
+              formData: JSON.stringify(formData),
+              currentStep,
+              selectedAgeGroupId: selectedAgeGroupId || null,
+              selectedBracketId: selectedBracketId || null,
+              selectedClubId: selectedClubId || null,
+              selectedFeeIds: selectedFeeIds || null,
+              totalAmount: totalAmount || null,
+              lastUpdated: new Date().toISOString(),
+              expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
+            })
+            .where(and(
+              eq(registrationCarts.userId, userId),
+              eq(registrationCarts.eventId, eventId)
+            ));
         } else {
           // Create new cart
-          await db.execute(sql`
-            INSERT INTO registration_carts (
-              user_id, event_id, form_data, current_step,
-              selected_age_group_id, selected_bracket_id, selected_club_id,
-              selected_fee_ids, total_amount, last_updated, created_at, expires_at
-            ) VALUES (
-              ${userId}, ${eventId}, ${JSON.stringify(formData)}, ${currentStep},
-              ${selectedAgeGroupId || null}, ${selectedBracketId || null}, ${selectedClubId || null},
-              ${selectedFeeIds || null}, ${totalAmount || null}, NOW(), NOW(), NOW() + INTERVAL '30 days'
-            )
-          `);
+          await db.insert(registrationCarts).values({
+            userId,
+            eventId,
+            formData: JSON.stringify(formData),
+            currentStep,
+            selectedAgeGroupId: selectedAgeGroupId || null,
+            selectedBracketId: selectedBracketId || null,
+            selectedClubId: selectedClubId || null,
+            selectedFeeIds: selectedFeeIds || null,
+            totalAmount: totalAmount || null,
+            createdAt: new Date().toISOString(),
+            lastUpdated: new Date().toISOString(),
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          });
         }
         
         res.json({ message: 'Registration cart saved successfully' });
