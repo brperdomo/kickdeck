@@ -1,6 +1,6 @@
 import { pgTable, text, serial, boolean, jsonb, timestamp, integer, bigint, date, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { z } from "zod";
 
 export const clubs = pgTable("clubs", {
@@ -599,6 +599,59 @@ export const insertEventSettingSchema = createInsertSchema(eventSettings, {
 
 export const selectEventAdministratorSchema = createSelectSchema(eventAdministrators);
 export const selectEventSettingSchema = createSelectSchema(eventSettings);
+
+// Registration cart table for incomplete registrations
+export const registrationCarts = pgTable("registration_carts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  eventId: bigint("event_id", { mode: "number" }).notNull().references(() => events.id, { onDelete: 'cascade' }),
+  // Registration progress data stored as JSON
+  formData: jsonb("form_data").notNull(), // Contains all form field values
+  currentStep: text("current_step").notNull().default("age-group"), // Current step in registration flow
+  selectedAgeGroupId: integer("selected_age_group_id").references(() => eventAgeGroups.id),
+  selectedBracketId: integer("selected_bracket_id").references(() => eventBrackets.id),
+  selectedClubId: integer("selected_club_id").references(() => clubs.id),
+  selectedFeeIds: text("selected_fee_ids"), // Comma-separated list of fee IDs
+  totalAmount: integer("total_amount"), // Total calculated amount in cents
+  // Track when the cart was last updated
+  lastUpdated: timestamp("last_updated").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  // Expiry for cart cleanup (default 30 days)
+  expiresAt: timestamp("expires_at").notNull().default(sql`(now() + interval '30 days')`),
+});
+
+export const registrationCartsRelations = relations(registrationCarts, ({ one }) => ({
+  user: one(users, {
+    fields: [registrationCarts.userId],
+    references: [users.id]
+  }),
+  event: one(events, {
+    fields: [registrationCarts.eventId],
+    references: [events.id]
+  }),
+  ageGroup: one(eventAgeGroups, {
+    fields: [registrationCarts.selectedAgeGroupId],
+    references: [eventAgeGroups.id]
+  }),
+  bracket: one(eventBrackets, {
+    fields: [registrationCarts.selectedBracketId],
+    references: [eventBrackets.id]
+  }),
+  club: one(clubs, {
+    fields: [registrationCarts.selectedClubId],
+    references: [clubs.id]
+  }),
+}));
+
+export const insertRegistrationCartSchema = createInsertSchema(registrationCarts, {
+  formData: z.record(z.any()), // Allow any form data structure
+  currentStep: z.enum(["age-group", "team", "players", "payment", "success"]),
+  totalAmount: z.number().int().min(0).optional(),
+});
+
+export const selectRegistrationCartSchema = createSelectSchema(registrationCarts);
+export type InsertRegistrationCart = typeof registrationCarts.$inferInsert;
+export type SelectRegistrationCart = typeof registrationCarts.$inferSelect;
 
 export type InsertEventAdministrator = typeof eventAdministrators.$inferInsert;
 export type SelectEventAdministrator = typeof eventAdministrators.$inferSelect;
