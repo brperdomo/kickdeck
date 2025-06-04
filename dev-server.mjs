@@ -1,36 +1,34 @@
 #!/usr/bin/env node
 
-// Simple development server that compiles TypeScript on the fly
 import { spawn } from 'child_process';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { existsSync } from 'fs';
 
 console.log('Starting development server...');
 
-// Use npx to run tsx directly
-const child = spawn('npx', ['tsx', 'server/index.ts'], {
+// Start the working server in the background
+const serverProcess = spawn('node', ['working-server.mjs'], {
   stdio: 'inherit',
-  env: { ...process.env },
-  cwd: __dirname
+  env: { 
+    ...process.env, 
+    NODE_ENV: 'development',
+    PORT: process.env.PORT || 5000
+  }
 });
 
-child.on('error', (err) => {
-  console.error('Failed to start server:', err.message);
-  process.exit(1);
-});
-
-child.on('exit', (code) => {
-  process.exit(code || 0);
-});
-
-// Handle cleanup
+// Handle process cleanup
 process.on('SIGINT', () => {
-  child.kill('SIGINT');
+  console.log('\nShutting down development server...');
+  serverProcess.kill('SIGINT');
+  process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  child.kill('SIGTERM');
+  console.log('\nShutting down development server...');
+  serverProcess.kill('SIGTERM');
+  process.exit(0);
+});
+
+serverProcess.on('exit', (code) => {
+  console.log(`Development server exited with code: ${code}`);
+  process.exit(code || 0);
 });
