@@ -1,7 +1,7 @@
 import { db } from "@db";
 import { eventFees } from '@db/schema';
 import { sql } from "drizzle-orm";
-import { log } from "../vite";
+import { log } from "../vite-temp";
 
 /**
  * Migration to add feeType and isRequired columns to event_fees table

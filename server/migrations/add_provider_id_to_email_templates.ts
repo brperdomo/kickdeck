@@ -15,15 +15,22 @@ export async function addProviderIdToEmailTemplates() {
     `);
     
     // If providerId column doesn't exist, add it
-    if (result.rows.length === 0) {
+    if (!result || result.length === 0) {
       console.log('Adding provider_id column to email_templates table...');
       
-      await db.execute(sql`
-        ALTER TABLE email_templates 
-        ADD COLUMN provider_id INTEGER REFERENCES email_provider_settings(id) ON DELETE SET NULL;
-      `);
-
-      console.log('Successfully added provider_id column to email_templates table');
+      try {
+        await db.execute(sql`
+          ALTER TABLE email_templates 
+          ADD COLUMN provider_id INTEGER REFERENCES email_provider_settings(id) ON DELETE SET NULL;
+        `);
+        console.log('Successfully added provider_id column to email_templates table');
+      } catch (error: any) {
+        if (error.code === '42701') {
+          console.log('provider_id column already exists in email_templates table');
+        } else {
+          throw error;
+        }
+      }
     } else {
       console.log('provider_id column already exists in email_templates table');
     }

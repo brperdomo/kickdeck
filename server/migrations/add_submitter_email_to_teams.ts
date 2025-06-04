@@ -1,7 +1,7 @@
 import { db } from "../../db";
 import { teams } from "../../db/schema";
 import { sql } from "drizzle-orm";
-import { log } from "../vite";
+import { log } from "../vite-temp";
 
 /**
  * Migration to add submitterEmail column to teams table
@@ -18,7 +18,7 @@ export async function addSubmitterEmailToTeams() {
       WHERE table_name = 'teams' AND column_name = 'submitter_email'
     `);
 
-    if (checkColumn.rows.length === 0) {
+    if (!checkColumn || checkColumn.length === 0) {
       // Add the submitterEmail column if it doesn't exist
       await db.execute(sql`
         ALTER TABLE teams 
