@@ -36,6 +36,8 @@ import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground
 import { useAuth } from "@/hooks/use-auth";
 import { useHouseholdDetails } from "@/hooks/use-household-details";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useRegistrationCart } from "@/hooks/useRegistrationCart";
+import { ResumeRegistrationDialog } from "@/components/ResumeRegistrationDialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";

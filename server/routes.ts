@@ -1070,6 +1070,135 @@ export function registerRoutes(app: Express): Server {
       }
     });
 
+    // Registration Cart API endpoints
+    
+    // Get existing registration cart for user and event
+    app.get('/api/events/:eventId/cart', async (req: Request, res: Response) => {
+      if (!req.user) {
+        return res.status(401).json({ error: 'You must be logged in to access registration cart' });
+      }
+      
+      try {
+        const { eventId } = req.params;
+        const userId = req.user.id;
+        
+        const [cart] = await db.execute(sql`
+          SELECT * FROM registration_carts 
+          WHERE user_id = ${userId} AND event_id = ${eventId}
+          AND expires_at > NOW()
+        `);
+        
+        if (!cart.rows || cart.rows.length === 0) {
+          return res.json({ cart: null });
+        }
+        
+        const cartData = cart.rows[0];
+        return res.json({ 
+          cart: {
+            id: cartData.id,
+            eventId: cartData.event_id,
+            formData: cartData.form_data,
+            currentStep: cartData.current_step,
+            selectedAgeGroupId: cartData.selected_age_group_id,
+            selectedBracketId: cartData.selected_bracket_id,
+            selectedClubId: cartData.selected_club_id,
+            selectedFeeIds: cartData.selected_fee_ids,
+            totalAmount: cartData.total_amount,
+            lastUpdated: cartData.last_updated,
+            createdAt: cartData.created_at
+          }
+        });
+      } catch (error) {
+        console.error('Error fetching registration cart:', error);
+        res.status(500).json({ error: 'Failed to fetch registration cart' });
+      }
+    });
+    
+    // Save/update registration cart
+    app.post('/api/events/:eventId/cart', async (req: Request, res: Response) => {
+      if (!req.user) {
+        return res.status(401).json({ error: 'You must be logged in to save registration cart' });
+      }
+      
+      try {
+        const { eventId } = req.params;
+        const userId = req.user.id;
+        const {
+          formData,
+          currentStep,
+          selectedAgeGroupId,
+          selectedBracketId,
+          selectedClubId,
+          selectedFeeIds,
+          totalAmount
+        } = req.body;
+        
+        // Check if cart already exists
+        const [existingCart] = await db.execute(sql`
+          SELECT id FROM registration_carts 
+          WHERE user_id = ${userId} AND event_id = ${eventId}
+        `);
+        
+        if (existingCart.rows && existingCart.rows.length > 0) {
+          // Update existing cart
+          await db.execute(sql`
+            UPDATE registration_carts 
+            SET 
+              form_data = ${JSON.stringify(formData)},
+              current_step = ${currentStep},
+              selected_age_group_id = ${selectedAgeGroupId || null},
+              selected_bracket_id = ${selectedBracketId || null},
+              selected_club_id = ${selectedClubId || null},
+              selected_fee_ids = ${selectedFeeIds || null},
+              total_amount = ${totalAmount || null},
+              last_updated = NOW(),
+              expires_at = NOW() + INTERVAL '30 days'
+            WHERE user_id = ${userId} AND event_id = ${eventId}
+          `);
+        } else {
+          // Create new cart
+          await db.execute(sql`
+            INSERT INTO registration_carts (
+              user_id, event_id, form_data, current_step,
+              selected_age_group_id, selected_bracket_id, selected_club_id,
+              selected_fee_ids, total_amount, last_updated, created_at, expires_at
+            ) VALUES (
+              ${userId}, ${eventId}, ${JSON.stringify(formData)}, ${currentStep},
+              ${selectedAgeGroupId || null}, ${selectedBracketId || null}, ${selectedClubId || null},
+              ${selectedFeeIds || null}, ${totalAmount || null}, NOW(), NOW(), NOW() + INTERVAL '30 days'
+            )
+          `);
+        }
+        
+        res.json({ message: 'Registration cart saved successfully' });
+      } catch (error) {
+        console.error('Error saving registration cart:', error);
+        res.status(500).json({ error: 'Failed to save registration cart' });
+      }
+    });
+    
+    // Clear registration cart
+    app.delete('/api/events/:eventId/cart', async (req: Request, res: Response) => {
+      if (!req.user) {
+        return res.status(401).json({ error: 'You must be logged in to clear registration cart' });
+      }
+      
+      try {
+        const { eventId } = req.params;
+        const userId = req.user.id;
+        
+        await db.execute(sql`
+          DELETE FROM registration_carts 
+          WHERE user_id = ${userId} AND event_id = ${eventId}
+        `);
+        
+        res.json({ message: 'Registration cart cleared successfully' });
+      } catch (error) {
+        console.error('Error clearing registration cart:', error);
+        res.status(500).json({ error: 'Failed to clear registration cart' });
+      }
+    });
+
     // Team registration endpoint for participants
     app.post('/api/events/:eventId/register-team', async (req: Request, res: Response) => {
       // TEMPORARILY bypass authentication for testing
