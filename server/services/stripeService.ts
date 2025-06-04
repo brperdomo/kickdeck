@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import { db } from "../../db";
 import { teams, paymentTransactions, events } from "../../db/schema";
 import { eq } from 'drizzle-orm';
-import { log } from '../vite';
+import { log } from '../vite-temp';
 import { sendRegistrationReceiptEmail } from './emailService';
 
 if (!process.env.STRIPE_SECRET_KEY) {

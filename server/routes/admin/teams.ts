@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { db } from '@db';
 import { teams, events, users } from '@db/schema';
 import { eq, and, or, like, asc, desc, sql } from 'drizzle-orm';
-import { log } from '../../vite';
+import { log } from '../../vite-temp';
 import { sendTemplatedEmail } from '../../services/emailService';
 import { createRefund, createTestPaymentIntent } from '../../services/stripeService';
 
