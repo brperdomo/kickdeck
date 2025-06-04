@@ -1146,7 +1146,7 @@ export function registerRoutes(app: Express): Server {
           // Update existing cart
           await db.update(registrationCarts)
             .set({
-              formData: JSON.stringify(formData),
+              formData: formData,
               currentStep,
               selectedAgeGroupId: selectedAgeGroupId || null,
               selectedBracketId: selectedBracketId || null,
@@ -1154,7 +1154,7 @@ export function registerRoutes(app: Express): Server {
               selectedFeeIds: selectedFeeIds || null,
               totalAmount: totalAmount || null,
               lastUpdated: new Date().toISOString(),
-              expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
+              expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
             })
             .where(and(
               eq(registrationCarts.userId, userId),
@@ -1165,7 +1165,7 @@ export function registerRoutes(app: Express): Server {
           await db.insert(registrationCarts).values({
             userId,
             eventId,
-            formData: JSON.stringify(formData),
+            formData: formData,
             currentStep,
             selectedAgeGroupId: selectedAgeGroupId || null,
             selectedBracketId: selectedBracketId || null,
