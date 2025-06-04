@@ -330,14 +330,9 @@ router.get('/:id/age-groups', async (req, res) => {
     // Filter out ineligible age groups for the public-facing endpoints
     const eligibleGroups = uniqueGroups.filter(group => group.isEligible !== false);
     
-    // Sort age groups in logical order (U4, U5, U6, etc.) grouped by gender
+    // Sort age groups in logical order (U4, U5, U6, etc.) with consistent ordering
     const sortedEligibleGroups = eligibleGroups.sort((a, b) => {
-      // First sort by gender (Boys first, then Girls)
-      if (a.gender !== b.gender) {
-        return a.gender === 'Boys' ? -1 : 1;
-      }
-      
-      // Then sort by age group number (U4, U5, U6, etc.)
+      // First sort by age group number (U4, U5, U6, etc.)
       const getAgeNumber = (ageGroup: string) => {
         if (ageGroup.startsWith('U')) {
           return parseInt(ageGroup.substring(1));
@@ -345,7 +340,16 @@ router.get('/:id/age-groups', async (req, res) => {
         return 999; // Put non-U groups at the end
       };
       
-      return getAgeNumber(a.ageGroup) - getAgeNumber(b.ageGroup);
+      const ageA = getAgeNumber(a.ageGroup);
+      const ageB = getAgeNumber(b.ageGroup);
+      
+      if (ageA !== ageB) {
+        return ageA - ageB;
+      }
+      
+      // Within same age, sort by gender: Boys, Girls, Coed
+      const genderOrder = { 'Boys': 0, 'Girls': 1, 'Coed': 2 };
+      return (genderOrder[a.gender] || 3) - (genderOrder[b.gender] || 3);
     });
     
     console.log(`Deduplicated to ${uniqueGroups.length} unique age groups (${sortedEligibleGroups.length} eligible and sorted) from ${ageGroups.length} for event ${eventId}`);
