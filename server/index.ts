@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite-temp";
+import { setupVite, serveStatic, log } from "./vite";
 import { db } from "@db";
 import { users } from "@db/schema";
 import { createAdmin } from "./create-admin";
@@ -93,8 +93,14 @@ async function testDbConnection() {
       return;
     }
 
-    // Skip migrations for now to allow faster startup
-    log("Skipping migrations - database should already be configured");
+    // Run database migrations
+    const migrationsResult = await createTables();
+    if (!migrationsResult.success) {
+      log("Migration failed: " + migrationsResult.error + " - retrying in 5 seconds...");
+      setTimeout(() => createTables(), 5000);
+      return;
+    }
+    log("Database migrations completed successfully");
 
     // Create admin user if it doesn't exist
     await createAdmin();
@@ -125,11 +131,27 @@ async function testDbConnection() {
     const routes = registerRoutes(app);
     log("API routes registered");
 
-    // Temporarily bypass vite setup to fix dependency issues
-    // Set up Vite for frontend serving
-    const { createViteDevServer } = await import('./vite-temp.js');
-    const viteDevServer = await createViteDevServer(app);
-    log("Vite development server configured successfully");
+    // Set up appropriate middleware based on environment
+    if (nodeEnv === 'production') {
+      try {
+        // Try production static files first
+        serveStatic(app);
+        log("Static file serving configured for production");
+      } catch (error) {
+        // If production files don't exist, use development mode without HMR WebSockets
+        log("Production files not found, using development mode with stable configuration");
+        const { createServer } = await import('http');
+        server = createServer(app);
+        await setupVite(app, server);
+        log("Development mode configured for production stability");
+      }
+    } else {
+      // In development, create a temporary server for Vite HMR
+      const { createServer } = await import('http');
+      server = createServer(app);
+      await setupVite(app, server);
+      log("Vite middleware setup complete for development");
+    }
 
     // Error handling middleware
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
