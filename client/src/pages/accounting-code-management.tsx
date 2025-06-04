@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Plus, Edit, Trash } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useToast } from "../hooks/use-toast";
+import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/button";
 import {
   Table,
   TableBody,
@@ -11,8 +11,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { AccountingCodeModal } from "@/components/admin/AccountingCodeModal";
+} from "../components/ui/table";
+import { AccountingCodeModal } from "../components/admin/AccountingCodeModal";
 
 export default function AccountingCodeManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);

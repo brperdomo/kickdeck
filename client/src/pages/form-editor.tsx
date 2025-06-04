@@ -1,7 +1,7 @@
 import { useParams } from "wouter";
-import { AdminPageLayout } from "@/components/layouts/AdminPageLayout";
+import { AdminPageLayout } from "../components/layouts/AdminPageLayout";
 import { FileSpreadsheet } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "../components/ui/card";
 import { useState } from "react";
 
 // Import the main component content

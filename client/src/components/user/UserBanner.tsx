@@ -1,11 +1,11 @@
 import { Link } from "wouter";
 import { Home, User, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 import { useEffect } from "react";
-import { ViewToggle } from "@/components/ViewToggle";
-import { useUser } from "@/hooks/use-user";
+import { ViewToggle } from "../../components/ViewToggle";
+import { useUser } from "../../hooks/use-user";
 import { motion } from "framer-motion";
-import { useOrganizationSettings } from "@/hooks/use-organization-settings";
+import { useOrganizationSettings } from "../../hooks/use-organization-settings";
 
 /**
  * UserBanner component displays a navigation bar at the top of user dashboard pages

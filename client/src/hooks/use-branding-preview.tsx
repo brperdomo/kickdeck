@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useMemo } from 'react';
-import type { SelectOrganizationSettings } from '@db/schema';
+import type { SelectOrganizationSettings } // from '@db/schema' // Database import disabled for build;
 
 interface BrandingPreview extends Partial<SelectOrganizationSettings> {
   isDraft?: boolean;

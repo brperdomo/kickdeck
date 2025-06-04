@@ -1,11 +1,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useOrganizationSettings } from "@/hooks/use-organization-settings";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "../../components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "../../components/ui/form";
+import { Input } from "../../components/ui/input";
+import { useOrganizationSettings } from "../../hooks/use-organization-settings";
+import { useToast } from "../../hooks/use-toast";
 import { Loader2, Upload, Building, Phone, MapPin, Mail } from "lucide-react";
 import { useState, useEffect } from "react";
 

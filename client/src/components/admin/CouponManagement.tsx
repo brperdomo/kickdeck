@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { useLocation } from "@/hooks/use-location";
-import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "../../hooks/use-location";
+import { useToast } from "../../hooks/use-toast";
 import { Loader2, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent } from "../../components/ui/card";
 import {
   Table,
   TableBody,
@@ -12,10 +12,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { CouponModal } from "@/components/CouponModal";
-import type { SelectCoupon } from "@db/schema";
+} from "../../components/ui/table";
+import { Badge } from "../../components/ui/badge";
+import { CouponModal } from "../../components/CouponModal";
+import type { SelectCoupon } // from "@db/schema" // Database import disabled for build;
 
 import { AdminBanner } from "./AdminBanner";
 

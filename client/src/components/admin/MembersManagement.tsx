@@ -7,7 +7,7 @@ import {
   TableHead,
   TableBody,
   TableCell
-} from "@/components/ui/table";
+} from "../../components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -15,14 +15,14 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter
-} from "@/components/ui/dialog";
+} from "../../components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../../components/ui/select";
 import {
   Card,
   CardContent,
@@ -30,20 +30,20 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from "@/components/ui/card";
+} from "../../components/ui/card";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger
-} from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from '@/components/ui/badge';
+} from "../../components/ui/tabs";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Badge } from "../../components/ui/badge";
 import { Loader2, Mail, Search, UserCircle, Filter, CheckCircle, XCircle, RotateCw } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { Pagination } from '@/components/ui/pagination';
-import { formatDate } from '@/lib/utils';
+import { useToast } from "../../hooks/use-toast";
+import { Pagination } from "../../components/ui/pagination";
+import { formatDate } from "../../lib/utils";
 
 export function MemberManagement() {
   const [search, setSearch] = useState('');

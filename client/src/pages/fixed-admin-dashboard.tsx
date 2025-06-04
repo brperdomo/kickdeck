@@ -5,17 +5,17 @@ import {
   Settings, Users, ChevronRight, Building2, MessageSquare, Sparkles,
   Moon, Sun, CalendarDays, ImageIcon, FormInput, KeyRound
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { useUser } from "@/hooks/use-user";
-import { usePermissions } from "@/hooks/use-permissions";
-import { useTheme } from "@/hooks/use-theme";
-import { SelectUser } from "@db/schema";
-import { AnimatedSidebar } from "@/components/admin/AnimatedSidebar";
-import { AnimatedContent } from "@/components/ui/animation";
-import { AnimatedNavigationButton } from "@/components/admin/AnimatedNavigationButton";
+import { Button } from "../components/ui/button";
+import { Separator } from "../components/ui/separator";
+import { useUser } from "../hooks/use-user";
+import { usePermissions } from "../hooks/use-permissions";
+import { useTheme } from "../hooks/use-theme";
+import { SelectUser } // from "@db/schema" // Database import disabled for build;
+import { AnimatedSidebar } from "../components/admin/AnimatedSidebar";
+import { AnimatedContent } from "../components/ui/animation";
+import { AnimatedNavigationButton } from "../components/admin/AnimatedNavigationButton";
 import { motion, AnimatePresence } from "framer-motion";
-import { AdminBanner } from "@/components/admin/AdminBanner";
+import { AdminBanner } from "../components/admin/AdminBanner";
 
 // Type guard function to check if user is admin
 function isAdminUser(user: SelectUser | null): user is SelectUser & { isAdmin: true } {

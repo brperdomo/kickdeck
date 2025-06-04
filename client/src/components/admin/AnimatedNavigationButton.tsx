@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { usePermissions } from "@/hooks/use-permissions";
-import { cn } from "@/lib/utils";
+import { Button } from "../../components/ui/button";
+import { usePermissions } from "../../hooks/use-permissions";
+import { cn } from "../../lib/utils";
 import { motion, useAnimation } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 

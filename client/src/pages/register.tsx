@@ -1,11 +1,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type InsertUser } from "@db/schema";
-import { useUser } from "@/hooks/use-user";
-import { useToast } from "@/hooks/use-toast";
-import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
-import AuthLayout from "@/components/layouts/AuthLayout";
-import { PasswordStrength } from "@/components/ui/password-strength";
+// import { type InsertUser } from "@db/schema"; // Database import disabled for build
+import { useUser } from "../hooks/use-user";
+import { useToast } from "../hooks/use-toast";
+import { AnimatedBackground } from "../components/ui/AnimatedBackground";
+import AuthLayout from "../components/layouts/AuthLayout";
+import { PasswordStrength } from "../components/ui/password-strength";
 import {
   Form,
   FormControl,
@@ -14,10 +14,10 @@ import {
   FormLabel,
   FormMessage,
   FormDescription,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+} from "../components/ui/form";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Link, useLocation } from "wouter";

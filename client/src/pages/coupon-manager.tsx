@@ -1,8 +1,8 @@
 import { useParams } from "wouter";
-import { AdminPageLayout } from "@/components/layouts/AdminPageLayout";
+import { AdminPageLayout } from "../components/layouts/AdminPageLayout";
 import { Ticket } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { CouponManagement } from "@/components/admin/CouponManagement";
+import { Card, CardContent } from "../components/ui/card";
+import { CouponManagement } from "../components/admin/CouponManagement";
 
 export default function CouponManagerPage() {
   const params = useParams();

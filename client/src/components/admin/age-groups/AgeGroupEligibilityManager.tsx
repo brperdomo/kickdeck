@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "../../../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Switch } from "../../../components/ui/switch";
+import { useToast } from "../../../hooks/use-toast";
 import { AgeGroup, updateAgeGroupEligibilitySetting } from "../../../api/age-groups";
 import { Loader2 } from "lucide-react";
 

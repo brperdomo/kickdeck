@@ -1,5 +1,5 @@
-import { FormTemplatesView } from "@/components/admin/FormTemplatesView";
-import { AdminLayout, AdminSidebar, AdminSidebarItem } from "@/components/layouts/AdminLayout.tsx";
+import { FormTemplatesView } from "../components/admin/FormTemplatesView";
+import { AdminLayout, AdminSidebar, AdminSidebarItem } from "../components/layouts/AdminLayout.tsx";
 import { useLocation } from "wouter";
 import { Users, Settings, FileText, LayoutTemplate } from "lucide-react";
 

@@ -1,5 +1,5 @@
-import { ChatInterface } from "@/components/chat/ChatInterface";
-import { Button } from "@/components/ui/button";
+import { ChatInterface } from "../components/chat/ChatInterface";
+import { Button } from "../components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 

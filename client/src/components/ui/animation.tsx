@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 // ===========================
 // Animation Configuration

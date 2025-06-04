@@ -7,8 +7,8 @@ import {
   CardHeader, 
   CardTitle, 
   CardDescription 
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
 import { 
   Table, 
   TableBody, 
@@ -16,7 +16,7 @@ import {
   TableHead, 
   TableHeader, 
   TableRow 
-} from "@/components/ui/table";
+} from "../components/ui/table";
 import { 
   ArrowLeft, 
   Download, 
@@ -28,11 +28,11 @@ import {
   ExternalLink,
   DollarSign
 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { formatCurrency, formatDate } from "@/lib/formatters";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from "../hooks/use-toast";
+import { formatCurrency, formatDate } from "../lib/formatters";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -41,7 +41,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "../components/ui/dropdown-menu";
 import { 
   Sheet, 
   SheetContent, 
@@ -51,15 +51,15 @@ import {
   SheetTrigger,
   SheetFooter,
   SheetClose 
-} from "@/components/ui/sheet";
+} from "../components/ui/sheet";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
+} from "../components/ui/select";
+import { Label } from "../components/ui/label";
 import { formatDistanceToNow } from "date-fns";
 
 // Get the payment status badge variant

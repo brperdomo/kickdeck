@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 import { UserCog, Users, LogOut } from "lucide-react";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { useOrganizationSettings } from "@/hooks/use-organization-settings";
-import { ViewToggle } from "@/components/ViewToggle";
+import { cn } from "../../lib/utils";
+import { useOrganizationSettings } from "../../hooks/use-organization-settings";
+import { ViewToggle } from "../../components/ViewToggle";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
+import { Badge } from "../../components/ui/badge";
+import { useToast } from "../../hooks/use-toast";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "../../components/ui/popover";
 
 /**
  * AdminBanner component displays a navigation bar at the top of admin pages

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { ArrowLeft, ChevronDown } from "lucide-react";
-import { ProductUpdates } from "@/components/ProductUpdates";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ProductUpdates } from "../components/ProductUpdates";
+import { Button } from "../components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu";
 
 // List of possible categories for filtering
 const categories = [

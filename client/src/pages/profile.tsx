@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useUser } from "@/hooks/use-user";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { useUser } from "../hooks/use-user";
 import { Link, useLocation } from "wouter";
 import { MessageSquare } from "lucide-react";
-import { LogoutOverlay } from "@/components/ui/logout-overlay";
+import { LogoutOverlay } from "../components/ui/logout-overlay";
 
 export default function Profile() {
   const { user, logout } = useUser();

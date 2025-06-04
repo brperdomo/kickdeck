@@ -4,7 +4,7 @@ import FileItem from './FileItem';
 import FolderItem from './FolderItem';
 import { useDrop } from 'react-dnd';
 import { File, Folder, DragItem } from './types';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from "../../../components/ui/skeleton";
 import { 
   Upload, 
   FolderOpen, 
@@ -14,7 +14,7 @@ import {
   Zap,
   FolderDot
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from "../../../lib/utils";
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Wrapper components for file and folder items

@@ -5,7 +5,7 @@ import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
-} from "@/components/ui/resizable";
+} from "../../components/ui/resizable";
 
 export function ChatInterface() {
   const [selectedRoomId, setSelectedRoomId] = useState<number | undefined>();

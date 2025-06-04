@@ -5,7 +5,7 @@ import { PaymentStatusBadge } from './payment-status-badge';
 import { Button } from './button';
 import { Alert, AlertDescription, AlertTitle } from './alert';
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import { createPaymentIntent, getStripe } from '@/lib/payment';
+import { createPaymentIntent, getStripe } from "../../lib/payment";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card';
 
 // Payment states for the form

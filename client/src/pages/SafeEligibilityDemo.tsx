@@ -6,8 +6,8 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { SafeEligibilityToggle } from '@/components/admin/SafeEligibilityToggle';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SafeEligibilityToggle } from "../components/admin/SafeEligibilityToggle";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 
 export default function SafeEligibilityDemo() {
   // Using your event ID from the errors

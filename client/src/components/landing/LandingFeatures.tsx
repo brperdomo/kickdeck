@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { fadeUpVariant, scaleVariant, staggerContainer } from '@/lib/animations';
+import { fadeUpVariant, scaleVariant, staggerContainer } from "../../lib/animations";
 
 /**
  * Features section for the landing page

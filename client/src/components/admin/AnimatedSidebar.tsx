@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import React, { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { AnimatedContent, AnimatedItem, ANIMATION_CONFIG } from "@/components/ui/animation";
-import { CollapsibleSidebar } from "@/components/ui/collapsible-sidebar";
+import { cn } from "../../lib/utils";
+import { AnimatedContent, AnimatedItem, ANIMATION_CONFIG } from "../../components/ui/animation";
+import { CollapsibleSidebar } from "../../components/ui/collapsible-sidebar";
 
 interface AnimatedSidebarProps {
   children: React.ReactNode;

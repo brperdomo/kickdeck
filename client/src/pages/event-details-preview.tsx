@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useLocation } from "wouter";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
 import { Loader2 } from "lucide-react";
 // Remove SoccerFieldBackground since it doesn't exist
 // We'll use a simple div instead
-import { Footer } from "@/components/ui/Footer";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth";
+import { Footer } from "../components/ui/Footer";
+import { useToast } from "../hooks/use-toast";
+import { useAuth } from "../hooks/use-auth";
 
 /**
  * This is a separate component from EventRegistration that only shows

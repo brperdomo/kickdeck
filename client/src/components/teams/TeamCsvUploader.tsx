@@ -1,9 +1,9 @@
 import { useState, useRef, useCallback } from "react";
 import { FileText, Upload, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Button } from "../../components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "../../components/ui/alert";
 import { AlertCircle, AlertTriangle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../../hooks/use-toast";
 
 interface TeamCsvUploaderProps {
   eventId: number;

@@ -7,8 +7,8 @@
 
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Switch } from '@/components/ui/switch';
-import { useToast } from '@/hooks/use-toast';
+import { Switch } from "../../components/ui/switch";
+import { useToast } from "../../hooks/use-toast";
 
 interface SafeEligibilityToggleProps {
   eventId: string;

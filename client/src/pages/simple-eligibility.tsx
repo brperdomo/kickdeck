@@ -5,9 +5,9 @@
  * without any database constraint violations.
  */
 
-import { SimpleEligibilityManager } from '@/components/admin/SimpleEligibilityManager';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { SimpleEligibilityManager } from "../components/admin/SimpleEligibilityManager";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
 import { Link } from 'wouter';
 import { ArrowLeft } from 'lucide-react';
 

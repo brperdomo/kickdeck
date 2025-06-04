@@ -1,5 +1,5 @@
 import { CheckCircle, Clock, XCircle, CreditCard, AlertCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "../../components/ui/badge";
 
 type PaymentStatusBadgeProps = {
   status: string | undefined | null;

@@ -1,11 +1,11 @@
 import React from "react";
-import { useUser } from "@/hooks/use-user";
-import { useOrganizationSettings } from "@/hooks/use-organization-settings";
-import { MobileNavigation, MobileHeader } from "@/components/ui/mobile-navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { useUser } from "../../hooks/use-user";
+import { useOrganizationSettings } from "../../hooks/use-organization-settings";
+import { MobileNavigation, MobileHeader } from "../../components/ui/mobile-navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Separator } from "../../components/ui/separator";
+import { Badge } from "../../components/ui/badge";
 import { Link } from "wouter";
 import {
   Home,

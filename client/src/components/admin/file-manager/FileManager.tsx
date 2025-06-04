@@ -5,13 +5,13 @@ import Breadcrumbs from './Breadcrumbs';
 import Toolbar from './Toolbar';
 import FileManagerContent from './FileManagerContent';
 import FileUploader from './FileUploader';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
+import { Separator } from "../../../components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
 import { useDropzone } from 'react-dropzone';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { cn } from '@/lib/utils';
+import { cn } from "../../../lib/utils";
 import { Upload, FolderPlus } from 'lucide-react';
 
 // Internal component that has access to context

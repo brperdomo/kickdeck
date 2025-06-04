@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useUser } from "@/hooks/use-user";
-import { useOrganizationSettings } from "@/hooks/use-organization-settings";
-import { MobileNavigation, MobileHeader, MobileBottomSheet } from "@/components/ui/mobile-navigation";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { useUser } from "../../hooks/use-user";
+import { useOrganizationSettings } from "../../hooks/use-organization-settings";
+import { MobileNavigation, MobileHeader, MobileBottomSheet } from "../../components/ui/mobile-navigation";
+import { Card, CardContent } from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Separator } from "../../components/ui/separator";
+import { Badge } from "../../components/ui/badge";
 import { Link, useLocation } from "wouter";
 import {
   Home,
@@ -26,7 +26,7 @@ import {
   Grid3X3,
   Search
 } from "lucide-react";
-import { usePermissions } from "@/hooks/use-permissions";
+import { usePermissions } from "../../hooks/use-permissions";
 
 interface MobileAdminDashboardProps {
   toggleSidebar?: () => void;

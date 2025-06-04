@@ -1,7 +1,7 @@
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "../../components/ui/button";
+import { useToast } from "../../hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { useParams } from "wouter";
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { Separator } from "../components/ui/separator";
+import { Badge } from "../components/ui/badge";
 import { format } from "date-fns";
 import { AlertCircle } from "lucide-react";
 

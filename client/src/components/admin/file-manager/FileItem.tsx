@@ -1,7 +1,7 @@
 import React, { useState, forwardRef, useEffect, useRef } from 'react';
 import { File, DragItem } from './types';
 import { useFileManager } from './FileManagerContext';
-import { cn } from '@/lib/utils';
+import { cn } from "../../../lib/utils";
 import { 
   ContextMenu, 
   ContextMenuContent, 
@@ -9,16 +9,16 @@ import {
   ContextMenuSeparator, 
   ContextMenuShortcut, 
   ContextMenuTrigger
-} from '@/components/ui/context-menu';
+} from "../../../components/ui/context-menu";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+} from "../../../components/ui/dialog";
+import { Input } from "../../../components/ui/input";
+import { Button } from "../../../components/ui/button";
 import { 
   FileIcon, MoreVertical, Edit, Trash2, Download, Share2, Star, Info,
   Music, Video, Image, FileText, File as FileIconGeneric, FileCode, ArrowUpDown, 

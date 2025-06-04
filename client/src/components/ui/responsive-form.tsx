@@ -1,8 +1,8 @@
 import React, { useState, useEffect, Children, isValidElement, cloneElement } from "react";
-import { useMobileContext } from "@/hooks/use-mobile";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useMobileContext } from "../../hooks/use-mobile";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { cn } from "../../lib/utils";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ResponsiveFormProps {

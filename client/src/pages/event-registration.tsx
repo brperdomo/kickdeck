@@ -1,10 +1,10 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { useParams, useLocation } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { BracketSelector } from "@/components/registration/BracketSelector";
-import { useToast } from "@/hooks/use-toast";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Separator } from "../components/ui/separator";
+import { BracketSelector } from "../components/registration/BracketSelector";
+import { useToast } from "../hooks/use-toast";
 
 
 import { 
@@ -30,28 +30,28 @@ import {
   Users,
   LogOut
 } from "lucide-react";
-import { InfoPopover } from "@/components/ui/InfoPopover";
-import { SoccerFieldBackground } from "@/components/ui/SoccerFieldBackground";
-import { AnimatedEventBackground } from "@/components/ui/AnimatedEventBackground";
-import { useAuth } from "@/hooks/use-auth";
-import { useHouseholdDetails } from "@/hooks/use-household-details";
+import { InfoPopover } from "../components/ui/InfoPopover";
+import { SoccerFieldBackground } from "../components/ui/SoccerFieldBackground";
+import { AnimatedEventBackground } from "../components/ui/AnimatedEventBackground";
+import { useAuth } from "../hooks/use-auth";
+import { useHouseholdDetails } from "../hooks/use-household-details";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "../components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { Textarea } from "../components/ui/textarea";
+import { Badge } from "../components/ui/badge";
+import { ScrollArea } from "../components/ui/scroll-area";
+import { Checkbox } from "../components/ui/checkbox";
 import { PaymentElement, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import StripeProvider from "@/components/StripeProvider";
-import { SetupPaymentForm } from "@/components/payment/SetupPaymentForm";
-import { SetupPaymentProvider } from "@/components/payment/SetupPaymentProvider";
-import { Footer } from "@/components/ui/Footer";
+import StripeProvider from "../components/StripeProvider";
+import { SetupPaymentForm } from "../components/payment/SetupPaymentForm";
+import { SetupPaymentProvider } from "../components/payment/SetupPaymentProvider";
+import { Footer } from "../components/ui/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import RegistrationAuthChecker from "./registration-auth-checker";
 import { 
@@ -63,8 +63,8 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose
-} from "@/components/ui/dialog";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+} from "../components/ui/dialog";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 
 // Payment Setup Wrapper Component
 function PaymentSetupWrapper({ 

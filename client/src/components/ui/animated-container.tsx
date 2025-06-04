@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { motion, Variants } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 interface AnimatedContainerProps {
   children: ReactNode;

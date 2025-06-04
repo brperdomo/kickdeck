@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { Label } from "@/components/ui/label";
+import { Label } from "../../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "../../components/ui/select";
 import { Info } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { FormDescription } from "@/components/ui/form";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../components/ui/tooltip";
+import { FormDescription } from "../../components/ui/form";
 
 // Utility function to format flight names
 const formatFlightName = (level: string | undefined | null): string => {

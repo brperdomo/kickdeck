@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import { 
   Table, 
   TableBody, 
@@ -11,8 +11,8 @@ import {
   TableHead, 
   TableHeader,
   TableRow 
-} from "@/components/ui/table";
-import { useToast } from "@/hooks/use-toast";
+} from "../../components/ui/table";
+import { useToast } from "../../hooks/use-toast";
 import { Plus, Loader2, Trash2, Eye } from "lucide-react";
 import { z } from "zod";
 import {
@@ -24,17 +24,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "../../components/ui/alert-dialog";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
+} from "../../components/ui/dialog";
+import { Badge } from "../../components/ui/badge";
+import { Switch } from "../../components/ui/switch";
+import { Checkbox } from "../../components/ui/checkbox";
 
 interface AgeGroupSettings {
   id: number;

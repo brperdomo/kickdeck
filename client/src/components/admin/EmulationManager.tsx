@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardTitle, CardDescription } from "../../components/ui/card";
+import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
 import { AlertCircle, User, UserCheck, LogOut, UserCog } from 'lucide-react';
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"; 
+import { Alert, AlertTitle, AlertDescription } from "../../components/ui/alert"; 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from '@/hooks/use-toast';
+import { toast } from "../../hooks/use-toast";
 
 interface Admin {
   id: number;

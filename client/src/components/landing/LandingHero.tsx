@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { Link } from 'wouter';
-import { Button } from '@/components/ui/button';
+import { Button } from "../../components/ui/button";
 import { ChevronRight } from 'lucide-react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { fadeUpVariant, slideInLeftVariant, slideInRightVariant, buttonHoverVariant } from '@/lib/animations';
+import { fadeUpVariant, slideInLeftVariant, slideInRightVariant, buttonHoverVariant } from "../../lib/animations";
 
 /**
  * Hero section component for the landing page

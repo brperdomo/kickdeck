@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import { Loader2, ArrowLeft, Plus, Edit, Trash, CheckCircle, Upload, ImageIcon } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../components/ui/form";
+import { Badge } from "../../components/ui/badge";
+import { useToast } from "../../hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/dialog";
+import { Switch } from "../../components/ui/switch";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDropzone } from 'react-dropzone';
-import EventAdminModal from "@/components/events/EventAdminModal";
+import EventAdminModal from "../../components/events/EventAdminModal";
 import {
   Table,
   TableBody,
@@ -24,10 +24,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { BracketsContent } from "@/components/admin/brackets/BracketsContent";
+} from "../../components/ui/table";
+import { BracketsContent } from "../../components/admin/brackets/BracketsContent";
 import { Editor } from "@tinymce/tinymce-react";
-import { AgeGroupEligibilityManager } from "@/components/admin/age-groups/AgeGroupEligibilityManager";
+import { AgeGroupEligibilityManager } from "../../components/admin/age-groups/AgeGroupEligibilityManager";
 
 // TinyMCE API key from environment variable
 const TINYMCE_API_KEY = import.meta.env.VITE_TINYMCE_API_KEY;
@@ -70,9 +70,9 @@ import {
   EventSettingValues,
   AdminModalProps,
 } from "./event-form-types";
-import { ComplexSelector } from "@/components/events/ComplexSelector";
-import { InfoPopover } from "@/components/ui/InfoPopover";
-import { Textarea } from "@/components/ui/textarea";
+import { ComplexSelector } from "../../components/events/ComplexSelector";
+import { InfoPopover } from "../../components/ui/InfoPopover";
+import { Textarea } from "../../components/ui/textarea";
 
 interface EventFormValues extends EventInformationValues {
   ageGroups: AgeGroup[];

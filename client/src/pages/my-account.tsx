@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useUser } from "@/hooks/use-user";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { useUser } from "../hooks/use-user";
 import { 
   Loader2, 
   Save, 
@@ -15,12 +15,12 @@ import {
   AlertTriangle,
   InfoIcon
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../hooks/use-toast";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
-import { MemberLayout } from "@/components/layouts/MemberLayout";
+import { MemberLayout } from "../components/layouts/MemberLayout";
 import { 
   Form, 
   FormControl,
@@ -29,11 +29,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage 
-} from "@/components/ui/form";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "../components/ui/form";
+import { Switch } from "../components/ui/switch";
+import { Separator } from "../components/ui/separator";
+import { Checkbox } from "../components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Form validation schemas

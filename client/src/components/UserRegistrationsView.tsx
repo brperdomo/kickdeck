@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
-import { formatDate } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { formatDate } from "../lib/utils";
+import { Skeleton } from "../components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 import { AlertCircle, CreditCard, X } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { PaymentStatusBadge, TeamStatusBadge } from '@/components/ui/payment-status-badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Badge } from "../components/ui/badge";
+import { PaymentStatusBadge, TeamStatusBadge } from "../components/ui/payment-status-badge";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../components/ui/dialog";
 import { useState } from 'react';
 
 interface Registration {

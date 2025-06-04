@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { EventForm } from "@/components/forms/EventForm";
-import { type EventTab } from "@/components/forms/event-form-types";
-import { EventFormLayout } from "@/components/layouts/EventFormLayout";
+import { useToast } from "../hooks/use-toast";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { EventForm } from "../components/forms/EventForm";
+import { type EventTab } from "../components/forms/event-form-types";
+import { EventFormLayout } from "../components/layouts/EventFormLayout";
 
 export default function CreateEvent() {
   const [, navigate] = useLocation();

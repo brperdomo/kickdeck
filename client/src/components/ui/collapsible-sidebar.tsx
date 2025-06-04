@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useMobileContext } from "@/hooks/use-mobile";
+import { Button } from "../../components/ui/button";
+import { cn } from "../../lib/utils";
+import { useMobileContext } from "../../hooks/use-mobile";
 import { Menu, X, ChevronRight, ChevronLeft } from "lucide-react";
 
 interface CollapsibleSidebarProps {

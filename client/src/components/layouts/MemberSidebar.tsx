@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { LogOut, User, Home, Calendar, Bell, UserPlus, Settings, Shield } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useUser } from "@/hooks/use-user";
-import { useOrganizationSettings } from "@/hooks/use-organization-settings";
-import { usePermissions } from "@/hooks/use-permissions";
+import { Button } from "../../components/ui/button";
+import { useUser } from "../../hooks/use-user";
+import { useOrganizationSettings } from "../../hooks/use-organization-settings";
+import { usePermissions } from "../../hooks/use-permissions";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { CollapsibleSidebar } from "@/components/ui/collapsible-sidebar";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
+import { cn } from "../../lib/utils";
+import { CollapsibleSidebar } from "../../components/ui/collapsible-sidebar";
+import { Avatar, AvatarFallback } from "../../components/ui/avatar";
+import { Separator } from "../../components/ui/separator";
 
 export function MemberSidebar() {
   const [location] = useLocation();

@@ -7,15 +7,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "../components/ui/table";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+} from "../components/ui/accordion";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
 import { Trash2, CheckSquare } from "lucide-react";
 import { 
   AlertDialog,
@@ -27,9 +27,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
+} from "../components/ui/alert-dialog";
+import { Checkbox } from "../components/ui/checkbox";
+import { useToast } from "../hooks/use-toast";
 
 interface Game {
   id: string;
