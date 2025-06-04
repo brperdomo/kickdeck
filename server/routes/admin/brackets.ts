@@ -97,7 +97,7 @@ router.get('/events/:eventId/age-groups/:ageGroupId/brackets', hasEventAccess, a
 router.post('/events/:eventId/brackets', hasEventAccess, async (req, res) => {
   try {
     const { eventId } = req.params;
-    const { ageGroupId, name, description, sortOrder = 0 } = req.body;
+    const { ageGroupId, name, description, level, eligibility, sortOrder = 0 } = req.body;
     
     // Validate required fields
     if (!ageGroupId || !name) {
@@ -128,6 +128,8 @@ router.post('/events/:eventId/brackets', hasEventAccess, async (req, res) => {
         ageGroupId,
         name,
         description,
+        level: level || 'middle_flight',
+        eligibility,
         sortOrder,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -145,7 +147,7 @@ router.post('/events/:eventId/brackets', hasEventAccess, async (req, res) => {
 router.put('/events/:eventId/brackets/:bracketId', hasEventAccess, async (req, res) => {
   try {
     const { eventId, bracketId } = req.params;
-    const { name, description, sortOrder } = req.body;
+    const { name, description, level, eligibility, sortOrder } = req.body;
     
     // Validate required fields
     if (!name) {
@@ -174,6 +176,8 @@ router.put('/events/:eventId/brackets/:bracketId', hasEventAccess, async (req, r
       .set({
         name,
         description,
+        level: level !== undefined ? level : existingBracket[0].level,
+        eligibility: eligibility !== undefined ? eligibility : existingBracket[0].eligibility,
         sortOrder: sortOrder !== undefined ? sortOrder : existingBracket[0].sortOrder,
         updatedAt: new Date().toISOString(),
       })

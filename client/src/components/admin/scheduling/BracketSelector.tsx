@@ -6,10 +6,30 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { Loader2 } from "lucide-react";
 
+// Utility function to format flight names
+const formatFlightName = (level: string | undefined | null): string => {
+  if (!level) return '';
+  
+  switch (level) {
+    case 'top_flight':
+      return 'Top Flight';
+    case 'middle_flight':
+      return 'Middle Flight';
+    case 'bottom_flight':
+      return 'Bottom Flight';
+    case 'other':
+      return 'Other';
+    default:
+      // Handle legacy values
+      return level.charAt(0).toUpperCase() + level.slice(1);
+  }
+};
+
 interface Bracket {
   id: number;
   name: string;
   ageGroupId: number;
+  level?: string;
   teamCount?: number;
 }
 
@@ -193,9 +213,14 @@ export default function BracketSelector({
                     }`}
                   >
                     {bracket.name}
+                    {bracket.level && (
+                      <span className="text-muted-foreground ml-1 text-xs">
+                        ({formatFlightName(bracket.level)})
+                      </span>
+                    )}
                     {bracket.teamCount !== undefined && (
                       <span className={bracket.teamCount < 2 ? "text-red-500 ml-1 text-xs" : "text-muted-foreground ml-1 text-xs"}>
-                        ({bracket.teamCount} team{bracket.teamCount !== 1 ? 's' : ''})
+                        - {bracket.teamCount} team{bracket.teamCount !== 1 ? 's' : ''}
                       </span>
                     )}
                   </Label>

@@ -12,7 +12,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { FormDescription } from "@/components/ui/form";
 
 // Utility function to format flight names
-const formatFlightName = (level: string): string => {
+const formatFlightName = (level: string | undefined | null): string => {
+  if (!level) return 'Not specified';
+  
   switch (level) {
     case 'top_flight':
       return 'Top Flight';

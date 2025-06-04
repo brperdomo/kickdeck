@@ -6292,31 +6292,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    // Add endpoint to get age groups for an event
-    app.get('/api/admin/events/:id/age-groups', hasEventAccess, async (req, res) => {
-      try {
-        const eventId = parseInt(req.params.id);
-
-        const ageGroups = await db
-          .select({
-            ageGroup: eventAgeGroups.ageGroup,
-            gender: eventAgeGroups.gender,
-            teamCount: sql<number>`count(${teams.id})`.mapWith(Number)
-          })
-          .from(eventAgeGroups)
-          .leftJoin(teams, eq(teams.ageGroupId, eventAgeGroups.id))
-          .where(eq(eventAgeGroups.eventId, eventId))
-          .groupBy(eventAgeGroups.id, eventAgeGroups.ageGroup, eventAgeGroups.gender)
-          .orderBy(eventAgeGroups.ageGroup);
-
-        res.json(ageGroups);
-      } catch (error) {
-        console.error('Error fetching age groups:', error);
-        // Added basic error logging for white screen debugging.
-        console.error("Error details:", error);
-        res.status(500).send("Failed to fetch age groups");
-      }
-    });
+    // REMOVED: Duplicate endpoint that was causing incorrect age group sorting
+    // The main age groups endpoint with proper sorting is at line 5961
 
     // Add administrators endpoint
     // IMPORTANT: This is a duplicate administrator creation endpoint

@@ -245,6 +245,8 @@ export const eventBrackets = pgTable("event_brackets", {
   ageGroupId: integer("age_group_id").notNull().references(() => eventAgeGroups.id),
   name: text("name").notNull(), // e.g., "Elite", "Premier", "Select", "Classic", "Recreational"
   description: text("description"), // More info about the bracket
+  level: text("level").notNull().default("middle_flight"), // Flight level: top_flight, middle_flight, bottom_flight, other
+  eligibility: text("eligibility"), // Optional eligibility requirements
   sortOrder: integer("sort_order").notNull().default(0), // For ordering brackets in the UI
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   updatedAt: text("updated_at").notNull().default(new Date().toISOString()),

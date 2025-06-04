@@ -35,7 +35,9 @@ import {
 } from "@/components/ui/table";
 
 // Utility function to format flight names
-const formatFlightName = (level: string): string => {
+const formatFlightName = (level: string | undefined | null): string => {
+  if (!level) return 'Not specified';
+  
   switch (level) {
     case 'top_flight':
       return 'Top Flight';
@@ -333,8 +335,8 @@ export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
               <TableRow key={bracket.id}>
                 <TableCell className="font-medium">{bracket.name}</TableCell>
                 <TableCell>
-                  <Badge variant="outline" className="capitalize">
-                    {bracket.level}
+                  <Badge variant="outline">
+                    {formatFlightName(bracket.level)}
                   </Badge>
                 </TableCell>
                 <TableCell className="max-w-[300px] truncate">

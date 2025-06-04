@@ -3377,7 +3377,28 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {event.ageGroups?.filter(ageGroup => ageGroup.isEligible !== false).map((ageGroup) => (
+                              {event.ageGroups?.filter(ageGroup => ageGroup.isEligible !== false)
+                                .sort((a, b) => {
+                                  // First sort by age group number (U4, U5, U6, etc.)
+                                  const getAgeNumber = (ageGroup: string) => {
+                                    if (ageGroup && ageGroup.startsWith('U')) {
+                                      return parseInt(ageGroup.substring(1));
+                                    }
+                                    return 999; // Put non-U groups at the end
+                                  };
+                                  
+                                  const ageA = getAgeNumber(a.ageGroup);
+                                  const ageB = getAgeNumber(b.ageGroup);
+                                  
+                                  if (ageA !== ageB) {
+                                    return ageA - ageB;
+                                  }
+                                  
+                                  // Within same age, sort by gender: Boys, Girls, Coed
+                                  const genderOrder: { [key: string]: number } = { 'Boys': 0, 'Girls': 1, 'Coed': 2 };
+                                  return (genderOrder[a.gender] || 3) - (genderOrder[b.gender] || 3);
+                                })
+                                .map((ageGroup) => (
                                 <SelectItem key={ageGroup.id} value={String(ageGroup.id)}>
                                   {ageGroup.divisionCode ? `${ageGroup.divisionCode} - ` : ''}{`${ageGroup.gender} ${ageGroup.ageGroup}`}
                                   {ageGroup.birthYear ? ` (${ageGroup.birthYear})` : ''}
