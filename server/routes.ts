@@ -1115,7 +1115,7 @@ export function registerRoutes(app: Express): Server {
       }
     });
     
-    // Save/update registration cart
+    // Save/update registration cart using raw SQL to avoid timestamp issues
     app.post('/api/events/:eventId/cart', async (req: Request, res: Response) => {
       if (!req.user) {
         return res.status(401).json({ error: 'You must be logged in to save registration cart' });
@@ -1134,49 +1134,30 @@ export function registerRoutes(app: Express): Server {
           totalAmount
         } = req.body;
         
-        // Check if cart already exists
-        const existingCart = await db.query.registrationCarts.findFirst({
-          where: and(
-            eq(registrationCarts.userId, userId),
-            eq(registrationCarts.eventId, eventId)
+        // Use INSERT ... ON CONFLICT to handle upsert with raw SQL
+        await db.execute(sql`
+          INSERT INTO registration_carts (
+            user_id, event_id, form_data, current_step, 
+            selected_age_group_id, selected_bracket_id, selected_club_id,
+            selected_fee_ids, total_amount, last_updated, created_at, expires_at
+          ) VALUES (
+            ${userId}, ${eventId}, ${JSON.stringify(formData)}, ${currentStep},
+            ${selectedAgeGroupId || null}, ${selectedBracketId || null}, ${selectedClubId || null},
+            ${selectedFeeIds || null}, ${totalAmount || null}, 
+            NOW(), NOW(), NOW() + INTERVAL '30 days'
           )
-        });
-        
-        if (existingCart) {
-          // Update existing cart
-          await db.update(registrationCarts)
-            .set({
-              formData: formData,
-              currentStep,
-              selectedAgeGroupId: selectedAgeGroupId || null,
-              selectedBracketId: selectedBracketId || null,
-              selectedClubId: selectedClubId || null,
-              selectedFeeIds: selectedFeeIds || null,
-              totalAmount: totalAmount || null,
-              lastUpdated: new Date().toISOString(),
-              expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-            })
-            .where(and(
-              eq(registrationCarts.userId, userId),
-              eq(registrationCarts.eventId, eventId)
-            ));
-        } else {
-          // Create new cart
-          await db.insert(registrationCarts).values({
-            userId,
-            eventId,
-            formData: formData,
-            currentStep,
-            selectedAgeGroupId: selectedAgeGroupId || null,
-            selectedBracketId: selectedBracketId || null,
-            selectedClubId: selectedClubId || null,
-            selectedFeeIds: selectedFeeIds || null,
-            totalAmount: totalAmount || null,
-            createdAt: new Date().toISOString(),
-            lastUpdated: new Date().toISOString(),
-            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-          });
-        }
+          ON CONFLICT (user_id, event_id) 
+          DO UPDATE SET
+            form_data = EXCLUDED.form_data,
+            current_step = EXCLUDED.current_step,
+            selected_age_group_id = EXCLUDED.selected_age_group_id,
+            selected_bracket_id = EXCLUDED.selected_bracket_id,
+            selected_club_id = EXCLUDED.selected_club_id,
+            selected_fee_ids = EXCLUDED.selected_fee_ids,
+            total_amount = EXCLUDED.total_amount,
+            last_updated = NOW(),
+            expires_at = NOW() + INTERVAL '30 days'
+        `);
         
         res.json({ message: 'Registration cart saved successfully' });
       } catch (error) {

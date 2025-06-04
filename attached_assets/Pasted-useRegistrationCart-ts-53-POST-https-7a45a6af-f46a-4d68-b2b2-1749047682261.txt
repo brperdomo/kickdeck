@@ -1,0 +1,119 @@
+useRegistrationCart.ts:53 
+            
+            
+           POST https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/events/1844329078/cart 500 (Internal Server Error)
+mutationFn @ useRegistrationCart.ts:53
+fn @ @tanstack_react-query.js?v=d38ea3bb:1188
+run @ @tanstack_react-query.js?v=d38ea3bb:493
+start @ @tanstack_react-query.js?v=d38ea3bb:535
+execute @ @tanstack_react-query.js?v=d38ea3bb:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=d38ea3bb:2649
+(anonymous) @ @tanstack_react-query.js?v=d38ea3bb:3320
+saveCart @ useRegistrationCart.ts:112
+(anonymous) @ event-registration.tsx:2133
+(anonymous) @ event-registration.tsx:2143
+setTimeout
+(anonymous) @ event-registration.tsx:2142
+(anonymous) @ event-registration.tsx:2254
+Qj @ chunk-E27YX2RL.js?v=d38ea3bb:4852
+Hk @ chunk-E27YX2RL.js?v=d38ea3bb:6117
+Ek @ chunk-E27YX2RL.js?v=d38ea3bb:5681
+jg @ chunk-E27YX2RL.js?v=d38ea3bb:2527
+Wk @ chunk-E27YX2RL.js?v=d38ea3bb:6021
+Pk @ chunk-E27YX2RL.js?v=d38ea3bb:5964
+Gk @ chunk-E27YX2RL.js?v=d38ea3bb:5620
+J @ chunk-E27YX2RL.js?v=d38ea3bb:97
+R @ chunk-E27YX2RL.js?v=d38ea3bb:129Understand this error
+event-registration.tsx:700 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:701 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:913 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:915 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#1f3a71', secondaryColor: '#1a82c4', type: 'particles', opacity: 0.6}
+60AnimatedEventBackground.tsx:162 Animation frame running, particles: 190 Canvas size: 1098 x 868
+event-registration.tsx:700 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:701 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:913 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:915 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#1f3a71', secondaryColor: '#1a82c4', type: 'particles', opacity: 0.6}
+useRegistrationCart.ts:53 
+            
+            
+           POST https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/events/1844329078/cart 500 (Internal Server Error)
+mutationFn @ useRegistrationCart.ts:53
+fn @ @tanstack_react-query.js?v=d38ea3bb:1188
+run @ @tanstack_react-query.js?v=d38ea3bb:493
+start @ @tanstack_react-query.js?v=d38ea3bb:535
+execute @ @tanstack_react-query.js?v=d38ea3bb:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=d38ea3bb:2649
+(anonymous) @ @tanstack_react-query.js?v=d38ea3bb:3320
+saveCart @ useRegistrationCart.ts:112
+(anonymous) @ event-registration.tsx:2133
+(anonymous) @ event-registration.tsx:2143
+setTimeout
+(anonymous) @ event-registration.tsx:2142
+(anonymous) @ event-registration.tsx:2254
+Qj @ chunk-E27YX2RL.js?v=d38ea3bb:4852
+Hk @ chunk-E27YX2RL.js?v=d38ea3bb:6117
+Ek @ chunk-E27YX2RL.js?v=d38ea3bb:5681
+jg @ chunk-E27YX2RL.js?v=d38ea3bb:2527
+Wk @ chunk-E27YX2RL.js?v=d38ea3bb:6021
+Pk @ chunk-E27YX2RL.js?v=d38ea3bb:5964
+Gk @ chunk-E27YX2RL.js?v=d38ea3bb:5620
+J @ chunk-E27YX2RL.js?v=d38ea3bb:97
+R @ chunk-E27YX2RL.js?v=d38ea3bb:129Understand this error
+event-registration.tsx:700 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:701 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:913 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:915 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#1f3a71', secondaryColor: '#1a82c4', type: 'particles', opacity: 0.6}
+60AnimatedEventBackground.tsx:162 Animation frame running, particles: 190 Canvas size: 1098 x 868
+event-registration.tsx:700 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:701 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:913 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:915 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#1f3a71', secondaryColor: '#1a82c4', type: 'particles', opacity: 0.6}
+useRegistrationCart.ts:53 
+            
+            
+           POST https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/events/1844329078/cart 500 (Internal Server Error)
+mutationFn @ useRegistrationCart.ts:53
+fn @ @tanstack_react-query.js?v=d38ea3bb:1188
+run @ @tanstack_react-query.js?v=d38ea3bb:493
+start @ @tanstack_react-query.js?v=d38ea3bb:535
+execute @ @tanstack_react-query.js?v=d38ea3bb:1224
+await in execute
+mutate @ @tanstack_react-query.js?v=d38ea3bb:2649
+(anonymous) @ @tanstack_react-query.js?v=d38ea3bb:3320
+saveCart @ useRegistrationCart.ts:112
+(anonymous) @ event-registration.tsx:2133
+(anonymous) @ event-registration.tsx:2143
+setTimeout
+(anonymous) @ event-registration.tsx:2142
+(anonymous) @ event-registration.tsx:2254
+Qj @ chunk-E27YX2RL.js?v=d38ea3bb:4852
+Hk @ chunk-E27YX2RL.js?v=d38ea3bb:6117
+Ek @ chunk-E27YX2RL.js?v=d38ea3bb:5681
+jg @ chunk-E27YX2RL.js?v=d38ea3bb:2527
+Wk @ chunk-E27YX2RL.js?v=d38ea3bb:6021
+Pk @ chunk-E27YX2RL.js?v=d38ea3bb:5964
+Gk @ chunk-E27YX2RL.js?v=d38ea3bb:5620
+J @ chunk-E27YX2RL.js?v=d38ea3bb:97
+R @ chunk-E27YX2RL.js?v=d38ea3bb:129Understand this error
+event-registration.tsx:700 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:701 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:913 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:915 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#1f3a71', secondaryColor: '#1a82c4', type: 'particles', opacity: 0.6}
+36AnimatedEventBackground.tsx:162 Animation frame running, particles: 190 Canvas size: 1098 x 868
+event-registration.tsx:700 AUTH FIX: EventRegistration component starting - user should now see event details without immediate redirect
+event-registration.tsx:701 AUTH FIX: RegistrationAuthChecker allowUnauthenticated is now set to TRUE by default
+event-registration.tsx:913 Enhanced registration flow: Always starting at personal step with integrated auth
+event-registration.tsx:915 🔍 AUTH DEBUG 🔍 {user: {…}, isLoggedIn: true, urlParams: '', currentStep: 'personal', isPreview: false}
+AnimatedEventBackground.tsx:36 AnimatedEventBackground CONSTRUCTOR - Received colors: {primaryColor: '#1f3a71', secondaryColor: '#1a82c4', type: 'particles', opacity: 0.6}
+24AnimatedEventBackground.tsx:162 Animation frame running, particles: 190 Canvas size: 1098 x 868
+useRegistrationCart.ts:53 
+            
+            
+           POST https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/events/1844329078/cart 500 (Internal Server Error)
