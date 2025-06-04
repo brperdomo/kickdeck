@@ -1238,149 +1238,6 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   // Auto-save timer ref
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Function to save current registration progress
-  const saveRegistrationProgress = useCallback(() => {
-    if (!user || !eventId) return;
-    
-    const formData = form.getValues();
-    const teamFormData = teamForm.getValues();
-    
-    const cartData = {
-      formData: {
-        ...formData,
-        selectedAgeGroup,
-        selectedBracket,
-        players,
-        selectedFees,
-        addRosterLater,
-        clubs,
-        isNewClub,
-      },
-      currentStep,
-      selectedAgeGroupId: selectedAgeGroup?.id,
-      selectedBracketId: selectedBracket,
-      selectedClubId: teamFormData.clubId,
-      selectedFeeIds: JSON.stringify(selectedFees.map(f => f.id)),
-      totalAmount: teamFormData.totalAmount,
-    };
-    
-    saveCart(cartData);
-  }, [user, eventId, form, teamForm, currentStep, selectedAgeGroup, selectedBracket, players, selectedFees, addRosterLater, clubs, isNewClub, saveCart]);
-  
-  // Auto-save with debouncing
-  const debouncedAutoSave = useCallback(() => {
-    if (autoSaveTimerRef.current) {
-      clearTimeout(autoSaveTimerRef.current);
-    }
-    
-    autoSaveTimerRef.current = setTimeout(() => {
-      saveRegistrationProgress();
-    }, 2000); // Save after 2 seconds of inactivity
-  }, [saveRegistrationProgress]);
-  
-  // Check for existing cart when component mounts
-  useEffect(() => {
-    if (!cartLoading && !cartChecked && user && cart && currentStep !== 'success') {
-      setCartChecked(true);
-      setShowResumeDialog(true);
-    }
-  }, [cart, cartLoading, cartChecked, user, currentStep]);
-  
-  // Auto-save on form changes
-  useEffect(() => {
-    if (user && currentStep !== 'auth' && currentStep !== 'success') {
-      debouncedAutoSave();
-    }
-    
-    return () => {
-      if (autoSaveTimerRef.current) {
-        clearTimeout(autoSaveTimerRef.current);
-      }
-    };
-  }, [user, currentStep, selectedAgeGroup, selectedBracket, players, selectedFees, addRosterLater, debouncedAutoSave]);
-  
-  // Resume registration from cart
-  const handleResumeRegistration = useCallback(() => {
-    if (!cart) return;
-    
-    try {
-      const { formData } = cart;
-      
-      // Restore form data
-      if (formData) {
-        form.reset({
-          ...form.getValues(),
-          ...formData,
-        });
-        
-        // Restore other state
-        if (formData.selectedAgeGroup) setSelectedAgeGroup(formData.selectedAgeGroup);
-        if (formData.selectedBracket) setSelectedBracket(formData.selectedBracket);
-        if (formData.players) setPlayers(formData.players);
-        if (formData.selectedFees) setSelectedFees(formData.selectedFees);
-        if (formData.addRosterLater !== undefined) setAddRosterLater(formData.addRosterLater);
-        if (formData.clubs) setClubs(formData.clubs);
-        if (formData.isNewClub !== undefined) setIsNewClub(formData.isNewClub);
-      }
-      
-      // Navigate to the saved step
-      setCurrentStep(cart.currentStep as RegistrationStep);
-      setShowResumeDialog(false);
-      
-      toast({
-        title: "Registration Resumed",
-        description: "Your previous progress has been restored.",
-      });
-    } catch (error) {
-      console.error('Error resuming registration:', error);
-      toast({
-        title: "Error",
-        description: "Failed to resume registration. Starting fresh.",
-        variant: "destructive",
-      });
-      handleStartFresh();
-    }
-  }, [cart, form, toast]);
-  
-  // Start fresh registration
-  const handleStartFresh = useCallback(() => {
-    clearCart();
-    setShowResumeDialog(false);
-    setCurrentStep('personal');
-    
-    // Reset all form state
-    form.reset({
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-      email: user?.email || '',
-      phone: user?.phone || '',
-      address: addressData.address,
-      city: addressData.city,
-      state: addressData.state,
-      zipCode: addressData.zipCode,
-      password: '',
-      confirmPassword: '',
-      emailChecked: false,
-      emailExists: false,
-      authenticated: !!user,
-    });
-    
-    teamForm.reset();
-    setPlayers([]);
-    setSelectedAgeGroup(null);
-    setSelectedBracket(null);
-    setSelectedFees([]);
-    setAddRosterLater(false);
-    setIsNewClub(false);
-  }, [clearCart, form, teamForm, user, addressData]);
-  
-  // Clear cart on successful registration
-  useEffect(() => {
-    if (currentStep === 'success') {
-      clearCart();
-    }
-  }, [currentStep, clearCart]);
-  
   // We don't need the handleAuthRedirect function anymore since we're handling auth state
   // directly in the useEffect hooks. This was causing the redirect to /auth when unnecessary.
   // Removing this function and direct redirections prevents circular redirects.
@@ -2247,6 +2104,121 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     }
   });
 
+  // Function to save current registration progress
+  const saveRegistrationProgress = useCallback(() => {
+    if (!user || !eventId) return;
+    
+    const formData = form.getValues();
+    const teamFormData = teamForm.getValues();
+    
+    const cartData = {
+      formData: {
+        ...formData,
+        selectedAgeGroup,
+        selectedBracket,
+        players,
+        selectedFees,
+        addRosterLater,
+        clubs,
+        isNewClub,
+      },
+      currentStep,
+      selectedAgeGroupId: selectedAgeGroup?.id,
+      selectedBracketId: selectedBracket,
+      selectedClubId: teamFormData.clubId,
+      selectedFeeIds: JSON.stringify(selectedFees.map(f => f.id)),
+      totalAmount: teamFormData.totalAmount,
+    };
+    
+    saveCart(cartData);
+  }, [user, eventId, form, teamForm, currentStep, selectedAgeGroup, selectedBracket, players, selectedFees, addRosterLater, clubs, isNewClub, saveCart]);
+  
+  // Auto-save with debouncing
+  const debouncedAutoSave = useCallback(() => {
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+    }
+    
+    autoSaveTimerRef.current = setTimeout(() => {
+      saveRegistrationProgress();
+    }, 2000); // Save after 2 seconds of inactivity
+  }, [saveRegistrationProgress]);
+  
+  // Resume registration from cart
+  const handleResumeRegistration = useCallback(() => {
+    if (!cart) return;
+    
+    try {
+      const { formData } = cart;
+      
+      // Restore form data
+      if (formData) {
+        form.reset({
+          ...form.getValues(),
+          ...formData,
+        });
+        
+        // Restore other state
+        if (formData.selectedAgeGroup) setSelectedAgeGroup(formData.selectedAgeGroup);
+        if (formData.selectedBracket) setSelectedBracket(formData.selectedBracket);
+        if (formData.players) setPlayers(formData.players);
+        if (formData.selectedFees) setSelectedFees(formData.selectedFees);
+        if (formData.addRosterLater !== undefined) setAddRosterLater(formData.addRosterLater);
+        if (formData.clubs) setClubs(formData.clubs);
+        if (formData.isNewClub !== undefined) setIsNewClub(formData.isNewClub);
+      }
+      
+      // Navigate to the saved step
+      setCurrentStep(cart.currentStep as RegistrationStep);
+      setShowResumeDialog(false);
+      
+      toast({
+        title: "Registration Resumed",
+        description: "Your previous progress has been restored.",
+      });
+    } catch (error) {
+      console.error('Error resuming registration:', error);
+      toast({
+        title: "Error",
+        description: "Failed to resume registration. Starting fresh.",
+        variant: "destructive",
+      });
+      handleStartFresh();
+    }
+  }, [cart, form, toast]);
+  
+  // Start fresh registration
+  const handleStartFresh = useCallback(() => {
+    clearCart();
+    setShowResumeDialog(false);
+    setCurrentStep('personal');
+    
+    // Reset all form state
+    form.reset({
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      email: user?.email || '',
+      phone: user?.phone || '',
+      address: addressData.address,
+      city: addressData.city,
+      state: addressData.state,
+      zipCode: addressData.zipCode,
+      password: '',
+      confirmPassword: '',
+      emailChecked: false,
+      emailExists: false,
+      authenticated: !!user,
+    });
+    
+    teamForm.reset();
+    setPlayers([]);
+    setSelectedAgeGroup(null);
+    setSelectedBracket(null);
+    setSelectedFees([]);
+    setAddRosterLater(false);
+    setIsNewClub(false);
+  }, [clearCart, form, teamForm, user, addressData]);
+
   const addPlayer = () => {
     const newPlayer: PlayerForm = {
       id: crypto.randomUUID(),
@@ -2267,6 +2239,34 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     setPlayers(updatedPlayers);
     teamForm.setValue('players', updatedPlayers);
   };
+
+  // Check for existing cart when component mounts
+  useEffect(() => {
+    if (!cartLoading && !cartChecked && user && cart && currentStep !== 'success') {
+      setCartChecked(true);
+      setShowResumeDialog(true);
+    }
+  }, [cart, cartLoading, cartChecked, user, currentStep]);
+  
+  // Auto-save on form changes
+  useEffect(() => {
+    if (user && currentStep !== 'auth' && currentStep !== 'success') {
+      debouncedAutoSave();
+    }
+    
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [user, currentStep, selectedAgeGroup, selectedBracket, players, selectedFees, addRosterLater, debouncedAutoSave]);
+  
+  // Clear cart on successful registration
+  useEffect(() => {
+    if (currentStep === 'success') {
+      clearCart();
+    }
+  }, [currentStep, clearCart]);
   
   // Handle club selection
   const handleClubSelect = (clubId: number | null) => {
