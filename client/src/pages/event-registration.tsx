@@ -2248,18 +2248,51 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     }
   }, [cart, cartLoading, cartChecked, user, currentStep]);
   
-  // Auto-save on form changes
-  useEffect(() => {
+  // Smart save strategy: Save on meaningful user interactions only
+  const saveOnInteraction = useCallback(() => {
     if (user && currentStep !== 'auth' && currentStep !== 'success') {
-      debouncedAutoSave();
+      const formData = {
+        selectedAgeGroupId: selectedAgeGroup?.id,
+        selectedBracketId: selectedBracket?.id,
+        teamName: teamData.name,
+        managerName: teamData.managerName,
+        managerEmail: teamData.managerEmail,
+        managerPhone: teamData.managerPhone,
+        players: players,
+        selectedFees: selectedFees,
+        addRosterLater: addRosterLater,
+        currentStep: currentStep
+      };
+      
+      saveCart({
+        formData,
+        currentStep,
+        selectedAgeGroupId: selectedAgeGroup?.id,
+        selectedBracketId: selectedBracket?.id,
+        selectedFeeIds: selectedFees.length > 0 ? selectedFees.join(',') : undefined,
+        totalAmount: calculateTotalAmount()
+      });
     }
-    
-    return () => {
-      if (autoSaveTimerRef.current) {
-        clearTimeout(autoSaveTimerRef.current);
-      }
-    };
-  }, [user, currentStep, selectedAgeGroup, selectedBracket, players, selectedFees, addRosterLater, debouncedAutoSave]);
+  }, [user, currentStep, selectedAgeGroup, selectedBracket, teamData, players, selectedFees, addRosterLater, saveCart]);
+
+  // Save when user makes meaningful selections
+  const handleAgeGroupSelect = useCallback((ageGroup: any) => {
+    setSelectedAgeGroup(ageGroup);
+    setTimeout(saveOnInteraction, 500); // Small delay to batch changes
+  }, [saveOnInteraction]);
+
+  const handleBracketSelect = useCallback((bracket: any) => {
+    setSelectedBracket(bracket);
+    setTimeout(saveOnInteraction, 500);
+  }, [saveOnInteraction]);
+
+  const handlePlayerUpdate = useCallback(() => {
+    setTimeout(saveOnInteraction, 1000); // Longer delay for text input
+  }, [saveOnInteraction]);
+
+  const handleFeeSelection = useCallback(() => {
+    setTimeout(saveOnInteraction, 500);
+  }, [saveOnInteraction]);
   
   // Clear cart on successful registration
   useEffect(() => {
