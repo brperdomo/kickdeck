@@ -11,6 +11,23 @@ import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { FormDescription } from "@/components/ui/form";
 
+// Utility function to format flight names
+const formatFlightName = (level: string): string => {
+  switch (level) {
+    case 'top_flight':
+      return 'Top Flight';
+    case 'middle_flight':
+      return 'Middle Flight';
+    case 'bottom_flight':
+      return 'Bottom Flight';
+    case 'other':
+      return 'Other';
+    default:
+      // Handle legacy values
+      return level.charAt(0).toUpperCase() + level.slice(1);
+  }
+};
+
 // Type definitions
 type Bracket = {
   id: number;
@@ -130,7 +147,7 @@ export function BracketSelector({ brackets, value, onChange }: BracketSelectorPr
           {/* Bracket options */}
           {brackets.map((bracket: Bracket) => (
             <SelectItem key={bracket.id} value={bracket.id.toString()}>
-              {bracket.name} {bracket.level ? `(${bracket.level.charAt(0).toUpperCase() + bracket.level.slice(1)})` : ''}
+              {bracket.name} {bracket.level ? `(${formatFlightName(bracket.level)})` : ''}
             </SelectItem>
           ))}
         </SelectContent>

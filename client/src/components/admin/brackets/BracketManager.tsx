@@ -34,6 +34,23 @@ import {
   TableRow 
 } from "@/components/ui/table";
 
+// Utility function to format flight names
+const formatFlightName = (level: string): string => {
+  switch (level) {
+    case 'top_flight':
+      return 'Top Flight';
+    case 'middle_flight':
+      return 'Middle Flight';
+    case 'bottom_flight':
+      return 'Bottom Flight';
+    case 'other':
+      return 'Other';
+    default:
+      // Handle legacy values
+      return level.charAt(0).toUpperCase() + level.slice(1);
+  }
+};
+
 // Define type for a bracket
 type Bracket = {
   id: number;
@@ -69,7 +86,7 @@ export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
   const [formData, setFormData] = useState<BracketFormData>({
     name: "",
     description: "",
-    level: "intermediate",
+    level: "middle_flight",
     eligibility: "",
   });
 
@@ -179,7 +196,7 @@ export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
     setFormData({
       name: "",
       description: "",
-      level: "intermediate",
+      level: "middle_flight",
       eligibility: "",
     });
   };
@@ -258,10 +275,10 @@ export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
                     <SelectValue placeholder="Select skill level" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="beginner">Beginner</SelectItem>
-                    <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="advanced">Advanced</SelectItem>
-                    <SelectItem value="elite">Elite</SelectItem>
+                    <SelectItem value="top_flight">Top Flight</SelectItem>
+                    <SelectItem value="middle_flight">Middle Flight</SelectItem>
+                    <SelectItem value="bottom_flight">Bottom Flight</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -391,10 +408,10 @@ export function BracketManager({ ageGroupId, eventId }: BracketManagerProps) {
                   <SelectValue placeholder="Select skill level" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="beginner">Beginner</SelectItem>
-                  <SelectItem value="intermediate">Intermediate</SelectItem>
-                  <SelectItem value="advanced">Advanced</SelectItem>
-                  <SelectItem value="elite">Elite</SelectItem>
+                  <SelectItem value="top_flight">Top Flight</SelectItem>
+                  <SelectItem value="middle_flight">Middle Flight</SelectItem>
+                  <SelectItem value="bottom_flight">Bottom Flight</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
