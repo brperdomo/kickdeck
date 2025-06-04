@@ -26,17 +26,17 @@ export async function setupVite(app: Express, server: Server) {
   
   // Development mode - try to load vite or fallback to static
   try {
-    const { createServer: createViteServer, createLogger } = await import("vite");
+    const viteModule = await import("vite");
     const viteConfig = await import("../vite.config.js");
     
-    const viteLogger = createLogger();
+    const viteLogger = viteModule.createLogger();
     
-    const vite = await createViteServer({
+    const vite = await viteModule.createServer({
       ...viteConfig.default,
       configFile: false,
       customLogger: {
         ...viteLogger,
-        error: (msg, options) => {
+        error: (msg: any, options: any) => {
           if (msg.includes("WebSocket server error")) return;
           if (msg.includes("ws connection")) return;
           viteLogger.error(msg, options);

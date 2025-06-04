@@ -2,7 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { setupWebSocketServer } from "./websocket";
-import { log } from "./vite";
+import { log } from "./vite-fallback";
 import { crypto } from "./crypto";
 import { db } from "@db";
 import { emailTemplates, insertPlayerSchema } from "@db/schema";
