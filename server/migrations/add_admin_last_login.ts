@@ -18,7 +18,7 @@ export async function addAdminLastLoginFields() {
       WHERE table_name = 'users'
     `);
     
-    const columns = checkResult.rows.map((row: any) => row.column_name);
+    const columns = checkResult && checkResult.length > 0 ? checkResult.map((row: any) => row.column_name) : [];
     
     // Add the last_login column if it doesn't exist
     if (!columns.includes('last_login')) {

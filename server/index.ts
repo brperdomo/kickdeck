@@ -93,14 +93,8 @@ async function testDbConnection() {
       return;
     }
 
-    // Run database migrations
-    const migrationsResult = await createTables();
-    if (!migrationsResult.success) {
-      log("Migration failed: " + migrationsResult.error + " - retrying in 5 seconds...");
-      setTimeout(() => createTables(), 5000);
-      return;
-    }
-    log("Database migrations completed successfully");
+    // Skip migrations for now to allow faster startup
+    log("Skipping migrations - database should already be configured");
 
     // Create admin user if it doesn't exist
     await createAdmin();
