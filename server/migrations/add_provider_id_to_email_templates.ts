@@ -15,7 +15,7 @@ export async function addProviderIdToEmailTemplates() {
     `);
     
     // If providerId column doesn't exist, add it
-    if (result.rows.length === 0) {
+    if (!result || result.length === 0) {
       console.log('Adding provider_id column to email_templates table...');
       
       await db.execute(sql`
