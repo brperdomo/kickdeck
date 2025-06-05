@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import { spawn } from 'child_process';
+const { spawn } = require('child_process');
 
 console.log('🚀 Starting TypeScript development server...');
 
 const server = spawn('tsx', ['server/index.ts'], {
   stdio: 'inherit',
-  env: { ...process.env }
+  env: { ...process.env, NODE_OPTIONS: '--import tsx' }
 });
 
 server.on('error', (error) => {
