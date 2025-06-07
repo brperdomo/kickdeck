@@ -124,8 +124,8 @@
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
     "tsx": "^4.19.4",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.9"
+    "typescript": "^5.8.3",
+    "vite": "^5.4.19"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
