@@ -8,6 +8,7 @@ const __dirname = dirname(__filename);
 import { type Server } from "http";
 import viteConfig from "../vite.config";
 
+
 const viteLogger = createLogger();
 
 export function log(message: string, source = "express") {
