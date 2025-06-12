@@ -7787,12 +7787,12 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           return res.status(400).json({ error: 'Coupon code and event ID are required' });
         }
         
-        // Query the coupon with proper validation
+        // Query the coupon with case-insensitive validation
         const [coupon] = await db
           .select()
           .from(coupons)
           .where(and(
-            eq(coupons.code, code.trim().toUpperCase()),
+            sql`UPPER(${coupons.code}) = UPPER(${code.trim()})`,
             eq(coupons.isActive, true),
             or(
               isNull(coupons.eventId),

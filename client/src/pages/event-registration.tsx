@@ -4351,7 +4351,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               type="text"
                               placeholder="Enter discount code (e.g., DJSO)"
                               value={couponCode}
-                              onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                              onChange={(e) => setCouponCode(e.target.value)}
                               className="flex-1"
                               disabled={isValidatingCoupon}
                             />
