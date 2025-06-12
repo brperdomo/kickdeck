@@ -415,6 +415,21 @@ export function registerRoutes(app: Express): Server {
         // Convert eventId to number or null
         const parsedEventId = eventId ? parseInt(eventId) : null;
 
+        // Safely parse expiration date
+        let parsedExpirationDate = null;
+        if (expirationDate && typeof expirationDate === 'string' && expirationDate.trim() !== '') {
+          try {
+            parsedExpirationDate = new Date(expirationDate);
+            // Validate that the date is valid
+            if (isNaN(parsedExpirationDate.getTime())) {
+              parsedExpirationDate = null;
+            }
+          } catch (error) {
+            console.warn('Invalid expiration date provided:', expirationDate);
+            parsedExpirationDate = null;
+          }
+        }
+
         // Create coupon record
         const [newCoupon] = await db
           .insert(coupons)
@@ -422,7 +437,7 @@ export function registerRoutes(app: Express): Server {
             code,
             discountType,
             amount: parseFloat(amount),
-            expirationDate: expirationDate ? new Date(expirationDate) : null,
+            expirationDate: parsedExpirationDate,
             description,
             eventId: parsedEventId,
             maxUses: maxUses ? parseInt(maxUses) : null,
