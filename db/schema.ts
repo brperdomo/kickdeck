@@ -319,6 +319,8 @@ export const teams = pgTable("teams", {
   termsAcknowledgementRecord: text("terms_acknowledgement_record"), // Path to PDF or record ID
   // Flag for adding roster later
   addRosterLater: boolean("add_roster_later").default(false),
+  // Applied coupon information
+  appliedCoupon: text("applied_coupon"), // JSON string storing coupon details
   // Notes field for admin comments
   notes: text("notes")
 });
