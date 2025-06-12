@@ -2176,6 +2176,18 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
   const [availableFees, setAvailableFees] = useState<Fee[]>([]);
   const [selectedFee, setSelectedFee] = useState<Fee | null>(null);
   
+  // Coupon states
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    id: number;
+    code: string;
+    discountType: 'fixed' | 'percentage';
+    amount: number;
+    description?: string;
+  } | null>(null);
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  
   // For UX purposes, only show one registration fee in the registration fee section 
   // (even if multiple are marked as registration)
   const mainRegistrationFee = useMemo(() => selectedFee, [selectedFee]);
@@ -2196,7 +2208,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     [availableFees, mainRegistrationFee]
   );
   
-  // Calculate total amount to pay based on selected fees
+  // Calculate total amount to pay based on selected fees and coupon discounts
   const calculateTotalAmount = () => {
     let total = selectedFee ? selectedFee.amount : 0;
     
@@ -2205,10 +2217,69 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
       total += fee.amount;
     });
     
-    // We don't include optional fees anymore - they're not selectable by the user
-    // All fees are automatically calculated
+    // Apply coupon discount if valid
+    if (appliedCoupon) {
+      if (appliedCoupon.discountType === 'fixed') {
+        // Fixed amount discount (coupon amount is in cents)
+        total = Math.max(0, total - appliedCoupon.amount);
+      } else if (appliedCoupon.discountType === 'percentage') {
+        // Percentage discount
+        const discountAmount = Math.round(total * (appliedCoupon.amount / 100));
+        total = Math.max(0, total - discountAmount);
+      }
+    }
       
     return (total / 100).toFixed(2);
+  };
+
+  // Function to validate coupon code
+  const validateCoupon = async (code: string) => {
+    if (!code.trim() || !eventId) return;
+    
+    setIsValidatingCoupon(true);
+    setCouponError(null);
+    
+    try {
+      const response = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: code.trim(),
+          eventId: eventId
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.valid) {
+        setAppliedCoupon(data.coupon);
+        setCouponError(null);
+        toast({
+          title: "Coupon Applied!",
+          description: `${data.coupon.discountType === 'fixed' 
+            ? `$${(data.coupon.amount / 100).toFixed(2)} discount` 
+            : `${data.coupon.amount}% discount`} applied successfully.`,
+        });
+      } else {
+        setAppliedCoupon(null);
+        setCouponError(data.error || 'Invalid coupon code');
+      }
+    } catch (error) {
+      console.error('Error validating coupon:', error);
+      setAppliedCoupon(null);
+      setCouponError('Failed to validate coupon code');
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
+
+  // Function to remove applied coupon
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    setCouponError(null);
   };
   
   // Fetch fee information when age group is selected

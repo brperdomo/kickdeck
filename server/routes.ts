@@ -7774,6 +7774,53 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
+    // Coupon validation endpoint for team registration
+    app.post('/api/coupons/validate', async (req, res) => {
+      try {
+        const { code, eventId } = req.body;
+        
+        if (!code || !eventId) {
+          return res.status(400).json({ error: 'Coupon code and event ID are required' });
+        }
+        
+        // Query the coupon with proper validation
+        const [coupon] = await db
+          .select()
+          .from(coupons)
+          .where(and(
+            eq(coupons.code, code.trim().toUpperCase()),
+            eq(coupons.isActive, true),
+            or(
+              isNull(coupons.eventId),
+              eq(coupons.eventId, parseInt(eventId))
+            )
+          ));
+        
+        if (!coupon) {
+          return res.status(404).json({ error: 'Invalid coupon code' });
+        }
+        
+        // Check if coupon has expired
+        if (coupon.expirationDate && new Date() > new Date(coupon.expirationDate)) {
+          return res.status(400).json({ error: 'Coupon has expired' });
+        }
+        
+        res.json({
+          valid: true,
+          coupon: {
+            id: coupon.id,
+            code: coupon.code,
+            discountType: coupon.discountType,
+            amount: coupon.amount,
+            description: coupon.description
+          }
+        });
+      } catch (error) {
+        console.error('Error validating coupon:', error);
+        res.status(500).json({ error: 'Failed to validate coupon' });
+      }
+    });
+
     // Register email template routes
     app.get('/api/admin/email-templates', isAdmin, async (req, res) => {
       try {
