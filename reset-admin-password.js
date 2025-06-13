@@ -7,7 +7,7 @@
 import { db } from './db/index.ts';
 import { users } from './db/schema.ts';
 import { eq } from 'drizzle-orm';
-import bcrypt from 'bcrypt';
+import { crypto } from './server/crypto.ts';
 
 async function resetAdminPassword() {
   try {
