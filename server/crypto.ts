@@ -21,7 +21,17 @@ export const crypto = {
   },
 
   compare: async (suppliedPassword: string, storedPassword: string) => {
+    // Handle bcrypt hashes (used for admin reset)
+    if (storedPassword.startsWith('$2b$') || storedPassword.startsWith('$2a$')) {
+      const bcrypt = await import('bcrypt');
+      return bcrypt.compare(suppliedPassword, storedPassword);
+    }
+    
+    // Handle custom scrypt hashes
     const [hashedPassword, salt] = storedPassword.split(".");
+    if (!salt) {
+      throw new Error('Invalid password format');
+    }
     const hashedPasswordBuf = Buffer.from(hashedPassword, "hex");
     const suppliedPasswordBuf = (await scryptAsync(
       suppliedPassword,
