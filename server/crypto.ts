@@ -1,6 +1,7 @@
 import { randomBytes } from "crypto";
 import { scrypt, timingSafeEqual } from "crypto";
 import { promisify } from "util";
+import bcrypt from "bcrypt";
 
 const scryptAsync = promisify(scrypt);
 
@@ -23,12 +24,15 @@ export const crypto = {
   compare: async (suppliedPassword: string, storedPassword: string) => {
     console.log('Crypto compare - stored password format:', storedPassword.substring(0, 10) + '...');
     
-    // Handle bcrypt hashes (used for admin reset) - temporarily using simple comparison
+    // Handle bcrypt hashes (used for admin accounts and password resets)
     if (storedPassword.startsWith('$2b$') || storedPassword.startsWith('$2a$')) {
-      console.log('Using temporary bcrypt bypass for admin authentication');
-      // For admin authentication, temporarily bypass bcrypt and use simple password check
-      // This is a temporary fix to enable banking access
-      return suppliedPassword === 'admin123';
+      console.log('Using bcrypt comparison');
+      try {
+        return await bcrypt.compare(suppliedPassword, storedPassword);
+      } catch (error) {
+        console.error('Bcrypt comparison error:', error);
+        return false;
+      }
     }
     
     console.log('Using scrypt comparison');
