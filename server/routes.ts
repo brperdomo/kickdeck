@@ -2450,7 +2450,7 @@ export function registerRoutes(app: Express): Server {
           .limit(1);
 
         // Check current password
-        const isCurrentPasswordValid = await crypto.verify(currentPassword, user.password);
+        const isCurrentPasswordValid = await crypto.compare(currentPassword, user.password);
         if (!isCurrentPasswordValid) {
           return res.status(400).send("Current password is incorrect");
         }
