@@ -28,6 +28,7 @@ import {
 import { BracketsContent } from "@/components/admin/brackets/BracketsContent";
 import { Editor } from "@tinymce/tinymce-react";
 import { AgeGroupEligibilityManager } from "@/components/admin/age-groups/AgeGroupEligibilityManager";
+import { StripeConnectBankingView } from "@/components/admin/StripeConnectBankingView";
 
 // TinyMCE API key from environment variable
 const TINYMCE_API_KEY = import.meta.env.VITE_TINYMCE_API_KEY;
@@ -1241,6 +1242,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       'scoring': scoringRules.length === 0,
       'complexes': selectedComplexIds.length === 0,
       'settings': false,
+      'banking': false,
       'administrators': false,
     };
     return errors;
@@ -1593,7 +1595,7 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
       <Card className="bg-white shadow-sm border border-gray-200">
         <CardContent className="p-6">
           <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as EventTab)}>
-            <TabsList className="w-full grid grid-cols-7 gap-2 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
+            <TabsList className="w-full grid grid-cols-8 gap-2 mb-6 bg-[#F2F2F7] p-1 rounded-lg">
               {TAB_ORDER.map((tab) => (
                 <TabsTrigger
                   key={tab}
@@ -1649,6 +1651,19 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
 
               <TabsContent value="settings">
                 {renderSettingsContent()}
+              </TabsContent>
+
+              <TabsContent value="banking">
+                {mode === 'edit' && defaultValues?.id ? (
+                  <StripeConnectBankingView eventId={defaultValues.id.toString()} />
+                ) : (
+                  <div className="p-4 bg-muted/50 rounded-md text-center">
+                    <p>Save the event first to set up banking information.</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Banking setup is available after creating the event.
+                    </p>
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="administrators">

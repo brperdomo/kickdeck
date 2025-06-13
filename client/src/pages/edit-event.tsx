@@ -196,7 +196,7 @@ export default function EditEvent() {
 
   console.log('Prepared event data:', eventData);
 
-  const tabs: EventTab[] = ['information', 'age-groups', 'scoring', 'complexes', 'settings', 'administrators'];
+  const tabs: EventTab[] = ['information', 'age-groups', 'brackets', 'scoring', 'complexes', 'settings', 'banking', 'administrators'];
 
   return (
     <EventFormLayout 
