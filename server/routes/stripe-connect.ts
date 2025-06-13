@@ -93,10 +93,22 @@ export function registerStripeConnectRoutes(app: Express) {
       });
 
     } catch (error: any) {
-      console.error("Error creating Connect account:", error);
+      console.error("Error creating Connect account:", {
+        error: error.message,
+        type: error.type,
+        code: error.code,
+        statusCode: error.statusCode,
+        requestId: error.requestId,
+        stack: error.stack,
+        eventId: req.params.eventId,
+        requestBody: req.body
+      });
+      
       res.status(500).json({ 
         error: "Failed to create Connect account",
-        details: error.message 
+        details: error.message,
+        type: error.type,
+        code: error.code
       });
     }
   });
