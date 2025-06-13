@@ -32,7 +32,7 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
   const { data: connectStatus, isLoading, error } = useQuery<ConnectAccountStatus>({
     queryKey: ['stripe-connect-account', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/stripe-connect/events/${eventId}/connect-account`);
+      const response = await fetch(`/api/events/${eventId}/connect-account`);
       if (!response.ok) {
         throw new Error('Failed to fetch Connect account status');
       }
@@ -43,7 +43,7 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
   // Create Connect account mutation
   const createAccountMutation = useMutation({
     mutationFn: async ({ email }: { email: string }) => {
-      const response = await fetch(`/api/stripe-connect/events/${eventId}/connect-account`, {
+      const response = await fetch(`/api/events/${eventId}/connect-account`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, country: 'US', type: 'standard' }),
@@ -82,7 +82,7 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
   // Create reauth link mutation
   const reauthMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/stripe-connect/events/${eventId}/connect-account/reauth`, {
+      const response = await fetch(`/api/events/${eventId}/connect-account/refresh`, {
         method: 'POST',
       });
 
@@ -112,7 +112,7 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
   // Get dashboard link mutation
   const dashboardMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/stripe-connect/events/${eventId}/connect-account/dashboard`);
+      const response = await fetch(`/api/events/${eventId}/connect-account/dashboard`);
       
       if (!response.ok) {
         const error = await response.json();
