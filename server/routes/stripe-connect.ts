@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { db } from "@db";
 import { events } from "@db/schema";
 import { eq } from "drizzle-orm";
-import { isAdmin } from "../middleware";
+import { isAdmin } from "../middleware/auth";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');

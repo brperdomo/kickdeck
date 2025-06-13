@@ -1,55 +1,34 @@
 import { Request, Response, NextFunction } from "express";
 
-export const authenticateAdmin = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Not authenticated" });
-  }
-
-  if (!req.user?.isAdmin) {
-    return res.status(403).json({ message: "Not authorized" });
-  }
-
-  next();
-};
-import { Request, Response, NextFunction } from "express";
-
-// Admin middleware
+// Enhanced admin authentication middleware with debugging
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+  console.log(`[Banking Auth] Session ID: ${req.sessionID}`);
+  console.log(`[Banking Auth] isAuthenticated: ${req.isAuthenticated()}`);
+  console.log(`[Banking Auth] User: ${req.user ? 'exists' : 'null'}`);
+  console.log(`[Banking Auth] isAdmin: ${req.user?.isAdmin}`);
+  
   if (!req.isAuthenticated()) {
-    return res.status(401).send("Not authenticated");
+    console.log(`[Banking Auth] Authentication failed - not authenticated`);
+    return res.status(401).json({ error: "Authentication required for banking access" });
   }
 
   if (!req.user?.isAdmin) {
-    return res.status(403).send("Not authorized");
+    console.log(`[Banking Auth] Authorization failed - not admin`);
+    return res.status(403).json({ error: "Admin privileges required for banking access" });
   }
 
+  console.log(`[Banking Auth] Authentication successful for banking access`);
   next();
 };
-import { Request, Response, NextFunction } from 'express';
 
-// Middleware to validate authentication
+// Middleware to validate authentication only (not admin)
 export const validateAuth = (req: Request, res: Response, next: NextFunction) => {
-  console.log(`[Auth Debug] Request headers: ${JSON.stringify(req.headers)}`);
-  console.log(`[Auth Debug] isAuthenticated: ${req.isAuthenticated()}`);
-  console.log(`[Auth Debug] Session ID: ${req.sessionID}`);
-  console.log(`[Auth Debug] Session: ${JSON.stringify(req.session)}`);
-  console.log(`[Auth Debug] User: ${JSON.stringify(req.user)}`);
-  
   if (!req.isAuthenticated()) {
-    return res.status(401).json({ error: 'Not authenticated' });
+    return res.status(401).json({ error: 'Authentication required' });
   }
   next();
 };
 
-// Middleware to validate admin privileges
-export const validateAdmin = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ error: 'Not authenticated' });
-  }
-  
-  if (!req.user?.isAdmin) {
-    return res.status(403).json({ error: 'Not authorized' });
-  }
-  
-  next();
-};
+// Legacy support
+export const authenticateAdmin = isAdmin;
+export const validateAdmin = isAdmin;
