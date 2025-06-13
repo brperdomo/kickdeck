@@ -1,15 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ExternalLink, AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Loader2, ExternalLink, AlertCircle, CheckCircle, Clock, XCircle, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 interface StripeConnectBankingViewProps {
   eventId: string;
 }
+
+// Secure form validation schema
+const bankAccountSchema = z.object({
+  email: z.string()
+    .email('Please enter a valid email address')
+    .min(5, 'Email must be at least 5 characters')
+    .max(100, 'Email must be less than 100 characters')
+    .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email format'),
+  confirmEmail: z.string()
+    .email('Please enter a valid email address'),
+  businessName: z.string()
+    .min(2, 'Business name must be at least 2 characters')
+    .max(100, 'Business name must be less than 100 characters')
+    .optional(),
+}).refine((data) => data.email === data.confirmEmail, {
+  message: "Email addresses must match",
+  path: ["confirmEmail"],
+});
 
 interface ConnectAccountStatus {
   status: 'not_connected' | 'pending' | 'active' | 'rejected' | 'restricted';
@@ -27,6 +51,17 @@ interface ConnectAccountStatus {
 export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [showSetupForm, setShowSetupForm] = useState(false);
+
+  // Secure form for bank account setup
+  const form = useForm<z.infer<typeof bankAccountSchema>>({
+    resolver: zodResolver(bankAccountSchema),
+    defaultValues: {
+      email: '',
+      confirmEmail: '',
+      businessName: '',
+    },
+  });
 
   // Fetch Connect account status
   const { data: connectStatus, isLoading, error } = useQuery<ConnectAccountStatus>({
@@ -40,13 +75,18 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
     },
   });
 
-  // Create Connect account mutation
+  // Create Connect account mutation with secure form data
   const createAccountMutation = useMutation({
-    mutationFn: async ({ email }: { email: string }) => {
+    mutationFn: async (formData: z.infer<typeof bankAccountSchema>) => {
       const response = await fetch(`/api/events/${eventId}/connect-account`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, country: 'US', type: 'standard' }),
+        body: JSON.stringify({ 
+          email: formData.email, 
+          businessName: formData.businessName,
+          country: 'US', 
+          type: 'standard' 
+        }),
       });
 
       if (!response.ok) {
@@ -57,13 +97,17 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
       return response.json();
     },
     onSuccess: (data) => {
-      // Redirect to Stripe onboarding
-      window.open(data.onboardingUrl, '_blank');
+      setShowSetupForm(false);
+      form.reset();
       
-      toast({
-        title: "Bank Account Setup Started",
-        description: "Complete the setup process in the new window, then return here to check status.",
-      });
+      // Redirect to Stripe onboarding
+      if (data.onboardingUrl) {
+        window.open(data.onboardingUrl, '_blank');
+        toast({
+          title: "Secure Account Created",
+          description: "Complete the setup process in the new window, then return here to check status.",
+        });
+      }
 
       // Refresh status after a delay
       setTimeout(() => {
