@@ -104,11 +104,41 @@ export function registerStripeConnectRoutes(app: Express) {
         requestBody: req.body
       });
       
+      // Handle specific Stripe Connect setup error
+      if (error.message && error.message.includes("signed up for Connect")) {
+        return res.status(400).json({ 
+          error: "Stripe Connect not enabled",
+          details: "Your Stripe account needs to be enrolled in Stripe Connect to create tournament bank accounts. Please visit your Stripe Dashboard > Connect settings to enable this feature, then try again.",
+          actionRequired: "enable_stripe_connect",
+          helpUrl: "https://stripe.com/docs/connect"
+        });
+      }
+      
+      // Handle authentication errors
+      if (error.type === 'StripeAuthenticationError') {
+        return res.status(401).json({ 
+          error: "Stripe authentication failed",
+          details: "Invalid Stripe API credentials. Please check your Stripe secret key configuration.",
+          actionRequired: "check_stripe_keys"
+        });
+      }
+      
+      // Handle permission errors
+      if (error.type === 'StripePermissionError') {
+        return res.status(403).json({ 
+          error: "Stripe permission denied",
+          details: "Your Stripe account doesn't have permission to create Connect accounts. Please contact Stripe support or check your account settings.",
+          actionRequired: "contact_stripe_support"
+        });
+      }
+      
+      // Generic error fallback
       res.status(500).json({ 
         error: "Failed to create Connect account",
         details: error.message,
         type: error.type,
-        code: error.code
+        code: error.code,
+        requestId: error.requestId
       });
     }
   });

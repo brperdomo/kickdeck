@@ -106,7 +106,12 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to create Connect account');
+        const errorObj = new Error(error.error || 'Failed to create Connect account');
+        // Attach additional error details for better handling
+        (errorObj as any).details = error.details;
+        (errorObj as any).actionRequired = error.actionRequired;
+        (errorObj as any).helpUrl = error.helpUrl;
+        throw errorObj;
       }
 
       return response.json();
@@ -129,12 +134,33 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
         queryClient.invalidateQueries({ queryKey: ['stripe-connect-account', eventId] });
       }, 3000);
     },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+    onError: (error: any) => {
+      // Handle specific Stripe Connect setup error
+      if (error.actionRequired === 'enable_stripe_connect' || error.message.includes('signed up for Connect')) {
+        toast({
+          title: "Stripe Connect Required",
+          description: error.details || "Your Stripe account needs Stripe Connect enabled. Visit your Stripe Dashboard > Connect settings to enable this feature.",
+          variant: "destructive",
+        });
+      } else if (error.message.includes('Authentication') || error.message.includes('Admin privileges')) {
+        toast({
+          title: "Access Denied",
+          description: "You need admin privileges to set up banking. Please log in as an administrator.",
+          variant: "destructive",
+        });
+      } else if (error.actionRequired === 'check_stripe_keys') {
+        toast({
+          title: "Configuration Error",
+          description: "Stripe API credentials are invalid. Please check your configuration.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Setup Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
     },
   });
 
