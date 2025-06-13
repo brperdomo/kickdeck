@@ -176,6 +176,17 @@ export const events = pgTable("events", {
   agreement: text("agreement"),
   refundPolicy: text("refund_policy"),
   isArchived: boolean("is_archived").default(false).notNull(),
+  // Stripe Connect fields for per-tournament bank accounts
+  stripeConnectAccountId: text("stripe_connect_account_id"), // Stripe Connect account ID
+  connectAccountStatus: text("connect_account_status").default("not_connected"), // not_connected, pending, active, rejected, restricted
+  connectOnboardingUrl: text("connect_onboarding_url"), // URL for completing onboarding
+  connectDashboardUrl: text("connect_dashboard_url"), // URL to Stripe Express dashboard
+  connectAccountType: text("connect_account_type").default("standard"), // standard, express, custom
+  connectRequirementsNeeded: text("connect_requirements_needed"), // JSON array of pending requirements
+  connectPayoutsEnabled: boolean("connect_payouts_enabled").default(false), // Whether payouts are enabled
+  connectChargesEnabled: boolean("connect_charges_enabled").default(false), // Whether charges are enabled
+  connectAccountVerified: boolean("connect_account_verified").default(false), // Full verification status
+  connectLastUpdated: timestamp("connect_last_updated"), // When Connect status was last checked
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
 });
@@ -221,6 +232,15 @@ export const insertEventSchema = createInsertSchema(events, {
   details: z.string().optional(),
   agreement: z.string().optional(),
   refundPolicy: z.string().optional(),
+  stripeConnectAccountId: z.string().optional(),
+  connectAccountStatus: z.enum(["not_connected", "pending", "active", "rejected", "restricted"]).default("not_connected"),
+  connectOnboardingUrl: z.string().optional(),
+  connectDashboardUrl: z.string().optional(),
+  connectAccountType: z.enum(["standard", "express", "custom"]).default("standard"),
+  connectRequirementsNeeded: z.string().optional(),
+  connectPayoutsEnabled: z.boolean().default(false),
+  connectChargesEnabled: z.boolean().default(false),
+  connectAccountVerified: z.boolean().default(false),
 });
 
 export type InsertEvent = typeof events.$inferInsert;
