@@ -21,7 +21,7 @@ export function registerStripeConnectRoutes(app: Express) {
   app.post("/api/events/:eventId/connect-account", isAdmin, async (req, res) => {
     try {
       const { eventId } = req.params;
-      const { email, country = "US", type = "standard" } = req.body;
+      const { email, businessName, country = "US", type = "standard" } = req.body;
 
       // Check if event exists and user has access
       const event = await db.query.events.findFirst({
@@ -40,8 +40,8 @@ export function registerStripeConnectRoutes(app: Express) {
         });
       }
 
-      // Create Stripe Connect account
-      const account = await stripe.accounts.create({
+      // Create Stripe Connect account with secure form data
+      const accountParams: any = {
         type: type as "standard" | "express" | "custom",
         country,
         email,
@@ -49,8 +49,20 @@ export function registerStripeConnectRoutes(app: Express) {
           card_payments: { requested: true },
           transfers: { requested: true },
         },
-        business_type: 'individual',
-      });
+        business_type: businessName ? 'company' : 'individual',
+      };
+
+      // Add business profile if business name is provided
+      if (businessName) {
+        accountParams.business_profile = {
+          name: businessName,
+        };
+        accountParams.company = {
+          name: businessName,
+        };
+      }
+
+      const account = await stripe.accounts.create(accountParams);
 
       // Create account link for onboarding
       const accountLink = await stripe.accountLinks.create({

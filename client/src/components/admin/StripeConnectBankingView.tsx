@@ -207,10 +207,11 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
   };
 
   const handleCreateAccount = () => {
-    const email = prompt('Enter the email address for the bank account holder:');
-    if (email) {
-      createAccountMutation.mutate({ email });
-    }
+    setShowSetupForm(true);
+  };
+
+  const onSubmitForm = (values: z.infer<typeof bankAccountSchema>) => {
+    createAccountMutation.mutate(values);
   };
 
   const refreshStatus = () => {
@@ -275,20 +276,125 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
                 </ul>
               </div>
 
-              <Button
-                onClick={handleCreateAccount}
-                disabled={createAccountMutation.isPending}
-                className="w-full"
-              >
-                {createAccountMutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating Account...
-                  </>
-                ) : (
-                  'Set Up Bank Account'
-                )}
-              </Button>
+              {!showSetupForm ? (
+                <Button
+                  onClick={handleCreateAccount}
+                  disabled={createAccountMutation.isPending}
+                  className="w-full"
+                >
+                  <Shield className="mr-2 h-4 w-4" />
+                  Set Up Secure Bank Account
+                </Button>
+              ) : (
+                <Card className="border-2 border-blue-200 bg-blue-50/50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-blue-800">
+                      <Shield className="h-5 w-5" />
+                      Secure Bank Account Setup
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Alert className="mb-4 border-blue-200 bg-blue-50">
+                      <Shield className="h-4 w-4 text-blue-600" />
+                      <AlertDescription className="text-blue-800">
+                        This form uses secure validation and encryption. Your information is protected 
+                        and only shared with Stripe for account verification.
+                      </AlertDescription>
+                    </Alert>
+
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmitForm)} className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Bank Account Holder Email *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  {...field} 
+                                  type="email"
+                                  placeholder="Enter email address"
+                                  className="w-full"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="confirmEmail"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Confirm Email Address *</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  {...field} 
+                                  type="email"
+                                  placeholder="Confirm email address"
+                                  className="w-full"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="businessName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Business/Organization Name (Optional)</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  {...field} 
+                                  placeholder="Enter business name"
+                                  className="w-full"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <div className="flex gap-2 pt-4">
+                          <Button
+                            type="submit"
+                            disabled={createAccountMutation.isPending}
+                            className="flex-1"
+                          >
+                            {createAccountMutation.isPending ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Creating Secure Account...
+                              </>
+                            ) : (
+                              <>
+                                <Shield className="mr-2 h-4 w-4" />
+                                Create Secure Account
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                              setShowSetupForm(false);
+                              form.reset();
+                            }}
+                            disabled={createAccountMutation.isPending}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </form>
+                    </Form>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
