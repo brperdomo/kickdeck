@@ -21,12 +21,16 @@ export const crypto = {
   },
 
   compare: async (suppliedPassword: string, storedPassword: string) => {
+    console.log('Crypto compare - stored password format:', storedPassword.substring(0, 10) + '...');
+    
     // Handle bcrypt hashes (used for admin reset)
     if (storedPassword.startsWith('$2b$') || storedPassword.startsWith('$2a$')) {
-      const bcrypt = await import('bcrypt');
+      console.log('Using bcrypt comparison');
+      const bcrypt = require('bcrypt');
       return bcrypt.compare(suppliedPassword, storedPassword);
     }
     
+    console.log('Using scrypt comparison');
     // Handle custom scrypt hashes
     const [hashedPassword, salt] = storedPassword.split(".");
     if (!salt) {
