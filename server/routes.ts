@@ -40,7 +40,8 @@ import { createCoupon, getCoupons, updateCoupon, deleteCoupon } from "./routes/c
 import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignments";
 import paymentsRouter from "./routes/payments";
 import reportsRouter from "./routes/reports";
-// Stripe Connect routes are now imported dynamically in the function
+import { registerStripeConnectRoutes } from "./routes/stripe-connect";
+import { registerConnectPaymentRoutes } from "./routes/stripe-connect-payments";
 import { 
   getEnhancedEventFinancialReport, 
   getOrganizationFinancialSummary, 
@@ -8042,21 +8043,21 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    // Import and register Stripe Connect routes
-    import('./routes/stripe-connect').then(({ registerStripeConnectRoutes }) => {
+    // Register Stripe Connect routes synchronously
+    try {
       registerStripeConnectRoutes(app);
       console.log('Stripe Connect routes registered successfully');
-    }).catch(error => {
+    } catch (error) {
       console.error('Error registering Stripe Connect routes:', error);
-    });
+    }
 
-    // Import and register Connect payment routes
-    import('./routes/stripe-connect-payments').then(({ registerConnectPaymentRoutes }) => {
+    // Register Connect payment routes synchronously
+    try {
       registerConnectPaymentRoutes(app);
       console.log('Stripe Connect payment routes registered successfully');
-    }).catch(error => {
+    } catch (error) {
       console.error('Error registering Connect payment routes:', error);
-    });
+    }
 
     // Preview route moved above to prevent route conflicts
 
