@@ -182,10 +182,13 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
     const currentStepData = workflowSteps[currentStep];
     if (!currentStepData) return null;
 
+    // Debug teams data structure
+    console.log('SchedulingWorkflow teamsData:', teamsData);
+    
     const commonProps = {
       eventId,
       eventData,
-      teamsData: teamsData?.teams || [],
+      teamsData: Array.isArray(teamsData) ? teamsData : (teamsData?.teams || []),
       workflowData,
       onComplete: (data: any) => updateStepStatus(currentStepData.id, 'completed', data),
       onError: (error: string) => {
