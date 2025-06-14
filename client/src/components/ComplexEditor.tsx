@@ -21,6 +21,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect, useState } from "react";
+import { MapboxAutocomplete } from "./MapboxAutocomplete";
 import { GoogleMapsAutocomplete } from "./GoogleMapsAutocomplete";
 import { Card } from "@/components/ui/card";
 
@@ -159,42 +160,41 @@ export function ComplexEditor({ open, onOpenChange, onSubmit, complex }: Complex
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <GoogleMapsAutocomplete
+                    <MapboxAutocomplete
                       value={field.value}
                       onChange={(value, placeDetails) => {
                         // Update the address field
                         field.onChange(value);
                         
-                        // If Google Maps returned place details with coordinates
-                        if (placeDetails && placeDetails.geometry && placeDetails.geometry.location) {
-                          // Update latitude and longitude fields
-                          form.setValue('latitude', placeDetails.geometry.location.lat().toString());
-                          form.setValue('longitude', placeDetails.geometry.location.lng().toString());
+                        // If Mapbox returned place details with coordinates
+                        if (placeDetails && placeDetails.extractedData) {
+                          const { location, city, state, country } = placeDetails.extractedData;
                           
-                          // If extractedData is available, update city, state, country fields
-                          if (placeDetails.extractedData) {
-                            if (placeDetails.extractedData.city) {
-                              form.setValue('city', placeDetails.extractedData.city);
-                            }
-                            if (placeDetails.extractedData.state) {
-                              form.setValue('state', placeDetails.extractedData.state);
-                            }
-                            if (placeDetails.extractedData.country) {
-                              form.setValue('country', placeDetails.extractedData.country);
-                            }
+                          // Update latitude and longitude fields
+                          if (location) {
+                            form.setValue('latitude', location.lat.toString());
+                            form.setValue('longitude', location.lng.toString());
                           }
                           
-                          console.log("Updated form with Google Maps data:", {
-                            lat: placeDetails.geometry.location.lat(),
-                            lng: placeDetails.geometry.location.lng(),
-                            extractedData: placeDetails.extractedData
+                          // Update city, state, country fields
+                          if (city) form.setValue('city', city);
+                          if (state) form.setValue('state', state);
+                          if (country) form.setValue('country', country);
+                          
+                          console.log("Updated form with Mapbox data:", {
+                            lat: location?.lat,
+                            lng: location?.lng,
+                            city, state, country,
+                            placeId: placeDetails.extractedData.placeId
                           });
                         } else {
-                          console.log("No place details or coordinates available");
+                          console.log("No place details or coordinates available from Mapbox");
                         }
                       }}
                       placeholder="Search for an address"
                       className="w-full"
+                      types={['address', 'poi']}
+                      country={['us', 'ca']}
                     />
                   </FormControl>
                   <FormMessage />

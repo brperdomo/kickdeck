@@ -1,5 +1,6 @@
 // Environment variable handling for client-side
 export const googleMapsApiKey = import.meta.env.GOOGLE_MAPS_API_KEY || ""; // Use environment API key
+export const mapboxApiKey = import.meta.env.VITE_MAPBOX_API_KEY || "";
 export const tinymceApiKey = import.meta.env.VITE_TINYMCE_API_KEY || "";
 export const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "";
 export const bypassAuth = import.meta.env.VITE_BYPASS_AUTH === "true";
@@ -7,6 +8,7 @@ export const hostUrl = import.meta.env.VITE_HOST || "";
 
 // Log API key length for debugging
 console.log(`Google Maps API key length: ${googleMapsApiKey?.length || 0} characters`);
+console.log(`Mapbox API key length: ${mapboxApiKey?.length || 0} characters`);
 
 // Initialize Google Maps API
 export function initGoogleMapsApi() {
@@ -54,6 +56,7 @@ export function initGoogleMapsApi() {
 export function debugEnvVars() {
   console.log("Environment variables status:");
   console.log("- Google Maps API Key:", googleMapsApiKey ? `Present (${googleMapsApiKey.length} chars)` : "Missing");
+  console.log("- Mapbox API Key:", mapboxApiKey ? `Present (${mapboxApiKey.length} chars)` : "Missing");
   console.log("- TinyMCE API Key:", tinymceApiKey ? "Present" : "Missing");
   console.log("- Stripe Publishable Key:", stripePublishableKey ? "Present" : "Missing");
   console.log("- Bypass Auth:", bypassAuth);
