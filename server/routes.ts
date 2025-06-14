@@ -6169,7 +6169,6 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch age groups' });
       }
     });
-    });
 
     app.get('/api/admin/teams', isAdmin, async (req, res) => {
       try {

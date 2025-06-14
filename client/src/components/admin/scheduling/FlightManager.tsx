@@ -46,6 +46,8 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
   const [flights, setFlights] = useState<Flight[]>([]);
   const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingFlight, setEditingFlight] = useState<Flight | null>(null);
   const [autoFlightSuggestions, setAutoFlightSuggestions] = useState<any[]>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -165,6 +167,32 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
     toast({
       title: "Flight Created",
       description: `${newFlight.name} has been created successfully.`
+    });
+  };
+
+  const updateFlight = (flightData: Partial<Flight>) => {
+    if (!editingFlight) return;
+
+    setFlights(prev => prev.map(flight => 
+      flight.id === editingFlight.id 
+        ? {
+            ...flight,
+            name: flightData.name || flight.name,
+            ageGroup: flightData.ageGroup || flight.ageGroup,
+            level: flightData.level || flight.level,
+            description: flightData.description || flight.description,
+            minTeams: flightData.minTeams || flight.minTeams,
+            maxTeams: flightData.maxTeams || flight.maxTeams
+          }
+        : flight
+    ));
+    
+    setIsEditDialogOpen(false);
+    setEditingFlight(null);
+    
+    toast({
+      title: "Flight Updated",
+      description: `${flightData.name} has been updated successfully.`
     });
   };
 
@@ -391,6 +419,10 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
                   availableTeams={getUnassignedTeams()}
                   onAssignTeam={assignTeamToFlight}
                   onRemoveTeam={removeTeamFromFlight}
+                  onEditFlight={(flight) => {
+                    setEditingFlight(flight);
+                    setIsEditDialogOpen(true);
+                  }}
                 />
               ))}
             </div>
@@ -557,6 +589,13 @@ function FlightCard({ flight, availableTeams, onAssignTeam, onRemoveTeam }: any)
           <Badge variant="outline">
             {flight.teams.length}/{flight.maxTeams} teams
           </Badge>
+          <Button 
+            size="sm" 
+            variant="ghost"
+            onClick={() => onEditFlight?.(flight)}
+          >
+            <Edit2 className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
