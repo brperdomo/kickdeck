@@ -52,9 +52,21 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Debug: Log teams data structure to understand age group extraction
+  console.log('FlightManager teamsData:', teamsData?.slice(0, 2));
+  
+  // Extract age groups from teams data with multiple possible property names
+  const extractedAgeGroups = teamsData?.map(team => {
+    return team.ageGroup || team.age_group || team.ageGroupName || team.ageGroupCode || null;
+  }).filter(Boolean) || [];
+  
+  console.log('Extracted age groups:', extractedAgeGroups);
+  const uniqueAgeGroups = Array.from(new Set(extractedAgeGroups));
+  console.log('Unique age groups:', uniqueAgeGroups);
+
   // Group teams by age group for analysis
   const ageGroupSummary: AgeGroupSummary[] = teamsData.reduce((acc: AgeGroupSummary[], team) => {
-    const ageGroup = team.ageGroup || 'Unknown';
+    const ageGroup = team.ageGroup || team.age_group || team.ageGroupName || 'Unknown';
     const existing = acc.find(item => item.ageGroup === ageGroup);
     
     if (existing) {
@@ -396,7 +408,7 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
                   <DialogTitle>Create New Flight</DialogTitle>
                 </DialogHeader>
                 <CreateFlightForm
-                  ageGroups={Array.from(new Set(teamsData.map(t => t.ageGroup)))}
+                  ageGroups={uniqueAgeGroups}
                   onSubmit={createFlight}
                   onCancel={() => setIsCreateDialogOpen(false)}
                 />
@@ -412,7 +424,7 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
                 {editingFlight && (
                   <EditFlightForm
                     flight={editingFlight}
-                    ageGroups={Array.from(new Set(teamsData.map(t => t.ageGroup)))}
+                    ageGroups={uniqueAgeGroups}
                     onSubmit={updateFlight}
                     onCancel={() => {
                       setIsEditDialogOpen(false);
