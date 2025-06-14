@@ -1534,7 +1534,7 @@ export function registerRoutes(app: Express): Server {
             
             if (isSetupIntentFlow) {
               // For setup intent flow, send registration confirmation email
-              console.log(`Sending registration confirmation email to ${result.team.submitterEmail} (setup intent workflow)`);
+              console.log(`📧 TRIGGERING registration confirmation email to ${result.team.submitterEmail} (setup intent workflow)`);
               
               sendRegistrationConfirmationEmail(
                 result.team.submitterEmail,
@@ -1544,11 +1544,13 @@ export function registerRoutes(app: Express): Server {
                 bracketInfo
               ).catch(emailError => {
                 // Log email errors but don't fail the registration process
-                console.error('Error sending registration confirmation email:', emailError);
+                console.error('❌ ERROR sending registration confirmation email:', emailError);
+                console.error('   Team:', result.team.name);
+                console.error('   Email:', result.team.submitterEmail);
               });
             } else {
               // For traditional immediate payment flow, send registration receipt email
-              console.log(`Sending registration receipt email to ${result.team.submitterEmail} (traditional payment workflow)`);
+              console.log(`📧 TRIGGERING registration receipt email to ${result.team.submitterEmail} (traditional payment workflow)`);
               
               // Create a mock payment data object for the initial receipt
               const initialPaymentData = {
@@ -1565,7 +1567,9 @@ export function registerRoutes(app: Express): Server {
                 eventInfo?.name || 'Event Registration'
               ).catch(emailError => {
                 // Log email errors but don't fail the registration process
-                console.error('Error sending registration receipt email:', emailError);
+                console.error('❌ ERROR sending registration receipt email:', emailError);
+                console.error('   Team:', result.team.name);
+                console.error('   Email:', result.team.submitterEmail);
               });
             }
           }

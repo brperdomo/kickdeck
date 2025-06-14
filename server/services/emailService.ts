@@ -215,7 +215,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
     });
     
     if (result) {
-      console.log(`SendGrid: Email sent to ${options.to}`);
+      console.log(`✅ EMAIL SENT: ${options.subject} → ${options.to}`);
     } else {
       throw new Error('Failed to send email via SendGrid');
     }
@@ -278,7 +278,7 @@ export async function sendTemplatedEmail(
         });
         
         if (result) {
-          console.log(`SendGrid dynamic template email (${templateType}) sent to ${to}`);
+          console.log(`✅ TEMPLATE EMAIL SENT: ${templateType} → ${to} (SendGrid ID: ${emailTemplate.sendgridTemplateId})`);
         } else {
           throw new Error(`Failed to send SendGrid dynamic template email to ${to}`);
         }
