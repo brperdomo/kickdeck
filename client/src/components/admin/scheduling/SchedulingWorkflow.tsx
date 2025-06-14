@@ -50,12 +50,15 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
     enabled: !!eventId
   });
 
-  const { data: teamsData, isLoading: teamsLoading } = useQuery({
+  const { data: teamsData, isLoading: teamsLoading, error: teamsError } = useQuery({
     queryKey: ['teams', eventId],
     queryFn: async () => {
+      console.log('Fetching teams for event:', eventId);
       const response = await fetch(`/api/admin/events/${eventId}/teams`);
       if (!response.ok) throw new Error('Failed to fetch teams');
-      return response.json();
+      const data = await response.json();
+      console.log('Teams API response:', data);
+      return data;
     },
     enabled: !!eventId
   });
