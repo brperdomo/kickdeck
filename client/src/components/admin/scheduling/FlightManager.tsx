@@ -65,7 +65,20 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
 
   // Debug: Log teams data structure to understand age group extraction
   console.log('FlightManager teamsData:', teamsData?.slice(0, 2));
-  console.log('FlightManager ageGroupsData:', ageGroupsData?.slice(0, 3));
+  console.log('FlightManager ageGroupsData:', ageGroupsData?.slice(0, 5));
+  
+  // Enhanced gender-aware age group extraction
+  const genderAwareAgeGroups = useMemo(() => {
+    if (!ageGroupsData) return [];
+    
+    return ageGroupsData.map(ag => ({
+      id: ag.id,
+      name: ag.ageGroup,
+      gender: ag.ageGroup.toLowerCase().includes('girls') || ag.ageGroup.toLowerCase().includes('girl') ? 'Girls' :
+              ag.ageGroup.toLowerCase().includes('boys') || ag.ageGroup.toLowerCase().includes('boy') ? 'Boys' : 'Mixed',
+      ageOnly: ag.ageGroup.replace(/[-\s]*(girls?|boys?)/gi, '').trim()
+    }));
+  }, [ageGroupsData]);
   
   // Extract unique age groups from teams data and map to names
   const extractedAgeGroups = useMemo(() => {
@@ -370,21 +383,33 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {ageGroupSummary.map(group => (
-              <div key={group.ageGroup} className="p-4 border rounded-lg">
-                <h3 className="font-medium mb-2">{group.ageGroup}</h3>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span>Total Teams:</span>
-                    <span className="font-medium">{group.totalTeams}</span>
+            {ageGroupSummary.map(group => {
+              // Enhanced gender detection for clear display
+              const genderInfo = genderAwareAgeGroups.find(g => g.name === group.ageGroup);
+              const gender = genderInfo?.gender || 'Mixed';
+              const genderColor = gender === 'Boys' ? 'text-blue-600' : gender === 'Girls' ? 'text-pink-600' : 'text-gray-600';
+              const genderBg = gender === 'Boys' ? 'bg-blue-50 border-blue-200' : gender === 'Girls' ? 'bg-pink-50 border-pink-200' : 'bg-gray-50 border-gray-200';
+              
+              return (
+                <div key={group.ageGroup} className={`p-4 border rounded-lg ${genderBg}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-medium">{group.ageGroup}</h3>
+                    <Badge className={`text-xs ${genderColor} bg-white border`}>
+                      {gender}
+                    </Badge>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Approved:</span>
-                    <span className="font-medium text-green-600">{group.approvedTeams}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Suggested Flights:</span>
-                    <span className="font-medium text-blue-600">{group.suggestedFlights}</span>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span>Total Teams:</span>
+                      <span className="font-medium">{group.totalTeams}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Approved:</span>
+                      <span className="font-medium text-green-600">{group.approvedTeams}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Suggested Flights:</span>
+                      <span className="font-medium text-blue-600">{group.suggestedFlights}</span>
                   </div>
                 </div>
               </div>
