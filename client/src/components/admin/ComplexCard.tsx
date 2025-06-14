@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MapPin, Clock, Users, Loader2, MoreHorizontal, Edit, Eye, MapIcon, ChevronDown, ChevronUp, PlusCircle } from "lucide-react";
+import { MapPin, Clock, Users, Loader2, MoreHorizontal, Edit, Eye, MapIcon, ChevronDown, ChevronUp, PlusCircle, Trash2 } from "lucide-react";
 import { 
   Card, 
   CardContent, 
@@ -333,17 +333,30 @@ export function ComplexCard({
                         </p>
                       )}
                     </div>
-                    {onEditField && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onEditField(field)}
-                        className="ml-2 text-gray-400 hover:text-white hover:bg-gray-700/50"
-                      >
-                        <Edit className="h-3.5 w-3.5 mr-1 text-indigo-400" />
-                        Edit
-                      </Button>
-                    )}
+                    <div className="flex gap-2">
+                      {onEditField && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onEditField(field)}
+                          className="text-gray-400 hover:text-white hover:bg-gray-700/50"
+                        >
+                          <Edit className="h-3.5 w-3.5 mr-1 text-indigo-400" />
+                          Edit
+                        </Button>
+                      )}
+                      {onDeleteField && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onDeleteField(field.id)}
+                          className="text-red-400 hover:text-red-300 hover:bg-red-950/20"
+                        >
+                          <Trash2 className="h-3.5 w-3.5 mr-1" />
+                          Delete
+                        </Button>
+                      )}
+                    </div>
                   </motion.div>
                 ))}
               </div>
