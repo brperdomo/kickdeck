@@ -4133,9 +4133,9 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                     <p className="font-medium">{fee.name}</p>
                                     {(fee.beginDate || fee.endDate) && (
                                       <p className="text-xs text-gray-500">
-                                        {fee.beginDate && `Available from ${new Date(fee.beginDate).toLocaleDateString()}`}
+                                        {fee.beginDate && `Available from ${formatDateInEventTimezone(fee.beginDate, event.timezone)}`}
                                         {fee.beginDate && fee.endDate && ' to '}
-                                        {fee.endDate && `${new Date(fee.endDate).toLocaleDateString()}`}
+                                        {fee.endDate && `${formatDateInEventTimezone(fee.endDate, event.timezone)}`}
                                       </p>
                                     )}
                                   </div>

@@ -563,6 +563,7 @@ export function registerRoutes(app: Express): Server {
             name: 'Preview Tournament',
             startDate: '2025-04-15',
             endDate: '2025-04-20',
+            timezone: 'America/Los_Angeles',
             location: 'Demo Soccer Complex',
             description: 'This is a preview of the tournament registration process. No actual registrations or payments will be processed.',
             applicationDeadline: '2025-04-10',
