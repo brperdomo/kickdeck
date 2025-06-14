@@ -325,6 +325,7 @@ export function setupAuth(app: Express) {
 
       // Try to send welcome email
       try {
+        console.log(`📧 TRIGGERING welcome email for new account: ${email}`);
         // Send welcome email asynchronously (don't await to avoid delaying registration)
         sendTemplatedEmail(
           email,
@@ -336,12 +337,16 @@ export function setupAuth(app: Express) {
             username
           }
         ).then(() => {
-          console.log(`Welcome email sent to ${email}`);
+          console.log(`✅ Welcome email sent to ${email}`);
         }).catch((err: Error) => {
-          console.error('Welcome email error:', err);
+          console.error('❌ ERROR sending welcome email:', err);
+          console.error('   User:', `${firstName} ${lastName}`);
+          console.error('   Email:', email);
         });
       } catch (emailError) {
-        console.error('Failed to send welcome email:', emailError);
+        console.error('❌ ERROR preparing welcome email:', emailError);
+        console.error('   User:', `${firstName} ${lastName}`);
+        console.error('   Email:', email);
         // Non-blocking - continue registration process even if email fails
       }
 
