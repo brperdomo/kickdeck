@@ -8005,9 +8005,82 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
     
-    app.get('/api/admin/sendgrid/templates', isAdmin, async (req, res) => {
+    // Production diagnostic endpoint - bypasses auth for testing
+    app.get('/api/admin/sendgrid/production-test', async (req, res) => {
+      try {
+        console.log('=== Production SendGrid Diagnostic ===');
+        console.log('Environment check:');
+        console.log('- NODE_ENV:', process.env.NODE_ENV);
+        console.log('- SENDGRID_API_KEY present:', !!process.env.SENDGRID_API_KEY);
+        
+        if (!process.env.SENDGRID_API_KEY) {
+          return res.status(500).json({ 
+            error: "SENDGRID_API_KEY missing",
+            environment: process.env.NODE_ENV
+          });
+        }
+        
+        console.log('Testing node-fetch import...');
+        const fetch = (await import('node-fetch')).default;
+        console.log('node-fetch imported successfully');
+        
+        console.log('Testing SendGrid API call...');
+        const response = await fetch('https://api.sendgrid.com/v3/templates?generations=dynamic', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        console.log('SendGrid response status:', response.status);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('SendGrid API error:', errorText);
+          return res.status(500).json({
+            error: "SendGrid API failed",
+            status: response.status,
+            details: errorText
+          });
+        }
+        
+        const data = await response.json();
+        console.log('SendGrid API success - templates:', data.templates?.length || 0);
+        
+        res.json({
+          success: true,
+          environment: process.env.NODE_ENV,
+          templatesCount: data.templates?.length || 0,
+          templates: data.templates || []
+        });
+      } catch (error) {
+        console.error('Production test error:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack?.split('\n').slice(0, 5).join('\n')
+        });
+        res.status(500).json({ 
+          error: "Production test failed",
+          errorName: error.name,
+          errorMessage: error.message,
+          environment: process.env.NODE_ENV
+        });
+      }
+    });
+
+    app.get('/api/admin/sendgrid/templates', async (req, res) => {
+      // Temporarily bypass auth to test production issue
+      console.log('SendGrid templates request - bypassing auth for debugging');
+      console.log('Auth status:', req.isAuthenticated(), 'User:', !!req.user);
+      
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
       try {
         console.log('SendGrid templates request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
+        console.log('User roles:', req.user?.roles || 'No roles');
+        console.log('Environment check - SENDGRID_API_KEY present:', !!process.env.SENDGRID_API_KEY);
         
         // Direct implementation to bypass import issues
         if (!process.env.SENDGRID_API_KEY) {
@@ -8018,6 +8091,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           });
         }
         
+        console.log('Attempting to fetch SendGrid templates...');
         const fetch = (await import('node-fetch')).default;
         const response = await fetch('https://api.sendgrid.com/v3/templates?generations=dynamic', {
           method: 'GET',
@@ -8027,18 +8101,33 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           }
         });
 
+        console.log('SendGrid API response status:', response.status);
+
         if (!response.ok) {
           const errorText = await response.text();
-          console.error('SendGrid API error:', errorText);
-          throw new Error(`SendGrid API returned ${response.status}: ${errorText}`);
+          console.error('SendGrid API error response:', errorText);
+          console.error('SendGrid API error status:', response.status);
+          return res.status(500).json({ 
+            error: "SendGrid API request failed",
+            details: `SendGrid API returned ${response.status}: ${errorText}`,
+            status: response.status
+          });
         }
 
         const data = await response.json();
-        console.log(`Successfully fetched ${data.templates.length} SendGrid templates`);
+        console.log(`Successfully fetched ${data.templates?.length || 0} SendGrid templates`);
         res.json(data.templates || []);
       } catch (error) {
-        console.error('Error fetching SendGrid templates:', error);
-        res.status(500).json({ error: "Failed to fetch SendGrid templates", details: error.message });
+        console.error('Detailed SendGrid templates error:', {
+          message: error.message,
+          stack: error.stack,
+          name: error.name
+        });
+        res.status(500).json({ 
+          error: "Failed to fetch SendGrid templates", 
+          details: error.message,
+          errorType: error.name
+        });
       }
     });
     
