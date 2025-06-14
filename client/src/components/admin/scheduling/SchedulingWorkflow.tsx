@@ -54,7 +54,7 @@ export function SchedulingWorkflow({ eventId, onComplete }: SchedulingWorkflowPr
     queryKey: ['teams', eventId],
     queryFn: async () => {
       console.log('Fetching teams for event:', eventId);
-      const response = await fetch(`/api/admin/events/${eventId}/teams`);
+      const response = await fetch(`/api/admin/teams?eventId=${eventId}`);
       if (!response.ok) throw new Error('Failed to fetch teams');
       const data = await response.json();
       console.log('Teams API response:', data);
