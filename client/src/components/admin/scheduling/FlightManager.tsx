@@ -410,10 +410,10 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
                     <div className="flex justify-between">
                       <span>Suggested Flights:</span>
                       <span className="font-medium text-blue-600">{group.suggestedFlights}</span>
-                  </div>
+                    </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>
