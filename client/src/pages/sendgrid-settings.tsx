@@ -54,15 +54,25 @@ export default function SendGridSettingsPage() {
   });
 
   // Fetch SendGrid templates
-  const { data: sendgridTemplates, isLoading: isLoadingTemplates, refetch: refetchTemplates } = useQuery({
+  const { data: sendgridTemplates, isLoading: isLoadingTemplates, refetch: refetchTemplates, error: templatesError } = useQuery({
     queryKey: ["sendgrid-templates"],
     queryFn: async () => {
       const response = await fetch("/api/admin/sendgrid/templates", {
         credentials: 'include'
       });
-      if (!response.ok) throw new Error("Failed to fetch SendGrid templates");
+      
+      if (response.status === 401) {
+        throw new Error("Authentication required. Please log in as an admin.");
+      }
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to fetch SendGrid templates`);
+      }
+      
       return response.json();
     },
+    retry: false, // Don't retry auth failures
   });
 
   // Fetch Email Templates with mappings
@@ -235,9 +245,37 @@ export default function SendGridSettingsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {isLoading ? (
+                {templatesError && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
+                    <div className="flex items-start">
+                      <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium">Error loading SendGrid templates</p>
+                        <p className="text-sm mt-1">{templatesError.message}</p>
+                        {templatesError.message.includes('Authentication') && (
+                          <p className="text-sm mt-2">
+                            Please ensure you're logged in as an administrator to access SendGrid settings.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {isLoadingTemplates ? (
                   <div className="flex justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                  </div>
+                ) : templatesError ? (
+                  <div className="text-center py-8">
+                    <Button
+                      variant="outline"
+                      onClick={() => refetchTemplates()}
+                      className="mt-4"
+                    >
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      Try Again
+                    </Button>
                   </div>
                 ) : !sendgridTemplates || sendgridTemplates.length === 0 ? (
                   <div className="bg-muted p-4 rounded-md text-center">

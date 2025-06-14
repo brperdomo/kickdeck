@@ -8069,14 +8069,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
-    app.get('/api/admin/sendgrid/templates', async (req, res) => {
-      // Temporarily bypass auth to test production issue
-      console.log('SendGrid templates request - bypassing auth for debugging');
-      console.log('Auth status:', req.isAuthenticated(), 'User:', !!req.user);
-      
-      if (!req.isAuthenticated() || !req.user) {
-        return res.status(401).json({ error: "Authentication required" });
-      }
+    app.get('/api/admin/sendgrid/templates', isAdmin, async (req, res) => {
       try {
         console.log('SendGrid templates request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
         console.log('User roles:', req.user?.roles || 'No roles');
