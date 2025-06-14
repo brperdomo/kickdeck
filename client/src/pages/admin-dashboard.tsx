@@ -3131,64 +3131,6 @@ function SchedulingView() {
           )}
         </DialogContent>
       </Dialog>
-      
-          {/* Event Selection for AI scheduling */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Event</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Select value={selectedEvent || ""} onValueChange={setSelectedEvent}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select an event" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {eventsQuery.isLoading ? (
-                      <SelectItem value="loading" disabled>Loading events...</SelectItem>
-                    ) : eventsQuery.isError ? (
-                      <SelectItem value="error" disabled>Error loading events</SelectItem>
-                    ) : eventsQuery.data && Array.isArray(eventsQuery.data) && eventsQuery.data.length > 0 ? (
-                      eventsQuery.data.map((event: any) => (
-                        <SelectItem key={event.id} value={event.id.toString()}>
-                          {event.name}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem value="none" disabled>No events available</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Placeholder for AI scheduling content */}
-          {selectedEvent ? (
-            <Card>
-              <CardContent className="p-12">
-                <div className="text-center">
-                  <p className="text-muted-foreground">
-                    AI scheduling interface will be implemented here
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardContent className="p-12">
-                <div className="flex flex-col items-center justify-center text-center space-y-4">
-                  <CalendarDays className="h-12 w-12 text-muted-foreground" />
-                  <div>
-                    <h3 className="font-medium text-lg">Select an Event</h3>
-                    <p className="text-muted-foreground">
-                      Choose an event to begin AI scheduling
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </TabsContent>
       </Tabs>
 

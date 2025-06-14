@@ -267,7 +267,7 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
       summary: {
         totalFlights: flights.length,
         totalTeamsAssigned: flights.reduce((sum, flight) => sum + flight.teams.length, 0),
-        ageGroups: [...new Set(flights.map(f => f.ageGroup))]
+        ageGroups: Array.from(new Set(flights.map(f => f.ageGroup)))
       }
     };
     
@@ -368,7 +368,7 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
                   <DialogTitle>Create New Flight</DialogTitle>
                 </DialogHeader>
                 <CreateFlightForm
-                  ageGroups={[...new Set(teamsData.map(t => t.ageGroup))]}
+                  ageGroups={Array.from(new Set(teamsData.map(t => t.ageGroup)))}
                   onSubmit={createFlight}
                   onCancel={() => setIsCreateDialogOpen(false)}
                 />

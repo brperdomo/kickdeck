@@ -292,7 +292,7 @@ export function BracketCreator({ eventId, workflowData, onComplete, onError }: B
         totalBrackets: brackets.length,
         totalGames: brackets.reduce((sum, bracket) => sum + bracket.totalGames, 0),
         totalDuration: brackets.reduce((sum, bracket) => sum + bracket.estimatedDuration, 0),
-        formats: [...new Set(brackets.map(b => b.format))]
+        formats: Array.from(new Set(brackets.map(b => b.format)))
       }
     };
     

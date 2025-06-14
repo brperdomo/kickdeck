@@ -248,8 +248,8 @@ export function ScheduleBuilder({ eventId, workflowData, onComplete, onError }: 
       conflicts,
       summary: {
         totalGames: generatedGames.length,
-        fieldsUsed: [...new Set(generatedGames.map(g => g.field))].length,
-        bracketsScheduled: [...new Set(generatedGames.map(g => g.bracket))].length,
+        fieldsUsed: Array.from(new Set(generatedGames.map(g => g.field))).length,
+        bracketsScheduled: Array.from(new Set(generatedGames.map(g => g.bracket))).length,
         avgQualityScore: qualityScore
       },
       workflowCompleted: true
