@@ -391,8 +391,17 @@ const fadeInUp = {
 // Timezone-aware date formatting function
 const formatDateInEventTimezone = (dateString: string, timezone: string): string => {
   try {
-    // Parse the date string and format it in the event's timezone
-    const date = new Date(dateString);
+    // For date-only strings (YYYY-MM-DD), parse them as local dates to avoid UTC conversion issues
+    let date: Date;
+    
+    if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      // Date-only string: parse as local date to avoid timezone shifts
+      const [year, month, day] = dateString.split('-').map(Number);
+      date = new Date(year, month - 1, day); // month is 0-indexed
+    } else {
+      // Date with time: parse normally
+      date = new Date(dateString);
+    }
     
     // Use Intl.DateTimeFormat to format the date in the event's timezone
     return new Intl.DateTimeFormat('en-US', {
