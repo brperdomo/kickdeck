@@ -1,99 +1,51 @@
 /**
- * Simple Email Test Script
- * This script tests sending emails using the configured SMTP settings
+ * Simple Email Test
+ * Tests if emails are working by directly calling the SendGrid service
  */
 
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
+import dotenv from 'dotenv';
 
-// Get SMTP settings from environment variables
-const host = process.env.SMTP_HOST;
-const port = process.env.SMTP_PORT;
-const username = process.env.SMTP_USER;
-const password = process.env.SMTP_PASSWORD;
-const secure = process.env.SMTP_SECURE === 'true';
+dotenv.config();
 
-// Test email recipient - will send to self by default
-// Replace this with your actual email for testing
-const TEST_RECIPIENT = process.argv[2] || "your-email@example.com";
-
-console.log(`
-==============================================
-      SIMPLE EMAIL TEST
-==============================================
-`);
-
-// Check if all required environment variables are set
-const requiredVars = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASSWORD', 'SMTP_SECURE'];
-const missing = requiredVars.filter(name => !process.env[name]);
-
-if (missing.length > 0) {
-  console.error(`❌ Missing required environment variables: ${missing.join(', ')}`);
-  console.error('Please ensure all required environment variables are set');
-  process.exit(1);
-}
-
-console.log(`Email configuration:
-  Host: ${host}
-  Port: ${port}
-  User: ${username}
-  Secure: ${secure}
-  Recipient: ${TEST_RECIPIENT}
-`);
-
-// Create transporter
-console.log('Creating SMTP transporter...');
-const transporter = nodemailer.createTransport({
-  host,
-  port: parseInt(port),
-  secure,
-  auth: {
-    user: username,
-    pass: password
-  },
-  // For troubleshooting - will log SMTP traffic
-  debug: true,
-  logger: true
-});
-
-// Test SMTP connection
-console.log('Testing SMTP connection...');
-transporter.verify()
-  .then(() => {
-    console.log('✅ SMTP connection successful!');
-    return sendTestEmail();
-  })
-  .catch(error => {
-    console.error('❌ SMTP connection failed:', error);
-    process.exit(1);
-  });
-
-// Send test email
-function sendTestEmail() {
-  console.log(`Sending test email to ${TEST_RECIPIENT}...`);
+async function testEmail() {
+  console.log('Testing SendGrid email delivery...');
   
-  return transporter.sendMail({
-    from: username,
-    to: TEST_RECIPIENT,
-    subject: 'Test Email from MatchPro Application',
-    text: 'This is a test email to verify that the email service is working correctly.',
+  if (!process.env.SENDGRID_API_KEY) {
+    console.error('SENDGRID_API_KEY not found');
+    return;
+  }
+  
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  
+  const msg = {
+    to: 'bperdomo@zoho.com',
+    from: 'support@matchpro.ai',
+    subject: 'Email System Test - Registration Flow',
+    text: 'This is a test to verify the email system is working for registration notifications.',
     html: `
-      <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
-        <h2 style="color: #4a90e2;">MatchPro Email Test</h2>
-        <p>This is a test email to verify that the email service is working correctly.</p>
-        <p><strong>Environment:</strong> ${process.env.NODE_ENV || 'development'}</p>
+      <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <h2>Email System Test</h2>
+        <p>This confirms that your SendGrid email system is working correctly.</p>
+        <p><strong>Test Purpose:</strong> Registration email troubleshooting</p>
         <p><strong>Time:</strong> ${new Date().toISOString()}</p>
-        <hr/>
-        <p style="color: #666; font-size: 12px;">This is an automated message, please do not reply.</p>
       </div>
     `
-  })
-  .then(info => {
-    console.log('✅ Test email sent successfully!');
-    console.log('Message ID:', info.messageId);
-    console.log('\nEmail service is properly configured and working!');
-  })
-  .catch(error => {
-    console.error('❌ Error sending test email:', error);
-    process.exit(1);
-  });
+  };
+  
+  try {
+    const result = await sgMail.send(msg);
+    console.log('Email sent successfully!');
+    console.log('Status:', result[0].statusCode);
+    console.log('Message ID:', result[0].headers['x-message-id']);
+    return true;
+  } catch (error) {
+    console.error('Email failed:', error.message);
+    if (error.response && error.response.body) {
+      console.error('SendGrid response:', JSON.stringify(error.response.body, null, 2));
+    }
+    return false;
+  }
 }
+
+testEmail();
