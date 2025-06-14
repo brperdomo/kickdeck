@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect, useMemo } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,36 +52,80 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Fetch age groups to get names
+  const { data: ageGroupsData } = useQuery({
+    queryKey: ['age-groups', eventId],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/age-groups`);
+      if (!response.ok) throw new Error('Failed to fetch age groups');
+      return response.json();
+    },
+    enabled: !!eventId
+  });
+
   // Debug: Log teams data structure to understand age group extraction
   console.log('FlightManager teamsData:', teamsData?.slice(0, 2));
+  console.log('FlightManager ageGroupsData:', ageGroupsData?.slice(0, 3));
   
-  // Extract age groups from teams data with multiple possible property names
-  const extractedAgeGroups = teamsData?.map(team => {
-    return team.ageGroup || team.age_group || team.ageGroupName || team.ageGroupCode || null;
-  }).filter(Boolean) || [];
+  // Extract unique age groups from teams data and map to names
+  const extractedAgeGroups = useMemo(() => {
+    if (!teamsData || !Array.isArray(teamsData) || !ageGroupsData) {
+      return [];
+    }
+    
+    // Extract unique age group IDs from teams (teams data structure: [{team: {...}}, ...])
+    const ageGroupIds = teamsData
+      .map(teamObj => teamObj.team?.ageGroupId)
+      .filter(Boolean);
+    
+    console.log('Extracted age group IDs:', ageGroupIds);
+    
+    const uniqueAgeGroupIds = Array.from(new Set(ageGroupIds));
+    
+    // Map IDs to age group names
+    const ageGroupsWithNames = uniqueAgeGroupIds
+      .map(id => {
+        const ageGroup = ageGroupsData.find(ag => ag.id === id);
+        return ageGroup ? { id, name: ageGroup.ageGroup } : null;
+      })
+      .filter(Boolean);
+    
+    console.log('Age groups with names:', ageGroupsWithNames);
+    
+    return ageGroupsWithNames.map(ag => ag.name);
+  }, [teamsData, ageGroupsData]);
   
-  console.log('Extracted age groups:', extractedAgeGroups);
+  console.log('Final extracted age groups:', extractedAgeGroups);
   const uniqueAgeGroups = Array.from(new Set(extractedAgeGroups));
-  console.log('Unique age groups:', uniqueAgeGroups);
 
   // Group teams by age group for analysis
-  const ageGroupSummary: AgeGroupSummary[] = teamsData.reduce((acc: AgeGroupSummary[], team) => {
-    const ageGroup = team.ageGroup || team.age_group || team.ageGroupName || 'Unknown';
-    const existing = acc.find(item => item.ageGroup === ageGroup);
+  const ageGroupSummary: AgeGroupSummary[] = useMemo(() => {
+    if (!teamsData || !ageGroupsData) return [];
     
-    if (existing) {
-      existing.totalTeams++;
-      if (team.status === 'approved') existing.approvedTeams++;
-    } else {
-      acc.push({
-        ageGroup,
-        totalTeams: 1,
-        approvedTeams: team.status === 'approved' ? 1 : 0,
-        suggestedFlights: 0
-      });
-    }
-    return acc;
-  }, []);
+    return teamsData.reduce((acc: AgeGroupSummary[], teamObj) => {
+      const team = teamObj.team;
+      if (!team) return acc;
+      
+      // Find age group name by ID
+      const ageGroupData = ageGroupsData.find(ag => ag.id === team.ageGroupId);
+      const ageGroup = ageGroupData?.ageGroup || 'Unknown';
+      
+      const existing = acc.find(item => item.ageGroup === ageGroup);
+      
+      if (existing) {
+        existing.totalTeams++;
+        if (team.status === 'approved') existing.approvedTeams++;
+      } else {
+        acc.push({
+          ageGroup,
+          totalTeams: 1,
+          approvedTeams: team.status === 'approved' ? 1 : 0,
+          suggestedFlights: 0
+        });
+      }
+      return acc;
+    }, []);
+  }, [teamsData, ageGroupsData]);
 
   // Calculate suggested flights based on team count
   useEffect(() => {
