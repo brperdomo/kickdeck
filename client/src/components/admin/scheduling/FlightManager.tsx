@@ -383,9 +383,9 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {ageGroupSummary.map(group => {
+            {ageGroupSummary.map((group) => {
               // Enhanced gender detection for clear display
-              const genderInfo = genderAwareAgeGroups.find(g => g.name === group.ageGroup);
+              const genderInfo = genderAwareAgeGroups.find((g) => g.name === group.ageGroup);
               const gender = genderInfo?.gender || 'Mixed';
               const genderColor = gender === 'Boys' ? 'text-blue-600' : gender === 'Girls' ? 'text-pink-600' : 'text-gray-600';
               const genderBg = gender === 'Boys' ? 'bg-blue-50 border-blue-200' : gender === 'Girls' ? 'bg-pink-50 border-pink-200' : 'bg-gray-50 border-gray-200';
@@ -411,6 +411,7 @@ export function FlightManager({ eventId, teamsData, workflowData, onComplete, on
                       <span>Suggested Flights:</span>
                       <span className="font-medium text-blue-600">{group.suggestedFlights}</span>
                     </div>
+                  </div>
                 </div>
               );
             })}
