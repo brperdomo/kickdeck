@@ -8008,8 +8008,34 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     app.get('/api/admin/sendgrid/templates', isAdmin, async (req, res) => {
       try {
         console.log('SendGrid templates request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
-        const { getSendGridTemplates } = await import('./routes/sendgrid-settings');
-        await getSendGridTemplates(req, res);
+        
+        // Direct implementation to bypass import issues
+        if (!process.env.SENDGRID_API_KEY) {
+          console.error('SENDGRID_API_KEY not found in environment');
+          return res.status(500).json({ 
+            error: "SendGrid API key not configured",
+            details: "SENDGRID_API_KEY environment variable is missing"
+          });
+        }
+        
+        const fetch = (await import('node-fetch')).default;
+        const response = await fetch('https://api.sendgrid.com/v3/templates?generations=dynamic', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('SendGrid API error:', errorText);
+          throw new Error(`SendGrid API returned ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log(`Successfully fetched ${data.templates.length} SendGrid templates`);
+        res.json(data.templates || []);
       } catch (error) {
         console.error('Error fetching SendGrid templates:', error);
         res.status(500).json({ error: "Failed to fetch SendGrid templates", details: error.message });
@@ -8019,8 +8045,11 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     app.get('/api/admin/sendgrid/template-mappings', isAdmin, async (req, res) => {
       try {
         console.log('SendGrid template mappings request - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
-        const { getEmailTemplatesWithSendGridMapping } = await import('./routes/sendgrid-settings');
-        await getEmailTemplatesWithSendGridMapping(req, res);
+        
+        // Direct implementation to fetch email templates with SendGrid mappings
+        const templates = await db.select().from(emailTemplates);
+        console.log(`Found ${templates.length} email templates`);
+        res.json(templates);
       } catch (error) {
         console.error('Error fetching template mappings:', error);
         res.status(500).json({ error: "Failed to fetch template mappings", details: error.message });
@@ -8030,8 +8059,23 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     app.post('/api/admin/sendgrid/template-mapping', isAdmin, async (req, res) => {
       try {
         console.log('SendGrid template mapping update - Auth status:', req.isAuthenticated(), 'User:', !!req.user);
-        const { updateSendGridTemplateMapping } = await import('./routes/sendgrid-settings');
-        await updateSendGridTemplateMapping(req, res);
+        const { templateType, sendgridTemplateId } = req.body;
+        
+        if (!templateType) {
+          return res.status(400).json({ error: 'Template type is required' });
+        }
+
+        // Update the email template with the SendGrid template ID
+        const { eq } = await import('drizzle-orm');
+        await db.update(emailTemplates)
+          .set({ 
+            sendgridTemplateId: sendgridTemplateId || null,
+            updatedAt: new Date().toISOString()
+          })
+          .where(eq(emailTemplates.type, templateType));
+
+        console.log(`Updated template mapping: ${templateType} -> ${sendgridTemplateId || 'removed'}`);
+        res.json({ success: true, message: 'Template mapping updated successfully' });
       } catch (error) {
         console.error('Error updating template mapping:', error);
         res.status(500).json({ error: "Failed to update template mapping", details: error.message });
