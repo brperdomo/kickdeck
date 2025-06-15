@@ -29,6 +29,7 @@ import { BracketsContent } from "@/components/admin/brackets/BracketsContent";
 import { Editor } from "@tinymce/tinymce-react";
 import { AgeGroupEligibilityManager } from "@/components/admin/age-groups/AgeGroupEligibilityManager";
 import { StripeConnectBankingView } from "@/components/admin/StripeConnectBankingView";
+import ScoringRulesTab from "@/components/admin/scoring/ScoringRulesTab";
 
 // TinyMCE API key from environment variable
 const TINYMCE_API_KEY = import.meta.env.VITE_TINYMCE_API_KEY;
@@ -1642,7 +1643,16 @@ export const EventForm = ({ mode, defaultValues, onSubmit, isSubmitting = false,
               </TabsContent>
 
               <TabsContent value="scoring">
-                {renderScoringContent()}
+                {mode === 'edit' && defaultValues?.id ? (
+                  <ScoringRulesTab eventId={defaultValues.id.toString()} />
+                ) : (
+                  <div className="p-4 bg-muted/50 rounded-md text-center">
+                    <p>Save the event first to configure scoring rules.</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Scoring and standings configuration is available after creating the event.
+                    </p>
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="complexes">
