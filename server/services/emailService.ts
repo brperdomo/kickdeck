@@ -303,10 +303,39 @@ export async function sendTemplatedEmail(
       }
     } catch (renderError) {
       console.error(`Error rendering or sending email (${templateType}):`, renderError);
-      // Don't throw here, even in development, to prevent API failures
+      
+      // In production, provide detailed error information for debugging
+      if (process.env.NODE_ENV === 'production') {
+        console.error(`PRODUCTION EMAIL ERROR DETAILS:`);
+        console.error(`Template Type: ${templateType}`);
+        console.error(`Recipient: ${to}`);
+        console.error(`Error Stack:`, renderError);
+        
+        // Log the specific error type to help with debugging
+        if (renderError && typeof renderError === 'object' && 'response' in renderError) {
+          const sgError = renderError as { response: { body: any; status?: number } };
+          console.error(`SendGrid Error Status:`, sgError.response?.status);
+          console.error(`SendGrid Error Body:`, sgError.response?.body);
+        }
+      }
+      
+      // Don't throw here to prevent API failures, but ensure errors are visible
     }
   } catch (error) {
     console.error(`Unexpected error in sendTemplatedEmail (${templateType}):`, error);
+    
+    // In production, provide comprehensive error logging
+    if (process.env.NODE_ENV === 'production') {
+      console.error(`PRODUCTION EMAIL SERVICE ERROR:`);
+      console.error(`Template Type: ${templateType}`);
+      console.error(`Recipient: ${to}`);
+      console.error(`Error Stack:`, error);
+      
+      // Check if it's a database/template error
+      if (error && typeof error === 'object' && 'message' in error) {
+        console.error(`Error Message: ${error.message}`);
+      }
+    }
     
     // Always log but never throw to keep API endpoints working
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
