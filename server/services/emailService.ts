@@ -182,6 +182,45 @@ function renderTemplate(template: string, context: TemplateContext): string {
 }
 
 /**
+ * Generates plain text content from HTML for better email deliverability
+ */
+function generateTextFromHtml(html: string, context: TemplateContext): string {
+  // For password reset specifically, create a clean text version
+  if (context.resetUrl && context.username) {
+    return `Hello ${context.username},
+
+We received a request to reset your password for your MatchPro account.
+
+To reset your password, please visit this link:
+${context.resetUrl}
+
+This link will expire in ${context.expiryHours || 24} hours.
+
+If you didn't request this password reset, you can safely ignore this email.
+
+Best regards,
+MatchPro Support Team
+support@matchpro.ai`;
+  }
+  
+  // General HTML to text conversion (basic)
+  let text = html
+    .replace(/<style[^>]*>.*?<\/style>/gis, '') // Remove style tags
+    .replace(/<script[^>]*>.*?<\/script>/gis, '') // Remove script tags
+    .replace(/<[^>]+>/g, '') // Remove HTML tags
+    .replace(/&nbsp;/g, ' ') // Replace &nbsp; with space
+    .replace(/&amp;/g, '&') // Replace &amp; with &
+    .replace(/&lt;/g, '<') // Replace &lt; with <
+    .replace(/&gt;/g, '>') // Replace &gt; with >
+    .replace(/&quot;/g, '"') // Replace &quot; with "
+    .replace(/&#39;/g, "'") // Replace &#39; with '
+    .replace(/\s+/g, ' ') // Replace multiple whitespace with single space
+    .trim();
+  
+  return text || 'You have received a notification from MatchPro. Please check your account for more information.';
+}
+
+/**
  * Sends an email using the SendGrid API
  */
 export async function sendEmail(options: EmailOptions): Promise<void> {
@@ -292,10 +331,20 @@ export async function sendTemplatedEmail(
           html = '<p>You have received a notification from MatchPro. Please check your account for more information.</p>';
         }
         
+        // Generate text version for better deliverability
+        let text: string;
+        if (emailTemplate.textContent) {
+          text = renderTemplate(emailTemplate.textContent, context);
+        } else {
+          // Auto-generate text from HTML if no text template exists
+          text = generateTextFromHtml(html, context);
+        }
+        
         await sendEmail({
           to,
           subject,
           html,
+          text,
           from: `${emailTemplate.senderName} <${emailTemplate.senderEmail}>`
         });
         

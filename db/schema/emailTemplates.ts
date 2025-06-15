@@ -8,6 +8,7 @@ export const emailTemplates = pgTable('email_templates', {
   type: text('type').notNull(), // registration, payment, password_reset, etc.
   subject: text('subject').notNull(),
   content: text('content').notNull(),
+  textContent: text('text_content'), // Plain text version for better deliverability
   senderName: text('sender_name').notNull(),
   senderEmail: text('sender_email').notNull(),
   isActive: boolean('is_active').default(true),
