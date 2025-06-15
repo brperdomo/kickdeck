@@ -6,8 +6,9 @@
  * configurable tiebreakers.
  */
 
-const { drizzle } = require('drizzle-orm/node-postgres');
-const { Client } = require('pg');
+import { drizzle } from 'drizzle-orm/node-postgres';
+import pkg from 'pg';
+const { Client } = pkg;
 
 async function addScoringStandingsEnhancements() {
   const client = new Client({
@@ -222,7 +223,8 @@ async function addScoringStandingsEnhancements() {
   }
 }
 
-if (require.main === module) {
+// Run if this is the main module
+if (import.meta.url === `file://${process.argv[1]}`) {
   addScoringStandingsEnhancements()
     .then(() => {
       console.log('Migration completed successfully');
@@ -234,4 +236,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { addScoringStandingsEnhancements };
+export { addScoringStandingsEnhancements };
