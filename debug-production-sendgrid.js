@@ -5,8 +5,11 @@
  * and provides detailed error information to identify the root cause.
  */
 
-const { config } = require('dotenv');
-const express = require('express');
+import { config } from 'dotenv';
+import express from 'express';
+import sgMail from '@sendgrid/mail';
+import https from 'https';
+import http from 'http';
 
 // Load environment variables
 config();
@@ -18,7 +21,6 @@ console.log('SendGrid API Key present:', !!process.env.SENDGRID_API_KEY);
 // Test 1: Check if SendGrid module can be imported
 console.log('\n📦 Testing SendGrid module import...');
 try {
-  const sgMail = require('@sendgrid/mail');
   console.log('✅ SendGrid module imported successfully');
   
   if (process.env.SENDGRID_API_KEY) {
