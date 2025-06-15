@@ -8249,6 +8249,313 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       }
     });
 
+    // Scoring Rules API Routes
+    app.get('/api/admin/events/:eventId/scoring-rules', isAdmin, async (req, res) => {
+      try {
+        const { eventId } = req.params;
+        const scoringRules = await db
+          .select()
+          .from(eventScoringRules)
+          .where(eq(eventScoringRules.eventId, eventId))
+          .orderBy(eventScoringRules.createdAt);
+        
+        res.json(scoringRules);
+      } catch (error) {
+        console.error('Error fetching scoring rules:', error);
+        res.status(500).send("Failed to fetch scoring rules");
+      }
+    });
+
+    app.post('/api/admin/events/:eventId/scoring-rules', isAdmin, async (req, res) => {
+      try {
+        const { eventId } = req.params;
+        const ruleData = req.body;
+        
+        // If this rule is being set as active, deactivate all other rules for this event
+        if (ruleData.isActive) {
+          await db
+            .update(eventScoringRules)
+            .set({ isActive: false })
+            .where(eq(eventScoringRules.eventId, eventId));
+        }
+        
+        const [newRule] = await db
+          .insert(eventScoringRules)
+          .values({
+            ...ruleData,
+            eventId,
+          })
+          .returning();
+        
+        res.json(newRule);
+      } catch (error) {
+        console.error('Error creating scoring rule:', error);
+        res.status(500).send("Failed to create scoring rule");
+      }
+    });
+
+    app.put('/api/admin/events/:eventId/scoring-rules/:ruleId', isAdmin, async (req, res) => {
+      try {
+        const { eventId, ruleId } = req.params;
+        const ruleData = req.body;
+        
+        // If this rule is being set as active, deactivate all other rules for this event
+        if (ruleData.isActive) {
+          await db
+            .update(eventScoringRules)
+            .set({ isActive: false })
+            .where(eq(eventScoringRules.eventId, eventId));
+        }
+        
+        const [updatedRule] = await db
+          .update(eventScoringRules)
+          .set(ruleData)
+          .where(and(
+            eq(eventScoringRules.id, parseInt(ruleId)),
+            eq(eventScoringRules.eventId, eventId)
+          ))
+          .returning();
+        
+        if (!updatedRule) {
+          return res.status(404).send("Scoring rule not found");
+        }
+        
+        res.json(updatedRule);
+      } catch (error) {
+        console.error('Error updating scoring rule:', error);
+        res.status(500).send("Failed to update scoring rule");
+      }
+    });
+
+    app.delete('/api/admin/events/:eventId/scoring-rules/:ruleId', isAdmin, async (req, res) => {
+      try {
+        const { eventId, ruleId } = req.params;
+        
+        const [deletedRule] = await db
+          .delete(eventScoringRules)
+          .where(and(
+            eq(eventScoringRules.id, parseInt(ruleId)),
+            eq(eventScoringRules.eventId, eventId)
+          ))
+          .returning();
+        
+        if (!deletedRule) {
+          return res.status(404).send("Scoring rule not found");
+        }
+        
+        res.json({ success: true });
+      } catch (error) {
+        console.error('Error deleting scoring rule:', error);
+        res.status(500).send("Failed to delete scoring rule");
+      }
+    });
+
+    // Team Standings API Routes
+    app.get('/api/admin/events/:eventId/standings', isAdmin, async (req, res) => {
+      try {
+        const { eventId } = req.params;
+        const { ageGroupId, bracketId } = req.query;
+        
+        let whereConditions = eq(teamStandings.eventId, eventId);
+        
+        if (ageGroupId) {
+          whereConditions = and(whereConditions, eq(teamStandings.ageGroupId, parseInt(ageGroupId as string)));
+        }
+        
+        if (bracketId) {
+          whereConditions = and(whereConditions, eq(teamStandings.bracketId, parseInt(bracketId as string)));
+        }
+        
+        const standings = await db
+          .select({
+            id: teamStandings.id,
+            teamId: teamStandings.teamId,
+            teamName: teams.name,
+            position: teamStandings.position,
+            gamesPlayed: teamStandings.gamesPlayed,
+            wins: teamStandings.wins,
+            losses: teamStandings.losses,
+            ties: teamStandings.ties,
+            goalsScored: teamStandings.goalsScored,
+            goalsAllowed: teamStandings.goalsAllowed,
+            goalDifferential: teamStandings.goalDifferential,
+            shutouts: teamStandings.shutouts,
+            yellowCards: teamStandings.yellowCards,
+            redCards: teamStandings.redCards,
+            totalPoints: teamStandings.totalPoints,
+            fairPlayPoints: teamStandings.fairPlayPoints,
+          })
+          .from(teamStandings)
+          .leftJoin(teams, eq(teamStandings.teamId, teams.id))
+          .where(whereConditions)
+          .orderBy(teamStandings.position, teamStandings.totalPoints);
+        
+        res.json(standings);
+      } catch (error) {
+        console.error('Error fetching team standings:', error);
+        res.status(500).send("Failed to fetch team standings");
+      }
+    });
+
+    app.post('/api/admin/events/:eventId/standings/recalculate', isAdmin, async (req, res) => {
+      try {
+        const { eventId } = req.params;
+        
+        // Get the active scoring rule for this event
+        const [activeScoringRule] = await db
+          .select()
+          .from(eventScoringRules)
+          .where(and(
+            eq(eventScoringRules.eventId, eventId),
+            eq(eventScoringRules.isActive, true)
+          ))
+          .limit(1);
+        
+        if (!activeScoringRule) {
+          return res.status(400).send("No active scoring rule found for this event");
+        }
+        
+        // Get all teams for this event
+        const eventTeams = await db
+          .select({
+            id: teams.id,
+            name: teams.name,
+            ageGroupId: teams.ageGroupId,
+            bracketId: teams.bracketId,
+          })
+          .from(teams)
+          .where(eq(teams.eventId, eventId));
+        
+        // Get all completed games for this event
+        const completedGames = await db
+          .select()
+          .from(games)
+          .where(and(
+            eq(games.eventId, eventId),
+            eq(games.status, 'completed'),
+            isNull(games.homeScore) === false,
+            isNull(games.awayScore) === false
+          ));
+        
+        // Calculate standings for each team
+        const standingsData = [];
+        
+        for (const team of eventTeams) {
+          const teamGames = completedGames.filter(
+            game => game.homeTeamId === team.id || game.awayTeamId === team.id
+          );
+          
+          let wins = 0;
+          let losses = 0;
+          let ties = 0;
+          let goalsScored = 0;
+          let goalsAllowed = 0;
+          let shutouts = 0;
+          let yellowCards = 0;
+          let redCards = 0;
+          
+          for (const game of teamGames) {
+            const isHome = game.homeTeamId === team.id;
+            const teamScore = isHome ? game.homeScore : game.awayScore;
+            const opponentScore = isHome ? game.awayScore : game.homeScore;
+            const teamYellowCards = isHome ? (game.homeYellowCards || 0) : (game.awayYellowCards || 0);
+            const teamRedCards = isHome ? (game.homeRedCards || 0) : (game.awayRedCards || 0);
+            
+            goalsScored += teamScore;
+            goalsAllowed += opponentScore;
+            yellowCards += teamYellowCards;
+            redCards += teamRedCards;
+            
+            if (teamScore > opponentScore) {
+              wins++;
+              if (opponentScore === 0) shutouts++;
+            } else if (teamScore < opponentScore) {
+              losses++;
+            } else {
+              ties++;
+            }
+          }
+          
+          const goalDifferential = goalsScored - goalsAllowed;
+          
+          // Calculate points based on scoring rule
+          let totalPoints = 0;
+          let winPoints = wins * activeScoringRule.win;
+          let tiePoints = ties * activeScoringRule.tie;
+          let shutoutPoints = shutouts * activeScoringRule.shutout;
+          let goalPoints = 0;
+          let cardPenaltyPoints = 0;
+          
+          // Performance-based scoring
+          if (activeScoringRule.goalScored > 0) {
+            const cappedGoals = Math.min(goalsScored, activeScoringRule.goalCap * teamGames.length);
+            goalPoints = cappedGoals * activeScoringRule.goalScored;
+          }
+          
+          if (activeScoringRule.redCard < 0) {
+            cardPenaltyPoints += redCards * activeScoringRule.redCard;
+          }
+          
+          if (activeScoringRule.yellowCard < 0) {
+            cardPenaltyPoints += yellowCards * activeScoringRule.yellowCard;
+          }
+          
+          totalPoints = winPoints + tiePoints + shutoutPoints + goalPoints + cardPenaltyPoints;
+          
+          const fairPlayPoints = -(yellowCards + (redCards * 2)); // Simple fair play calculation
+          
+          standingsData.push({
+            teamId: team.id,
+            eventId,
+            ageGroupId: team.ageGroupId,
+            bracketId: team.bracketId,
+            gamesPlayed: teamGames.length,
+            wins,
+            losses,
+            ties,
+            goalsScored,
+            goalsAllowed,
+            goalDifferential,
+            shutouts,
+            yellowCards,
+            redCards,
+            totalPoints,
+            winPoints,
+            tiePoints,
+            goalPoints,
+            shutoutPoints,
+            cardPenaltyPoints,
+            fairPlayPoints,
+          });
+        }
+        
+        // Sort teams by total points (and potentially tiebreakers)
+        standingsData.sort((a, b) => {
+          if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+          if (b.goalDifferential !== a.goalDifferential) return b.goalDifferential - a.goalDifferential;
+          if (b.goalsScored !== a.goalsScored) return b.goalsScored - a.goalsScored;
+          return a.goalsAllowed - b.goalsAllowed;
+        });
+        
+        // Assign positions
+        standingsData.forEach((standing, index) => {
+          standing.position = index + 1;
+        });
+        
+        // Clear existing standings for this event and insert new ones
+        await db.delete(teamStandings).where(eq(teamStandings.eventId, eventId));
+        
+        if (standingsData.length > 0) {
+          await db.insert(teamStandings).values(standingsData);
+        }
+        
+        res.json({ success: true, standingsCalculated: standingsData.length });
+      } catch (error) {
+        console.error('Error recalculating standings:', error);
+        res.status(500).send("Failed to recalculate standings");
+      }
+    });
+
     // Register Stripe Connect routes synchronously
     try {
       registerStripeConnectRoutes(app);
