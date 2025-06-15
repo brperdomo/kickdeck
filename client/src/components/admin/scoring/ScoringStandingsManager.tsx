@@ -239,10 +239,10 @@ export default function ScoringStandingsManager({ eventId }: ScoringStandingsMan
   });
 
   const handleSystemTypeChange = (systemType: "three_point" | "ten_point" | "custom") => {
-    if (systemType in presetSystems) {
+    if (systemType === "three_point" || systemType === "ten_point") {
       const preset = presetSystems[systemType];
       Object.entries(preset).forEach(([key, value]) => {
-        form.setValue(key as keyof ScoringRuleFormData, value);
+        form.setValue(key as keyof ScoringRuleFormData, value as any);
       });
     }
   };
