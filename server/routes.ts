@@ -199,7 +199,13 @@ const isAdmin = (req: Request, res: Response, next: Function) => {
     return res.status(401).send("Not authenticated");
   }
 
-  if (!req.user?.isAdmin) {
+  // Check for admin access via roles or isAdmin flag
+  const hasAdminRole = req.user?.roles?.includes('super_admin') || 
+                       req.user?.roles?.includes('tournament_admin') ||
+                       req.user?.roles?.includes('finance_admin') ||
+                       req.user?.roles?.includes('score_admin');
+  
+  if (!req.user?.isAdmin && !hasAdminRole) {
     return res.status(403).send("Not authorized");
   }
 
@@ -8076,23 +8082,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         console.log('Environment check - SENDGRID_API_KEY present:', !!process.env.SENDGRID_API_KEY);
         
         // Additional authentication debugging
-        if (!req.isAuthenticated()) {
-          console.log('Authentication failed: User not authenticated');
-          return res.status(401).json({
-            error: "Authentication required",
-            details: "You must be logged in as an admin to access SendGrid templates",
-            authStatus: "not_authenticated"
-          });
-        }
-        
-        if (!req.user?.roles?.includes('super_admin') && !req.user?.roles?.includes('tournament_admin')) {
-          console.log('Authorization failed: User lacks admin permissions');
-          return res.status(403).json({
-            error: "Admin access required",
-            details: "You must have admin permissions to access SendGrid templates",
-            authStatus: "insufficient_permissions"
-          });
-        }
+        console.log('User authenticated successfully with roles:', req.user?.roles);
         
         // Direct implementation to bypass import issues
         if (!process.env.SENDGRID_API_KEY) {
