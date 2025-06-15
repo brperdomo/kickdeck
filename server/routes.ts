@@ -8075,6 +8075,25 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         console.log('User roles:', req.user?.roles || 'No roles');
         console.log('Environment check - SENDGRID_API_KEY present:', !!process.env.SENDGRID_API_KEY);
         
+        // Additional authentication debugging
+        if (!req.isAuthenticated()) {
+          console.log('Authentication failed: User not authenticated');
+          return res.status(401).json({
+            error: "Authentication required",
+            details: "You must be logged in as an admin to access SendGrid templates",
+            authStatus: "not_authenticated"
+          });
+        }
+        
+        if (!req.user?.roles?.includes('super_admin') && !req.user?.roles?.includes('tournament_admin')) {
+          console.log('Authorization failed: User lacks admin permissions');
+          return res.status(403).json({
+            error: "Admin access required",
+            details: "You must have admin permissions to access SendGrid templates",
+            authStatus: "insufficient_permissions"
+          });
+        }
+        
         // Direct implementation to bypass import issues
         if (!process.env.SENDGRID_API_KEY) {
           console.error('SENDGRID_API_KEY not found in environment');
