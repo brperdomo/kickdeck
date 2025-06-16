@@ -240,10 +240,16 @@ export function MapboxAutocomplete({
       const data: MapboxGeocodingResponse = await response.json();
       
       // Process features and add extracted data
-      const processedFeatures: ExtendedMapboxFeature[] = data.features.map((feature) => ({
-        ...feature,
-        extractedData: extractAddressComponents(feature),
-      }));
+      const processedFeatures: ExtendedMapboxFeature[] = data.features.map((feature) => {
+        const extractedData = extractAddressComponents(feature);
+        console.log('Processing feature:', feature.place_name);
+        console.log('Extracted components:', extractedData);
+        
+        return {
+          ...feature,
+          extractedData
+        };
+      });
 
       setSuggestions(processedFeatures);
       setShowSuggestions(true);
@@ -270,19 +276,45 @@ export function MapboxAutocomplete({
       searchAddresses(newValue);
     }, 300);
 
-    // Immediately call onChange for controlled input
-    onChange(newValue);
+    // Immediately call onChange for controlled input (no place details for manual typing)
+    console.log('Manual input change:', newValue);
+    onChange(newValue, undefined);
   };
 
   // Handle suggestion selection
   const handleSuggestionSelect = (feature: ExtendedMapboxFeature) => {
-    console.log('Mapbox suggestion selected:', feature);
-    console.log('Extracted data:', feature.extractedData);
+    console.log('🔵 Mapbox suggestion selected:', {
+      placeName: feature.place_name,
+      center: feature.center,
+      context: feature.context,
+      extractedData: feature.extractedData
+    });
     
     setInputValue(feature.place_name);
     setShowSuggestions(false);
     setSelectedIndex(-1);
-    onChange(feature.place_name, feature);
+    
+    // Always call onChange with both parameters
+    if (feature.extractedData) {
+      console.log('🟢 Calling onChange with extracted data:', feature.extractedData);
+      onChange(feature.place_name, feature);
+    } else {
+      console.log('🔴 No extracted data available, checking raw feature...');
+      console.log('Raw feature context:', feature.context);
+      console.log('Raw feature center:', feature.center);
+      
+      // Try to extract data directly if it wasn't attached
+      const fallbackData = extractAddressComponents(feature);
+      console.log('🟡 Fallback extraction result:', fallbackData);
+      
+      if (fallbackData && (fallbackData.city || fallbackData.location)) {
+        console.log('🟢 Using fallback data');
+        onChange(feature.place_name, { ...feature, extractedData: fallbackData });
+      } else {
+        console.log('🔴 No usable place details available');
+        onChange(feature.place_name, undefined);
+      }
+    }
   };
 
   // Handle keyboard navigation
