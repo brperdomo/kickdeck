@@ -67,23 +67,23 @@ router.get('/my-teams', requireAuth, async (req: Request, res: Response) => {
     // 2. Have no players but were registered by this user (based on email)
     const userTeams = await db
       .select({
-        id: teams.id,
-        name: teams.name,
-        eventId: teams.eventId,
-        ageGroupId: teams.ageGroupId,
-        addRosterLater: teams.addRosterLater,
-        initialRosterComplete: teams.initialRosterComplete,
-        rosterUploadedAt: teams.rosterUploadedAt,
-        rosterUploadMethod: teams.rosterUploadMethod,
-        submitterEmail: teams.submitterEmail,
-        managerEmail: teams.managerEmail,
-        createdAt: teams.createdAt,
+        id: teamsTable.id,
+        name: teamsTable.name,
+        eventId: teamsTable.eventId,
+        ageGroupId: teamsTable.ageGroupId,
+        addRosterLater: teamsTable.addRosterLater,
+        initialRosterComplete: teamsTable.initialRosterComplete,
+        rosterUploadedAt: teamsTable.rosterUploadedAt,
+        rosterUploadMethod: teamsTable.rosterUploadMethod,
+        submitterEmail: teamsTable.submitterEmail,
+        managerEmail: teamsTable.managerEmail,
+        createdAt: teamsTable.createdAt,
       })
-      .from(teams)
+      .from(teamsTable)
       .where(
         and(
-          eq(teams.submitterEmail, userEmail),
-          eq(teams.addRosterLater, true)
+          eq(teamsTable.submitterEmail, userEmail),
+          eq(teamsTable.addRosterLater, true)
         )
       );
 
@@ -91,9 +91,9 @@ router.get('/my-teams', requireAuth, async (req: Request, res: Response) => {
     const teamsWithPlayerCounts = await Promise.all(
       userTeams.map(async (team) => {
         const playerCount = await db
-          .select({ count: players.id })
-          .from(players)
-          .where(eq(players.teamId, team.id));
+          .select({ count: playersTable.id })
+          .from(playersTable)
+          .where(eq(playersTable.teamId, team.id));
           
         return {
           ...team,
@@ -133,11 +133,11 @@ router.post('/teams/:teamId/roster', requireAuth, upload.single('file'), async (
     // Verify the team belongs to the user and needs a roster
     const [team] = await db
       .select()
-      .from(teams)
+      .from(teamsTable)
       .where(
         and(
-          eq(teams.id, parseInt(teamId)),
-          eq(teams.submitterEmail, userEmail)
+          eq(teamsTable.id, parseInt(teamId)),
+          eq(teamsTable.submitterEmail, userEmail)
         )
       )
       .limit(1);
@@ -269,11 +269,11 @@ router.post('/teams/:teamId/players', requireAuth, async (req: Request, res: Res
     // Verify the team belongs to the user
     const [team] = await db
       .select()
-      .from(teams)
+      .from(teamsTable)
       .where(
         and(
-          eq(teams.id, parseInt(teamId)),
-          eq(teams.submitterEmail, userEmail)
+          eq(teamsTable.id, parseInt(teamId)),
+          eq(teamsTable.submitterEmail, userEmail)
         )
       )
       .limit(1);
@@ -327,13 +327,13 @@ router.post('/teams/:teamId/players', requireAuth, async (req: Request, res: Res
 
       if (playerCount.length === 1 && !team.initialRosterComplete) {
         await tx
-          .update(teams)
+          .update(teamsTable)
           .set({
             initialRosterComplete: true,
             rosterUploadedAt: new Date(),
             rosterUploadMethod: 'manual_entry'
           })
-          .where(eq(teams.id, parseInt(teamId)));
+          .where(eq(teamsTable.id, parseInt(teamId)));
       }
 
       return player;
@@ -361,11 +361,11 @@ router.get('/teams/:teamId/players', requireAuth, async (req: Request, res: Resp
     // Verify the team belongs to the user
     const [team] = await db
       .select()
-      .from(teams)
+      .from(teamsTable)
       .where(
         and(
-          eq(teams.id, parseInt(teamId)),
-          eq(teams.submitterEmail, userEmail)
+          eq(teamsTable.id, parseInt(teamId)),
+          eq(teamsTable.submitterEmail, userEmail)
         )
       )
       .limit(1);
