@@ -106,7 +106,7 @@ export function MapboxAutocomplete({
     let state = '';
     let country = '';
 
-    // Extract from context array
+    // Extract from context array first
     if (feature.context) {
       feature.context.forEach((context) => {
         if (context.id.includes('place')) {
@@ -114,23 +114,72 @@ export function MapboxAutocomplete({
         } else if (context.id.includes('region')) {
           state = context.short_code || context.text;
         } else if (context.id.includes('country')) {
-          country = context.text;
+          country = context.short_code || context.text;
         }
       });
     }
 
-    // If no city found in context, try to extract from place_name
-    if (!city && feature.place_type.includes('address')) {
+    // Enhanced fallback parsing from place_name
+    if (!city || !state || !country) {
       const parts = feature.place_name.split(', ');
+      
+      // For address format variations:
+      // "Street, City, State Zip, Country"
+      // "Street, City, State, Country" 
+      // "City, State, Country"
       if (parts.length >= 2) {
-        city = parts[1];
+        // Try to identify city from different positions
+        if (!city) {
+          if (feature.place_type.includes('address') && parts.length >= 2) {
+            city = parts[1].trim(); // Second part for addresses
+          } else if (feature.place_type.includes('place')) {
+            city = parts[0].trim(); // First part for places
+          } else if (parts[1]) {
+            city = parts[1].trim(); // Default to second part
+          }
+        }
+        
+        // Extract state from various formats
+        if (!state) {
+          for (let i = 1; i < parts.length; i++) {
+            const part = parts[i].trim();
+            
+            // Check for US state codes (2 letters)
+            const usStateMatch = part.match(/^([A-Z]{2})(\s+\d|$)/);
+            if (usStateMatch) {
+              state = usStateMatch[1];
+              break;
+            }
+            
+            // Check for state names or abbreviations at word boundaries
+            const stateNameMatch = part.match(/^([A-Za-z\s]+?)(\s+\d|$)/);
+            if (stateNameMatch && i === parts.length - 2) { // Second to last part
+              state = stateNameMatch[1].trim();
+              break;
+            }
+          }
+        }
+        
+        // Extract country (usually last part)
+        if (!country && parts.length >= 2) {
+          const lastPart = parts[parts.length - 1].trim();
+          // Check if last part looks like country (no digits, reasonable length)
+          if (!/\d/.test(lastPart) && lastPart.length >= 2) {
+            country = lastPart;
+          }
+        }
       }
     }
 
+    // Default country to US if not found and state looks like US state
+    if (!country && state && /^[A-Z]{2}$/.test(state)) {
+      country = 'US';
+    }
+
     return {
-      city,
-      state,
-      country,
+      city: city || '',
+      state: state || '',
+      country: country || '',
       location: {
         lat: feature.center[1],
         lng: feature.center[0],
@@ -217,6 +266,9 @@ export function MapboxAutocomplete({
 
   // Handle suggestion selection
   const handleSuggestionSelect = (feature: ExtendedMapboxFeature) => {
+    console.log('Mapbox suggestion selected:', feature);
+    console.log('Extracted data:', feature.extractedData);
+    
     setInputValue(feature.place_name);
     setShowSuggestions(false);
     setSelectedIndex(-1);

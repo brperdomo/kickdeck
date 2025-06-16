@@ -170,16 +170,33 @@ export function ComplexEditor({ open, onOpenChange, onSubmit, complex }: Complex
                         if (placeDetails && placeDetails.extractedData) {
                           const { location, city, state, country } = placeDetails.extractedData;
                           
+                          console.log("Mapbox place details received:", placeDetails.extractedData);
+                          
                           // Update latitude and longitude fields
                           if (location) {
-                            form.setValue('latitude', location.lat.toString());
-                            form.setValue('longitude', location.lng.toString());
+                            form.setValue('latitude', location.lat.toString(), { shouldValidate: true });
+                            form.setValue('longitude', location.lng.toString(), { shouldValidate: true });
+                            console.log("Set coordinates:", location.lat, location.lng);
                           }
                           
-                          // Update city, state, country fields
-                          if (city) form.setValue('city', city);
-                          if (state) form.setValue('state', state);
-                          if (country) form.setValue('country', country);
+                          // Update city, state, country fields with validation
+                          if (city) {
+                            form.setValue('city', city, { shouldValidate: true });
+                            console.log("Set city:", city);
+                          }
+                          if (state) {
+                            form.setValue('state', state.toUpperCase(), { shouldValidate: true });
+                            console.log("Set state:", state.toUpperCase());
+                          }
+                          if (country) {
+                            form.setValue('country', country, { shouldValidate: true });
+                            console.log("Set country:", country);
+                          }
+                          
+                          // Force form re-render
+                          setTimeout(() => {
+                            form.trigger(['city', 'state', 'country', 'latitude', 'longitude']);
+                          }, 100);
                           
                           console.log("Updated form with Mapbox data:", {
                             lat: location?.lat,
