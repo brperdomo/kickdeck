@@ -5,7 +5,7 @@ import {
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
-  Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard
+  Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -5688,6 +5688,15 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
               onClick={() => navigate('/admin/complexes')}
               icon={<Building2 className="h-4 w-4" />}
               label="Field Complexes"
+              permission="view_complexes"
+            />
+            
+            <AnimatedNavigationButton
+              view="complex-map"
+              activeView={activeView}
+              onClick={() => navigate('/admin/complex-locations')}
+              icon={<MapPin className="h-4 w-4" />}
+              label="Complex Locations"
               permission="view_complexes"
             />
             
