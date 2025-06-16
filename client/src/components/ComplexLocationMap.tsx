@@ -6,6 +6,13 @@ import { MapPin, Navigation, Clock, Users, ExternalLink } from 'lucide-react';
 import { mapboxApiKey } from '@/lib/env';
 import { formatAddress } from '@/lib/format-address';
 
+// Declare Mapbox GL types
+declare global {
+  interface Window {
+    mapboxgl: any;
+  }
+}
+
 interface Complex {
   id: number;
   name: string;
