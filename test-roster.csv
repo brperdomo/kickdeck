@@ -1,0 +1,4 @@
+id,firstName,lastName,jerseyNumber,dateOfBirth,medicalNotes,emergencyContactFirstName,emergencyContactLastName,emergencyContactPhone
+1,John,Smith,10,2010-05-15,No allergies,Jane,Smith,555-0101
+2,Maria,Garcia,7,2010-08-22,Asthma medication needed,Carlos,Garcia,555-0102
+3,David,Johnson,23,2010-03-10,,Linda,Johnson,555-0103
