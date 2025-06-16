@@ -130,6 +130,10 @@ async function testDbConnection() {
     
     // Register routes after authentication setup
     const routes = registerRoutes(app);
+    
+    // Register member roster upload routes after authentication
+    app.use('/api/member-roster', memberRosterUploadRouter);
+    
     log("API routes registered");
 
     // Set up appropriate middleware based on environment
