@@ -219,6 +219,7 @@ router.post('/teams/:teamId/roster', requireAuth, upload.single('file'), async (
       emergencyContactFirstName: player.emergencyContactFirstName,
       emergencyContactLastName: player.emergencyContactLastName,
       emergencyContactPhone: player.emergencyContactPhone,
+      emergencyContactName: `${player.emergencyContactFirstName} ${player.emergencyContactLastName}`, // Combined field for backward compatibility
       isActive: true,
       createdAt: new Date().toISOString(),
     }));
