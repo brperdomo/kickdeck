@@ -57,6 +57,8 @@ import EmergencyRegistrationFix from "@/pages/emergency-registration-fix";
 import SafeEligibilityDemo from "@/pages/SafeEligibilityDemo";
 // Member roster upload
 import MemberRosterUpload from "@/pages/member-roster-upload";
+// Member dashboard
+import MemberDashboard from "@/pages/member-dashboard";
 
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
@@ -322,6 +324,7 @@ function Router() {
           {/* User routes */}
           <Route path="/household" component={HouseholdPage} />
           <Route path="/dashboard/my-household" component={HouseholdPage} />
+          <Route path="/dashboard/member-roster" component={MemberDashboard} />
           <Route path="/dashboard/my-account">
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
