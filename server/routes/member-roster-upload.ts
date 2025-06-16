@@ -9,7 +9,7 @@ import { parse } from 'csv-parse';
 import * as z from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../../db';
-import { players, teams } from '../../db/schema';
+import { players as playersTable, teams as teamsTable } from '../../db/schema';
 import { eq, and } from 'drizzle-orm';
 
 // Set up multer for file uploads
@@ -228,19 +228,19 @@ router.post('/teams/:teamId/roster', requireAuth, upload.single('file'), async (
     // Insert the new players and update team roster tracking
     const insertedPlayers = await db.transaction(async (tx) => {
       // Insert players
-      const players = await tx.insert(players).values(playersToInsert).returning();
+      const newPlayers = await tx.insert(playersTable).values(playersToInsert).returning();
       
       // Update team roster tracking
       await tx
-        .update(teams)
+        .update(teamsTable)
         .set({
           initialRosterComplete: true,
           rosterUploadedAt: new Date(),
           rosterUploadMethod: 'csv_upload'
         })
-        .where(eq(teams.id, parseInt(teamId)));
+        .where(eq(teamsTable.id, parseInt(teamId)));
       
-      return players;
+      return newPlayers;
     });
     
     console.log(`Successfully uploaded roster for team ${teamId}: ${insertedPlayers.length} players`);
