@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { db } from '../../db';
 import { players, teams } from '../../db/schema';
 import { eq, and } from 'drizzle-orm';
+import { validateAuth } from '../middleware/auth';
 
 // Set up multer for file uploads
 const storage = multer.memoryStorage();
@@ -48,16 +49,8 @@ const playerSchema = z.object({
 
 type PlayerData = z.infer<typeof playerSchema>;
 
-// Authentication middleware
-const requireAuth = (req: Request, res: Response, next: Function) => {
-  if (!req.user) {
-    return res.status(401).json({ error: 'Authentication required' });
-  }
-  next();
-};
-
 // Get teams that belong to the current user and need rosters
-router.get('/my-teams', requireAuth, async (req: Request, res: Response) => {
+router.get('/my-teams', validateAuth, async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
     const userEmail = req.user!.email;
@@ -116,7 +109,7 @@ router.get('/my-teams', requireAuth, async (req: Request, res: Response) => {
 });
 
 // Upload roster for a specific team
-router.post('/teams/:teamId/roster', requireAuth, upload.single('file'), async (req: Request, res: Response) => {
+router.post('/teams/:teamId/roster', validateAuth, upload.single('file'), async (req: Request, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
@@ -260,7 +253,7 @@ router.post('/teams/:teamId/roster', requireAuth, upload.single('file'), async (
 });
 
 // Add individual player to team
-router.post('/teams/:teamId/players', requireAuth, async (req: Request, res: Response) => {
+router.post('/teams/:teamId/players', validateAuth, async (req: Request, res: Response) => {
   try {
     const { teamId } = req.params;
     const userId = req.user!.id;
@@ -353,7 +346,7 @@ router.post('/teams/:teamId/players', requireAuth, async (req: Request, res: Res
 });
 
 // Get players for a specific team
-router.get('/teams/:teamId/players', requireAuth, async (req: Request, res: Response) => {
+router.get('/teams/:teamId/players', validateAuth, async (req: Request, res: Response) => {
   try {
     const { teamId } = req.params;
     const userEmail = req.user!.email;
