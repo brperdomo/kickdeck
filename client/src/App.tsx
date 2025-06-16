@@ -59,6 +59,8 @@ import SafeEligibilityDemo from "@/pages/SafeEligibilityDemo";
 import MemberRosterUpload from "@/pages/member-roster-upload";
 // Member dashboard
 import MemberDashboard from "@/pages/member-dashboard";
+// Complex locations map
+import ComplexLocationsMapPage from "@/pages/complex-locations-map";
 
 // Import landing page components
 import LandingPage from "@/pages/landing-page";
@@ -243,6 +245,9 @@ function Router() {
           </Route>
           <Route path="/admin/events/:id/clubs">
             {(params) => user.isAdmin ? <EventClubsPage /> : <NotFound />}
+          </Route>
+          <Route path="/admin/complex-locations">
+            {user.isAdmin ? <ComplexLocationsMapPage /> : <NotFound />}
           </Route>
           <Route path="/admin/events/:id/preview-registration">
             {user.isAdmin ? <RegistrationPreview /> : <NotFound />}
