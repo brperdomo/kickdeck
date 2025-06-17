@@ -2887,6 +2887,8 @@ export function registerRoutes(app: Express): Server {
               city: complexes.city,
               state: complexes.state,
               country: complexes.country,
+              latitude: complexes.latitude,
+              longitude: complexes.longitude,
               openTime: complexes.openTime,
               closeTime: complexes.closeTime,
               rules: complexes.rules,
