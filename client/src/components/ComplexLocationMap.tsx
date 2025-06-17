@@ -118,12 +118,23 @@ export function ComplexLocationMap({
         map.on('load', () => {
           setMapLoaded(true);
           
-          // Fit map to show all complexes
-          if (complexesWithCoords.length > 1) {
+          // Only fit to all complexes if no specific complex is selected
+          if (complexesWithCoords.length > 1 && !selectedComplexId) {
             map.fitBounds(bounds, { 
               padding: 50,
               maxZoom: 15 
             });
+          } else if (selectedComplexId) {
+            // If a complex is selected, focus on it instead
+            const selectedComplex = complexesWithCoords.find(c => c.id === selectedComplexId);
+            if (selectedComplex) {
+              const lat = getCoordinate(selectedComplex.latitude);
+              const lng = getCoordinate(selectedComplex.longitude);
+              if (lat !== null && lng !== null) {
+                map.setCenter([lng, lat]);
+                map.setZoom(15);
+              }
+            }
           }
 
           // Add markers for each complex
