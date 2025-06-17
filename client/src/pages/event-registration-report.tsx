@@ -63,6 +63,8 @@ export default function EventRegistrationReport({ eventId }: EventRegistrationRe
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['eventFinancialReport', eventId],
     queryFn: async () => {
+      console.log('🔍 Starting API call for event:', eventId);
+      
       const response = await fetch(`/api/reports/events/${eventId}/financial`, {
         credentials: 'include',
         headers: {
@@ -70,26 +72,37 @@ export default function EventRegistrationReport({ eventId }: EventRegistrationRe
         },
       });
       
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response content-type:', response.headers.get('content-type'));
       
       if (!response.ok) {
         const responseText = await response.text();
-        console.log('Error response text:', responseText);
+        console.error('❌ Error response text:', responseText);
         throw new Error(`HTTP ${response.status}: ${responseText}`);
       }
       
       const responseText = await response.text();
-      console.log('Response text:', responseText);
+      console.log('📄 Full response text:', responseText);
+      console.log('📄 Response text length:', responseText.length);
+      console.log('📄 First 100 chars:', responseText.substring(0, 100));
+      
+      if (responseText.startsWith('<!DOCTYPE') || responseText.startsWith('<html')) {
+        console.error('❌ Received HTML instead of JSON');
+        throw new Error('Server returned HTML page instead of JSON data');
+      }
       
       try {
-        return JSON.parse(responseText);
+        const parsed = JSON.parse(responseText);
+        console.log('✅ Successfully parsed JSON:', parsed);
+        return parsed;
       } catch (parseError) {
-        console.error('JSON parse error:', parseError);
-        console.error('Response was:', responseText);
+        console.error('❌ JSON parse error:', parseError);
+        console.error('❌ Response was:', responseText);
         throw new Error('Invalid JSON response from server');
       }
     },
+    retry: false,
+    refetchOnWindowFocus: false,
   });
   
   const reportData = data?.data;
