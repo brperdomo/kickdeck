@@ -56,9 +56,9 @@ export default function EventClubsPage() {
   
   // Fetch event details
   const eventQuery = useQuery<EventDetails>({
-    queryKey: [`/api/admin/events/${eventId}/clubs`, eventId],
+    queryKey: [`/api/admin/events/${eventId}`, eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/clubs`);
+      const response = await fetch(`/api/admin/events/${eventId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch event details");
       }
@@ -70,9 +70,9 @@ export default function EventClubsPage() {
   
   // Fetch clubs for this event
   const clubsQuery = useQuery<Club[]>({
-    queryKey: [`/api/admin/events/${eventId}/clubs/clubs`, eventId],
+    queryKey: [`/api/admin/event-clubs/${eventId}/clubs`, eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/clubs/clubs`);
+      const response = await fetch(`/api/admin/event-clubs/${eventId}/clubs`);
       if (!response.ok) {
         throw new Error("Failed to fetch clubs");
       }
@@ -85,7 +85,7 @@ export default function EventClubsPage() {
     mutationFn: async (clubData: Partial<Club>) => {
       if (!editingClub) return null;
       
-      const response = await fetch(`/api/admin/events/${eventId}/clubs/${editingClub.id}`, {
+      const response = await fetch(`/api/admin/event-clubs/${eventId}/clubs/${editingClub.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

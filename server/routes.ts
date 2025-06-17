@@ -363,7 +363,7 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin', isAdmin, bracketsRouter); // Bracket management router
     app.use('/api/admin/games', isAdmin, gamesRouter); // Game management router
     app.use('/api/admin/clubs', isAdmin, adminClubsRouter); // Admin club management router
-    app.use('/api/admin/events', isAdmin, eventClubsRouter); // Event clubs management router
+    app.use('/api/admin/event-clubs', isAdmin, eventClubsRouter); // Event clubs management router
     app.use('/api/admin/email-config', isAdmin, emailConfigRouter); // Email configuration router
     // Stripe Connect routes are registered dynamically at the end of this function
     
