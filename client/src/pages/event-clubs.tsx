@@ -62,7 +62,9 @@ export default function EventClubsPage() {
       if (!response.ok) {
         throw new Error("Failed to fetch event details");
       }
-      return response.json();
+      const data = await response.json();
+      console.log('Event data received:', data);
+      return data;
     },
   });
   
