@@ -104,7 +104,7 @@ export default function EventClubsPage() {
     },
     onSuccess: () => {
       // Invalidate and refetch the clubs query to update the UI
-      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/clubs/clubs`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/admin/event-clubs/${eventId}/clubs`] });
       
       // Close the dialog and clear the editing club
       setIsEditDialogOpen(false);
@@ -128,7 +128,7 @@ export default function EventClubsPage() {
   // Merge clubs mutation
   const mergeClubsMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/admin/events/${eventId}/clubs/merge`, {
+      const response = await fetch(`/api/admin/event-clubs/${eventId}/clubs/merge`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ export default function EventClubsPage() {
     },
     onSuccess: (data) => {
       // Invalidate and refetch the clubs query to update the UI
-      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/clubs/clubs`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/admin/event-clubs/${eventId}/clubs`] });
       
       // Close the dialog and reset state
       setIsMergeDialogOpen(false);
