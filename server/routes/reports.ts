@@ -42,7 +42,7 @@ export async function getRegistrationOrdersReport(req: Request, res: Response) {
         teams.club_name,
         events.id as event_id,
         events.name as event_name,
-        event_age_groups.name as age_group
+        event_age_groups.age_group
       FROM payment_transactions pt
       LEFT JOIN teams ON pt.team_id = teams.id
       LEFT JOIN events ON teams.event_id = events.id
