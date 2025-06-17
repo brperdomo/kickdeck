@@ -30,13 +30,10 @@ export async function getRegistrationOrdersReport(req: Request, res: Response) {
       SELECT 
         pt.id, 
         pt.amount, 
-        pt.payment_method, 
+        pt.payment_method_type as payment_method, 
         pt.status, 
         pt.created_at,
         pt.payment_intent_id,
-        pt.stripe_receipt_url,
-        pt.accounting_code,
-        pt.payment_method_details,
         pt.refunded_at, 
         teams.name as team_name,
         teams.manager_name,
@@ -140,14 +137,14 @@ export async function getFinancialOverviewReport(req: Request, res: Response) {
     // Get payment methods distribution
     const paymentMethodsQuery = sql`
       SELECT 
-        payment_method as "paymentMethod",
+        payment_method_type as "paymentMethod",
         COUNT(id) as count,
         SUM(amount) as "totalAmount",
         AVG(amount) as "avgAmount"
       FROM payment_transactions
       WHERE created_at BETWEEN ${startDate.toISOString()} AND ${endDate.toISOString()}
       AND status = 'succeeded'
-      GROUP BY payment_method
+      GROUP BY payment_method_type
       ORDER BY "totalAmount" DESC
     `;
     const paymentMethods = await db.execute(paymentMethodsQuery);
