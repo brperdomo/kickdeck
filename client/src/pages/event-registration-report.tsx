@@ -63,12 +63,32 @@ export default function EventRegistrationReport({ eventId }: EventRegistrationRe
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['eventFinancialReport', eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/reports/events/${eventId}/financial`);
+      const response = await fetch(`/api/reports/events/${eventId}/financial`, {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch event registration report');
+        const responseText = await response.text();
+        console.log('Error response text:', responseText);
+        throw new Error(`HTTP ${response.status}: ${responseText}`);
       }
-      return response.json();
+      
+      const responseText = await response.text();
+      console.log('Response text:', responseText);
+      
+      try {
+        return JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        console.error('Response was:', responseText);
+        throw new Error('Invalid JSON response from server');
+      }
     },
   });
   
