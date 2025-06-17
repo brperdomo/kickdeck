@@ -50,7 +50,8 @@ export async function getRegistrationOrdersReport(req: Request, res: Response) {
       ORDER BY pt.created_at DESC
     `;
 
-    const transactions = await db.execute(query);
+    const result = await db.execute(query);
+    const transactions = result.rows || [];
 
     return res.json({
       success: true,

@@ -100,8 +100,11 @@ export default function RegistrationOrdersReport() {
   
   const transactions = data?.transactions || [];
 
+  // Ensure transactions is an array before filtering
+  const transactionsArray = Array.isArray(transactions) ? transactions : [];
+
   // Apply filters
-  const filteredTransactions = transactions.filter((transaction: any) => {
+  const filteredTransactions = transactionsArray.filter((transaction: any) => {
     // Text search
     const searchTerms = searchQuery.toLowerCase().split(' ');
     const searchFields = [
