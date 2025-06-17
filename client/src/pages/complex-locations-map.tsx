@@ -62,8 +62,16 @@ export default function ComplexLocationsMapPage() {
     const lat = complex.latitude;
     const lng = complex.longitude;
     
+    console.log(`🏟️ Checking complex "${complex.name}":`, {
+      lat: lat,
+      lng: lng,
+      latType: typeof lat,
+      lngType: typeof lng
+    });
+    
     // Check if coordinates exist and are valid numbers
     if (lat === null || lat === undefined || lng === null || lng === undefined) {
+      console.log(`❌ ${complex.name}: Missing coordinates`);
       return false;
     }
     
@@ -71,7 +79,10 @@ export default function ComplexLocationsMapPage() {
     const latNum = typeof lat === 'number' ? lat : parseFloat(String(lat));
     const lngNum = typeof lng === 'number' ? lng : parseFloat(String(lng));
     
-    return !isNaN(latNum) && !isNaN(lngNum) && latNum !== 0 && lngNum !== 0;
+    const isValid = !isNaN(latNum) && !isNaN(lngNum) && latNum !== 0 && lngNum !== 0;
+    console.log(`${isValid ? '✅' : '❌'} ${complex.name}: lat=${latNum}, lng=${lngNum}, valid=${isValid}`);
+    
+    return isValid;
   });
 
   const complexesWithoutCoords = filteredComplexes.filter((complex: Complex) => {
