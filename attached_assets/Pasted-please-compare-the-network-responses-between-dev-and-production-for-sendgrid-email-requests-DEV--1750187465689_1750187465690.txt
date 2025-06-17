@@ -1,0 +1,144 @@
+please compare the network responses between dev and production for sendgrid email requests.
+
+DEV:
+
+Request URL
+https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/auth/forgot-password
+Request Method
+POST
+Status Code
+200 OK
+Remote Address
+34.82.58.13:443
+Referrer Policy
+strict-origin-when-cross-origin
+content-length
+102
+content-type
+application/json; charset=utf-8
+date
+Tue, 17 Jun 2025 19:06:06 GMT
+etag
+W/"66-EfEiBy/F+OxkaqUM9z6xZSsjmcg"
+replit-cluster
+spock
+x-powered-by
+Express
+x-robots-tag
+none, noindex, noarchive, nofollow, nositelinkssearchbox, noimageindex
+x-robots-tag
+none, noindex, noarchive, nofollow, nositelinkssearchbox, noimageindex
+accept
+/
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+en-US,en;q=0.9
+connection
+keep-alive
+content-length
+29
+content-type
+application/json
+cookie
+__stripe_mid=b40d0d21-9c91-4a81-84ff-304f83b2c026d82286; matchpro.sid=s%3AQ-BzXNyxosgbqRxYEcWU85cy7DQ8mgHJ.cSJT%2BVjXmkl1Gooe%2FVIGHIrTqsmABbHk6YSGfQiewBQ; __stripe_sid=b630d61c-17b8-468f-b509-c936a0277c32d9441e; connect.sid=s%3AKRPVxKMzo-17EnKmD3ybuv5pEt8EF6kP.PoIH0gkcKcjaqVJnXakzd7THfF2Xuxr1tDeNARyWYQw
+dnt
+1
+host
+7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev
+origin
+https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev
+referer
+https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/forgot-password
+sec-ch-ua
+"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"macOS"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+sec-gpc
+1
+user-agent
+
+PROD:
+
+Request URL
+https://app.matchpro.ai/api/auth/forgot-password
+Request Method
+POST
+Status Code
+200 OK
+Remote Address
+34.111.179.208:443
+Referrer Policy
+strict-origin-when-cross-origin
+alt-svc
+h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+content-length
+102
+content-type
+application/json; charset=utf-8
+date
+Tue, 17 Jun 2025 19:05:22 GMT
+etag
+W/"66-EfEiBy/F+OxkaqUM9z6xZSsjmcg"
+server
+Google Frontend
+strict-transport-security
+max-age=63072000; includeSubDomains
+via
+1.1 google
+x-cloud-trace-context
+0f3a1afc3bbc0ba2764aea0470c14ddb;o=1
+x-powered-by
+Express
+:authority
+app.matchpro.ai
+:method
+POST
+:path
+/api/auth/forgot-password
+:scheme
+https
+accept
+/
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+en-US,en;q=0.9
+content-length
+29
+content-type
+application/json
+cookie
+ajs_anonymous_id=%228bb51eaf-3add-4bce-b290-7864932727ee%22; _ga=GA1.1.1574020155.1746809315; _ga_622YZQ6TFL=GS2.1.s1746908505$o3$g0$t1746908509$j0$l0$h0; _ga_5GLRM87F4Q=GS2.1.s1746908505$o3$g0$t1746908509$j0$l0$h0; __stripe_mid=241c8eaf-a447-4b0f-89d5-9d961d7c70156de293; connect.sid=s%3AIxz5KBpY8YO5Y2sVdqDknvSlCQUwQVgL.yNAPkci8yTlZDpgqabdlUC1bZnh3rmgaPPOmgvfW1SU; __stripe_sid=0cb27990-eb3e-4320-a436-898c66811400358e56
+dnt
+1
+origin
+https://app.matchpro.ai
+priority
+u=1, i
+referer
+https://app.matchpro.ai/forgot-password
+sec-ch-ua
+"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"macOS"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+sec-gpc
+1
+user-agent
+Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
