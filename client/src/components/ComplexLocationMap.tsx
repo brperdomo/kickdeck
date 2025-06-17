@@ -38,6 +38,13 @@ interface ComplexLocationMapProps {
   onComplexSelect?: (complex: Complex) => void;
 }
 
+// Helper function to safely convert coordinates to numbers
+const getCoordinate = (coord: string | number | null | undefined): number | null => {
+  if (coord === null || coord === undefined) return null;
+  const num = typeof coord === 'number' ? coord : parseFloat(String(coord));
+  return isNaN(num) ? null : num;
+};
+
 export function ComplexLocationMap({ 
   complexes, 
   height = '400px',
@@ -54,10 +61,9 @@ export function ComplexLocationMap({
 
   // Filter complexes that have coordinates
   const complexesWithCoords = complexes.filter(complex => {
-    const lat = complex.latitude;
-    const lng = complex.longitude;
-    return lat !== null && lat !== undefined && lng !== null && lng !== undefined &&
-           !isNaN(parseFloat(String(lat))) && !isNaN(parseFloat(String(lng)));
+    const lat = getCoordinate(complex.latitude);
+    const lng = getCoordinate(complex.longitude);
+    return lat !== null && lng !== null;
   });
 
   useEffect(() => {
@@ -93,8 +99,10 @@ export function ComplexLocationMap({
         // Calculate center point from all complexes
         const bounds = new mapboxgl.LngLatBounds();
         complexesWithCoords.forEach(complex => {
-          if (complex.latitude && complex.longitude) {
-            bounds.extend([parseFloat(String(complex.longitude)), parseFloat(String(complex.latitude))]);
+          const lat = getCoordinate(complex.latitude);
+          const lng = getCoordinate(complex.longitude);
+          if (lat !== null && lng !== null) {
+            bounds.extend([lng, lat]);
           }
         });
 
@@ -120,10 +128,9 @@ export function ComplexLocationMap({
 
           // Add markers for each complex
           complexesWithCoords.forEach(complex => {
-            if (!complex.latitude || !complex.longitude) return;
-
-            const lng = parseFloat(String(complex.longitude));
-            const lat = parseFloat(String(complex.latitude));
+            const lat = getCoordinate(complex.latitude);
+            const lng = getCoordinate(complex.longitude);
+            if (lat === null || lng === null) return;
 
             // Create custom marker element
             const markerElement = document.createElement('div');
@@ -218,15 +225,17 @@ export function ComplexLocationMap({
   useEffect(() => {
     if (selectedComplexId && mapRef.current) {
       const complex = complexesWithCoords.find(c => c.id === selectedComplexId);
-      if (complex && complex.latitude && complex.longitude) {
-        const lng = parseFloat(complex.longitude);
-        const lat = parseFloat(complex.latitude);
-        mapRef.current.flyTo({
-          center: [lng, lat],
-          zoom: 15,
-          duration: 1000
-        });
-        setSelectedComplex(complex);
+      if (complex) {
+        const lat = getCoordinate(complex.latitude);
+        const lng = getCoordinate(complex.longitude);
+        if (lat !== null && lng !== null) {
+          mapRef.current.flyTo({
+            center: [lng, lat],
+            zoom: 15,
+            duration: 1000
+          });
+          setSelectedComplex(complex);
+        }
       }
     }
   }, [selectedComplexId, complexesWithCoords]);
