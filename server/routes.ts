@@ -77,6 +77,7 @@ import {
   removeEventAdministrator
 } from "./routes/admin/event-administrators";
 import userRouter from "./routes/user";
+import sendgridWebhookRouter from "./routes/sendgrid-webhook";
 import { sql, eq, and, or, inArray, notInArray, isNull } from "drizzle-orm";
 import { sendTemplatedEmail, sendRegistrationReceiptEmail, sendRegistrationConfirmationEmail } from "./services/emailService";
 import {

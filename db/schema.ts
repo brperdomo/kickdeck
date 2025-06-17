@@ -1350,4 +1350,28 @@ export const selectProductUpdateSchema = createSelectSchema(productUpdates);
 export type InsertProductUpdate = typeof productUpdates.$inferInsert;
 export type SelectProductUpdate = typeof productUpdates.$inferSelect;
 
+// Email tracking table for SendGrid webhook events
+export const emailTracking = pgTable("email_tracking", {
+  id: serial("id").primaryKey(),
+  recipientEmail: text("recipient_email").notNull(),
+  emailType: text("email_type").notNull(), // 'template', 'regular', etc.
+  templateId: text("template_id"),
+  sendgridMessageId: text("sendgrid_message_id"),
+  status: text("status").notNull(), // 'sent', 'delivered', 'failed', 'opened', 'clicked'
+  sentAt: timestamp("sent_at").notNull().defaultNow(),
+  deliveredAt: timestamp("delivered_at"),
+  openedAt: timestamp("opened_at"),
+  clickedAt: timestamp("clicked_at"),
+  errorMessage: text("error_message"),
+  webhookData: jsonb("webhook_data"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertEmailTrackingSchema = createInsertSchema(emailTracking);
+export const selectEmailTrackingSchema = createSelectSchema(emailTracking);
+
+export type InsertEmailTracking = typeof emailTracking.$inferInsert;
+export type SelectEmailTracking = typeof emailTracking.$inferSelect;
+
 // Note: Clubs table already defined at the top of the file
