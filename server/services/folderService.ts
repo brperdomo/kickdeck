@@ -290,3 +290,33 @@ export async function deleteFolder(folderId: string): Promise<boolean> {
   
   return true;
 }
+
+/**
+ * Get breadcrumbs for a folder (path from root to folder)
+ * @param folderId The folder ID
+ * @returns Array of breadcrumb objects with id and name
+ */
+export async function getFolderBreadcrumbs(folderId: string): Promise<{ id: string | null; name: string }[]> {
+  const breadcrumbs: { id: string | null; name: string }[] = [];
+  
+  let currentFolderId: string | null = folderId;
+  
+  // Traverse up the folder hierarchy
+  while (currentFolderId) {
+    const folder = await getFolder(currentFolderId);
+    
+    if (!folder) {
+      break;
+    }
+    
+    // Add to beginning of array to maintain correct order
+    breadcrumbs.unshift({
+      id: folder.id,
+      name: folder.name
+    });
+    
+    currentFolderId = folder.parentId;
+  }
+  
+  return breadcrumbs;
+}

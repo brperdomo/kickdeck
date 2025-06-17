@@ -142,6 +142,19 @@ router.delete('/:id', validateAuth, isAdmin, async (req, res) => {
   }
 });
 
+// Get breadcrumbs for a folder
+router.get('/breadcrumbs/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const breadcrumbs = await folderService.getFolderBreadcrumbs(id);
+    res.json(breadcrumbs);
+  } catch (error) {
+    console.error(`Error fetching breadcrumbs for folder ${req.params.id}:`, error);
+    res.status(500).json({ error: 'Failed to fetch breadcrumbs' });
+  }
+});
+
 // Get folder tree structure
 router.get('/tree', async (req, res) => {
   try {
