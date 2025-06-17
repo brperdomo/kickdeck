@@ -1,0 +1,21 @@
+Manual input change: 201 Soccer Park Drive, Cary, North Carolina 27511, United States, Cary, NC
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:245 Processing feature: 201 Soccer Park Drive, Cary, North Carolina 27511, United States
+MapboxAutocomplete.tsx:246 Extracted components: {city: 'Cary', state: 'NC', country: 'US', location: {…}, placeId: 'address.2775439979755996'}
+MapboxAutocomplete.tsx:428 🖱️ Mouse click on suggestion: 201 Soccer Park Drive, Cary, North Carolina 27511, United States
+MapboxAutocomplete.tsx:286 🔵 Mapbox suggestion selected: {placeName: '201 Soccer Park Drive, Cary, North Carolina 27511, United States', center: Array(2), context: Array(5), extractedData: {…}}
+MapboxAutocomplete.tsx:299 🟢 Calling onChange with extracted data: {city: 'Cary', state: 'NC', country: 'US', location: {…}, placeId: 'address.2775439979755996'}
+ComplexEditor.tsx:173 Mapbox place details received: {city: 'Cary', state: 'NC', country: 'US', location: {…}, placeId: 'address.2775439979755996'}
+ComplexEditor.tsx:179 Set coordinates: 35.7858 -78.7543
+ComplexEditor.tsx:185 Set city: Cary
+ComplexEditor.tsx:189 Set state: NC
+ComplexEditor.tsx:193 Set country: US
+ComplexEditor.tsx:201 Updated form with Mapbox data: {lat: 35.7858, lng: -78.7543, city: 'Cary', state: 'NC', country: 'US', …}city: "Cary"country: "US"lat: 35.7858lng: -78.7543placeId: "address.2775439979755996"state: "NC"[[Prototype]]: Object
+use-user.ts:59 Fetching user with emulation token: not present
+complexes:1 Failed to decode downloaded font: https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swapUnderstand this warning
+complexes:1 OTS parsing error: invalid sfntVersion: 791289955Understand this warning
+use-user.ts:76 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/complex-locations
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/complex-locations
+RouteDebugger.tsx:15 Current pathname: /admin/complex-locations
+RouteDebugger.tsx:16 Current search: 

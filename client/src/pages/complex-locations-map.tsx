@@ -61,17 +61,33 @@ export default function ComplexLocationsMapPage() {
   const complexesWithCoords = filteredComplexes.filter((complex: Complex) => {
     const lat = complex.latitude;
     const lng = complex.longitude;
-    return lat !== null && lat !== undefined && lat !== '' && 
-           lng !== null && lng !== undefined && lng !== '' &&
-           !isNaN(Number(lat)) && !isNaN(Number(lng));
+    
+    // Check if coordinates exist and are valid numbers
+    if (lat === null || lat === undefined || lng === null || lng === undefined) {
+      return false;
+    }
+    
+    // Handle both string and number types
+    const latNum = typeof lat === 'number' ? lat : parseFloat(String(lat));
+    const lngNum = typeof lng === 'number' ? lng : parseFloat(String(lng));
+    
+    return !isNaN(latNum) && !isNaN(lngNum) && latNum !== 0 && lngNum !== 0;
   });
 
   const complexesWithoutCoords = filteredComplexes.filter((complex: Complex) => {
     const lat = complex.latitude;
     const lng = complex.longitude;
-    return lat === null || lat === undefined || lat === '' || 
-           lng === null || lng === undefined || lng === '' ||
-           isNaN(Number(lat)) || isNaN(Number(lng));
+    
+    // Check if coordinates are missing or invalid
+    if (lat === null || lat === undefined || lng === null || lng === undefined) {
+      return true;
+    }
+    
+    // Handle both string and number types
+    const latNum = typeof lat === 'number' ? lat : parseFloat(String(lat));
+    const lngNum = typeof lng === 'number' ? lng : parseFloat(String(lng));
+    
+    return isNaN(latNum) || isNaN(lngNum) || latNum === 0 || lngNum === 0;
   });
 
   if (isLoading) {
