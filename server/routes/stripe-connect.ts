@@ -64,6 +64,21 @@ export function registerStripeConnectRoutes(app: Express) {
 
       const account = await stripe.accounts.create(accountParams);
 
+      // Configure daily payouts for better cash flow
+      try {
+        await stripe.accounts.update(account.id, {
+          settings: {
+            payouts: {
+              schedule: {
+                interval: 'daily'
+              }
+            }
+          }
+        });
+      } catch (payoutError) {
+        console.log('Note: Payout schedule will be configured during onboarding');
+      }
+
       // Create account link for onboarding
       const accountLink = await stripe.accountLinks.create({
         account: account.id,

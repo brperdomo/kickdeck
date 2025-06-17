@@ -42,6 +42,7 @@ import { getFeeAssignments, updateFeeAssignments } from "./routes/fee-assignment
 import paymentsRouter from "./routes/payments";
 import reportsRouter from "./routes/reports";
 import { registerStripeConnectRoutes } from "./routes/stripe-connect";
+import { registerPaymentReportRoutes } from "./routes/payment-reports";
 import { registerConnectPaymentRoutes } from "./routes/stripe-connect-payments";
 import { 
   getEnhancedEventFinancialReport, 
