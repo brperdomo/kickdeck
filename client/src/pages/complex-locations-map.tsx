@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Search, Filter, Building, Clock, Navigation } from 'lucide-react';
+import { MapPin, Search, Filter, Building, Clock } from 'lucide-react';
 import { formatAddress } from '@/lib/format-address';
 
 interface Complex {
@@ -27,9 +27,9 @@ interface Complex {
 }
 
 export default function ComplexLocationsMapPage() {
-  const [selectedComplexId, setSelectedComplexId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'closed'>('all');
+  const [selectedComplexId, setSelectedComplexId] = useState<number | undefined>();
 
   const { data: complexes = [], isLoading, error } = useQuery({
     queryKey: ['/api/admin/complexes'],
@@ -38,52 +38,64 @@ export default function ComplexLocationsMapPage() {
       if (!response.ok) {
         throw new Error('Failed to fetch complexes');
       }
-      return response.json();
-    },
+      const data = await response.json();
+      // API returns array directly, not wrapped in complexes property
+      return Array.isArray(data) ? data : data.complexes || [];
+    }
   });
 
   // Filter complexes based on search and status
   const filteredComplexes = complexes.filter((complex: Complex) => {
-    const matchesSearch = 
+    const matchesSearch = !searchQuery || 
       complex.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       complex.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      complex.state.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      complex.address.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesStatus = 
-      statusFilter === 'all' || 
+      complex.state.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || 
       (statusFilter === 'open' && complex.isOpen) ||
       (statusFilter === 'closed' && !complex.isOpen);
-
+    
     return matchesSearch && matchesStatus;
   });
 
-  // Separate complexes with and without coordinates
   const complexesWithCoords = filteredComplexes.filter((complex: Complex) => {
-    return complex.latitude && complex.longitude && 
-           complex.latitude !== '' && complex.longitude !== '' &&
-           complex.latitude !== '0' && complex.longitude !== '0';
+    const lat = complex.latitude;
+    const lng = complex.longitude;
+    
+    // Check if coordinates exist and are valid numbers
+    if (lat === null || lat === undefined || lng === null || lng === undefined) {
+      return false;
+    }
+    
+    // Handle both string and number types
+    const latNum = typeof lat === 'number' ? lat : parseFloat(String(lat));
+    const lngNum = typeof lng === 'number' ? lng : parseFloat(String(lng));
+    
+    return !isNaN(latNum) && !isNaN(lngNum) && latNum !== 0 && lngNum !== 0;
   });
 
   const complexesWithoutCoords = filteredComplexes.filter((complex: Complex) => {
-    return !complex.latitude || !complex.longitude || 
-           complex.latitude === '' || complex.longitude === '' ||
-           complex.latitude === '0' || complex.longitude === '0';
+    const lat = complex.latitude;
+    const lng = complex.longitude;
+    
+    // Check if coordinates are missing or invalid
+    if (lat === null || lat === undefined || lng === null || lng === undefined) {
+      return true;
+    }
+    
+    // Handle both string and number types
+    const latNum = typeof lat === 'number' ? lat : parseFloat(String(lat));
+    const lngNum = typeof lng === 'number' ? lng : parseFloat(String(lng));
+    
+    return isNaN(latNum) || isNaN(lngNum) || latNum === 0 || lngNum === 0;
   });
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-        <div className="container mx-auto p-6">
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-            <CardContent className="p-8">
-              <div className="text-center">
-                <Building className="h-12 w-12 mx-auto mb-4 text-blue-500 animate-pulse" />
-                <p className="font-medium text-gray-700">Loading complex locations...</p>
-                <p className="text-sm text-gray-500 mt-1">Please wait while we fetch the data</p>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="container mx-auto p-6">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-96 bg-gray-200 rounded"></div>
         </div>
       </div>
     );
@@ -91,173 +103,164 @@ export default function ComplexLocationsMapPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-        <div className="container mx-auto p-6">
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-            <CardContent className="p-8">
-              <div className="text-center text-red-600">
-                <Building className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="font-medium">Failed to load complexes</p>
-                <p className="text-sm text-gray-600 mt-1">Please try again later</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="container mx-auto p-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center text-red-600">
+              <Building className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p className="font-medium">Failed to load complexes</p>
+              <p className="text-sm text-gray-600 mt-1">Please try again later</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      <div className="container mx-auto p-6 space-y-8">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              Complex Locations
-            </h1>
-            <p className="text-gray-600 text-lg">Interactive map of all complex locations</p>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Complex Locations</h1>
+          <p className="text-gray-600 mt-1">Interactive map of all complex locations</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline">
+            {complexes.length} total complexes
+          </Badge>
+          <Badge variant="secondary">
+            {complexesWithCoords.length} on map
+          </Badge>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Filter className="h-5 w-5" />
+            Filters
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search complexes by name, city, or state..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+              <SelectTrigger className="w-full sm:w-48">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Complexes</SelectItem>
+                <SelectItem value="open">Open Only</SelectItem>
+                <SelectItem value="closed">Closed Only</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="px-4 py-2 bg-white shadow-sm border-blue-200 text-blue-700">
-              <MapPin className="h-4 w-4 mr-2" />
-              {complexes.length} total complexes
-            </Badge>
-            <Badge variant="secondary" className="px-4 py-2 bg-green-100 text-green-700 border-green-200">
-              <Navigation className="h-4 w-4 mr-2" />
-              {complexesWithCoords.length} on map
-            </Badge>
-          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Map */}
+        <div className="lg:col-span-2">
+          <ComplexLocationMap
+            complexes={filteredComplexes}
+            height="600px"
+            selectedComplexId={selectedComplexId}
+            onComplexSelect={(complex) => setSelectedComplexId(complex.id)}
+          />
         </div>
 
-        {/* Filters */}
-        <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-t-lg">
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
-              Filters
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Search complexes by name, city, or state..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 border-blue-200 focus:border-blue-400 focus:ring-blue-400 bg-white/80"
-                  />
-                </div>
-              </div>
-              <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
-                <SelectTrigger className="w-full sm:w-48 border-blue-200 focus:border-blue-400 focus:ring-blue-400 bg-white/80">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Complexes</SelectItem>
-                  <SelectItem value="open">Open Only</SelectItem>
-                  <SelectItem value="closed">Closed Only</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Map */}
-          <div className="lg:col-span-2">
-            <ComplexLocationMap
-              complexes={filteredComplexes}
-              height="600px"
-              selectedComplexId={selectedComplexId}
-              onComplexSelect={(complex) => setSelectedComplexId(complex.id)}
-            />
-          </div>
-
-          {/* Complex List */}
-          <div className="space-y-4">
-            <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-t-lg">
-                <CardTitle className="flex items-center gap-2">
-                  <Building className="h-5 w-5" />
-                  Complex List
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="max-h-96 overflow-y-auto">
-                  {filteredComplexes.map((complex: Complex) => (
-                    <div
-                      key={complex.id}
-                      className={`p-4 border-b cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 transition-all duration-200 ${
-                        selectedComplexId === complex.id 
-                          ? 'bg-gradient-to-r from-blue-100 to-green-100 border-l-4 border-l-blue-500 shadow-md' 
-                          : ''
-                      }`}
-                      onClick={() => setSelectedComplexId(complex.id)}
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-medium text-sm">{complex.name}</h3>
-                        <Badge 
-                          variant={complex.isOpen ? "default" : "destructive"}
-                          className="text-xs"
-                        >
-                          {complex.isOpen ? "Open" : "Closed"}
-                        </Badge>
+        {/* Complex List */}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Complex List</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="max-h-96 overflow-y-auto">
+                {filteredComplexes.map((complex: Complex) => (
+                  <div
+                    key={complex.id}
+                    className={`p-4 border-b cursor-pointer hover:bg-gray-50 transition-colors ${
+                      selectedComplexId === complex.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+                    }`}
+                    onClick={() => setSelectedComplexId(complex.id)}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-medium text-sm">{complex.name}</h3>
+                      <Badge 
+                        variant={complex.isOpen ? "default" : "destructive"}
+                        className="text-xs"
+                      >
+                        {complex.isOpen ? "Open" : "Closed"}
+                      </Badge>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <div className="flex items-start gap-1">
+                        <MapPin className="h-3 w-3 mt-0.5 text-gray-400 flex-shrink-0" />
+                        <span className="text-xs text-gray-600">{formatAddress(complex)}</span>
                       </div>
                       
-                      <div className="space-y-1">
-                        <div className="flex items-start gap-1">
-                          <MapPin className="h-3 w-3 mt-0.5 text-gray-400 flex-shrink-0" />
-                          <span className="text-xs text-gray-600">{formatAddress(complex)}</span>
-                        </div>
-                        
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-3 w-3 text-gray-400" />
+                        <span className="text-xs text-gray-600">
+                          {complex.openTime} - {complex.closeTime}
+                        </span>
+                      </div>
+
+                      {complex.fields && (
                         <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                          <Building className="h-3 w-3 text-gray-400" />
                           <span className="text-xs text-gray-600">
-                            {complex.openTime} - {complex.closeTime}
+                            {complex.fields.length} field{complex.fields.length !== 1 ? 's' : ''}
                           </span>
                         </div>
+                      )}
 
-                        {(!complex.latitude || !complex.longitude) && (
-                          <Badge variant="outline" className="text-xs">
-                            No coordinates
-                          </Badge>
-                        )}
-                      </div>
+                      {(!complex.latitude || !complex.longitude) && (
+                        <Badge variant="outline" className="text-xs">
+                          No coordinates
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Complexes without coordinates */}
+          {complexesWithoutCoords.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Complexes Not on Map</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-gray-600 mb-3">
+                  These complexes don't have coordinates and won't appear on the map:
+                </p>
+                <div className="space-y-2">
+                  {complexesWithoutCoords.map((complex: Complex) => (
+                    <div key={complex.id} className="text-xs p-2 bg-gray-50 rounded">
+                      <div className="font-medium">{complex.name}</div>
+                      <div className="text-gray-600">{formatAddress(complex)}</div>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
-
-            {/* Complexes without coordinates */}
-            {complexesWithoutCoords.length > 0 && (
-              <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-                <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    Complexes Not on Map
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <p className="text-xs text-gray-600 mb-3">
-                    These complexes don't have coordinates and won't appear on the map:
-                  </p>
-                  <div className="space-y-2">
-                    {complexesWithoutCoords.map((complex: Complex) => (
-                      <div key={complex.id} className="text-xs p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border border-orange-200">
-                        <div className="font-medium text-gray-800">{complex.name}</div>
-                        <div className="text-gray-600">{formatAddress(complex)}</div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </div>
