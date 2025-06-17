@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MapPin, Search, Filter, Building, Clock } from 'lucide-react';
+import { MapPin, Search, Filter, Building, Clock, Navigation } from 'lucide-react';
 import { formatAddress } from '@/lib/format-address';
 
 interface Complex {
@@ -118,31 +118,36 @@ export default function ComplexLocationsMapPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Complex Locations</h1>
-          <p className="text-gray-600 mt-1">Interactive map of all complex locations</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <div className="container mx-auto p-6 space-y-8">
+        <div className="flex justify-between items-center">
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              Complex Locations
+            </h1>
+            <p className="text-gray-600 text-lg">Interactive map of all complex locations</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Badge variant="outline" className="px-4 py-2 bg-white shadow-sm border-blue-200 text-blue-700">
+              <MapPin className="h-4 w-4 mr-2" />
+              {complexes.length} total complexes
+            </Badge>
+            <Badge variant="secondary" className="px-4 py-2 bg-green-100 text-green-700 border-green-200">
+              <Navigation className="h-4 w-4 mr-2" />
+              {complexesWithCoords.length} on map
+            </Badge>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline">
-            {complexes.length} total complexes
-          </Badge>
-          <Badge variant="secondary">
-            {complexesWithCoords.length} on map
-          </Badge>
-        </div>
-      </div>
 
       {/* Filters */}
-      <Card>
-        <CardHeader>
+      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-t-lg">
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
             Filters
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -151,12 +156,12 @@ export default function ComplexLocationsMapPage() {
                   placeholder="Search complexes by name, city, or state..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-blue-200 focus:border-blue-400 focus:ring-blue-400 bg-white/80"
                 />
               </div>
             </div>
             <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
-              <SelectTrigger className="w-full sm:w-48">
+              <SelectTrigger className="w-full sm:w-48 border-blue-200 focus:border-blue-400 focus:ring-blue-400 bg-white/80">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -169,30 +174,35 @@ export default function ComplexLocationsMapPage() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Map */}
-        <div className="lg:col-span-2">
-          <ComplexLocationMap
-            complexes={filteredComplexes}
-            height="600px"
-            selectedComplexId={selectedComplexId}
-            onComplexSelect={(complex) => setSelectedComplexId(complex.id)}
-          />
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Map */}
+          <div className="lg:col-span-2">
+            <ComplexLocationMap
+              complexes={filteredComplexes}
+              height="600px"
+              selectedComplexId={selectedComplexId}
+              onComplexSelect={(complex) => setSelectedComplexId(complex.id)}
+            />
+          </div>
 
         {/* Complex List */}
         <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Complex List</CardTitle>
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-t-lg">
+              <CardTitle className="flex items-center gap-2">
+                <Building className="h-5 w-5" />
+                Complex List
+              </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="max-h-96 overflow-y-auto">
                 {filteredComplexes.map((complex: Complex) => (
                   <div
                     key={complex.id}
-                    className={`p-4 border-b cursor-pointer hover:bg-gray-50 transition-colors ${
-                      selectedComplexId === complex.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+                    className={`p-4 border-b cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 transition-all duration-200 ${
+                      selectedComplexId === complex.id 
+                        ? 'bg-gradient-to-r from-blue-100 to-green-100 border-l-4 border-l-blue-500 shadow-md' 
+                        : ''
                     }`}
                     onClick={() => setSelectedComplexId(complex.id)}
                   >
@@ -242,18 +252,21 @@ export default function ComplexLocationsMapPage() {
 
           {/* Complexes without coordinates */}
           {complexesWithoutCoords.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Complexes Not on Map</CardTitle>
+            <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  Complexes Not on Map
+                </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4">
                 <p className="text-xs text-gray-600 mb-3">
                   These complexes don't have coordinates and won't appear on the map:
                 </p>
                 <div className="space-y-2">
                   {complexesWithoutCoords.map((complex: Complex) => (
-                    <div key={complex.id} className="text-xs p-2 bg-gray-50 rounded">
-                      <div className="font-medium">{complex.name}</div>
+                    <div key={complex.id} className="text-xs p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border border-orange-200">
+                      <div className="font-medium text-gray-800">{complex.name}</div>
                       <div className="text-gray-600">{formatAddress(complex)}</div>
                     </div>
                   ))}
