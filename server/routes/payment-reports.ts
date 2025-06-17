@@ -48,7 +48,7 @@ export function registerPaymentReportRoutes(app: Application) {
         summary.totalNetAmount += netAmount;
 
         // Group by date for daily breakdown
-        const date = team.createdAt ? team.createdAt.toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+        const date = team.createdAt ? String(team.createdAt).split('T')[0] : new Date().toISOString().split('T')[0];
         
         if (!dailyMap.has(date)) {
           dailyMap.set(date, {
@@ -127,13 +127,13 @@ export function registerPaymentReportRoutes(app: Application) {
         ].join(',');
 
         const csvRows = paidTeams.map(team => {
-          const fee = parseFloat(team.registrationFee || '0');
+          const fee = parseFloat(String(team.registrationFee || '0'));
           const platformFee = Math.round(fee * 0.03 * 100) / 100;
           const netAmount = fee - platformFee;
 
           return [
-            team.createdAt ? team.createdAt.toISOString().split('T')[0] : '',
-            `"${team.teamName || ''}"`,
+            String(team.createdAt || ''),
+            `"${team.name || ''}"`,
             `"${team.clubName || ''}"`,
             `"${team.ageGroupName || ''}"`,
             `"${team.submitterEmail || ''}"`,
