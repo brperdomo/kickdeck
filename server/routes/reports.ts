@@ -282,13 +282,12 @@ export async function getFinancialOverviewReport(req: Request, res: Response) {
 /**
  * Get Event Financial Report
  * 
- * Fetches detailed financial data for a specific event.
+ * Fetches event-specific registration and financial data for tournament organizers.
+ * Shows registrations submitted, payment collection status, expected revenue, and fees.
  */
 export async function getEventFinancialReport(req: Request, res: Response) {
   try {
     const { eventId } = req.params;
-    const { includeAI = 'true' } = req.query;
-    const includeAIInsights = includeAI === 'true';
     
     if (!eventId) {
       return res.status(400).json({ success: false, error: 'Event ID is required' });
@@ -302,244 +301,154 @@ export async function getEventFinancialReport(req: Request, res: Response) {
     `;
     const eventResult = await db.execute(eventQuery);
     
-    if (!eventResult || eventResult.length === 0) {
+    if (!eventResult.rows || eventResult.rows.length === 0) {
       return res.status(404).json({ success: false, error: 'Event not found' });
     }
     
-    const event = eventResult[0];
+    const event = eventResult.rows[0];
     
-    // Get financial data - handle both regular and test transactions
-    const financialsQuery = sql`
-      WITH event_transactions AS (
-        -- Regular transactions with team_id
-        SELECT 
-          pt.id,
-          pt.amount,
-          pt.status
-        FROM payment_transactions pt
-        JOIN teams t ON pt.team_id = t.id
-        WHERE t.event_id = ${eventId}
-        AND pt.status = 'succeeded'
-        
-        UNION ALL
-        
-        -- Include test transactions for this event (distributed evenly)
-        SELECT 
-          pt.id,
-          ROUND(pt.amount / 
-            (SELECT COUNT(*) FROM events WHERE is_archived = false)) as amount,
-          pt.status
-        FROM payment_transactions pt
-        WHERE pt.team_id IS NULL
-        AND pt.status = 'succeeded'
-        AND EXISTS (SELECT 1 FROM events WHERE id = ${eventId})
-        -- Only include test transactions for active events
-      )
-      
+    // Get registration overview with payment collection status
+    const registrationOverviewQuery = sql`
       SELECT 
-        SUM(amount) as total_revenue,
-        COUNT(id) as transaction_count,
-        AVG(amount) as avg_transaction_amount
-      FROM event_transactions
-    `;
-    const financialsResult = await db.execute(financialsQuery);
-    const financials = {
-      totalRevenue: financialsResult[0]?.total_revenue || 0,
-      transactionCount: financialsResult[0]?.transaction_count || 0,
-      avgTransactionAmount: financialsResult[0]?.avg_transaction_amount || 0
-    };
-    
-    // Get refund data - handling both regular and test refunds
-    const refundsQuery = sql`
-      WITH event_refunds AS (
-        -- Regular refunds with team_id
-        SELECT 
-          pt.id,
-          pt.amount
-        FROM payment_transactions pt
-        JOIN teams t ON pt.team_id = t.id
-        WHERE t.event_id = ${eventId}
-        AND (pt.refunded_at IS NOT NULL OR pt.status = 'refunded' OR pt.transaction_type = 'refund')
-        
-        UNION ALL
-        
-        -- Include test refunds for this event (distributed evenly)
-        SELECT 
-          pt.id,
-          ROUND(pt.amount / 
-            (SELECT COUNT(*) FROM events WHERE is_archived = false)) as amount
-        FROM payment_transactions pt
-        WHERE pt.team_id IS NULL
-        AND (pt.refunded_at IS NOT NULL OR pt.status = 'refunded' OR pt.transaction_type = 'refund')
-        AND EXISTS (SELECT 1 FROM events WHERE id = ${eventId})
-      )
-      
-      SELECT 
-        COUNT(id) as total_refunds,
-        SUM(amount) as total_refund_amount
-      FROM event_refunds
-    `;
-    const refundsResult = await db.execute(refundsQuery);
-    const refunds = {
-      totalRefunds: refundsResult[0]?.total_refunds || 0,
-      totalRefundAmount: refundsResult[0]?.total_refund_amount || 0
-    };
-    
-    // Get registration data
-    const registrationsQuery = sql`
-      SELECT 
-        COUNT(id) as total_teams,
-        SUM(CASE WHEN payment_status = 'paid' THEN 1 ELSE 0 END) as paid_teams,
-        SUM(CASE WHEN payment_status != 'paid' THEN 1 ELSE 0 END) as pending_teams
+        COUNT(*) as total_registrations,
+        COUNT(CASE WHEN setup_intent_id IS NOT NULL OR payment_method_id IS NOT NULL THEN 1 END) as with_payment_info,
+        COUNT(CASE WHEN setup_intent_id IS NULL AND payment_method_id IS NULL THEN 1 END) as without_payment_info,
+        COUNT(CASE WHEN payment_status = 'paid' THEN 1 END) as already_paid,
+        COUNT(CASE WHEN approval_status = 'approved' THEN 1 END) as approved_teams,
+        COUNT(CASE WHEN approval_status = 'pending' THEN 1 END) as pending_approval,
+        COUNT(CASE WHEN approval_status = 'rejected' THEN 1 END) as rejected_teams,
+        COUNT(CASE WHEN approval_status = 'waitlisted' THEN 1 END) as waitlisted_teams
       FROM teams
       WHERE event_id = ${eventId}
     `;
-    const registrationsResult = await db.execute(registrationsQuery);
-    const registrations = {
-      totalTeams: registrationsResult[0]?.total_teams || 0,
-      paidTeams: registrationsResult[0]?.paid_teams || 0,
-      pendingTeams: registrationsResult[0]?.pending_teams || 0
-    };
-    
-    // Get revenue by age group - handling both regular and test transactions
-    const ageGroupRevenueQuery = sql`
-      WITH age_group_transactions AS (
-        -- Regular transactions with team_id
-        SELECT 
-          eag.id as age_group_id,
-          eag.name as age_group,
-          eag.gender,
-          pt.amount,
-          t.id as team_id
-        FROM payment_transactions pt
-        JOIN teams t ON pt.team_id = t.id
-        JOIN event_age_groups eag ON t.age_group_id = eag.id
-        WHERE t.event_id = ${eventId}
-        AND pt.status = 'succeeded'
-        
-        UNION ALL
-        
-        -- Include test transactions distributed across age groups
-        SELECT 
-          eag.id as age_group_id,
-          eag.name as age_group,
-          eag.gender,
-          (pt.amount / (SELECT COUNT(*) FROM event_age_groups WHERE event_id = ${eventId})) as amount,
-          NULL as team_id
-        FROM payment_transactions pt
-        CROSS JOIN event_age_groups eag
-        WHERE pt.team_id IS NULL
-        AND pt.status = 'succeeded'
-        AND eag.event_id = ${eventId}
-        AND EXISTS (SELECT 1 FROM events WHERE id = ${eventId})
-      )
-      
+    const registrationResult = await db.execute(registrationOverviewQuery);
+    const registrationOverview = registrationResult.rows[0];
+
+    // Get expected revenue calculation based on team fees
+    const revenueCalculationQuery = sql`
       SELECT 
-        age_group,
-        gender,
-        SUM(amount) as total_revenue,
-        COUNT(DISTINCT team_id) as team_count
-      FROM age_group_transactions
-      GROUP BY age_group_id, age_group, gender
-      ORDER BY total_revenue DESC
+        t.id as team_id,
+        t.name as team_name,
+        t.total_amount as registration_fee,
+        t.approval_status,
+        t.payment_status,
+        t.setup_intent_id,
+        t.payment_method_id,
+        eag.age_group,
+        eag.gender,
+        CASE 
+          WHEN t.setup_intent_id IS NOT NULL OR t.payment_method_id IS NOT NULL THEN 'Ready to charge'
+          ELSE 'No payment method'
+        END as payment_collection_status
+      FROM teams t
+      LEFT JOIN event_age_groups eag ON t.age_group_id = eag.id
+      WHERE t.event_id = ${eventId}
+      ORDER BY t.created_at DESC
     `;
-    const ageGroupRevenue = await db.execute(ageGroupRevenueQuery);
+    const revenueResult = await db.execute(revenueCalculationQuery);
+    const teamRegistrations = revenueResult.rows || [];
+
+    // Calculate expected revenue and fees
+    const expectedRevenue = teamRegistrations
+      .filter(team => team.approval_status !== 'rejected')
+      .reduce((sum, team) => sum + (parseInt(team.registration_fee) || 0), 0);
     
-    // Get daily revenue and registration trend - handling both regular and test transactions
-    const dailyRevenueQuery = sql`
-      WITH daily_event_transactions AS (
-        -- Regular transactions with team_id
-        SELECT 
-          DATE_TRUNC('day', pt.created_at) as day,
-          pt.amount,
-          t.id as team_id
-        FROM payment_transactions pt
-        JOIN teams t ON pt.team_id = t.id
-        WHERE t.event_id = ${eventId}
-        AND pt.status = 'succeeded'
-        
-        UNION ALL
-        
-        -- Include test transactions for this event (distributed evenly)
-        SELECT 
-          DATE_TRUNC('day', pt.created_at) as day,
-          ROUND(pt.amount / 
-            (SELECT COUNT(*) FROM events WHERE is_archived = false)) as amount,
-          NULL as team_id
-        FROM payment_transactions pt
-        WHERE pt.team_id IS NULL
-        AND pt.status = 'succeeded'
-        AND EXISTS (SELECT 1 FROM events WHERE id = ${eventId})
+    const chargeableRevenue = teamRegistrations
+      .filter(team => 
+        team.approval_status === 'approved' && 
+        (team.setup_intent_id || team.payment_method_id) &&
+        team.payment_status !== 'paid'
       )
-      
+      .reduce((sum, team) => sum + (parseInt(team.registration_fee) || 0), 0);
+
+    // Stripe fee calculation (2.9% + 30¢ per transaction)
+    const estimatedStripeFees = teamRegistrations
+      .filter(team => team.approval_status !== 'rejected')
+      .reduce((sum, team) => {
+        const amount = parseInt(team.registration_fee) || 0;
+        return sum + Math.round(amount * 0.029 + 30);
+      }, 0);
+
+    const netPayout = expectedRevenue - estimatedStripeFees;
+
+    // Get actual payments already processed
+    const actualPaymentsQuery = sql`
       SELECT 
-        day,
-        SUM(amount) as daily_revenue,
-        COUNT(DISTINCT team_id) as daily_registrations
-      FROM daily_event_transactions
-      GROUP BY day
-      ORDER BY day ASC
+        SUM(pt.amount) as total_collected,
+        COUNT(pt.id) as payment_count,
+        SUM(pt.stripe_fee) as actual_stripe_fees
+      FROM payment_transactions pt
+      JOIN teams t ON pt.team_id = t.id
+      WHERE t.event_id = ${eventId}
+      AND pt.status = 'succeeded'
+      AND pt.transaction_type = 'payment'
     `;
-    const dailyRevenue = await db.execute(dailyRevenueQuery);
-    
-    // Prepare response data
+    const actualPaymentsResult = await db.execute(actualPaymentsQuery);
+    const actualPayments = actualPaymentsResult.rows[0];
+
+    // Registration breakdown by age group
+    const ageGroupBreakdownQuery = sql`
+      SELECT 
+        eag.age_group,
+        eag.gender,
+        COUNT(t.id) as team_count,
+        COUNT(CASE WHEN t.setup_intent_id IS NOT NULL OR t.payment_method_id IS NOT NULL THEN 1 END) as with_payment_method,
+        SUM(t.total_amount) as age_group_revenue,
+        COUNT(CASE WHEN t.approval_status = 'approved' THEN 1 END) as approved_count,
+        COUNT(CASE WHEN t.approval_status = 'pending' THEN 1 END) as pending_count
+      FROM event_age_groups eag
+      LEFT JOIN teams t ON eag.id = t.age_group_id AND t.event_id = ${eventId}
+      WHERE eag.event_id = ${eventId}
+      GROUP BY eag.id, eag.age_group, eag.gender
+      ORDER BY eag.age_group, eag.gender
+    `;
+    const ageGroupResult = await db.execute(ageGroupBreakdownQuery);
+    const ageGroupBreakdown = ageGroupResult.rows || [];
+
+    // Registration timeline
+    const registrationTimelineQuery = sql`
+      SELECT 
+        DATE_TRUNC('day', created_at) as registration_date,
+        COUNT(*) as daily_registrations,
+        COUNT(CASE WHEN setup_intent_id IS NOT NULL OR payment_method_id IS NOT NULL THEN 1 END) as with_payment_info
+      FROM teams
+      WHERE event_id = ${eventId}
+      GROUP BY DATE_TRUNC('day', created_at)
+      ORDER BY registration_date ASC
+    `;
+    const timelineResult = await db.execute(registrationTimelineQuery);
+    const registrationTimeline = timelineResult.rows || [];
+
+    // Prepare comprehensive tournament organizer data
     const data = {
       event,
-      financials,
-      refunds,
-      registrations,
-      ageGroupRevenue,
-      dailyRevenue
+      registrationSummary: {
+        totalRegistrations: parseInt(registrationOverview.total_registrations) || 0,
+        withPaymentInfo: parseInt(registrationOverview.with_payment_info) || 0,
+        withoutPaymentInfo: parseInt(registrationOverview.without_payment_info) || 0,
+        alreadyPaid: parseInt(registrationOverview.already_paid) || 0,
+        approvedTeams: parseInt(registrationOverview.approved_teams) || 0,
+        pendingApproval: parseInt(registrationOverview.pending_approval) || 0,
+        rejectedTeams: parseInt(registrationOverview.rejected_teams) || 0,
+        waitlistedTeams: parseInt(registrationOverview.waitlisted_teams) || 0
+      },
+      financialProjection: {
+        expectedRevenue: expectedRevenue,
+        chargeableRevenue: chargeableRevenue,
+        estimatedStripeFees: estimatedStripeFees,
+        estimatedNetPayout: netPayout,
+        actualCollected: parseInt(actualPayments?.total_collected) || 0,
+        actualStripeFees: parseInt(actualPayments?.actual_stripe_fees) || 0,
+        paymentsProcessed: parseInt(actualPayments?.payment_count) || 0
+      },
+      teamRegistrations,
+      ageGroupBreakdown,
+      registrationTimeline
     };
-    
-    // Generate AI insights if requested
-    let aiInsights = null;
-    if (includeAIInsights && process.env.OPENAI_API_KEY) {
-      try {
-        // Format data for OpenAI
-        const analysisData = JSON.stringify({
-          event,
-          financials,
-          refunds,
-          registrations,
-          ageGroupRevenue,
-          dailyRevenue
-        });
-        
-        // Call OpenAI for analysis
-        const response = await openai.chat.completions.create({
-          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-          messages: [
-            { 
-              role: "system", 
-              content: `You are a financial analyst for a sports tournament management platform. Analyze the event financial data and provide insights and recommendations.` 
-            },
-            { 
-              role: "user", 
-              content: `Analyze this event financial data and provide key insights, patterns, and recommendations. Focus on revenue distribution by age group, registration timeline, and areas for improvement: ${analysisData}` 
-            }
-          ],
-          response_format: { type: "json_object" }
-        });
-        
-        // Parse OpenAI response
-        const aiResponse = JSON.parse(response.choices[0].message.content);
-        aiInsights = {
-          keyInsights: aiResponse.keyInsights || [],
-          recommendations: aiResponse.recommendations || [],
-          visualizationCaptions: aiResponse.visualizationCaptions || {},
-          growthOpportunities: aiResponse.growthOpportunities || []
-        };
-      } catch (error) {
-        console.error('Error generating AI insights for event report:', error);
-        // Continue without AI insights if there's an error
-      }
-    }
-    
+
     return res.json({
       success: true,
-      data,
-      aiInsights
+      data
     });
   } catch (error) {
     console.error('Error fetching event financial report:', error);

@@ -6,10 +6,10 @@ import {
   CardContent, 
   CardHeader, 
   CardTitle, 
-  CardDescription, 
-  CardFooter 
+  CardDescription 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { 
   Table, 
   TableBody, 
@@ -27,9 +27,6 @@ import {
   Tooltip, 
   Legend, 
   ResponsiveContainer,
-  PieChart, 
-  Pie, 
-  Cell,
   LineChart,
   Line
 } from "recharts";
@@ -38,16 +35,17 @@ import {
   BarChart2, 
   CalendarDays,
   DollarSign, 
-  Download, 
   FileText, 
   Loader2,
   Users,
-  RefreshCw
+  RefreshCw,
+  CreditCard,
+  CheckCircle,
+  Clock,
+  XCircle
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { formatCurrency } from "@/lib/formatters";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { 
   Tabs, 
   TabsContent, 
