@@ -1,52 +1,37 @@
 import { Application } from 'express';
 import { db } from '@db';
-import { events, teams, paymentTransactions } from '@db/schema';
-import { eq, and, gte, lte, desc } from 'drizzle-orm';
+import { events, teams } from '@db/schema';
+import { eq, desc } from 'drizzle-orm';
 import { isAdmin } from '../middleware/auth';
 
 export function registerPaymentReportRoutes(app: Application) {
   
-  // Get payment transactions summary for an event
+  // Get payment summary for an event using teams data
   app.get("/api/events/:eventId/payment-reports/summary", isAdmin, async (req, res) => {
     try {
       const { eventId } = req.params;
 
-      // Get all transactions for the event
-      const transactions = await db.query.paymentTransactions.findMany({
-        where: eq(paymentTransactions.eventId, parseInt(eventId)),
-        with: {
-          team: {
-            columns: {
-              id: true,
-              teamName: true,
-              clubName: true,
-              submitterName: true,
-              submitterEmail: true,
-              ageGroupName: true
-            }
-          }
-        },
-        orderBy: [desc(paymentTransactions.createdAt)]
+      // Get all paid teams for the event
+      const paidTeams = await db.query.teams.findMany({
+        where: eq(teams.eventId, parseInt(eventId)),
+        orderBy: [desc(teams.paidAt)]
       });
 
-      // Calculate summary metrics
+      // Calculate summary metrics from teams
       const summary = {
-        totalTransactions: transactions.length,
+        totalTransactions: 0,
         totalRevenue: 0,
         totalPlatformFees: 0,
-        totalStripeFees: 0,
         totalNetAmount: 0,
         successfulPayments: 0,
-        failedPayments: 0,
         pendingPayments: 0,
-        refundedPayments: 0,
+        failedPayments: 0,
         dailyBreakdown: [] as any[]
       };
 
-      // Process transactions for summary
       const dailyMap = new Map();
       
-      transactions.forEach((transaction: any) => {
+      paidTeams.forEach((team: any) => {
         const amount = transaction.amount || 0;
         const platformFee = transaction.applicationFeeAmount || 0;
         const processingFee = transaction.processingFees || 0;

@@ -8581,6 +8581,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     // Register Stripe Connect routes synchronously
     try {
       registerStripeConnectRoutes(app);
+      registerPaymentReportRoutes(app);
       console.log('Stripe Connect routes registered successfully');
     } catch (error) {
       console.error('Error registering Stripe Connect routes:', error);
