@@ -39,7 +39,8 @@ export default function ComplexLocationsMapPage() {
         throw new Error('Failed to fetch complexes');
       }
       const data = await response.json();
-      return data.complexes || [];
+      // API returns array directly, not wrapped in complexes property
+      return Array.isArray(data) ? data : data.complexes || [];
     }
   });
 
