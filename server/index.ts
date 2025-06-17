@@ -128,7 +128,7 @@ async function testDbConnection() {
     app.use(logPermissionDetails);
     log("Permission logging middleware set up successfully");
     
-    // Register routes after authentication setup
+    // Register API routes BEFORE setting up static file serving or Vite middleware
     const routes = registerRoutes(app);
     
     // Register member roster upload routes after authentication is fully configured
