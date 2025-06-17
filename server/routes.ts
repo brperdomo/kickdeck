@@ -199,24 +199,7 @@ const identifyOrganization = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-// Admin middleware (unchanged)
-const isAdmin = (req: Request, res: Response, next: Function) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).send("Not authenticated");
-  }
-
-  // Check for admin access via roles or isAdmin flag
-  const hasAdminRole = req.user?.roles?.includes('super_admin') || 
-                       req.user?.roles?.includes('tournament_admin') ||
-                       req.user?.roles?.includes('finance_admin') ||
-                       req.user?.roles?.includes('score_admin');
-  
-  if (!req.user?.isAdmin && !hasAdminRole) {
-    return res.status(403).send("Not authorized");
-  }
-
-  next();
-};
+// Using isAdmin from middleware/auth.ts to avoid duplicate definitions
 
 export function registerRoutes(app: Express): Server {
   const httpServer = createServer(app);
