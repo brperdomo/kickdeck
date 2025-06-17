@@ -292,20 +292,39 @@ export async function getEventFinancialReport(req: Request, res: Response) {
     if (!eventId) {
       return res.status(400).json({ success: false, error: 'Event ID is required' });
     }
-    
-    // Get event details
-    const eventQuery = sql`
-      SELECT id, name, start_date, end_date, application_deadline, is_archived
-      FROM events
-      WHERE id = ${eventId}
-    `;
-    const eventResult = await db.execute(eventQuery);
-    
-    if (!eventResult || eventResult.length === 0) {
-      return res.status(404).json({ success: false, error: 'Event not found' });
-    }
-    
-    const event = eventResult[0];
+
+    // Simple test response first
+    const simplifiedData = {
+      success: true,
+      data: {
+        event: {
+          id: eventId,
+          name: "Test Event",
+          startDate: "2025-06-17",
+          endDate: "2025-06-18"
+        },
+        registrationSummary: {
+          totalTeams: 0,
+          approvedTeams: 0,
+          pendingTeams: 0,
+          rejectedTeams: 0,
+          waitlistedTeams: 0,
+          teamsWithPaymentMethod: 0,
+          paymentCollectionRate: 0
+        },
+        financialSummary: {
+          expectedRevenue: 0,
+          actualRevenue: 0,
+          totalStripeFees: 0,
+          netRevenue: 0
+        },
+        teamRegistrations: [],
+        ageGroupBreakdown: [],
+        registrationTimeline: []
+      }
+    };
+
+    return res.json(simplifiedData);
     
     // Get registration overview with payment collection status
     const registrationOverviewQuery = sql`
