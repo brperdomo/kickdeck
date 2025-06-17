@@ -16,8 +16,8 @@ interface Complex {
   city: string;
   state: string;
   country: string;
-  latitude?: string | null;
-  longitude?: string | null;
+  latitude?: string | number | null;
+  longitude?: string | number | null;
   openTime: string;
   closeTime: string;
   rules?: string | null;
@@ -58,13 +58,21 @@ export default function ComplexLocationsMapPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const complexesWithCoords = filteredComplexes.filter((complex: Complex) => 
-    complex.latitude && complex.longitude
-  );
+  const complexesWithCoords = filteredComplexes.filter((complex: Complex) => {
+    const lat = complex.latitude;
+    const lng = complex.longitude;
+    return lat !== null && lat !== undefined && lat !== '' && 
+           lng !== null && lng !== undefined && lng !== '' &&
+           !isNaN(Number(lat)) && !isNaN(Number(lng));
+  });
 
-  const complexesWithoutCoords = filteredComplexes.filter((complex: Complex) => 
-    !complex.latitude || !complex.longitude
-  );
+  const complexesWithoutCoords = filteredComplexes.filter((complex: Complex) => {
+    const lat = complex.latitude;
+    const lng = complex.longitude;
+    return lat === null || lat === undefined || lat === '' || 
+           lng === null || lng === undefined || lng === '' ||
+           isNaN(Number(lat)) || isNaN(Number(lng));
+  });
 
   if (isLoading) {
     return (

@@ -20,8 +20,8 @@ interface Complex {
   city: string;
   state: string;
   country: string;
-  latitude?: string | null;
-  longitude?: string | null;
+  latitude?: string | number | null;
+  longitude?: string | number | null;
   openTime: string;
   closeTime: string;
   rules?: string | null;
@@ -53,10 +53,12 @@ export function ComplexLocationMap({
   const [loadError, setLoadError] = useState<string | null>(null);
 
   // Filter complexes that have coordinates
-  const complexesWithCoords = complexes.filter(complex => 
-    complex.latitude && complex.longitude && 
-    !isNaN(parseFloat(complex.latitude)) && !isNaN(parseFloat(complex.longitude))
-  );
+  const complexesWithCoords = complexes.filter(complex => {
+    const lat = complex.latitude;
+    const lng = complex.longitude;
+    return lat !== null && lat !== undefined && lng !== null && lng !== undefined &&
+           !isNaN(parseFloat(String(lat))) && !isNaN(parseFloat(String(lng)));
+  });
 
   useEffect(() => {
     if (!mapboxApiKey) {
@@ -92,7 +94,7 @@ export function ComplexLocationMap({
         const bounds = new mapboxgl.LngLatBounds();
         complexesWithCoords.forEach(complex => {
           if (complex.latitude && complex.longitude) {
-            bounds.extend([parseFloat(complex.longitude), parseFloat(complex.latitude)]);
+            bounds.extend([parseFloat(String(complex.longitude)), parseFloat(String(complex.latitude))]);
           }
         });
 
@@ -120,8 +122,8 @@ export function ComplexLocationMap({
           complexesWithCoords.forEach(complex => {
             if (!complex.latitude || !complex.longitude) return;
 
-            const lng = parseFloat(complex.longitude);
-            const lat = parseFloat(complex.latitude);
+            const lng = parseFloat(String(complex.longitude));
+            const lat = parseFloat(String(complex.latitude));
 
             // Create custom marker element
             const markerElement = document.createElement('div');
