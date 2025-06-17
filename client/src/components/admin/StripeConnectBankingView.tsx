@@ -55,6 +55,27 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
   const queryClient = useQueryClient();
   const [showSetupForm, setShowSetupForm] = useState(false);
 
+  // Check for success parameter from Stripe redirect
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    
+    if (success === 'true') {
+      toast({
+        title: "Banking Setup Progress",
+        description: "Successfully completed step in Stripe. Your banking information has been updated.",
+        duration: 5000,
+      });
+      
+      // Clean up URL parameters
+      const newUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, '', newUrl);
+      
+      // Refresh account status
+      queryClient.invalidateQueries({ queryKey: ['stripe-connect-account', eventId] });
+    }
+  }, [eventId, toast, queryClient]);
+
   // Secure form for bank account setup
   const form = useForm<z.infer<typeof bankAccountSchema>>({
     resolver: zodResolver(bankAccountSchema),
