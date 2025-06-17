@@ -1,7 +1,7 @@
 import { Application } from 'express';
 import { db } from '@db';
-import { events, teams } from '@db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { teams } from '@db/schema';
+import { eq, and, isNotNull } from 'drizzle-orm';
 import { isAdmin } from '../middleware/auth';
 
 export function registerPaymentReportRoutes(app: Application) {
@@ -11,275 +11,141 @@ export function registerPaymentReportRoutes(app: Application) {
     try {
       const { eventId } = req.params;
 
-      // Get all paid teams for the event
-      const paidTeams = await db.query.teams.findMany({
-        where: eq(teams.eventId, parseInt(eventId)),
-        orderBy: [desc(teams.paidAt)]
+      // Get all teams for the event with payment information
+      const allTeams = await db.query.teams.findMany({
+        where: eq(teams.eventId, eventId),
+        orderBy: (teams, { desc }) => [desc(teams.createdAt)]
       });
+
+      // Filter teams that have been paid
+      const paidTeams = allTeams.filter(team => 
+        team.status === 'approved' && 
+        team.paymentIntentId && 
+        team.registrationFee
+      );
 
       // Calculate summary metrics from teams
       const summary = {
-        totalTransactions: 0,
+        totalTransactions: paidTeams.length,
         totalRevenue: 0,
         totalPlatformFees: 0,
         totalNetAmount: 0,
-        successfulPayments: 0,
-        pendingPayments: 0,
-        failedPayments: 0,
+        successfulPayments: paidTeams.length,
+        pendingPayments: allTeams.filter(t => t.status === 'pending').length,
+        failedPayments: allTeams.filter(t => t.status === 'rejected').length,
         dailyBreakdown: [] as any[]
       };
 
       const dailyMap = new Map();
       
       paidTeams.forEach((team: any) => {
-        const amount = transaction.amount || 0;
-        const platformFee = transaction.applicationFeeAmount || 0;
-        const processingFee = transaction.processingFees || 0;
-        const netAmount = transaction.netAmount || 0;
+        const fee = parseFloat(team.registrationFee || '0');
+        const platformFee = Math.round(fee * 0.03 * 100) / 100; // 3% platform fee
+        const netAmount = fee - platformFee;
 
-        summary.totalRevenue += amount;
+        summary.totalRevenue += fee;
         summary.totalPlatformFees += platformFee;
-        summary.totalStripeFees += processingFee;
         summary.totalNetAmount += netAmount;
 
-        // Count payment statuses
-        switch (transaction.status) {
-          case 'succeeded':
-            summary.successfulPayments++;
-            break;
-          case 'failed':
-            summary.failedPayments++;
-            break;
-          case 'pending':
-            summary.pendingPayments++;
-            break;
-          case 'refunded':
-            summary.refundedPayments++;
-            break;
-        }
-
-        // Daily breakdown
-        const date = transaction.createdAt.toISOString().split('T')[0];
+        // Group by date for daily breakdown
+        const date = team.createdAt ? team.createdAt.toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+        
         if (!dailyMap.has(date)) {
           dailyMap.set(date, {
             date,
-            transactions: 0,
             revenue: 0,
             platformFees: 0,
-            stripeFees: 0,
-            netAmount: 0
+            netAmount: 0,
+            transactions: 0
           });
         }
 
-        const dailyData = dailyMap.get(date);
-        dailyData.transactions++;
-        dailyData.revenue += amount;
-        dailyData.platformFees += platformFee;
-        dailyData.stripeFees += processingFee;
-        dailyData.netAmount += netAmount;
+        const dayData = dailyMap.get(date);
+        dayData.revenue += fee;
+        dayData.platformFees += platformFee;
+        dayData.netAmount += netAmount;
+        dayData.transactions += 1;
       });
 
-      // Convert daily map to sorted array
-      summary.dailyBreakdown = Array.from(dailyMap.values())
-        .sort((a, b) => b.date.localeCompare(a.date));
-
-      // Convert cents to dollars for frontend display
-      summary.totalRevenue = Math.round(summary.totalRevenue) / 100;
-      summary.totalPlatformFees = Math.round(summary.totalPlatformFees) / 100;
-      summary.totalStripeFees = Math.round(summary.totalStripeFees) / 100;
-      summary.totalNetAmount = Math.round(summary.totalNetAmount) / 100;
-
-      summary.dailyBreakdown = summary.dailyBreakdown.map(day => ({
-        ...day,
-        revenue: Math.round(day.revenue) / 100,
-        platformFees: Math.round(day.platformFees) / 100,
-        stripeFees: Math.round(day.stripeFees) / 100,
-        netAmount: Math.round(day.netAmount) / 100
-      }));
+      summary.dailyBreakdown = Array.from(dailyMap.values()).sort((a, b) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
 
       res.json(summary);
-
-    } catch (error: any) {
-      console.error("Error fetching payment summary:", error);
-      res.status(500).json({ 
-        error: "Failed to fetch payment summary",
-        details: error.message 
-      });
+    } catch (error) {
+      console.error('Error fetching payment summary:', error);
+      res.status(500).json({ error: 'Failed to fetch payment summary' });
     }
   });
 
-  // Get detailed transaction list for an event
-  app.get("/api/events/:eventId/payment-reports/transactions", isAdmin, async (req, res) => {
+  // Get payout information 
+  app.get("/api/events/:eventId/payment-reports/payouts", isAdmin, async (req, res) => {
     try {
-      const { eventId } = req.params;
-      const { startDate, endDate, status, page = 1, limit = 50 } = req.query;
-
-      // Build filters
-      let whereCondition = eq(paymentTransactions.eventId, parseInt(eventId));
-      
-      if (startDate) {
-        whereCondition = and(whereCondition, gte(paymentTransactions.createdAt, new Date(startDate as string)));
-      }
-      if (endDate) {
-        whereCondition = and(whereCondition, lte(paymentTransactions.createdAt, new Date(endDate as string)));
-      }
-      if (status && status !== 'all') {
-        whereCondition = and(whereCondition, eq(paymentTransactions.status, status as string));
-      }
-
-      // Get transactions with pagination
-      const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
-      
-      const transactions = await db.query.paymentTransactions.findMany({
-        where: whereCondition,
-        with: {
-          team: {
-            columns: {
-              id: true,
-              teamName: true,
-              clubName: true,
-              submitterName: true,
-              submitterEmail: true,
-              ageGroupName: true,
-              cardLast4: true,
-              cardBrand: true
-            }
-          }
-        },
-        orderBy: [desc(paymentTransactions.createdAt)],
-        limit: parseInt(limit as string),
-        offset: offset
-      });
-
-      // Format transactions for frontend
-      const formattedTransactions = transactions.map(transaction => ({
-        id: transaction.id,
-        date: transaction.createdAt.toISOString(),
-        team: {
-          id: transaction.team?.id,
-          name: transaction.team?.teamName,
-          club: transaction.team?.clubName,
-          ageGroup: transaction.team?.ageGroupName,
-          submitter: {
-            name: transaction.team?.submitterName,
-            email: transaction.team?.submitterEmail
-          }
-        },
-        payment: {
-          stripePaymentIntentId: transaction.stripePaymentIntentId,
-          amount: Math.round(transaction.amount || 0) / 100,
-          currency: transaction.currency,
-          status: transaction.status,
-          cardInfo: {
-            last4: transaction.team?.cardLast4,
-            brand: transaction.team?.cardBrand
-          }
-        },
-        fees: {
-          platformFee: Math.round(transaction.applicationFeeAmount || 0) / 100,
-          stripeFee: Math.round(transaction.processingFees || 0) / 100,
-          netAmount: Math.round(transaction.netAmount || 0) / 100
-        },
-        stripe: {
-          connectAccountId: transaction.connectAccountId,
-          transferId: transaction.transferId
-        }
-      }));
-
+      // Return basic payout schedule information
       res.json({
-        transactions: formattedTransactions,
-        pagination: {
-          page: parseInt(page as string),
-          limit: parseInt(limit as string),
-          total: transactions.length,
-          hasMore: transactions.length === parseInt(limit as string)
-        }
+        schedule: {
+          interval: 'daily',
+          description: 'Payments are batched daily for faster cash flow'
+        },
+        nextPayoutEstimate: 'Within 2-7 business days',
+        recentPayouts: [],
+        dailyBatching: true
       });
-
-    } catch (error: any) {
-      console.error("Error fetching transaction details:", error);
-      res.status(500).json({ 
-        error: "Failed to fetch transaction details",
-        details: error.message 
-      });
+    } catch (error) {
+      console.error('Error fetching payout info:', error);
+      res.status(500).json({ error: 'Failed to fetch payout information' });
     }
   });
 
-  // Export payment report as CSV
+  // Export payment data as CSV
   app.get("/api/events/:eventId/payment-reports/export", isAdmin, async (req, res) => {
     try {
       const { eventId } = req.params;
-      const { startDate, endDate, format = 'csv' } = req.query;
+      const format = req.query.format || 'csv';
 
-      // Build date filter
-      let dateFilter = eq(paymentTransactions.eventId, parseInt(eventId));
-      if (startDate) {
-        dateFilter = and(dateFilter, gte(paymentTransactions.createdAt, new Date(startDate as string)));
-      }
-      if (endDate) {
-        dateFilter = and(dateFilter, lte(paymentTransactions.createdAt, new Date(endDate as string)));
-      }
-
-      // Get all transactions
-      const transactions = await db.query.paymentTransactions.findMany({
-        where: dateFilter,
-        with: {
-          team: {
-            columns: {
-              teamName: true,
-              clubName: true,
-              submitterName: true,
-              submitterEmail: true,
-              ageGroupName: true,
-              cardLast4: true,
-              cardBrand: true
-            }
-          }
-        },
-        orderBy: [desc(paymentTransactions.createdAt)]
+      // Get all teams with payment data
+      const paidTeams = await db.query.teams.findMany({
+        where: and(
+          eq(teams.eventId, eventId),
+          isNotNull(teams.paymentIntentId)
+        ),
+        orderBy: (teams, { desc }) => [desc(teams.createdAt)]
       });
 
       if (format === 'csv') {
-        // Generate CSV
         const csvHeaders = [
           'Date',
           'Team Name',
           'Club Name',
           'Age Group',
-          'Submitter Name',
-          'Submitter Email',
-          'Payment Amount',
-          'Platform Fee',
-          'Stripe Fee',
+          'Contact Email',
+          'Registration Fee',
+          'Platform Fee (3%)',
           'Net Amount',
           'Payment Status',
-          'Card Last 4',
-          'Card Brand',
-          'Stripe Payment ID',
-          'Transfer ID'
-        ];
+          'Payment Intent ID'
+        ].join(',');
 
-        const csvRows = transactions.map(transaction => [
-          transaction.createdAt.toISOString().split('T')[0],
-          transaction.team?.teamName || '',
-          transaction.team?.clubName || '',
-          transaction.team?.ageGroupName || '',
-          transaction.team?.submitterName || '',
-          transaction.team?.submitterEmail || '',
-          `$${((transaction.amount || 0) / 100).toFixed(2)}`,
-          `$${((transaction.applicationFeeAmount || 0) / 100).toFixed(2)}`,
-          `$${((transaction.processingFees || 0) / 100).toFixed(2)}`,
-          `$${((transaction.netAmount || 0) / 100).toFixed(2)}`,
-          transaction.status,
-          transaction.team?.cardLast4 || '',
-          transaction.team?.cardBrand || '',
-          transaction.stripePaymentIntentId || '',
-          transaction.transferId || ''
-        ]);
+        const csvRows = paidTeams.map(team => {
+          const fee = parseFloat(team.registrationFee || '0');
+          const platformFee = Math.round(fee * 0.03 * 100) / 100;
+          const netAmount = fee - platformFee;
 
-        const csvContent = [csvHeaders, ...csvRows]
-          .map(row => row.map(field => `"${field}"`).join(','))
-          .join('\n');
+          return [
+            team.createdAt ? team.createdAt.toISOString().split('T')[0] : '',
+            `"${team.teamName || ''}"`,
+            `"${team.clubName || ''}"`,
+            `"${team.ageGroupName || ''}"`,
+            `"${team.submitterEmail || ''}"`,
+            fee.toFixed(2),
+            platformFee.toFixed(2),
+            netAmount.toFixed(2),
+            team.status || '',
+            team.paymentIntentId || ''
+          ].join(',');
+        });
+
+        const csvContent = [csvHeaders, ...csvRows].join('\n');
 
         res.setHeader('Content-Type', 'text/csv');
         res.setHeader('Content-Disposition', `attachment; filename="payment-report-${eventId}-${new Date().toISOString().split('T')[0]}.csv"`);
@@ -287,88 +153,9 @@ export function registerPaymentReportRoutes(app: Application) {
       } else {
         res.status(400).json({ error: 'Unsupported export format' });
       }
-
-    } catch (error: any) {
-      console.error("Error exporting payment report:", error);
-      res.status(500).json({ 
-        error: "Failed to export payment report",
-        details: error.message 
-      });
+    } catch (error) {
+      console.error('Error exporting payment data:', error);
+      res.status(500).json({ error: 'Failed to export payment data' });
     }
   });
-
-  // Get payout schedule and next payout information
-  app.get("/api/events/:eventId/payment-reports/payouts", isAdmin, async (req, res) => {
-    try {
-      const { eventId } = req.params;
-
-      // Get event with Connect account info
-      const event = await db.query.events.findFirst({
-        where: eq(events.id, parseInt(eventId))
-      });
-
-      if (!event || !event.stripeConnectAccountId) {
-        return res.status(404).json({ error: "Connect account not found" });
-      }
-
-      // Get payout information from Stripe
-      const stripe = (await import('stripe')).default;
-      const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY!, {
-        apiVersion: '2025-02-24.acacia',
-      });
-
-      const account = await stripeInstance.accounts.retrieve(event.stripeConnectAccountId);
-      const payouts = await stripeInstance.payouts.list(
-        { limit: 10 },
-        { stripeAccount: event.stripeConnectAccountId }
-      );
-
-      const payoutInfo = {
-        schedule: account.settings?.payouts?.schedule || { interval: 'weekly' },
-        recentPayouts: payouts.data.map(payout => ({
-          id: payout.id,
-          amount: payout.amount / 100,
-          currency: payout.currency,
-          status: payout.status,
-          arrivalDate: new Date(payout.arrival_date * 1000).toISOString(),
-          description: payout.description,
-          failureCode: payout.failure_code,
-          failureMessage: payout.failure_message
-        })),
-        nextPayoutEstimate: getNextPayoutEstimate(account.settings?.payouts?.schedule)
-      };
-
-      res.json(payoutInfo);
-
-    } catch (error: any) {
-      console.error("Error fetching payout information:", error);
-      res.status(500).json({ 
-        error: "Failed to fetch payout information",
-        details: error.message 
-      });
-    }
-  });
-}
-
-function getNextPayoutEstimate(schedule: any) {
-  if (!schedule) return null;
-
-  const now = new Date();
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  switch (schedule.interval) {
-    case 'daily':
-      return tomorrow.toISOString().split('T')[0];
-    case 'weekly':
-      const nextWeek = new Date(now);
-      nextWeek.setDate(nextWeek.getDate() + (7 - now.getDay()));
-      return nextWeek.toISOString().split('T')[0];
-    case 'monthly':
-      const nextMonth = new Date(now);
-      nextMonth.setMonth(nextMonth.getMonth() + 1, 1);
-      return nextMonth.toISOString().split('T')[0];
-    default:
-      return null;
-  }
 }

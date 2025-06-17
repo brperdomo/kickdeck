@@ -6,12 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Loader2, ExternalLink, AlertCircle, CheckCircle, Clock, XCircle, Shield, Info } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, ExternalLink, AlertCircle, CheckCircle, Clock, XCircle, Shield, Info, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { PaymentReportsView } from "./PaymentReportsView";
 
 interface StripeConnectBankingViewProps {
   eventId: string;
@@ -304,12 +306,26 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-2">Tournament Banking Setup</h3>
+        <h3 className="text-lg font-semibold mb-2">Tournament Banking & Payments</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Connect a bank account to receive registration payments directly for this tournament.
-          All registration fees will be automatically deposited to the connected account.
+          Manage your bank account setup and view comprehensive payment reports all in one place.
         </p>
       </div>
+
+      <Tabs defaultValue="setup" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="setup" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            Banking Setup
+          </TabsTrigger>
+          <TabsTrigger value="reports" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Payment Reports
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="setup" className="space-y-6 mt-6">
+          <div className="space-y-6">
 
       <Card>
         <CardHeader>
@@ -848,6 +864,13 @@ export function StripeConnectBankingView({ eventId }: StripeConnectBankingViewPr
           </div>
         </CardContent>
       </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="reports" className="space-y-6 mt-6">
+          <PaymentReportsView eventId={eventId} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
