@@ -423,7 +423,14 @@ export function MapboxAutocomplete({
               className={`px-4 py-2 cursor-pointer hover:bg-gray-50 ${
                 index === selectedIndex ? 'bg-blue-50 border-l-2 border-blue-500' : ''
               }`}
-              onClick={() => handleSuggestionSelect(suggestion)}
+              onMouseDown={(e) => {
+                e.preventDefault(); // Prevent input from losing focus
+                console.log('🖱️ Mouse click on suggestion:', suggestion.place_name);
+                handleSuggestionSelect(suggestion);
+              }}
+              onClick={(e) => {
+                e.preventDefault(); // Additional prevention
+              }}
             >
               <div className="font-medium text-sm text-gray-900">
                 {suggestion.text}
