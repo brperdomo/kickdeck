@@ -1311,6 +1311,7 @@ export const emailTemplates = pgTable("email_templates", {
   sender_email: text("sender_email").notNull(),
   is_active: boolean("is_active").default(true),
   variables: jsonb("variables").default('["firstName", "lastName"]'),
+  sendgridTemplateId: text("sendgrid_template_id"), // SendGrid dynamic template ID mapping
   created_at: timestamp("created_at").notNull().defaultNow(),
   updated_at: timestamp("updated_at").notNull().defaultNow(),
 });

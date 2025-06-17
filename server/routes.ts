@@ -8206,7 +8206,8 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         const { eq } = await import('drizzle-orm');
         await db.update(emailTemplates)
           .set({ 
-            sendgridTemplateId: sendgridTemplateId || null
+            sendgridTemplateId: sendgridTemplateId || null,
+            updated_at: new Date()
           })
           .where(eq(emailTemplates.type, templateType));
 
