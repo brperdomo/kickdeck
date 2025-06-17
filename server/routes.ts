@@ -3113,6 +3113,18 @@ export function registerRoutes(app: Express): Server {
         // First remove complex from all events
         await db.delete(eventComplexes).where(eq(eventComplexes.complexId, complexId));
 
+        // Get all field IDs for this complex
+        const complexFields = await db
+          .select({ id: fields.id })
+          .from(fields)
+          .where(eq(fields.complexId, complexId));
+
+        // Delete all game time slots that reference these fields
+        if (complexFields.length > 0) {
+          const fieldIds = complexFields.map(f => f.id);
+          await db.delete(gameTimeSlots).where(inArray(gameTimeSlots.fieldId, fieldIds));
+        }
+
         // Then delete all fields associated with this complex
         await db.delete(fields).where(eq(fields.complexId, complexId));
 
