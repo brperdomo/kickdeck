@@ -396,6 +396,7 @@ export const paymentTransactions = pgTable("payment_transactions", {
   payoutId: text("payout_id"), // Stripe payout ID when settled
   metadata: jsonb("metadata"), // Additional data about the transaction
   notes: text("notes"), // Admin notes about the transaction
+  refundedAt: timestamp("refunded_at"), // When the transaction was refunded (null if not refunded)
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow()
 });
