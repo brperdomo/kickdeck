@@ -151,6 +151,78 @@ router.get('/:eventId/clubs/clubs', hasEventAccess, async (req, res) => {
   }
 });
 
+// Merge clubs
+router.post('/:eventId/clubs/merge', hasEventAccess, async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.eventId);
+
+    const mergeSchema = z.object({
+      targetClubName: z.string().min(1, "Target club name is required"),
+      sourceClubNames: z.array(z.string()).min(1, "At least one source club is required"),
+      logoUrl: z.string().optional().nullable(),
+    });
+
+    const validatedData = mergeSchema.parse(req.body);
+
+    // Create or update the target club in the clubs table
+    let targetClub;
+    const existingTargetClub = await db
+      .select()
+      .from(clubs)
+      .where(eq(clubs.name, validatedData.targetClubName))
+      .limit(1);
+
+    if (existingTargetClub.length > 0) {
+      // Update existing club
+      [targetClub] = await db
+        .update(clubs)
+        .set({
+          name: validatedData.targetClubName,
+          logoUrl: validatedData.logoUrl,
+          updatedAt: new Date().toISOString(),
+        })
+        .where(eq(clubs.id, existingTargetClub[0].id))
+        .returning();
+    } else {
+      // Create new club
+      [targetClub] = await db
+        .insert(clubs)
+        .values({
+          name: validatedData.targetClubName,
+          logoUrl: validatedData.logoUrl || null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        })
+        .returning();
+    }
+
+    // Update all teams from source clubs to the target club
+    const updateResult = await db
+      .update(teams)
+      .set({
+        clubId: targetClub.id,
+        clubName: validatedData.targetClubName,
+      })
+      .where(and(
+        eq(teams.eventId, eventId),
+        sql`${teams.clubName} IN (${sql.join(validatedData.sourceClubNames.map(name => sql`${name}`), sql`, `)})`
+      ))
+      .returning({ id: teams.id, name: teams.name });
+
+    return res.json({
+      targetClub,
+      mergedTeamsCount: updateResult.length,
+      mergedTeams: updateResult,
+    });
+  } catch (error) {
+    console.error(`Error merging clubs for event ID ${req.params.eventId}:`, error);
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors });
+    }
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Update club information
 router.patch('/:eventId/clubs/:clubId', hasEventAccess, async (req, res) => {
   try {

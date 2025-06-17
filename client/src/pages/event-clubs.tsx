@@ -24,10 +24,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, PenLine, Image } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, PenLine, Image, Merge } from "lucide-react";
 
 interface Club {
-  id: number;
+  id: number | null;
   name: string;
   logoUrl: string | null;
   teamCount?: number;
@@ -48,6 +49,10 @@ export default function EventClubsPage() {
   
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingClub, setEditingClub] = useState<Club | null>(null);
+  const [isMergeDialogOpen, setIsMergeDialogOpen] = useState(false);
+  const [selectedClubsForMerge, setSelectedClubsForMerge] = useState<string[]>([]);
+  const [targetClubName, setTargetClubName] = useState("");
+  const [targetClubLogo, setTargetClubLogo] = useState("");
   
   // Fetch event details
   const eventQuery = useQuery<EventDetails>({
@@ -117,6 +122,52 @@ export default function EventClubsPage() {
       });
     },
   });
+
+  // Merge clubs mutation
+  const mergeClubsMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/admin/events/${eventId}/clubs/merge`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          targetClubName: targetClubName,
+          sourceClubNames: selectedClubsForMerge,
+          logoUrl: targetClubLogo || null,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to merge clubs");
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      // Invalidate and refetch the clubs query to update the UI
+      queryClient.invalidateQueries({ queryKey: [`/api/admin/events/${eventId}/clubs/clubs`] });
+      
+      // Close the dialog and reset state
+      setIsMergeDialogOpen(false);
+      setSelectedClubsForMerge([]);
+      setTargetClubName("");
+      setTargetClubLogo("");
+      
+      // Show success toast
+      toast({
+        title: "Clubs merged successfully",
+        description: `${data.mergedTeamsCount} teams have been consolidated into "${data.targetClub.name}".`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to merge clubs",
+        variant: "destructive",
+      });
+    },
+  });
   
   const handleEditClub = (club: Club) => {
     setEditingClub(club);
@@ -167,7 +218,20 @@ export default function EventClubsPage() {
       
       <Card className="bg-white shadow-lg border border-gray-100">
         <CardHeader>
-          <CardTitle>Participating Clubs</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            Participating Clubs
+            {clubsQuery.data && clubsQuery.data.length > 1 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsMergeDialogOpen(true)}
+                className="ml-4"
+              >
+                <Merge className="mr-2 h-4 w-4" />
+                Merge Clubs
+              </Button>
+            )}
+          </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 pb-2">
           <div className="text-sm text-muted-foreground">
@@ -328,6 +392,112 @@ export default function EventClubsPage() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Merge Clubs Dialog */}
+      <Dialog open={isMergeDialogOpen} onOpenChange={setIsMergeDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Merge Clubs</DialogTitle>
+            <DialogDescription>
+              Consolidate multiple club entries into a single club. All teams from the selected clubs will be moved to the target club.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-6 py-4">
+            <div>
+              <Label className="text-sm font-medium">Select clubs to merge:</Label>
+              <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
+                {clubsQuery.data?.map((club) => (
+                  <div key={club.name} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`club-${club.name}`}
+                      checked={selectedClubsForMerge.includes(club.name)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedClubsForMerge([...selectedClubsForMerge, club.name]);
+                        } else {
+                          setSelectedClubsForMerge(selectedClubsForMerge.filter(name => name !== club.name));
+                        }
+                      }}
+                    />
+                    <Label htmlFor={`club-${club.name}`} className="flex-1 cursor-pointer">
+                      {club.name} ({club.teamCount} teams)
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="target-club-name" className="text-sm font-medium">
+                Target club name:
+              </Label>
+              <Input
+                id="target-club-name"
+                value={targetClubName}
+                onChange={(e) => setTargetClubName(e.target.value)}
+                placeholder="Enter the final club name"
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                This will be the name used for the merged club
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="target-club-logo" className="text-sm font-medium">
+                Logo URL (optional):
+              </Label>
+              <Input
+                id="target-club-logo"
+                value={targetClubLogo}
+                onChange={(e) => setTargetClubLogo(e.target.value)}
+                placeholder="https://example.com/logo.png"
+                className="mt-1"
+              />
+            </div>
+
+            {selectedClubsForMerge.length > 0 && targetClubName && (
+              <div className="p-3 bg-blue-50 rounded-md">
+                <p className="text-sm font-medium text-blue-900">Merge Summary:</p>
+                <p className="text-sm text-blue-800">
+                  {selectedClubsForMerge.length} clubs ({selectedClubsForMerge.join(", ")}) will be merged into "{targetClubName}"
+                </p>
+                <p className="text-xs text-blue-700 mt-1">
+                  Total teams affected: {selectedClubsForMerge.reduce((sum, clubName) => {
+                    const club = clubsQuery.data?.find(c => c.name === clubName);
+                    return sum + (club?.teamCount || 0);
+                  }, 0)}
+                </p>
+              </div>
+            )}
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => {
+                setIsMergeDialogOpen(false);
+                setSelectedClubsForMerge([]);
+                setTargetClubName("");
+                setTargetClubLogo("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => mergeClubsMutation.mutate()}
+              disabled={mergeClubsMutation.isPending || selectedClubsForMerge.length === 0 || !targetClubName}
+            >
+              {mergeClubsMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Merge Clubs
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </AdminPageLayout>
