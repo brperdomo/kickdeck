@@ -300,6 +300,9 @@ export function registerRoutes(app: Express): Server {
     // Add organization identification middleware
     app.use(identifyOrganization);
     
+    // Register SendGrid webhook route (no auth required for webhook)
+    app.use('/api', sendgridWebhookRouter);
+    
     // Safe registration fees middleware temporarily disabled to fix server startup
 
     // Register admin routes

@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { db } from '@db/index';
-import { emailTracking } from '@db/schema';
-import { eq } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 
 const router = Router();
 
@@ -64,79 +63,83 @@ async function processWebhookEvent(event: SendGridEvent) {
   
   console.log(`Processing ${eventType} event for ${event.email} at ${timestamp}`);
   
-  // Try to find existing email tracking record by SendGrid message ID
-  let trackingRecord = null;
-  if (event.sg_message_id) {
-    const existing = await db
-      .select()
-      .from(emailTracking)
-      .where(eq(emailTracking.sendgridMessageId, event.sg_message_id))
-      .limit(1);
+  try {
+    // Try to find existing email tracking record by SendGrid message ID
+    const existingQuery = await db.execute(sql`
+      SELECT * FROM email_tracking 
+      WHERE sendgrid_message_id = ${event.sg_message_id}
+      LIMIT 1
+    `);
     
-    trackingRecord = existing[0] || null;
-  }
-  
-  // If no existing record found, create a new one
-  if (!trackingRecord) {
-    try {
-      const newRecord = {
-        recipientEmail: event.email,
-        emailType: event.template_id ? 'template' : 'regular',
-        templateId: event.template_id || null,
-        sendgridMessageId: event.sg_message_id,
-        status: eventType === 'delivered' ? 'delivered' : 
-                eventType === 'bounce' || eventType === 'dropped' ? 'failed' : 'sent',
-        sentAt: timestamp,
-        deliveredAt: eventType === 'delivered' ? timestamp : null,
-        errorMessage: event.reason || null,
-        webhookData: JSON.stringify(event)
-      };
+    const trackingRecord = existingQuery.rows[0] || null;
+    
+    // If no existing record found, create a new one
+    if (!trackingRecord) {
+      const status = eventType === 'delivered' ? 'delivered' : 
+                    eventType === 'bounce' || eventType === 'dropped' ? 'failed' : 'sent';
       
-      await db.insert(emailTracking).values(newRecord);
+      await db.execute(sql`
+        INSERT INTO email_tracking (
+          recipient_email, email_type, template_id, sendgrid_message_id, 
+          status, sent_at, delivered_at, error_message, webhook_data
+        ) VALUES (
+          ${event.email},
+          ${event.template_id ? 'template' : 'regular'},
+          ${event.template_id || null},
+          ${event.sg_message_id},
+          ${status},
+          ${timestamp}::timestamp,
+          ${eventType === 'delivered' ? timestamp : null}::timestamp,
+          ${event.reason || null},
+          ${JSON.stringify(event)}::jsonb
+        )
+      `);
+      
       console.log(`✅ Created new tracking record for ${event.email}`);
       
-    } catch (insertError) {
-      console.error('Error inserting new tracking record:', insertError);
-    }
-  } else {
-    // Update existing record with new event information
-    const updateData: any = {
-      webhookData: JSON.stringify(event)
-    };
-    
-    // Update status based on event type
-    if (eventType === 'delivered') {
-      updateData.status = 'delivered';
-      updateData.deliveredAt = timestamp;
-    } else if (eventType === 'bounce' || eventType === 'dropped') {
-      updateData.status = 'failed';
-      updateData.errorMessage = event.reason || 'Email bounced or dropped';
-    } else if (eventType === 'open') {
-      updateData.openedAt = timestamp;
-    } else if (eventType === 'click') {
-      updateData.clickedAt = timestamp;
-    }
-    
-    try {
-      await db
-        .update(emailTracking)
-        .set(updateData)
-        .where(eq(emailTracking.id, trackingRecord.id));
+    } else {
+      // Update existing record with new event information
+      let updateQuery = `UPDATE email_tracking SET webhook_data = $1, updated_at = $2`;
+      const params = [JSON.stringify(event), timestamp];
+      let paramIndex = 3;
       
+      // Update status based on event type
+      if (eventType === 'delivered') {
+        updateQuery += `, status = $${paramIndex}, delivered_at = $${paramIndex + 1}`;
+        params.push('delivered', timestamp);
+        paramIndex += 2;
+      } else if (eventType === 'bounce' || eventType === 'dropped') {
+        updateQuery += `, status = $${paramIndex}, error_message = $${paramIndex + 1}`;
+        params.push('failed', event.reason || 'Email bounced or dropped');
+        paramIndex += 2;
+      } else if (eventType === 'open') {
+        updateQuery += `, opened_at = $${paramIndex}`;
+        params.push(timestamp);
+        paramIndex += 1;
+      } else if (eventType === 'click') {
+        updateQuery += `, clicked_at = $${paramIndex}`;
+        params.push(timestamp);
+        paramIndex += 1;
+      }
+      
+      updateQuery += ` WHERE id = $${paramIndex}`;
+      params.push(trackingRecord.id);
+      
+      await db.execute(sql.raw(updateQuery, params));
       console.log(`✅ Updated tracking record for ${event.email} with ${eventType} event`);
-      
-    } catch (updateError) {
-      console.error('Error updating tracking record:', updateError);
     }
-  }
-  
-  // Log important events for immediate visibility
-  if (eventType === 'delivered') {
-    console.log(`🎉 EMAIL DELIVERED: ${event.email} via SendGrid`);
-  } else if (eventType === 'bounce') {
-    console.log(`❌ EMAIL BOUNCED: ${event.email} - ${event.reason}`);
-  } else if (eventType === 'dropped') {
-    console.log(`⚠️ EMAIL DROPPED: ${event.email} - ${event.reason}`);
+    
+    // Log important events for immediate visibility
+    if (eventType === 'delivered') {
+      console.log(`🎉 EMAIL DELIVERED: ${event.email} via SendGrid`);
+    } else if (eventType === 'bounce') {
+      console.log(`❌ EMAIL BOUNCED: ${event.email} - ${event.reason}`);
+    } else if (eventType === 'dropped') {
+      console.log(`⚠️ EMAIL DROPPED: ${event.email} - ${event.reason}`);
+    }
+    
+  } catch (error) {
+    console.error('Error processing webhook event:', error);
   }
 }
 
@@ -147,44 +150,57 @@ router.get('/admin/email-activity', async (req, res) => {
   try {
     const { limit = '50', offset = '0', status, email_type } = req.query;
     
-    // Build where conditions
-    const whereConditions = [];
+    // Build where clause
+    let whereClause = '';
+    const params = [];
+    let paramIndex = 1;
     
     if (status) {
-      whereConditions.push(eq(emailTracking.status, status as string));
+      whereClause += `WHERE status = $${paramIndex}`;
+      params.push(status);
+      paramIndex++;
     }
     
     if (email_type) {
-      whereConditions.push(eq(emailTracking.emailType, email_type as string));
+      whereClause += whereClause ? ` AND email_type = $${paramIndex}` : `WHERE email_type = $${paramIndex}`;
+      params.push(email_type);
+      paramIndex++;
     }
     
     // Get recent email activity
-    const emails = await db
-      .select()
-      .from(emailTracking)
-      .where(whereConditions.length > 0 ? eq(emailTracking.status, status as string) : undefined)
-      .orderBy(emailTracking.sentAt)
-      .limit(parseInt(limit as string))
-      .offset(parseInt(offset as string));
+    const emailsQuery = await db.execute(sql.raw(`
+      SELECT * FROM email_tracking
+      ${whereClause}
+      ORDER BY sent_at DESC
+      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+    `, [...params, parseInt(limit as string), parseInt(offset as string)]));
     
     // Get summary statistics
-    const allEmails = await db.select().from(emailTracking);
-    const stats = {
-      total: allEmails.length,
-      delivered: allEmails.filter(e => e.status === 'delivered').length,
-      failed: allEmails.filter(e => e.status === 'failed').length,
-      sent: allEmails.filter(e => e.status === 'sent').length
-    };
+    const statsQuery = await db.execute(sql`
+      SELECT 
+        COUNT(*) as total,
+        COUNT(CASE WHEN status = 'delivered' THEN 1 END) as delivered,
+        COUNT(CASE WHEN status = 'failed' THEN 1 END) as failed,
+        COUNT(CASE WHEN status = 'sent' THEN 1 END) as sent
+      FROM email_tracking
+    `);
+    
+    const stats = statsQuery.rows[0];
     
     res.json({
       success: true,
       data: {
-        emails,
-        stats,
+        emails: emailsQuery.rows,
+        stats: {
+          total: parseInt(stats.total),
+          delivered: parseInt(stats.delivered),
+          failed: parseInt(stats.failed),
+          sent: parseInt(stats.sent)
+        },
         pagination: {
           limit: parseInt(limit as string),
           offset: parseInt(offset as string),
-          total: emails.length
+          total: emailsQuery.rows.length
         }
       }
     });
