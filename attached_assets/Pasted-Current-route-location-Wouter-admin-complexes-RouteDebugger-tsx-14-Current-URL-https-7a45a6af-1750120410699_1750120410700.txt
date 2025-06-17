@@ -1,0 +1,72 @@
+Current route location (Wouter): /admin/complexes
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/complexes
+RouteDebugger.tsx:15 Current pathname: /admin/complexes
+RouteDebugger.tsx:16 Current search: 
+admin-dashboard.tsx:5471 Updating activeView from URL: complexes
+chunk-J2F67UGW.js?v=80b17ebe:340 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-J2F67UGW.js?v=80b17ebe:340
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515Understand this warning
+MapboxAutocomplete.tsx:280 Manual input change: 3
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:280 Manual input change: 38
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:280 Manual input change: 388
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:280 Manual input change: 3880
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:280 Manual input change: 38801
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:280 Manual input change: 38801 
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:280 Manual input change: 38801 L
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:280 Manual input change: 38801 Lo
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:280 Manual input change: 38801 Los
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:280 Manual input change: 38801 Los 
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:245 Processing feature: 38801 Los Corralitos Road, Temecula, California 92592, United States
+MapboxAutocomplete.tsx:246 Extracted components: {city: 'Temecula', state: 'CA', country: 'US', location: {…}, placeId: 'address.8881362428033070'}
+MapboxAutocomplete.tsx:245 Processing feature: 38801 Ducor Avenue, Yucca Valley, California 92284, United States
+MapboxAutocomplete.tsx:246 Extracted components: {city: 'Yucca Valley', state: 'CA', country: 'US', location: {…}, placeId: 'address.6274680665714362'}
+MapboxAutocomplete.tsx:245 Processing feature: 38801 Los Liones Drive, Pacific Palisades, California 90272, United States
+MapboxAutocomplete.tsx:246 Extracted components: {city: 'Pacific Palisades', state: 'CA', country: 'US', location: {…}, placeId: 'address.2883219223230154'}
+MapboxAutocomplete.tsx:245 Processing feature: 38801 Pacific Coast Highway, Malibu, California 90265, United States
+MapboxAutocomplete.tsx:246 Extracted components: {city: 'Malibu', state: 'CA', country: 'US', location: {…}, placeId: 'address.5506589753924378'}
+MapboxAutocomplete.tsx:245 Processing feature: 38801 Los Coches Road, Soledad, California 93960, United States
+MapboxAutocomplete.tsx:246 Extracted components: {city: 'Soledad', state: 'CA', country: 'US', location: {…}, placeId: 'address.7242898396351332'}
+MapboxAutocomplete.tsx:280 Manual input change: 38801 Los C
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:280 Manual input change: 38801 Los Co
+ComplexEditor.tsx:208 No place details or coordinates available from Mapbox
+MapboxAutocomplete.tsx:245 Processing feature: 38801 Los Corralitos Road, Temecula, California 92592, United States
+MapboxAutocomplete.tsx:246 Extracted components: {city: 'Temecula', state: 'CA', country: 'US', location: {…}, placeId: 'address.8881362428033070'}
+MapboxAutocomplete.tsx:245 Processing feature: 38801 Ducor Avenue, Yucca Valley, California 92284, United States
+MapboxAutocomplete.tsx:246 Extracted components: {city: 'Yucca Valley', state: 'CA', country: 'US', location: {…}, placeId: 'address.6274680665714362'}
+MapboxAutocomplete.tsx:245 Processing feature: 38801 Los Coches Road, Soledad, California 93960, United States
+MapboxAutocomplete.tsx:246 Extracted components: {city: 'Soledad', state: 'CA', country: 'US', location: {…}, placeId: 'address.7242898396351332'}
+MapboxAutocomplete.tsx:245 Processing feature: Los Cocos Drive East, Rancho Mirage, California 92270, United States
+MapboxAutocomplete.tsx:246 Extracted components: {city: 'Rancho Mirage', state: 'CA', country: 'US', location: {…}, placeId: 'address.1521733110365066'}
+MapboxAutocomplete.tsx:245 Processing feature: 38801 Lost Lane, Sunriver, Oregon 97707, United States
+MapboxAutocomplete.tsx:246 Extracted components: {city: 'Sunriver', state: 'OR', country: 'US', location: {…}, placeId: 'address.4636604672352804'}
+MapboxAutocomplete.tsx:286 🔵 Mapbox suggestion selected: {placeName: '38801 Los Corralitos Road, Temecula, California 92592, United States', center: Array(2), context: Array(5), extractedData: {…}}
+MapboxAutocomplete.tsx:299 🟢 Calling onChange with extracted data: {city: 'Temecula', state: 'CA', country: 'US', location: {…}, placeId: 'address.8881362428033070'}city: "Temecula"country: "US"location: {lat: 33.48514, lng: -117.03341}placeId: "address.8881362428033070"state: "CA"[[Prototype]]: Object
+ComplexEditor.tsx:173 Mapbox place details received: {city: 'Temecula', state: 'CA', country: 'US', location: {…}, placeId: 'address.8881362428033070'}
+ComplexEditor.tsx:179 Set coordinates: 33.48514 -117.03341
+ComplexEditor.tsx:185 Set city: Temecula
+ComplexEditor.tsx:189 Set state: CA
+ComplexEditor.tsx:193 Set country: US
+ComplexEditor.tsx:201 Updated form with Mapbox data: {lat: 33.48514, lng: -117.03341, city: 'Temecula', state: 'CA', country: 'US', …}
+use-user.ts:59 Fetching user with emulation token: not present
+use-user.ts:76 User data fetched: {id: 24, email: 'bperdomo@zoho.com', username: 'bperdomo@zoho.com', password: '$2b$12$d6n1CBWgsWFm0fh77F1OX.YxDZy7/O3aLSuJOuq4QkvOtFmSit7BC', firstName: 'Bryan', …}
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/complex-locations
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/complex-locations
+RouteDebugger.tsx:15 Current pathname: /admin/complex-locations
+RouteDebugger.tsx:16 Current search: 
