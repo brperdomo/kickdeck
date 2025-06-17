@@ -1,0 +1,96 @@
+Current route location (Wouter): /admin
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+RouteDebugger.tsx:15 Current pathname: /admin
+RouteDebugger.tsx:16 Current search: 
+RouteDebugger.tsx:13 Current route location (Wouter): /event-financial-report/1825427780
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/event-financial-report/1825427780
+RouteDebugger.tsx:15 Current pathname: /event-financial-report/1825427780
+RouteDebugger.tsx:16 Current search: 
+RouteDebugger.tsx:13 Current route location (Wouter): /registration-orders-report
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/registration-orders-report
+RouteDebugger.tsx:15 Current pathname: /registration-orders-report
+RouteDebugger.tsx:16 Current search: 
+registration-orders-report.tsx:92 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/reports/registration-orders 500 (Internal Server Error)
+queryFn @ registration-orders-report.tsx:92
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515Understand this error
+RouteDebugger.tsx:13 Current route location (Wouter): /financial-overview-report
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/financial-overview-report
+RouteDebugger.tsx:15 Current pathname: /financial-overview-report
+RouteDebugger.tsx:16 Current search: 
+financial-overview-report.tsx:95 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/reports/financial-overview?period=30d&includeAI=true 500 (Internal Server Error)
+queryFn @ financial-overview-report.tsx:95
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+onSubscribe @ @tanstack_react-query.js?v=80b17ebe:1982
+subscribe @ @tanstack_react-query.js?v=80b17ebe:24
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3145
+ai @ chunk-E27YX2RL.js?v=80b17ebe:3392
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6018
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5693
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+(anonymous) @ chunk-E27YX2RL.js?v=80b17ebe:5515Understand this error
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/reports
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/reports
+RouteDebugger.tsx:15 Current pathname: /admin/reports
+RouteDebugger.tsx:16 Current search: 
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events
+RouteDebugger.tsx:15 Current pathname: /admin/events
+RouteDebugger.tsx:16 Current search: 
+admin-dashboard.tsx:5471 Updating activeView from URL: events
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events/1825427780/clubs
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1825427780/clubs
+RouteDebugger.tsx:15 Current pathname: /admin/events/1825427780/clubs
+RouteDebugger.tsx:16 Current search: 
+event-clubs.tsx:66 Event data received: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+RouteDebugger.tsx:13 Current route location (Wouter): /admin/events/1825427780/edit
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin/events/1825427780/edit
+RouteDebugger.tsx:15 Current pathname: /admin/events/1825427780/edit
+RouteDebugger.tsx:16 Current search: 
+edit-event.tsx:47 Fetched age groups: (30) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+edit-event.tsx:156 Raw event data from server: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+edit-event.tsx:162 Has branding data: #007AFF {logoUrl: null, primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:195 Final branding data for EventForm: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+edit-event.tsx:197 Prepared event data: {id: 1825427780, name: 'Rise Cup', startDate: '2025-08-23', endDate: '2025-08-24', timezone: 'America/Los_Angeles', …}
+EventForm.tsx:125 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:137 defaultValues changed, updating branding colors: {primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:212 Fetching eligibility settings for event: 1825427780
+EventForm.tsx:125 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:125 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:125 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+EventForm.tsx:125 EventForm initializing with branding values: {logoUrl: '', primaryColor: '#007AFF', secondaryColor: '#34C759'}
+RouteDebugger.tsx:13 Current route location (Wouter): /admin
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/admin
+RouteDebugger.tsx:15 Current pathname: /admin
+RouteDebugger.tsx:16 Current search: 
+RouteDebugger.tsx:13 Current route location (Wouter): /event-financial-report/1825427780
+RouteDebugger.tsx:14 Current URL: https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/event-financial-report/1825427780
+RouteDebugger.tsx:15 Current pathname: /event-financial-report/1825427780
+RouteDebugger.tsx:16 Current search: 
