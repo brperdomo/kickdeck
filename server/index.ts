@@ -15,6 +15,23 @@ import { emulationMiddleware } from './services/emulationService';
 import { initializeStandardFolders } from './utils/initStandardFolders';
 import { verifySuperAdminRoles, logPermissionDetails } from './middleware/role-verification';
 import { phoneFormatterMiddleware } from './middleware/phone-formatter';
+import dotenv from 'dotenv';
+
+// Load environment variables based on NODE_ENV
+const nodeEnv = process.env.NODE_ENV || 'development';
+if (nodeEnv === 'production') {
+  dotenv.config({ path: '.env.production' });
+  log(`Loaded production environment variables from .env.production`);
+} else {
+  dotenv.config();
+  log(`Loaded development environment variables from .env`);
+}
+
+// Log critical environment variables for debugging (without exposing secrets)
+log(`Environment: ${nodeEnv}`);
+log(`SendGrid API Key: ${process.env.SENDGRID_API_KEY ? `Present (${process.env.SENDGRID_API_KEY.substring(0, 10)}...)` : 'Missing'}`);
+log(`Database URL: ${process.env.DATABASE_URL ? 'Present' : 'Missing'}`);
+log(`Session Secret: ${process.env.SESSION_SECRET ? 'Present' : 'Missing'}`);
 
 const app = express();
 
