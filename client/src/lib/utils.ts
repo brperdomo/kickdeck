@@ -52,6 +52,9 @@ export function formatCurrency(amount: number): string {
     return "$0.00";
   }
   
+  // Debug log to see what's being passed in
+  console.log(`formatCurrency received: ${amount} (type: ${typeof amount})`);
+  
   try {
     // Convert to a number explicitly to handle string inputs
     const numericAmount = Number(amount);
