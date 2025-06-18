@@ -78,6 +78,7 @@ import {
 } from "./routes/admin/event-administrators";
 import userRouter from "./routes/user";
 import sendgridWebhookRouter from "./routes/sendgrid-webhook";
+import { fixCardDetails } from "./routes/fix-card-details";
 import { sql, eq, and, or, inArray, notInArray, isNull } from "drizzle-orm";
 import { sendTemplatedEmail, sendRegistrationReceiptEmail, sendRegistrationConfirmationEmail } from "./services/emailService";
 import {
