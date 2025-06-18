@@ -6,7 +6,7 @@ import {
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
   Upload, Wand2, Sparkles, AlertTriangle, CalendarDays, Loader2,
-  Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin
+  Trophy, WandSparkles, CheckCircle2, AlertCircle, CreditCard, MapPin, User
 } from "lucide-react";
 // Removed ClubLogo import as we now display club name as text
 import { ComplexCard } from "@/components/admin/ComplexCard";
@@ -5743,127 +5743,153 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
       {/* Sidebar */}
       <AnimatedSidebar title="Admin Dashboard" icon={<Calendar className="h-5 w-5 text-primary" />}>
         <div className="space-y-1">
-            <AnimatedNavigationButton
-              view="formTemplates"
-              activeView={activeView}
-              onClick={() => navigate('/admin/form-templates')}
-              icon={<FormInput className="h-4 w-4" />}
-              label="Form Templates"
-              permission="view_form_templates"
-              index={0}
-            />
-            
-            <AnimatedNavigationButton
-              view="events"
-              activeView={activeView}
-              onClick={() => navigate('/admin/events')}
-              icon={<Calendar className="h-4 w-4" />}
-              label="Events"
-              permission="view_events"
-              index={1}
-            />
-            
-            <AnimatedNavigationButton
-              view="teams"
-              activeView={activeView}
-              onClick={() => navigate('/admin/teams')}
-              icon={<Users className="h-4 w-4" />}
-              label="Teams"
-              permission="view_teams"
-              index={2}
-            />
+            {/* Tournament Directors only see Events and Account */}
+            {isTournamentDirector && !hasRole('super_admin') ? (
+              <>
+                <AnimatedNavigationButton
+                  view="events"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/events')}
+                  icon={<Calendar className="h-4 w-4" />}
+                  label="Events"
+                  permission="view_events"
+                  index={0}
+                />
+                <AnimatedNavigationButton
+                  view="account"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/account')}
+                  icon={<User className="h-4 w-4" />}
+                  label="My Account"
+                  permission="view_account"
+                  index={1}
+                />
+              </>
+            ) : (
+              <>
+                <AnimatedNavigationButton
+                  view="formTemplates"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/form-templates')}
+                  icon={<FormInput className="h-4 w-4" />}
+                  label="Form Templates"
+                  permission="view_form_templates"
+                  index={0}
+                />
+                
+                <AnimatedNavigationButton
+                  view="events"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/events')}
+                  icon={<Calendar className="h-4 w-4" />}
+                  label="Events"
+                  permission="view_events"
+                  index={1}
+                />
+                
+                <AnimatedNavigationButton
+                  view="teams"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/teams')}
+                  icon={<Users className="h-4 w-4" />}
+                  label="Teams"
+                  permission="view_teams"
+                  index={2}
+                />
 
-            <AnimatedNavigationButton
-              view="administrators"
-              activeView={activeView}
-              onClick={() => navigate('/admin/administrators')}
-              icon={<Shield className="h-4 w-4" />}
-              label="Administrators"
-              permission="view_administrators"
-              index={3}
-            />
-            
-            <AnimatedNavigationButton
-              view="complexes"
-              activeView={activeView}
-              onClick={() => navigate('/admin/complexes')}
-              icon={<Building2 className="h-4 w-4" />}
-              label="Field Complexes"
-              permission="view_complexes"
-            />
-            
-            <AnimatedNavigationButton
-              view="complex-map"
-              activeView={activeView}
-              onClick={() => navigate('/admin/complex-locations')}
-              icon={<MapPin className="h-4 w-4" />}
-              label="Complex Locations"
-              permission="view_complexes"
-            />
-            
-            <AnimatedNavigationButton
-              view="households"
-              activeView={activeView}
-              onClick={() => navigate('/admin/households')}
-              icon={<Home className="h-4 w-4" />}
-              label="MatchPro Client"
-              permission="view_households"
-            />
-            
-            <AnimatedNavigationButton
-              view="scheduling"
-              activeView={activeView}
-              onClick={() => navigate('/admin/scheduling')}
-              icon={<CalendarDays className="h-4 w-4" />}
-              label="Scheduling"
-              permission="view_scheduling"
-            />
-            
-            <AnimatedNavigationButton
-              view="reports"
-              activeView={activeView}
-              onClick={() => navigate('/admin/reports')}
-              icon={<FileText className="h-4 w-4" />}
-              label="Reports and Financials"
-              permission="view_reports"
-            />
-            
-            <AnimatedNavigationButton
-              view="files"
-              activeView={activeView}
-              onClick={() => navigate('/admin/file-manager')}
-              icon={<ImageIcon className="h-4 w-4" />}
-              label="File Manager"
-              permission="view_files"
-            />
-            
-            <AnimatedNavigationButton
-              view="members"
-              activeView={activeView}
-              onClick={() => navigate('/admin/members')}
-              icon={<Users className="h-4 w-4" />}
-              label="Members"
-              permission="view_members"
-            />
-            
-            {/* Coupons are managed within events, so no standalone navigation is needed */}
-            
-            <AnimatedNavigationButton
-              view="roles"
-              activeView={activeView}
-              onClick={() => navigate('/admin/roles')}
-              icon={<KeyRound className="h-4 w-4" />}
-              label="Role Permissions"
-              permission="view_role_permissions"
-            />
+                <AnimatedNavigationButton
+                  view="administrators"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/administrators')}
+                  icon={<Shield className="h-4 w-4" />}
+                  label="Administrators"
+                  permission="view_administrators"
+                  index={3}
+                />
+                
+                <AnimatedNavigationButton
+                  view="complexes"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/complexes')}
+                  icon={<Building2 className="h-4 w-4" />}
+                  label="Field Complexes"
+                  permission="view_complexes"
+                />
+                
+                <AnimatedNavigationButton
+                  view="complex-map"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/complex-locations')}
+                  icon={<MapPin className="h-4 w-4" />}
+                  label="Complex Locations"
+                  permission="view_complexes"
+                />
+                
+                <AnimatedNavigationButton
+                  view="households"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/households')}
+                  icon={<Home className="h-4 w-4" />}
+                  label="MatchPro Client"
+                  permission="view_households"
+                />
+                
+                <AnimatedNavigationButton
+                  view="scheduling"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/scheduling')}
+                  icon={<CalendarDays className="h-4 w-4" />}
+                  label="Scheduling"
+                  permission="view_scheduling"
+                />
+                
+                <AnimatedNavigationButton
+                  view="reports"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/reports')}
+                  icon={<FileText className="h-4 w-4" />}
+                  label="Reports and Financials"
+                  permission="view_reports"
+                />
+                
+                <AnimatedNavigationButton
+                  view="files"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/file-manager')}
+                  icon={<ImageIcon className="h-4 w-4" />}
+                  label="File Manager"
+                  permission="view_files"
+                />
+                
+                <AnimatedNavigationButton
+                  view="members"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/members')}
+                  icon={<Users className="h-4 w-4" />}
+                  label="Members"
+                  permission="view_members"
+                />
+                
+                {/* Coupons are managed within events, so no standalone navigation is needed */}
+                
+                <AnimatedNavigationButton
+                  view="roles"
+                  activeView={activeView}
+                  onClick={() => navigate('/admin/roles')}
+                  icon={<KeyRound className="h-4 w-4" />}
+                  label="Role Permissions"
+                  permission="view_role_permissions"
+                />
+              </>
+            )}
 
-            {/* Settings */}
-            {/* Removed permission check to allow access */}
-            <Collapsible
-              open={isSettingsOpen}
-              onOpenChange={setIsSettingsOpen}
-              className="space-y-2"
-            >
+            {/* Settings - Hide from Tournament Directors */}
+            {!(isTournamentDirector && !hasRole('super_admin')) && (
+              <Collapsible
+                open={isSettingsOpen}
+                onOpenChange={setIsSettingsOpen}
+                className="space-y-2"
+              >
               <CollapsibleTrigger asChild>
                 <Button
                   variant={activeView === 'settings' ? 'secondary' : 'ghost'}
@@ -5923,6 +5949,7 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                 </Button>
               </CollapsibleContent>
             </Collapsible>
+            )}
 
             {/* Account */}
             <Button
