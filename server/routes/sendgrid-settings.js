@@ -5,8 +5,7 @@
  */
 
 import express from 'express';
-import { isAuthenticated } from '../middleware/auth.js';
-import { isAdmin, hasPermission } from '../middleware/permissions.js';
+import { isAdmin } from '../middleware/auth.js';
 import { 
   getSendGridTemplates, 
   getEmailTemplatesWithMappings, 
@@ -18,7 +17,7 @@ import {
 const router = express.Router();
 
 // Get all SendGrid templates
-router.get('/templates', isAuthenticated, isAdmin, async (req, res) => {
+router.get('/templates', isAdmin, async (req, res) => {
   try {
     const templates = await getSendGridTemplates();
     res.json(templates);
@@ -29,7 +28,7 @@ router.get('/templates', isAuthenticated, isAdmin, async (req, res) => {
 });
 
 // Get all email templates with SendGrid mappings
-router.get('/template-mappings', isAuthenticated, isAdmin, async (req, res) => {
+router.get('/template-mappings', isAdmin, async (req, res) => {
   try {
     const templates = await getEmailTemplatesWithMappings();
     res.json(templates);
@@ -40,7 +39,7 @@ router.get('/template-mappings', isAuthenticated, isAdmin, async (req, res) => {
 });
 
 // Map a SendGrid template to an email type
-router.post('/template-mapping', isAuthenticated, isAdmin, async (req, res) => {
+router.post('/template-mapping', isAdmin, async (req, res) => {
   try {
     const { templateType, sendgridTemplateId } = req.body;
     
@@ -57,7 +56,7 @@ router.post('/template-mapping', isAuthenticated, isAdmin, async (req, res) => {
 });
 
 // Get SendGrid provider settings and status
-router.get('/settings', isAuthenticated, isAdmin, async (req, res) => {
+router.get('/settings', isAdmin, async (req, res) => {
   try {
     const status = await getSendGridStatus();
     res.json(status);
@@ -68,7 +67,7 @@ router.get('/settings', isAuthenticated, isAdmin, async (req, res) => {
 });
 
 // Send a test email using a SendGrid template
-router.post('/test-template', isAuthenticated, isAdmin, async (req, res) => {
+router.post('/test-template', isAdmin, async (req, res) => {
   try {
     const { templateId, recipientEmail, testData } = req.body;
     
