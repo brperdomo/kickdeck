@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { formatPhoneNumber } from "@/utils/phone-formatter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TeamModal } from "./TeamModal";
 
@@ -101,7 +102,7 @@ export function TeamCard({ team }: TeamCardProps) {
               <p className="text-sm text-muted-foreground">Email: {team.managerEmail}</p>
             )}
             {team.managerPhone && (
-              <p className="text-sm text-muted-foreground">Phone: {team.managerPhone}</p>
+              <p className="text-sm text-muted-foreground">Phone: {formatPhoneNumber(team.managerPhone)}</p>
             )}
           </div>
         </CardContent>

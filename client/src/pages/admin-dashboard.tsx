@@ -4614,7 +4614,7 @@ function TeamsView() {
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Manager Phone:</div>
-                      <div className="col-span-2">{selectedTeam.managerPhone || 'N/A'}</div>
+                      <div className="col-span-2">{selectedTeam.managerPhone ? formatPhoneNumber(selectedTeam.managerPhone) : 'N/A'}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Head Coach:</div>
@@ -4626,7 +4626,7 @@ function TeamsView() {
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Coach Phone:</div>
-                      <div className="col-span-2">{selectedTeam.coachData?.headCoachPhone || 'N/A'}</div>
+                      <div className="col-span-2">{selectedTeam.coachData?.headCoachPhone ? formatPhoneNumber(selectedTeam.coachData.headCoachPhone) : 'N/A'}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Asst. Coach:</div>
@@ -4638,7 +4638,7 @@ function TeamsView() {
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Asst. Phone:</div>
-                      <div className="col-span-2">{selectedTeam.coachData?.assistantCoachPhone || 'N/A'}</div>
+                      <div className="col-span-2">{selectedTeam.coachData?.assistantCoachPhone ? formatPhoneNumber(selectedTeam.coachData.assistantCoachPhone) : 'N/A'}</div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Club/Org:</div>
