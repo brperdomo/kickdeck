@@ -78,11 +78,24 @@ router.get('/', async (req, res) => {
     }
     
     // Add Tournament Director filtering
+    console.log('[Events Router] User object:', {
+      id: (req as any).user?.id,
+      isTournamentDirector: (req as any).user?.isTournamentDirector,
+      assignedEvents: (req as any).user?.assignedEvents,
+      isAdmin: (req as any).user?.isAdmin
+    });
+    
     if ((req as any).user?.isTournamentDirector && (req as any).user?.assignedEvents) {
       const assignedEventIds = (req as any).user.assignedEvents.map((id: string) => parseInt(id));
+      console.log('[Events Router] Filtering for Tournament Director - assigned event IDs:', assignedEventIds);
       if (assignedEventIds.length > 0) {
         whereConditions.push(inArray(events.id, assignedEventIds));
+        console.log('[Events Router] Added tournament director filter to where conditions');
+      } else {
+        console.log('[Events Router] No assigned events found, Tournament Director will see no events');
       }
+    } else {
+      console.log('[Events Router] Not filtering - user is not Tournament Director or no assigned events');
     }
     
     // Apply where conditions to main query
