@@ -84,29 +84,54 @@ function getRosterCount(team: any): string {
 
 // Helper function to format the payment method display
 function getPaymentMethodDisplay(team: any): JSX.Element {
-  if (team.setupIntentId && !team.paymentIntentId) {
+  // Handle nested team structure (item.team or direct item)
+  const teamData = team.team || team;
+  
+  // Check if we have card information
+  if (teamData.cardBrand && teamData.cardLastFour) {
+    const brandName = teamData.cardBrand.charAt(0).toUpperCase() + teamData.cardBrand.slice(1);
+    return (
+      <div className="flex items-center gap-1 text-sm">
+        <CreditCard className="w-3 h-3" />
+        <span>{brandName} ••••{teamData.cardLastFour}</span>
+      </div>
+    );
+  }
+  
+  // Check for setup intent (payment method collected but not charged)
+  if (teamData.setupIntentId && !teamData.paymentIntentId) {
     return (
       <Badge variant="outline" className="text-blue-600 border-blue-400 whitespace-nowrap font-medium">
         <CreditCard className="w-3 h-3 mr-1" /> Payment Pending
       </Badge>
     );
-  } else if (team.payLater) {
+  }
+  
+  // Check for pay later option
+  if (teamData.payLater) {
     return (
       <Badge variant="outline" className="text-orange-500 border-orange-500 whitespace-nowrap font-medium">
         <AlertCircle className="w-3 h-3 mr-1" /> Pay Later
       </Badge>
     );
-  } else if (team.paymentStatus === 'paid') {
+  }
+  
+  // Check if payment is completed
+  if (teamData.paymentStatus === 'paid' || teamData.paymentIntentId) {
     return (
-      <Badge className="bg-green-500/90 whitespace-nowrap">Paid</Badge>
-    );
-  } else {
-    return (
-      <Badge variant="outline">
-        {team.paymentStatus || 'Unpaid'}
+      <Badge className="bg-green-500/90 whitespace-nowrap">
+        <CreditCard className="w-3 h-3 mr-1" /> Paid
       </Badge>
     );
   }
+  
+  // Default case - no payment info
+  return (
+    <Badge variant="outline">
+      <AlertCircle className="w-3 h-3 mr-1" />
+      {teamData.paymentStatus === 'payment_info_pending' || teamData.paymentStatus === 'pending' ? 'Pending' : teamData.paymentStatus || 'Unpaid'}
+    </Badge>
+  );
 }
 
 import {
