@@ -8793,9 +8793,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
           res.json({ success: true, message: 'Test email sent successfully' });
         } else {
           const errorText = await response.text();
-          res.json({ 
+          console.error('SendGrid API error:', response.status, errorText);
+          res.status(400).json({ 
             success: false, 
-            message: `Failed to send test email: ${response.status}`,
+            message: `SendGrid API error: ${response.status}`,
             error: errorText
           });
         }
