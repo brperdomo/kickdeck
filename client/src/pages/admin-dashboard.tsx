@@ -98,8 +98,17 @@ function getPaymentMethodDisplay(team: any): JSX.Element {
     );
   }
   
-  // Check for setup intent (payment method collected but not charged)
-  if (teamData.setupIntentId && !teamData.paymentIntentId) {
+  // Check for incomplete setup intent (started but not completed)
+  if (teamData.setupIntentId && !teamData.cardBrand && teamData.paymentStatus === 'payment_info_pending') {
+    return (
+      <Badge variant="outline" className="text-amber-600 border-amber-400 whitespace-nowrap font-medium">
+        <AlertCircle className="w-3 h-3 mr-1" /> Setup Incomplete
+      </Badge>
+    );
+  }
+  
+  // Check for completed setup intent (payment method collected but not charged)
+  if (teamData.setupIntentId && teamData.cardBrand && !teamData.paymentIntentId) {
     return (
       <Badge variant="outline" className="text-blue-600 border-blue-400 whitespace-nowrap font-medium">
         <CreditCard className="w-3 h-3 mr-1" /> Payment Pending
