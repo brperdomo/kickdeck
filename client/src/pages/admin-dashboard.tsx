@@ -4771,7 +4771,59 @@ function TeamsView() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="grid grid-cols-3 gap-1">
+                    {/* Show original registration fee first */}
+                    {selectedTeam.registrationFee && (
+                      <div className="grid grid-cols-3 gap-1">
+                        <div className="font-medium">Registration Fee:</div>
+                        <div className="col-span-2">
+                          {formatCurrency(selectedTeam.registrationFee)}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Show coupon discount if applied */}
+                    {selectedTeam.appliedCoupon && (() => {
+                      try {
+                        const coupon = typeof selectedTeam.appliedCoupon === 'string' 
+                          ? JSON.parse(selectedTeam.appliedCoupon) 
+                          : selectedTeam.appliedCoupon;
+                        
+                        return (
+                          <div className="grid grid-cols-3 gap-1">
+                            <div className="font-medium">Coupon Applied:</div>
+                            <div className="col-span-2">
+                              <div className="flex items-center gap-2">
+                                <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium">
+                                  {coupon.code}
+                                </span>
+                                <span className="text-green-600 font-medium">
+                                  -{coupon.discountType === 'percentage' 
+                                    ? `${coupon.amount}%` 
+                                    : formatCurrency(coupon.amount)}
+                                </span>
+                              </div>
+                              {coupon.description && (
+                                <div className="text-sm text-muted-foreground mt-1">
+                                  {coupon.description}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      } catch (e) {
+                        return (
+                          <div className="grid grid-cols-3 gap-1">
+                            <div className="font-medium">Coupon Applied:</div>
+                            <div className="col-span-2 text-sm text-muted-foreground">
+                              Coupon information available (parsing error)
+                            </div>
+                          </div>
+                        );
+                      }
+                    })()}
+
+                    {/* Show final total amount */}
+                    <div className="grid grid-cols-3 gap-1 border-t pt-2">
                       <div className="font-medium">Total Amount:</div>
                       <div className="col-span-2 font-semibold text-blue-700">
                         {selectedTeam.totalAmount 
