@@ -45,6 +45,7 @@ import { registerStripeConnectRoutes } from "./routes/stripe-connect";
 import { registerPaymentReportRoutes } from "./routes/payment-reports";
 import { registerConnectPaymentRoutes } from "./routes/stripe-connect-payments";
 import { registerFeeCalculatorRoutes } from "./routes/admin/fee-calculator-router";
+import tournamentDirectorRoutes from "./routes/tournament-director-routes";
 import { 
   getEnhancedEventFinancialReport, 
   getOrganizationFinancialSummary, 

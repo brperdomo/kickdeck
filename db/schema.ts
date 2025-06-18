@@ -697,7 +697,7 @@ export const eventSettings = pgTable("event_settings", {
 });
 
 export const insertEventAdministratorSchema = createInsertSchema(eventAdministrators, {
-  role: z.enum(['owner', 'admin', 'moderator']),
+  role: z.enum(['owner', 'admin', 'moderator', 'tournament_director']),
   permissions: z.record(z.boolean()).optional(),
 });
 
