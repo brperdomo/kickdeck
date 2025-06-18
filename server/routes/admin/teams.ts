@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { db } from '@db';
-import { teams, events, users, players } from '@db/schema';
+import { teams, events, users, players, eventAgeGroups } from '@db/schema';
 import { eq, and, or, like, asc, desc, sql } from 'drizzle-orm';
 import { log } from '../../vite';
 import { sendTemplatedEmail } from '../../services/emailService';
@@ -64,6 +64,12 @@ export async function getTeams(req: Request, res: Response) {
         id: events.id,
         name: events.name
       },
+      ageGroup: {
+        id: eventAgeGroups.id,
+        ageGroup: eventAgeGroups.ageGroup,
+        gender: eventAgeGroups.gender,
+        fieldSize: eventAgeGroups.fieldSize
+      },
       user: {
         email: users.email,
         firstName: users.firstName,
@@ -72,6 +78,7 @@ export async function getTeams(req: Request, res: Response) {
     })
     .from(teams)
     .leftJoin(events, eq(teams.eventId, events.id))
+    .leftJoin(eventAgeGroups, eq(teams.ageGroupId, eventAgeGroups.id))
     .leftJoin(users, eq(teams.managerEmail, users.email));
     
     // Add filters if provided
@@ -115,9 +122,6 @@ export async function getTeams(req: Request, res: Response) {
           .where(eq(players.teamId, team.id));
         
         const playerCount = playerCountResult[0]?.count || 0;
-        
-        // Debug: Log team amounts before sending to frontend
-        console.log(`Team ${team.id} (${team.name}): totalAmount=${team.totalAmount}, registrationFee=${team.registrationFee}`);
         
         return {
           team: {
