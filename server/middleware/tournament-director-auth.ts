@@ -7,7 +7,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { db } from 'db';
-import { eventAdministrators, users, adminRoles, roles } from '@db/schema';
+import { users, adminRoles, roles } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
 
 interface AuthenticatedRequest extends Request {
@@ -33,7 +33,7 @@ export async function checkTournamentDirectorRole(userId: number): Promise<boole
       }
     });
 
-    return tournamentDirectorRole?.role?.name === 'tournament_director';
+    return tournamentDirectorRole?.role?.name === 'tournament_admin';
   } catch (error) {
     console.error('Error checking tournament director role:', error);
     return false;
@@ -45,14 +45,13 @@ export async function checkTournamentDirectorRole(userId: number): Promise<boole
  */
 export async function getTournamentDirectorEvents(userId: number): Promise<string[]> {
   try {
-    const assignments = await db.query.eventAdministrators.findMany({
-      where: and(
-        eq(eventAdministrators.userId, userId),
-        eq(eventAdministrators.role, 'tournament_director')
-      )
-    });
+    const assignments = await db.execute(`
+      SELECT event_id 
+      FROM tournament_director_events 
+      WHERE user_id = $1
+    `, [userId]);
 
-    return assignments.map(assignment => assignment.eventId);
+    return assignments.map((assignment: any) => assignment.event_id.toString());
   } catch (error) {
     console.error('Error getting tournament director events:', error);
     return [];
