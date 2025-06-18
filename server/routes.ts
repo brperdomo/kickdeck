@@ -44,6 +44,7 @@ import reportsRouter from "./routes/reports";
 import { registerStripeConnectRoutes } from "./routes/stripe-connect";
 import { registerPaymentReportRoutes } from "./routes/payment-reports";
 import { registerConnectPaymentRoutes } from "./routes/stripe-connect-payments";
+import { registerFeeCalculatorRoutes } from "./routes/admin/fee-calculator-router";
 import { 
   getEnhancedEventFinancialReport, 
   getOrganizationFinancialSummary, 
@@ -8596,6 +8597,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
     // Register Connect payment routes synchronously
     try {
       registerConnectPaymentRoutes(app);
+      registerFeeCalculatorRoutes(app);
       console.log('Stripe Connect payment routes registered successfully');
     } catch (error) {
       console.error('Error registering Connect payment routes:', error);
