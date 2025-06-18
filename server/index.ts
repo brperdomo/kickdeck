@@ -22,6 +22,13 @@ const nodeEnv = process.env.NODE_ENV || 'development';
 if (nodeEnv === 'production') {
   dotenv.config({ path: '.env.production' });
   log(`Loaded production environment variables from .env.production`);
+  
+  // Force correct SendGrid API key for production deployment
+  if (!process.env.SENDGRID_API_KEY || process.env.SENDGRID_API_KEY.includes('${')) {
+    process.env.SENDGRID_API_KEY = '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';
+    process.env.DEFAULT_FROM_EMAIL = 'support@matchpro.ai';
+    log('Applied production SendGrid API key override');
+  }
 } else {
   dotenv.config();
   log(`Loaded development environment variables from .env`);
