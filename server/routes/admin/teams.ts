@@ -114,7 +114,7 @@ export async function getTeams(req: Request, res: Response) {
     
     // For each team, fetch player count
     const teamsWithPlayerCounts = await Promise.all(
-      result.map(async ({ team, event, user }) => {
+      result.map(async ({ team, event, ageGroup, user }) => {
         // Count players for this team
         const playerCountResult = await db
           .select({ count: sql<number>`count(*)`.mapWith(Number) })
@@ -132,6 +132,7 @@ export async function getTeams(req: Request, res: Response) {
             registrationFee: team.registrationFee
           },
           event,
+          ageGroup,
           user
         };
       })
