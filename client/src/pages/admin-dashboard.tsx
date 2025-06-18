@@ -3994,7 +3994,7 @@ function TeamsView() {
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Submitter</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registered Date</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Roster Count</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registration Fee</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Final Total</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Payment Method</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100 text-right">Actions</TableHead>
                         </TableRow>
@@ -4096,7 +4096,7 @@ function TeamsView() {
                           <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Submitter</TableHead>
                           <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Registered Date</TableHead>
                           <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Roster Count</TableHead>
-                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Registration Fee</TableHead>
+                          <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Final Total</TableHead>
                           <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100">Payment Method</TableHead>
                           <TableHead className="font-semibold py-4 text-amber-900 dark:text-amber-100 text-right">Actions</TableHead>
                         </TableRow>
@@ -4189,7 +4189,7 @@ function TeamsView() {
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Submitter</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registered Date</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Roster Count</TableHead>
-                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Registration Fee</TableHead>
+                          <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Final Total</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100">Payment Method</TableHead>
                           <TableHead className="font-semibold py-4 text-indigo-900 dark:text-blue-100 text-right">Actions</TableHead>
                         </TableRow>
@@ -4582,7 +4582,7 @@ function TeamsView() {
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-1">
-                      <div className="font-medium">Registration Fee:</div>
+                      <div className="font-medium">Final Total:</div>
                       <div className="col-span-2">{formatCurrency(selectedTeam.registrationFee || 0)}</div>
                     </div>
                     {selectedTeam.status === 'rejected' && (
