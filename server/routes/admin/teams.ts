@@ -116,6 +116,9 @@ export async function getTeams(req: Request, res: Response) {
         
         const playerCount = playerCountResult[0]?.count || 0;
         
+        // Debug: Log team amounts before sending to frontend
+        console.log(`Team ${team.id} (${team.name}): totalAmount=${team.totalAmount}, registrationFee=${team.registrationFee}`);
+        
         return {
           team: {
             ...team,
