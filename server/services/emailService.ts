@@ -272,8 +272,8 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error(`Failed to send email to ${options.to}: ${errorMessage}`);
     
-    // TEMPORARY: Throw errors in production to debug password reset issue
-    throw error;
+    // Don't rethrow the error in production as this could interrupt important flows
+    // such as payment processing or user registration just because an email failed
   }
 }
 
@@ -448,8 +448,8 @@ function getAppUrl(isDevelopment: boolean = process.env.NODE_ENV !== 'production
     // Development environment - use local domain
     return process.env.APP_URL || `https://${process.env.REPLIT_DOMAINS?.split(',')[0]}`;
   } else {
-    // Production environment - use production domain
-    return process.env.PRODUCTION_URL || process.env.APP_URL || 'https://matchpro.ai';
+    // Production environment - use correct production domain
+    return 'https://app.matchpro.ai';
   }
 }
 
@@ -665,9 +665,8 @@ export async function sendPasswordResetEmail(
       throw error;
     }
     
-    // TEMPORARY: Also throw errors in production to debug password reset issue
+    // In production, log error but don't crash the application
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error(`Failed to send password reset email to ${to}: ${errorMessage}`);
-    throw error;
   }
 }
