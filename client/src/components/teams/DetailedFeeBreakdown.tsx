@@ -75,14 +75,30 @@ export function DetailedFeeBreakdown({ teamId, selectedFeeIds, totalAmount, appl
     return groups;
   }, [feesQuery.data]);
 
-  // Calculate the total amount of all fees
-  const totalAmount = useMemo(() => {
+  // Calculate the subtotal of all fees before discounts
+  const feesSubtotal = useMemo(() => {
     if (!feesQuery.data || feesQuery.data.length === 0) {
       return 0;
     }
     
     return feesQuery.data.reduce((sum, fee) => sum + fee.amount, 0);
   }, [feesQuery.data]);
+
+  // Calculate discount information
+  const discountInfo = useMemo(() => {
+    if (!totalAmount || !feesSubtotal || totalAmount >= feesSubtotal) {
+      return null;
+    }
+    
+    const discountAmount = feesSubtotal - totalAmount;
+    const discountPercentage = Math.round((discountAmount / feesSubtotal) * 100);
+    
+    return {
+      amount: discountAmount,
+      percentage: discountPercentage,
+      code: appliedCoupon || 'Discount Applied'
+    };
+  }, [feesSubtotal, totalAmount, appliedCoupon]);
 
   // Get formatted fee types for better display
   const formatFeeType = (type: string): string => {
@@ -191,9 +207,30 @@ export function DetailedFeeBreakdown({ teamId, selectedFeeIds, totalAmount, appl
         
         <div className="mt-6 pt-4 border-t">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold">Total Amount</h3>
-            <span className="text-lg font-bold">{formatCurrency(totalAmount)}</span>
+            <h3 className="text-lg font-semibold">Total Amount</h3>
+            <span className="text-lg font-semibold">{formatCurrency(feesSubtotal)}</span>
           </div>
+          
+          {/* Show discount information if applicable */}
+          {discountInfo && (
+            <>
+              <div className="flex justify-between items-center mt-2 text-green-600">
+                <span className="text-sm">
+                  {discountInfo.code} ({discountInfo.percentage}% off)
+                </span>
+                <span className="text-sm font-medium">
+                  -{formatCurrency(discountInfo.amount)}
+                </span>
+              </div>
+              
+              <div className="flex justify-between items-center mt-3 pt-2 border-t border-green-200">
+                <h3 className="text-lg font-bold text-green-700">Final Total</h3>
+                <span className="text-lg font-bold text-green-700">
+                  {formatCurrency(totalAmount)}
+                </span>
+              </div>
+            </>
+          )}
         </div>
       </CardContent>
     </Card>

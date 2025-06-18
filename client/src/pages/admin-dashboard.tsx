@@ -4813,7 +4813,12 @@ function TeamsView() {
                             Selected fees: {selectedTeam.selectedFeeIds.split(',').length}
                           </p>
                           
-                          <DetailedFeeBreakdown teamId={selectedTeam.id} selectedFeeIds={selectedTeam.selectedFeeIds} />
+                          <DetailedFeeBreakdown 
+            teamId={selectedTeam.id} 
+            selectedFeeIds={selectedTeam.selectedFeeIds}
+            totalAmount={selectedTeam.totalAmount}
+            appliedCoupon={selectedTeam.appliedCoupon}
+          />
                           
                           <div className="flex justify-between py-1 font-semibold mt-2 border-t border-slate-200 pt-2">
                             <span>Total</span>
