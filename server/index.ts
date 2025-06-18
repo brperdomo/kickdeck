@@ -14,6 +14,7 @@ import { setupAuth } from './auth';
 import { emulationMiddleware } from './services/emulationService';
 import { initializeStandardFolders } from './utils/initStandardFolders';
 import { verifySuperAdminRoles, logPermissionDetails } from './middleware/role-verification';
+import { phoneFormatterMiddleware } from './middleware/phone-formatter';
 
 const app = express();
 
@@ -127,6 +128,10 @@ async function testDbConnection() {
     // Add permission logging middleware to catch and debug 403 errors
     app.use(logPermissionDetails);
     log("Permission logging middleware set up successfully");
+    
+    // Add phone formatting middleware to ensure consistent phone number formatting
+    app.use('/api', phoneFormatterMiddleware);
+    log("Phone formatting middleware set up successfully");
     
     // Register API routes BEFORE setting up static file serving or Vite middleware
     const routes = registerRoutes(app);
