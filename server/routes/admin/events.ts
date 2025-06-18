@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../../../db';
 import { events, eventAgeGroups, eventScoringRules, eventComplexes, eventFieldSizes, eventFees, coupons, eventAgeGroupFees, teams } from '@db/schema';
-import { eq, sql, and, or, lt, gt, gte, lte } from 'drizzle-orm';
+import { eq, sql, and, or, lt, gt, gte, lte, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { hasEventAccess } from '../../middleware/event-access';
 
@@ -74,6 +74,14 @@ router.get('/', async (req, res) => {
       const statusCondition = getStatusFilterCondition(statusFilter);
       if (statusCondition) {
         whereConditions.push(statusCondition);
+      }
+    }
+    
+    // Add Tournament Director filtering
+    if ((req as any).user?.isTournamentDirector && (req as any).user?.assignedEvents) {
+      const assignedEventIds = (req as any).user.assignedEvents.map((id: string) => parseInt(id));
+      if (assignedEventIds.length > 0) {
+        whereConditions.push(inArray(events.id, assignedEventIds));
       }
     }
     
