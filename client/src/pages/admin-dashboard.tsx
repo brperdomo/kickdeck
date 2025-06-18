@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, lazy, Suspense, useCallback, useRef } from "react";
 import { useLocation, Link } from "wouter";
 import { motion } from "framer-motion";
+import { formatPhoneNumber } from "@/utils/phone-formatter";
 import { 
   Link2, X, Ticket, Plus, Mail, KeyRound, Check, RefreshCcw, UserMinus, RotateCcw, 
   Pencil, PlusCircle, CalendarRange, UserRoundPlus, ClipboardX, ArrowLeft,
@@ -5268,11 +5269,16 @@ function TeamsView() {
                   <Label htmlFor="emergencyContactPhone">Phone * (Required)</Label>
                   <Input 
                     id="emergencyContactPhone" 
+                    type="tel"
                     value={selectedPlayer.emergencyContactPhone || ''}
-                    onChange={(e) => setSelectedPlayer({
-                      ...selectedPlayer,
-                      emergencyContactPhone: e.target.value
-                    })}
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value);
+                      setSelectedPlayer({
+                        ...selectedPlayer,
+                        emergencyContactPhone: formatted
+                      });
+                    }}
+                    placeholder="(555) 123-4567"
                     required
                   />
                 </div>

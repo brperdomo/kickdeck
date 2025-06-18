@@ -4051,12 +4051,14 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                     type="tel"
                                     value={player.emergencyContactPhone || ''}
                                     onChange={(e) => {
+                                      const formatted = formatPhoneNumber(e.target.value);
                                       const newPlayers = [...players];
-                                      newPlayers[index].emergencyContactPhone = e.target.value;
+                                      newPlayers[index].emergencyContactPhone = formatted;
                                       setPlayers(newPlayers);
                                       // Update form state with the modified players array
                                       teamForm.setValue('players', newPlayers);
                                     }}
+                                    placeholder="(555) 123-4567"
                                     className="w-full"
                                   />
                                 </div>
