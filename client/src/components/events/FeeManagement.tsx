@@ -595,18 +595,34 @@ export function FeeManagement() {
       return;
     }
     
-    // Prepare assignments data
+    // Prepare assignments data - collect ALL age groups that should have this fee assigned
     const ageGroupIds = [];
 
-    // Collect all selected age group IDs for the current fee
+    // For each age group, determine if it should be assigned based on:
+    // 1. Local state changes (selectedAgeGroups)
+    // 2. Existing database assignments (if no local state change)
     ageGroupsQuery.data?.forEach((ageGroup) => {
       const groupId = ageGroup.id;
-      if (
-        groupId && 
-        selectedAgeGroups[groupId] &&
-        selectedAgeGroups[groupId][currentFeeId]
-      ) {
-        ageGroupIds.push(groupId);
+      if (!groupId) return;
+      
+      // Check if there's a local state change for this age group and fee
+      const localState = selectedAgeGroups[groupId]?.[currentFeeId];
+      
+      if (localState !== undefined) {
+        // User has made a change - use the local state
+        if (localState === true) {
+          ageGroupIds.push(groupId);
+        }
+        // If localState is false, don't include (will be unassigned)
+      } else {
+        // No local change - check if it was already assigned in database
+        const isCurrentlyAssigned = feeAssignmentsQuery.data?.some(
+          a => a.ageGroupId === groupId && a.feeId === currentFeeId
+        );
+        
+        if (isCurrentlyAssigned) {
+          ageGroupIds.push(groupId);
+        }
       }
     });
 
@@ -1293,13 +1309,20 @@ export function FeeManagement() {
                 <Checkbox
                   id={`age-group-${ageGroup.id || ageGroup.divisionCode}`}
                   className="h-5 w-5 border-2 rounded-sm data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 data-[state=checked]:text-white"
-                  checked={
-                    selectedAgeGroups[ageGroup.id]?.[selectedFeeId] === true || 
-                    feeAssignmentsQuery.data?.some(
-                      a => (a.ageGroupId === ageGroup.id || a.divisionCode === ageGroup.divisionCode) && 
-                           a.feeId === selectedFeeId
-                    ) === true
-                  }
+                  checked={(() => {
+                    // Check if there's a local state change for this age group and fee
+                    const localState = selectedAgeGroups[ageGroup.id]?.[selectedFeeId];
+                    
+                    if (localState !== undefined) {
+                      // User has made a change - use the local state
+                      return localState === true;
+                    } else {
+                      // No local change - check if it was already assigned in database
+                      return feeAssignmentsQuery.data?.some(
+                        a => a.ageGroupId === ageGroup.id && a.feeId === selectedFeeId
+                      ) === true;
+                    }
+                  })()}
                   onCheckedChange={(checked) => {
                     setSelectedAgeGroups(prev => {
                       const newState = {...prev};
@@ -1424,7 +1447,20 @@ export function FeeManagement() {
                 <Checkbox
                   id={`quick-assign-${ageGroup.id}`}
                   className="h-5 w-5 border-2 rounded-sm data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600 data-[state=checked]:text-white"
-                  checked={selectedAgeGroups[ageGroup.id]?.[selectedFeeId] === true}
+                  checked={(() => {
+                    // Check if there's a local state change for this age group and fee
+                    const localState = selectedAgeGroups[ageGroup.id]?.[selectedFeeId];
+                    
+                    if (localState !== undefined) {
+                      // User has made a change - use the local state
+                      return localState === true;
+                    } else {
+                      // No local change - check if it was already assigned in database
+                      return feeAssignmentsQuery.data?.some(
+                        a => a.ageGroupId === ageGroup.id && a.feeId === selectedFeeId
+                      ) === true;
+                    }
+                  })()}
                   onCheckedChange={(checked) => {
                     setSelectedAgeGroups(prev => {
                       const newState = {...prev};
