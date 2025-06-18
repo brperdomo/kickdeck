@@ -88,12 +88,12 @@ function getPaymentMethodDisplay(team: any): JSX.Element {
   const teamData = team.team || team;
   
   // Check if we have card information
-  if (teamData.cardBrand && teamData.cardLastFour) {
+  if (teamData.cardBrand && teamData.cardLast4) {
     const brandName = teamData.cardBrand.charAt(0).toUpperCase() + teamData.cardBrand.slice(1);
     return (
       <div className="flex items-center gap-1 text-sm">
         <CreditCard className="w-3 h-3" />
-        <span>{brandName} ••••{teamData.cardLastFour}</span>
+        <span>{brandName} ••••{teamData.cardLast4}</span>
       </div>
     );
   }
@@ -108,7 +108,7 @@ function getPaymentMethodDisplay(team: any): JSX.Element {
   }
   
   // Check for pay later option
-  if (teamData.payLater) {
+  if (teamData.addRosterLater) {
     return (
       <Badge variant="outline" className="text-orange-500 border-orange-500 whitespace-nowrap font-medium">
         <AlertCircle className="w-3 h-3 mr-1" /> Pay Later
