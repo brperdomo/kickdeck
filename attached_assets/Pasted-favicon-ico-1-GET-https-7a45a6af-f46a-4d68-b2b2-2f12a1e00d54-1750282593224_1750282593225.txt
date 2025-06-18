@@ -1,0 +1,66 @@
+favicon.ico:1 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/favicon.ico 503 (Service Unavailable)Understand this error
+NewRegistrationsBanner.tsx:27 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/registrations/new-count 503 (Service Unavailable)
+queryFn @ NewRegistrationsBanner.tsx:27
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:2312Understand this error
+EventsTable.tsx:122 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events?page=1&pageSize=5&showArchived=true&search=empire&statusFilter=all&sortField=date&sortDirection=desc 503 (Service Unavailable)
+queryFn @ EventsTable.tsx:122
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+setOptions @ @tanstack_react-query.js?v=80b17ebe:2039
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3155
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129Understand this error
+EventsTable.tsx:122 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events?page=1&pageSize=5&showArchived=true&search=empire&statusFilter=all&sortField=date&sortDirection=desc 503 (Service Unavailable)
+queryFn @ EventsTable.tsx:122
+fetchFn @ @tanstack_react-query.js?v=80b17ebe:881
+run @ @tanstack_react-query.js?v=80b17ebe:513
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:538
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:534
+Promise.catch
+run @ @tanstack_react-query.js?v=80b17ebe:517
+start @ @tanstack_react-query.js?v=80b17ebe:555
+fetch @ @tanstack_react-query.js?v=80b17ebe:969
+executeFetch_fn @ @tanstack_react-query.js?v=80b17ebe:2278
+setOptions @ @tanstack_react-query.js?v=80b17ebe:2039
+(anonymous) @ @tanstack_react-query.js?v=80b17ebe:3155
+Qj @ chunk-E27YX2RL.js?v=80b17ebe:4852
+Hk @ chunk-E27YX2RL.js?v=80b17ebe:6117
+Ek @ chunk-E27YX2RL.js?v=80b17ebe:5681
+jg @ chunk-E27YX2RL.js?v=80b17ebe:2527
+Wk @ chunk-E27YX2RL.js?v=80b17ebe:6021
+Pk @ chunk-E27YX2RL.js?v=80b17ebe:5964
+Gk @ chunk-E27YX2RL.js?v=80b17ebe:5620
+J @ chunk-E27YX2RL.js?v=80b17ebe:97
+R @ chunk-E27YX2RL.js?v=80b17ebe:129Understand this error
+EventsTable.tsx:122 
+            
+            
+           GET https://7a45a6af-f46a-4d68-b2b2-2f12a1e00d54-00-5s7bw9z7rtfa.spock.replit.dev/api/admin/events?page=1&pageSize=5&showArchived=true&search=empire&statusFilter=all&sortField=date&sortDirection=desc 503 (Service Unavailable)
