@@ -116,7 +116,7 @@ export async function getTeams(req: Request, res: Response) {
         
         const playerCount = playerCountResult[0]?.count || 0;
         
-        const convertedTeam = {
+        return {
           team: {
             ...team,
             playerCount: playerCount,
@@ -127,13 +127,6 @@ export async function getTeams(req: Request, res: Response) {
           event,
           user
         };
-        
-        // Debug log to see conversion results
-        if (team.totalAmount || team.registrationFee) {
-          console.log(`Team ${team.name}: Original totalAmount=${team.totalAmount} cents -> ${convertedTeam.team.totalAmount} dollars, registrationFee=${team.registrationFee} cents -> ${convertedTeam.team.registrationFee} dollars`);
-        }
-        
-        return convertedTeam;
       })
     );
     
