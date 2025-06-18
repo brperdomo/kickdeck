@@ -8734,9 +8734,10 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
 
     app.post('/api/admin/sendgrid/send-test-email', isAdmin, async (req, res) => {
       try {
-        const { email } = req.body;
+        const { email, testEmail } = req.body;
+        const targetEmail = email || testEmail;
 
-        if (!email) {
+        if (!targetEmail) {
           return res.status(400).json({ success: false, message: 'Email address is required' });
         }
 
@@ -8764,7 +8765,7 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
         // Send a simple test email
         const emailData = {
           personalizations: [{
-            to: [{ email }],
+            to: [{ email: targetEmail }],
             subject: 'SendGrid Test Email'
           }],
           from: { email: fromEmail, name: 'MatchPro Test' },
