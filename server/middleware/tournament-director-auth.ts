@@ -71,13 +71,7 @@ export async function authenticateTournamentDirector(
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    // Check if user is a super admin (has full access)
-    if (req.user.isAdmin) {
-      req.user.isTournamentDirector = false;
-      return next();
-    }
-
-    // Check if user has Tournament Director role
+    // Check if user has Tournament Director role first
     const isTournamentDirector = await checkTournamentDirectorRole(req.user.id);
     
     if (isTournamentDirector) {
@@ -87,6 +81,12 @@ export async function authenticateTournamentDirector(
       req.user.isTournamentDirector = true;
       req.user.assignedEvents = assignedEvents;
       
+      return next();
+    }
+
+    // Check if user is a super admin (has full access)
+    if (req.user.isAdmin) {
+      req.user.isTournamentDirector = false;
       return next();
     }
 

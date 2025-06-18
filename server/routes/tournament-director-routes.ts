@@ -200,14 +200,6 @@ router.get('/my-events', authenticateTournamentDirector, async (req: any, res) =
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    // Super admins see all events (handled in middleware)
-    if (req.user.isAdmin && !req.user.isTournamentDirector) {
-      const allEvents = await db.query.events.findMany({
-        where: (events, { eq }) => eq(events.isArchived, false)
-      });
-      return res.json(allEvents);
-    }
-
     // Tournament Directors see only assigned events
     if (req.user.isTournamentDirector && req.user.assignedEvents) {
       const accessibleEvents = await db.query.events.findMany({
@@ -217,6 +209,14 @@ router.get('/my-events', authenticateTournamentDirector, async (req: any, res) =
         )
       });
       return res.json(accessibleEvents);
+    }
+
+    // Super admins see all events
+    if (req.user.isAdmin && !req.user.isTournamentDirector) {
+      const allEvents = await db.query.events.findMany({
+        where: (events, { eq }) => eq(events.isArchived, false)
+      });
+      return res.json(allEvents);
     }
 
     res.json([]);
