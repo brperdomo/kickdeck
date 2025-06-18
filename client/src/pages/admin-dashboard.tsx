@@ -4227,7 +4227,7 @@ function TeamsView() {
                                 <TableCell>{team.submitterEmail || team.managerEmail}</TableCell>
                                 <TableCell>{formatDate(team.createdAt)}</TableCell>
                                 <TableCell>{getRosterCount(team)}</TableCell>
-                                <TableCell>{formatCurrency(team.registrationFee || 0)}</TableCell>
+                                <TableCell>{formatCurrency(team.totalAmount || team.registrationFee || 0)}</TableCell>
                                 <TableCell>
                                   <Badge variant={team.paymentStatus === 'paid' ? 'default' : 'outline'}>
                                     {team.paymentStatus || 'Unpaid'}
