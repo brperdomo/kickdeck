@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { db } from '@db';
-import { teams, events, users } from '@db/schema';
+import { teams, events, users, players } from '@db/schema';
 import { eq, and, or, like, asc, desc, sql } from 'drizzle-orm';
 import { log } from '../../vite';
 import { sendTemplatedEmail } from '../../services/emailService';
@@ -62,7 +62,30 @@ export async function getTeams(req: Request, res: Response) {
     }
     
     const result = await query;
-    res.json(result);
+    
+    // For each team, fetch player count
+    const teamsWithPlayerCounts = await Promise.all(
+      result.map(async ({ team, event, user }) => {
+        // Count players for this team
+        const playerCountResult = await db
+          .select({ count: sql<number>`count(*)`.mapWith(Number) })
+          .from(players)
+          .where(eq(players.teamId, team.id));
+        
+        const playerCount = playerCountResult[0]?.count || 0;
+        
+        return {
+          team: {
+            ...team,
+            playerCount: playerCount
+          },
+          event,
+          user
+        };
+      })
+    );
+    
+    res.json(teamsWithPlayerCounts);
   } catch (error) {
     log(`Error getting teams: ${error}`, 'admin');
     res.status(500).json({ error: 'Failed to retrieve teams' });

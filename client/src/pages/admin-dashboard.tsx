@@ -61,14 +61,22 @@ function getRosterCount(team: any): string {
     return '0';
   }
   
+  // Handle nested team structure (item.team or direct item)
+  const teamData = team.team || team;
+  
   // Check for playerCount directly from API
-  if (typeof team.playerCount === 'number') {
-    return team.playerCount.toString();
+  if (typeof teamData.playerCount === 'number') {
+    return teamData.playerCount.toString();
   }
   
   // Check if players array exists and has length
-  if (team.players && Array.isArray(team.players)) {
-    return team.players.length.toString();
+  if (teamData.players && Array.isArray(teamData.players)) {
+    return teamData.players.length.toString();
+  }
+  
+  // Check for playerCount on the original team object as well
+  if (typeof team.playerCount === 'number') {
+    return team.playerCount.toString();
   }
   
   return '0';
