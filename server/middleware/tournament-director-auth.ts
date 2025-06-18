@@ -67,30 +67,38 @@ export async function authenticateTournamentDirector(
   next: NextFunction
 ) {
   try {
+    console.log(`[Tournament Director Auth] User ID: ${req.user?.id}, isAuthenticated: ${!!req.user?.id}`);
+    
     if (!req.user?.id) {
+      console.log('[Tournament Director Auth] No user ID found, authentication required');
       return res.status(401).json({ error: 'Authentication required' });
     }
 
     // Check if user has Tournament Director role first
     const isTournamentDirector = await checkTournamentDirectorRole(req.user.id);
+    console.log(`[Tournament Director Auth] Is Tournament Director: ${isTournamentDirector}`);
     
     if (isTournamentDirector) {
       // Get assigned events for this Tournament Director
       const assignedEvents = await getTournamentDirectorEvents(req.user.id);
+      console.log(`[Tournament Director Auth] Assigned events: ${assignedEvents.join(', ')}`);
       
       req.user.isTournamentDirector = true;
       req.user.assignedEvents = assignedEvents;
       
+      console.log('[Tournament Director Auth] Tournament Director authentication successful');
       return next();
     }
 
     // Check if user is a super admin (has full access)
     if (req.user.isAdmin) {
+      console.log('[Tournament Director Auth] User is super admin, granting full access');
       req.user.isTournamentDirector = false;
       return next();
     }
 
     // User has no admin or tournament director privileges
+    console.log('[Tournament Director Auth] Access denied - no admin or tournament director privileges');
     return res.status(403).json({ error: 'Access denied. Tournament Director role required.' });
 
   } catch (error) {

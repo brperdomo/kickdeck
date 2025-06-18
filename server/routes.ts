@@ -296,8 +296,8 @@ export function registerRoutes(app: Express): Server {
     // Register admin routes
     app.use('/api/admin/accounting-codes', isAdmin, accountingCodesRouter);
     app.use('/api/admin/seasonal-scopes', isAdmin, seasonalScopesRouter);
-    app.use('/api/admin/events', authenticateTournamentDirector, eventsRouter);
-    app.use('/api/admin/events', authenticateTournamentDirector, feesRouter); // Mount fees router under events path
+    app.use('/api/admin/events', isAdmin, authenticateTournamentDirector, eventsRouter);
+    app.use('/api/admin/events', isAdmin, authenticateTournamentDirector, feesRouter); // Mount fees router under events path
     app.use('/api/admin/age-groups', isAdmin, ageGroupsRouter); // Add age groups router
     app.use('/api/admin/age-groups', isAdmin, ageGroupFieldSizesRouter); // Add field size update router
     
