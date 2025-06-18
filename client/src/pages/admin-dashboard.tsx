@@ -511,12 +511,6 @@ function EventsView() {
           >Events</motion.h2>
           <div className="flex gap-2">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="outline" onClick={() => navigate("/admin/events/preview")}>
-                <Eye className="mr-2 h-4 w-4" />
-                Preview Registration
-              </Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button onClick={() => navigate("/admin/events/create")} className="event-create-button">
                 <Plus className="mr-2 h-4 w-4" />
                 Create Event
