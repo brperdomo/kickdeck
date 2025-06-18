@@ -118,6 +118,7 @@ import {
   coupons,
   eventAdministrators,
   eventBrackets,
+  emailProviderSettings,
 } from "@db/schema";
 import fs from "fs/promises";
 import path from "path";
