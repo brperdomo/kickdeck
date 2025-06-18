@@ -436,6 +436,7 @@ export async function processPaymentForApprovedTeam(teamId: number, amount: numb
       payment_method: team.paymentMethodId,
       confirm: true, // Immediately attempt to confirm the payment
       off_session: true, // Since the customer is not present
+      receipt_email: team.submitterEmail, // Enable Stripe's automatic receipt email
       metadata: {
         teamId: teamId.toString(),
         eventId: team.eventId?.toString() || '',

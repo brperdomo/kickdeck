@@ -36,6 +36,11 @@ export async function processDestinationCharge(
   connectAccountId: string
 ) {
   try {
+    // Get team information for receipt email
+    const team = await db.query.teams.findFirst({
+      where: eq(teams.id, teamId)
+    });
+
     // Calculate comprehensive fee breakdown using the enhanced calculator
     const feeCalculation = await calculateEventFees(eventId, tournamentCostCents);
     
@@ -59,6 +64,7 @@ export async function processDestinationCharge(
       confirmation_method: 'manual',
       confirm: true,
       on_behalf_of: connectAccountId,
+      receipt_email: team?.submitterEmail, // Enable Stripe's automatic receipt email
       transfer_data: {
         destination: connectAccountId,
         amount: feeCalculation.tournamentReceives, // Tournament gets their base amount
