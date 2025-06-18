@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useTournamentDirector } from "@/hooks/use-tournament-director";
 import { Link2, Edit, FileQuestion, Copy, User, TagsIcon, Printer, AlertTriangle, MoreHorizontal, ChevronUp, ChevronDown, Search, FormInput, DollarSign, Ticket, Trash, Archive, RotateCcw, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
@@ -82,6 +83,7 @@ type SortDirection = "asc" | "desc";
 export function EventsTable() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const { isTournamentDirector, assignedEvents, canAccessEvent } = useTournamentDirector();
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"past" | "active" | "upcoming" | "all">("all");
@@ -115,13 +117,31 @@ export function EventsTable() {
   const queryClient = useQueryClient();
 
   const eventsQuery = useQuery<EventsResponse>({
-    queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter, sortField, sortDirection],
+    queryKey: ["/api/admin/events", currentPage, pageSize, showArchived, searchQuery, statusFilter, sortField, sortDirection, isTournamentDirector],
     queryFn: async () => {
       const response = await fetch(`/api/admin/events?page=${currentPage}&pageSize=${pageSize}&showArchived=${showArchived}&search=${encodeURIComponent(searchQuery)}&statusFilter=${statusFilter}&sortField=${sortField}&sortDirection=${sortDirection}`);
       if (!response.ok) {
         throw new Error("Failed to fetch events");
       }
-      return response.json();
+      const data = await response.json();
+      
+      // Filter events for Tournament Directors to only show assigned events
+      if (isTournamentDirector && assignedEvents.length > 0) {
+        const filteredEvents = data.events.filter((event: Event) => 
+          assignedEvents.includes(event.id.toString())
+        );
+        return {
+          ...data,
+          events: filteredEvents,
+          pagination: {
+            ...data.pagination,
+            totalEvents: filteredEvents.length,
+            totalPages: Math.ceil(filteredEvents.length / pageSize)
+          }
+        };
+      }
+      
+      return data;
     },
     staleTime: 5 * 60 * 1000, // 5 minute cache
     retry: 2,
