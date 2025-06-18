@@ -8,7 +8,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { db } from 'db';
 import { users, adminRoles, roles } from '@db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -45,13 +45,14 @@ export async function checkTournamentDirectorRole(userId: number): Promise<boole
  */
 export async function getTournamentDirectorEvents(userId: number): Promise<string[]> {
   try {
-    const assignments = await db.execute(`
-      SELECT event_id 
-      FROM tournament_director_events 
-      WHERE user_id = $1
-    `, [userId]);
+    const assignments = await db.execute(
+      sql`SELECT event_id FROM tournament_director_events WHERE user_id = ${userId}`
+    );
 
-    return assignments.map((assignment: any) => assignment.event_id.toString());
+    console.log(`[Tournament Director Auth] Raw assignments query result:`, assignments.rows);
+    const eventIds = assignments.rows.map((assignment: any) => assignment.event_id.toString());
+    console.log(`[Tournament Director Auth] Mapped event IDs:`, eventIds);
+    return eventIds;
   } catch (error) {
     console.error('Error getting tournament director events:', error);
     return [];
