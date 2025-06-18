@@ -8583,6 +8583,9 @@ app.delete('/api/admin/complexes/:id', isAdmin, async (req, res) => {
       console.error('Error registering Connect payment routes:', error);
     }
 
+    // Fix card details endpoint for teams with missing card information
+    app.post('/api/admin/fix-card-details', isAdmin, fixCardDetails);
+
     // Preview route moved above to prevent route conflicts
 
     return httpServer;
