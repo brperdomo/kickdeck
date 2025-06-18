@@ -4794,7 +4794,7 @@ function TeamsView() {
                                 <span className="text-green-600 font-medium">
                                   -{coupon.discountType === 'percentage' 
                                     ? `${coupon.amount}%` 
-                                    : formatCurrency(coupon.amount)}
+                                    : `$${coupon.amount.toFixed(2)}`}
                                 </span>
                               </div>
                               {coupon.description && (

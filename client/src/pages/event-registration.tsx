@@ -2247,8 +2247,8 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
     // Apply coupon discount if valid
     if (appliedCoupon) {
       if (appliedCoupon.discountType === 'fixed') {
-        // Fixed amount discount (coupon amount is in cents)
-        total = Math.max(0, total - appliedCoupon.amount);
+        // Fixed amount discount (coupon amount is in dollars, convert to cents)
+        total = Math.max(0, total - (appliedCoupon.amount * 100));
       } else if (appliedCoupon.discountType === 'percentage') {
         // Percentage discount
         const discountAmount = Math.round(total * (appliedCoupon.amount / 100));
@@ -2286,7 +2286,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
         toast({
           title: "Coupon Applied!",
           description: `${data.coupon.discountType === 'fixed' 
-            ? `$${(data.coupon.amount / 100).toFixed(2)} discount` 
+            ? `$${data.coupon.amount.toFixed(2)} discount` 
             : `${data.coupon.amount}% discount`} applied successfully.`,
         });
       } else {
@@ -4429,7 +4429,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                               </div>
                               <div className="text-sm font-medium text-green-800">
                                 -{appliedCoupon.discountType === 'fixed' 
-                                  ? `$${(appliedCoupon.amount / 100).toFixed(2)}`
+                                  ? `$${appliedCoupon.amount.toFixed(2)}`
                                   : `${appliedCoupon.amount}%`
                                 }
                               </div>
@@ -4465,7 +4465,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                                   <span>Discount ({appliedCoupon.code})</span>
                                   <span>
                                     -{appliedCoupon.discountType === 'fixed' 
-                                      ? `$${(appliedCoupon.amount / 100).toFixed(2)}`
+                                      ? `$${appliedCoupon.amount.toFixed(2)}`
                                       : `${appliedCoupon.amount}%`
                                     }
                                   </span>
@@ -4820,7 +4820,7 @@ export default function EventRegistration({ isPreview = false, eventIdOverride }
                             </div>
                             <div className="text-sm font-medium text-green-800">
                               -{appliedCoupon.discountType === 'fixed' 
-                                ? `$${(appliedCoupon.amount / 100).toFixed(2)}`
+                                ? `$${appliedCoupon.amount.toFixed(2)}`
                                 : `${appliedCoupon.amount}%`
                               }
                             </div>
