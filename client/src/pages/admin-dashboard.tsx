@@ -42,6 +42,7 @@ import { PaymentStatusBadge, TeamStatusBadge } from "@/components/ui/payment-sta
 import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/hooks/use-user";
 import { usePermissions } from "@/hooks/use-permissions";
+import { useTournamentDirector } from "@/hooks/use-tournament-director";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "@/hooks/use-theme";
 import { SelectUser } from "@db/schema";
@@ -5520,6 +5521,7 @@ interface AdminDashboardProps {
 function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
   const { user, logout, isLoading: isUserLoading } = useUser();
   const { hasPermission, hasRole } = usePermissions();
+  const { isTournamentDirector, assignedEvents, hasEventAccess } = useTournamentDirector();
   const [location, navigate] = useLocation();
   const [activeView, setActiveView] = useState<View>(initialView);
   // Show welcome banner only once per login session
@@ -6424,20 +6426,32 @@ function CouponManagement() {
   );
 }
 
-const navigationItems = [
-  { icon: Shield, label: "Administrators", value: "administrators" as const },
-  { icon: Calendar, label: "Events", value: "events" as const },
-  { icon: Users, label: "Teams", value: "teams" as const },
-  { icon: Building2, label: "Field Complexes", value: "complexes" as const },
-  { icon: Home, label: "MatchPro Client", value: "households" as const },
-  { icon: CalendarDays, label: "Scheduling", value: "scheduling" as const },
-  { icon: FileText, label: "Reports and Financials", value: "reports" as const },
-  { icon: ImageIcon, label: "File Manager", value: "files" as const },
-  { icon: Ticket, label: "Coupons", value: "coupons" as const },
-  { icon: FormInput, label: "Form Templates", value: "formTemplates" as const },
-  { icon: KeyRound, label: "Role Permissions", value: "roles" as const },
-  { icon: UserRound, label: "Members", value: "members" as const },
-  { icon: User, label: "My Account", value: "account" as const },
-];
+// Navigation items filtered based on user role
+const getNavigationItems = (isTournamentDirector: boolean, hasRole: (role: string) => boolean) => {
+  const allItems = [
+    { icon: Shield, label: "Administrators", value: "administrators" as const },
+    { icon: Calendar, label: "Events", value: "events" as const },
+    { icon: Users, label: "Teams", value: "teams" as const },
+    { icon: Building2, label: "Field Complexes", value: "complexes" as const },
+    { icon: Home, label: "MatchPro Client", value: "households" as const },
+    { icon: CalendarDays, label: "Scheduling", value: "scheduling" as const },
+    { icon: FileText, label: "Reports and Financials", value: "reports" as const },
+    { icon: ImageIcon, label: "File Manager", value: "files" as const },
+    { icon: Ticket, label: "Coupons", value: "coupons" as const },
+    { icon: FormInput, label: "Form Templates", value: "formTemplates" as const },
+    { icon: KeyRound, label: "Role Permissions", value: "roles" as const },
+    { icon: UserRound, label: "Members", value: "members" as const },
+    { icon: User, label: "My Account", value: "account" as const },
+  ];
+
+  // If user is Tournament Director (and not Super Admin), only show Events and My Account
+  if (isTournamentDirector && !hasRole('super_admin')) {
+    return allItems.filter(item => 
+      item.value === 'events' || item.value === 'account'
+    );
+  }
+
+  return allItems;
+};
 
 export default AdminDashboard;

@@ -358,6 +358,59 @@ export function registerRoutes(app: Express): Server {
     app.use('/api/admin/event-clubs', isAdmin, eventClubsRouter); // Event clubs management router
     app.use('/api/admin/email-config', isAdmin, emailConfigRouter); // Email configuration router
     app.use('/api/admin', isAdmin, tournamentDirectorRoutes); // Tournament Director management router
+
+    // Get events accessible to current Tournament Director
+    app.get('/api/admin/my-events', async (req: Request, res: Response) => {
+      try {
+        if (!req.isAuthenticated()) {
+          return res.status(401).send("Not authenticated");
+        }
+
+        const userId = req.user.id;
+        
+        // Get events assigned to this Tournament Director
+        const assignedEvents = await db
+          .select({ eventId: eventAdministrators.eventId })
+          .from(eventAdministrators)
+          .where(
+            and(
+              eq(eventAdministrators.userId, userId),
+              eq(eventAdministrators.role, 'tournament_director')
+            )
+          );
+
+        const eventIds = assignedEvents.map(assignment => assignment.eventId);
+        res.json(eventIds);
+      } catch (error) {
+        console.error('Error fetching accessible events:', error);
+        res.status(500).send("Failed to fetch accessible events");
+      }
+    });
+
+    // Get user roles
+    app.get('/api/user/roles', async (req: Request, res: Response) => {
+      try {
+        if (!req.isAuthenticated()) {
+          return res.status(401).send("Not authenticated");
+        }
+
+        const userId = req.user.id;
+        
+        // Get user roles
+        const userRoles = await db
+          .select({ name: roles.name })
+          .from(adminRoles)
+          .innerJoin(roles, eq(adminRoles.roleId, roles.id))
+          .where(eq(adminRoles.userId, userId));
+
+        const roleNames = userRoles.map(role => role.name);
+        res.json(roleNames);
+      } catch (error) {
+        console.error('Error fetching user roles:', error);
+        res.status(500).send("Failed to fetch user roles");
+      }
+    });
+
     // Stripe Connect routes are registered dynamically at the end of this function
     
     // Register direct SendGrid API routes
