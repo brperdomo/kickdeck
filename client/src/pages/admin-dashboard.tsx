@@ -5899,6 +5899,26 @@ function AdminDashboard({ initialView = 'events' }: AdminDashboardProps) {
                   <Settings className="h-4 w-4" />
                   General
                 </Button>
+                
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start relative overflow-hidden group"
+                  style={{
+                    backgroundColor: activeSettingsView === 'email' 
+                      ? 'var(--admin-nav-selected-bg, var(--admin-nav-active))' 
+                      : 'transparent',
+                    color: activeSettingsView === 'email'
+                      ? 'var(--admin-nav-selected-text, var(--admin-nav-active-text))' 
+                      : 'var(--admin-nav-text, inherit)',
+                  }}
+                  onClick={() => {
+                    navigate('/admin/sendgrid-setup');
+                    setActiveSettingsView('email');
+                  }}
+                >
+                  <Mail className="h-4 w-4" />
+                  Email Configuration
+                </Button>
               </CollapsibleContent>
             </Collapsible>
 
