@@ -4424,7 +4424,7 @@ function TeamsView() {
           <DialogHeader>
             <DialogTitle>Process Refund</DialogTitle>
             <DialogDescription>
-              This will process a refund for {selectedTeam?.name}'s registration payment of {selectedTeam ? formatCurrency(selectedTeam.registrationFee || 0) : '$0.00'}.
+              This will process a refund for {selectedTeam?.name}'s registration payment of {selectedTeam ? formatCurrency(selectedTeam.totalAmount || selectedTeam.registrationFee || 0) : '$0.00'}.
             </DialogDescription>
           </DialogHeader>
           
@@ -4466,7 +4466,7 @@ function TeamsView() {
                       if (!value) {
                         setRefundAmount("");
                       } else if (!isNaN(numValue) && numValue > 0) {
-                        const maxAmount = selectedTeam ? (selectedTeam.registrationFee || 0) / 100 : 0;
+                        const maxAmount = selectedTeam ? (selectedTeam.totalAmount || selectedTeam.registrationFee || 0) / 100 : 0;
                         if (numValue <= maxAmount) {
                           setRefundAmount(value);
                         } else {
@@ -4479,7 +4479,7 @@ function TeamsView() {
                 <div className="text-sm text-muted-foreground">
                   {isPartialRefund && refundAmount && !isNaN(parseFloat(refundAmount)) ? (
                     <span>
-                      Refunding <strong>${parseFloat(refundAmount).toFixed(2)}</strong> of {selectedTeam ? formatCurrency(selectedTeam.registrationFee || 0) : '$0.00'}
+                      Refunding <strong>${parseFloat(refundAmount).toFixed(2)}</strong> of {selectedTeam ? formatCurrency(selectedTeam.totalAmount || selectedTeam.registrationFee || 0) : '$0.00'}
                     </span>
                   ) : (
                     <span>Enter an amount to refund</span>
@@ -4583,7 +4583,7 @@ function TeamsView() {
                     </div>
                     <div className="grid grid-cols-3 gap-1">
                       <div className="font-medium">Final Total:</div>
-                      <div className="col-span-2">{formatCurrency(selectedTeam.registrationFee || 0)}</div>
+                      <div className="col-span-2">{formatCurrency(selectedTeam.totalAmount || selectedTeam.registrationFee || 0)}</div>
                     </div>
                     {selectedTeam.status === 'rejected' && (
                       <div className="grid grid-cols-3 gap-1">
